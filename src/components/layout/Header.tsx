@@ -6,7 +6,7 @@ import { VscMenu } from 'react-icons/vsc';
 
 import { cn } from '@/lib/utils';
 
-import { Container } from '@/components/layout/Container';
+import { Container } from '@/components/layout/container';
 import ButtonLink from '@/components/ui/links/ButtonLink';
 import UnstyledLink from '@/components/ui/links/UnstyledLink';
 

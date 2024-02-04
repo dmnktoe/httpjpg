@@ -14,8 +14,9 @@ import { Autoplay, Navigation } from 'swiper/modules';
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
-import { Container } from '@/components/layout/Container';
+import { Container } from '@/components/layout/container';
 import { Introduction } from '@/components/templates/introduction';
+import { ProjectList } from '@/components/templates/project-list';
 
 // !STARTERCONF -> Select !STARTERCONF and CMD + SHIFT + F
 // Before you begin editing, follow all comments with `STARTERCONF`,
@@ -35,7 +36,8 @@ export default function HomePage() {
   }, []);
   return (
     <main>
-      <Introduction />
+      <Introduction projects={[]} />
+      <ProjectList projects={[]} />
       <section>
         <Container>
           <div className='z-40 flex flex-col gap-8 md:gap-16'>

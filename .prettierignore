@@ -41,4 +41,4 @@ CHANGELOG.md
 pnpm-lock.yaml
 
 # LARGE ASCII ART ON THE HEADER
-src/components/layout/Header.tsx
+src/components/layout/header.tsx

@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import React from 'react';
 
-import { Container } from '@/components/layout/Container';
+import { Container } from '@/components/layout/container';
 
 export default function StoriesPage() {
   return (

@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import '@/styles/globals.css';
 
-import { Header } from '@/components/layout/Header';
+import { Header } from '@/components/layout/header';
 
 import { siteConfig } from '@/constant/config';
 

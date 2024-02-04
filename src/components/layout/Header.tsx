@@ -92,7 +92,8 @@ export const Header = () => {
 
   const Navigation = () => (
     <div className='relative hidden xl:flex'>
-      <div className='inline-flex items-center justify-between rounded-full bg-white bg-opacity-60 px-5 py-2 backdrop-blur-md lg:px-6 lg:py-3'>
+      <div
+        className='inline-flex items-center justify-between rounded-full bg-white bg-opacity-60 px-5 py-2 backdrop-blur-md lg:px-6 lg:py-3'>
         {navItems.map((item) => (
           <UnstyledLink
             key={item.label}
@@ -102,6 +103,37 @@ export const Header = () => {
             {item.label}
           </UnstyledLink>
         ))}
+      </div>
+    </div>
+  );
+
+  const MobileMenuContent = () => (
+    <div
+      className='flex flex-grow flex-col items-stretch bg-[#EBE8E8] md:bg-white text-black md:m-6 md:rounded-2xl md:shadow-xl'>
+      <div className='flex flex-1 flex-grow flex-col gap-y-2 p-2 md:p-6 text-3xl tracking-tight'>
+        {navItems.map((item) => (
+          <UnstyledLink
+            key={item.label}
+            href={item.href}
+            className='hover:text-primary-600 active:text-primary-900'
+          >
+            {item.label}
+          </UnstyledLink>
+        ))}
+      </div>
+      <div className='text-md flex flex-col justify-between gap-y-2 p-6 font-medium tracking-tight'>
+        <div className='mb-2 grid grid-cols-3 divide-x text-center'>
+          <UnstyledLink href='/impressum'>imprint</UnstyledLink>
+          <UnstyledLink href='/datenschutz'>privacy</UnstyledLink>
+        </div>
+        <ButtonLink
+          href='/kontakt'
+          size='base'
+          className='ml-4'
+          variant='outline'
+        >
+          call
+        </ButtonLink>
       </div>
     </div>
   );
@@ -129,7 +161,6 @@ export const Header = () => {
                   data-testid='navigationButton'
                 >
                   <VscMenu className='h-6 w-6 text-inherit' />
-                  <span className='sr-only'>header.toggleNavigationText</span>
                 </button>
               </div>
             </div>
@@ -151,25 +182,7 @@ export const Header = () => {
                     : 'translate-x-2 opacity-0'
                 )}
               >
-                <div className='flex flex-grow flex-col items-stretch bg-white text-black md:m-6 md:rounded-2xl md:shadow-xl'>
-                  <div className='flex flex-1 flex-grow flex-col gap-y-2 p-6 text-3xl font-bold tracking-tight'>
-                    hi
-                  </div>
-                  <div className='text-md flex flex-col justify-between gap-y-2 p-6 font-medium tracking-tight'>
-                    <div className='mb-2 grid grid-cols-3 divide-x text-center'>
-                      <UnstyledLink href='/impressum'>imprint</UnstyledLink>
-                      <UnstyledLink href='/datenschutz'>privacy</UnstyledLink>
-                    </div>
-                    <ButtonLink
-                      href='/kontakt'
-                      size='base'
-                      className='ml-4'
-                      variant='outline'
-                    >
-                      call
-                    </ButtonLink>
-                  </div>
-                </div>
+                <MobileMenuContent />
               </div>
             </div>
           </div>

@@ -39,3 +39,6 @@ yarn-error.log*
 CHANGELOG.md
 
 pnpm-lock.yaml
+
+# LARGE ASCII ART ON THE HEADER
+src/components/layout/Header.tsx

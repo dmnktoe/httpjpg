@@ -30,6 +30,10 @@
 }
 
 @layer base {
+  :root {
+    --navigation-height: 110px;
+  }
+
   /* inter var - latin */
   @font-face {
     font-family: 'Inter';

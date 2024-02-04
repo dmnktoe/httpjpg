@@ -6,7 +6,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        primary: ['Inter', ...defaultTheme.fontFamily.sans],
+        primary: ['Neue Haas Grotesk', ...defaultTheme.fontFamily.sans],
       },
       colors: {
         primary: {
@@ -24,6 +24,9 @@ export default {
         },
         dark: '#222222',
         background: '#EBE8E8',
+      },
+      spacing: {
+        'navigation-height': 'var(--navigation-height)',
       },
       keyframes: {
         flicker: {

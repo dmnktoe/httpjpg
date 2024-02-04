@@ -8,7 +8,14 @@ const nextConfig = {
   swcMinify: true,
 
   images: {
-    domains: ['s3-alpha-sig.figma.com', 'placehold.co'],
+    domains: [
+      's3-alpha-sig.figma.com',
+      'placehold.co',
+      'unsplash.it',
+      'picsum.photos',
+      'via.placeholder.com',
+      'source.unsplash.com',
+    ],
   },
 
   webpack(config) {

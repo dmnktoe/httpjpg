@@ -5,10 +5,6 @@ import UnstyledLink from '@/components/ui/links/UnstyledLink';
 
 import { Project } from '@/interfaces/Project';
 
-interface IntroductionProps {
-  projects?: Project[];
-}
-
 const Info = () => {
   return (
     <div>
@@ -31,10 +27,10 @@ const ProjectList = ({ projects }: { projects: Project[] }) => {
       {projects.map((project) => (
         <UnstyledLink
           key={project.id}
-          href={`/projects/${project.id}`}
+          href={`/projects/${project.slug}`}
           className='hover:text-primary-600 line-clamp-1 hover:underline'
         >
-          {project.name}
+          {project.slug}
         </UnstyledLink>
       ))}
     </div>
@@ -60,7 +56,7 @@ const ClientWorkList = ({ projects }: { projects: Project[] }) => {
 };
 
 // eslint-disable-next-line unused-imports/no-unused-vars
-export const Introduction = ({ projects }: IntroductionProps) => {
+export const Introduction = ({ projects }: { projects: Project[] }) => {
   return (
     <section className='top-navigation-height py-6 text-black md:py-12'>
       <Container>
@@ -69,10 +65,10 @@ export const Introduction = ({ projects }: IntroductionProps) => {
             <Info />
           </div>
           <div className='md:w-6/12'>
-            <ProjectList projects={[]} />
+            <ProjectList projects={projects} />
           </div>
           <div className='md:w-3/12'>
-            <ClientWorkList projects={[]} />
+            <ClientWorkList projects={projects} />
           </div>
         </div>
       </Container>

@@ -1,9 +1,13 @@
 export interface Project {
+  id: number;
   name: string;
   description: string;
   images: string[];
-  url: string;
-  tags: string[];
-  github: string;
-  id: number;
+  slug: string;
+  category: Category;
+}
+
+interface Category {
+  name: string;
+  slug: string;
 }

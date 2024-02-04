@@ -19,14 +19,14 @@ const SlideshowButtons = ({
 }) => {
   return (
     <>
-      <div className='absolute right-8 top-8 z-20'>
+      <div className='absolute right-8 top-4 z-20'>
         <div className='flex flex-row gap-3'>
           <button onClick={onPrev}>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 32 32'
-              className='w-16 -rotate-90'
-              fill='#ffffff'
+              className='w-8 -rotate-90 transform text-white/35 transition-all hover:text-white md:w-12 lg:w-16'
+              fill='currentColor'
             >
               <path d='m26.71 10.29-10-10a1 1 0 0 0-1.41 0l-10 10 1.41 1.41L15 3.41V32h2V3.41l8.29 8.29z' />
             </svg>
@@ -35,8 +35,8 @@ const SlideshowButtons = ({
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 32 32'
-              className='w-16 rotate-90'
-              fill='#ffffff'
+              className='w-8 rotate-90 transform text-white/35 transition-all hover:text-white md:w-12 lg:w-16'
+              fill='currentColor'
             >
               <path d='m26.71 10.29-10-10a1 1 0 0 0-1.41 0l-10 10 1.41 1.41L15 3.41V32h2V3.41l8.29 8.29z' />
             </svg>
@@ -63,10 +63,11 @@ export const Slideshow = ({ images }: SlideshowProps) => {
       <Swiper
         modules={[Navigation, Autoplay]}
         navigation
+        speed={1}
         spaceBetween={15}
         ref={swiperElRef}
         autoplay={{
-          delay: 5000,
+          delay: 7000,
           disableOnInteraction: false,
         }}
         loop={true}
@@ -79,6 +80,7 @@ export const Slideshow = ({ images }: SlideshowProps) => {
               src={image}
               className='w-full'
               alt={`Slide ${index + 1}`}
+              useSkeleton={true}
             />
           </SwiperSlide>
         ))}

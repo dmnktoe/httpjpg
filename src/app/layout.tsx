@@ -1,8 +1,12 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { apiPlugin, storyblokInit } from '@storyblok/react/rsc';
 import { Metadata } from 'next';
 import * as React from 'react';
 
 import '@/styles/globals.css';
 
+import { Footer } from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
 
 import { siteConfig } from '@/constant/config';
@@ -49,6 +53,11 @@ export const metadata: Metadata = {
   // ],
 };
 
+storyblokInit({
+  accessToken: 'PLkrO3gfRkjDlF4jwoQI8wtt',
+  use: [apiPlugin],
+});
+
 export default function RootLayout({
   children,
 }: {
@@ -59,6 +68,7 @@ export default function RootLayout({
       <body className='bg-background'>
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );

@@ -4,17 +4,17 @@
 
 :root {
   /* #region  /**=========== Primary Color =========== */
-  --tw-color-primary-50: 232 245 255;
-  --tw-color-primary-100: 213 236 255;
-  --tw-color-primary-200: 179 218 255;
-  --tw-color-primary-300: 133 192 255;
-  --tw-color-primary-400: 86 150 255;
-  --tw-color-primary-500: 47 109 255;
-  --tw-color-primary-600: 12 61 255;
-  --tw-color-primary-700: 15 61 255;
-  --tw-color-primary-800: 6 47 205;
-  --tw-color-primary-900: 16 49 159;
-  --tw-color-primary-950: 10 27 92;
+  --tw-color-primary-50: 242 251 250;
+  --tw-color-primary-100: 212 243 241;
+  --tw-color-primary-200: 183 234 232;
+  --tw-color-primary-300: 118 210 209;
+  --tw-color-primary-400: 74 180 183;
+  --tw-color-primary-500: 48 151 156;
+  --tw-color-primary-600: 36 119 125;
+  --tw-color-primary-700: 33 95 100;
+  --tw-color-primary-800: 30 77 81;
+  --tw-color-primary-900: 29 65 68;
+  --tw-color-primary-950: 11 37 40;
   --color-primary-50: rgb(var(--tw-color-primary-50)); /* #eff6ff */
   --color-primary-100: rgb(var(--tw-color-primary-100)); /* #dbeafe */
   --color-primary-200: rgb(var(--tw-color-primary-200)); /* #bfdbfe */

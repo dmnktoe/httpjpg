@@ -65,7 +65,7 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <body className='bg-background'>
+      <body className='bg-primary-100'>
         <Header />
         {children}
         <Footer />

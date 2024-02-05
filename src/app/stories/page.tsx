@@ -9,7 +9,7 @@ export default function StoriesPage() {
   return (
     <main>
       <section>
-        <Container className='py-16'>
+        <Container>
           <div className='grid grid-cols-6 grid-rows-5 gap-4'>
             <div className='col-span-6 row-span-1 md:col-span-2'>
               <div className='text-xs'>

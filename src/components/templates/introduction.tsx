@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { Container } from '@/components/layout/container';
 import UnstyledLink from '@/components/ui/links/UnstyledLink';
 
 import { Project } from '@/interfaces/Project';
@@ -58,20 +57,16 @@ const ClientWorkList = ({ projects }: { projects: Project[] }) => {
 // eslint-disable-next-line unused-imports/no-unused-vars
 export const Introduction = ({ projects }: { projects: Project[] }) => {
   return (
-    <section className='top-navigation-height py-6 text-black md:py-12'>
-      <Container>
-        <div className='flex flex-col gap-8 text-xs font-normal tracking-tight md:flex-row md:gap-16 md:text-base xl:text-xl'>
-          <div className='md:w-3/12'>
-            <Info />
-          </div>
-          <div className='md:w-6/12'>
-            <ProjectList projects={projects} />
-          </div>
-          <div className='md:w-3/12'>
-            <ClientWorkList projects={projects} />
-          </div>
-        </div>
-      </Container>
-    </section>
+    <div className='flex flex-col gap-4 text-xs font-normal tracking-tight text-black md:flex-row xl:gap-16 xl:text-base'>
+      <div className='md:w-3/12'>
+        <Info />
+      </div>
+      <div className='md:w-6/12'>
+        <ProjectList projects={projects} />
+      </div>
+      <div className='md:w-3/12'>
+        <ClientWorkList projects={projects} />
+      </div>
+    </div>
   );
 };

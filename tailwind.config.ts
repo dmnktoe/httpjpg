@@ -23,7 +23,6 @@ export default {
           950: 'rgb(var(--tw-color-primary-950) / <alpha-value>)',
         },
         dark: '#222222',
-        background: '#EBE8E8',
       },
       spacing: {
         'navigation-height': 'var(--navigation-height)',

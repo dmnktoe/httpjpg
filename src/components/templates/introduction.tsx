@@ -57,7 +57,7 @@ const ClientWorkList = ({ projects }: { projects: Project[] }) => {
 // eslint-disable-next-line unused-imports/no-unused-vars
 export const Introduction = ({ projects }: { projects: Project[] }) => {
   return (
-    <div className='flex flex-col gap-4 text-xs font-normal tracking-tight text-black md:flex-row xl:gap-16 xl:text-base'>
+    <div className='flex flex-col gap-4 text-xs font-light tracking-tight text-black md:flex-row xl:gap-16 xl:text-base'>
       <div className='md:w-3/12'>
         <Info />
       </div>

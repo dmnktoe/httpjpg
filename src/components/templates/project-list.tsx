@@ -27,7 +27,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
             </div>
             {project.name}
           </div>
-          <div className='project-desc h-auto w-full rounded-[10vw] bg-white p-6 text-xs tracking-tighter text-black shadow-xl xl:line-clamp-none xl:w-1/2 xl:rounded-full'>
+          <div className='project-desc h-auto w-full rounded-[10vw] bg-white/70 p-1 text-xs tracking-tighter text-black shadow-xl xl:w-1/2 xl:rounded-full xl:p-6'>
             <div className='mx-auto w-10/12'>
               {project.description}
               <br />

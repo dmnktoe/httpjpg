@@ -10,7 +10,6 @@ import { projects } from '@/data/projects';
 
 import { Container } from '@/components/layout/container';
 import { Introduction } from '@/components/templates/introduction';
-import ButtonLink from '@/components/ui/links/ButtonLink';
 import UnstyledLink from '@/components/ui/links/UnstyledLink';
 
 interface NavItemProps {
@@ -103,20 +102,6 @@ export const Header = () => {
             {item.label}
           </UnstyledLink>
         ))}
-      </div>
-      <div className='text-md flex flex-col justify-between gap-y-2 p-6 font-medium tracking-tight'>
-        <div className='mb-2 grid grid-cols-3 divide-x text-center'>
-          <UnstyledLink href='/impressum'>imprint</UnstyledLink>
-          <UnstyledLink href='/datenschutz'>privacy</UnstyledLink>
-        </div>
-        <ButtonLink
-          href='/kontakt'
-          size='base'
-          className='ml-4'
-          variant='outline'
-        >
-          call
-        </ButtonLink>
       </div>
     </div>
   );

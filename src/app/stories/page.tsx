@@ -2,17 +2,25 @@
 
 import Image from 'next/image';
 import React from 'react';
+import { StlViewer } from 'react-stl-viewer';
 
 import { Container } from '@/components/layout/container';
 import NextImage from '@/components/ui/NextImage';
 
+const url = '/images/stories/star.stl';
+
+const style = {
+  width: '100%',
+  height: '400px',
+};
+
 export default function StoriesPage() {
   return (
-    <main>
+    <main className='bg-white'>
       <section>
         <Container>
           <div className='grid grid-cols-6 grid-rows-5 gap-4'>
-            <div className='col-span-6 row-span-1 md:col-span-2'>
+            <div className='col-span-6 row-span-1 md:col-span-2 md:row-span-5'>
               <div className='text-xs'>
                 The form International Issue was a project close to our hearts.
                 Nina Sieverding and I wanted to make the diverse content from
@@ -21,6 +29,7 @@ export default function StoriesPage() {
                 concept in the form of a portable archive featuring 35
                 contributions from recent years.Besides that, I was responsible
                 for its financing and marketing.
+                <StlViewer style={style} orbitControls shadows url={url} />
               </div>
             </div>
             <div className='col-span-3 col-start-1 row-span-4 md:col-span-2 md:col-start-3 md:row-span-5'>
@@ -29,7 +38,7 @@ export default function StoriesPage() {
                 height='800'
                 alt='test'
                 className='w-full'
-                src='https://s3-alpha-sig.figma.com/img/63d2/6931/57e93707bb30ba95bd26b5efd2ba2a53?Expires=1707696000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=cgZOE-W9HYaxzkd1tIe6C8jYZOkCcrchSUQiuFCp~iOM9ILf2zhB6E7knd9cYJ6yX5s4483iuMNy1A~6r0UcqKCBQ19nrZiw-dOefD5SCTTpAjOxWJUQem5eFT39xPftOlrNNxICxd6l0dh3fHMj~LLBmviVWmjvbHfc6LYz0T~mxlFS-Qllizn1do2awQUunl-q4EEl92OU-fjvjwjnef8LdL-79WxHrene3CTaNUNPZLTjBhsGUpWFw~CeXXlsHCAo25G2fG~YWq5EhgN3GwFTgaxIg1B-CuRFLMVs2ymsY5A6CRCRuaCFfkk-pNZwRnbZ8Bv9VimD9V3obvXYPA__'
+                src='/images/stories/hospital.jpg'
               />
             </div>
             <div className='col-span-3 col-start-4 row-span-4 md:col-span-2 md:col-start-5 md:row-span-5'>
@@ -44,20 +53,20 @@ export default function StoriesPage() {
             </div>
           </div>
         </Container>
-        <div className='relative px-44 py-80'>
+        <div className='relative px-44 pt-96'>
           <div className='flex gap-4'>
             <div className='w-1/2'>
               <Image
                 alt='test'
                 className='w-full'
-                src='https://placehold.co/780x1040'
+                src='/images/stories/knockout.webp'
                 width={780}
                 height={1040}
               />
               <Image
                 alt='test'
                 className='absolute bottom-0 right-64 w-[40vw]'
-                src='https://placehold.co/780x1040'
+                src='/images/stories/knockout.webp'
                 width={780}
                 height={1040}
               />

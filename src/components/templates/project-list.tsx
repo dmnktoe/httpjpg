@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { Container } from '@/components/layout/container';
+import UnstyledLink from '@/components/ui/links/UnstyledLink';
 import Slideshow from '@/components/ui/slideshow';
 
 import { Project } from '@/interfaces/Project';
@@ -13,7 +14,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
       </div>
       <div>
         <div className='flex flex-col gap-2 xl:flex-row'>
-          <div className='w-full overflow-hidden rounded-full bg-[url("/images/unnamed.gif")] text-[8.5vw] leading-[0.8] tracking-tighter xl:w-1/2 xl:text-[6.5vw]'>
+          <div className='w-full overflow-hidden rounded-full bg-[url("/images/unnamed.gif")] text-[8.5vw] leading-[0.8] tracking-tighter shadow-xl xl:w-1/2 xl:text-[6.5vw]'>
             <div className='inline-block'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -26,12 +27,17 @@ const ProjectCard = ({ project }: { project: Project }) => {
             </div>
             {project.name}
           </div>
-          <div className='h-auto w-full rounded-[10vw] bg-white p-6 text-xs tracking-tighter text-black xl:line-clamp-none xl:w-1/2 xl:rounded-full'>
+          <div className='project-desc h-auto w-full rounded-[10vw] bg-white p-6 text-xs tracking-tighter text-black shadow-xl xl:line-clamp-none xl:w-1/2 xl:rounded-full'>
             <div className='mx-auto w-10/12'>
               {project.description}
-              <p className='text-[9px] tracking-tighter text-neutral-400'>
-                Fotos: Dominik Müller
-              </p>
+              <br />
+              <br />
+              <UnstyledLink
+                href={`/${project.slug}`}
+                className='hover:text-primary-600 line-clamp-1 text-[blue] hover:underline'
+              >
+                -̸̨̱̠̳̩̼͙̈̀̀̄̃̆́͠ͅ↳↳↳{project.slug}↳↳↳
+              </UnstyledLink>
             </div>
           </div>
         </div>

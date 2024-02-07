@@ -47,14 +47,16 @@
   }
 
   body {
-    background-color: white;
+    background-color: gray;
     background-image: url('/images/alt-bg.png');
-    background-size: cover;
+    background-size: 850px 300px;
     background-attachment: fixed;
-    color: white;
+    background-position: right top;
+    background-repeat: no-repeat;
   }
 
-  header {
+  header,
+  .project-desc {
     font-family: 'Times', sans-serif !important;
   }
 

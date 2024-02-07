@@ -86,7 +86,9 @@ export const Slideshow = ({ images }: SlideshowProps) => {
           </SwiperSlide>
         ))}
       </Swiper>
-      <SlideshowButtons onPrev={handlePrev} onNext={handleNext} />
+      {images.length > 1 && (
+        <SlideshowButtons onPrev={handlePrev} onNext={handleNext} />
+      )}
     </div>
   );
 };

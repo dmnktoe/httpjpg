@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'Pre-built components with awesome default',
 };
 
-export default function ContactPage() {
+export default function OutletStorePage() {
   return (
     <main>
       <section>

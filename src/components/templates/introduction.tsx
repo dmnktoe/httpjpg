@@ -7,7 +7,7 @@ import { Project } from '@/interfaces/Project';
 const Info = () => {
   return (
     <div className='mb-6 xl:mb-0'>
-      <span className='font-bold'>⇝HE𝓁𝓁O</span>
+      <span className='font-bold'>⇝HE𝓁𝓁O www.httpjpg.com</span>
       <br />
       <UnstyledLink href='/'>
         <span className='text-justify'>

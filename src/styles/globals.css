@@ -47,14 +47,23 @@
   }
 
   body {
-    font-family: 'Times', sans-serif !important;
     background-color: white;
-    background-image: url('/images/bg.png');
-    background-size: 500px 500px;
+    background-image: url('/images/desktop.jpeg');
+    background-size: cover;
+    background-attachment: fixed;
+    color: white;
   }
 
-  a {
-    color: blue !important;
+  header {
+    font-family: 'Times', sans-serif !important;
+  }
+
+  a:hover {
+    background: black;
+    color: white !important;
+    text-decoration: dotted;
+    font-style: italic;
+    overflow: hidden;
   }
 
   .cursor-newtab {

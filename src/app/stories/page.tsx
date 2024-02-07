@@ -4,6 +4,7 @@ import Image from 'next/image';
 import React from 'react';
 
 import { Container } from '@/components/layout/container';
+import NextImage from '@/components/ui/NextImage';
 
 export default function StoriesPage() {
   return (
@@ -32,12 +33,13 @@ export default function StoriesPage() {
               />
             </div>
             <div className='col-span-3 col-start-4 row-span-4 md:col-span-2 md:col-start-5 md:row-span-5'>
-              <Image
+              <NextImage
                 width='800'
                 height='800'
                 alt='test'
                 className='aspect-auto w-full'
-                src='https://s3-alpha-sig.figma.com/img/c4a3/0553/d6a90ef6d274b6a0178703dd849a113e?Expires=1707696000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Fw94B3Nclu0cbpPsopHO3nUaDcKOhet9bKtzyoSbuJMNA7mW4759VqteIWI6w8B9cwePposdGtf0XyqvP7ODrsCTMQ03dt5FNmNeL1Js9CWghZSO2NIljOFcZejHcCTXNEo0uer00wKyVUsb-IolCDXsHXnxpNGOU9WWykyuFnFHaUoeRJ2kHwTsGDOoMPgJDEiE6bbqBbmCXJNFFUIVfvnqIFFECJuA8M2tkp5Phj1dAvrPYf-rz3Y9KB4jx9JiXrckm206-xR3GZMj4wN1bOh8-mTaV7ZBgMpAF2kdQ~k8nIThr0yPg~jsgNNtKmPOfn1aX1CZKg8sXkGG68jL2g__'
+                src='/images/stories/knockout.webp'
+                useSkeleton
               />
             </div>
           </div>

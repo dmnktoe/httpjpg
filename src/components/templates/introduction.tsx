@@ -6,7 +6,7 @@ import { Project } from '@/interfaces/Project';
 
 const Info = () => {
   return (
-    <div>
+    <div className='mb-6 xl:mb-0'>
       <span className='font-bold'>⇝HE𝓁𝓁O</span>
       <br />
       <UnstyledLink href='/'>
@@ -68,13 +68,13 @@ const ClientWorkList = ({ projects }: { projects: Project[] }) => {
 export const Introduction = ({ projects }: { projects: Project[] }) => {
   return (
     <div className='flex flex-col gap-4 text-xs font-light tracking-tight md:flex-row xl:gap-16 xl:text-base'>
-      <div className='md:w-3/12'>
+      <div className='md:w-4/12'>
         <Info />
       </div>
-      <div className='md:w-6/12'>
+      <div className='md:w-4/12'>
         <ProjectList projects={projects} />
       </div>
-      <div className='md:w-3/12'>
+      <div className='md:w-4/12'>
         <ClientWorkList projects={projects} />
       </div>
     </div>

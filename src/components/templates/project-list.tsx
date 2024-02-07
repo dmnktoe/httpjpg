@@ -13,7 +13,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
       </div>
       <div>
         <div className='flex flex-col gap-2 xl:flex-row'>
-          <div className='w-full bg-[url("/images/unnamed.gif")] text-[8.5vw] leading-[0.8] tracking-tighter xl:w-1/2 xl:text-[6.5vw]'>
+          <div className='w-full overflow-hidden rounded-full bg-[url("/images/unnamed.gif")] text-[8.5vw] leading-[0.8] tracking-tighter xl:w-1/2 xl:text-[6.5vw]'>
             <div className='inline-block'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -26,11 +26,13 @@ const ProjectCard = ({ project }: { project: Project }) => {
             </div>
             {project.name}
           </div>
-          <div className='line-clamp-6 w-full text-xs tracking-tighter xl:line-clamp-none xl:w-1/2'>
-            {project.description}
-            <p className='text-[9px] tracking-tighter text-neutral-400'>
-              Fotos: Dominik Müller
-            </p>
+          <div className='h-auto w-full rounded-full bg-black p-6 text-xs tracking-tighter xl:line-clamp-none xl:w-1/2'>
+            <div className='mx-auto w-10/12'>
+              {project.description}
+              <p className='text-[9px] tracking-tighter text-neutral-400'>
+                Fotos: Dominik Müller
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -42,9 +44,12 @@ export const ProjectList = ({ projects }: { projects: Project[] }) => {
   return (
     <section>
       <Container>
-        <div className='z-40 flex flex-col gap-8 md:gap-16'>
+        <div className='z-40 flex flex-col gap-8 md:gap-32'>
           {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+            <>
+              <ProjectCard key={project.id} project={project} />
+              <div className='text-center'>*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚</div>
+            </>
           ))}
         </div>
       </Container>

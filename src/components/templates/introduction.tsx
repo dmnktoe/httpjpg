@@ -9,30 +9,39 @@ const Info = () => {
     <div>
       <span className='font-bold'>⇝HE𝓁𝓁O</span>
       <br />
-      <span className='text-justify'>
-        so I basically cook up web magic and design wizardry. My gig involves
-        smashing together different media vibes and throwing in some spicy
-        digital wizardry.
-      </span>
+      <UnstyledLink href='/'>
+        <span className='text-justify'>
+          ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& —————— ꠹ρᧁ! :))))) hׁׅ֮υׁׅhׁׅ֮υׁׅυׁׅυׁׅ hׁׅ֮tׁׅtׁׅ℘
+          &&& —————— յׁׅ℘ᧁׁ! :))))) ⋈ꮺ⋈ꮺꮺꮺ ⋈ᯅᯅꔛ &&& ————P̵̨̢͇̗̘̩̖̜̰̠͛̓Ĺ̴͙̝͎̼̌̒̓̌̀͊̎̔̍̉͛̋̔͝E̴̢̢̛̦̣̩̝̩͙̲̠͊̒̀̊̾̕͝Ä̴́̔̈̌͌̑ͅS̶̡̰̪̭͕̤̥͈̗̞͛́̍̾̑͜͜͝Ę̶̧̛̲̠̱̜̖͈̋͒̑̋̇̐̈́̓͊̃̈̕ ̸̡̛̣̹̠͖͊̓̊̒̅͗̏͌͑̐̚̕Y̴͎̘̙͓͕̺͒̽̃͛̂̓̊̎̕̚̚Ǫ̴̛̼̻̌̊͊̉͆́͋̔̀͒Ü̷̟̤͙̲̙̹̘̝̟̯̤̍̌͋͗̋͛̓̋̎̓̔̀͌S̸̩͔̿̒̔͗͘̚͝E̵̡̺̘̞̗͉̬̞̟͖͍̍͌ ̷̪͔̲̯̫̉̅͒̀͑͂̍͠T̷̯̹́͒̅̉̊̅̈́͠H̷͎̣̦̘̪͆͐́͝E̷͈͕̗̬̠̹͔͚̪͔̐
+          ̵͖̥̥͔͚̭̗̪̠͕̭̞̤̯̞̀̌͋́͒͠͝N̸̼̪̘̘̩͍̗͓̼͇̪͓̲̈̓̆͑͛̽͆̽͘A̵̧̪̱͖̦̭̎̓̓̾̌̓̎͠͝ͅW̴̙͑̑̈̕̚͝I̷̥͓̱̺̟͔̳̔̒̇͜͜Ģ̶͔̠̣̯̱̼̀̈́À̷͚̋̏͘͘͠T̴̨̰̭̓͋̔̀̓͊̄͐̇̇͒͐̓́͝I̵̡͓̖̼̒̈́͌̇͜Z̶̬̦̟̥͇͍̦͉̰̬͗͗̌̍̿̔̽͗̑̇͋̑͠͝͝O̴͖͇͈̾ͅN̷̝̺̺͎̻̟̞͓̳̠̎͜ͅ—— ୨୧ꔛꗃ! :))))) ꃅꀎꃅꀎꀎꀎ ꃅ꓄꓄ꉣ &&& —————— ꀭꉣꁅ!
+          :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷)))) 🎀 ⋆ﾟ･
+        </span>
+      </UnstyledLink>
     </div>
   );
 };
 
 const ProjectList = ({ projects }: { projects: Project[] }) => {
   return (
-    <div>
-      <span className='font-bold'>⇝TH1𝓃𝑔S</span>
-      <br />
-      {projects.map((project) => (
-        <UnstyledLink
-          key={project.id}
-          href={`/projects/${project.slug}`}
-          className='hover:text-primary-600 line-clamp-1 hover:underline'
-        >
-          {project.slug}
-        </UnstyledLink>
-      ))}
-    </div>
+    <>
+      <div>
+        <span className='font-bold'>⇝TH1𝓃𝑔S</span>
+        <br />
+        {projects.map((project) => (
+          <UnstyledLink
+            key={project.id}
+            href={`/projects/${project.slug}`}
+            className='hover:text-primary-600 line-clamp-1 hover:underline'
+          >
+            🎀 ⋆ﾟ･
+            {project.slug}
+          </UnstyledLink>
+        ))}
+      </div>
+      <UnstyledLink href='/stories'>
+        ⋆.˚ ᡣ𐭩 .𖥔˚ music ⋆.˚✮🎧✮˚.⋆ &nd pics -----⇒
+      </UnstyledLink>
+    </>
   );
 };
 
@@ -47,6 +56,7 @@ const ClientWorkList = ({ projects }: { projects: Project[] }) => {
           href={`/projects/${project.id}`}
           className='hover:text-primary-600 line-clamp-1 hover:underline'
         >
+          (^‿^)-𝒷))))
           {project.name}
         </UnstyledLink>
       ))}
@@ -57,7 +67,7 @@ const ClientWorkList = ({ projects }: { projects: Project[] }) => {
 // eslint-disable-next-line unused-imports/no-unused-vars
 export const Introduction = ({ projects }: { projects: Project[] }) => {
   return (
-    <div className='flex flex-col gap-4 text-xs font-light tracking-tight text-black md:flex-row xl:gap-16 xl:text-base'>
+    <div className='flex flex-col gap-4 text-xs font-light tracking-tight md:flex-row xl:gap-16 xl:text-base'>
       <div className='md:w-3/12'>
         <Info />
       </div>

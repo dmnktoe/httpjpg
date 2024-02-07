@@ -59,12 +59,12 @@ export const Header = () => {
 
   const Navigation = () => (
     <div className='relative hidden xl:flex'>
-      <div className='inline-flex items-center justify-between rounded-full bg-white bg-opacity-60 px-5 py-2 backdrop-blur-md xl:px-6 xl:py-3'>
+      <div className='inline-flex flex-col items-center justify-between rounded-full bg-white bg-opacity-60 px-5 py-2 backdrop-blur-md xl:px-6 xl:py-3'>
         {navItems.map((item) => (
           <UnstyledLink
             key={item.label}
             href={item.href}
-            className='hover:text-primary-600 active:text-primary-900 px-2 text-xl text-black xl:px-3 xl:text-xl'
+            className='hover:text-primary-600 active:text-primary-900 px-2 text-xl xl:px-3 xl:text-xl'
           >
             {item.label}
           </UnstyledLink>
@@ -74,7 +74,7 @@ export const Header = () => {
   );
 
   const MenuButton = () => (
-    <div className='ml-auto xl:hidden'>
+    <div className='z-[65] ml-auto xl:hidden'>
       <div className='flex flex-row gap-3'>
         <button
           className={cn(
@@ -92,7 +92,7 @@ export const Header = () => {
   );
 
   const MobileMenuContent = () => (
-    <div className='flex flex-grow flex-col items-stretch bg-[#EBE8E8] text-black md:m-6 md:rounded-2xl md:bg-white md:shadow-xl'>
+    <div className='flex flex-grow flex-col items-stretch bg-[#EBE8E8] md:m-6 md:rounded-2xl md:bg-white md:shadow-xl'>
       <div className='flex flex-1 flex-grow flex-col gap-y-2 p-2 text-3xl tracking-tight md:p-6'>
         {navItems.map((item) => (
           <UnstyledLink
@@ -135,7 +135,7 @@ export const Header = () => {
             {/* Absolute positioned mobile menu with blur-mask */}
             <div
               className={cn(
-                'top-navigation-height fixed inset-0 z-50 flex max-h-full w-full max-w-full flex-row transition-all duration-200 ease-in-out md:justify-end md:bg-[#EBE8E8]/30 md:backdrop-blur-[5px] xl:hidden',
+                'fixed inset-0 z-50 flex max-h-full w-full max-w-full flex-row transition-all duration-200 ease-in-out md:justify-end md:bg-[#EBE8E8]/30 md:backdrop-blur-[5px] xl:hidden',
                 hamburgerMenuIsOpen
                   ? 'visible opacity-100'
                   : 'invisible opacity-0'
@@ -144,7 +144,7 @@ export const Header = () => {
               <div
                 data-testid='navigationMenu'
                 className={cn(
-                  'animate-fadeInRight m-0 flex h-[calc(100vh_-_var(--navigation-height))] w-full overflow-hidden transition-all duration-200 ease-in-out md:w-96',
+                  'animate-fadeInRight m-0 flex h-[calc(100vh)] w-full overflow-hidden transition-all duration-200 ease-in-out md:w-96',
                   hamburgerMenuIsOpen
                     ? 'translate-x-0 opacity-100'
                     : 'translate-x-2 opacity-0'

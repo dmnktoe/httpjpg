@@ -75,8 +75,8 @@ export const Slideshow = ({ images }: SlideshowProps) => {
         {images.map((image, index) => (
           <SwiperSlide key={index}>
             <NextImage
-              width={1920}
-              height={900}
+              width={2500}
+              height={1200}
               src={image}
               className='w-full'
               alt={`Slide ${index + 1}`}

@@ -46,6 +46,17 @@
       U+2215, U+FEFF, U+FFFD;
   }
 
+  body {
+    font-family: 'Times', sans-serif !important;
+    background-color: white;
+    background-image: url('/images/bg.png');
+    background-size: 500px 500px;
+  }
+
+  a {
+    color: blue !important;
+  }
+
   .cursor-newtab {
     cursor: url('/images/new-tab.png') 10 10, pointer;
   }

@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import * as React from 'react';
-import { RiAlarmWarningFill } from 'react-icons/ri';
 
 export const metadata: Metadata = {
   title: 'Not Found',
@@ -9,14 +8,12 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <main>
-      <section className='bg-white'>
-        <div className='layout flex min-h-screen flex-col items-center justify-center text-center text-black'>
-          <RiAlarmWarningFill
-            size={60}
-            className='drop-shadow-glow animate-flicker text-red-500'
-          />
-          <h1 className='mt-8 text-4xl md:text-6xl'>Page Not Found</h1>
-          <a href='/'>Back to home</a>
+      <section className='bg-white bg-opacity-45'>
+        <div className='layout flex min-h-44 flex-col items-center justify-center text-center text-black'>
+          <h1 className='mt-8 text-4xl md:text-6xl'>
+            💲🐧 ➃０❹ ᑎ𝓸𝐓 Ⓕ𝔬𝔲ภ𝔡 𝕩➂;( 👍🍫
+          </h1>
+          <a href='/'>HOME</a>
         </div>
       </section>
     </main>

@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { apiPlugin, storyblokInit } from '@storyblok/react/rsc';
 import { Metadata } from 'next';
 import * as React from 'react';
 
@@ -51,11 +48,6 @@ export const metadata: Metadata = {
   //   },
   // ],
 };
-
-storyblokInit({
-  accessToken: 'PLkrO3gfRkjDlF4jwoQI8wtt',
-  use: [apiPlugin],
-});
 
 export default function RootLayout({
   children,

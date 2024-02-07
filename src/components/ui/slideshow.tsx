@@ -81,6 +81,7 @@ export const Slideshow = ({ images }: SlideshowProps) => {
               className='w-full'
               alt={`Slide ${index + 1}`}
               useSkeleton={true}
+              key={index}
             />
           </SwiperSlide>
         ))}

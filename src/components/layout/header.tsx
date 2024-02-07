@@ -59,7 +59,7 @@ export const Header = () => {
 
   const Navigation = () => (
     <div className='relative hidden xl:flex'>
-      <div className='inline-flex flex-col items-center justify-between rounded-full bg-white bg-opacity-60 px-5 py-2 backdrop-blur-md xl:px-6 xl:py-3'>
+      <div className='flex flex-col items-center rounded-full bg-white bg-opacity-60 px-5 py-2 text-black shadow-2xl backdrop-blur-md xl:px-6 xl:py-3'>
         {navItems.map((item) => (
           <UnstyledLink
             key={item.label}

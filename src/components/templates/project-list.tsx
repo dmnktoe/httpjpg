@@ -46,10 +46,10 @@ export const ProjectList = ({ projects }: { projects: Project[] }) => {
       <Container>
         <div className='z-40 flex flex-col gap-8 md:gap-32'>
           {projects.map((project) => (
-            <>
-              <ProjectCard key={project.id} project={project} />
+            <React.Fragment key={project.id}>
+              <ProjectCard project={project} />
               <div className='text-center'>*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚</div>
-            </>
+            </React.Fragment>
           ))}
         </div>
       </Container>

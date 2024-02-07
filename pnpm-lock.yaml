@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@storyblok/react':
-    specifier: ^3.0.8
-    version: 3.0.8(react-dom@18.2.0)(react@18.2.0)
   clsx:
     specifier: ^2.0.0
     version: 2.1.0
@@ -2065,23 +2062,6 @@ packages:
     dependencies:
       '@sinonjs/commons': 1.8.6
     dev: true
-
-  /@storyblok/js@3.0.6:
-    resolution: {integrity: sha512-Kbz5D1pcKWgjqecF+rz1bq5742YpCZe7+B8Zrtp979QOXFpAurHm2BrmzVZy75G2BevWR5CcsK9MzLnyief1Kw==}
-    dependencies:
-      storyblok-js-client: 6.6.5
-    dev: false
-
-  /@storyblok/react@3.0.8(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-PtgkmhAeW8QJI9cGBtVW3v8Daw7lTZgZX56hBnXhxkukRmJOVgSl8Ywv8lBeEeRCvvYmrlM1FWAy95HPsJJxEA==}
-    peerDependencies:
-      react: ^17.0.0 || ^18.0.0
-      react-dom: ^17.0.0 || ^18.0.0
-    dependencies:
-      '@storyblok/js': 3.0.6
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    dev: false
 
   /@svgr/babel-plugin-add-jsx-attribute@8.0.0(@babel/core@7.22.9):
     resolution: {integrity: sha512-b9MIk7yhdS1pMCZM8VeNfUlSKVRhsHZNMl5O9SfaX0l0t5wjdgu4IDzGB8bpnGBBOjGST3rRFVsaaEtI4W6f7g==}
@@ -7143,10 +7123,6 @@ packages:
     dependencies:
       internal-slot: 1.0.5
     dev: true
-
-  /storyblok-js-client@6.6.5:
-    resolution: {integrity: sha512-ZO2jn63ZBIbpvQ/XBJHnXt+drwJ45z057xNRLWPusRIv34+uC2JF3UutOvxmyslOXMcd2kuKc9Nf+mrp3v92hA==}
-    dev: false
 
   /streamsearch@1.1.0:
     resolution: {integrity: sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==}

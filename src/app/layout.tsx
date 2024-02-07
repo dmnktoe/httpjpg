@@ -6,7 +6,6 @@ import * as React from 'react';
 
 import '@/styles/globals.css';
 
-import { Footer } from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
 
 import { siteConfig } from '@/constant/config';
@@ -65,10 +64,9 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <body className='bg-primary-100'>
+      <body>
         <Header />
         {children}
-        <Footer />
       </body>
     </html>
   );

@@ -2,17 +2,17 @@
 
 import Image from 'next/image';
 import React from 'react';
-import { StlViewer } from 'react-stl-viewer';
 
+// import { StlViewer } from 'react-stl-viewer';
 import { Container } from '@/components/layout/container';
 import NextImage from '@/components/ui/NextImage';
 
-const url = '/images/stories/star.stl';
+// const url = '/images/stories/star.stl';
 
-const style = {
-  width: '100%',
-  height: '400px',
-};
+// const style = {
+//   width: '100%',
+//   height: '400px',
+// };
 
 export default function StoriesPage() {
   return (
@@ -29,7 +29,7 @@ export default function StoriesPage() {
                 concept in the form of a portable archive featuring 35
                 contributions from recent years.Besides that, I was responsible
                 for its financing and marketing.
-                <StlViewer style={style} orbitControls shadows url={url} />
+                {/* <StlViewer style={style} orbitControls shadows url={url} /> */}
               </div>
             </div>
             <div className='col-span-3 col-start-1 row-span-4 md:col-span-2 md:col-start-3 md:row-span-5'>

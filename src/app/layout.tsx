@@ -1,9 +1,11 @@
+import { apiPlugin, storyblokInit } from '@storyblok/react';
 import { Metadata } from 'next';
 import * as React from 'react';
 
 import '@/styles/globals.css';
 
 import { Header } from '@/components/layout/header';
+import StoryblokProvider from '@/components/layout/storyblok-provider';
 
 import { siteConfig } from '@/constant/config';
 
@@ -39,15 +41,13 @@ export const metadata: Metadata = {
     title: siteConfig.title,
     description: siteConfig.description,
     images: [`${siteConfig.url}/images/og.jpg`],
-    // creator: '@th_clarence',
   },
-  // authors: [
-  //   {
-  //     name: 'Theodorus Clarence',
-  //     url: 'https://theodorusclarence.com',
-  //   },
-  // ],
 };
+
+storyblokInit({
+  accessToken: 'PLkrO3gfRkjDlF4jwoQI8wtt',
+  use: [apiPlugin],
+});
 
 export default function RootLayout({
   children,
@@ -55,11 +55,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html>
-      <body>
-        <Header />
-        {children}
-      </body>
-    </html>
+    <StoryblokProvider>
+      <html>
+        <body>
+          <Header />
+          {children}
+        </body>
+      </html>
+    </StoryblokProvider>
   );
 }

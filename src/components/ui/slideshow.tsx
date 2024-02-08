@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useRef } from 'react';
 import * as React from 'react';
 import { Autoplay, Navigation } from 'swiper/modules';

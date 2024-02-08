@@ -1,5 +1,6 @@
-'use client';
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { getStoryblokApi } from '@storyblok/react/rsc';
 import * as React from 'react';
 /**
  * SVGR Support
@@ -18,10 +19,21 @@ import { ProjectList } from '@/components/templates/project-list';
 // Before you begin editing, follow all comments with `STARTERCONF`,
 // to customize the default configuration.
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { data } = await fetchData();
   return (
     <main>
+      <div>
+        <h1>Story: {data.story.name}</h1>
+      </div>
       <ProjectList projects={projects} />
     </main>
   );
+}
+
+export async function fetchData() {
+  const sbParams = { version: 'draft' };
+
+  const storyblokApi = getStoryblokApi();
+  return storyblokApi.get(`cdn/stories/home`, sbParams, { cache: 'no-store' });
 }

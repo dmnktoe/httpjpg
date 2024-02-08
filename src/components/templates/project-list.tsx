@@ -14,7 +14,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
       </div>
       <div>
         <div className='flex flex-col gap-2 xl:flex-row'>
-          <div className='w-full overflow-hidden rounded-full bg-[url("/images/unnamed.gif")] text-[8.5vw] leading-[0.8] tracking-tighter shadow-xl xl:w-1/2 xl:text-[6.5vw]'>
+          <div className='w-full overflow-hidden rounded-full border-[1px] border-solid border-black bg-[url("/images/unnamed.gif")] text-[8.5vw] leading-[0.8] tracking-tighter xl:w-1/2 xl:text-[6.5vw]'>
             <div className='inline-block'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -27,8 +27,10 @@ const ProjectCard = ({ project }: { project: Project }) => {
             </div>
             {project.name}
           </div>
-          <div className='project-desc h-auto w-full rounded-[10vw] bg-white/70 p-1 text-xs tracking-tighter text-black shadow-xl xl:w-1/2 xl:rounded-full xl:p-6'>
+          <div className='project-desc h-auto w-full rounded-[10vw] border-[1px] border-solid border-black bg-white/70 p-1 text-xs tracking-tighter text-black xl:w-1/2 xl:rounded-full xl:p-6'>
             <div className='mx-auto w-10/12'>
+              2022.10.23
+              <br />
               {project.description}
               <br />
               <br />

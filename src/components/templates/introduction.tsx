@@ -33,7 +33,7 @@ const ProjectList = ({ projects }: { projects: Project[] }) => {
         {projects.map((project) => (
           <UnstyledLink
             key={project.id}
-            href={`/${project.slug}`}
+            href={`/pages/${project.slug}`}
             className='hover:text-primary-600 line-clamp-1 hover:underline'
           >
             🎀 ⋆ﾟ･

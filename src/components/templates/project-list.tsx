@@ -35,7 +35,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
               <br />
               <br />
               <UnstyledLink
-                href={`/${project.slug}`}
+                href={`/pages/${project.slug}`}
                 className='hover:text-primary-600 line-clamp-1 text-[blue] hover:underline'
               >
                 -̸̨̱̠̳̩̼͙̈̀̀̄̃̆́͠ͅ↳↳↳{project.slug}↳↳↳

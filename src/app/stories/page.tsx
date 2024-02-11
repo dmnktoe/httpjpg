@@ -16,7 +16,7 @@ import NextImage from '@/components/ui/NextImage';
 
 export default function StoriesPage() {
   return (
-    <main className='bg-white'>
+    <main>
       <section>
         <Container>
           <div className='grid grid-cols-6 grid-rows-5 gap-4'>
@@ -55,25 +55,18 @@ export default function StoriesPage() {
             </div>
           </div>
         </Container>
-        <div className='relative px-44 pt-96'>
-          <div className='flex gap-4'>
-            <div className='w-1/2'>
+        <div className='relative px-2 py-32 md:px-56 md:py-44 xl:px-64 xl:py-96'>
+          <div className='flex flex-col gap-4 xl:flex-row'>
+            <div className='w-full xl:w-1/2'>
               <Image
                 alt='test'
-                className='w-full'
-                src='/images/stories/knockout.webp'
-                width={780}
-                height={1040}
-              />
-              <Image
-                alt='test'
-                className='absolute bottom-0 right-64 w-[40vw]'
+                className='w-1/2 xl:w-full'
                 src='/images/stories/knockout.webp'
                 width={780}
                 height={1040}
               />
             </div>
-            <div className='w-1/2'>
+            <div className='relative xl:w-1/2'>
               <div className='text-xs'>
                 The form International Issue was a project close to our hearts.
                 Nina Sieverding and I wanted to make the diverse content from
@@ -83,6 +76,28 @@ export default function StoriesPage() {
                 contributions from recent years.Besides that, I was responsible
                 for its financing and marketing.
               </div>
+              <div className='w-full xl:absolute xl:-left-12 xl:top-64'>
+                <Image
+                  alt='test'
+                  className='w-1/2 xl:w-full'
+                  src='/images/stories/knockout.webp'
+                  width={780}
+                  height={1040}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className='relative px-2 pt-16 md:px-56 xl:px-80'>
+          <div className='flex flex-col gap-4 xl:flex-row'>
+            <div className='w-full'>
+              <Image
+                alt='test'
+                className='w-full'
+                src='/images/stories/knockout.webp'
+                width={780}
+                height={1040}
+              />
             </div>
           </div>
         </div>

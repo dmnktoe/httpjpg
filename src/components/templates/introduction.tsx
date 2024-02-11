@@ -1,7 +1,10 @@
 import * as React from 'react';
 
+import { clients } from '@/data/clients';
+
 import UnstyledLink from '@/components/ui/links/UnstyledLink';
 
+import { Client } from '@/interfaces/Client';
 import { Project } from '@/interfaces/Project';
 
 const Info = () => {
@@ -45,19 +48,19 @@ const ProjectList = ({ projects }: { projects: Project[] }) => {
   );
 };
 
-const ClientWorkList = ({ projects }: { projects: Project[] }) => {
+const ClientWorkList = ({ clients }: { clients: Client[] }) => {
   return (
     <div>
       <span className='font-bold'>⇝𝒞𝓁LI€NT</span>
       <br />
-      {projects.map((project) => (
+      {clients.map((client) => (
         <UnstyledLink
-          key={project.id}
-          href={`/${project.slug}`}
+          key={client.id}
+          href={`${client.url}`}
           className='hover:text-primary-600 line-clamp-1 hover:underline'
         >
           (^‿^)-𝒷))))
-          {project.name}
+          {client.name}
         </UnstyledLink>
       ))}
     </div>
@@ -75,7 +78,7 @@ export const Introduction = ({ projects }: { projects: Project[] }) => {
         <ProjectList projects={projects} />
       </div>
       <div className='md:w-4/12'>
-        <ClientWorkList projects={projects} />
+        <ClientWorkList clients={clients} />
       </div>
     </div>
   );

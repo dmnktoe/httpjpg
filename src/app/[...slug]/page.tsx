@@ -62,8 +62,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = story.content?.seo?.title || story.name;
   const description = story.content?.seo?.description;
   return {
-    metadataBase: new URL('https://your-brand.ch'),
-    title: `${title} · Your Brand`,
+    metadataBase: new URL('https://httpjpg.com'),
+    title: `${title} ㋡httpjpg.com`,
     description: description,
     robots: {
       index: true,

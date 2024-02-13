@@ -17,7 +17,8 @@
     "postbuild": "next-sitemap --config next-sitemap.config.js",
     "prepare": "husky install",
     "pull-components": "storyblok pull-components --space=275306",
-    "generate-sb-types": "storyblok-generate-ts source=./components.275306.json target=./src/types/component-types-sb"
+    "generate-sb-types": "storyblok-generate-ts source=./components.275306.json target=./src/types/component-types-sb",
+    "https-proxy-start": "local-ssl-proxy --source 3010 --target 3000 --cert ./dev/localhost.pem --key ./dev/localhost-key.pem"
   },
   "dependencies": {
     "@storyblok/react": "^3.0.8",

@@ -53,7 +53,7 @@ module.exports = {
           // static data
           ['^@/data'],
           // components
-          ['^@/components', '^@/container'],
+          ['^@/components'],
           // zustand store
           ['^@/store'],
           // Other imports
@@ -70,7 +70,7 @@ module.exports = {
             '^\\.\\./\\.\\./\\.\\.(?!/?$)',
           ],
           ['^@/types'],
-          // other that didnt fit in
+          // other that didn't fit in
           ['^'],
         ],
       },

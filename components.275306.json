@@ -1,14 +1,92 @@
 {
   "components": [
     {
-      "name": "feature",
-      "display_name": null,
-      "created_at": "2024-02-10T20:17:22.128Z",
-      "updated_at": "2024-02-10T20:17:22.128Z",
-      "id": 5322220,
+      "name": "container",
+      "display_name": "Container",
+      "created_at": "2024-02-14T19:04:58.072Z",
+      "updated_at": "2024-02-15T14:58:30.036Z",
+      "id": 5342371,
       "schema": {
-        "name": {
-          "type": "text"
+        "children": {
+          "type": "bloks",
+          "key": "children",
+          "pos": 0
+        },
+        "as": {
+          "type": "option",
+          "display_name": "Render As",
+          "required": true,
+          "options": [
+            {
+              "_uid": "c4cb76f7-b917-483a-9312-d7eb6011c840",
+              "name": "div",
+              "value": "div"
+            },
+            {
+              "_uid": "83b853c4-0f2f-412a-b06e-09bf17eca622",
+              "value": "section",
+              "name": "section"
+            },
+            {
+              "_uid": "1735ec0c-679c-4cd1-a869-043899bd296e",
+              "value": "article",
+              "name": "article"
+            },
+            {
+              "_uid": "ca2c9884-aaa7-4e13-82b4-23fa316b5955",
+              "value": "main",
+              "name": "main"
+            }
+          ],
+          "use_uuid": true,
+          "exclude_empty_option": true,
+          "key": "as",
+          "pos": 1
+        },
+        "bgColor": {
+          "type": "option",
+          "use_uuid": true,
+          "required": false,
+          "display_name": "Background Color",
+          "options": [
+            {
+              "_uid": "e102e9db-deac-4b12-8bec-b9ca0c43cb06",
+              "value": "transparent",
+              "name": "Transparent"
+            },
+            {
+              "_uid": "af5ac2a1-592a-45d9-b6f2-5fb0238718ee",
+              "value": "white",
+              "name": "White"
+            },
+            {
+              "_uid": "5530048d-f78d-4413-af15-ecee2a2067d5",
+              "name": "Black",
+              "value": "black"
+            }
+          ],
+          "pos": 2,
+          "exclude_empty_option": true
+        },
+        "width": {
+          "type": "option",
+          "use_uuid": true,
+          "display_name": "Width",
+          "options": [
+            {
+              "_uid": "1e53e484-0922-4513-8fee-85b740119408",
+              "name": "Full",
+              "value": "full"
+            },
+            {
+              "_uid": "bd9a8ab0-f5d6-4a34-854f-790d5c6c5d8c",
+              "value": "container",
+              "name": "Container"
+            }
+          ],
+          "default_value": "",
+          "pos": 3,
+          "exclude_empty_option": true
         }
       },
       "image": null,
@@ -18,30 +96,7 @@
       "is_nestable": true,
       "all_presets": [],
       "preset_id": null,
-      "real_name": "feature",
-      "component_group_uuid": null,
-      "color": null,
-      "icon": null
-    },
-    {
-      "name": "grid",
-      "display_name": null,
-      "created_at": "2024-02-10T20:17:22.114Z",
-      "updated_at": "2024-02-10T20:17:22.114Z",
-      "id": 5322219,
-      "schema": {
-        "columns": {
-          "type": "bloks"
-        }
-      },
-      "image": null,
-      "preview_field": null,
-      "is_root": false,
-      "preview_tmpl": null,
-      "is_nestable": true,
-      "all_presets": [],
-      "preset_id": null,
-      "real_name": "grid",
+      "real_name": "Container",
       "component_group_uuid": null,
       "color": null,
       "icon": null
@@ -70,14 +125,18 @@
       "icon": null
     },
     {
-      "name": "teaser",
-      "display_name": null,
-      "created_at": "2024-02-10T20:17:22.098Z",
-      "updated_at": "2024-02-10T20:17:22.098Z",
-      "id": 5322218,
+      "name": "slideshow",
+      "display_name": "Slideshow",
+      "created_at": "2024-02-15T15:09:04.594Z",
+      "updated_at": "2024-02-15T15:15:57.515Z",
+      "id": 5347784,
       "schema": {
-        "headline": {
-          "type": "text"
+        "images": {
+          "type": "multiasset",
+          "required": true,
+          "display_name": "Images",
+          "filetypes": ["images", "videos"],
+          "allow_external_url": true
         }
       },
       "image": null,
@@ -87,7 +146,7 @@
       "is_nestable": true,
       "all_presets": [],
       "preset_id": null,
-      "real_name": "teaser",
+      "real_name": "Slideshow",
       "component_group_uuid": null,
       "color": null,
       "icon": null

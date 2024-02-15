@@ -4,7 +4,7 @@ import { ReactElement } from 'react';
 
 import '@/styles/globals.css';
 
-import StoryblokProvider from '@/components/helpers/storyblok-provider';
+import StoryblokProvider from '@/components/helpers/StoryblokProvider';
 
 storyblokInit({
   accessToken: process.env.STORYBLOK_TOKEN,

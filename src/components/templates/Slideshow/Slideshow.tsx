@@ -1,19 +1,14 @@
 'use client';
-import { useCallback, useRef } from 'react';
-import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+import React, { useCallback, useRef } from 'react';
 import { Autoplay, Navigation } from 'swiper/modules';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
 import NextImage from '@/components/ui/NextImage';
 
-interface SlideshowProps {
+export type SlideshowProps = {
   images: string[];
-}
+};
 
 const SlideshowButtons = ({
   onPrev,
@@ -75,14 +70,14 @@ export const Slideshow = ({ images }: SlideshowProps) => {
           delay: 7000,
           disableOnInteraction: false,
         }}
-        loop={true}
+        loop={images.length > 1}
       >
         {images.map((image, index) => (
           <SwiperSlide key={index}>
             <NextImage
               width={2500}
               height={1200}
-              src={image}
+              src={image.filename}
               className='w-full'
               alt={`Slide ${index + 1}`}
               useSkeleton={true}

@@ -2,8 +2,8 @@
 
 import React from 'react';
 
-import { Container } from '@/components/layout/container';
-import UnstyledLink from '@/components/ui/links/UnstyledLink';
+import { Container } from '@/components/layout/Container/Container';
+import UnstyledLink from '@/components/ui/Links/UnstyledLink';
 import NextImage from '@/components/ui/NextImage';
 
 export default function ContactPage() {

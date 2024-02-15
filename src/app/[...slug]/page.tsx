@@ -6,7 +6,7 @@ import {
 import { Metadata } from 'next';
 import { draftMode } from 'next/headers';
 
-import { HeaderNeu } from '@/components/layout/HeaderNeu';
+import { Header } from '@/components/layout/Header';
 
 const isDev = process.env.NODE_ENV === 'development';
 export let revalidate: number;
@@ -91,7 +91,7 @@ export default async function Home({ params }: Props) {
   const { data } = await fetchData(slug);
   return (
     <>
-      <HeaderNeu />
+      <Header />
 
       <StoryblokStory story={data.story} />
 

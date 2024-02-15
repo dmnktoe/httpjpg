@@ -18,7 +18,7 @@ interface NavItemProps {
   external?: boolean;
 }
 
-export const HeaderNeu = () => {
+export const Header = () => {
   const navItems: NavItemProps[] = [
     { label: 'Home', href: '/' },
     { label: 'Stories', href: '/stories' },

@@ -1,14 +1,15 @@
 'use client';
 import React, { useCallback, useRef } from 'react';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { Autoplay, Navigation } from 'swiper/modules';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
+import { SlideshowProps } from '@/components/templates/slideshow/Slideshow.types';
 import NextImage from '@/components/ui/NextImage';
-
-export type SlideshowProps = {
-  images: string[];
-};
 
 const SlideshowButtons = ({
   onPrev,

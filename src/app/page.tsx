@@ -1,4 +1,7 @@
-import Index, { generateMetadata, revalidate } from './[...slug]/page';
+import Index, {
+  generateMetadata,
+  revalidate,
+} from './(storyblok)/[...slug]/page';
 
 export { generateMetadata, revalidate };
 export default Index;

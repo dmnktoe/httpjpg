@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import UnstyledLink from '@/components/ui/Links/UnstyledLink';
+import UnstyledLink from '@/components/ui/links/UnstyledLink';
 import NextImage from '@/components/ui/NextImage';
 
 export default function OutletStorePage() {

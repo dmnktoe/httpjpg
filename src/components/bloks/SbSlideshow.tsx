@@ -1,6 +1,6 @@
 import { storyblokEditable } from '@storyblok/react/rsc';
 
-import { Slideshow } from '@/components/templates/Slideshow/Slideshow';
+import { Slideshow } from '@/components/templates/slideshow/Slideshow';
 
 import { SlideshowStoryblok } from '@/types/component-types-sb';
 

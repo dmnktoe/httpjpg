@@ -8,9 +8,9 @@ import { cn } from '@/lib/utils';
 
 import { projects } from '@/data/projects';
 
-import { Container } from '@/components/layout/Container/Container';
+import { Container } from '@/components/layout/container/Container';
 import { Introduction } from '@/components/templates/Introduction';
-import UnstyledLink from '@/components/ui/Links/UnstyledLink';
+import UnstyledLink from '@/components/ui/links/UnstyledLink';
 
 interface NavItemProps {
   label: string;

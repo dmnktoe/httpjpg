@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { Container } from '@/components/layout/container/Container';
+import { Container } from '@/components/layout/container';
 import UnstyledLink from '@/components/ui/links/UnstyledLink';
 import NextImage from '@/components/ui/NextImage';
 

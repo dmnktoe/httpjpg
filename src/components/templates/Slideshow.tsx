@@ -8,8 +8,11 @@ import { Autoplay, Navigation } from 'swiper/modules';
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
-import { SlideshowProps } from '@/components/templates/slideshow/Slideshow.types';
 import NextImage from '@/components/ui/NextImage';
+
+export type SlideshowProps = {
+  images: { filename: string }[];
+};
 
 const SlideshowButtons = ({
   onPrev,

@@ -6,7 +6,7 @@ import {
 import { Metadata } from 'next';
 import { draftMode } from 'next/headers';
 
-import { Header } from '@/components/layout/header/Header';
+import { Header } from '@/components/layout/header';
 
 const isDev = process.env.NODE_ENV === 'development';
 export let revalidate: number;

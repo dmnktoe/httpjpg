@@ -22,7 +22,7 @@ export default function Error({
       <Header />
       <main>
         <Container width='container' className='rs-my-8 text-white'>
-          <h1>Something went wrong.</h1>
+          <h1>Something went very wrong.</h1>
           <p>Try refreshing your browser.</p>
         </Container>
       </main>

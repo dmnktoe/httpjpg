@@ -5,7 +5,7 @@ export interface ContainerStoryblok {
   width?: 'full' | 'container';
   _uid: string;
   component: 'container';
-  [k: string]: any;
+  [k: string]: never;
 }
 
 export interface PageStoryblok {
@@ -13,7 +13,7 @@ export interface PageStoryblok {
   _uid: string;
   component: 'page';
   uuid?: string;
-  [k: string]: any;
+  [k: string]: never;
 }
 
 export type MultiassetStoryblok = {
@@ -23,12 +23,12 @@ export type MultiassetStoryblok = {
   filename: string;
   name: string;
   title?: string;
-  [k: string]: any;
+  [k: string]: never;
 }[];
 
 export interface SlideshowStoryblok {
   images: MultiassetStoryblok;
   _uid: string;
   component: 'slideshow';
-  [k: string]: any;
+  [k: string]: never;
 }

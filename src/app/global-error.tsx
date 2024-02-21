@@ -4,7 +4,6 @@ import * as Sentry from '@sentry/nextjs';
 import { useEffect } from 'react';
 
 import { Container } from '@/components/layout/container';
-import { Header } from '@/components/layout/header';
 
 export default function Error({
   error,
@@ -19,9 +18,8 @@ export default function Error({
 
   return (
     <div className='bg-black'>
-      <Header />
       <main>
-        <Container width='container' className='rs-my-8 text-white'>
+        <Container width='container' className='my-8 text-white'>
           <h1>Something went very wrong.</h1>
           <p>Try refreshing your browser.</p>
         </Container>

@@ -1,26 +1,32 @@
-import { apiPlugin, storyblokInit } from '@storyblok/react/rsc';
-import * as React from 'react';
-import { ReactElement } from 'react';
-
 import '@/styles/globals.css';
+import 'react-loading-skeleton/dist/skeleton.css';
 
-import StoryblokProvider from '@/components/helpers/StoryblokProvider';
+import GoogleAnalyticsProvider from '@/components/helpers/GoogleAnalyticsProvider';
+import LazyMotionProvider from '@/components/helpers/LazyMotionProvider';
+import { Flexbox } from '@/components/layout/flexbox';
+import { Header } from '@/components/layout/header';
 
-storyblokInit({
-  accessToken: process.env.STORYBLOK_TOKEN,
-  use: [apiPlugin],
-});
-
-type RootLayoutProps = {
-  children: ReactElement;
+type LayoutProps = {
+  children: React.ReactNode;
 };
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children }: LayoutProps) {
   return (
-    <StoryblokProvider>
-      <html lang='de-CH'>
-        <body>{children}</body>
+    <LazyMotionProvider>
+      <html lang='en'>
+        <GoogleAnalyticsProvider />
+        {/* Absolutely necessary to have a body tag here, otherwise your components won't get any interactivity */}
+        <body>
+          <Header />
+          <Flexbox
+            justifyContent='between'
+            direction='col'
+            className='relative'
+          >
+            {children}
+          </Flexbox>
+        </body>
       </html>
-    </StoryblokProvider>
+    </LazyMotionProvider>
   );
 }

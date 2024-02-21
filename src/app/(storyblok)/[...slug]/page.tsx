@@ -1,101 +1,166 @@
+import * as Sentry from '@sentry/nextjs';
 import {
+  apiPlugin,
   getStoryblokApi,
   ISbStoriesParams,
+  StoryblokClient,
+  storyblokInit,
   StoryblokStory,
 } from '@storyblok/react/rsc';
 import { Metadata } from 'next';
-import { draftMode } from 'next/headers';
+import { notFound } from 'next/navigation';
 
-import { Header } from '@/components/layout/header';
+import ComponentNotFound from '@/components/bloks/ComponentNotFound';
+import { components as Components } from '@/components/helpers/StoryblokProvider';
 
-const isDev = process.env.NODE_ENV === 'development';
-export let revalidate: number;
-if (isDev) {
-  revalidate = 0;
-} else {
-  revalidate = 3600;
-}
+import { getPageMetadata } from '@/utilities/getPageMetadata';
+import { resolveRelations } from '@/utilities/resolveRelations';
 
-async function fetchData(slug: string) {
-  const { isEnabled: isDraft } = draftMode();
+type PathsType = {
+  slug: string[];
+};
+
+type ParamsType = {
+  slug: string[];
+};
+
+// Bug in Safari + Netlify + Next where back button doesn't function correctly and returns the user
+// back to the page they hit the back button on after scrolling or interacting with the page they went back to.
+// Setting a long revalidate time patches this until Next/Netlify fix the bug in future releases of their stuff.
+// export const revalidate = 60 * 60 * 24 * 365;
+
+// Storyblok bridge options.
+const bridgeOptions = {
+  resolveRelations,
+  resolveLinks: 'story',
+};
+
+/**
+ * Init on the server.
+ */
+storyblokInit({
+  accessToken: process.env.STORYBLOK_ACCESS_TOKEN, // Preview token because this is in server side.
+  use: [apiPlugin],
+  components: Components,
+  enableFallbackComponent: true,
+  customFallbackComponent: (component) => {
+    return <ComponentNotFound component={component} />;
+  },
+});
+
+/**
+ * Generate the list of stories to statically render.
+ */
+export async function generateStaticParams() {
+  const activeEnv = process.env.NODE_ENV || 'development';
+  // Fetch new content from storyblok.
+  const storyblokApi: StoryblokClient = getStoryblokApi();
   const sbParams: ISbStoriesParams = {
-    resolve_links: 'url',
-    version: isDev || isDraft ? 'draft' : 'published',
-    cv: isDev || isDraft ? Date.now() : undefined,
+    version: activeEnv === 'development' ? 'draft' : 'published',
+    cv: activeEnv === 'development' ? Date.now() : undefined,
+    resolve_links: '0',
+    resolve_assets: 0,
+    per_page: 100,
   };
 
-  const storyblokApi = getStoryblokApi();
+  // Use the `cdn/links` endpoint to get a list of all stories without all the extra data.
+  const response = await storyblokApi.getAll('cdn/links', sbParams);
+  const stories = response.filter((link) => link.is_folder === false);
+  const paths: PathsType[] = [];
 
-  return storyblokApi.get(`cdn/stories/${slug}`, sbParams);
-}
-
-// Return a list of `params` to populate the [slug] dynamic segment
-export async function generateStaticParams() {
-  const storyblokApi = getStoryblokApi();
-  const { data } = await storyblokApi.get('cdn/links/', {
-    version: 'published',
-  });
-
-  const paths: { slug: string[] }[] = [];
-  // create a route for every link
-  Object.keys(data.links).forEach((linkKey) => {
-    // do not create a route for folders and home
-    if (data.links[linkKey].is_folder || data.links[linkKey].slug === 'home') {
-      return;
+  stories.forEach((story) => {
+    const slug = story.slug;
+    // Filter out the home page.
+    if (slug !== 'home') {
+      const splitSlug = slug.split('/');
+      paths.push({ slug: splitSlug });
     }
-
-    // get array for slug because of catch all
-    const slug = data.links[linkKey].slug;
-    const splittedSlug = slug.split('/');
-
-    // creates all the routes
-    paths.push({ slug: splittedSlug });
   });
 
   return paths;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const slug = params?.slug ? params.slug.join('/') : 'home';
-  const { data } = await fetchData(slug);
-  const story = data.story;
-  const title = story.content?.seo?.title || story.name;
-  const description = story.content?.seo?.description;
-  return {
-    metadataBase: new URL('https://httpjpg.com'),
-    title: `${title} ㋡httpjpg.com`,
-    description: description,
-    robots: {
-      index: true,
-      follow: true,
-    },
-    openGraph: {
-      title: title,
-      description: description,
-      url: `/${story.slug}`,
-    },
-    twitter: {
-      card: 'summary',
-      title: title,
-      description: description,
-    },
+/**
+ * Get the data out of the Storyblok API for the page.
+ *
+ * Make sure to not export the below functions otherwise there will be a typescript error
+ * https://github.com/vercel/next.js/discussions/48724
+ */
+async function getStoryData(params: { slug: string[] }) {
+  const activeEnv = process.env.NODE_ENV || 'development';
+  const storyblokApi: StoryblokClient = getStoryblokApi();
+  const slug = Array.isArray(params.slug) ? params.slug.join('/') : 'home';
+
+  const sbParams: ISbStoriesParams = {
+    version: activeEnv === 'development' ? 'draft' : 'published',
+    cv: activeEnv === 'development' ? Date.now() : undefined,
+    resolve_relations: resolveRelations,
   };
+
+  try {
+    const story = await storyblokApi.get(`cdn/stories/${slug}`, sbParams);
+    return story;
+  } catch (error) {
+    if (typeof error === 'string') {
+      try {
+        const parsedError = JSON.parse(error);
+        if (parsedError.status === 404) {
+          return { data: 404 };
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Error', error);
+      }
+    }
+  }
+
+  return { data: 404 };
 }
 
-type Props = {
-  params: { slug: string[] };
-};
+/**
+ * Generate the SEO metadata for the page.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: ParamsType;
+}): Promise<Metadata> {
+  try {
+    const { data } = await getStoryData(params);
+    if (!data.story || !data.story.content) {
+      notFound();
+    }
+    const blok = data.story.content;
+    const slug = params.slug ? params.slug.join('/') : 'home';
+    const meta = getPageMetadata({ blok, slug });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return meta;
+  } catch (error) {
+    Sentry.captureException(
+      new Error(`Metadata error: ${error} for ${params.slug}`)
+    );
+  }
 
-export default async function Home({ params }: Props) {
-  const slug = params?.slug ? params.slug.join('/') : 'home';
-  const { data } = await fetchData(slug);
+  notFound();
+}
+
+/**
+ * Fetch the path data for the page and render it.
+ */
+export default async function Page({ params }: { params: ParamsType }) {
+  const { data } = await getStoryData(params);
+  const slug = params.slug ? params.slug.join('/') : '';
+
+  if (data === 404) {
+    notFound();
+  }
+
   return (
-    <>
-      <Header />
-
-      <StoryblokStory story={data.story} />
-
-      <footer className='p-4'>Your Footer</footer>
-    </>
+    <StoryblokStory
+      story={data.story}
+      bridgeOptions={bridgeOptions}
+      slug={slug}
+    />
   );
 }

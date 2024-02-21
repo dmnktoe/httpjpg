@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
   // Fetch the headless CMS to check if the provided `slug` exists
   const storyblok = new StoryblokClient({
-    accessToken: process.env.STORYBLOK_TOKEN,
+    accessToken: process.env.STORYBLOK_ACCESS_TOKEN,
   });
   const { data } = await storyblok.get(`cdn/stories/${slug}`, {
     version: 'draft',

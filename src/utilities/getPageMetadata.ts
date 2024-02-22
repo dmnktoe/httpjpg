@@ -89,7 +89,7 @@ export const getPageMetadata = ({
   const canonical = canonicalNotSelf || selfReferencingUrl;
 
   return {
-    title: `${searchTitle} | ${siteTitle}`,
+    title: `${searchTitle} ${siteTitle}`,
     description: description,
     metadataBase: new URL(config.siteUrlProd),
     openGraph: {

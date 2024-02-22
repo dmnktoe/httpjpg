@@ -2,11 +2,11 @@
  * Global variables for this project.
  */
 export const config = {
-  siteUrlProd: 'https://momentum.stanford.edu',
-  siteTitle: 'Stanford Momentum',
-  siteDescription: 'Stories of Stanford’s impact, fueled by philanthropy.',
+  siteUrlProd: 'https://httpjpg.com',
+  siteTitle: '㋡httpjpg.com',
+  siteDescription: 'icon.icon te3shay dmnktoe yl33ly',
   assetCdn: 'https://assets.stanford.edu/',
-  imageService: 'https://a-us.storyblok.com/',
+  imageService: 'https://a.storyblok.com/',
   breakpoints: {
     sm: 576,
     md: 768,

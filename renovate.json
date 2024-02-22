@@ -1,9 +1,20 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", "group:all"],
-  "updatePinnedDependencies": false,
-  "stabilityDays": 2,
-  "separateMajorMinor": true,
-  "timezone": "Asia/Jakarta",
-  "schedule": ["before 11am on Monday"]
+  "assignees": ["dmnktoe"],
+  "labels": ["dependencies"],
+  "extends": [
+    "config:base",
+    ":enablePreCommit",
+    ":preserveSemverRanges",
+    ":disableDependencyDashboard"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "addLabels": ["ci"]
+    },
+    {
+      "matchManagers": ["npm"],
+      "addLabels": ["npm"]
+    }
+  ]
 }

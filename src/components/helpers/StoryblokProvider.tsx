@@ -1,4 +1,5 @@
 'use client';
+
 import { apiPlugin, storyblokInit } from '@storyblok/react/rsc';
 import React from 'react';
 

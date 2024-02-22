@@ -15,7 +15,6 @@ export default function RootLayout({ children }: LayoutProps) {
     <LazyMotionProvider>
       <html lang='en'>
         <GoogleAnalyticsProvider />
-        {/* Absolutely necessary to have a body tag here, otherwise your components won't get any interactivity */}
         <body>
           <Header />
           <Flexbox

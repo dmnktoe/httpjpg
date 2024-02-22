@@ -9,15 +9,20 @@ import {
 } from '@storyblok/react/rsc';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import React from 'react';
 
 import ComponentNotFound from '@/components/bloks/ComponentNotFound';
-import StoryblokProvider, {
-  components as Components,
-} from '@/components/helpers/StoryblokProvider';
+import { components as Components } from '@/components/helpers/StoryblokProvider';
 
 import { getPageMetadata } from '@/utilities/getPageMetadata';
 import { resolveRelations } from '@/utilities/resolveRelations';
+
+type PathsType = {
+  slug: string[];
+};
+
+type ParamsType = {
+  slug: string[];
+};
 
 // Bug in Safari + Netlify + Next where back button doesn't function correctly and returns the user
 // back to the page they hit the back button on after scrolling or interacting with the page they went back to.
@@ -44,15 +49,47 @@ storyblokInit({
 });
 
 /**
+ * Generate the list of stories to statically render.
+ */
+export async function generateStaticParams() {
+  const activeEnv = process.env.NODE_ENV || 'development';
+  // Fetch new content from storyblok.
+  const storyblokApi: StoryblokClient = getStoryblokApi();
+  const sbParams: ISbStoriesParams = {
+    version: activeEnv === 'development' ? 'draft' : 'published',
+    cv: activeEnv === 'development' ? Date.now() : undefined,
+    resolve_links: '0',
+    resolve_assets: 0,
+    per_page: 100,
+  };
+
+  // Use the `cdn/links` endpoint to get a list of all stories without all the extra data.
+  const response = await storyblokApi.getAll('cdn/links', sbParams);
+  const stories = response.filter((link) => link.is_folder === false);
+  const paths: PathsType[] = [];
+
+  stories.forEach((story) => {
+    const slug = story.slug;
+    // Filter out the home page.
+    if (slug !== 'home') {
+      const splitSlug = slug.split('/');
+      paths.push({ slug: splitSlug });
+    }
+  });
+
+  return paths;
+}
+
+/**
  * Get the data out of the Storyblok API for the page.
  *
  * Make sure to not export the below functions otherwise there will be a typescript error
  * https://github.com/vercel/next.js/discussions/48724
  */
-async function getStoryData() {
+async function getStoryData(params: { slug: string[] }) {
   const activeEnv = process.env.NODE_ENV || 'development';
   const storyblokApi: StoryblokClient = getStoryblokApi();
-  const slug = 'home';
+  const slug = Array.isArray(params.slug) ? params.slug.join('/') : 'home';
 
   const sbParams: ISbStoriesParams = {
     version: activeEnv === 'development' ? 'draft' : 'published',
@@ -71,55 +108,59 @@ async function getStoryData() {
           return { data: 404 };
         }
       } catch (e) {
-        throw error;
+        // eslint-disable-next-line no-console
+        console.error('Error', error);
       }
     }
-    throw error;
   }
+
+  return { data: 404 };
 }
 
 /**
  * Generate the SEO metadata for the page.
  */
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: ParamsType;
+}): Promise<Metadata> {
   try {
-    const { data } = await getStoryData();
+    const { data } = await getStoryData(params);
     if (!data.story || !data.story.content) {
-      throw new Error(`No story data found for home`);
+      notFound();
     }
     const blok = data.story.content;
-    const slug = 'home';
+    const slug = params.slug ? params.slug.join('/') : 'home';
     const meta = getPageMetadata({ blok, slug });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return meta;
   } catch (error) {
-    Sentry.captureException(new Error(`Metadata error: ${error}`));
+    Sentry.captureException(
+      new Error(`Metadata error: ${error} for ${params.slug}`)
+    );
   }
 
-  return {};
+  notFound();
 }
 
 /**
  * Fetch the path data for the page and render it.
  */
-export default async function Page() {
-  const { data } = await getStoryData();
-  const slug = '/';
+export default async function Page({ params }: { params: ParamsType }) {
+  const { data } = await getStoryData(params);
+  const slug = params.slug ? params.slug.join('/') : '';
 
-  if (!data.story) {
+  if (data === 404) {
     notFound();
   }
 
   return (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    <StoryblokProvider>
-      <StoryblokStory
-        story={data.story}
-        bridgeOptions={bridgeOptions}
-        slug={slug}
-      />
-    </StoryblokProvider>
+    <StoryblokStory
+      story={data.story}
+      bridgeOptions={bridgeOptions}
+      slug={slug}
+    />
   );
 }

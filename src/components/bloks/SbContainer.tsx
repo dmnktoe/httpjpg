@@ -1,0 +1,31 @@
+import { StoryblokComponent, storyblokEditable } from '@storyblok/react/rsc';
+
+import { Container } from '@/components/layout/container';
+
+import { ContainerStoryblok } from '@/types/component-types-sb';
+
+type SbContainerProps = {
+  blok: ContainerStoryblok;
+};
+
+const SbContainer = ({ blok }: SbContainerProps) => (
+  <Container
+    as={blok.as}
+    width={blok.width}
+    bgColor={blok.bgColor}
+    py={blok.py}
+    pt={blok.pt}
+    pb={blok.pb}
+    mt={blok.mt}
+    mb={blok.mb}
+    my={blok.my}
+    {...storyblokEditable(blok)}
+  >
+    {blok.children &&
+      blok.children.map((nestedBlok) => (
+        <StoryblokComponent blok={nestedBlok} key={nestedBlok._uid} />
+      ))}
+  </Container>
+);
+
+export default SbContainer;

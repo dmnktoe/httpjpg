@@ -21,13 +21,16 @@
     "https-proxy-start": "local-ssl-proxy --source 3010 --target 3000 --cert ./dev/localhost.pem --key ./dev/localhost-key.pem"
   },
   "dependencies": {
+    "@sentry/nextjs": "^7.102.0",
     "@storyblok/react": "^3.0.8",
     "clsx": "^2.0.0",
+    "framer-motion": "^11.0.5",
     "lucide-react": "^0.297.0",
     "next": "^14.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.12.0",
+    "react-loading-skeleton": "^3.4.0",
     "react-stl-viewer": "^2.5.0",
     "storyblok-js-client": "^6.6.7",
     "storyblok-rich-text-react-renderer-ts": "^3.2.0",

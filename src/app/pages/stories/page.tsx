@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React from 'react';
 
 // import { StlViewer } from 'react-stl-viewer';
-import { Container } from '@/components/layout/container';
+import { Container } from '@/components/layout/container/Container';
 import NextImage from '@/components/ui/NextImage';
 
 // const url = '/images/stories/star.stl';

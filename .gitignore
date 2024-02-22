@@ -43,3 +43,6 @@ sitemap-*.xml
 
 # ide
 .idea
+
+# Sentry Config File
+.sentryclirc

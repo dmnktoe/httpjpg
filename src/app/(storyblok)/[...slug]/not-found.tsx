@@ -8,7 +8,6 @@ import {
 } from '@storyblok/react/rsc';
 
 import ComponentNotFound from '@/components/bloks/ComponentNotFound';
-import StoryblokProvider from '@/components/helpers/StoryblokProvider';
 import { components as Components } from '@/components/helpers/StoryblokProvider';
 
 import { resolveRelations } from '@/utilities/resolveRelations';
@@ -83,11 +82,5 @@ export default async function NotFound() {
     );
   }
 
-  return (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    <StoryblokProvider>
-      <StoryblokStory story={data.story} bridgeOptions={bridgeOptions} />
-    </StoryblokProvider>
-  );
+  return <StoryblokStory story={data.story} bridgeOptions={bridgeOptions} />;
 }

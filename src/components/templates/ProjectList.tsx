@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import { Container } from '@/components/layout/container';
+import Slideshow from '@/components/templates/Slideshow';
 import UnstyledLink from '@/components/ui/links/UnstyledLink';
-import Slideshow from '@/components/ui/slideshow';
 
 import { Project } from '@/interfaces/Project';
 
@@ -10,6 +10,8 @@ const ProjectCard = ({ project }: { project: Project }) => {
   return (
     <div className='flex flex-col gap-2'>
       <div className='-mx-2 md:mx-0 xl:px-48'>
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-ignore */}
         <Slideshow images={project.images} />
       </div>
       <div>

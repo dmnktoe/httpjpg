@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     return new Response('Invalid request', { status: 401 });
   }
   const storyblok = new StoryblokClient({
-    accessToken: process.env.STORYBLOK_TOKEN,
+    accessToken: process.env.STORYBLOK_ACCESS_TOKEN,
   });
   // Revalidate the path
   storyblok

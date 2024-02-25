@@ -9,11 +9,11 @@ import {
 
 import { resolveRelations } from '@/lib/resolveRelations';
 
-import ComponentNotFound from '@/components/bloks/ComponentNotFound';
+import { isProd } from '@/data/env';
+
 import StoryblokProvider from '@/components/helpers/StoryblokProvider';
 import { components as Components } from '@/components/helpers/StoryblokProvider';
-
-import { isProd } from '@/constant/env';
+import ComponentNotFound from '@/components/storyblok/ComponentNotFound';
 
 const bridgeOptions = {
   resolveRelations,

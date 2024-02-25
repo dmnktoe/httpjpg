@@ -1,6 +1,6 @@
 import { getProcessedImage } from '@/lib/getProcessedImage';
 
-import { config } from '@/constant/config';
+import { config } from '@/data/config';
 
 import { type SbImageType, type SbLinkType } from '@/types/SbFields.types';
 

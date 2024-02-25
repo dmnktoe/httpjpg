@@ -1,4 +1,4 @@
-import { config } from '@/constant/config';
+import { config } from '@/data/config';
 
 /**
  * @param mediaSrc - The Storyblok URL of the asset

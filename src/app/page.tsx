@@ -14,12 +14,12 @@ import React from 'react';
 import { getPageMetadata } from '@/lib/getPageMetadata';
 import { resolveRelations } from '@/lib/resolveRelations';
 
-import ComponentNotFound from '@/components/bloks/ComponentNotFound';
+import { isProd } from '@/data/env';
+
 import StoryblokProvider, {
   components as Components,
 } from '@/components/helpers/StoryblokProvider';
-
-import { isProd } from '@/constant/env';
+import ComponentNotFound from '@/components/storyblok/ComponentNotFound';
 
 // Bug in Safari + Netlify + Next where back button doesn't function correctly and returns the user
 // back to the page they hit the back button on after scrolling or interacting with the page they went back to.

@@ -11,7 +11,7 @@ import {
   paddingTops,
   PaddingType,
   paddingVerticals,
-} from '@/constant/datasource';
+} from '@/data/datasource';
 
 import * as styles from './Container.styles';
 import * as types from './Container.types';

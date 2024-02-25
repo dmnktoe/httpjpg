@@ -3,10 +3,10 @@
 import { apiPlugin, storyblokInit } from '@storyblok/react/rsc';
 import React from 'react';
 
-import ComponentNotFound from '@/components/bloks/ComponentNotFound';
-import SbContainer from '@/components/bloks/SbContainer';
-import SbPage from '@/components/bloks/SbPage';
-import SbSlideshow from '@/components/bloks/SbSlideshow';
+import ComponentNotFound from '@/components/storyblok/ComponentNotFound';
+import SbContainer from '@/components/storyblok/SbContainer';
+import SbPage from '@/components/storyblok/SbPage';
+import SbSlideshow from '@/components/storyblok/SbSlideshow';
 
 export const components = {
   container: SbContainer,

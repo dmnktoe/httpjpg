@@ -12,8 +12,8 @@ import { notFound } from 'next/navigation';
 
 import { resolveRelations } from '@/lib/resolveRelations';
 
-import ComponentNotFound from '@/components/bloks/ComponentNotFound';
 import { components as Components } from '@/components/helpers/StoryblokProvider';
+import ComponentNotFound from '@/components/storyblok/ComponentNotFound';
 
 type PageProps = {
   searchParams: {

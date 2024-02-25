@@ -1,5 +1,4 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach } from 'jest-circus';
 import { HiArrowRight, HiPlus } from 'react-icons/hi';
 
 import Button from '@/components/ui/buttons/Button';

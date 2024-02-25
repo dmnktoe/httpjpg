@@ -2,7 +2,7 @@ import { storyblokEditable } from '@storyblok/react/rsc';
 
 import { Slideshow } from '@/components/templates/Slideshow';
 
-import { SlideshowStoryblok } from '@/types/component-types-sb';
+import { SlideshowStoryblok } from '@/types/SbComponent.types';
 
 type SbSlideshowProps = {
   blok: SlideshowStoryblok;

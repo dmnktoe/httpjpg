@@ -2,7 +2,7 @@ import { StoryblokComponent, storyblokEditable } from '@storyblok/react/rsc';
 
 import { Container } from '@/components/layout/container';
 
-import { ContainerStoryblok } from '@/types/component-types-sb';
+import { ContainerStoryblok } from '@/types/SbComponent.types';
 
 type SbContainerProps = {
   blok: ContainerStoryblok;

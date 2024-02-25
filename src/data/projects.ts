@@ -1,6 +1,6 @@
-import { Project } from '@/interfaces/Project';
+import { ProjectTypes } from '@/types/Project.types';
 
-export const projects: Project[] = [
+export const projects: ProjectTypes[] = [
   {
     id: 1,
     name: 'Outlet L𝒶bel Store CGI—te3s𝒽a𝓎 MIX',

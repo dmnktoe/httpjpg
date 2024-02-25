@@ -5,15 +5,19 @@ export interface ContainerStoryblok {
   width?: 'full' | 'container';
   _uid: string;
   component: 'container';
-  [k: string]: never;
+  [k: string]: unknown;
 }
 
 export interface PageStoryblok {
   body?: (ContainerStoryblok | PageStoryblok | SlideshowStoryblok)[];
+  seoTitle?: string;
+  title?: string;
+  seoDescription?: string;
+  seo?: unknown;
   _uid: string;
   component: 'page';
   uuid?: string;
-  [k: string]: never;
+  [k: string]: unknown;
 }
 
 export type MultiassetStoryblok = {
@@ -23,12 +27,12 @@ export type MultiassetStoryblok = {
   filename: string;
   name: string;
   title?: string;
-  [k: string]: never;
+  [k: string]: unknown;
 }[];
 
 export interface SlideshowStoryblok {
   images: MultiassetStoryblok;
   _uid: string;
   component: 'slideshow';
-  [k: string]: never;
+  [k: string]: unknown;
 }

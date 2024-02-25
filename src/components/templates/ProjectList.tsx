@@ -4,9 +4,9 @@ import { Container } from '@/components/layout/container';
 import Slideshow from '@/components/templates/Slideshow';
 import UnstyledLink from '@/components/ui/links/UnstyledLink';
 
-import { Project } from '@/interfaces/Project';
+import { ProjectTypes } from '@/types/Project.types';
 
-const ProjectCard = ({ project }: { project: Project }) => {
+const ProjectCard = ({ project }: { project: ProjectTypes }) => {
   return (
     <div className='flex flex-col gap-2'>
       <div className='-mx-2 md:mx-0 xl:px-48'>
@@ -50,7 +50,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
   );
 };
 
-export const ProjectList = ({ projects }: { projects: Project[] }) => {
+export const ProjectList = ({ projects }: { projects: ProjectTypes[] }) => {
   return (
     <section>
       <Container>

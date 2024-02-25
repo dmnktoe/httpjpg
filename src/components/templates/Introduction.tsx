@@ -4,8 +4,8 @@ import { clients } from '@/data/clients';
 
 import UnstyledLink from '@/components/ui/links/UnstyledLink';
 
-import { Client } from '@/interfaces/Client';
-import { Project } from '@/interfaces/Project';
+import { ClientTypes } from '@/types/Client.types';
+import { ProjectTypes } from '@/types/Project.types';
 
 const Info = () => {
   return (
@@ -24,7 +24,7 @@ const Info = () => {
   );
 };
 
-const ProjectList = ({ projects }: { projects: Project[] }) => {
+const ProjectList = ({ projects }: { projects: ProjectTypes[] }) => {
   return (
     <>
       <div>
@@ -48,7 +48,7 @@ const ProjectList = ({ projects }: { projects: Project[] }) => {
   );
 };
 
-const ClientWorkList = ({ clients }: { clients: Client[] }) => {
+const ClientWorkList = ({ clients }: { clients: ClientTypes[] }) => {
   return (
     <div>
       <span className='font-bold'>⇝𝒞𝓁LI€NT</span>
@@ -68,7 +68,7 @@ const ClientWorkList = ({ clients }: { clients: Client[] }) => {
 };
 
 // eslint-disable-next-line unused-imports/no-unused-vars
-export const Introduction = ({ projects }: { projects: Project[] }) => {
+export const Introduction = ({ projects }: { projects: ProjectTypes[] }) => {
   return (
     <div className='flex flex-col gap-4 text-xs font-light tracking-tight md:flex-row xl:gap-16 xl:text-base'>
       <div className='md:w-4/12'>

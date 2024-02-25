@@ -1,11 +1,8 @@
-import {
-  type SbImageType,
-  type SbLinkType,
-} from '@/components/bloks/Storyblok.types';
+import { getProcessedImage } from '@/lib/getProcessedImage';
 
-import { getProcessedImage } from '@/utilities/getProcessedImage';
+import { config } from '@/constant/config';
 
-import { config } from './config';
+import { type SbImageType, type SbLinkType } from '@/types/SbFields.types';
 
 export type SbSEOType = {
   title?: string;

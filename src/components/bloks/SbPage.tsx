@@ -1,6 +1,6 @@
 import { StoryblokComponent, storyblokEditable } from '@storyblok/react/rsc';
 
-import { PageStoryblok } from '@/types/component-types-sb';
+import { PageStoryblok } from '@/types/SbComponent.types';
 
 type SbPageProps = {
   blok: PageStoryblok;

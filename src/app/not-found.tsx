@@ -7,12 +7,13 @@ import {
   StoryblokStory,
 } from '@storyblok/react/rsc';
 
+import { resolveRelations } from '@/lib/resolveRelations';
+
 import ComponentNotFound from '@/components/bloks/ComponentNotFound';
 import StoryblokProvider from '@/components/helpers/StoryblokProvider';
 import { components as Components } from '@/components/helpers/StoryblokProvider';
 
 import { isProd } from '@/constant/env';
-import { resolveRelations } from '@/utilities/resolveRelations';
 
 const bridgeOptions = {
   resolveRelations,

@@ -1,6 +1,6 @@
-import { Client } from '@/interfaces/Client';
+import { ClientTypes } from '@/types/Client.types';
 
-export const clients: Client[] = [
+export const clients: ClientTypes[] = [
   {
     id: 1,
     name: '2024_duecker-medizintechnik.de {nextjs/strapi}',

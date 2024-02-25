@@ -10,12 +10,13 @@ import {
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { getPageMetadata } from '@/lib/getPageMetadata';
+import { resolveRelations } from '@/lib/resolveRelations';
+
 import ComponentNotFound from '@/components/bloks/ComponentNotFound';
 import { components as Components } from '@/components/helpers/StoryblokProvider';
 
 import { isProd } from '@/constant/env';
-import { getPageMetadata } from '@/utilities/getPageMetadata';
-import { resolveRelations } from '@/utilities/resolveRelations';
 
 type PathsType = {
   slug: string[];

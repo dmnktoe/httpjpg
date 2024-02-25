@@ -52,11 +52,10 @@ export const getPageMetadata = ({
   },
   slug,
 }: PageMetadataProps) => {
-  // We only care about canonical URL for production so ok to use the prod URL here
   const { siteTitle, siteDescription, siteUrlProd: siteUrl } = config;
 
   const title = seoTitle || pageTitle;
-  const searchTitle = slug === 'home' ? 'Home' : title;
+  const searchTitle = title ? `${title}` : '';
   const description = seoDescription || dek || siteDescription;
   const ogTitle = og_title || title;
   const ogDescription = og_description || description;

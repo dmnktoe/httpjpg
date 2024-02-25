@@ -9,6 +9,7 @@ import {
 } from '@storyblok/react/rsc';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import React from 'react';
 
 import { getPageMetadata } from '@/lib/getPageMetadata';
 import { resolveRelations } from '@/lib/resolveRelations';

@@ -31,10 +31,15 @@ describe('Button', () => {
   });
 
   it('should render with different variants', () => {
-    const variants = ['primary', 'outline', 'ghost', 'light', 'dark'];
+    const variants = [
+      'primary',
+      'outline',
+      'ghost',
+      'light',
+      'dark',
+      undefined,
+    ] as const;
     variants.forEach((variant) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       render(<Button variant={variant}>Test Button</Button>);
       expect(screen.getByText('Test Button')).toBeInTheDocument();
       cleanup();
@@ -42,10 +47,8 @@ describe('Button', () => {
   });
 
   it('should render with different sizes', () => {
-    const sizes = ['sm', 'base', 'lg'];
+    const sizes = ['sm', 'base', undefined] as const;
     sizes.forEach((size) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       render(<Button size={size}>Test Button</Button>);
       expect(screen.getByText('Test Button')).toBeInTheDocument();
       cleanup();

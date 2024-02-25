@@ -30,6 +30,7 @@ export default function StoryblokProvider({
       accessToken = urlParams.get('_storyblok_tk[token]') || accessToken;
     }
   }
+
   // Temporarily override console.error to squelch errors from Storyblok.
   // Storyblok Init wants an api key, but I don't want it in the client side code nor do I want to fetch from
   // Storyblok API on the front end.
@@ -53,5 +54,5 @@ export default function StoryblokProvider({
   // eslint-disable-next-line no-console
   console.error = originalConsoleError;
 
-  return children;
+  return <>{children}</>;
 }

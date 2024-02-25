@@ -1,3 +1,5 @@
+import React from 'react';
+
 import StoryblokProvider from '@/components/helpers/StoryblokProvider';
 
 type StoryblokLayoutProps = {
@@ -5,7 +7,5 @@ type StoryblokLayoutProps = {
 };
 
 export default function StoryblokLayout({ children }: StoryblokLayoutProps) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   return <StoryblokProvider>{children}</StoryblokProvider>;
 }

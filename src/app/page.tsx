@@ -16,6 +16,7 @@ import StoryblokProvider, {
   components as Components,
 } from '@/components/helpers/StoryblokProvider';
 
+import { isProd } from '@/constant/env';
 import { getPageMetadata } from '@/utilities/getPageMetadata';
 import { resolveRelations } from '@/utilities/resolveRelations';
 
@@ -50,13 +51,12 @@ storyblokInit({
  * https://github.com/vercel/next.js/discussions/48724
  */
 async function getStoryData() {
-  const activeEnv = process.env.NODE_ENV || 'development';
   const storyblokApi: StoryblokClient = getStoryblokApi();
   const slug = 'home';
 
   const sbParams: ISbStoriesParams = {
-    version: activeEnv === 'development' ? 'draft' : 'published',
-    cv: activeEnv === 'development' ? Date.now() : undefined,
+    version: isProd ? 'published' : 'draft',
+    cv: isProd ? undefined : Date.now(),
     resolve_relations: resolveRelations,
   };
 
@@ -112,8 +112,6 @@ export default async function Page() {
   }
 
   return (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     <StoryblokProvider>
       <StoryblokStory
         story={data.story}

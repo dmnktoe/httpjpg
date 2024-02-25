@@ -10,6 +10,7 @@ import {
 import ComponentNotFound from '@/components/bloks/ComponentNotFound';
 import { components as Components } from '@/components/helpers/StoryblokProvider';
 
+import { isProd } from '@/constant/env';
 import { resolveRelations } from '@/utilities/resolveRelations';
 
 // Storyblok bridge options.
@@ -38,11 +39,10 @@ storyblokInit({
  * https://github.com/vercel/next.js/discussions/48724
  */
 async function getStoryData(slug = 'page-not-found') {
-  const activeEnv = process.env.NODE_ENV || 'development';
   const storyblokApi: StoryblokClient = getStoryblokApi();
   const sbParams: ISbStoriesParams = {
-    version: activeEnv === 'development' ? 'draft' : 'published',
-    cv: activeEnv === 'development' ? Date.now() : undefined,
+    version: isProd ? 'published' : 'draft',
+    cv: isProd ? undefined : Date.now(),
     resolve_relations: resolveRelations,
   };
 

@@ -13,6 +13,7 @@ import { notFound } from 'next/navigation';
 import ComponentNotFound from '@/components/bloks/ComponentNotFound';
 import { components as Components } from '@/components/helpers/StoryblokProvider';
 
+import { isProd } from '@/constant/env';
 import { getPageMetadata } from '@/utilities/getPageMetadata';
 import { resolveRelations } from '@/utilities/resolveRelations';
 
@@ -27,7 +28,7 @@ type ParamsType = {
 // Bug in Safari + Netlify + Next where back button doesn't function correctly and returns the user
 // back to the page they hit the back button on after scrolling or interacting with the page they went back to.
 // Setting a long revalidate time patches this until Next/Netlify fix the bug in future releases of their stuff.
-// export const revalidate = 60 * 60 * 24 * 365;
+export const revalidate = 3600;
 
 // Storyblok bridge options.
 const bridgeOptions = {
@@ -52,12 +53,11 @@ storyblokInit({
  * Generate the list of stories to statically render.
  */
 export async function generateStaticParams() {
-  const activeEnv = process.env.NODE_ENV || 'development';
   // Fetch new content from storyblok.
   const storyblokApi: StoryblokClient = getStoryblokApi();
   const sbParams: ISbStoriesParams = {
-    version: activeEnv === 'development' ? 'draft' : 'published',
-    cv: activeEnv === 'development' ? Date.now() : undefined,
+    version: isProd ? 'published' : 'draft',
+    cv: isProd ? undefined : Date.now(),
     resolve_links: '0',
     resolve_assets: 0,
     per_page: 100,
@@ -87,13 +87,12 @@ export async function generateStaticParams() {
  * https://github.com/vercel/next.js/discussions/48724
  */
 async function getStoryData(params: { slug: string[] }) {
-  const activeEnv = process.env.NODE_ENV || 'development';
   const storyblokApi: StoryblokClient = getStoryblokApi();
   const slug = Array.isArray(params.slug) ? params.slug.join('/') : 'home';
 
   const sbParams: ISbStoriesParams = {
-    version: activeEnv === 'development' ? 'draft' : 'published',
-    cv: activeEnv === 'development' ? Date.now() : undefined,
+    version: isProd ? 'published' : 'draft',
+    cv: isProd ? undefined : Date.now(),
     resolve_relations: resolveRelations,
   };
 
@@ -108,8 +107,7 @@ async function getStoryData(params: { slug: string[] }) {
           return { data: 404 };
         }
       } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('Error', error);
+        Sentry.captureException(new Error(`Storyblok error: ${error}`));
       }
     }
   }

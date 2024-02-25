@@ -5,7 +5,7 @@ export interface ContainerStoryblok {
   width?: 'full' | 'container';
   _uid: string;
   component: 'container';
-  [k: string]: unknown;
+  [k: string]: any;
 }
 
 export interface PageStoryblok {
@@ -13,11 +13,11 @@ export interface PageStoryblok {
   seoTitle?: string;
   title?: string;
   seoDescription?: string;
-  seo?: unknown;
+  seo?: any;
   _uid: string;
   component: 'page';
   uuid?: string;
-  [k: string]: unknown;
+  [k: string]: any;
 }
 
 export type MultiassetStoryblok = {
@@ -27,12 +27,12 @@ export type MultiassetStoryblok = {
   filename: string;
   name: string;
   title?: string;
-  [k: string]: unknown;
+  [k: string]: any;
 }[];
 
 export interface SlideshowStoryblok {
   images: MultiassetStoryblok;
   _uid: string;
   component: 'slideshow';
-  [k: string]: unknown;
+  [k: string]: any;
 }

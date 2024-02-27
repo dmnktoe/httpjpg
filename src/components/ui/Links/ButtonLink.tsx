@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 
 import UnstyledLink, {
   UnstyledLinkProps,
-} from '@/components/ui/links/UnstyledLink';
+} from '@/components/ui/Links/UnstyledLink';
 
 const ButtonLinkVariant = [
   'primary',

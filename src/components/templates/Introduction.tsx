@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { clients } from '@/data/clients';
 
-import UnstyledLink from '@/components/ui/links/UnstyledLink';
+import UnstyledLink from '@/components/ui/Links/UnstyledLink';
 
 import { ClientTypes } from '@/types/Client.types';
 import { ProjectTypes } from '@/types/Project.types';

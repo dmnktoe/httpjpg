@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { projects } from '@/data/projects';
 
 import { Introduction } from '@/components/templates/Introduction';
-import UnstyledLink from '@/components/ui/links/UnstyledLink';
+import UnstyledLink from '@/components/ui/Links/UnstyledLink';
 
 interface NavItemProps {
   label: string;

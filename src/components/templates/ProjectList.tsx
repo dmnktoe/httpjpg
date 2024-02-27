@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Container } from 'src/components/layout/Container';
 
 import Slideshow from '@/components/templates/Slideshow';
-import UnstyledLink from '@/components/ui/links/UnstyledLink';
+import UnstyledLink from '@/components/ui/Links/UnstyledLink';
 
 import { ProjectTypes } from '@/types/Project.types';
 

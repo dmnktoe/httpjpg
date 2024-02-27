@@ -1,9 +1,10 @@
+import { Flexbox } from 'src/components/layout/Flexbox';
+
 import '@/styles/globals.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 import GoogleAnalyticsProvider from '@/components/helpers/GoogleAnalyticsProvider';
 import LazyMotionProvider from '@/components/helpers/LazyMotionProvider';
-import { Flexbox } from '@/components/layout/flexbox';
 import { Header } from '@/components/layout/header';
 
 type LayoutProps = {

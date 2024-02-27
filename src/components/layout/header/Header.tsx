@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import * as React from 'react';
 import { VscMenu } from 'react-icons/vsc';
+import { Container } from 'src/components/layout/Container';
 
 import { cn } from '@/lib/utils';
 
 import { projects } from '@/data/projects';
 
-import { Container } from '@/components/layout/container';
 import { Introduction } from '@/components/templates/Introduction';
 import UnstyledLink from '@/components/ui/links/UnstyledLink';
 

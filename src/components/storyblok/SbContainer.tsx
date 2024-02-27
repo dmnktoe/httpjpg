@@ -1,6 +1,5 @@
 import { StoryblokComponent, storyblokEditable } from '@storyblok/react/rsc';
-
-import { Container } from '@/components/layout/container';
+import { Container } from 'src/components/layout/Container';
 
 import { ContainerStoryblok } from '@/types/SbComponent.types';
 

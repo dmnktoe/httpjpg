@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Container } from 'src/components/layout/Container';
 
-import { Container } from '@/components/layout/container';
 import Slideshow from '@/components/templates/Slideshow';
 import UnstyledLink from '@/components/ui/links/UnstyledLink';
 

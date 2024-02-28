@@ -5,7 +5,7 @@ export const config = {
   siteUrlProd: 'https://httpjpg.com',
   siteTitle: '㋡httpjpg.com',
   siteDescription: 'icon.icon te3shay dmnktoe yl33ly',
-  assetCdn: 'https://assets.stanford.edu/',
+  assetCdn: 'https://a.storyblok.com/',
   imageService: 'https://a.storyblok.com/',
   breakpoints: {
     sm: 576,

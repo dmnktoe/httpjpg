@@ -1,9 +1,14 @@
-import { StoryblokComponent, storyblokEditable } from '@storyblok/react/rsc';
-
-import { PageStoryblok } from '@/types/SbComponent.types';
+import {
+  SbBlokData,
+  StoryblokComponent,
+  storyblokEditable,
+} from '@storyblok/react/rsc';
 
 type SbPageProps = {
-  blok: PageStoryblok;
+  blok: {
+    _uid: string;
+    body: SbBlokData[];
+  };
 };
 
 const SbPage = ({ blok }: SbPageProps) => (

@@ -4,13 +4,15 @@ import { apiPlugin, storyblokInit } from '@storyblok/react/rsc';
 import React from 'react';
 
 import ComponentNotFound from '@/components/storyblok/ComponentNotFound';
-import SbContainer from '@/components/storyblok/SbContainer';
+import { SbGrid } from '@/components/storyblok/SbGrid';
 import SbPage from '@/components/storyblok/SbPage';
+import { SbSection } from '@/components/storyblok/SbSection';
 import SbSlideshow from '@/components/storyblok/SbSlideshow';
 
 export const components = {
-  container: SbContainer,
+  grid: SbGrid,
   page: SbPage,
+  section: SbSection,
   slideshow: SbSlideshow,
 };
 

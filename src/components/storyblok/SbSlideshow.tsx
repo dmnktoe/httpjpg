@@ -2,10 +2,15 @@ import { storyblokEditable } from '@storyblok/react/rsc';
 
 import { Slideshow } from '@/components/templates/Slideshow';
 
-import { SlideshowStoryblok } from '@/types/SbComponent.types';
-
 type SbSlideshowProps = {
-  blok: SlideshowStoryblok;
+  blok: {
+    _uid: string;
+    images: {
+      filename: string;
+      alt: string;
+      focus: string;
+    }[];
+  };
 };
 
 const SbSlideshow = ({ blok }: SbSlideshowProps) => (

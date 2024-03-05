@@ -13,8 +13,6 @@ type SbSlideshowProps = {
   };
 };
 
-const SbSlideshow = ({ blok }: SbSlideshowProps) => (
+export const SbSlideshow = ({ blok }: SbSlideshowProps) => (
   <Slideshow images={blok.images} {...storyblokEditable(blok)} />
 );
-
-export default SbSlideshow;

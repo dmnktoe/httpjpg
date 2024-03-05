@@ -35,11 +35,8 @@
   }
 
   body {
-    background-color: gray;
-    background-image: url('/images/background.png');
-    background-size: 850px 300px;
-    background-attachment: fixed;
-    background-position: right top;
+    background-image: url('https://card.psnprofiles.com/1/bullensohn6.png');
+    background-position: left top;
     background-repeat: no-repeat;
   }
 

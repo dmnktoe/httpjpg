@@ -11,7 +11,7 @@ type SbPageProps = {
   };
 };
 
-const SbPage = ({ blok }: SbPageProps) => (
+export const SbPage = ({ blok }: SbPageProps) => (
   <main {...storyblokEditable(blok)}>
     {blok.body &&
       blok.body.map((nestedBlok) => (
@@ -19,5 +19,3 @@ const SbPage = ({ blok }: SbPageProps) => (
       ))}
   </main>
 );
-
-export default SbPage;

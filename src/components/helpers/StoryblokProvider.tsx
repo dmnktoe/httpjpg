@@ -5,15 +5,19 @@ import React from 'react';
 
 import ComponentNotFound from '@/components/storyblok/ComponentNotFound';
 import { SbGrid } from '@/components/storyblok/SbGrid';
-import SbPage from '@/components/storyblok/SbPage';
+import { SbImage } from '@/components/storyblok/SbImage';
+import { SbPage } from '@/components/storyblok/SbPage';
 import { SbSection } from '@/components/storyblok/SbSection';
-import SbSlideshow from '@/components/storyblok/SbSlideshow';
+import { SbSlideshow } from '@/components/storyblok/SbSlideshow';
+import { SbText } from '@/components/storyblok/SbText';
 
 export const components = {
   grid: SbGrid,
+  image: SbImage,
   page: SbPage,
   section: SbSection,
   slideshow: SbSlideshow,
+  text: SbText,
 };
 
 interface ProviderProps {

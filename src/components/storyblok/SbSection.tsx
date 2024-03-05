@@ -28,12 +28,13 @@ export const SbSection = ({
     paddingBottom,
     marginTop,
     marginBottom,
+    width,
   },
   blok,
 }: SbSectionProps) => {
   return (
     <Container
-      width='container'
+      width={width}
       mt={marginTop}
       mb={marginBottom}
       bgColor={bgColor}

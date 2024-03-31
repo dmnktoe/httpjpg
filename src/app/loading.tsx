@@ -7,20 +7,20 @@ const Skeleton = DynamicLoad(() => import('react-loading-skeleton'), {
 
 const Loading = () => {
   return (
-    <div className='bg-black'>
+    <div>
       <main>
-        <Container width='container' className='my-10'>
-          <Flexbox gap direction='row' wrap='wrap'>
+        <Container width='container'>
+          <Flexbox gap direction='row'>
             <Skeleton
-              height={500}
+              height={200}
               highlightColor='rgba(255,255,255,0.2)'
-              baseColor='rgba(0,0,0,0.6)'
+              baseColor='rgba(0,0,0,0.1)'
               containerClassName='w-full'
             />
             <Skeleton
-              height={300}
+              height={200}
               highlightColor='rgba(255,255,255,0.2)'
-              baseColor='rgba(0,0,0,0.6)'
+              baseColor='rgba(0,0,0,0.1)'
               containerClassName='w-full'
             />
           </Flexbox>

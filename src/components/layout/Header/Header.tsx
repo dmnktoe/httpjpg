@@ -7,7 +7,7 @@ import { Container } from 'src/components/layout/Container';
 
 import { cn } from '@/lib/utils';
 
-import { projects } from '@/data/projects';
+import { work } from '@/data/work';
 
 import { Introduction } from '@/components/templates/Introduction';
 import UnstyledLink from '@/components/ui/Links/UnstyledLink';
@@ -21,7 +21,7 @@ interface NavItemProps {
 export const Header = () => {
   const navItems: NavItemProps[] = [
     { label: 'Home', href: '/' },
-    { label: 'Stories', href: '/stories' },
+    { label: 'Stories', href: '/feed-xml' },
     { label: 'Contact', href: '/contact' },
     { label: 'Github', href: 'https://github.com/dmnktoe', external: true },
   ];
@@ -112,7 +112,7 @@ export const Header = () => {
         <Container>
           <div className='mb-16 flex items-start justify-between gap-12 py-4 md:mb-24'>
             {/* Introduction */}
-            <Introduction projects={projects} />
+            <Introduction work={work} />
             {/* Navigation */}
             <Navigation />
             {/* Hamburger Menu Button */}

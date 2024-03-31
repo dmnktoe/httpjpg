@@ -6,7 +6,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        primary: ['Neue Haas Grotesk', ...defaultTheme.fontFamily.sans],
+        primary: ['Helvetica', ...defaultTheme.fontFamily.sans],
       },
       colors: {
         primary: {

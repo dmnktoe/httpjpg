@@ -3,4 +3,4 @@
  * It is used in the page files in the app directory
  */
 
-export const resolveRelations = ['sbStoryCard.storyPicker'];
+export const resolveRelations = ['work-list.work'];

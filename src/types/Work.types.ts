@@ -1,6 +1,6 @@
-export interface ProjectTypes {
+export interface Work {
   id: number;
-  name: string;
+  title: string;
   description: string;
   images: string[];
   slug: string;

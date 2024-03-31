@@ -10,6 +10,8 @@ import { SbPage } from '@/components/storyblok/SbPage';
 import { SbSection } from '@/components/storyblok/SbSection';
 import { SbSlideshow } from '@/components/storyblok/SbSlideshow';
 import { SbText } from '@/components/storyblok/SbText';
+import { SbWork } from '@/components/storyblok/SbWork';
+import { SbWorkList } from '@/components/storyblok/SbWorkList';
 
 export const components = {
   grid: SbGrid,
@@ -18,6 +20,8 @@ export const components = {
   section: SbSection,
   slideshow: SbSlideshow,
   text: SbText,
+  work: SbWork,
+  'work-list': SbWorkList,
 };
 
 interface ProviderProps {

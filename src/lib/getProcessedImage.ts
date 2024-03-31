@@ -32,8 +32,8 @@ export const getProcessedImage = (
   // Supports jpg, png (including transparent ones). Animated GIFs will retain the GIF format automatically.
   let myParams = '/m';
 
-  // Start off the filters with a default image quality of 70% - works for webp
-  let myFilters = '/filters:quality(70)';
+  // Start off the filters with a default image quality of 75% - works for webp
+  let myFilters = '/filters:quality(75)';
 
   if (crop) {
     myParams += `/${crop}`;

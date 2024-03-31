@@ -107,7 +107,7 @@ export const Image = ({
               as='figcaption'
               width={isCaptionInset ? 'container' : 'full'}
             >
-              <div className={styles.caption}>{caption}</div>
+              <div className={styles.caption}>&copy; {caption}</div>
             </Container>
           )}
         </figure>

@@ -8,7 +8,7 @@ import { Autoplay, Navigation } from 'swiper/modules';
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
-import NextImage from '@/components/ui/NextImage';
+import { Image } from '@/components/ui/Image';
 
 export type SlideshowProps = {
   images: { filename: string }[];
@@ -78,13 +78,22 @@ export const Slideshow = ({ images }: SlideshowProps) => {
       >
         {images.map((image, index) => (
           <SwiperSlide key={index}>
-            <NextImage
+            {/*<NextImage
               width={2500}
               height={1200}
               src={image.filename}
               className='w-full'
               alt={`Slide ${index + 1}`}
               useSkeleton={true}
+            />*/}
+            <Image
+              imageSrc={image.filename}
+              imageFocus={image.focus}
+              alt={image.alt}
+              caption={image.copyright}
+              isCaptionInset
+              aspectRatio='16x9'
+              animation='zoomSharpen'
               key={index}
             />
           </SwiperSlide>

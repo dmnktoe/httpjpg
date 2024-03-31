@@ -45,7 +45,7 @@ const bridgeOptions = {
  * Init on the server.
  */
 storyblokInit({
-  accessToken: process.env.STORYBLOK_PREVIEW_EDITOR_TOKEN, // Preview token because this is in server side.
+  accessToken: process.env.STORYBLOK_TOKEN, // Preview token because this is in server side.
   use: [apiPlugin],
   components: Components,
   enableFallbackComponent: true,
@@ -105,7 +105,7 @@ const validateEditor = (searchParams: PageProps['searchParams']) => {
   const validationString =
     searchParams['_storyblok_tk[space_id]'] +
     ':' +
-    process.env.STORYBLOK_PREVIEW_EDITOR_TOKEN +
+    process.env.STORYBLOK_TOKEN +
     ':' +
     searchParams['_storyblok_tk[timestamp]'];
   const validationToken = crypto

@@ -1,10 +1,14 @@
+import { Container } from '@/components/layout/Container';
+
 const ComponentNotFound = ({ component: { blok } }) => (
-  <div className='bg-red-600 text-white'>
-    <h2 className='text-white'>
-      {blok.component} component is missing from the codebase.
-    </h2>
-    <p className='text-white'>Source blok UID: {blok._uid}</p>
-  </div>
+  <Container width='container'>
+    <div className='bg-pink-300 p-4'>
+      <h4 className='text-black'>
+        '{blok.component}' component is missing from the codebase.
+      </h4>
+      <p className='text-black'>Source blok UID: {blok._uid}</p>
+    </div>
+  </Container>
 );
 
 export default ComponentNotFound;

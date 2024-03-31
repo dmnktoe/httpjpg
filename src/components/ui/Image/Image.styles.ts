@@ -26,4 +26,4 @@ export const imageWrapper = (isFullHeight?: boolean) =>
   cn(isFullHeight ? 'h-full' : '');
 export const image = 'w-full h-full object-cover';
 export const caption =
-  '*:*:leading-display caption text-xs mt-1 max-w-prose-wide';
+  '*:*:leading-display caption text-xs font-mono mt-1 max-w-prose-wide text-neutral-400';

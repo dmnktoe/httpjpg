@@ -37,7 +37,7 @@ export const Flexbox = ({
       justifyContent ? styles.flexJustifyContent[justifyContent] : '',
       alignContent ? styles.flexAlignContent[alignContent] : '',
       alignItems ? styles.flexAlignItems[alignItems] : '',
-      gap ? 'grid-gap' : '',
+      gap ? 'gap-4' : '',
       className
     )}
   >

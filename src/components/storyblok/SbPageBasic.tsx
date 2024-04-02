@@ -4,14 +4,14 @@ import {
   storyblokEditable,
 } from '@storyblok/react/rsc';
 
-type SbPageProps = {
+type SbPageBasicProps = {
   blok: {
     _uid: string;
     body: SbBlokData[];
   };
 };
 
-export const SbPage = ({ blok }: SbPageProps) => (
+export const SbPageBasic = ({ blok }: SbPageBasicProps) => (
   <main {...storyblokEditable(blok)}>
     {blok.body &&
       blok.body.map((nestedBlok) => (

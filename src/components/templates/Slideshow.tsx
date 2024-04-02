@@ -1,17 +1,17 @@
 'use client';
 import React, { useCallback, useRef } from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-expect-error - https://github.com/microsoft/TypeScript/issues/52529
 import { Autoplay, Navigation } from 'swiper/modules';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-expect-error - https://github.com/microsoft/TypeScript/issues/52529
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
 import { Image } from '@/components/ui/Image';
 
+import { SbImageType } from '@/types/SbFields.types';
+
 export type SlideshowProps = {
-  images: { filename: string }[];
+  images: SbImageType[];
 };
 
 const SlideshowButtons = ({
@@ -21,29 +21,37 @@ const SlideshowButtons = ({
   onPrev: () => void;
   onNext: () => void;
 }) => {
+  const LeftArrow = () => (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      viewBox='0 0 32 32'
+      className='w-8 -rotate-90 transform text-white transition-all hover:text-white md:w-12 lg:w-16 xl:text-white/35'
+      fill='currentColor'
+    >
+      <path d='m26.71 10.29-10-10a1 1 0 0 0-1.41 0l-10 10 1.41 1.41L15 3.41V32h2V3.41l8.29 8.29z' />
+    </svg>
+  );
+
+  const RightArrow = () => (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      viewBox='0 0 32 32'
+      className='w-8 rotate-90 transform text-white transition-all hover:text-white md:w-12 lg:w-16 xl:text-white/35'
+      fill='currentColor'
+    >
+      <path d='m26.71 10.29-10-10a1 1 0 0 0-1.41 0l-10 10 1.41 1.41L15 3.41V32h2V3.41l8.29 8.29z' />
+    </svg>
+  );
+
   return (
     <>
       <div className='absolute right-8 top-4 z-20'>
         <div className='flex flex-row gap-3'>
           <button onClick={onPrev}>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              viewBox='0 0 32 32'
-              className='w-8 -rotate-90 transform text-white transition-all hover:text-white md:w-12 lg:w-16 xl:text-white/35'
-              fill='currentColor'
-            >
-              <path d='m26.71 10.29-10-10a1 1 0 0 0-1.41 0l-10 10 1.41 1.41L15 3.41V32h2V3.41l8.29 8.29z' />
-            </svg>
+            <LeftArrow />
           </button>
           <button onClick={onNext}>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              viewBox='0 0 32 32'
-              className='w-8 rotate-90 transform text-white transition-all hover:text-white md:w-12 lg:w-16 xl:text-white/35'
-              fill='currentColor'
-            >
-              <path d='m26.71 10.29-10-10a1 1 0 0 0-1.41 0l-10 10 1.41 1.41L15 3.41V32h2V3.41l8.29 8.29z' />
-            </svg>
+            <RightArrow />
           </button>
         </div>
       </div>
@@ -87,7 +95,7 @@ export const Slideshow = ({ images }: SlideshowProps) => {
               useSkeleton={true}
             />*/}
             <Image
-              imageSrc={image.filename}
+              imageSrc={image.filename as string}
               imageFocus={image.focus}
               alt={image.alt}
               caption={image.copyright}

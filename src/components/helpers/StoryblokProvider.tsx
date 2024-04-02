@@ -6,21 +6,21 @@ import React from 'react';
 import ComponentNotFound from '@/components/storyblok/ComponentNotFound';
 import { SbGrid } from '@/components/storyblok/SbGrid';
 import { SbImage } from '@/components/storyblok/SbImage';
-import { SbPage } from '@/components/storyblok/SbPage';
+import { SbPageBasic } from '@/components/storyblok/SbPageBasic';
+import { SbPageWork } from '@/components/storyblok/SbPageWork';
 import { SbSection } from '@/components/storyblok/SbSection';
 import { SbSlideshow } from '@/components/storyblok/SbSlideshow';
 import { SbText } from '@/components/storyblok/SbText';
-import { SbWork } from '@/components/storyblok/SbWork';
 import { SbWorkList } from '@/components/storyblok/SbWorkList';
 
 export const components = {
   grid: SbGrid,
   image: SbImage,
-  page: SbPage,
+  page: SbPageBasic,
   section: SbSection,
   slideshow: SbSlideshow,
   text: SbText,
-  work: SbWork,
+  work: SbPageWork,
   'work-list': SbWorkList,
 };
 

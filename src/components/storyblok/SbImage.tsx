@@ -52,17 +52,20 @@ export const SbImage = ({
   },
   blok,
 }: SbImageProps) => {
-  const Caption = hasRichText(caption) ? (
+  // TODO: Remove this workaround when Storyblok fixes the issue
+  const Caption = hasRichText(caption as never) ? (
     <RichText
       textColor={isCaptionLight ? 'white' : 'black-70'}
-      wysiwyg={caption}
+      // as never workaround for Storyblok
+      wysiwyg={caption as never}
     />
   ) : undefined;
 
   return (
     <Image
       {...storyblokEditable(blok)}
-      imageSrc={filename}
+      // as string workaround for Storyblok
+      imageSrc={filename as string}
       imageFocus={focus}
       alt={alt}
       isLoadingEager={isLoadingEager}

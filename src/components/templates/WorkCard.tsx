@@ -3,15 +3,27 @@ import * as React from 'react';
 import Slideshow from '@/components/templates/Slideshow';
 import UnstyledLink from '@/components/ui/Links/UnstyledLink';
 
-import { Work } from '@/types/Work.types';
+import { SbImageType } from '@/types/SbFields.types';
 
-export const WorkCard = ({ work }: { work: Work }) => {
+interface WorkCardProps {
+  title: string;
+  description: string;
+  date: string;
+  images: SbImageType[];
+  slug: string;
+}
+
+export const WorkCard = ({
+  title,
+  description,
+  date,
+  images,
+  slug,
+}: WorkCardProps) => {
   return (
     <div className='flex flex-col gap-2'>
       <div className='-mx-2 md:mx-0 xl:px-48'>
-        {work.content.images && work.content.images.length > 1 && (
-          <Slideshow images={work.content.images} />
-        )}
+        {images && images.length > 1 && <Slideshow images={images} />}
       </div>
       <div>
         <div className='flex flex-col gap-2 xl:flex-row'>
@@ -26,25 +38,24 @@ export const WorkCard = ({ work }: { work: Work }) => {
                 <path d='m26.71 10.29-10-10a1 1 0 0 0-1.41 0l-10 10 1.41 1.41L15 3.41V32h2V3.41l8.29 8.29z' />
               </svg>
             </div>
-            {work.name}
+            {title}
           </div>
           <div className='project-desc h-auto w-full rounded-[10vw] border-[1px] border-solid border-black bg-white/70 p-1 text-xs tracking-tighter text-black xl:w-1/2 xl:rounded-full xl:p-6'>
             <div className='mx-auto w-10/12'>
-              {/* format date */}
-              {work.created_at && (
+              {date && (
                 <div className='w-auto rounded-2xl bg-pink-300 p-2'>
-                  {new Date(work.created_at).toLocaleDateString()}
+                  {new Date(date).toLocaleDateString()}
                 </div>
               )}
               <br />
-              {work.content.description}
+              {description}
               <br />
               <br />
               <UnstyledLink
-                href={`/work/${work.slug}`}
+                href={`/work/${slug}`}
                 className='hover:text-primary-600 line-clamp-1 text-[blue] hover:underline'
               >
-                -̸̨̱̠̳̩̼͙̈̀̀̄̃̆́͠ͅ↳↳↳{work.slug}↳↳↳
+                -̸̨̱̠̳̩̼͙̈̀̀̄̃̆́͠ͅ↳↳↳{slug}↳↳↳
               </UnstyledLink>
             </div>
           </div>

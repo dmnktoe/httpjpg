@@ -87,6 +87,8 @@ export async function getHeaderData() {
     resolve_links: 'url',
   });
 
+  const nav = config.data.story.content.header_menu;
+
   const work = await storyblokApi.get(`cdn/stories`, {
     starts_with: 'work/',
     cv: Date.now(),
@@ -94,20 +96,21 @@ export async function getHeaderData() {
     resolve_links: 'url',
   });
 
-  const personal = work.data.stories.filter(
-    (story: { tag_list: string | string[] }) =>
-      story.tag_list.includes('Personal')
-  );
+  const filterStoriesByTag = (
+    tag: string,
+    stories: { tag_list: string | string[] }[]
+  ) =>
+    stories.filter(
+      (story) => Array.isArray(story.tag_list) && story.tag_list.includes(tag)
+    );
 
-  const client = work.data.stories.filter(
-    (story: { tag_list: string | string[] }) =>
-      story.tag_list.includes('Client')
-  );
+  const personal = filterStoriesByTag('Personal', work.data.stories);
+  const client = filterStoriesByTag('Client', work.data.stories);
 
   return {
     props: {
       header: {
-        config: config.data,
+        nav: nav,
         personal: personal,
         client: client,
       },

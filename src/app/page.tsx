@@ -79,6 +79,43 @@ async function getStoryData() {
   }
 }
 
+export async function getHeaderData() {
+  const storyblokApi: StoryblokClient = getStoryblokApi();
+
+  const config = await storyblokApi.get(`cdn/stories/config`, {
+    version: 'draft',
+    resolve_links: 'url',
+  });
+
+  const work = await storyblokApi.get(`cdn/stories`, {
+    starts_with: 'work/',
+    cv: Date.now(),
+    version: 'draft',
+    resolve_links: 'url',
+  });
+
+  const personal = work.data.stories.filter(
+    (story: { tag_list: string | string[] }) =>
+      story.tag_list.includes('Personal')
+  );
+
+  const client = work.data.stories.filter(
+    (story: { tag_list: string | string[] }) =>
+      story.tag_list.includes('Client')
+  );
+
+  return {
+    props: {
+      header: {
+        config: config.data,
+        personal: personal,
+        client: client,
+      },
+    },
+    revalidate: 3600,
+  };
+}
+
 /**
  * Generate the SEO metadata for the page.
  */

@@ -27,12 +27,12 @@ export const WorkCard = ({
       </div>
       <div>
         <div className='flex flex-col gap-2 xl:flex-row'>
-          <div className='w-full overflow-hidden rounded-full border-[1px] border-solid border-black bg-[url("/images/glitter.gif")] bg-cover text-[8.5vw] leading-[0.8] tracking-tighter xl:w-1/2 xl:text-[6.5vw]'>
+          <div className='w-full overflow-hidden rounded-full border-[1px] border-solid border-black bg-cover text-[8.5vw] leading-[0.8] tracking-tighter xl:w-1/2 xl:text-[6.5vw]'>
             <div className='inline-block'>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 viewBox='0 0 32 32'
-                className='w-[6vw] rotate-90 xl:w-[5vw]'
+                className='relative top-3 hidden rotate-90 md:block md:w-[8vw] xl:w-[6vw]'
                 fill='currentColor'
               >
                 <path d='m26.71 10.29-10-10a1 1 0 0 0-1.41 0l-10 10 1.41 1.41L15 3.41V32h2V3.41l8.29 8.29z' />

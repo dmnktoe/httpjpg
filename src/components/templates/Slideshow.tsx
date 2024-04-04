@@ -6,6 +6,7 @@ import { Autoplay, Navigation } from 'swiper/modules';
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
+import { AnimateInView } from '@/components/helpers/Animate';
 import { Image } from '@/components/ui/Image';
 
 import { SbImageType } from '@/types/SbFields.types';
@@ -71,46 +72,39 @@ export const Slideshow = ({ images }: SlideshowProps) => {
   }, []);
 
   return (
-    <div className='relative'>
-      <Swiper
-        modules={[Navigation, Autoplay]}
-        navigation
-        speed={1}
-        spaceBetween={15}
-        ref={swiperElRef}
-        autoplay={{
-          delay: 7000,
-          disableOnInteraction: false,
-        }}
-        loop={images.length > 1}
-      >
-        {images.map((image, index) => (
-          <SwiperSlide key={index}>
-            {/*<NextImage
-              width={2500}
-              height={1200}
-              src={image.filename}
-              className='w-full'
-              alt={`Slide ${index + 1}`}
-              useSkeleton={true}
-            />*/}
-            <Image
-              imageSrc={image.filename as string}
-              imageFocus={image.focus}
-              alt={image.alt}
-              caption={image.copyright}
-              isCaptionInset
-              aspectRatio='16x9'
-              animation='zoomSharpen'
-              key={index}
-            />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-      {images.length > 1 && (
-        <SlideshowButtons onPrev={handlePrev} onNext={handleNext} />
-      )}
-    </div>
+    <AnimateInView animation='sharpen'>
+      <div className='relative'>
+        <Swiper
+          modules={[Navigation, Autoplay]}
+          navigation
+          speed={1}
+          spaceBetween={15}
+          ref={swiperElRef}
+          autoplay={{
+            delay: 7000,
+            disableOnInteraction: false,
+          }}
+          loop={images.length > 1}
+        >
+          {images.map((image, index) => (
+            <SwiperSlide key={index}>
+              <Image
+                imageSrc={image.filename as string}
+                imageFocus={image.focus}
+                alt={image.alt}
+                caption={image.copyright}
+                isCaptionInset
+                aspectRatio='16x9'
+                key={index}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+        {images.length > 1 && (
+          <SlideshowButtons onPrev={handlePrev} onNext={handleNext} />
+        )}
+      </div>
+    </AnimateInView>
   );
 };
 

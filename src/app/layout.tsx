@@ -1,3 +1,4 @@
+import React from 'react';
 import { Flexbox } from 'src/components/layout/Flexbox';
 import { Header } from 'src/components/layout/Header';
 

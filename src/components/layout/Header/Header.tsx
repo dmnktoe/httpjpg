@@ -11,13 +11,22 @@ import { cn } from '@/lib/utils';
 import UnstyledLink from '@/components/ui/Links/UnstyledLink';
 
 interface HeaderProps {
-  data: any;
-  blok: SbBlokData;
+  data: {
+    nav: {
+      _uid: string;
+      link: {
+        cached_url: string;
+      };
+      name: string;
+      isExternal: boolean;
+      component: 'menu_link';
+    }[];
+    personal: SbBlokData[];
+    client: SbBlokData[];
+  };
 }
 
-export const Header = ({ data, blok }: HeaderProps) => {
-  console.log(data.nav);
-
+export const Header = ({ data }: HeaderProps) => {
   const [hamburgerMenuIsOpen, setHamburgerMenuIsOpen] = useState(false);
 
   useEffect(() => {
@@ -49,62 +58,68 @@ export const Header = ({ data, blok }: HeaderProps) => {
   }, [setHamburgerMenuIsOpen]);
 
   const Navigation = () => (
-    <div className='relative hidden xl:flex'>
-      <div className='flex flex-col gap-4 text-xs font-light tracking-tight md:flex-row xl:gap-16 xl:text-base'>
-        <div className='md:w-4/12'>
+    <div className='relative w-full xl:flex'>
+      <div className='flex flex-col gap-4 text-[15px] text-xs font-thin tracking-tight md:flex-row xl:gap-8'>
+        <div className='hidden xl:block xl:w-1/3'>
           <span className='font-bold'>⇝HE𝓁𝓁O www.httpjpg.com</span>
           <br />
           <span className='text-justify'>
             ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& —————— ꠹ρᧁ! :))))) hׁׅ֮υׁׅhׁׅ֮υׁׅυׁׅυׁׅ hׁׅ֮tׁׅtׁׅ℘
             &&& —————— յׁׅ℘ᧁׁ! :))))) ⋈ꮺ⋈ꮺꮺꮺ ⋈ᯅᯅꔛ &&& ————P̵̨̢͇̗̘̩̖̜̰̠͛̓Ĺ̴͙̝͎̼̌̒̓̌̀͊̎̔̍̉͛̋̔͝E̴̢̢̛̦̣̩̝̩͙̲̠͊̒̀̊̾̕͝Ä̴́̔̈̌͌̑ͅS̶̡̰̪̭͕̤̥͈̗̞͛́̍̾̑͜͜͝Ę̶̧̛̲̠̱̜̖͈̋͒̑̋̇̐̈́̓͊̃̈̕ ̸̡̛̣̹̠͖͊̓̊̒̅͗̏͌͑̐̚̕Y̴͎̘̙͓͕̺͒̽̃͛̂̓̊̎̕̚̚Ǫ̴̛̼̻̌̊͊̉͆́͋̔̀͒Ü̷̟̤͙̲̙̹̘̝̟̯̤̍̌͋͗̋͛̓̋̎̓̔̀͌S̸̩͔̿̒̔͗͘̚͝E̵̡̺̘̞̗͉̬̞̟͖͍̍͌ ̷̪͔̲̯̫̉̅͒̀͑͂̍͠T̷̯̹́͒̅̉̊̅̈́͠H̷͎̣̦̘̪͆͐́͝E̷͈͕̗̬̠̹͔͚̪͔̐
-            ̵͖̥̥͔͚̭̗̪̠͕̭̞̤̯̞̀̌͋́͒͠͝N̸̼̪̘̘̩͍̗͓̼͇̪͓̲̈̓̆͑͛̽͆̽͘A̵̧̪̱͖̦̭̎̓̓̾̌̓̎͠͝ͅW̴̙͑̑̈̕̚͝I̷̥͓̱̺̟͔̳̔̒̇͜͜Ģ̶͔̠̣̯̱̼̀̈́À̷͚̋̏͘͘͠T̴̨̰̭̓͋̔̀̓͊̄͐̇̇͒͐̓́͝I̵̡͓̖̼̒̈́͌̇͜Z̶̬̦̟̥͇͍̦͉̰̬͗͗̌̍̿̔̽͗̑̇͋̑͠͝͝O̴͖͇͈̾ͅN̷̝̺̺͎̻̟̞͓̳̠̎͜ͅ—— ୨୧ꔛꗃ! :))))) ꃅꀎꃅꀎꀎꀎ ꃅ꓄꓄ꉣ &&& —————— ꀭꉣꁅ!
-            :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷)))) 🎀 ⋆ﾟ･
+            ̵͖̥̥͔͚̭̗̪̠͕̭̞̤̯̞̀̌͋́͒͠͝N̸̼̪̘̘̩͍̗͓̼͇̪͓̲̈̓̆͑͛̽͆̽͘A̵̧̪̱͖̦̭̎̓̓̾̌̓̎͠͝ͅW̴̙͑̑̈̕̚͝I̷̥͓̱̺̟͔̳̔̒̇͜͜Ģ̶͔̠̣̯̱̼̀̈́À̷͚̋̏͘͘͠T̴̨̰̭̓͋̔̀̓͊̄͐̇̇͒͐̓́͝I̵̡͓̖̼̒̈́͌̇͜Z̶̬̦̟̥͇͍̦͉̰̬͗͗̌̍̿̔̽͗̑̇͋̑͠͝͝O̴͖͇͈̾ͅN̷̝̺̺͎̻̟̞͓̳̠̎͜ͅ—— ୨୧ꔛꗃ! :))))) ꃅꀎꃅꀎꀎꀎ ꃅ꓄꓄ꉣ &&&
+          </span>
+          {data.nav.map((item) => (
+            <UnstyledLink
+              key={item.name}
+              href={
+                item.isExternal
+                  ? item.link.cached_url
+                  : item.link.cached_url === 'home'
+                  ? '/'
+                  : `/${item.link.cached_url}`
+              }
+              className='font-black hover:underline'
+            >
+              {item.name}
+            </UnstyledLink>
+          ))}
+          <span className='text-justify'>
+            —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣
+            𝓈(^‿^)-𝒷)))) 🎀 ⋆ﾟ･
           </span>
         </div>
-        <div className='md:w-4/12'>
+        <div className='xl:w-1/3'>
           <span className='font-bold'>⇝TH1𝓃𝑔S</span>
           <br />
           {data.personal.map((work) => (
             <UnstyledLink
-              key={work.id}
+              key={work._uid}
               href={`/work/${work.slug}`}
-              className='hover:text-primary-600 line-clamp-1 hover:underline'
+              className='line-clamp-1 hover:underline'
             >
-              🎀 ⋆ﾟ･
-              {work.slug}
+              <>🎀 ⋆ﾟ･ {work.slug}</>
             </UnstyledLink>
           ))}
-          <UnstyledLink href='/feed-xml'>
+          <UnstyledLink
+            href='/feed-xml'
+            className='line-clamp-1 hover:underline'
+          >
             ⋆.˚ ᡣ𐭩 .𖥔˚ music ⋆.˚✮🎧✮˚.⋆ &nd pics -----⇒
           </UnstyledLink>
         </div>
-        <div className='md:w-4/12'>
+        <div className='xl:w-1/3'>
           <span className='font-bold'>⇝𝒞𝓁LI€NT</span>
           <br />
-          {data.client.map((client) => (
+          {data.client.map((work) => (
             <UnstyledLink
-              key={client.id}
-              href={`${client.url}`}
+              key={work._uid}
+              href={`/work/${work.slug}`}
               className='hover:text-primary-600 line-clamp-1 hover:underline'
             >
-              (^‿^)-𝒷))))
-              {client.slug}
+              <>(^‿^)-𝒷)))){work.slug}</>
             </UnstyledLink>
           ))}
         </div>
-      </div>
-      <div className='flex flex-col items-center rounded-full bg-white bg-opacity-60 px-5 py-2 text-black shadow-2xl backdrop-blur-md xl:px-6 xl:py-3'>
-        {data.nav.map((item) => (
-          <UnstyledLink
-            key={item.name}
-            href={
-              item.link.cached_url === 'home' ? '/' : '/' + item.link.cached_url
-            }
-            className='hover:text-primary-600 active:text-primary-900 px-2 text-xl xl:px-3 xl:text-xl'
-          >
-            {item.name}
-          </UnstyledLink>
-        ))}
       </div>
     </div>
   );
@@ -132,8 +147,14 @@ export const Header = ({ data, blok }: HeaderProps) => {
       <div className='flex flex-1 flex-grow flex-col gap-y-2 p-2 text-3xl tracking-tight md:p-6'>
         {data.nav.map((item) => (
           <UnstyledLink
-            key={item.name}
-            href={item.link.cached_url}
+            key={item._uid}
+            href={
+              item.isExternal
+                ? item.link.cached_url
+                : item.link.cached_url === 'home'
+                ? '/'
+                : `/${item.link.cached_url}`
+            }
             className='hover:text-primary-600 active:text-primary-900'
           >
             {item.name}
@@ -145,7 +166,7 @@ export const Header = ({ data, blok }: HeaderProps) => {
 
   return (
     <>
-      <header className='z-50 md:sticky md:top-0' {...storyblokEditable(blok)}>
+      <header className='z-50 md:sticky md:top-0' {...storyblokEditable(data)}>
         <Container>
           <div className='mb-16 flex items-start justify-between gap-12 py-4 md:mb-24'>
             {/* Navigation */}

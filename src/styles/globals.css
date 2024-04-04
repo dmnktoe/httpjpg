@@ -34,25 +34,6 @@
     --navigation-height: 110px;
   }
 
-  body {
-    background-image: url('https://card.psnprofiles.com/1/bullensohn6.png');
-    background-position: left top;
-    background-repeat: no-repeat;
-  }
-
-  header,
-  .project-desc {
-    font-family: 'Times', sans-serif !important;
-  }
-
-  a:hover {
-    background: black;
-    color: white !important;
-    text-decoration: dotted;
-    font-style: italic;
-    overflow: hidden;
-  }
-
   .cursor-newtab {
     cursor: url('/images/new-tab.png') 10 10, pointer;
   }

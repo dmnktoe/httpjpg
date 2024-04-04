@@ -83,16 +83,15 @@ export async function getHeaderData() {
   const storyblokApi: StoryblokClient = getStoryblokApi();
 
   const config = await storyblokApi.get(`cdn/stories/config`, {
-    version: 'draft',
+    version: isProd ? 'published' : 'draft',
     resolve_links: 'url',
   });
-
   const nav = config.data.story.content.header_menu;
 
   const work = await storyblokApi.get(`cdn/stories`, {
     starts_with: 'work/',
     cv: Date.now(),
-    version: 'draft',
+    version: isProd ? 'published' : 'draft',
     resolve_links: 'url',
   });
 

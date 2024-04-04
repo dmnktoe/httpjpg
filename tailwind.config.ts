@@ -6,7 +6,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        primary: ['Helvetica', ...defaultTheme.fontFamily.sans],
+        primary: ['Manrope', ...defaultTheme.fontFamily.sans],
       },
       colors: {
         primary: {

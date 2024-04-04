@@ -59,7 +59,7 @@ export const Header = ({ data }: HeaderProps) => {
 
   const Navigation = () => (
     <div className='relative w-full xl:flex'>
-      <div className='flex flex-col gap-4 text-[15px] text-xs font-thin tracking-tight md:flex-row xl:gap-8'>
+      <div className='flex flex-col gap-4 tracking-tight md:flex-row xl:gap-8'>
         <div className='hidden xl:block xl:w-1/3'>
           <span className='font-bold'>⇝HE𝓁𝓁O www.httpjpg.com</span>
           <br />
@@ -93,7 +93,7 @@ export const Header = ({ data }: HeaderProps) => {
           <br />
           {data.personal.map((work) => (
             <UnstyledLink
-              key={work._uid}
+              key={work.uuid as string}
               href={`/work/${work.slug}`}
               className='line-clamp-1 hover:underline'
             >
@@ -104,7 +104,7 @@ export const Header = ({ data }: HeaderProps) => {
             href='/feed-xml'
             className='line-clamp-1 hover:underline'
           >
-            ⋆.˚ ᡣ𐭩 .𖥔˚ music ⋆.˚✮🎧✮˚.⋆ &nd pics -----⇒
+            ⋆.˚ ᡣ𐭩 .𖥔˚ music ⋆.˚✮🎧✮˚.⋆ &nd pics ˙✧˖°📷 ༘ ⋆｡˚ ➔
           </UnstyledLink>
         </div>
         <div className='xl:w-1/3'>
@@ -112,7 +112,7 @@ export const Header = ({ data }: HeaderProps) => {
           <br />
           {data.client.map((work) => (
             <UnstyledLink
-              key={work._uid}
+              key={work.uuid as string}
               href={`/work/${work.slug}`}
               className='hover:text-primary-600 line-clamp-1 hover:underline'
             >

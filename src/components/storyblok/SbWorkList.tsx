@@ -24,11 +24,11 @@ type SbWorkListProps = {
 
 export const SbWorkList = ({ blok }: SbWorkListProps) => {
   return (
-    <main {...storyblokEditable(blok)}>
+    <div {...storyblokEditable(blok)}>
       {blok.work &&
         blok.work.map((work) => (
-          <>
-            <div className='pb-24 xl:pb-48' key={blok._uid}>
+          <React.Fragment key={blok._uid}>
+            <div className='pb-24 xl:pb-48'>
               <WorkCard
                 date={work.created_at}
                 slug={work.slug}
@@ -40,8 +40,8 @@ export const SbWorkList = ({ blok }: SbWorkListProps) => {
               />
             </div>
             <div className='pb-24 text-center xl:pb-48'>*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚</div>
-          </>
+          </React.Fragment>
         ))}
-    </main>
+    </div>
   );
 };

@@ -6,7 +6,7 @@ export async function POST(req: Request) {
   const secret = url.searchParams.get('secret');
   const body = await req.json();
   // This secret should only be known to this API route and the CMS
-  if (secret !== process.env.SECRET) {
+  if (secret !== process.env.STORYBLOK_PREVIEW_TOKEN) {
     return new Response('Invalid token', { status: 401 });
   }
   // The request contains a story_id in the body

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Flexbox } from 'src/components/layout/Flexbox';
-import { Header } from 'src/components/layout/Header';
 
 import '@/styles/globals.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 import GoogleAnalyticsProvider from '@/components/helpers/GoogleAnalyticsProvider';
 import LazyMotionProvider from '@/components/helpers/LazyMotionProvider';
+import { Flexbox } from '@/components/layout/Flexbox';
+import { Header } from '@/components/layout/Header';
 
 import { getHeaderData } from '@/app/page';
 

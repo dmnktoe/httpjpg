@@ -1,6 +1,7 @@
 import DynamicLoad from 'next/dynamic';
-import { Container } from 'src/components/layout/Container';
-import { Flexbox } from 'src/components/layout/Flexbox';
+
+import { Container } from '@/components/layout/Container';
+import { Flexbox } from '@/components/layout/Flexbox';
 const Skeleton = DynamicLoad(() => import('react-loading-skeleton'), {
   ssr: false,
 });

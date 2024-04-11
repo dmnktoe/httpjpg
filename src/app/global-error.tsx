@@ -2,7 +2,8 @@
 
 import * as Sentry from '@sentry/nextjs';
 import { useEffect } from 'react';
-import { Container } from 'src/components/layout/Container';
+
+import { Container } from '@/components/layout/Container';
 
 export default function Error({
   error,

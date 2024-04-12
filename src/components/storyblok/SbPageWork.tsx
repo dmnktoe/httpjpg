@@ -3,31 +3,43 @@ import {
   StoryblokComponent,
   storyblokEditable,
 } from '@storyblok/react/rsc';
+import { StoryblokRichtext } from 'storyblok-rich-text-react-renderer-ts';
 
-import { SbImageType } from '@/types/SbFields.types';
+import { RichText } from '@/components/helpers/RichText';
+import UnstyledLink from '@/components/ui/Links/UnstyledLink';
+
+import { SbImageType, SbLinkType } from '@/types/SbFields.types';
 
 type SbPageWorkProps = {
-  name: string;
   blok: {
     _uid: string;
-    title?: string;
-    description?: string;
-    link?: string;
-    type?: 'work' | 'project';
-    images?: SbImageType[];
     body: SbBlokData[];
+    description?: StoryblokRichtext;
+    images?: SbImageType[];
+    link?: SbLinkType;
+    title?: string;
   };
 };
 
-export const SbPageWork = ({ blok }: SbPageWorkProps) => (
+export const SbPageWork = ({
+  blok: { body, description, images, link, title },
+  blok,
+}: SbPageWorkProps) => (
   <main {...storyblokEditable(blok)}>
-    {blok.body &&
-      blok.body.map((nestedBlok) => (
+    {title && <h1 className='mb-3'>{title}</h1>}
+    {description && <RichText wysiwyg={description} />}
+    {link && (
+      <UnstyledLink href={link.cached_url} target={link.cached_url}>
+        {link.title}
+      </UnstyledLink>
+    )}
+    {body &&
+      body.map((nestedBlok) => (
         <StoryblokComponent blok={nestedBlok} key={nestedBlok._uid} />
       ))}
-    {blok.images && (
+    {images && (
       <div>
-        {blok.images.map((image) => (
+        {images.map((image) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             key={image.filename}

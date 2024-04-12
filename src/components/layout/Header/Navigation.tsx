@@ -27,7 +27,7 @@ export const Navigation = ({ data }: HeaderProps) => {
               }
               className='font-black hover:underline'
             >
-              {item.name}
+              🎀 {item.name}&nbsp;
             </UnstyledLink>
           ))}
           <span className='text-justify'>

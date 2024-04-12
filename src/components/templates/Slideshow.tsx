@@ -75,15 +75,22 @@ export const Slideshow = ({
           >
             {images.map((image, index) => (
               <SwiperSlide key={index}>
-                <Image
-                  alt={image.alt}
-                  aspectRatio={aspectRatio}
-                  caption={image.copyright}
-                  imageSrc={image.filename || ''}
-                  imageFocus={image.focus}
-                  isCaptionInset
-                  key={index}
-                />
+                <div className='relative block h-full w-full'>
+                  <Image
+                    alt={image.alt}
+                    aspectRatio={aspectRatio}
+                    imageSrc={image.filename || ''}
+                    imageFocus={image.focus}
+                    isCaptionInset
+                    key={index}
+                    className='z-0'
+                  />
+                  {image.copyright && (
+                    <div className='absolute bottom-2 right-2 z-10 text-xs text-black/80'>
+                      &copy; {image.copyright}
+                    </div>
+                  )}
+                </div>
               </SwiperSlide>
             ))}
           </Swiper>

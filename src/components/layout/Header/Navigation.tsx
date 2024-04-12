@@ -6,7 +6,7 @@ import UnstyledLink from '@/components/ui/Links/UnstyledLink';
 export const Navigation = ({ data }: HeaderProps) => {
   return (
     <div className='relative w-full xl:flex'>
-      <div className='flex flex-col gap-4 tracking-tight md:flex-row xl:gap-8'>
+      <div className='flex w-full flex-col gap-4 text-xs tracking-tight md:flex-row xl:gap-8'>
         <div className='hidden xl:block xl:w-1/3'>
           <span className='font-bold'>⇝HE𝓁𝓁O www.httpjpg.com</span>
           <br />
@@ -25,7 +25,7 @@ export const Navigation = ({ data }: HeaderProps) => {
                   ? '/'
                   : `/${item.link.cached_url}`
               }
-              className='font-black hover:underline'
+              className='hover:underline'
             >
               🎀 {item.name}&nbsp;
             </UnstyledLink>
@@ -61,7 +61,7 @@ export const Navigation = ({ data }: HeaderProps) => {
             <UnstyledLink
               key={work.uuid as string}
               href={`/work/${work.slug}`}
-              className='hover:text-primary-600 line-clamp-1 hover:underline'
+              className='line-clamp-1 hover:underline'
             >
               <>(^‿^)-𝒷)))){work.slug}</>
             </UnstyledLink>

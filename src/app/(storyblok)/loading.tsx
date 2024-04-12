@@ -9,7 +9,7 @@ const Skeleton = DynamicLoad(() => import('react-loading-skeleton'), {
 const Loading = () => {
   return (
     <div>
-      <main>
+      <main className='md:pt-32'>
         <Container width='container'>
           <Flexbox gap direction='row'>
             <Skeleton

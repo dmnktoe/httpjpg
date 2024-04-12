@@ -3,11 +3,10 @@ import {
   StoryblokComponent,
   storyblokEditable,
 } from '@storyblok/react/rsc';
+import { useEffect } from 'react';
 import { StoryblokRichtext } from 'storyblok-rich-text-react-renderer-ts';
 
-import { RichText } from '@/components/helpers/RichText';
-import { Container } from '@/components/layout/Container';
-import UnstyledLink from '@/components/ui/Links/UnstyledLink';
+import { cn } from '@/lib/utils';
 
 import { SbImageType, SbLinkType } from '@/types/SbFields.types';
 
@@ -17,40 +16,36 @@ export type SbPageWorkProps = {
     body: SbBlokData[];
     description?: StoryblokRichtext;
     images?: SbImageType[];
+    isDark?: boolean;
     link?: SbLinkType;
     title?: string;
   };
 };
 
 export const SbPageWork = ({
-  blok: { body, description, images, link, title },
+  blok: { body, isDark },
   blok,
-}: SbPageWorkProps) => (
-  <main {...storyblokEditable(blok)}>
-    <Container>
-      {title && <h1 className='mb-3'>{title}</h1>}
-      {description && <RichText wysiwyg={description} />}
-      {link && (
-        <UnstyledLink href={link.cached_url} target={link.cached_url}>
-          {link.title}
-        </UnstyledLink>
+}: SbPageWorkProps) => {
+  useEffect(() => {
+    if (isDark) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+  }, [isDark]);
+  return (
+    <main
+      {...storyblokEditable(blok)}
+      className={cn(
+        'bg-white',
+        isDark && 'dark bg-black text-white',
+        'md:pt-32'
       )}
+    >
       {body &&
         body.map((nestedBlok) => (
           <StoryblokComponent blok={nestedBlok} key={nestedBlok._uid} />
         ))}
-      {images && (
-        <div>
-          {images.map((image) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={image.filename}
-              src={image.filename}
-              alt={image.alt || ''}
-            />
-          ))}
-        </div>
-      )}
-    </Container>
-  </main>
-);
+    </main>
+  );
+};

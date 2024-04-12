@@ -36,14 +36,22 @@
 
   header {
     @apply pointer-events-none;
+  }
 
-    a {
-      @apply pointer-events-auto;
-    }
+  header a {
+    @apply pointer-events-auto;
+  }
 
-    button {
-      @apply pointer-events-auto;
-    }
+  header button {
+    @apply pointer-events-auto;
+  }
+
+  body.dark {
+    @apply bg-black text-white;
+  }
+
+  body.dark > header {
+    color: #fff !important;
   }
 
   .cursor-newtab {

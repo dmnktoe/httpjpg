@@ -3,6 +3,7 @@ import React from 'react';
 
 import { SbPageWorkProps } from '@/components/storyblok/SbPageWork';
 import { WorkCard } from '@/components/templates/WorkCard';
+import { Divider } from '@/components/ui/Divider';
 
 type SbWorkListProps = {
   blok: {
@@ -33,7 +34,7 @@ export const SbWorkList = ({ blok }: SbWorkListProps) => {
                 images={work.content?.images || []}
               />
             </div>
-            <div className='pb-24 text-center xl:pb-48'>*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚</div>
+            <Divider className='pb-24 xl:pb-48' />
           </React.Fragment>
         ))}
     </div>

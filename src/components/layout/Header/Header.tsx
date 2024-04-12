@@ -12,7 +12,6 @@ import { MobileMenuContent } from '@/components/layout/Header/MobileMenuContent'
 import { Navigation } from '@/components/layout/Header/Navigation';
 
 export interface HeaderProps {
-  isLight?: boolean;
   data: {
     nav: {
       _uid: string;
@@ -39,9 +38,12 @@ export const Header = ({ data }: HeaderProps) => {
 
   return (
     <>
-      <header className='z-50 md:sticky md:top-0' {...storyblokEditable(data)}>
+      <header
+        className='z-50 w-full md:fixed md:top-0'
+        {...storyblokEditable(data)}
+      >
         <Container>
-          <div className='mb-16 flex items-start justify-between gap-12 py-4 md:mb-24'>
+          <div className='flex w-full items-start justify-between gap-12 py-4'>
             <Navigation data={data} />
             <MobileMenuButton setMobileMenuIsOpen={setMobileMenuIsOpen} />
             <div

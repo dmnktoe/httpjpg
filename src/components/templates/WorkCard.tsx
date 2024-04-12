@@ -35,8 +35,8 @@ export const WorkCard = ({
         <Slideshow animation='sharpen' images={images} />
       </div>
       <div className='z-10'>
-        <div className='flex flex-col gap-2 xl:flex-row'>
-          <div className='-mt-3 w-full text-[8.5vw] leading-[0.8] tracking-tighter md:-mt-6 xl:-mt-[5vw] xl:w-1/2 xl:text-[6.5vw]'>
+        <div className='flex flex-col gap-2 xl:flex-row 2xl:px-48'>
+          <div className='-mt-3 w-full text-[8.5vw] leading-[0.8] tracking-tighter md:-mt-6 xl:-mt-[5vw] xl:w-1/2 xl:text-[6vw] 2xl:-ml-6 2xl:mr-6'>
             <AnimateInView animation='fadeIn' delay={0.5}>
               <div className='inline-block'>
                 <Arrow />
@@ -45,7 +45,7 @@ export const WorkCard = ({
             </AnimateInView>
           </div>
           <div className='text-xs tracking-tighter xl:w-1/2'>
-            <div className='mx-auto flex w-10/12 flex-col gap-4 xl:w-full'>
+            <div className='mx-auto flex flex-col gap-4 md:w-10/12 xl:w-full'>
               <div>
                 {date && (
                   <div className='inline-block w-auto text-xs font-bold'>

@@ -11,7 +11,7 @@ import UnstyledLink from '@/components/ui/Links/UnstyledLink';
 
 import { SbImageType, SbLinkType } from '@/types/SbFields.types';
 
-type SbPageWorkProps = {
+export type SbPageWorkProps = {
   blok: {
     _uid: string;
     body: SbBlokData[];

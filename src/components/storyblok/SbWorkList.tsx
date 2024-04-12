@@ -1,9 +1,8 @@
 import { storyblokEditable } from '@storyblok/react/rsc';
 import React from 'react';
 
+import { SbPageWorkProps } from '@/components/storyblok/SbPageWork';
 import { WorkCard } from '@/components/templates/WorkCard';
-
-import { SbImageType } from '@/types/SbFields.types';
 
 type SbWorkListProps = {
   blok: {
@@ -12,12 +11,7 @@ type SbWorkListProps = {
       name: string;
       slug: string;
       created_at: string;
-      content?: {
-        _uid: string;
-        title: string;
-        description: string;
-        images: SbImageType[];
-      };
+      content?: SbPageWorkProps['blok'];
     }[];
   };
 };
@@ -35,7 +29,7 @@ export const SbWorkList = ({ blok }: SbWorkListProps) => {
                 // Use the work content title if it exists,
                 // otherwise use the work name.
                 title={work.content?.title || work.name}
-                description={work.content?.description || ''}
+                description={work.content?.description}
                 images={work.content?.images || []}
               />
             </div>

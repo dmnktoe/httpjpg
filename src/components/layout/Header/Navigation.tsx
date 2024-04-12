@@ -17,6 +17,7 @@ export const Navigation = ({ data }: HeaderProps) => {
           </span>
           {data.nav.map((item) => (
             <>
+              🎀 ⋆ﾟ･
               <UnstyledLink
                 key={item.name}
                 href={
@@ -28,7 +29,7 @@ export const Navigation = ({ data }: HeaderProps) => {
                 }
                 className='font-accent hover:underline'
               >
-                🎀 {item.name.toUpperCase()}
+                {item.name.toUpperCase()}
               </UnstyledLink>
               &ensp;ꗃ&ensp;
             </>

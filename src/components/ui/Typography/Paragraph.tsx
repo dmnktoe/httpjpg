@@ -11,5 +11,9 @@ type ParagraphProps = Omit<TypographyProps, 'className'> &
 
 // Convenience component for paragraphs
 export const Paragraph = ({ noMargin, className, ...rest }: ParagraphProps) => (
-  <Text {...rest} as='p' className={cn(noMargin ? 'mb-0' : '', className)} />
+  <Text
+    {...rest}
+    as='p'
+    className={cn(noMargin ? 'mb-0' : 'mb-2', className)}
+  />
 );

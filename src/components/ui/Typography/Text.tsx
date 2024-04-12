@@ -29,7 +29,7 @@ export type TextProps = TypographyProps & React.HTMLAttributes<HTMLElement>;
 
 export const Text = ({
   as: AsComponent = 'div',
-  font = 'sans',
+  font = 'serif',
   size,
   weight,
   align,

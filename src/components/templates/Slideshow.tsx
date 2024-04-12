@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useCallback, useRef } from 'react';
 // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/52529
 import { Autoplay, Navigation } from 'swiper/modules';
@@ -6,13 +7,93 @@ import { Autoplay, Navigation } from 'swiper/modules';
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 
-import { AnimateInView } from '@/components/helpers/Animate';
+import type { ImageAspectRatioType, PaddingType } from '@/data/datasource';
+
+import {
+  type AnimationType,
+  AnimateInView,
+} from '@/components/helpers/Animate';
+import { WidthBox, WidthType } from '@/components/layout/WidthBox';
 import { Image } from '@/components/ui/Image';
 
 import { SbImageType } from '@/types/SbFields.types';
 
-export type SlideshowProps = {
+type SlideshowProps = React.HTMLAttributes<HTMLDivElement> & {
+  animation?: AnimationType;
+  aspectRatio?: ImageAspectRatioType;
+  boundingWidth?: 'container' | 'full';
+  delay?: number;
   images: SbImageType[];
+  spacingBottom?: PaddingType;
+  spacingTop?: PaddingType;
+  speed?: number;
+  width?: WidthType;
+};
+export const Slideshow = ({
+  animation = 'none',
+  aspectRatio = '16x9',
+  boundingWidth = 'full',
+  delay,
+  images,
+  spacingBottom,
+  spacingTop,
+  speed = 1,
+  width,
+  ...props
+}: SlideshowProps) => {
+  const swiperElRef = useRef<SwiperRef>(null);
+
+  const handlePrev = useCallback(() => {
+    swiperElRef.current?.swiper.slidePrev();
+  }, []);
+
+  const handleNext = useCallback(() => {
+    swiperElRef.current?.swiper.slideNext();
+  }, []);
+
+  return (
+    <WidthBox
+      {...props}
+      boundingWidth={boundingWidth}
+      width={width}
+      pt={spacingTop}
+      pb={spacingBottom}
+    >
+      <AnimateInView animation={animation} delay={delay}>
+        <div className='relative'>
+          <Swiper
+            modules={[Navigation, Autoplay]}
+            navigation
+            speed={speed}
+            spaceBetween={15}
+            ref={swiperElRef}
+            autoplay={{
+              delay: 7000,
+              disableOnInteraction: false,
+            }}
+            loop={images.length > 1}
+          >
+            {images.map((image, index) => (
+              <SwiperSlide key={index}>
+                <Image
+                  alt={image.alt}
+                  aspectRatio={aspectRatio}
+                  caption={image.copyright}
+                  imageSrc={image.filename || ''}
+                  imageFocus={image.focus}
+                  isCaptionInset
+                  key={index}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+          {images.length > 1 && (
+            <SlideshowButtons onPrev={handlePrev} onNext={handleNext} />
+          )}
+        </div>
+      </AnimateInView>
+    </WidthBox>
+  );
 };
 
 const SlideshowButtons = ({
@@ -57,54 +138,6 @@ const SlideshowButtons = ({
         </div>
       </div>
     </>
-  );
-};
-
-export const Slideshow = ({ images }: SlideshowProps) => {
-  const swiperElRef = useRef<SwiperRef>(null);
-
-  const handlePrev = useCallback(() => {
-    swiperElRef.current?.swiper.slidePrev();
-  }, []);
-
-  const handleNext = useCallback(() => {
-    swiperElRef.current?.swiper.slideNext();
-  }, []);
-
-  return (
-    <AnimateInView animation='sharpen'>
-      <div className='relative'>
-        <Swiper
-          modules={[Navigation, Autoplay]}
-          navigation
-          speed={1}
-          spaceBetween={15}
-          ref={swiperElRef}
-          autoplay={{
-            delay: 7000,
-            disableOnInteraction: false,
-          }}
-          loop={images.length > 1}
-        >
-          {images.map((image, index) => (
-            <SwiperSlide key={index}>
-              <Image
-                imageSrc={image.filename as string}
-                imageFocus={image.focus}
-                alt={image.alt}
-                caption={image.copyright}
-                isCaptionInset
-                aspectRatio='16x9'
-                key={index}
-              />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-        {images.length > 1 && (
-          <SlideshowButtons onPrev={handlePrev} onNext={handleNext} />
-        )}
-      </div>
-    </AnimateInView>
   );
 };
 

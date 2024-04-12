@@ -16,69 +16,67 @@ import { type SbImageType } from '@/types/SbFields.types';
 type SbImageProps = {
   blok: {
     _uid: string;
-    image: SbImageType;
     alt?: string;
-    isLoadingEager?: boolean;
-    caption?: StoryblokRichtext;
+    animation?: AnimationType;
     aspectRatio?: ImageAspectRatioType;
-    isFullHeight?: boolean;
     boundingWidth?: 'container' | 'full';
-    width?: WidthType;
-    spacingTop?: PaddingType;
-    spacingBottom?: PaddingType;
+    caption?: StoryblokRichtext;
+    delay?: number;
+    image: SbImageType;
     isCaptionInset?: boolean;
     isCaptionLight?: boolean;
-    animation?: AnimationType;
-    delay?: number;
+    isFullHeight?: boolean;
+    isLoadingEager?: boolean;
+    spacingBottom?: PaddingType;
+    spacingTop?: PaddingType;
+    width?: WidthType;
   };
 };
 
 export const SbImage = ({
   blok: {
-    image: { filename, focus } = {},
     alt,
-    isLoadingEager,
-    caption,
+    animation = 'none',
     aspectRatio,
-    isFullHeight,
     boundingWidth = 'full',
-    width,
-    spacingTop,
-    spacingBottom,
+    caption,
+    delay,
+    image: { filename, focus } = {},
     isCaptionInset,
     isCaptionLight,
-    animation = 'none',
-    delay,
+    isFullHeight,
+    isLoadingEager,
+    spacingBottom,
+    spacingTop,
+    width,
   },
   blok,
 }: SbImageProps) => {
-  // TODO: Remove this workaround when Storyblok fixes the issue
-  const Caption = hasRichText(caption as never) ? (
-    <RichText
-      textColor={isCaptionLight ? 'white' : 'black-70'}
-      // as never workaround for Storyblok
-      wysiwyg={caption as never}
-    />
-  ) : undefined;
+  const Caption =
+    caption && hasRichText(caption) ? (
+      <RichText
+        textColor={isCaptionLight ? 'white' : 'black-70'}
+        wysiwyg={caption}
+      />
+    ) : undefined;
 
   return (
     <Image
       {...storyblokEditable(blok)}
-      // as string workaround for Storyblok
-      imageSrc={filename as string}
-      imageFocus={focus}
       alt={alt}
-      isLoadingEager={isLoadingEager}
-      caption={Caption}
-      aspectRatio={aspectRatio}
-      isFullHeight={isFullHeight}
-      boundingWidth={boundingWidth}
-      width={width}
-      spacingTop={spacingTop}
-      spacingBottom={spacingBottom}
-      isCaptionInset={isCaptionInset}
       animation={animation}
+      aspectRatio={aspectRatio}
+      boundingWidth={boundingWidth}
+      caption={Caption}
       delay={delay}
+      imageFocus={focus}
+      imageSrc={filename || ''}
+      isCaptionInset={isCaptionInset}
+      isFullHeight={isFullHeight}
+      isLoadingEager={isLoadingEager}
+      spacingBottom={spacingBottom}
+      spacingTop={spacingTop}
+      width={width}
     />
   );
 };

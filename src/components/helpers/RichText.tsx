@@ -52,7 +52,7 @@ export const RichText = ({
   textAlign = 'left',
   className,
 }: RichTextProps) => {
-  const printColor = 'print:text-gc-black';
+  const printColor = 'print:text-black';
 
   const rendered = render(wysiwyg, {
     markResolvers: {

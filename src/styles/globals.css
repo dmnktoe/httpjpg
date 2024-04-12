@@ -34,6 +34,18 @@
     --navigation-height: 110px;
   }
 
+  header {
+    @apply pointer-events-none;
+
+    a {
+      @apply pointer-events-auto;
+    }
+
+    button {
+      @apply pointer-events-auto;
+    }
+  }
+
   .cursor-newtab {
     cursor: url('/images/new-tab.png') 10 10, pointer;
   }

@@ -23,7 +23,7 @@ export const WorkCard = ({
 }: WorkCardProps) => {
   return (
     <div className='flex flex-col gap-2'>
-      <div className='-mx-8 md:mx-0 xl:px-48'>
+      <div className='xl:mx-0 xl:px-48'>
         {images && images.length > 1 && <Slideshow images={images} />}
       </div>
       <div className='-mt-1'>
@@ -43,7 +43,7 @@ export const WorkCard = ({
               {title}
             </AnimateInView>
           </div>
-          <div className='font-serif text-xs tracking-tighter text-black xl:w-1/2'>
+          <div className='font-serif text-xs tracking-tighter xl:w-1/2'>
             <div className='mx-auto w-10/12 xl:w-full'>
               {date && (
                 <div className='inline-block w-auto bg-gradient-to-r from-[#e0e0e0] to-[#f7f7f7] p-1 text-xs'>

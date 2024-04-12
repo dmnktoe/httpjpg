@@ -18,38 +18,38 @@ import { type WidthType, WidthBox } from '@/components/layout/WidthBox';
 import * as styles from './Image.styles';
 
 type ImageProps = React.HTMLAttributes<HTMLDivElement> & {
-  imageSrc: string;
-  imageFocus?: string;
-  isLoadingEager?: boolean;
   alt?: string;
-  caption?: React.ReactNode;
-  aspectRatio?: ImageAspectRatioType;
-  isFullHeight?: boolean;
-  boundingWidth?: 'container' | 'full';
-  width?: WidthType;
-  spacingTop?: PaddingType;
-  spacingBottom?: PaddingType;
-  isCaptionInset?: boolean;
   animation?: AnimationType;
+  aspectRatio?: ImageAspectRatioType;
+  boundingWidth?: 'container' | 'full';
+  caption?: React.ReactNode;
   delay?: number;
+  imageFocus?: string;
+  imageSrc: string;
+  isCaptionInset?: boolean;
+  isFullHeight?: boolean;
+  isLoadingEager?: boolean;
+  spacingBottom?: PaddingType;
+  spacingTop?: PaddingType;
+  width?: WidthType;
 };
 
 export const Image = ({
-  imageSrc,
-  imageFocus,
-  isLoadingEager,
   alt,
-  caption,
-  aspectRatio,
-  isFullHeight,
-  boundingWidth = 'full',
-  width,
-  spacingTop,
-  spacingBottom,
-  isCaptionInset,
   animation = 'none',
-  delay,
+  aspectRatio,
+  boundingWidth = 'full',
+  caption,
   className,
+  delay,
+  imageFocus,
+  imageSrc,
+  isCaptionInset,
+  isFullHeight,
+  isLoadingEager,
+  spacingBottom,
+  spacingTop,
+  width,
   ...props
 }: ImageProps) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -107,7 +107,7 @@ export const Image = ({
               as='figcaption'
               width={isCaptionInset ? 'container' : 'full'}
             >
-              <div className={styles.caption}>&copy; {caption}</div>
+              <div className={styles.caption}>{caption}</div>
             </Container>
           )}
         </figure>

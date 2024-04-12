@@ -31,14 +31,12 @@ export const WorkCard = ({
     ) : undefined;
   return (
     <div className='flex flex-col gap-2'>
-      <div className='xl:mx-0 xl:px-48'>
-        {images && images.length > 1 && (
-          <Slideshow animation='sharpen' images={images} />
-        )}
+      <div className='z-10 xl:mx-0 xl:px-48'>
+        <Slideshow animation='sharpen' images={images} />
       </div>
-      <div className='-mt-1'>
+      <div className='z-10'>
         <div className='flex flex-col gap-2 xl:flex-row'>
-          <div className='w-full text-[8.5vw] leading-[0.8] tracking-tighter xl:-mt-6 xl:w-1/2 xl:text-[6.5vw]'>
+          <div className='-mt-3 w-full text-[8.5vw] leading-[0.8] tracking-tighter md:-mt-6 xl:-mt-[5vw] xl:w-1/2 xl:text-[6.5vw]'>
             <AnimateInView animation='fadeIn' delay={0.5}>
               <div className='inline-block'>
                 <Arrow />

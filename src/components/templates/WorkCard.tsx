@@ -44,11 +44,11 @@ export const WorkCard = ({
               {title}
             </AnimateInView>
           </div>
-          <div className='font-serif text-xs tracking-tighter xl:w-1/2'>
+          <div className='text-xs tracking-tighter xl:w-1/2'>
             <div className='mx-auto flex w-10/12 flex-col gap-4 xl:w-full'>
               <div>
                 {date && (
-                  <div className='inline-block w-auto text-xs font-black'>
+                  <div className='inline-block w-auto text-xs font-bold'>
                     {new Date(date).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'long',

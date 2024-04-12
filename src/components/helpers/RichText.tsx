@@ -30,16 +30,16 @@ export type RichTextProps = {
 };
 
 const textClasses = {
-  black: 'text-gc-black',
+  black: 'text-black',
   white: 'text-white',
   'black-70': 'text-black-70',
 };
 
 const bgClasses = {
-  black: 'bg-gc-black',
-  'black-50': 'bg-black-true/50',
-  'black-60': 'bg-black-true/60',
-  'black-70': 'bg-black-true/70',
+  black: 'bg-black',
+  'black-50': 'bg-black/50',
+  'black-60': 'bg-black/60',
+  'black-70': 'bg-black/70',
   white: 'bg-white',
   none: '',
 };
@@ -83,7 +83,7 @@ export const RichText = ({
         );
       },
       paragraph: (children) => (
-        <Paragraph variant={type === 'card' ? 'card' : 'none'}>
+        <Paragraph variant={type === 'default' ? 'none' : 'none'}>
           {children}
         </Paragraph>
       ),
@@ -92,7 +92,7 @@ export const RichText = ({
       sbText: (props) => <SbText blok={props} />,
     },
     defaultBlokResolver: (name) => (
-      <Paragraph weight='bold' variant={type === 'card' ? 'card' : 'none'}>
+      <Paragraph weight='bold' variant={type === 'default' ? 'none' : 'none'}>
         Missing blok resolver for blok type {name}.
       </Paragraph>
     ),

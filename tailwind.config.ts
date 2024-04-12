@@ -7,6 +7,10 @@ export default {
     extend: {
       fontFamily: {
         primary: ['Manrope', ...defaultTheme.fontFamily.sans],
+        sans: ['Manrope', ...defaultTheme.fontFamily.sans],
+        serif: '"Serif Babe"',
+        accent: '"1251"',
+        mono: '"Monaspace Neon"',
       },
       colors: {
         primary: {

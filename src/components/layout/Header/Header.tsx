@@ -43,7 +43,7 @@ export const Header = ({ data }: HeaderProps) => {
         {...storyblokEditable(data)}
       >
         <Container>
-          <div className='flex w-full items-start justify-between gap-12 py-4'>
+          <div className='flex w-full items-start justify-between gap-12 py-4 tracking-tight xl:text-sm'>
             <Navigation data={data} />
             <MobileMenuButton setMobileMenuIsOpen={setMobileMenuIsOpen} />
             <div

@@ -44,29 +44,30 @@ export const WorkCard = ({
               {title}
             </AnimateInView>
           </div>
-          <div className='text-xs tracking-tighter xl:w-1/2'>
+          <div className='xl:w-1/2'>
             <div className='mx-auto flex flex-col gap-4 md:w-10/12 xl:w-full'>
-              <div>
-                {date && (
-                  <div className='inline-block w-auto text-xs font-bold'>
-                    {new Date(date).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </div>
-                )}
-              </div>
               <div className='line-clamp-5 xl:line-clamp-none'>
                 {Description}
               </div>
               <div>
-                <UnstyledLink
-                  href={`/work/${slug}`}
-                  className=' line-clamp-1 text-[blue] hover:underline'
-                >
-                  -̸̨̱̠̳̩̼͙̈̀̀̄̃̆́͠ͅ↳↳↳{slug}↳↳↳
-                </UnstyledLink>
+                {date && (
+                  <div className='inline-block w-auto font-mono line-through'>
+                    {new Date(date).toLocaleDateString('de-DE', {
+                      year: '2-digit',
+                      month: 'narrow',
+                      day: '2-digit',
+                    })}
+                    ꠹ρᧁׁׅt
+                  </div>
+                )}
+                <div>
+                  <UnstyledLink
+                    href={`/work/${slug}`}
+                    className=' line-clamp-1 text-[blue] hover:underline'
+                  >
+                    -̸̨̱̠̳̩̼͙̈̀̀̄̃̆́͠ͅ↳↳↳{slug}↳↳↳
+                  </UnstyledLink>
+                </div>
               </div>
             </div>
           </div>

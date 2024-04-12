@@ -29,17 +29,17 @@ export type TextProps = TypographyProps & React.HTMLAttributes<HTMLElement>;
 
 export const Text = ({
   as: AsComponent = 'div',
-  font = 'serif',
+  font,
   size,
   weight,
   align,
   color = 'default',
   variant,
   leading,
-  useDefaultTracking = font === 'druk-wide',
+  useDefaultTracking = font === 'accent',
   italic,
   srOnly,
-  uppercase = font === 'druk',
+  uppercase = font === 'accent',
   className,
   children,
   ...rest
@@ -59,7 +59,7 @@ export const Text = ({
         srOnly ? 'sr-only' : '',
         uppercase ? 'uppercase' : '',
         useDefaultTracking ? 'tracking-normal' : '',
-        font === 'druk' ? 'tracking-normal sm:tracking-wide' : '',
+        font === 'accent' ? 'tracking-normal sm:tracking-wide' : '',
         className
       )}
     >

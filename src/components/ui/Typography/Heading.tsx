@@ -11,8 +11,8 @@ type HeadingProps = Omit<TypographyProps, 'as'> &
 // Convenience component for paragraphs
 export const Heading = ({
   as = 'h2',
-  font = 'sans',
-  weight = font === 'druk' ? 'black' : 'bold',
+  font,
+  weight = font === 'accent' ? 'normal' : 'bold',
   ...rest
 }: HeadingProps) => (
   <Text {...rest} font={font} weight={weight} as={as} className='mb-2' />

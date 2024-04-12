@@ -86,7 +86,7 @@ export const Slideshow = ({
                     className='z-0'
                   />
                   {image.copyright && (
-                    <div className='absolute bottom-2 right-2 z-10 text-xs text-black/80'>
+                    <div className='absolute -right-8 bottom-12 z-10 -rotate-90 text-xs text-black'>
                       &copy; {image.copyright}
                     </div>
                   )}

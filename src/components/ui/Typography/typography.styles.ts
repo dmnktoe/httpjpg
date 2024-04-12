@@ -1,18 +1,17 @@
 export const fontFamilies = {
-  sans: 'font-sans',
-  serif: 'font-serif',
-  druk: 'font-druk',
-  'druk-wide': 'font-druk-wide',
+  sans: 'font-sans', // Manrope
+  serif: 'font-serif', // Serif Babe
+  accent: 'font-accent', // 1251
+  mono: 'font-mono', // Monaspace Neon
 };
 
 export const fontWeights = {
   normal: 'font-normal',
   semibold: 'font-semibold',
   bold: 'font-bold',
-  black: 'font-black', // 900, needed for Druk font
 };
 
-// Modular typography - already includes responsive font sizes
+// TODO: Modular typography - already includes responsive font sizes
 export const fontSizes = {
   base: 'type-0',
   1: 'type-1',
@@ -55,32 +54,14 @@ export const textAligns = {
 export const textColors = {
   default: '', // Interit from the base
   black: 'text-black',
-  'cool-grey': 'text-cool-grey',
   white: 'text-white',
-  'black-20': 'text-black-20',
-  'black-40': 'text-black-40',
-  'black-60': 'text-black-60',
-  'black-80': 'text-black-80',
+  red: 'text-red-500',
+  'cool-gray': 'text-neutral-400',
 };
 
 export const textVariants = {
   none: '', // Default base style
   /**
-   * Decanter typography styles
+   * Variants
    */
-  big: 'big-paragraph',
-  subheading: 'subheading',
-  /**
-   * Campaign typography styles
-   * (-gc ones are Decanter styles with Campaign modifications)
-   */
-  caption: 'caption',
-  card: 'gc-card',
-  changemaker: 'gc-changemaker',
-  intro: 'gc-intro-text',
-  /**
-   * Campaign only styles
-   * No gc- prefix because no Decanter equivalent
-   */
-  overview: 'overview',
 };

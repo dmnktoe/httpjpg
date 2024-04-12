@@ -22,25 +22,25 @@ import {
 export type SbTextProps = {
   blok: {
     _uid: string;
-    text: string;
-    color?: TextColorType;
-    headingLevel?: HeadingType;
-    font?: FontFamilyType;
-    size?: FontSizeType;
-    variant?: TextVariantType;
-    leading?: FontLeadingType;
     align?: TextAlignType;
-    weight?: FontWeightType;
-    italic?: boolean;
-    srOnly?: boolean;
-    boundingWidth?: 'container' | 'full';
-    width?: '12' | '10' | '8' | '6' | '4';
-    marginTop?: MarginType;
-    marginBottom?: MarginType;
-    paddingTop?: PaddingType;
-    paddingBottom?: PaddingType;
     animation?: AnimationType;
+    boundingWidth?: 'container' | 'full';
+    color?: TextColorType;
     delay?: number;
+    font?: FontFamilyType;
+    headingLevel?: HeadingType;
+    italic?: boolean;
+    leading?: FontLeadingType;
+    marginBottom?: MarginType;
+    marginTop?: MarginType;
+    paddingBottom?: PaddingType;
+    paddingTop?: PaddingType;
+    size?: FontSizeType;
+    srOnly?: boolean;
+    text: string;
+    variant?: TextVariantType;
+    weight?: FontWeightType;
+    width?: '12' | '10' | '8' | '6' | '4';
   };
 };
 

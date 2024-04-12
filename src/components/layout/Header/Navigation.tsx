@@ -6,29 +6,32 @@ import UnstyledLink from '@/components/ui/Links/UnstyledLink';
 export const Navigation = ({ data }: HeaderProps) => {
   return (
     <div className='relative w-full xl:flex'>
-      <div className='flex w-full flex-col gap-4 text-xs tracking-tight md:flex-row xl:gap-8'>
+      <div className='flex w-full flex-col gap-4 md:flex-row xl:gap-8'>
         <div className='hidden xl:block xl:w-1/3'>
           <span className='font-bold'>⇝HE𝓁𝓁O www.httpjpg.com</span>
           <br />
           <span className='text-justify'>
             ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& —————— ꠹ρᧁ! :))))) hׁׅ֮υׁׅhׁׅ֮υׁׅυׁׅυׁׅ hׁׅ֮tׁׅtׁׅ℘
             &&& —————— յׁׅ℘ᧁׁ! :))))) ⋈ꮺ⋈ꮺꮺꮺ ⋈ᯅᯅꔛ &&& ————P̵̨̢͇̗̘̩̖̜̰̠͛̓Ĺ̴͙̝͎̼̌̒̓̌̀͊̎̔̍̉͛̋̔͝E̴̢̢̛̦̣̩̝̩͙̲̠͊̒̀̊̾̕͝Ä̴́̔̈̌͌̑ͅS̶̡̰̪̭͕̤̥͈̗̞͛́̍̾̑͜͜͝Ę̶̧̛̲̠̱̜̖͈̋͒̑̋̇̐̈́̓͊̃̈̕ ̸̡̛̣̹̠͖͊̓̊̒̅͗̏͌͑̐̚̕Y̴͎̘̙͓͕̺͒̽̃͛̂̓̊̎̕̚̚Ǫ̴̛̼̻̌̊͊̉͆́͋̔̀͒Ü̷̟̤͙̲̙̹̘̝̟̯̤̍̌͋͗̋͛̓̋̎̓̔̀͌S̸̩͔̿̒̔͗͘̚͝E̵̡̺̘̞̗͉̬̞̟͖͍̍͌ ̷̪͔̲̯̫̉̅͒̀͑͂̍͠T̷̯̹́͒̅̉̊̅̈́͠H̷͎̣̦̘̪͆͐́͝E̷͈͕̗̬̠̹͔͚̪͔̐
-            ̵͖̥̥͔͚̭̗̪̠͕̭̞̤̯̞̀̌͋́͒͠͝N̸̼̪̘̘̩͍̗͓̼͇̪͓̲̈̓̆͑͛̽͆̽͘A̵̧̪̱͖̦̭̎̓̓̾̌̓̎͠͝ͅW̴̙͑̑̈̕̚͝I̷̥͓̱̺̟͔̳̔̒̇͜͜Ģ̶͔̠̣̯̱̼̀̈́À̷͚̋̏͘͘͠T̴̨̰̭̓͋̔̀̓͊̄͐̇̇͒͐̓́͝I̵̡͓̖̼̒̈́͌̇͜Z̶̬̦̟̥͇͍̦͉̰̬͗͗̌̍̿̔̽͗̑̇͋̑͠͝͝O̴͖͇͈̾ͅN̷̝̺̺͎̻̟̞͓̳̠̎͜ͅ—— ୨୧ꔛꗃ! :))))) ꃅꀎꃅꀎꀎꀎ ꃅ꓄꓄ꉣ &&&
+            ̵͖̥̥͔͚̭̗̪̠͕̭̞̤̯̞̀̌͋́͒͠͝N̸̼̪̘̘̩͍̗͓̼͇̪͓̲̈̓̆͑͛̽͆̽͘A̵̧̪̱͖̦̭̎̓̓̾̌̓̎͠͝ͅW̴̙͑̑̈̕̚͝I̷̥͓̱̺̟͔̳̔̒̇͜͜Ģ̶͔̠̣̯̱̼̀̈́À̷͚̋̏͘͘͠T̴̨̰̭̓͋̔̀̓͊̄͐̇̇͒͐̓́͝I̵̡͓̖̼̒̈́͌̇͜Z̶̬̦̟̥͇͍̦͉̰̬͗͗̌̍̿̔̽͗̑̇͋̑͠͝͝O̴͖͇͈̾ͅN̷̝̺̺͎̻̟̞͓̳̠̎͜ͅ—— ୨୧ꔛꗃ! :))))) ꃅꀎꃅꀎꀎꀎ ꃅ꓄꓄ꉣ&nbsp;
           </span>
           {data.nav.map((item) => (
-            <UnstyledLink
-              key={item.name}
-              href={
-                item.isExternal
-                  ? item.link.cached_url
-                  : item.link.cached_url === 'home'
-                  ? '/'
-                  : `/${item.link.cached_url}`
-              }
-              className='hover:underline'
-            >
-              🎀 {item.name}&nbsp;
-            </UnstyledLink>
+            <>
+              <UnstyledLink
+                key={item.name}
+                href={
+                  item.isExternal
+                    ? item.link.cached_url
+                    : item.link.cached_url === 'home'
+                    ? '/'
+                    : `/${item.link.cached_url}`
+                }
+                className='font-accent hover:underline'
+              >
+                🎀 {item.name.toUpperCase()}
+              </UnstyledLink>
+              &ensp;ꗃ&ensp;
+            </>
           ))}
           <span className='text-justify'>
             —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣

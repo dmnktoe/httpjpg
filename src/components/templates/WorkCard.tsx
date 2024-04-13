@@ -31,7 +31,7 @@ export const WorkCard = ({
     ) : undefined;
   return (
     <div className='flex flex-col gap-2'>
-      <div className='z-10 xl:mx-0 xl:px-48'>
+      <div className='z-10 xl:mx-0 xl:px-48 2xl:px-64'>
         <Slideshow animation='sharpen' images={images} />
       </div>
       <div className='z-10'>

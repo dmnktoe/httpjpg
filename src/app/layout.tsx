@@ -1,13 +1,10 @@
 import React from 'react';
 
 import '@/styles/globals.css';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 import GoogleAnalyticsProvider from '@/components/helpers/GoogleAnalyticsProvider';
+import { LayoutProvider } from '@/components/helpers/LayoutProvider';
 import LazyMotionProvider from '@/components/helpers/LazyMotionProvider';
-import { Flexbox } from '@/components/layout/Flexbox';
-import { Footer } from '@/components/layout/Footer/Footer';
-import { Header } from '@/components/layout/Header';
 
 import { getHeaderData } from '@/app/page';
 
@@ -22,15 +19,7 @@ export default async function RootLayout({ children }: LayoutProps) {
       <html lang='en'>
         <GoogleAnalyticsProvider />
         <body>
-          <Header data={props.header} />
-          <Flexbox
-            justifyContent='between'
-            direction='col'
-            className='relative'
-          >
-            {children}
-          </Flexbox>
-          <Footer />
+          <LayoutProvider props={props}>{children}</LayoutProvider>
         </body>
       </html>
     </LazyMotionProvider>

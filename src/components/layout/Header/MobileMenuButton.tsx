@@ -14,13 +14,13 @@ export const MobileMenuButton = ({ setMobileMenuIsOpen }: MenuButtonProps) => {
         <button
           className={cn(
             'navbar-burger',
-            'text-dark flex items-center justify-center rounded-full bg-white bg-opacity-60 p-3 backdrop-blur-md transition duration-200',
+            'flex items-center justify-center rounded-full bg-black bg-opacity-75 p-3 text-white backdrop-blur-md transition duration-200',
             'hover:scale-95 hover:bg-black hover:text-white active:scale-75 active:bg-neutral-700'
           )}
           onClick={() => setMobileMenuIsOpen((open) => !open)}
           data-testid='navigationButton'
         >
-          <VscMenu className='h-6 w-6 text-inherit' />
+          <VscMenu className='h-4 w-4 text-inherit' />
         </button>
       </div>
     </div>

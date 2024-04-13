@@ -39,7 +39,7 @@ export const Header = ({ data }: HeaderProps) => {
   return (
     <>
       <header
-        className='z-50 w-full md:fixed md:top-0'
+        className='z-50 w-full md:sticky md:top-0'
         {...storyblokEditable(data)}
       >
         <Container>

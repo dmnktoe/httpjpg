@@ -36,11 +36,7 @@ export const SbPageWork = ({
   return (
     <main
       {...storyblokEditable(blok)}
-      className={cn(
-        'bg-white',
-        isDark && 'dark bg-black text-white',
-        'md:pt-32'
-      )}
+      className={cn('bg-white', isDark && 'dark bg-black text-white')}
     >
       {body &&
         body.map((nestedBlok) => (

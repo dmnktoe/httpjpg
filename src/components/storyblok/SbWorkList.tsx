@@ -20,23 +20,29 @@ type SbWorkListProps = {
 export const SbWorkList = ({ blok }: SbWorkListProps) => {
   return (
     <div {...storyblokEditable(blok)}>
-      {blok.work &&
-        blok.work.map((work) => (
-          <React.Fragment key={blok._uid}>
-            <div className='pb-24 xl:pb-48'>
-              <WorkCard
-                date={work.created_at}
-                slug={work.slug}
-                // Use the work content title if it exists,
-                // otherwise use the work name.
-                title={work.content?.title || work.name}
-                description={work.content?.description}
-                images={work.content?.images || []}
-              />
-            </div>
-            <Divider className='pb-24 xl:pb-48' />
-          </React.Fragment>
-        ))}
+      {blok.work
+        ? blok.work.map((work, index) => (
+            <React.Fragment key={blok._uid}>
+              <div className='pb-24 xl:pb-48'>
+                <WorkCard
+                  date={work.created_at}
+                  slug={work.slug}
+                  // Use the work content title if it exists,
+                  // otherwise use the Storyblok story name.
+                  title={work.content?.title || work.name}
+                  description={work.content?.description}
+                  images={work.content?.images || []}
+                />
+              </div>
+              {/* Render a divider if this is not the last work item */}
+              {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+              {/* @ts-ignore */}
+              {index !== blok.work.length - 1 && (
+                <Divider className='pb-24 xl:pb-48' />
+              )}
+            </React.Fragment>
+          ))
+        : null}
     </div>
   );
 };

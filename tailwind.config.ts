@@ -5,6 +5,9 @@ export default {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
+      backgroundImage: {
+        'footer-texture': "url('/images/footer_bg.png')",
+      },
       fontFamily: {
         primary: ['Manrope', ...defaultTheme.fontFamily.sans],
         sans: ['Manrope', ...defaultTheme.fontFamily.sans],

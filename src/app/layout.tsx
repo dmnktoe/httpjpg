@@ -6,6 +6,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import GoogleAnalyticsProvider from '@/components/helpers/GoogleAnalyticsProvider';
 import LazyMotionProvider from '@/components/helpers/LazyMotionProvider';
 import { Flexbox } from '@/components/layout/Flexbox';
+import { Footer } from '@/components/layout/Footer/Footer';
 import { Header } from '@/components/layout/Header';
 
 import { getHeaderData } from '@/app/page';
@@ -29,6 +30,7 @@ export default async function RootLayout({ children }: LayoutProps) {
           >
             {children}
           </Flexbox>
+          <Footer />
         </body>
       </html>
     </LazyMotionProvider>

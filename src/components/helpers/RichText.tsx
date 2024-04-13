@@ -23,7 +23,7 @@ export type RichTextProps = {
   wysiwyg: StoryblokRichtext;
   // "default" is for main content, e.g., Story body content
   type?: 'default' | 'card';
-  textColor?: 'black' | 'white' | 'black-70';
+  textColor?: 'black' | 'white' | 'black-70' | 'inherit';
   bgColor?: 'black' | 'black-50' | 'black-60' | 'black-70' | 'white' | 'none';
   textAlign?: TextAlignType;
   className?: string;
@@ -33,6 +33,7 @@ const textClasses = {
   black: 'text-black',
   white: 'text-white',
   'black-70': 'text-black-70',
+  inherit: 'inherit',
 };
 
 const bgClasses = {
@@ -47,7 +48,7 @@ const bgClasses = {
 export const RichText = ({
   wysiwyg,
   type,
-  textColor = 'black',
+  textColor = 'inherit',
   bgColor = 'none',
   textAlign = 'left',
   className,

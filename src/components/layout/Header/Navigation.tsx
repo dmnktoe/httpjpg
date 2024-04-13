@@ -16,10 +16,9 @@ export const Navigation = ({ data }: HeaderProps) => {
             ̵͖̥̥͔͚̭̗̪̠͕̭̞̤̯̞̀̌͋́͒͠͝N̸̼̪̘̘̩͍̗͓̼͇̪͓̲̈̓̆͑͛̽͆̽͘A̵̧̪̱͖̦̭̎̓̓̾̌̓̎͠͝ͅW̴̙͑̑̈̕̚͝I̷̥͓̱̺̟͔̳̔̒̇͜͜Ģ̶͔̠̣̯̱̼̀̈́À̷͚̋̏͘͘͠T̴̨̰̭̓͋̔̀̓͊̄͐̇̇͒͐̓́͝I̵̡͓̖̼̒̈́͌̇͜Z̶̬̦̟̥͇͍̦͉̰̬͗͗̌̍̿̔̽͗̑̇͋̑͠͝͝O̴͖͇͈̾ͅN̷̝̺̺͎̻̟̞͓̳̠̎͜ͅ—— ୨୧ꔛꗃ! :))))) ꃅꀎꃅꀎꀎꀎ ꃅ꓄꓄ꉣ&nbsp;
           </span>
           {data.nav.map((item) => (
-            <>
+            <React.Fragment key={item.name}>
               🎀 ⋆ﾟ･
               <UnstyledLink
-                key={item.name}
                 href={
                   item.isExternal
                     ? item.link.cached_url
@@ -32,7 +31,7 @@ export const Navigation = ({ data }: HeaderProps) => {
                 {item.name.toUpperCase()}
               </UnstyledLink>
               &ensp;ꗃ&ensp;
-            </>
+            </React.Fragment>
           ))}
           <span className='text-justify'>
             —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣

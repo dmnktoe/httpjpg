@@ -22,7 +22,7 @@ export const SbWorkList = ({ blok }: SbWorkListProps) => {
     <div {...storyblokEditable(blok)}>
       {blok.work
         ? blok.work.map((work, index) => (
-            <React.Fragment key={blok._uid}>
+            <React.Fragment key={index}>
               <div className='pb-24 xl:pb-48'>
                 <WorkCard
                   date={work.created_at}

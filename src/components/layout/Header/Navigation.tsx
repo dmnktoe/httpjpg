@@ -51,7 +51,7 @@ export const Navigation = ({ data }: HeaderProps) => {
               href={`/work/${work.slug}`}
               className='line-clamp-1 hover:underline'
             >
-              <>🎀 ⋆ﾟ･ {work.slug}</>
+              <>🎀 ୧ꔛꗃ˖ {work.slug}</>
             </UnstyledLink>
           ))}
           <UnstyledLink
@@ -70,7 +70,7 @@ export const Navigation = ({ data }: HeaderProps) => {
               href={`/work/${work.slug}`}
               className='line-clamp-1 hover:underline'
             >
-              <>(^‿^)-𝒷)))){work.slug}</>
+              <>(^‿^)-𝒷))) {work.slug}</>
             </UnstyledLink>
           ))}
         </div>

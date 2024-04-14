@@ -36,13 +36,15 @@ export const WorkCard = ({
       </div>
       <div className='z-10'>
         <div className='flex flex-col gap-2 xl:flex-row 2xl:px-48'>
-          <div className='-mt-3 w-full text-[8.5vw] leading-[0.8] tracking-tighter md:-mt-6 xl:-mt-[5vw] xl:w-1/2 xl:text-[6vw] 2xl:-ml-6 2xl:mr-6'>
-            <AnimateInView animation='fadeIn' delay={0.5}>
-              <div className='inline-block'>
-                <Arrow />
-              </div>
-              {title}
-            </AnimateInView>
+          <div className='-mt-3 w-full md:-mt-6 xl:-mt-[5vw] xl:w-1/2 2xl:-ml-6 2xl:mr-6'>
+            <div className='text-right text-[8.5vw] leading-[0.8] tracking-tighter xl:text-[6vw]'>
+              <AnimateInView animation='fadeIn' delay={0.5}>
+                <div className='inline-block'>
+                  <Arrow />
+                </div>
+                {title}
+              </AnimateInView>
+            </div>
           </div>
           <div className='xl:w-1/2'>
             <div className='mx-auto flex flex-col gap-4 md:w-10/12 xl:w-full'>

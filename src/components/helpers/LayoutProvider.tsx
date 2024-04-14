@@ -8,36 +8,9 @@ import { Header } from '@/components/layout/Header';
 
 type LayoutProviderProps = {
   children: React.ReactNode;
-  props: {
-    header: {
-      nav: {
-        _uid: string;
-        link: {
-          cached_url: string;
-        };
-        name: string;
-        isExternal: boolean;
-      }[];
-      personal: {
-        _uid: string;
-        component: string;
-        body: {
-          _uid: string;
-          component: string;
-          text: string;
-        }[];
-      }[];
-      client: {
-        _uid: string;
-        component: string;
-        body: {
-          _uid: string;
-          component: string;
-          text: string;
-        }[];
-      }[];
-    };
-  };
+  // TODO: Add type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props: any;
 };
 
 export const LayoutProvider = ({ children, props }: LayoutProviderProps) => {

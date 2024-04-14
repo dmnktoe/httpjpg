@@ -1,0 +1,17 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "ALLOW-FROM storyblok.com"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "app.storyblok.com"
+        }
+      ]
+    }
+  ]
+}

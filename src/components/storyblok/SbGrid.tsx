@@ -1,0 +1,85 @@
+import { type SbBlokData, storyblokEditable } from '@storyblok/react/rsc';
+
+import { type MarginType, type PaddingType } from '@/data/datasource';
+
+import { CreateBloks } from '@/components/helpers/CreateBloks';
+import {
+  type GridGapType,
+  type GridNumColsType,
+  Grid,
+} from '@/components/layout/Grid';
+import { type WidthType, WidthBox } from '@/components/layout/WidthBox';
+
+type SbGridProps = {
+  blok: {
+    _uid: string;
+    // Turn grid into <ul> and items into <li>
+    isList?: boolean;
+    gap?: GridGapType;
+    boundingWidth?: 'container' | 'full';
+    width?: WidthType;
+    align?: 'left' | 'center';
+    rtl?: boolean;
+    items: SbBlokData[];
+    /**
+     * Currently we're only providing 1-4 columns in Storyblok even though GridNumColsType also supports 6 and 12
+     * We could add support for 6 and 12 in the future if needed
+     */
+    xs?: GridNumColsType;
+    sm?: GridNumColsType;
+    md?: GridNumColsType;
+    lg?: GridNumColsType;
+    xl?: GridNumColsType;
+    xxl?: GridNumColsType;
+    paddingTop?: PaddingType;
+    paddingBottom?: PaddingType;
+    marginTop?: MarginType;
+    marginBottom?: MarginType;
+  };
+};
+
+export const SbGrid = ({
+  blok: {
+    isList,
+    gap,
+    boundingWidth = 'full',
+    width,
+    align,
+    items,
+    xs,
+    sm,
+    md,
+    lg,
+    xl,
+    xxl,
+    paddingTop,
+    paddingBottom,
+    marginTop,
+    marginBottom,
+  },
+  blok,
+}: SbGridProps) => (
+  <WidthBox
+    {...storyblokEditable(blok)}
+    boundingWidth={boundingWidth}
+    width={width}
+    align={align}
+    mt={marginTop}
+    mb={marginBottom}
+    pt={paddingTop}
+    pb={paddingBottom}
+  >
+    <Grid
+      isList={isList}
+      xs={xs}
+      sm={sm}
+      md={md}
+      lg={lg}
+      xl={xl}
+      xxl={xxl}
+      gap={gap}
+    >
+      <CreateBloks blokSection={items} isListItems={isList} />
+    </Grid>
+  </WidthBox>
+);

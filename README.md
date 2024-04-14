@@ -1,2 +1,5 @@
-# httpjpg.com
-💠 Personal website and blog made using Next.js, TypeScript, Tailwind CSS, MDX Bundler, and Prisma with PostgreSQL
+![Storyblok Badge](https://img.shields.io/badge/Storyblok-09B3AF?logo=storyblok&logoColor=fff&style=flat)
+
+# http—jpg
+
+Personal Portfolio Website with Next.js and Storyblok

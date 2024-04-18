@@ -1,8 +1,10 @@
 <div align="center">
 
-# httpjpg.com
+<img src="https://i.ibb.co/D8hBfm1/http-github-banner.png" style="width: 100%;">
 
-Welcome to my personal portfolio project! This project showcases my skills, experiences, and art projects through a sleek and responsive web application built using cutting-edge technologies.
+# *ੈ✩‧₊˚༺ httpjpg.com ༻*ੈ✩‧₊˚
+
+աɛʟƈօʍɛ ȶօ ʍʏ քɛʀֆօռǟʟ քօʀȶʄօʟɨօ քʀօʝɛƈȶ! ȶɦɨֆ քʀօʝɛƈȶ ֆɦօաƈǟֆɛֆ ʍʏ ֆӄɨʟʟֆ, ɛӼքɛʀɨɛռƈɛֆ, ǟռɖ ǟʀȶ քʀօʝɛƈȶֆ ȶɦʀօʊɢɦ ǟ ֆʟɛɛӄ ǟռɖ ʀɛֆքօռֆɨʋɛ աɛɮ ǟքքʟɨƈǟȶɨօռ ɮʊɨʟȶ ʊֆɨռɢ ƈʊȶȶɨռɢ-ɛɖɢɛ ȶɛƈɦռօʟօɢɨɛֆ.
 
 [![CI](https://github.com/dmnktoe/httpjpg-com/actions/workflows/lint.yml/badge.svg)](https://github.com/dmnktoe/httpjpg-com/actions/workflows/lint.yml)
 

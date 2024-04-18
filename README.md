@@ -15,6 +15,7 @@
 
 [![CI](https://github.com/dmnktoe/httpjpg-com/actions/workflows/lint.yml/badge.svg)](https://github.com/dmnktoe/httpjpg-com/actions/workflows/lint.yml)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/dmnktoe/httpjpg-com?label=Issues&logo=Github&logoColor=fff&style=flat&labelColor=000&color=e61e8d)
+![GitHub Release](https://img.shields.io/github/v/release/dmnktoe/httpjpg-com?label=Release&logo=Github&logoColor=fff&style=flat&labelColor=000&color=00b4f0)
 
 [View Demo](https://httpjpg.com/) · [Report Bug](https://github.com/dmnktoe/httpjpg-com/issues)
 
@@ -56,3 +57,9 @@ To get started with this project, follow these steps:
 Feedback and contributions are highly appreciated! If you encounter any issues, have suggestions for improvements, or would like to contribute to the project, feel free to open an issue or submit a pull request.
 
 Let's build something amazing together! 🚀
+
+<div align="center">
+
+<img src="https://i.ibb.co/D16wjHg/footer-bg.png" style="width: 60%;">
+
+</div>

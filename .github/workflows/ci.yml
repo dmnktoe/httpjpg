@@ -45,15 +45,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
+
+      - name: 🤌 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: ⎔ Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
+          cache: 'pnpm'
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+        run: pnpm install --frozen-lockfile
 
       - name: 🔎 Type check
         run: pnpm run typecheck
@@ -63,15 +69,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
+
+      - name: 🤌 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: ⎔ Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
+          cache: 'pnpm'
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+        run: pnpm install --frozen-lockfile
 
       - name: 💅 Prettier check
         run: pnpm run format:check
@@ -81,15 +93,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
+
+      - name: 🤌 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: ⎔ Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
+          cache: 'pnpm'
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+        run: pnpm install --frozen-lockfile
 
       - name: 🃏 Run jest
         run: pnpm run test:coverage
@@ -106,15 +124,21 @@ jobs:
     needs: [lint, typecheck, prettier, test]
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
+
+      - name: 🤌 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: ⎔ Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
+          cache: 'pnpm'
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+        run: pnpm install --frozen-lockfile
 
       - name: 🏗 Build
         run: pnpm run build

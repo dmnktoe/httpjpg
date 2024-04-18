@@ -46,6 +46,19 @@ const nextConfig = {
 
 module.exports = nextConfig;
 
+// Redirects
+module.exports = {
+  async redirects() {
+    return [
+      {
+        source: '/home',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
+};
+
 // Injected content via Sentry wizard below
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

@@ -48,8 +48,8 @@
 To get started with this project, follow these steps:
 
 1. Clone this repository to your local machine.
-2. Install dependencies using `yarn install`.
-3. Run the development server with `yarn dev`.
+2. Install dependencies using `pnpm install`.
+3. Run the development server with `pnpm dev`.
 4. Explore the project and customize it to fit your personal portfolio needs.
 5. Deploy your portfolio using your preferred hosting platform.
 

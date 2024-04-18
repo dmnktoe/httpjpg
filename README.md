@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://i.ibb.co/D8hBfm1/http-github-banner.png" style="width: 100%;">
+<img src="https://i.ibb.co/D8hBfm1/http-github-banner.png" style="width: 60%;">
 
 # *ੈ✩‧₊˚༺ httpjpg.com ༻*ੈ✩‧₊˚
 

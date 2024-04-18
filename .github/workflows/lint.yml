@@ -5,6 +5,12 @@ on:
       - main
   pull_request: {}
 
+env:
+  NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  STORYBLOK_TOKEN: ${{ secrets.STORYBLOK_TOKEN }}
+  STORYBLOK_PREVIEW_TOKEN: ${{ secrets.STORYBLOK_PREVIEW_TOKEN }}
+
 concurrency:
   group: ${{ github.job }}-${{ github.ref }}
   cancel-in-progress: true

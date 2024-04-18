@@ -6,14 +6,17 @@
 
 աɛʟƈօʍɛ ȶօ ʍʏ քɛʀֆօռǟʟ քօʀȶʄօʟɨօ քʀօʝɛƈȶ! ȶɦɨֆ քʀօʝɛƈȶ ֆɦօաƈǟֆɛֆ ʍʏ ֆӄɨʟʟֆ, ɛӼքɛʀɨɛռƈɛֆ, ǟռɖ ǟʀȶ քʀօʝɛƈȶֆ ȶɦʀօʊɢɦ ǟ ֆʟɛɛӄ ǟռɖ ʀɛֆքօռֆɨʋɛ աɛɮ ǟքքʟɨƈǟȶɨօռ ɮʊɨʟȶ ʊֆɨռɢ ƈʊȶȶɨռɢ-ɛɖɢɛ ȶɛƈɦռօʟօɢɨɛֆ.
 
-[![CI](https://github.com/dmnktoe/httpjpg-com/actions/workflows/lint.yml/badge.svg)](https://github.com/dmnktoe/httpjpg-com/actions/workflows/lint.yml)
-
 ![Storyblok Badge](https://img.shields.io/badge/Storyblok-09B3AF?logo=storyblok&logoColor=fff&style=flat)
 ![Next.js Badge](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=fff&style=flat)
 ![ESLint Badge](https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=fff&style=flat)
-![Prettier Badge](https://img.shields.io/badge/Prettier-F7B93E?logo=prettier&logoColor=fff&style=flat)
+![Prettier Badge](https://img.shields.io/badge/Prettier-F7B93E?logo=prettier&logoColor=000&style=flat)
 ![Tailwind CSS Badge](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=fff&style=flat)
 ![Storybook Badge](https://img.shields.io/badge/Storybook-FF4785?logo=storybook&logoColor=fff&style=flat)
+
+[![CI](https://github.com/dmnktoe/httpjpg-com/actions/workflows/lint.yml/badge.svg)](https://github.com/dmnktoe/httpjpg-com/actions/workflows/lint.yml)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/dmnktoe/httpjpg-com?label=Issues&logo=Github&logoColor=fff&style=flat&labelColor=000&color=e61e8d)
+
+[View Demo](https://httpjpg.com/) · [Report Bug](https://github.com/dmnktoe/httpjpg-com/issues)
 
 </div>
 

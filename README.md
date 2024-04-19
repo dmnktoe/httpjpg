@@ -6,13 +6,6 @@
 
 աɛʟƈօʍɛ ȶօ ʍʏ քɛʀֆօռǟʟ քօʀȶʄօʟɨօ քʀօʝɛƈȶ! ȶɦɨֆ քʀօʝɛƈȶ ֆɦօաƈǟֆɛֆ ʍʏ ֆӄɨʟʟֆ, ɛӼքɛʀɨɛռƈɛֆ, ǟռɖ ǟʀȶ քʀօʝɛƈȶֆ ȶɦʀօʊɢɦ ǟ ֆʟɛɛӄ ǟռɖ ʀɛֆքօռֆɨʋɛ աɛɮ ǟքքʟɨƈǟȶɨօռ ɮʊɨʟȶ ʊֆɨռɢ ƈʊȶȶɨռɢ-ɛɖɢɛ ȶɛƈɦռօʟօɢɨɛֆ.
 
-![Storyblok Badge](https://img.shields.io/badge/Storyblok-09B3AF?logo=storyblok&logoColor=fff&style=flat)
-![Next.js Badge](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=fff&style=flat)
-![ESLint Badge](https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=fff&style=flat)
-![Prettier Badge](https://img.shields.io/badge/Prettier-F7B93E?logo=prettier&logoColor=000&style=flat)
-![Tailwind CSS Badge](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=fff&style=flat)
-![Storybook Badge](https://img.shields.io/badge/Storybook-FF4785?logo=storybook&logoColor=fff&style=flat)
-
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dmnktoe/httpjpg-com/ci.yml?branch=main&logo=github&logoColor=fff&label=CI&labelColor=000)
 ![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/dmnktoe/httpjpg-com?label=Issues&logo=Github&logoColor=fff&style=flat&labelColor=000&color=e61e8d)
 ![GitHub Release](https://img.shields.io/github/v/release/dmnktoe/httpjpg-com?label=Release&logo=Github&logoColor=fff&style=flat&labelColor=000&color=00b4f0)
@@ -24,7 +17,7 @@
 
 ## Technologies Used
 
-- **Storyblok**: Content management system for easily managing content.
+- ![Storyblok Badge](https://img.shields.io/badge/Storyblok-09B3AF?logo=storyblok&logoColor=fff&style=flat): Content management system for easily managing content.
 - **Next.js 14**: Utilizing the latest version of Next.js for blazing-fast performance and seamless app routing.
 - **App Router**: Enhanced navigation and routing capabilities for smooth user experience.
 - **Turborepo**: Leveraging the high-performance build system for JavaScript and TypeScript codebases, ensuring efficient development workflows.
@@ -43,8 +36,6 @@
 - Component-driven development and testing with Storybook.
 - Continuous integration and deployment workflows set up with GitHub Actions.
 
-Test
-
 ## Getting Started
 
 To get started with this project, follow these steps:
@@ -61,8 +52,12 @@ Feedback and contributions are highly appreciated! If you encounter any issues, 
 
 Let's build something amazing together! 🚀
 
-<div align="center">
-
-<img src="https://i.ibb.co/D16wjHg/footer-bg.png" style="width: 60%;">
-
-</div>
+![PNPM Badge](https://img.shields.io/badge/pnpm-FF3E00?logo=pnpm&logoColor=fff&style=flat)
+![Turborepo Badge](https://img.shields.io/badge/Turborepo-ff1e56?logo=Turborepo&logoColor=fff&style=flat)
+![Next.js Badge](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=fff&style=flat)
+![ESLint Badge](https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=fff&style=flat)
+![Prettier Badge](https://img.shields.io/badge/Prettier-F7B93E?logo=prettier&logoColor=000&style=flat)
+![Tailwind CSS Badge](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=fff&style=flat)
+![Storybook Badge](https://img.shields.io/badge/Storybook-FF4785?logo=storybook&logoColor=fff&style=flat)
+![GitHub Actions Badge](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=fff&style=flat)
+![Commitlint Badge](https://img.shields.io/badge/Commitlint-EE4C2C?logo=commitlint&logoColor=fff&style=flat)

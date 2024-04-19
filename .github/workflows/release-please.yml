@@ -18,3 +18,4 @@ jobs:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           config-file: release-please-config.json
           release-type: node
+          pull-request-header: ":candy: Automated Release PR"

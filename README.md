@@ -17,7 +17,17 @@
 
 ## Technologies Used
 
-- ![Storyblok Badge](https://img.shields.io/badge/Storyblok-09B3AF?logo=storyblok&logoColor=fff&style=flat): Content management system for easily managing content.
+- **TypeScript**: Strongly typed superset of JavaScript for enhanced code quality and developer productivity.
+- **pnpm**: Fast, disk space-efficient package manager for JavaScript projects.
+- **Release Please**: Automated release notes generation and semantic versioning for streamlined project management.
+- **Codecov**: Code coverage reporting tool for tracking and improving code quality.
+- **GitHub**: Version control system for collaborative development and project management.
+- **commitlint**: Linting tool for enforcing conventional commit messages.
+- **Husky**: Git hooks manager for running tasks before commits and pushes.
+- **lint-staged**: Run linters on staged files to ensure clean and consistent code.
+- **Sentry**: Error monitoring and reporting tool for identifying and fixing bugs.
+- **Renovate**: Automated dependency updates for keeping project dependencies up-to-date.
+- **Storyblok**: Content management system for easily managing content.
 - **Next.js 14**: Utilizing the latest version of Next.js for blazing-fast performance and seamless app routing.
 - **App Router**: Enhanced navigation and routing capabilities for smooth user experience.
 - **Turborepo**: Leveraging the high-performance build system for JavaScript and TypeScript codebases, ensuring efficient development workflows.
@@ -35,6 +45,17 @@
 - Codebase maintained and optimized using ESlint and Prettier.
 - Component-driven development and testing with Storybook.
 - Continuous integration and deployment workflows set up with GitHub Actions.
+- Automated dependency updates managed by Renovate.
+- Error monitoring and reporting enabled through Sentry.
+- Code coverage tracking and reporting with Codecov.
+- Automated release notes generation and semantic versioning with Release Please.
+- Conventional commit messages enforced using commitlint.
+- Git hooks configured with Husky for running tasks before commits and pushes.
+- Linters run on staged files using lint-staged for ensuring clean and consistent code.
+- High-performance build system provided by Turborepo for efficient development workflows.
+- Responsive design and mobile optimization for enhanced user experience.
+- Dark mode and light mode themes for personalized user preferences.
+- SEO-friendly and optimized for search engine visibility.
 
 ## Getting Started
 
@@ -51,13 +72,3 @@ To get started with this project, follow these steps:
 Feedback and contributions are highly appreciated! If you encounter any issues, have suggestions for improvements, or would like to contribute to the project, feel free to open an issue or submit a pull request.
 
 Let's build something amazing together! 🚀
-
-![PNPM Badge](https://img.shields.io/badge/pnpm-FF3E00?logo=pnpm&logoColor=fff&style=flat)
-![Turborepo Badge](https://img.shields.io/badge/Turborepo-ff1e56?logo=Turborepo&logoColor=fff&style=flat)
-![Next.js Badge](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=fff&style=flat)
-![ESLint Badge](https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=fff&style=flat)
-![Prettier Badge](https://img.shields.io/badge/Prettier-F7B93E?logo=prettier&logoColor=000&style=flat)
-![Tailwind CSS Badge](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=fff&style=flat)
-![Storybook Badge](https://img.shields.io/badge/Storybook-FF4785?logo=storybook&logoColor=fff&style=flat)
-![GitHub Actions Badge](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=fff&style=flat)
-![Commitlint Badge](https://img.shields.io/badge/Commitlint-EE4C2C?logo=commitlint&logoColor=fff&style=flat)

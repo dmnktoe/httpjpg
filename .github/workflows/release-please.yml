@@ -17,6 +17,3 @@ jobs:
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           release-type: node
-          # See also settings in these files:
-          manifest-file: .github/release-please/.release-please-manifest.json
-          config-file: .github/release-please/.release-please-config.json

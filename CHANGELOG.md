@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/dmnktoe/httpjpg-com/compare/v0.2.1...v0.2.2) (2024-04-19)
+
+
+### :hammer: Refactors
+
+* "include-component-in-tag": false ([a0c728f](https://github.com/dmnktoe/httpjpg-com/commit/a0c728f11080178ca47bca78c1daec382685e54d))
+
 ## [0.2.1](https://github.com/dmnktoe/httpjpg-com/compare/httpjpg-com-v0.2.0...httpjpg-com-v0.2.1) (2024-04-19)
 
 

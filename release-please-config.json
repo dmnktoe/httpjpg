@@ -1,57 +1,28 @@
 {
-  "packages": {
-    ".": {
-      "include-v-in-tag": true,
-      "include-component-in-tag": false,
-      "pull-request-header": ":candy: Automated Release PR",
-      "changelog-sections": [
-        {
-          "type": "feat",
-          "section": ":sparkles: Features"
-        },
-        {
-          "type": "fix",
-          "section": ":bug: Bug Fixes"
-        },
-        {
-          "type": "perf",
-          "section": ":racehorse: Performance Improvements"
-        },
-        {
-          "type": "revert",
-          "section": ":rewind: Reverts"
-        },
-        {
-          "type": "chore",
-          "section": ":broom: Chores"
-        },
-        {
-          "type": "docs",
-          "section": ":books: Documentation"
-        },
-        {
-          "type": "style",
-          "section": ":lipstick: Styles"
-        },
-        {
-          "type": "refactor",
-          "section": ":hammer: Refactors"
-        },
-        {
-          "type": "test",
-          "section": ":rotating_light: Tests",
-          "hidden": true
-        },
-        {
-          "type": "build",
-          "section": ":construction_worker: Build System"
-        },
-        {
-          "type": "ci",
-          "section": ":rocket: Continuous Integration",
-          "hidden": true
-        }
-      ]
+  "extra-files": [],
+  "pull-request-header": ":candy: Automated Release PR",
+  "release-type": "node",
+  "prerelease": false,
+  "changelog-type": "github",
+  "changelog-sections": [
+    { "type": "feat", "section": ":sparkles: Features" },
+    { "type": "fix", "section": ":bug: Bug Fixes" },
+    { "type": "perf", "section": ":racehorse: Performance Improvements" },
+    { "type": "revert", "section": ":rewind: Reverts" },
+    { "type": "chore", "section": ":broom: Chores" },
+    { "type": "docs", "section": ":books: Documentation" },
+    { "type": "style", "section": ":lipstick: Styles" },
+    { "type": "refactor", "section": ":hammer: Refactors" },
+    { "type": "test", "section": ":rotating_light: Tests", "hidden": true },
+    { "type": "build", "section": ":construction_worker: Build System" },
+    {
+      "type": "ci",
+      "section": ":rocket: Continuous Integration",
+      "hidden": true
     }
-  }
+  ],
+  "packages": {
+    ".": {}
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
 }

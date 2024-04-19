@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.1](https://github.com/dmnktoe/httpjpg-com/compare/httpjpg-com-v0.2.0...httpjpg-com-v0.2.1) (2024-04-19)
+
+
+### :rewind: Reverts
+
+* v tag ([307e742](https://github.com/dmnktoe/httpjpg-com/commit/307e74203b123c3972a5e283324ceff58c7fb615))
+
+
+### :broom: Chores
+
+* set `include-component-in-tag` to false ([ab24f71](https://github.com/dmnktoe/httpjpg-com/commit/ab24f710e1b6f0c38dab6ba63503b6ba0427eded))
+
+
+### :hammer: Refactors
+
+* update `.env.example` ([de7761d](https://github.com/dmnktoe/httpjpg-com/commit/de7761d8f9e8f7ff093609e2d7d5486f59c8a94b))
+
 ## [0.2.0](https://github.com/dmnktoe/httpjpg-com/compare/httpjpg-com-v0.1.1...httpjpg-com-v0.2.0) (2024-04-19)
 
 

@@ -89,7 +89,7 @@ export const Image = ({
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               imageAspectRatios[aspectRatio],
-              styles.imageWrapper(isFullHeight)
+              styles.imageWrapper(isFullHeight),
             )}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}

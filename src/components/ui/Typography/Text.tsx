@@ -60,7 +60,7 @@ export const Text = ({
         uppercase ? 'uppercase' : '',
         useDefaultTracking ? 'tracking-normal' : '',
         font === 'accent' ? 'tracking-normal sm:tracking-wide' : '',
-        className
+        className,
       )}
     >
       {children}

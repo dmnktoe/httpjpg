@@ -109,7 +109,7 @@ export const RichText = ({
         !!bgColor && bgColor !== 'none' ? 'rs-p-2 backdrop-blur-sm' : '',
         printColor,
         textAligns[textAlign],
-        className
+        className,
       )}
     >
       {rendered}

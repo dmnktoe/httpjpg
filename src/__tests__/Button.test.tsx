@@ -25,7 +25,7 @@ describe('Button', () => {
     expect(screen.getByText('Test Button')).toHaveClass('relative');
     expect(screen.getByText('Test Button')).toHaveClass('transition-none');
     expect(screen.getByText('Test Button')).toHaveClass(
-      'hover:text-transparent'
+      'hover:text-transparent',
     );
     expect(screen.getByText('Test Button')).toHaveClass('disabled:cursor-wait');
   });
@@ -59,7 +59,7 @@ describe('Button', () => {
     render(
       <Button leftIcon={HiPlus} rightIcon={HiArrowRight}>
         Test Button
-      </Button>
+      </Button>,
     );
     expect(screen.getByText('Test Button')).toBeInTheDocument();
   });

@@ -75,7 +75,7 @@ async function getStoryData({
   try {
     const story: ISbResult = await storyblokApi.get(
       `cdn/stories/${slug}`,
-      sbParams
+      sbParams,
     );
     return story;
   } catch (error) {

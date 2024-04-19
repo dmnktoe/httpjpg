@@ -4,7 +4,7 @@
  * @returns An object containing the width and height of the image, or null if the URL is invalid.
  */
 export const getSbImageSize = (
-  imageSrc: string
+  imageSrc: string,
 ): { width: number; height: number } | null => {
   if (imageSrc?.startsWith('http')) {
     const imageSize = {

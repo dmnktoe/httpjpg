@@ -138,7 +138,7 @@ export async function generateMetadata({
     return meta;
   } catch (error) {
     Sentry.captureException(
-      new Error(`Metadata error: ${error} for ${params.slug}`)
+      new Error(`Metadata error: ${error} for ${params.slug}`),
     );
   }
 

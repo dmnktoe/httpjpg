@@ -56,7 +56,7 @@ export const Container = ({
       mt ? marginTops[mt] : '',
       mb ? marginBottoms[mb] : '',
       width ? styles.widths[width] : '',
-      className
+      className,
     )}
   >
     {children}

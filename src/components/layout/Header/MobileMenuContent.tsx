@@ -15,8 +15,8 @@ export const MobileMenuContent = ({ data }: HeaderProps) => {
               item.isExternal
                 ? item.link.cached_url
                 : item.link.cached_url === 'home'
-                ? '/'
-                : `/${item.link.cached_url}`
+                  ? '/'
+                  : `/${item.link.cached_url}`
             }
             className='hover:underline'
           >

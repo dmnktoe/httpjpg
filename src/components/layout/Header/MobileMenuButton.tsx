@@ -15,7 +15,7 @@ export const MobileMenuButton = ({ setMobileMenuIsOpen }: MenuButtonProps) => {
           className={cn(
             'navbar-burger',
             'flex items-center justify-center rounded-full bg-black bg-opacity-75 p-3 text-white backdrop-blur-md transition duration-200',
-            'hover:scale-95 hover:bg-black hover:text-white active:scale-75 active:bg-neutral-700'
+            'hover:scale-95 hover:bg-black hover:text-white active:scale-75 active:bg-neutral-700',
           )}
           onClick={() => setMobileMenuIsOpen((open) => !open)}
           data-testid='navigationButton'

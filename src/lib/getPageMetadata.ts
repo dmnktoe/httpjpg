@@ -59,7 +59,7 @@ export const getPageMetadata = ({
   const heroImageCropped = getProcessedImage(
     filename || bgFilename,
     '1200x630',
-    focus || bgFocus
+    focus || bgFocus,
   );
 
   /**

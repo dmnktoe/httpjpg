@@ -60,7 +60,7 @@ export const WidthBox = ({
         <div
           className={cn(
             styles.widthClasses[width]?.column || '',
-            align === 'center' ? styles.widthClasses[width]?.columnStart : ''
+            align === 'center' ? styles.widthClasses[width]?.columnStart : '',
           )}
         >
           {children}

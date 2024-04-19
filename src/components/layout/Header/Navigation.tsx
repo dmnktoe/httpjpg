@@ -26,8 +26,8 @@ export const Navigation = ({ data }: HeaderProps) => {
                     item.isExternal
                       ? item.link.cached_url
                       : item.link.cached_url === 'home'
-                      ? '/'
-                      : `/${item.link.cached_url}`
+                        ? '/'
+                        : `/${item.link.cached_url}`
                   }
                   className='font-accent hover:underline'
                 >

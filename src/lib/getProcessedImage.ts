@@ -18,7 +18,7 @@ export const getProcessedImage = (
   imageSrc = '',
   crop = '',
   focus = '',
-  filters = ''
+  filters = '',
 ): string => {
   if (!imageSrc) {
     return '';

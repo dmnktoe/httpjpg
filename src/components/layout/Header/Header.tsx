@@ -46,14 +46,14 @@ export const Header = ({ data }: HeaderProps) => {
             <div
               className={cn(
                 'fixed inset-0 z-50 flex max-h-full w-full max-w-full flex-row transition-all duration-200 ease-in-out md:justify-end md:bg-[#EBE8E8]/30 md:backdrop-blur-[5px] xl:hidden',
-                mobileMenuClass
+                mobileMenuClass,
               )}
             >
               <div
                 data-testid='navigationMenu'
                 className={cn(
                   'animate-fadeInRight m-0 flex h-[calc(100vh)] w-full overflow-hidden transition-all duration-200 ease-in-out md:w-96',
-                  navigationMenuClass
+                  navigationMenuClass,
                 )}
               >
                 <MobileMenuContent data={data} />

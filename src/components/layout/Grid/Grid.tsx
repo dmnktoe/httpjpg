@@ -84,7 +84,7 @@ export const Grid = ({
       mb ? marginBottoms[mb] : '',
       my ? marginVerticals[my] : '',
       isList ? 'list-unstyled *:mb-0' : '',
-      className
+      className,
     )}
   >
     {children}

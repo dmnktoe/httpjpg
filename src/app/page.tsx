@@ -97,10 +97,10 @@ export async function getHeaderData() {
 
   const filterStoriesByTag = (
     tag: string,
-    stories: { tag_list: string | string[] }[]
+    stories: { tag_list: string | string[] }[],
   ) =>
     stories.filter(
-      (story) => Array.isArray(story.tag_list) && story.tag_list.includes(tag)
+      (story) => Array.isArray(story.tag_list) && story.tag_list.includes(tag),
     );
 
   const personal = filterStoriesByTag('Personal', work.data.stories);

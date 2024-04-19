@@ -16,6 +16,7 @@ jobs:
       - uses: google-github-actions/release-please-action@v4
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-          config-file: release-please-config.json
           release-type: node
-          pull-request-header: ":candy: Automated Release PR"
+          # See also settings in these files:
+          manifest-file: .github/release-please/.release-please-manifest.json
+          config-file: .github/release-please/.release-please-config.json

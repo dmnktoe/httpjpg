@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.2.3](https://github.com/dmnktoe/httpjpg-com/compare/v0.2.2...v0.2.3) (2024-04-21)
+
+
+### :bug: Bug Fixes
+
+* **deps:** update dependency lucide-react to ^0.372.0 ([a4e5474](https://github.com/dmnktoe/httpjpg-com/commit/a4e54741df5ed3e3389fd96c0e6f21ad8555220f))
+* enclose typescript error undefined ([93b1e32](https://github.com/dmnktoe/httpjpg-com/commit/93b1e32dc0634d67f3ea5e1194f18fd939f1f907))
+* **Header:** close mobile navigation on menu item click ([39c2079](https://github.com/dmnktoe/httpjpg-com/commit/39c20791ede258638522158c6e7342c2202c9b4b))
+* typescript issue undefined ([9b92ced](https://github.com/dmnktoe/httpjpg-com/commit/9b92ced83f18d59a7130370a9cc4a2b17ad46f36))
+
+
+### :broom: Chores
+
+* **deps:** update actions/setup-node action to v4 ([121e7d7](https://github.com/dmnktoe/httpjpg-com/commit/121e7d72d325b43bb1d18bc8cc4c98427084029a))
+* **deps:** update dependency eslint-config-prettier to v9 ([b49c14c](https://github.com/dmnktoe/httpjpg-com/commit/b49c14cdeff13fa9e1305ffaa387411c90514a4c))
+* **deps:** update dependency next-router-mock to ^0.9.0 ([895f54c](https://github.com/dmnktoe/httpjpg-com/commit/895f54c57920f148feae219c6eb98ab09c7feb6a))
+* **deps:** update typescript-eslint/eslint-plugin ([6c7a4b7](https://github.com/dmnktoe/httpjpg-com/commit/6c7a4b7fd01d73a9e990a93089b12bbe431f8b6d))
+
+
+### :books: Documentation
+
+* remove badges ([a7f6e0c](https://github.com/dmnktoe/httpjpg-com/commit/a7f6e0c5eb0d732aaa098cf5564ac23f5fb8d931))
+* update README; clean header ([036c049](https://github.com/dmnktoe/httpjpg-com/commit/036c049ac6dda1dea45dfcdf155878cc93e0b5c7))
+
 ## [0.2.2](https://github.com/dmnktoe/httpjpg-com/compare/v0.2.1...v0.2.2) (2024-04-19)
 
 

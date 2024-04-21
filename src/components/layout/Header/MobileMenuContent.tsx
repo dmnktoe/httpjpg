@@ -9,7 +9,9 @@ export const MobileMenuContent = ({
   setMobileMenuIsOpen,
 }: HeaderProps) => {
   const handleMenuItemClick = () => {
-    setMobileMenuIsOpen(false);
+    if (setMobileMenuIsOpen) {
+      setMobileMenuIsOpen(false);
+    }
   };
   return (
     <div className='pointer-events-auto flex flex-grow flex-col items-stretch bg-white text-black md:m-6 md:rounded-2xl md:bg-white md:shadow-xl'>

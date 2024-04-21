@@ -4,7 +4,13 @@ import { HeaderProps } from '@/components/layout/Header/Header';
 import { Divider } from '@/components/ui/Divider';
 import UnstyledLink from '@/components/ui/Links/UnstyledLink';
 
-export const MobileMenuContent = ({ data }: HeaderProps) => {
+export const MobileMenuContent = ({
+  data,
+  setMobileMenuIsOpen,
+}: HeaderProps) => {
+  const handleMenuItemClick = () => {
+    setMobileMenuIsOpen(false);
+  };
   return (
     <div className='pointer-events-auto flex flex-grow flex-col items-stretch bg-white text-black md:m-6 md:rounded-2xl md:bg-white md:shadow-xl'>
       <div className='flex flex-1 flex-grow flex-col p-2 text-2xl tracking-tight md:p-6'>
@@ -19,6 +25,7 @@ export const MobileMenuContent = ({ data }: HeaderProps) => {
                 : `/${item.link.cached_url}`
             }
             className='hover:underline'
+            onClick={handleMenuItemClick}
           >
             {item.name}
           </UnstyledLink>
@@ -29,6 +36,7 @@ export const MobileMenuContent = ({ data }: HeaderProps) => {
             key={work.uuid as string}
             href={`/work/${work.slug}`}
             className='line-clamp-1 hover:underline'
+            onClick={handleMenuItemClick}
           >
             {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
             {/* @ts-ignore */}

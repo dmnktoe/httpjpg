@@ -24,6 +24,7 @@ export interface HeaderProps {
     personal: SbBlokData[];
     client: SbBlokData[];
   };
+  setMobileMenuIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const Header = ({ data }: HeaderProps) => {
@@ -56,7 +57,10 @@ export const Header = ({ data }: HeaderProps) => {
                   navigationMenuClass
                 )}
               >
-                <MobileMenuContent data={data} />
+                <MobileMenuContent
+                  data={data}
+                  setMobileMenuIsOpen={setMobileMenuIsOpen}
+                />
               </div>
             </div>
           </div>

@@ -9,8 +9,8 @@ export default {
         'footer-texture': "url('/images/footer_bg.png')",
       },
       fontFamily: {
-        primary: ['Manrope', ...defaultTheme.fontFamily.sans],
-        sans: ['Manrope', ...defaultTheme.fontFamily.sans],
+        primary: ['Impact', ...defaultTheme.fontFamily.sans],
+        sans: ['Impact', ...defaultTheme.fontFamily.sans],
         serif: '"Serif Babe"',
         accent: '"1251"',
         mono: '"Monaspace Neon"',

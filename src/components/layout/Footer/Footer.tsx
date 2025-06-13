@@ -11,7 +11,7 @@ export const Footer = () => {
           <br />
           *ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚
           <br />
-          ༺yl33ly httpjpg dmnktoe te3shay༻
+          ༺yl33ly httpjpg icon.icon.iconn te3shay༻
         </p>
       </div>
     </footer>

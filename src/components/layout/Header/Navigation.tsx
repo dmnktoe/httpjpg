@@ -43,7 +43,7 @@ export const Navigation = ({ data }: HeaderProps) => {
           </div>
         </div>
         <div className='xl:w-1/3'>
-          <span className='font-bold'>⇝TH1𝓃𝑔S</span>
+          <span className='font-bold'>⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S</span>
           <br />
           {data.personal.map((work) => (
             <UnstyledLink
@@ -62,7 +62,7 @@ export const Navigation = ({ data }: HeaderProps) => {
           </UnstyledLink>
         </div>
         <div className='xl:w-1/3'>
-          <span className='font-bold'>⇝𝒞𝓁LI€NT</span>
+          <span className='font-bold'>⇝ᵣₑcꫀₙₜ 𝒞𝓁LI€NT</span>
           <br />
           {data.client.map((work) => (
             <UnstyledLink

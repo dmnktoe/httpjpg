@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/dmnktoe/httpjpg/compare/v0.2.3...v0.2.4) (2025-11-04)
+
+
+### :broom: Chores
+
+* idk ([62f3cd8](https://github.com/dmnktoe/httpjpg/commit/62f3cd809f6ca12869b1e71ffeb6a7b273fbbbde))
+
 ## [0.2.3](https://github.com/dmnktoe/httpjpg-com/compare/v0.2.2...v0.2.3) (2024-04-21)
 
 

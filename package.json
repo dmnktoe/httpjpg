@@ -1,75 +1,20 @@
 {
   "name": "httpjpg-com",
-  "version": "0.2.3",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "eslint src --fix && pnpm format",
-    "lint:strict": "eslint --max-warnings=0 src",
-    "typecheck": "tsc --noEmit --incremental false",
-    "test:watch": "jest --watch",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "format": "prettier -w .",
-    "format:check": "prettier -c .",
-    "postbuild": "next-sitemap --config next-sitemap.config.js",
-    "prepare": "husky install",
-    "https-proxy-start": "local-ssl-proxy --source 3010 --target 3000 --cert ./dev/localhost.pem --key ./dev/localhost-key.pem"
-  },
-  "dependencies": {
-    "@sentry/nextjs": "^7.102.0",
-    "@storyblok/react": "^3.0.8",
-    "@types/jest": "^29.5.12",
-    "clsx": "^2.0.0",
-    "framer-motion": "^11.0.5",
-    "lucide-react": "^0.372.0",
-    "next": "^14.0.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-icons": "^4.12.0",
-    "storyblok-js-client": "^6.6.7",
-    "storyblok-rich-text-react-renderer-ts": "^3.2.0",
-    "swiper": "^11.0.5",
-    "tailwind-merge": "^2.1.0"
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types"
   },
   "devDependencies": {
-    "@commitlint/cli": "^16.3.0",
-    "@commitlint/config-conventional": "^16.2.4",
-    "@svgr/webpack": "^8.1.0",
-    "@tailwindcss/forms": "^0.5.7",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@types/react": "^18.2.45",
-    "@types/testing-library__jest-dom": "^5.14.9",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "autoprefixer": "^10.4.16",
-    "eslint": "^8.56.0",
-    "eslint-config-next": "^14.0.4",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-simple-import-sort": "^7.0.0",
-    "eslint-plugin-unused-imports": "^3.1.0",
-    "husky": "^7.0.4",
-    "jest": "^27.5.1",
-    "lint-staged": "^12.5.0",
-    "next-router-mock": "^0.9.0",
-    "next-sitemap": "^2.5.28",
-    "postcss": "^8.4.32",
-    "prettier": "^2.8.8",
-    "prettier-plugin-tailwindcss": "^0.1.13",
-    "tailwindcss": "^3.3.6",
-    "typescript": "^4.9.5"
+    "prettier": "^3.6.2",
+    "turbo": "^2.6.0",
+    "typescript": "5.9.2"
   },
-  "lint-staged": {
-    "**/*.{js,jsx,ts,tsx}": [
-      "eslint --max-warnings=0",
-      "prettier -w"
-    ],
-    "**/*.{json,css,scss,md,webmanifest}": [
-      "prettier -w"
-    ]
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
   }
 }

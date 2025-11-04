@@ -1,74 +1,135 @@
-<div align="center">
+# Turborepo starter
 
-<img src="https://i.ibb.co/D8hBfm1/http-github-banner.png" style="width: 60%;">
+This Turborepo starter is maintained by the Turborepo core team.
 
-# *ੈ✩‧₊˚༺ httpjpg.com ༻*ੈ✩‧₊˚
+## Using this example
 
-աɛʟƈօʍɛ ȶօ ʍʏ քɛʀֆօռǟʟ քօʀȶʄօʟɨօ քʀօʝɛƈȶ! ȶɦɨֆ քʀօʝɛƈȶ ֆɦօաƈǟֆɛֆ ʍʏ ֆӄɨʟʟֆ, ɛӼքɛʀɨɛռƈɛֆ, ǟռɖ ǟʀȶ քʀօʝɛƈȶֆ ȶɦʀօʊɢɦ ǟ ֆʟɛɛӄ ǟռɖ ʀɛֆքօռֆɨʋɛ աɛɮ ǟքքʟɨƈǟȶɨօռ ɮʊɨʟȶ ʊֆɨռɢ ƈʊȶȶɨռɢ-ɛɖɢɛ ȶɛƈɦռօʟօɢɨɛֆ.
+Run the following command:
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dmnktoe/httpjpg-com/ci.yml?branch=main&logo=github&logoColor=fff&label=CI&labelColor=000)
-![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/dmnktoe/httpjpg-com?label=Issues&logo=Github&logoColor=fff&style=flat&labelColor=000&color=e61e8d)
-![GitHub Release](https://img.shields.io/github/v/release/dmnktoe/httpjpg-com?label=Release&logo=Github&logoColor=fff&style=flat&labelColor=000&color=00b4f0)
-![Codecov](https://img.shields.io/codecov/c/github/dmnktoe/httpjpg-com?logo=codecov&logoColor=fff&label=Coverage&labelColor=000)
+```sh
+npx create-turbo@latest
+```
 
-[View Demo](https://httpjpg.com/) · [Report Bug](https://github.com/dmnktoe/httpjpg-com/issues)
+## What's inside?
 
-</div>
+This Turborepo includes the following packages/apps:
 
-## Technologies Used
+### Apps and Packages
 
-- **TypeScript**: Strongly typed superset of JavaScript for enhanced code quality and developer productivity.
-- **pnpm**: Fast, disk space-efficient package manager for JavaScript projects.
-- **Release Please**: Automated release notes generation and semantic versioning for streamlined project management.
-- **Codecov**: Code coverage reporting tool for tracking and improving code quality.
-- **GitHub**: Version control system for collaborative development and project management.
-- **commitlint**: Linting tool for enforcing conventional commit messages.
-- **Husky**: Git hooks manager for running tasks before commits and pushes.
-- **lint-staged**: Run linters on staged files to ensure clean and consistent code.
-- **Sentry**: Error monitoring and reporting tool for identifying and fixing bugs.
-- **Renovate**: Automated dependency updates for keeping project dependencies up-to-date.
-- **Storyblok**: Content management system for easily managing content.
-- **Next.js 14**: Utilizing the latest version of Next.js for blazing-fast performance and seamless app routing.
-- **App Router**: Enhanced navigation and routing capabilities for smooth user experience.
-- **Turborepo**: Leveraging the high-performance build system for JavaScript and TypeScript codebases, ensuring efficient development workflows.
-- **Tailwind CSS**: Rapid UI development facilitated by a utility-first CSS framework, allowing for quick styling and customization.
-- **ESlint and Prettier**: Ensuring clean, consistent, and error-free code through linting and formatting tools (utilizing eslint-config-custom package).
-- **Storybook**: Creating, testing, and showcasing components to streamline development and improve code quality.
-- **GitHub Actions**: Pre-configured actions for smooth workflows, automating tasks such as testing, building, and deployment.
+- `docs`: a [Next.js](https://nextjs.org/) app
+- `web`: another [Next.js](https://nextjs.org/) app
+- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
-## Features
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
-- Interactive and engaging user interface designed with Tailwind CSS.
-- Seamless navigation powered by Next.js app routing.
-- Dynamic content management facilitated by Storyblok.
-- Showcase of personal art projects alongside professional work.
-- Codebase maintained and optimized using ESlint and Prettier.
-- Component-driven development and testing with Storybook.
-- Continuous integration and deployment workflows set up with GitHub Actions.
-- Automated dependency updates managed by Renovate.
-- Error monitoring and reporting enabled through Sentry.
-- Code coverage tracking and reporting with Codecov.
-- Automated release notes generation and semantic versioning with Release Please.
-- Conventional commit messages enforced using commitlint.
-- Git hooks configured with Husky for running tasks before commits and pushes.
-- Linters run on staged files using lint-staged for ensuring clean and consistent code.
-- High-performance build system provided by Turborepo for efficient development workflows.
-- Responsive design and mobile optimization for enhanced user experience.
-- Dark mode and light mode themes for personalized user preferences.
-- SEO-friendly and optimized for search engine visibility.
+### Utilities
 
-## Getting Started
+This Turborepo has some additional tools already setup for you:
 
-To get started with this project, follow these steps:
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
 
-1. Clone this repository to your local machine.
-2. Install dependencies using `pnpm install`.
-3. Run the development server with `pnpm dev`.
-4. Explore the project and customize it to fit your personal portfolio needs.
-5. Deploy your portfolio using your preferred hosting platform.
+### Build
 
-## Feedback and Contributions
+To build all apps and packages, run the following command:
 
-Feedback and contributions are highly appreciated! If you encounter any issues, have suggestions for improvements, or would like to contribute to the project, feel free to open an issue or submit a pull request.
+```
+cd my-turborepo
 
-Let's build something amazing together! 🚀
+# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+turbo build
+
+# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+npx turbo build
+yarn dlx turbo build
+pnpm exec turbo build
+```
+
+You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+
+```
+# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+turbo build --filter=docs
+
+# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+npx turbo build --filter=docs
+yarn exec turbo build --filter=docs
+pnpm exec turbo build --filter=docs
+```
+
+### Develop
+
+To develop all apps and packages, run the following command:
+
+```
+cd my-turborepo
+
+# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+turbo dev
+
+# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+npx turbo dev
+yarn exec turbo dev
+pnpm exec turbo dev
+```
+
+You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+
+```
+# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+turbo dev --filter=web
+
+# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+npx turbo dev --filter=web
+yarn exec turbo dev --filter=web
+pnpm exec turbo dev --filter=web
+```
+
+### Remote Caching
+
+> [!TIP]
+> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+
+Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+
+By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+
+```
+cd my-turborepo
+
+# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+turbo login
+
+# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+npx turbo login
+yarn exec turbo login
+pnpm exec turbo login
+```
+
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+
+```
+# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
+turbo link
+
+# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
+npx turbo link
+yarn exec turbo link
+pnpm exec turbo link
+```
+
+## Useful Links
+
+Learn more about the power of Turborepo:
+
+- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
+- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
+- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
+- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
+- [Configuration Options](https://turborepo.com/docs/reference/configuration)
+- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)

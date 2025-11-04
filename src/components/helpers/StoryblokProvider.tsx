@@ -4,6 +4,7 @@ import { apiPlugin, storyblokInit } from '@storyblok/react/rsc';
 import React from 'react';
 
 import ComponentNotFound from '@/components/storyblok/ComponentNotFound';
+import { SbContainer } from '@/components/storyblok/SbContainer';
 import { SbGrid } from '@/components/storyblok/SbGrid';
 import { SbImage } from '@/components/storyblok/SbImage';
 import { SbPageBasic } from '@/components/storyblok/SbPageBasic';
@@ -14,6 +15,7 @@ import { SbText } from '@/components/storyblok/SbText';
 import { SbWorkList } from '@/components/storyblok/SbWorkList';
 
 export const components = {
+  container: SbContainer,
   grid: SbGrid,
   image: SbImage,
   page: SbPageBasic,

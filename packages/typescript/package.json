@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "@biomejs/biome": "2.3.3"
+  },
+  "name": "@httpjpg/tsconfig",
+  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "0.0.0"
+}

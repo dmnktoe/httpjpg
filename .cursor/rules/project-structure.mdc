@@ -25,7 +25,6 @@ The repository is organized into top-level `apps` and `packages` directories, ea
 All backend, utility, and shared logic is modularized under `packages/`, each with its own responsibility:
 
 - `packages/env` – Environment variables and config.
-- `packages/eslint-config-custom` – Custom eslint rules for workspace.
 - `packages/fonts` – Font files and configuration.
 - `packages/middleware-chain` – Composable middlewares.
 - `packages/next-api-fetcher` – Next.js API fetch logic.

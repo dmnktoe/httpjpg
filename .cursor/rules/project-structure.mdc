@@ -1,0 +1,58 @@
+---
+description: >
+  This rule describes the basic project structure of the repository and where to find or add certain parts of the application.
+
+globs:
+  - "apps/**/*"
+  - "packages/**/*"
+  - "*"
+alwaysApply: true
+---
+
+# Project Structure
+
+The repository is organized into top-level `apps` and `packages` directories, each with focused subfolders.
+
+## Apps
+
+- `apps/docs` – Project documentation.
+- `apps/storybook-ui` – Storybook UI preview app.
+- `apps/web` – Main application.
+  All frontend-only code (Next.js App Router) goes in `apps/web/app`.
+
+## Packages
+
+All backend, utility, and shared logic is modularized under `packages/`, each with its own responsibility:
+
+- `packages/env` – Environment variables and config.
+- `packages/eslint-config-custom` – Custom eslint rules for workspace.
+- `packages/fonts` – Font files and configuration.
+- `packages/middleware-chain` – Composable middlewares.
+- `packages/next-api-fetcher` – Next.js API fetch logic.
+- `packages/next-link` – Next.js link helpers.
+- `packages/next-themes` – Theme management.
+- `packages/storyblok-api` – Storyblok API integration logic.
+- `packages/storyblok-preview` – Preview mode handling for Storyblok.
+- `packages/storyblok-revalidate` – Revalidation logic for Storyblok content.
+- `packages/storyblok-richtext` – Helpers for rich text rendering from Storyblok.
+- `packages/storyblok-seo` – SEO utilities connected to Storyblok data.
+- `packages/storyblok-setup` – Storyblok SDK setup.
+- `packages/storyblok-ui` – Storyblok-powered UI components, adapted from ui package.
+- `packages/storyblok-utils` – Utility functions for Storyblok.
+- `packages/storybook` – Storybook config and stories for design system.
+- `packages/tailwind-config` – Shared TailwindCSS configuration.
+- `packages/tsconfig` – Shared TypeScript configuration.
+- `packages/ui` – Shared React components and UI primitives.
+- `packages/utils` – General-purpose utilities and helper functions.
+- `config` contains the application configuration
+
+## Guidelines
+
+- Place all frontend-only Next.js code in `apps/web/app`.
+- Documentation and UI previews go in `apps/docs` and `apps/storybook-ui`.
+- Add backend logic and reusable packages only in the relevant `packages/` subfolder.
+- Each functionality is isolated as its own package—follow this convention for new domains.
+
+---
+
+Use this structure as the reference for creating, organizing, and extending features within the monorepo.

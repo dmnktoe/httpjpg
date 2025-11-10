@@ -92,8 +92,8 @@ devDependencies:
     specifier: ^9.0.0
     version: 9.1.0(eslint@8.56.0)
   eslint-plugin-simple-import-sort:
-    specifier: ^7.0.0
-    version: 7.0.0(eslint@8.56.0)
+    specifier: ^12.0.0
+    version: 12.1.1(eslint@8.56.0)
   eslint-plugin-unused-imports:
     specifier: ^3.1.0
     version: 3.1.0(@typescript-eslint/eslint-plugin@6.21.0)(eslint@8.56.0)
@@ -4360,8 +4360,8 @@ packages:
       string.prototype.matchall: 4.0.8
     dev: true
 
-  /eslint-plugin-simple-import-sort@7.0.0(eslint@8.56.0):
-    resolution: {integrity: sha512-U3vEDB5zhYPNfxT5TYR7u01dboFZp+HNpnGhkDB2g/2E4wZ/g1Q9Ton8UwCLfRV9yAKyYqDh62oHOamvkFxsvw==}
+  /eslint-plugin-simple-import-sort@12.1.1(eslint@8.56.0):
+    resolution: {integrity: sha512-6nuzu4xwQtE3332Uz0to+TxDQYRLTKRESSc2hefVT48Zc8JthmN23Gx9lnYhu0FtkRSL1oxny3kJ2aveVhmOVA==}
     peerDependencies:
       eslint: '>=5.0.0'
     dependencies:

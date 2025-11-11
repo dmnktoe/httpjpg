@@ -1,6 +1,6 @@
+import path from "node:path";
 import type { StorybookConfig } from "@storybook/react-vite";
 import wyw from "@wyw-in-js/vite";
-import path from "path";
 import { mergeConfig } from "vite";
 
 const config: StorybookConfig = {

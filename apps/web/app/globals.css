@@ -1,0 +1,45 @@
+/* CSS Custom Properties from Design Tokens */
+/* Auto-generated from @httpjpg/tokens - do not edit manually */
+@import "@httpjpg/tokens/dist/tokens.css";
+
+/* Minimal CSS Reset */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		"Helvetica Neue", Arial, sans-serif;
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	min-height: 100vh;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+}
+
+/* Focus styles */
+:focus-visible {
+	outline: 2px solid var(--color-black);
+	outline-offset: 2px;
+}
+
+main {
+	background: rgba(255, 255, 255, 0.95);
+	border-radius: 1rem;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+	color: #333;
+	margin: 2rem;
+}
+
+p {
+	line-height: 1.8;
+	color: #555;
+}

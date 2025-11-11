@@ -1,8 +1,7 @@
+import { config } from "@httpjpg/config";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import "./globals.css";
-import "cropperjs/dist/cropper.css";
-import { config } from "@repo/config";
 
 export const metadata: Metadata = {
   title: {
@@ -10,8 +9,13 @@ export const metadata: Metadata = {
     default: config.appName,
     template: `%s | ${config.appName}`,
   },
+  description: "Personal portfolio showcasing my skills and projects",
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {
-  return children;
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
 }

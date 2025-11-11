@@ -1,17 +1,7 @@
 {
   "extends": "@httpjpg/tsconfig/nextjs.json",
   "compilerOptions": {
-    "plugins": [{ "name": "next" }],
-    "paths": {
-      "@analytics": ["./modules/analytics"],
-      "@marketing/*": ["./modules/marketing/*"],
-      "@saas/*": ["./modules/saas/*"],
-      "@ui/*": ["./modules/ui/*"],
-      "@i18n": ["./modules/i18n"],
-      "@i18n/*": ["./modules/i18n/*"],
-      "@shared/*": ["./modules/shared/*"],
-      "content-collections": ["./.content-collections/generated"]
-    }
+    "plugins": [{ "name": "next" }]
   },
   "include": [
     "**/*.ts",

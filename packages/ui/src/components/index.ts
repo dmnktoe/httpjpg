@@ -5,3 +5,4 @@
 
 export { Button, type ButtonProps } from "./button";
 export { Headline, type HeadlineProps } from "./headline";
+export { Paragraph, type ParagraphProps } from "./paragraph";

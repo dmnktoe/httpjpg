@@ -8,4 +8,3 @@
  */
 
 export * from "./components/index";
-export { globals } from "./styles/global";

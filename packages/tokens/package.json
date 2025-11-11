@@ -9,9 +9,11 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
-    }
+    },
+    "./dist/tokens.css": "./dist/tokens.css"
   },
   "scripts": {
+    "build": "tsx scripts/generate-css-vars.ts",
     "type-check": "tsc --noEmit",
     "lint": "biome lint .",
     "lint:fix": "biome lint . --fix"
@@ -19,6 +21,7 @@
   "devDependencies": {
     "@httpjpg/tsconfig": "workspace:*",
     "@biomejs/biome": "2.3.4",
+    "tsx": "^4.19.2",
     "typescript": "5.9.2"
   }
 }

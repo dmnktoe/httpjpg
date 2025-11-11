@@ -1,3 +1,5 @@
+"use client";
+
 import { borderRadius, colors, spacing, typography } from "@httpjpg/tokens";
 import { css, cx } from "@linaria/core";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
@@ -70,22 +72,22 @@ const buttonBase = css`
 `;
 
 const variantPrimary = css`
-  background: linear-gradient(135deg, ${colors.neutral[900]} 0%, ${colors.black} 100%);
+  background: linear-gradient(135deg, ${colors.primary[500]} 0%, ${colors.primary[600]} 100%);
   color: ${colors.white};
-  border: 2px solid ${colors.black};
+  border: 2px solid ${colors.primary[700]};
   box-shadow:
-    0 4px 14px rgba(0, 0, 0, 0.4),
-    0 2px 6px rgba(0, 0, 0, 0.2),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.3),
-    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+    0 4px 14px rgba(244, 63, 94, 0.4),
+    0 2px 6px rgba(244, 63, 94, 0.2),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2);
 
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, ${colors.neutral[800]} 0%, ${colors.neutral[900]} 100%);
+    background: linear-gradient(135deg, ${colors.primary[400]} 0%, ${colors.primary[500]} 100%);
     box-shadow:
-      0 6px 20px rgba(0, 0, 0, 0.5),
-      0 3px 8px rgba(0, 0, 0, 0.3),
-      inset 0 -2px 4px rgba(0, 0, 0, 0.3),
-      inset 0 1px 2px rgba(255, 255, 255, 0.2);
+      0 6px 20px rgba(244, 63, 94, 0.5),
+      0 3px 8px rgba(244, 63, 94, 0.3),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+      inset 0 1px 2px rgba(255, 255, 255, 0.3);
   }
 `;
 

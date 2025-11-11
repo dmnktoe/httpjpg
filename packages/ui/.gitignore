@@ -1,0 +1,11 @@
+# Linaria generated files
+.linaria-cache/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+

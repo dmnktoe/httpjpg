@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
+# @httpjpg/storybook
+
+Component development and documentation workspace for the `@httpjpg/ui` package.
+
+## Overview
+
+This Storybook instance provides an interactive environment for developing, testing, and documenting UI components from the `@httpjpg/ui` package. It's configured to work seamlessly with Linaria's zero-runtime CSS-in-JS approach via the `@wyw-in-js/vite` plugin.
 
 ## Getting Started
 
-First, run the development server:
+Start the Storybook development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This will launch Storybook at [http://localhost:6006](http://localhost:6006).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load Inter, a custom Google Font.
+- **Component Playground**: Interactive controls for all component props
+- **Live Documentation**: Auto-generated docs from TypeScript types and JSDoc comments
+- **Hot Module Replacement**: Instant updates when you edit component code
+- **Linaria Integration**: Zero-runtime CSS extraction with full HMR support
+
+## Adding New Stories
+
+Create a new `.stories.tsx` file in the `stories/` directory:
+
+```tsx
+import { YourComponent } from "@httpjpg/ui";
+import type { Meta, StoryObj } from "@storybook/react";
+
+const meta = {
+  title: "UI/YourComponent",
+  component: YourComponent,
+  parameters: {
+    layout: "centered",
+  },
+  tags: ["autodocs"],
+  argTypes: {
+    // Define interactive controls here
+  },
+} satisfies Meta<typeof YourComponent>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  args: {
+    // Default props
+  },
+};
+```
+
+## Configuration
+
+Key configuration files:
+
+- `.storybook/main.ts` - Main Storybook configuration with Vite and Linaria setup
+- `.storybook/preview.ts` - Global decorators and parameters
+- `tsconfig.json` - TypeScript configuration
+
+## Troubleshooting
+
+### Linaria Styles Not Extracting
+
+Make sure you're using **static CSS** with `css()` from `@linaria/core`. Avoid template literal interpolations with runtime functions:
+
+```tsx
+// ✅ Good - Static CSS
+const button = css`
+  background: #000;
+  color: #fff;
+`;
+
+// ❌ Bad - Runtime interpolation
+const button = css`
+  background: ${(props) => props.color};
+`;
+```
+
+### Cache Issues
+
+Clear all caches and restart:
+
+```bash
+rm -rf node_modules/.cache .cache
+pnpm dev
+```
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Storybook Documentation](https://storybook.js.org/docs)
+- [Linaria Documentation](https://linaria.dev)
+- [wyw-in-js GitHub](https://github.com/Andarist/wyw-in-js)

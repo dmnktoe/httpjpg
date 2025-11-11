@@ -2,7 +2,7 @@
 description: >
   Code generation and architectural rules for the “httpjpg” project – a minimalistic, brutalistic
   artist portfolio built as a Turborepo monorepo with Next.js (App Router), TypeScript, React,
-  Storyblok CMS, Shadcn UI, Radix UI, and TailwindCSS.
+  Storyblok CMS and Linaria (CSS-in-JS).
 
 globs:
   - "apps/**/*.{ts,tsx}"
@@ -51,9 +51,7 @@ All content and layout data are managed via **Storyblok**, while the frontend us
 - Use `generateMetadata` and `revalidate` for SEO and caching.
 
 ### 4. UI Libraries Integration
-- **Shadcn UI** for composable UI components.
-- **Radix UI** primitives for accessibility and logic.
-- **TailwindCSS** for layout and typography.
+- **Linaria** (css-in-js) for layout and typography.
 - Use a **monochromatic palette** (black, white, neutral).
 - Avoid shadows, rounded corners, and gradients unless conceptually justified.
 

@@ -4,7 +4,8 @@
   "private": true,
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "config"
   ],
   "packageManager": "pnpm@9.0.0",
   "engines": {
@@ -30,11 +31,11 @@
     "typescript": "5.9.2"
   },
   "lint-staged": {
-    "apps/**/*.{ts,tsx,js,jsx}": [
-      "turbo run lint --filter=./apps/*"
+    "**/*.{ts,tsx,js,jsx}": [
+      "biome check --write --no-errors-on-unmatched"
     ],
-    "packages/**/*.{ts,tsx,js,jsx}": [
-      "turbo run lint --filter=./packages/*"
+    "**/*.json": [
+      "biome format --write"
     ]
   }
 }

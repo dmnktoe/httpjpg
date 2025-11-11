@@ -1,3 +1,5 @@
 {
-  "extends": "@httpjpg/tsconfig/base.json"
+  "extends": "../packages/typescript/base.json",
+  "include": ["*.ts"],
+  "exclude": ["node_modules"]
 }

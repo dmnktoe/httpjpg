@@ -1,0 +1,11 @@
+# Storybook build output
+storybook-static/
+
+# Linaria cache
+.linaria-cache/
+
+# Dependencies
+node_modules/
+
+# Build info
+*.tsbuildinfo

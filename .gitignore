@@ -36,3 +36,8 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Linaria/wyw-in-js
+.linaria-cache
+*.linaria.css
+*.wyw-in-js.css

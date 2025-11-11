@@ -9,7 +9,7 @@ import type { Meta, StoryObj } from "@storybook/react";
  * balanced text wrapping and polymorphic rendering.
  */
 const meta = {
-  title: "UI/Headline",
+  title: "Typography/Headline",
   component: Headline,
   parameters: {
     layout: "centered",

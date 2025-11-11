@@ -8,7 +8,7 @@ import type { Meta, StoryObj } from "@storybook/react";
  * accessibility support including keyboard navigation and focus states.
  */
 const meta = {
-  title: "UI/Button",
+  title: "Components/Button",
   component: Button,
   parameters: {
     layout: "centered",

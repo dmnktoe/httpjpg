@@ -3,6 +3,11 @@ import type { StorybookConfig } from "@storybook/react-vite";
 import wyw from "@wyw-in-js/vite";
 import { mergeConfig } from "vite";
 
+// Resolve paths from the storybook working directory
+const rootPath = path.resolve(process.cwd(), "../..");
+const uiPackagePath = path.resolve(rootPath, "packages/ui/src");
+const tokensPath = path.resolve(rootPath, "packages/tokens/src");
+
 const config: StorybookConfig = {
   stories: ["../stories/**/*.stories.@(ts|tsx)"],
   addons: [
@@ -18,16 +23,15 @@ const config: StorybookConfig = {
     disableTelemetry: true,
   },
   async viteFinal(config) {
-    // Use process.cwd() to get the workspace root from the storybook app directory
-    const rootPath = path.resolve(process.cwd(), "../..");
-    const uiPackagePath = path.resolve(rootPath, "packages/ui");
-    const tokensPath = path.resolve(rootPath, "packages/tokens/src");
-
     return mergeConfig(config, {
       plugins: [
         wyw({
           include: ["**/*.{ts,tsx}"],
           exclude: ["**/node_modules/**", "**/.storybook/**", "**/dist/**"],
+          displayName: true,
+          classNameSlug: (hash: string, title: string) => {
+            return `httpjpg-${title}-${hash}`;
+          },
           babelOptions: {
             presets: [
               [
@@ -41,7 +45,7 @@ const config: StorybookConfig = {
       ],
       resolve: {
         alias: {
-          "@httpjpg/ui": path.resolve(uiPackagePath, "src"),
+          "@httpjpg/ui": uiPackagePath,
           "@httpjpg/tokens": tokensPath,
         },
         preserveSymlinks: false,

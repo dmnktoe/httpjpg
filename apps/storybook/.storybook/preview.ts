@@ -1,6 +1,6 @@
 import type { Preview } from "@storybook/react";
-// Import global CSS custom properties and reset
-import "@httpjpg/ui/styles/global";
+// Import global CSS custom properties from tokens
+import "../../../packages/tokens/dist/tokens.css";
 
 /**
  * Storybook preview configuration

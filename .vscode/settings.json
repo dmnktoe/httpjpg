@@ -17,5 +17,5 @@
   "[json]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
-  "cSpell.words": ["httpjpg"]
+  "cSpell.words": ["httpjpg", "linaria"]
 }

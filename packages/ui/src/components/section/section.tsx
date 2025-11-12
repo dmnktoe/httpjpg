@@ -2,7 +2,7 @@
 
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { forwardRef } from "react";
-import type { SystemStyleObject } from "../../../styled-system/types";
+import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 
 export interface SectionProps

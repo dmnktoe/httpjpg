@@ -1,5 +1,6 @@
 import { AspectRatio } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { ASPECT_RATIO_OPTIONS } from "./storybook-helpers";
 
 /**
  * AspectRatio component stories
@@ -15,8 +16,8 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     ratio: {
-      control: { type: "select" },
-      options: ["1/1", "4/3", "16/9", "21/9", "9/16"],
+      control: { type: "select" as const },
+      options: ASPECT_RATIO_OPTIONS,
       description: "Aspect ratio preset",
       table: {
         defaultValue: { summary: "16/9" },
@@ -29,7 +30,37 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * 16:9 aspect ratio (widescreen)
+ * Basic AspectRatio with live controls
+ */
+export const Basic: Story = {
+  args: {
+    ratio: "16/9",
+    children: (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "white",
+          fontSize: "2rem",
+        }}
+      >
+        16:9
+      </div>
+    ),
+  },
+  render: (args) => (
+    <div style={{ maxWidth: "800px" }}>
+      <AspectRatio ratio={args.ratio}>{args.children}</AspectRatio>
+    </div>
+  ),
+};
+
+/**
+ * 16:9 aspect ratio (widescreen) - static example
  */
 export const Widescreen: Story = {
   render: () => (

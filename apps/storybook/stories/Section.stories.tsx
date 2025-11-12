@@ -1,5 +1,6 @@
 import { Box, Container, Headline, Paragraph, Section } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { extendedSpacingArgType } from "./storybook-helpers";
 
 /**
  * Section component stories
@@ -15,38 +16,10 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    pt: {
-      control: { type: "select" },
-      options: [0, 1, 2, 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96],
-      description: "Padding top (using token scale)",
-      table: {
-        defaultValue: { summary: "16" },
-      },
-    },
-    pb: {
-      control: { type: "select" },
-      options: [0, 1, 2, 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96],
-      description: "Padding bottom (using token scale)",
-      table: {
-        defaultValue: { summary: "16" },
-      },
-    },
-    pl: {
-      control: { type: "select" },
-      options: [0, 1, 2, 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96],
-      description: "Padding left (using token scale)",
-      table: {
-        defaultValue: { summary: "0" },
-      },
-    },
-    pr: {
-      control: { type: "select" },
-      options: [0, 1, 2, 4, 6, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96],
-      description: "Padding right (using token scale)",
-      table: {
-        defaultValue: { summary: "0" },
-      },
-    },
+    pt: extendedSpacingArgType("Padding top (using token scale)", "16"),
+    pb: extendedSpacingArgType("Padding bottom (using token scale)", "16"),
+    pl: extendedSpacingArgType("Padding left (using token scale)", "0"),
+    pr: extendedSpacingArgType("Padding right (using token scale)", "0"),
     fullWidth: {
       control: "boolean",
       description: "Full width",
@@ -70,7 +43,7 @@ export const Basic: Story = {
     children: (
       <Container>
         <Headline level={2}>Section Title</Headline>
-        <Paragraph style={{ marginTop: "1rem" }}>
+        <Paragraph css={{ mt: "4" }}>
           This is a basic section with default padding. Sections help organize
           content with consistent vertical rhythm.
         </Paragraph>
@@ -88,21 +61,16 @@ export const LargePadding: Story = {
     pb: 32,
     children: (
       <Container>
-        <Box style={{ textAlign: "center" }}>
+        <Box css={{ textAlign: "center" }}>
           <Box
-            style={{
-              fontFamily: "monospace",
-              fontSize: "0.75rem",
-              marginBottom: "1rem",
-              opacity: 0.5,
-            }}
+            css={{ fontFamily: "mono", fontSize: "xs", mb: "4", opacity: 0.5 }}
           >
             HERO SECTION
           </Box>
-          <Headline level={1} style={{ fontSize: "3rem", margin: 0 }}>
+          <Headline level={1} css={{ fontSize: "3rem", m: 0 }}>
             LARGE SPACING
           </Headline>
-          <Paragraph style={{ marginTop: "1.5rem", fontSize: "1.125rem" }}>
+          <Paragraph css={{ mt: "6", fontSize: "lg" }}>
             Use large padding for hero sections and important content areas.
           </Paragraph>
         </Box>
@@ -121,7 +89,7 @@ export const Compact: Story = {
     children: (
       <Container>
         <Headline level={3}>Compact Section</Headline>
-        <Paragraph style={{ marginTop: "0.5rem" }}>
+        <Paragraph css={{ mt: "2" }}>
           Minimal padding for compact layouts.
         </Paragraph>
       </Container>
@@ -130,7 +98,7 @@ export const Compact: Story = {
 };
 
 /**
- * Section with horizontal padding
+ * With horizontal padding
  */
 export const WithHorizontalPadding: Story = {
   args: {
@@ -141,7 +109,7 @@ export const WithHorizontalPadding: Story = {
     children: (
       <Box>
         <Headline level={2}>Section with Horizontal Padding</Headline>
-        <Paragraph style={{ marginTop: "1rem" }}>
+        <Paragraph css={{ mt: "4" }}>
           This section has horizontal padding in addition to vertical padding.
         </Paragraph>
       </Box>
@@ -192,6 +160,9 @@ export const DarkSection: Story = {
  * Multiple sections with different backgrounds
  */
 export const MultipleSections: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <>
       <Section pt={24} pb={24} style={{ background: "white" }}>
@@ -270,6 +241,9 @@ export const MultipleSections: Story = {
  * Brutalist portfolio section
  */
 export const BrutalistPortfolio: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <Section pt={32} pb={32} style={{ background: "white" }}>
       <Container>

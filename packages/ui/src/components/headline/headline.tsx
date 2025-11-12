@@ -1,9 +1,11 @@
 "use client";
 
 import type { HTMLAttributes, ReactNode } from "react";
-import { cva, cx } from "../../../styled-system/css";
+import { css, cva, cx } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 
-export interface HeadlineProps extends HTMLAttributes<HTMLHeadingElement> {
+export interface HeadlineProps
+  extends Omit<HTMLAttributes<HTMLHeadingElement>, "css"> {
   /**
    * Semantic heading level (affects sizing)
    * @default 1
@@ -18,6 +20,10 @@ export interface HeadlineProps extends HTMLAttributes<HTMLHeadingElement> {
    * @default Matches level (h1, h2, h3)
    */
   as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  /**
+   * Custom styles using Panda CSS SystemStyleObject
+   */
+  css?: SystemStyleObject;
 }
 
 const headlineRecipe = cva({
@@ -104,13 +110,20 @@ export function Headline({
   children,
   as,
   className,
+  css: cssProp,
   ...props
 }: HeadlineProps) {
   const element = as ?? getDefaultElement(level);
   const Element = element;
 
+  const styles = cx(
+    headlineRecipe({ level }),
+    cssProp && css(cssProp),
+    className,
+  );
+
   return (
-    <Element className={cx(headlineRecipe({ level }), className)} {...props}>
+    <Element className={styles} {...props}>
       {children}
     </Element>
   );

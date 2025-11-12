@@ -2,7 +2,7 @@
 
 import type { HTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
-import type { SystemStyleObject } from "../../../styled-system/types";
+import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 
 export interface StackProps extends HTMLAttributes<HTMLDivElement> {

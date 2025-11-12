@@ -1,14 +1,6 @@
 "use client";
 
-import { spacing } from "@httpjpg/tokens";
-import { Button } from "@httpjpg/ui";
-import { css } from "@linaria/core";
-
-const buttonGroup = css`
-  display: flex;
-  gap: ${spacing[4]};
-  flex-wrap: wrap;
-`;
+import { Button, HStack } from "@httpjpg/ui";
 
 /**
  * Client Component wrapper for interactive buttons
@@ -16,7 +8,7 @@ const buttonGroup = css`
  */
 export function InteractiveButtons() {
   return (
-    <div className={buttonGroup}>
+    <HStack gap="4" wrap>
       <Button onClick={() => alert("Primary clicked!")}>Primary Button</Button>
       <Button variant="secondary" onClick={() => alert("Secondary clicked!")}>
         Secondary Button
@@ -24,6 +16,6 @@ export function InteractiveButtons() {
       <Button variant="outline" size="lg" onClick={() => alert("Outline!")}>
         Outline Large
       </Button>
-    </div>
+    </HStack>
   );
 }

@@ -11,7 +11,7 @@
  * ```
  */
 
-import { css } from "../../styled-system/css";
+import { css } from "styled-system/css";
 
 /**
  * Global CSS class for focus-visible styling
@@ -54,4 +54,4 @@ export const globalStyles = `
  * Re-export Panda CSS global styles
  * This ensures the CSS reset and base styles are included
  */
-export { css } from "../../styled-system/css";
+export { css } from "styled-system/css";

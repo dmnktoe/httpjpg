@@ -2,8 +2,8 @@
 
 import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
 import { forwardRef } from "react";
-import { css } from "../../../styled-system/css";
-import type { SystemStyleObject } from "../../../styled-system/types";
+import { css } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 
 type PolymorphicRef<C extends ElementType> = ComponentPropsWithoutRef<C>["ref"];
 

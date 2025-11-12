@@ -1,5 +1,6 @@
 import { Container, Headline, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { CONTAINER_SIZE_OPTIONS, spacingArgType } from "./storybook-helpers";
 
 /**
  * Container component stories
@@ -15,21 +16,14 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     size: {
-      control: { type: "select" },
-      options: ["sm", "md", "lg", "xl", "2xl", "fluid"],
+      control: { type: "select" as const },
+      options: CONTAINER_SIZE_OPTIONS,
       description: "Container size preset",
       table: {
         defaultValue: { summary: "lg" },
       },
     },
-    px: {
-      control: { type: "select" },
-      options: [0, 2, 4, 6, 8],
-      description: "Horizontal padding",
-      table: {
-        defaultValue: { summary: "4" },
-      },
-    },
+    px: spacingArgType("Horizontal padding", "4"),
     center: {
       control: "boolean",
       description: "Center the container",

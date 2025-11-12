@@ -1,9 +1,11 @@
 "use client";
 
 import type { HTMLAttributes, ReactNode } from "react";
-import { css, cva, cx } from "../../../styled-system/css";
+import { css, cva, cx } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 
-export interface ParagraphProps extends HTMLAttributes<HTMLParagraphElement> {
+export interface ParagraphProps
+  extends Omit<HTMLAttributes<HTMLParagraphElement>, "css"> {
   /**
    * Visual size variant
    * @default "md"
@@ -23,6 +25,10 @@ export interface ParagraphProps extends HTMLAttributes<HTMLParagraphElement> {
    * @default true
    */
   maxWidth?: boolean;
+  /**
+   * Custom styles using Panda CSS SystemStyleObject
+   */
+  css?: SystemStyleObject;
 }
 
 const paragraphRecipe = cva({
@@ -126,16 +132,17 @@ export function Paragraph({
   maxWidth = true,
   children,
   className,
+  css: cssProp,
   ...props
 }: ParagraphProps) {
+  const styles = cx(
+    css(paragraphRecipe.raw({ size, align, maxWidth })),
+    cssProp && css(cssProp),
+    className,
+  );
+
   return (
-    <p
-      className={cx(
-        css(paragraphRecipe.raw({ size, align, maxWidth })),
-        className,
-      )}
-      {...props}
-    >
+    <p className={styles} {...props}>
       {children}
     </p>
   );

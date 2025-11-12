@@ -1,5 +1,6 @@
 import { Box, Image, VStack } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { OBJECT_FIT_OPTIONS } from "./storybook-helpers";
 
 /**
  * Image component stories
@@ -28,8 +29,8 @@ const meta = {
       description: "Copyright text",
     },
     copyrightPosition: {
-      control: { type: "select" },
-      options: ["inline", "below", "overlay"],
+      control: { type: "select" as const },
+      options: ["inline", "below", "overlay"] as const,
       description: "Copyright text position",
       table: {
         defaultValue: { summary: "inline" },
@@ -43,8 +44,8 @@ const meta = {
       },
     },
     objectFit: {
-      control: { type: "select" },
-      options: ["cover", "contain", "fill", "none", "scale-down"],
+      control: { type: "select" as const },
+      options: OBJECT_FIT_OPTIONS,
       description: "Object fit property",
       table: {
         defaultValue: { summary: "cover" },

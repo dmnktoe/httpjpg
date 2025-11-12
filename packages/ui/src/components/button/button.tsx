@@ -2,9 +2,11 @@
 
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
-import { cva, cx } from "../../../styled-system/css";
+import { css, cva, cx } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "css"> {
   /**
    * Visual style variant
    * @default "primary"
@@ -19,6 +21,10 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
    * Button content
    */
   children: ReactNode;
+  /**
+   * Custom styles using Panda CSS SystemStyleObject
+   */
+  css?: SystemStyleObject;
 }
 
 const buttonRecipe = cva({
@@ -205,17 +211,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       type = "button",
       className,
+      css: cssProp,
       ...props
     },
     ref,
   ) {
+    const styles = cx(
+      buttonRecipe({ variant, size }),
+      cssProp && css(cssProp),
+      className,
+    );
+
     return (
-      <button
-        ref={ref}
-        type={type}
-        className={cx(buttonRecipe({ variant, size }), className)}
-        {...props}
-      >
+      <button ref={ref} type={type} className={styles} {...props}>
         {children}
       </button>
     );

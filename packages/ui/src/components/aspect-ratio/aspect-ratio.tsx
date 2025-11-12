@@ -2,9 +2,11 @@
 
 import type { HTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
+import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 
-export interface AspectRatioProps extends HTMLAttributes<HTMLDivElement> {
+export interface AspectRatioProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "css"> {
   /**
    * AspectRatio content
    */
@@ -14,6 +16,10 @@ export interface AspectRatioProps extends HTMLAttributes<HTMLDivElement> {
    * @default "16/9"
    */
   ratio?: "1/1" | "4/3" | "16/9" | "21/9" | "9/16" | number;
+  /**
+   * Custom styles using Panda CSS SystemStyleObject
+   */
+  css?: SystemStyleObject;
 }
 
 const getRatioValue = (ratio: AspectRatioProps["ratio"]): string => {
@@ -46,31 +52,33 @@ const getRatioValue = (ratio: AspectRatioProps["ratio"]): string => {
  * ```
  */
 export const AspectRatio = forwardRef<HTMLDivElement, AspectRatioProps>(
-  ({ children, ratio = "16/9", className, style, ...props }, ref) => {
+  ({ children, ratio = "16/9", className, css: cssProp, ...props }, ref) => {
+    const ratioValue = getRatioValue(ratio);
+
     return (
       <Box
         ref={ref}
         className={className}
-        style={{
+        css={{
           position: "relative",
-          width: "100%",
+          w: "100%",
           boxSizing: "border-box",
-          aspectRatio: getRatioValue(ratio),
-          ...style,
+          ...cssProp,
         }}
+        style={{ aspectRatio: ratioValue }}
         {...props}
       >
-        <div
-          style={{
+        <Box
+          css={{
             position: "absolute",
             top: 0,
             left: 0,
-            width: "100%",
-            height: "100%",
+            w: "100%",
+            h: "100%",
           }}
         >
           {children}
-        </div>
+        </Box>
       </Box>
     );
   },

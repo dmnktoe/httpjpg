@@ -7,6 +7,15 @@ import {
 } from "@httpjpg/tokens";
 import { defineConfig } from "@pandacss/dev";
 
+// Generate spacing values from tokens for safelist
+const spacingValues = Object.keys(spacing).map(Number);
+
+// Generate grid column values (1-12 columns)
+const gridColumns = Array.from(
+  { length: 12 },
+  (_, i) => `repeat(${i + 1}, 1fr)`,
+);
+
 /**
  * Helper function to convert token objects to Panda CSS token format
  */
@@ -29,10 +38,57 @@ export default defineConfig({
   preflight: true,
 
   // Where to look for your css declarations
-  include: ["./src/**/*.{ts,tsx,js,jsx}"],
+  include: [
+    "./src/**/*.{ts,tsx,js,jsx}",
+    "../../apps/storybook/stories/**/*.{ts,tsx}",
+  ],
 
   // Files to exclude
   exclude: [],
+
+  // Safelist - only for component props that are dynamic (via Storybook controls, etc.)
+  // Most styling is now done via css prop which is statically extracted
+  staticCss: {
+    css: [
+      {
+        properties: {
+          // Stack component props (used in Storybook Playground controls)
+          justifyContent: [
+            "start",
+            "center",
+            "end",
+            "space-between",
+            "space-around",
+            "space-evenly",
+          ],
+          alignItems: ["start", "center", "end", "stretch", "baseline"],
+          flexDirection: ["row", "column"],
+          flexWrap: ["wrap", "nowrap"],
+
+          // All spacing token values (auto-generated from design tokens)
+          gap: spacingValues,
+          marginTop: spacingValues,
+          marginBottom: spacingValues,
+          marginLeft: spacingValues,
+          marginRight: spacingValues,
+          paddingTop: spacingValues,
+          paddingBottom: spacingValues,
+          paddingLeft: spacingValues,
+          paddingRight: spacingValues,
+
+          // Grid component columns prop (auto-generated 1-12 + auto-fit)
+          gridTemplateColumns: [
+            ...gridColumns,
+            "repeat(auto-fit, minmax(200px, 1fr))",
+          ],
+
+          // Divider component props
+          borderTopStyle: ["solid", "dashed", "dotted"],
+          borderBottomStyle: ["solid", "dashed", "dotted"],
+        },
+      },
+    ],
+  },
 
   // Conditions for responsive design and interactions
   conditions: {
@@ -122,9 +178,9 @@ export default defineConfig({
   // JSX Framework
   jsxFramework: "react",
 
-  // Optimize for production
+  // Optimize for production AND development (better caching)
   minify: true,
-  hash: process.env.NODE_ENV === "production",
+  hash: true, // Enable hash for better long-term caching
 
   // Utilities configuration
   utilities: {

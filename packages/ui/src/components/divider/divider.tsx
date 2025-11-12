@@ -2,7 +2,7 @@
 
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { forwardRef } from "react";
-import type { SystemStyleObject } from "../../../styled-system/types";
+import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 
 export interface DividerProps
@@ -30,7 +30,7 @@ export interface DividerProps
    * Divider thickness (for solid/dashed/dotted variants)
    * @default "1px"
    */
-  thickness?: "1px" | "2px" | "3px" | "4px";
+  thickness?: string;
   /**
    * Divider color (Panda color token)
    * @default "neutral.300"
@@ -135,15 +135,13 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
         css={{
           m: 0,
           flexShrink: 0,
-          w: orientation === "horizontal" ? "full" : thickness,
-          h: orientation === "horizontal" ? thickness : "full",
+          w: orientation === "horizontal" ? "full" : undefined,
+          h: orientation === "horizontal" ? undefined : "full",
           minH: orientation === "vertical" ? "20px" : undefined,
-          borderTopWidth: orientation === "horizontal" ? thickness : undefined,
           borderTopStyle:
             orientation === "horizontal" ? borderStyle : undefined,
           borderTopColor:
             orientation === "horizontal" ? dividerColor : undefined,
-          borderLeftWidth: orientation === "vertical" ? thickness : undefined,
           borderLeftStyle: orientation === "vertical" ? borderStyle : undefined,
           borderLeftColor:
             orientation === "vertical" ? dividerColor : undefined,
@@ -152,6 +150,13 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
           ml: orientation === "vertical" ? dividerSpacing : undefined,
           mr: orientation === "vertical" ? dividerSpacing : undefined,
           ...cssProp,
+        }}
+        style={{
+          // thickness must be inline style - it's a dynamic CSS value
+          width: orientation === "vertical" ? thickness : undefined,
+          height: orientation === "horizontal" ? thickness : undefined,
+          borderTopWidth: orientation === "horizontal" ? thickness : undefined,
+          borderLeftWidth: orientation === "vertical" ? thickness : undefined,
         }}
         {...props}
       />

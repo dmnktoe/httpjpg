@@ -7,6 +7,12 @@ import {
   Paragraph,
 } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import {
+  alignArgType,
+  GRID_COLUMN_OPTIONS,
+  justifyArgType,
+  spacingArgType,
+} from "./storybook-helpers";
 
 /**
  * Grid component stories
@@ -23,37 +29,16 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     columns: {
-      control: { type: "select" },
-      options: [1, 2, 3, 4, 6, 12, "auto"],
+      control: { type: "select" as const },
+      options: GRID_COLUMN_OPTIONS,
       description: "Number of columns in the grid",
       table: {
         defaultValue: { summary: "12" },
       },
     },
-    gap: {
-      control: { type: "select" },
-      options: ["0", "1", "2", "4", "6", "8", "12", "16"],
-      description: "Gap between grid items (using spacing tokens)",
-      table: {
-        defaultValue: { summary: "4" },
-      },
-    },
-    align: {
-      control: { type: "select" },
-      options: ["start", "center", "end", "stretch"],
-      description: "Alignment of items",
-      table: {
-        defaultValue: { summary: "stretch" },
-      },
-    },
-    justify: {
-      control: { type: "select" },
-      options: ["start", "center", "end", "stretch"],
-      description: "Justification of items",
-      table: {
-        defaultValue: { summary: "start" },
-      },
-    },
+    gap: spacingArgType("Gap between grid items (using spacing tokens)", "4"),
+    align: alignArgType("Alignment of items", "stretch"),
+    justify: justifyArgType("Justification of items", "start"),
   },
 } satisfies Meta<typeof Grid>;
 
@@ -65,30 +50,31 @@ type Story = StoryObj<typeof meta>;
  */
 export const Basic: Story = {
   args: {
+    children: null,
     columns: 3,
     gap: 6,
   },
   render: (args) => (
-    <Grid {...args} style={{ padding: "2rem" }}>
+    <Grid {...args} css={{ p: "8" }}>
       <AspectRatio ratio="4/3">
         <img
           src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop"
           alt="Architecture"
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          style={{ objectFit: "cover" }}
         />
       </AspectRatio>
       <AspectRatio ratio="4/3">
         <img
           src="https://images.unsplash.com/photo-1618556450991-2f1af64e8191?w=800&auto=format&fit=crop"
           alt="Minimalist"
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          style={{ objectFit: "cover" }}
         />
       </AspectRatio>
       <AspectRatio ratio="4/3">
         <img
           src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=800&auto=format&fit=crop"
           alt="Abstract"
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          style={{ objectFit: "cover" }}
         />
       </AspectRatio>
     </Grid>
@@ -100,41 +86,32 @@ export const Basic: Story = {
  */
 export const MagazineLayout: Story = {
   args: {
+    children: null,
     columns: 12,
     gap: 6,
   },
   render: (args) => (
-    <Grid {...args} style={{ background: "white", padding: "4rem 2rem" }}>
+    <Grid {...args} css={{ bg: "white", p: "16 8" }}>
       {/* Hero Image - Clean & Bold */}
       <GridItem colSpan={10} colStart={2}>
         <AspectRatio ratio="21/9">
           <img
             src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=1600&auto=format&fit=crop"
             alt="Hero"
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              filter: "grayscale(100%)",
-            }}
+            style={{ objectFit: "cover", filter: "grayscale(100%)" }}
           />
         </AspectRatio>
       </GridItem>
 
       {/* Project Title - Minimal with spacing */}
       <GridItem colSpan={6} colStart={4}>
-        <Box style={{ marginTop: "6rem" }}>
+        <Box css={{ mt: "24" }}>
           <Box
-            style={{
-              fontFamily: "monospace",
-              fontSize: "0.75rem",
-              marginBottom: "1rem",
-              opacity: 0.5,
-            }}
+            css={{ fontFamily: "mono", fontSize: "xs", mb: "4", opacity: 0.5 }}
           >
             01 / PROJECT
           </Box>
-          <Headline level={2} style={{ fontSize: "2.5rem", lineHeight: 1.2 }}>
+          <Headline level={2} css={{ fontSize: "2.5rem", lineHeight: 1.2 }}>
             Creative Direction
           </Headline>
         </Box>
@@ -142,12 +119,12 @@ export const MagazineLayout: Story = {
 
       {/* Main Image - Offset */}
       <GridItem colSpan={7} colStart={2}>
-        <Box style={{ marginTop: "4rem" }}>
+        <Box css={{ mt: "16" }}>
           <AspectRatio ratio="4/3">
             <img
               src="https://images.unsplash.com/photo-1618556450991-2f1af64e8191?w=1200&auto=format&fit=crop"
               alt="Main Project"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              style={{ objectFit: "cover" }}
             />
           </AspectRatio>
         </Box>
@@ -156,13 +133,14 @@ export const MagazineLayout: Story = {
       {/* Text Block - Asymmetric */}
       <GridItem colSpan={4} colStart={9}>
         <Box
-          style={{
-            marginTop: "8rem",
-            paddingLeft: "2rem",
-            borderLeft: "2px solid black",
+          css={{
+            mt: "32",
+            pl: "8",
+            borderLeft: "2px solid",
+            borderColor: "black",
           }}
         >
-          <Paragraph style={{ fontSize: "0.875rem", lineHeight: 1.8 }}>
+          <Paragraph css={{ fontSize: "sm", lineHeight: 1.8 }}>
             Minimalist brutalism focuses on whitespace, bold typography, and
             strategic use of negative space to create visual hierarchy.
           </Paragraph>
@@ -171,14 +149,12 @@ export const MagazineLayout: Story = {
 
       {/* Two Images - Side by Side with space */}
       <GridItem colSpan={5} colStart={3}>
-        <Box style={{ marginTop: "6rem" }}>
+        <Box css={{ mt: "24" }}>
           <AspectRatio ratio="1/1">
             <img
               src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop"
               alt="Detail 1"
               style={{
-                width: "100%",
-                height: "100%",
                 objectFit: "cover",
                 filter: "grayscale(100%) contrast(1.2)",
               }}
@@ -188,17 +164,12 @@ export const MagazineLayout: Story = {
       </GridItem>
 
       <GridItem colSpan={5} colStart={8}>
-        <Box style={{ marginTop: "10rem" }}>
+        <Box css={{ mt: "40" }}>
           <AspectRatio ratio="1/1">
             <img
               src="https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?w=800&auto=format&fit=crop"
               alt="Detail 2"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                border: "2px solid black",
-              }}
+              style={{ objectFit: "cover" }}
             />
           </AspectRatio>
         </Box>
@@ -207,15 +178,16 @@ export const MagazineLayout: Story = {
       {/* Quote/Statement - Full width with margins */}
       <GridItem colSpan={8} colStart={3}>
         <Box
-          style={{
-            marginTop: "8rem",
-            paddingTop: "3rem",
-            paddingBottom: "3rem",
-            borderTop: "1px solid #e5e5e5",
-            borderBottom: "1px solid #e5e5e5",
+          css={{
+            mt: "32",
+            pt: "12",
+            pb: "12",
+            borderTop: "1px solid",
+            borderBottom: "1px solid",
+            borderColor: "neutral.200",
           }}
         >
-          <Headline level={3} style={{ fontSize: "1.5rem", fontWeight: 400 }}>
+          <Headline level={3}>
             "Less is more, but impact is everything"
           </Headline>
         </Box>
@@ -223,23 +195,23 @@ export const MagazineLayout: Story = {
 
       {/* Small Image - Far right */}
       <GridItem colSpan={4} colStart={9}>
-        <Box style={{ marginTop: "4rem", position: "relative" }}>
+        <Box css={{ mt: "16", position: "relative" }}>
           <AspectRatio ratio="16/9">
             <img
               src="https://images.unsplash.com/photo-1618172193622-ae2d025f4032?w=800&auto=format&fit=crop"
               alt="Detail 3"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              style={{ objectFit: "cover" }}
             />
           </AspectRatio>
           <Box
-            style={{
+            css={{
               position: "absolute",
-              bottom: "1rem",
-              right: "1rem",
-              fontFamily: "monospace",
-              fontSize: "0.75rem",
-              background: "white",
-              padding: "0.25rem 0.5rem",
+              bottom: "4",
+              right: "4",
+              fontFamily: "mono",
+              fontSize: "xs",
+              bg: "white",
+              p: "1 2",
             }}
           >
             02
@@ -248,44 +220,30 @@ export const MagazineLayout: Story = {
       </GridItem>
 
       {/* Details - Clean list */}
-      <GridItem colSpan={3} colStart={2}>
-        <Box style={{ marginTop: "8rem" }}>
-          <Box
-            style={{
-              fontFamily: "monospace",
-              fontSize: "0.75rem",
-              marginBottom: "1.5rem",
-              opacity: 0.5,
-            }}
-          >
-            DETAILS
-          </Box>
-          <Box
-            style={{
-              fontSize: "0.875rem",
-              lineHeight: 2,
-            }}
-          >
-            Client: Studio XYZ
-            <br />
-            Year: 2025
-            <br />
-            Type: Digital
-          </Box>
+      <GridItem colSpan={3} colStart={2} css={{ mt: "32" }}>
+        <Box
+          css={{ fontFamily: "mono", fontSize: "xs", mb: "6", opacity: 0.5 }}
+        >
+          DETAILS
+        </Box>
+        <Box css={{ fontSize: "sm", lineHeight: 2 }}>
+          Client: Studio XYZ
+          <br />
+          Year: 2025
+          <br />
+          Type: Digital
         </Box>
       </GridItem>
 
       {/* Wide Image - Bottom */}
-      <GridItem colSpan={9} colStart={2}>
-        <Box style={{ marginTop: "6rem", marginBottom: "4rem" }}>
-          <AspectRatio ratio="21/9">
-            <img
-              src="https://images.unsplash.com/photo-1618005198914-c1b89531a13e?w=1600&auto=format&fit=crop"
-              alt="Wide Shot"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          </AspectRatio>
-        </Box>
+      <GridItem colSpan={9} colStart={2} css={{ mt: "24", mb: "16" }}>
+        <AspectRatio ratio="21/9">
+          <img
+            src="https://images.unsplash.com/photo-1618005198914-c1b89531a13e?w=1600&auto=format&fit=crop"
+            alt="Wide Shot"
+            style={{ objectFit: "cover" }}
+          />
+        </AspectRatio>
       </GridItem>
     </Grid>
   ),
@@ -296,21 +254,20 @@ export const MagazineLayout: Story = {
  */
 export const OverlappingLayout: Story = {
   args: {
+    children: null,
     columns: 12,
     gap: 6,
   },
   render: (args) => (
-    <Grid {...args} style={{ padding: "4rem 2rem", background: "white" }}>
+    <Grid {...args} css={{ p: "16 8", bg: "white" }}>
       {/* Large Hero Image with Text Overlay */}
       <GridItem colSpan={11} colStart={1}>
-        <Box style={{ position: "relative" }}>
+        <Box css={{ position: "relative" }}>
           <AspectRatio ratio="21/9">
             <img
               src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&auto=format&fit=crop"
               alt="Architecture hero"
               style={{
-                width: "100%",
-                height: "100%",
                 objectFit: "cover",
                 filter: "grayscale(100%)",
               }}
@@ -318,22 +275,22 @@ export const OverlappingLayout: Story = {
           </AspectRatio>
           {/* Overlapping Title Card */}
           <Box
-            style={{
+            css={{
               position: "absolute",
-              bottom: "-3rem",
-              right: "2rem",
-              background: "white",
-              padding: "2rem 3rem",
+              bottom: "-12",
+              right: "8",
+              bg: "white",
+              p: "8 12",
               border: "4px solid black",
               boxShadow: "12px 12px 0 black",
-              maxWidth: "500px",
+              maxW: "500px",
             }}
           >
             <Box
-              style={{
-                fontFamily: "monospace",
-                fontSize: "0.75rem",
-                marginBottom: "0.5rem",
+              css={{
+                fontFamily: "mono",
+                fontSize: "xs",
+                mb: "2",
                 opacity: 0.5,
               }}
             >
@@ -341,7 +298,7 @@ export const OverlappingLayout: Story = {
             </Box>
             <Headline
               level={1}
-              style={{ fontSize: "2.5rem", margin: 0, lineHeight: 1.1 }}
+              css={{ fontSize: "2.5rem", m: 0, lineHeight: 1.1 }}
             >
               VISUAL IMPACT
             </Headline>
@@ -350,69 +307,56 @@ export const OverlappingLayout: Story = {
       </GridItem>
 
       {/* Description Block */}
-      <GridItem colSpan={5} colStart={2}>
-        <Box style={{ marginTop: "6rem", paddingRight: "2rem" }}>
-          <Paragraph style={{ fontSize: "0.875rem", lineHeight: 1.8 }}>
-            Overlapping elements create depth and visual hierarchy. Strategic
-            layering draws attention to key content.
-          </Paragraph>
-        </Box>
+      <GridItem colSpan={5} colStart={2} css={{ mt: "24", pr: "8" }}>
+        <Paragraph size="sm">
+          Overlapping elements create depth and visual hierarchy. Strategic
+          layering draws attention to key content.
+        </Paragraph>
       </GridItem>
 
       {/* Square Image 1 */}
-      <GridItem colSpan={4} colStart={2}>
-        <Box style={{ marginTop: "4rem" }}>
-          <AspectRatio ratio="1/1">
-            <img
-              src="https://images.unsplash.com/photo-1618556450991-2f1af64e8191?w=800&auto=format&fit=crop"
-              alt="Minimal detail"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          </AspectRatio>
-        </Box>
+      <GridItem colSpan={4} colStart={2} css={{ mt: "16" }}>
+        <AspectRatio ratio="1/1">
+          <img
+            src="https://images.unsplash.com/photo-1618556450991-2f1af64e8191?w=800&auto=format&fit=crop"
+            alt="Minimal detail"
+            style={{ objectFit: "cover" }}
+          />
+        </AspectRatio>
       </GridItem>
 
       {/* Square Image 2 - Overlapping */}
-      <GridItem colSpan={5} colStart={6}>
-        <Box style={{ marginTop: "2rem" }}>
-          <AspectRatio ratio="1/1">
-            <img
-              src="https://images.unsplash.com/photo-1618172193622-ae2d025f4032?w=800&auto=format&fit=crop"
-              alt="Urban structure"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                border: "2px solid black",
-              }}
-            />
-          </AspectRatio>
-        </Box>
+      <GridItem colSpan={5} colStart={6} css={{ mt: "8" }}>
+        <AspectRatio ratio="1/1">
+          <img
+            src="https://images.unsplash.com/photo-1618172193622-ae2d025f4032?w=800&auto=format&fit=crop"
+            alt="Urban structure"
+            style={{
+              objectFit: "cover",
+              border: "2px solid black",
+            }}
+          />
+        </AspectRatio>
       </GridItem>
 
       {/* Floating Text Box */}
       <GridItem colSpan={4} colStart={8}>
         <Box
-          style={{
-            marginTop: "-4rem",
-            background: "#171717",
+          css={{
+            mt: "-16",
+            bg: "#171717",
             color: "white",
-            padding: "2rem",
+            p: "8",
             position: "relative",
             zIndex: 10,
           }}
         >
           <Box
-            style={{
-              fontFamily: "monospace",
-              fontSize: "0.75rem",
-              marginBottom: "1rem",
-              opacity: 0.7,
-            }}
+            css={{ fontFamily: "mono", fontSize: "xs", mb: "4", opacity: 0.7 }}
           >
             DETAILS
           </Box>
-          <Box style={{ fontSize: "0.875rem", lineHeight: 2 }}>
+          <Box css={{ fontSize: "sm", lineHeight: 2 }}>
             Client: Studio XYZ
             <br />
             Year: 2025
@@ -443,11 +387,12 @@ export const OverlappingLayout: Story = {
  */
 export const AutoFit: Story = {
   args: {
+    children: null,
     columns: "auto",
     gap: 6,
   },
   render: (args) => (
-    <Grid {...args} style={{ padding: "2rem" }}>
+    <Grid {...args} css={{ p: "8" }}>
       {[
         "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1618556450991-2f1af64e8191?w=600&auto=format&fit=crop",
@@ -475,11 +420,12 @@ export const AutoFit: Story = {
  */
 export const ComplexGrid: Story = {
   args: {
+    children: null,
     columns: 12,
     gap: 6,
   },
   render: (args) => (
-    <Grid {...args} style={{ padding: "2rem", background: "white" }}>
+    <Grid {...args} css={{ p: "8", bg: "white" }}>
       {/* Large Feature Image */}
       <GridItem colSpan={7} colStart={1} rowSpan={2}>
         <AspectRatio ratio={3 / 4}>

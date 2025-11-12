@@ -4,8 +4,8 @@ import { mergeConfig } from "vite";
 
 // Resolve paths from the storybook working directory
 const rootPath = path.resolve(process.cwd(), "../..");
-const uiPackagePath = path.resolve(rootPath, "packages/ui/src");
-const tokensPath = path.resolve(rootPath, "packages/tokens/src");
+const uiPackagePath = path.resolve(rootPath, "packages/ui");
+const tokensPackagePath = path.resolve(rootPath, "packages/tokens");
 
 const config: StorybookConfig = {
   stories: ["../stories/**/*.stories.@(ts|tsx)"],
@@ -25,8 +25,14 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       resolve: {
         alias: {
-          "@httpjpg/ui": uiPackagePath,
-          "@httpjpg/tokens": tokensPath,
+          "@httpjpg/ui/styles.css": path.resolve(uiPackagePath, "styles.css"),
+          "@httpjpg/ui": path.resolve(uiPackagePath, "src"),
+          "@httpjpg/tokens/dist/tokens.css": path.resolve(
+            tokensPackagePath,
+            "dist/tokens.css",
+          ),
+          "@httpjpg/tokens": path.resolve(tokensPackagePath, "src"),
+          "styled-system": path.resolve(uiPackagePath, "styled-system"),
         },
         preserveSymlinks: false,
       },

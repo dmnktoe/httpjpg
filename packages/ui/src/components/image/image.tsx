@@ -2,13 +2,15 @@
 
 import type { ImgHTMLAttributes } from "react";
 import { forwardRef, useState } from "react";
-import { css, cx } from "../../../styled-system/css";
+import { css, cx } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 
 /**
  * Image component props
  */
-export interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {
+export interface ImageProps
+  extends Omit<ImgHTMLAttributes<HTMLImageElement>, "css"> {
   /**
    * Image source URL
    */
@@ -52,6 +54,10 @@ export interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {
    * Custom class name for the wrapper
    */
   wrapperClassName?: string;
+  /**
+   * Custom styles using Panda CSS SystemStyleObject
+   */
+  css?: SystemStyleObject;
 }
 
 /**
@@ -90,6 +96,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       wrapperClassName,
       className,
       style,
+      css: cssProp,
       onLoad,
       ...props
     },
@@ -106,35 +113,13 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       setIsLoaded(true);
     };
 
-    // Calculate aspect ratio padding
-    const aspectRatioPadding = aspectRatio
+    // Calculate aspect ratio padding (must be inline - truly dynamic calculation)
+    const dynamicAspectRatio = aspectRatio
       ? (() => {
           const [width, height] = aspectRatio.split("/").map(Number);
-          return `${(height / width) * 100}%`;
+          return { paddingBottom: `${(height / width) * 100}%`, height: 0 };
         })()
       : undefined;
-
-    const wrapperStyles: React.CSSProperties = {
-      position: "relative",
-      display: "block",
-      overflow: "hidden",
-      boxSizing: "border-box",
-      ...wrapperStyle,
-      ...(aspectRatioPadding && {
-        paddingBottom: aspectRatioPadding,
-        height: 0,
-      }),
-    };
-
-    const imageStyles: React.CSSProperties = {
-      objectFit,
-      ...style,
-      ...(aspectRatio && {
-        position: "absolute",
-        top: 0,
-        left: 0,
-      }),
-    };
 
     const showBlur = blurOnLoad && !isLoaded && blurDataURL;
     const showCopyrightInside =
@@ -143,7 +128,20 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
 
     return (
       <>
-        <Box ref={ref} className={cx(wrapperClassName)} style={wrapperStyles}>
+        <Box
+          ref={ref}
+          className={cx(
+            css({
+              position: "relative",
+              display: "block",
+              overflow: "hidden",
+              boxSizing: "border-box",
+              ...cssProp,
+            }),
+            wrapperClassName,
+          )}
+          style={{ ...wrapperStyle, ...dynamicAspectRatio }}
+        >
           {/* Blur placeholder */}
           {showBlur && (
             <img
@@ -173,10 +171,17 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
                 boxSizing: "border-box",
                 transition: "opacity 0.3s ease-in-out",
               }),
+              aspectRatio &&
+                css({
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                }),
               className,
             )}
             style={{
-              ...imageStyles,
+              objectFit,
+              ...style,
               opacity: blurOnLoad && !isLoaded ? 0 : 1,
             }}
             onLoad={handleLoad}
@@ -184,35 +189,44 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
             {...props}
           />
 
-          {/* Copyright inside image */}
-          {showCopyrightInside && (
+          {/* Copyright inline (vertical on right side) */}
+          {showCopyrightInside && copyrightPosition === "inline" && (
             <Box
-              className={css({
+              css={{
+                position: "absolute",
+                bottom: "0.5rem",
+                right: "0.5rem",
+                p: "0.5rem 0.25rem",
                 fontFamily: "mono",
                 fontSize: "0.75rem",
                 opacity: 0.7,
+                color: "black",
+                writingMode: "vertical-rl",
+                transform: "rotate(180deg)",
                 boxSizing: "border-box",
-              })}
-              {...(copyrightPosition === "inline"
-                ? {
-                    position: "absolute",
-                    bottom: "0.5rem",
-                    right: "0.5rem",
-                    padding: "0.5rem 0.25rem",
-                    color: "black",
-                    writingMode: "vertical-rl",
-                    transform: "rotate(180deg)",
-                  }
-                : {
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    background:
-                      "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
-                    padding: "1rem",
-                    color: "white",
-                  })}
+              }}
+            >
+              {copyright}
+            </Box>
+          )}
+
+          {/* Copyright overlay (bottom gradient) */}
+          {showCopyrightInside && copyrightPosition === "overlay" && (
+            <Box
+              css={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background:
+                  "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
+                p: "1rem",
+                fontFamily: "mono",
+                fontSize: "0.75rem",
+                opacity: 0.7,
+                color: "white",
+                boxSizing: "border-box",
+              }}
             >
               {copyright}
             </Box>
@@ -226,7 +240,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
               fontFamily: "mono",
               fontSize: "0.75rem",
               opacity: 0.7,
-              padding: "0.5rem 0",
+              p: "0.5rem 0",
               color: "currentColor",
             }}
           >

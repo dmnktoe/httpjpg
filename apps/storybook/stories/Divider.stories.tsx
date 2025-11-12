@@ -1,5 +1,10 @@
-import { Divider, Paragraph } from "@httpjpg/ui";
+import { Box, Divider, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import {
+  DIVIDER_ORIENTATION_OPTIONS,
+  DIVIDER_VARIANT_OPTIONS,
+  spacingArgType,
+} from "./storybook-helpers";
 
 /**
  * Divider component stories
@@ -16,16 +21,16 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     orientation: {
-      control: { type: "select" },
-      options: ["horizontal", "vertical"],
+      control: { type: "select" as const },
+      options: DIVIDER_ORIENTATION_OPTIONS,
       description: "Divider orientation",
       table: {
         defaultValue: { summary: "horizontal" },
       },
     },
     variant: {
-      control: { type: "select" },
-      options: ["solid", "dashed", "dotted", "ascii", "custom"],
+      control: { type: "select" as const },
+      options: DIVIDER_VARIANT_OPTIONS,
       description: "Divider style variant",
       table: {
         defaultValue: { summary: "solid" },
@@ -38,12 +43,12 @@ const meta = {
         defaultValue: { summary: "*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚" },
       },
     },
-    spacing: {
-      control: { type: "select" },
-      options: [0, 1, 2, 4, 6, 8, 12, 16],
-      description: "Spacing around divider",
+    spacing: spacingArgType("Spacing around divider", "4"),
+    thickness: {
+      control: "text",
+      description: "Border thickness (CSS value)",
       table: {
-        defaultValue: { summary: "4" },
+        defaultValue: { summary: "1px" },
       },
     },
   },
@@ -53,9 +58,32 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
+ * Basic divider with live controls
+ */
+export const Basic: Story = {
+  args: {
+    variant: "solid",
+    orientation: "horizontal",
+    spacing: 4,
+    thickness: "1px",
+    children: null,
+  },
+  render: (args) => (
+    <div>
+      <Paragraph>Content above divider</Paragraph>
+      <Divider {...args} />
+      <Paragraph>Content below divider</Paragraph>
+    </div>
+  ),
+};
+
+/**
  * Default solid divider
  */
 export const Solid: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <div>
       <Paragraph>Content above divider</Paragraph>
@@ -69,8 +97,11 @@ export const Solid: Story = {
  * ASCII art divider (brutalist style)
  */
 export const ASCII: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
-    <div>
+    <>
       <Paragraph>Section One</Paragraph>
       <Divider variant="ascii" pattern="*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚" />
       <Paragraph>Section Two</Paragraph>
@@ -78,7 +109,7 @@ export const ASCII: Story = {
       <Paragraph>Section Three</Paragraph>
       <Divider variant="ascii" pattern="━━━━━━━ ∘◦ ❈ ◦∘ ━━━━━━━" />
       <Paragraph>Section Four</Paragraph>
-    </div>
+    </>
   ),
 };
 
@@ -86,8 +117,11 @@ export const ASCII: Story = {
  * Custom content divider
  */
 export const CustomContent: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
-    <div>
+    <>
       <Paragraph>Main content section</Paragraph>
       <Divider variant="custom" spacing={8}>
         → SECTION BREAK ←
@@ -97,7 +131,7 @@ export const CustomContent: Story = {
         ✦ ✦ ✦
       </Divider>
       <Paragraph>Another section</Paragraph>
-    </div>
+    </>
   ),
 };
 
@@ -105,14 +139,17 @@ export const CustomContent: Story = {
  * Dashed and dotted variants
  */
 export const DashedAndDotted: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
-    <div>
+    <>
       <Paragraph>Dashed divider</Paragraph>
       <Divider variant="dashed" thickness="2px" />
       <Paragraph>Dotted divider</Paragraph>
       <Divider variant="dotted" thickness="3px" />
       <Paragraph>End of content</Paragraph>
-    </div>
+    </>
   ),
 };
 
@@ -120,20 +157,23 @@ export const DashedAndDotted: Story = {
  * Vertical divider
  */
 export const Vertical: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
-    <div style={{ display: "flex", alignItems: "center", minHeight: "200px" }}>
-      <div style={{ padding: "1rem" }}>
+    <Box css={{ display: "flex", alignItems: "center", minH: "200px" }}>
+      <Box css={{ p: "4" }}>
         <Paragraph>Left side</Paragraph>
-      </div>
+      </Box>
       <Divider orientation="vertical" variant="solid" thickness="2px" />
-      <div style={{ padding: "1rem" }}>
+      <Box css={{ p: "4" }}>
         <Paragraph>Middle section</Paragraph>
-      </div>
+      </Box>
       <Divider orientation="vertical" variant="ascii" pattern="｜｜｜" />
-      <div style={{ padding: "1rem" }}>
+      <Box css={{ p: "4" }}>
         <Paragraph>Right side</Paragraph>
-      </div>
-    </div>
+      </Box>
+    </Box>
   ),
 };
 
@@ -141,9 +181,14 @@ export const Vertical: Story = {
  * Brutalist magazine-style dividers
  */
 export const BrutalistStyle: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
-    <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-      <h2 style={{ fontSize: "2rem", fontWeight: 900 }}>ARTICLE TITLE</h2>
+    <Box css={{ maxW: "800px", m: "0 auto" }}>
+      <Box as="h2" css={{ fontSize: "2rem", fontWeight: 900 }}>
+        ARTICLE TITLE
+      </Box>
       <Divider
         variant="ascii"
         pattern="━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -157,7 +202,9 @@ export const BrutalistStyle: Story = {
 
       <Divider variant="ascii" pattern="∴∵∴∵∴∵∴∵∴∵∴∵∴∵∴∵∴∵∴" spacing={8} />
 
-      <h3 style={{ fontSize: "1.5rem", fontWeight: 800 }}>SECTION BREAK</h3>
+      <Box as="h3" css={{ fontSize: "1.5rem", fontWeight: 800 }}>
+        SECTION BREAK
+      </Box>
       <Divider variant="custom" spacing={6}>
         ❋ ❋ ❋ ❋ ❋
       </Divider>
@@ -170,7 +217,7 @@ export const BrutalistStyle: Story = {
       <Divider variant="ascii" pattern="◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆" spacing={6} />
 
       <Paragraph>End of article</Paragraph>
-    </div>
+    </Box>
   ),
 };
 
@@ -178,8 +225,11 @@ export const BrutalistStyle: Story = {
  * Thick dividers
  */
 export const Thick: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
-    <div>
+    <>
       <Paragraph>1px thickness (default)</Paragraph>
       <Divider variant="solid" thickness="1px" />
 
@@ -191,6 +241,6 @@ export const Thick: Story = {
 
       <Paragraph>4px thickness</Paragraph>
       <Divider variant="solid" thickness="4px" />
-    </div>
+    </>
   ),
 };

@@ -31,21 +31,23 @@
       "types": "./styled-system/tokens/index.d.ts",
       "import": "./styled-system/tokens/index.mjs"
     },
-    "./styled-system/*": "./styled-system/*"
+    "./styled-system/*": "./styled-system/*",
+    "./styles.css": "./styles.css"
   },
   "files": [
     "src",
     "styled-system",
-    "panda.config.ts"
+    "panda.config.ts",
+    "styles.css"
   ],
   "scripts": {
-    "prepare": "panda codegen",
+    "prepare": "panda codegen && panda cssgen --outfile styles.css",
     "dev": "panda codegen --watch",
-    "build": "panda codegen",
+    "build": "panda codegen && panda cssgen --outfile styles.css",
     "type-check": "tsc --noEmit",
     "lint": "biome lint .",
     "lint:fix": "biome lint . --fix",
-    "clean": "rm -rf styled-system"
+    "clean": "rm -rf styled-system styles.css"
   },
   "dependencies": {
     "@httpjpg/tokens": "workspace:*"

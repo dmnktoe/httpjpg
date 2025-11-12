@@ -2,8 +2,8 @@
 
 import type { HTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
-import { css, cx } from "../../../styled-system/css";
-import type { SystemStyleObject } from "../../../styled-system/types";
+import { css, cx } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 
 export interface GridProps extends HTMLAttributes<HTMLDivElement> {
   /**
@@ -100,10 +100,11 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
     },
     ref,
   ) => {
+    // Map columns to Panda token values (ensures static extraction)
     const gridTemplateColumns =
       columns === "auto"
-        ? "repeat(auto-fit, minmax(200px, 1fr))"
-        : `repeat(${columns}, 1fr)`;
+        ? ("repeat(auto-fit, minmax(200px, 1fr))" as const)
+        : (`repeat(${columns}, 1fr)` as const);
 
     const styles = css({
       display: "grid",
@@ -128,7 +129,8 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
 
 Grid.displayName = "Grid";
 
-export interface GridItemProps extends HTMLAttributes<HTMLDivElement> {
+export interface GridItemProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "css"> {
   /**
    * Grid item content
    */
@@ -159,6 +161,10 @@ export interface GridItemProps extends HTMLAttributes<HTMLDivElement> {
    * Row end position
    */
   rowEnd?: number;
+  /**
+   * Additional Panda CSS styles
+   */
+  css?: SystemStyleObject;
 }
 
 /**
@@ -195,10 +201,15 @@ export const GridItem = forwardRef<HTMLDivElement, GridItemProps>(
       rowStart,
       rowEnd,
       className,
+      style,
+      css: cssProp,
       ...props
     },
     ref,
   ) => {
+    // Calculate grid positioning
+    // For simple spans, Panda will use generated utility classes
+    // For complex positioning (start/end), we use inline styles (unavoidable)
     const gridColumn =
       colSpan === "full" && !colStart
         ? "1 / -1"
@@ -210,15 +221,20 @@ export const GridItem = forwardRef<HTMLDivElement, GridItemProps>(
       ? `${rowStart} / ${rowEnd || `span ${rowSpan}`}`
       : `span ${rowSpan}`;
 
+    // Combine base styles with custom css prop
+    const styles = css({
+      boxSizing: "border-box",
+      ...cssProp,
+    });
+
     return (
       <div
         ref={ref}
-        className={className}
+        className={cx(styles, className)}
         style={{
-          boxSizing: "border-box",
           gridColumn,
           gridRow,
-          ...props.style,
+          ...style,
         }}
         {...props}
       >

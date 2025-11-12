@@ -16,7 +16,7 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     as: {
-      control: { type: "select" },
+      control: { type: "select" as const },
       options: [
         "div",
         "section",
@@ -26,7 +26,7 @@ const meta = {
         "footer",
         "main",
         "nav",
-      ],
+      ] as const,
       description: "Semantic HTML element to render",
       table: {
         defaultValue: { summary: "div" },
@@ -39,9 +39,33 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Basic Box
+ * Basic Box with live controls
  */
 export const Basic: Story = {
+  args: {
+    as: "div",
+    children: (
+      <div>
+        <Headline level={3}>Box Component</Headline>
+        <Paragraph style={{ marginTop: "0.5rem" }}>
+          A simple container with custom styling. Change the "as" control to
+          render different semantic HTML elements.
+        </Paragraph>
+      </div>
+    ),
+    style: {
+      background: "#f5f5f5",
+      padding: "2rem",
+      border: "2px solid #e5e5e5",
+    },
+  },
+  render: (args) => <Box {...args} />,
+};
+
+/**
+ * Old Basic (static)
+ */
+export const OldBasic: Story = {
   render: () => (
     <Box
       style={{

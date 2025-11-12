@@ -1,86 +1,104 @@
 "use client";
 
-import { spacing } from "@httpjpg/tokens";
-import { css, cx } from "@linaria/core";
-import type { HTMLAttributes, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { forwardRef } from "react";
+import type { SystemStyleObject } from "styled-system/types";
+import { Box } from "../box/box";
 
-export interface SectionProps extends HTMLAttributes<HTMLElement> {
+export interface SectionProps
+  extends Omit<ComponentPropsWithoutRef<"section">, "css"> {
   /**
    * Section content
    */
   children: ReactNode;
   /**
-   * Padding top (using token scale)
-   * @default 16
+   * Padding top (using Panda spacing tokens: 0-96)
+   * @default "16"
    */
-  pt?: keyof typeof spacing;
+  pt?: string | number;
   /**
-   * Padding bottom (using token scale)
-   * @default 16
+   * Padding bottom (using Panda spacing tokens: 0-96)
+   * @default "16"
    */
-  pb?: keyof typeof spacing;
+  pb?: string | number;
   /**
-   * Padding left (using token scale)
-   * @default 0
+   * Padding left (using Panda spacing tokens: 0-96)
+   * @default "0"
    */
-  pl?: keyof typeof spacing;
+  pl?: string | number;
   /**
-   * Padding right (using token scale)
-   * @default 0
+   * Padding right (using Panda spacing tokens: 0-96)
+   * @default "0"
    */
-  pr?: keyof typeof spacing;
+  pr?: string | number;
   /**
    * Full width
    * @default true
    */
   fullWidth?: boolean;
+  /**
+   * CSS styles using Panda CSS style object
+   */
+  css?: SystemStyleObject;
 }
 
-const sectionBase = css`
-  box-sizing: border-box;
-`;
-
 /**
- * Section component - Semantic section wrapper
- * Perfect for organizing portfolio content with consistent spacing
+ * Section component - Semantic section wrapper built on Box
+ *
+ * Semantic HTML5 section element with Panda CSS token-based styling.
+ * Uses the Box component under the hood with full Panda CSS style prop support.
+ * Perfect for organizing portfolio content with consistent spacing.
+ *
+ * @example
+ * ```tsx
+ * // Using numeric tokens (maps to spacing scale)
+ * <Section pt={16} pb={16}>
+ *   <Container>
+ *     <Headline>Section Title</Headline>
+ *   </Container>
+ * </Section>
+ *
+ * // Asymmetric padding with string tokens
+ * <Section pt="24" pb="12" pl="4" pr="4">
+ *   Content
+ * </Section>
+ *
+ * // With additional Panda CSS props
+ * <Section pt={16} pb={16} css={{ bg: "neutral.50", borderRadius: "lg" }}>
+ *   Styled Section
+ * </Section>
+ * ```
  */
 export const Section = forwardRef<HTMLElement, SectionProps>(
   (
     {
       children,
-      pt = 16,
-      pb = 16,
-      pl = 0,
-      pr = 0,
+      pt = "16",
+      pb = "16",
+      pl = "0",
+      pr = "0",
       fullWidth = true,
-      className,
-      style,
+      css: cssProp,
       ...props
     },
     ref,
   ) => {
-    const paddingTop = spacing[pt as keyof typeof spacing] || spacing[16];
-    const paddingBottom = spacing[pb as keyof typeof spacing] || spacing[16];
-    const paddingLeft = spacing[pl as keyof typeof spacing] || spacing[0];
-    const paddingRight = spacing[pr as keyof typeof spacing] || spacing[0];
-
     return (
-      <section
+      <Box
         ref={ref}
-        className={cx(sectionBase, className)}
-        style={{
-          paddingTop,
-          paddingBottom,
-          paddingLeft,
-          paddingRight,
-          width: fullWidth ? "100%" : undefined,
-          ...style,
+        as="section"
+        css={{
+          pt,
+          pb,
+          pl,
+          pr,
+          w: fullWidth ? "full" : undefined,
+          ...cssProp,
         }}
         {...props}
       >
         {children}
-      </section>
+      </Box>
     );
   },
 );

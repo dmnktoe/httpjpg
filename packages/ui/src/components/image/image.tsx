@@ -1,12 +1,16 @@
-import { css, cx } from "@linaria/core";
-import type { CSSProperties, ImgHTMLAttributes } from "react";
+"use client";
+
+import type { ImgHTMLAttributes } from "react";
 import { forwardRef, useState } from "react";
+import { css, cx } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 
 /**
  * Image component props
  */
-export interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {
+export interface ImageProps
+  extends Omit<ImgHTMLAttributes<HTMLImageElement>, "css"> {
   /**
    * Image source URL
    */
@@ -21,10 +25,12 @@ export interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   copyright?: string;
   /**
    * Copyright position
+   * @default "inline"
    */
   copyrightPosition?: "inline" | "below" | "overlay";
   /**
    * Enable blur-up loading effect
+   * @default false
    */
   blurOnLoad?: boolean;
   /**
@@ -33,6 +39,7 @@ export interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   blurDataURL?: string;
   /**
    * Object fit
+   * @default "cover"
    */
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
   /**
@@ -42,91 +49,16 @@ export interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   /**
    * Custom styles for the wrapper
    */
-  wrapperStyle?: CSSProperties;
+  wrapperStyle?: React.CSSProperties;
   /**
    * Custom class name for the wrapper
    */
   wrapperClassName?: string;
+  /**
+   * Custom styles using Panda CSS SystemStyleObject
+   */
+  css?: SystemStyleObject;
 }
-
-/**
- * Base styles for the image wrapper
- */
-const imageWrapperBase = css`
-  position: relative;
-  display: block;
-  overflow: hidden;
-  box-sizing: border-box;
-`;
-
-/**
- * Base styles for the image
- */
-const imageBase = css`
-  width: 100%;
-  height: 100%;
-  display: block;
-  box-sizing: border-box;
-  transition: opacity 0.3s ease-in-out;
-`;
-
-/**
- * Blur placeholder styles
- */
-const blurPlaceholder = css`
-  position: absolute;
-  inset: 0;
-  filter: blur(20px);
-  transform: scale(1.1);
-  transition: opacity 0.3s ease-in-out;
-`;
-
-/**
- * Copyright text styles
- */
-const copyrightBase = css`
-  font-family: monospace;
-  font-size: 0.75rem;
-  opacity: 0.7;
-  box-sizing: border-box;
-`;
-
-const copyrightInline = css`
-  position: absolute;
-  bottom: 0.5rem;
-  right: 0.5rem;
-  padding: 0.5rem 0.25rem;
-  color: black;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
-`;
-
-const copyrightOverlay = css`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-  padding: 1rem;
-  color: white;
-`;
-
-const copyrightBelow = css`
-  padding: 0.5rem 0;
-  color: currentColor;
-`;
-
-/**
- * Loaded image state
- */
-const imageLoaded = css`
-  opacity: 1;
-`;
-
-const imageLoading = css`
-  opacity: 0;
-`;
 
 /**
  * Image component with copyright and blur loading
@@ -134,9 +66,8 @@ const imageLoading = css`
  * Supports:
  * - Copyright text (inline, below, or overlay)
  * - Blur-up loading effect for better UX
- * - Aspect ratio control
  * - Object fit options
- * - Storyblok compatibility
+ * - Fully styled with Panda CSS
  *
  * @example
  * ```tsx
@@ -146,7 +77,7 @@ const imageLoading = css`
  *   copyright="© 2025 Photographer Name"
  *   copyrightPosition="inline"
  *   blurOnLoad
- *   aspectRatio="16/9"
+ *   blurDataURL="/blur.jpg"
  * />
  * ```
  */
@@ -165,12 +96,14 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       wrapperClassName,
       className,
       style,
+      css: cssProp,
       onLoad,
       ...props
     },
     ref,
   ) => {
     const [isLoaded, setIsLoaded] = useState(false);
+
     const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
       setIsLoaded(true);
       onLoad?.(e);
@@ -180,31 +113,13 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       setIsLoaded(true);
     };
 
-    // Calculate aspect ratio padding
-    const aspectRatioPadding = aspectRatio
+    // Calculate aspect ratio padding (must be inline - truly dynamic calculation)
+    const dynamicAspectRatio = aspectRatio
       ? (() => {
           const [width, height] = aspectRatio.split("/").map(Number);
-          return `${(height / width) * 100}%`;
+          return { paddingBottom: `${(height / width) * 100}%`, height: 0 };
         })()
       : undefined;
-
-    const wrapperStyles: CSSProperties = {
-      ...wrapperStyle,
-      ...(aspectRatioPadding && {
-        paddingBottom: aspectRatioPadding,
-        height: 0,
-      }),
-    };
-
-    const imageStyles: CSSProperties = {
-      objectFit,
-      ...style,
-      ...(aspectRatio && {
-        position: "absolute",
-        top: 0,
-        left: 0,
-      }),
-    };
 
     const showBlur = blurOnLoad && !isLoaded && blurDataURL;
     const showCopyrightInside =
@@ -215,8 +130,17 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       <>
         <Box
           ref={ref}
-          className={cx(imageWrapperBase, wrapperClassName)}
-          style={wrapperStyles}
+          className={cx(
+            css({
+              position: "relative",
+              display: "block",
+              overflow: "hidden",
+              boxSizing: "border-box",
+              ...cssProp,
+            }),
+            wrapperClassName,
+          )}
+          style={{ ...wrapperStyle, ...dynamicAspectRatio }}
         >
           {/* Blur placeholder */}
           {showBlur && (
@@ -224,7 +148,13 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
               src={blurDataURL}
               alt=""
               aria-hidden="true"
-              className={blurPlaceholder}
+              className={css({
+                position: "absolute",
+                inset: 0,
+                filter: "blur(20px)",
+                transform: "scale(1.1)",
+                transition: "opacity 0.3s ease-in-out",
+              })}
               style={{ opacity: isLoaded ? 0 : 1 }}
             />
           )}
@@ -234,25 +164,69 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
             src={src}
             alt={alt}
             className={cx(
-              imageBase,
+              css({
+                width: "100%",
+                height: "100%",
+                display: "block",
+                boxSizing: "border-box",
+                transition: "opacity 0.3s ease-in-out",
+              }),
+              aspectRatio &&
+                css({
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                }),
               className,
-              blurOnLoad ? (isLoaded ? imageLoaded : imageLoading) : undefined,
             )}
-            style={imageStyles}
+            style={{
+              objectFit,
+              ...style,
+              opacity: blurOnLoad && !isLoaded ? 0 : 1,
+            }}
             onLoad={handleLoad}
             onError={handleError}
             {...props}
           />
 
-          {/* Copyright inside image */}
-          {showCopyrightInside && (
+          {/* Copyright inline (vertical on right side) */}
+          {showCopyrightInside && copyrightPosition === "inline" && (
             <Box
-              className={cx(
-                copyrightBase,
-                copyrightPosition === "inline"
-                  ? copyrightInline
-                  : copyrightOverlay,
-              )}
+              css={{
+                position: "absolute",
+                bottom: "0.5rem",
+                right: "0.5rem",
+                p: "0.5rem 0.25rem",
+                fontFamily: "mono",
+                fontSize: "0.75rem",
+                opacity: 0.7,
+                color: "black",
+                writingMode: "vertical-rl",
+                transform: "rotate(180deg)",
+                boxSizing: "border-box",
+              }}
+            >
+              {copyright}
+            </Box>
+          )}
+
+          {/* Copyright overlay (bottom gradient) */}
+          {showCopyrightInside && copyrightPosition === "overlay" && (
+            <Box
+              css={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background:
+                  "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
+                p: "1rem",
+                fontFamily: "mono",
+                fontSize: "0.75rem",
+                opacity: 0.7,
+                color: "white",
+                boxSizing: "border-box",
+              }}
             >
               {copyright}
             </Box>
@@ -261,7 +235,17 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
 
         {/* Copyright below image */}
         {copyright && copyrightPosition === "below" && (
-          <Box className={cx(copyrightBase, copyrightBelow)}>{copyright}</Box>
+          <Box
+            css={{
+              fontFamily: "mono",
+              fontSize: "0.75rem",
+              opacity: 0.7,
+              p: "0.5rem 0",
+              color: "currentColor",
+            }}
+          >
+            {copyright}
+          </Box>
         )}
       </>
     );

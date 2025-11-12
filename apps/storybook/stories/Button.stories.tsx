@@ -1,5 +1,6 @@
 import { Button } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { BUTTON_VARIANT_OPTIONS } from "./storybook-helpers";
 
 /**
  * Button component stories
@@ -16,16 +17,16 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: { type: "select" },
-      options: ["primary", "secondary", "outline"],
+      control: { type: "select" as const },
+      options: BUTTON_VARIANT_OPTIONS,
       description: "Visual style variant of the button",
       table: {
         defaultValue: { summary: "primary" },
       },
     },
     size: {
-      control: { type: "select" },
-      options: ["sm", "md", "lg"],
+      control: { type: "select" as const },
+      options: ["sm", "md", "lg"] as const,
       description: "Size of the button",
       table: {
         defaultValue: { summary: "md" },

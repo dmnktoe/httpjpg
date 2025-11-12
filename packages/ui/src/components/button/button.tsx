@@ -1,11 +1,12 @@
 "use client";
 
-import { borderRadius, colors, spacing, typography } from "@httpjpg/tokens";
-import { css, cx } from "@linaria/core";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
+import { css, cva, cx } from "styled-system/css";
+import type { SystemStyleObject } from "styled-system/types";
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "css"> {
   /**
    * Visual style variant
    * @default "primary"
@@ -20,141 +21,172 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
    * Button content
    */
   children: ReactNode;
+  /**
+   * Custom styles using Panda CSS SystemStyleObject
+   */
+  css?: SystemStyleObject;
 }
 
-const buttonBase = css`
-  all: unset;
-  box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: ${borderRadius.xl};
-  font-family: ${typography.fontFamily.sans.join(", ")};
-  font-weight: 600;
-  white-space: nowrap;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+const buttonRecipe = cva({
+  base: {
+    /* Reset & Base */
+    all: "unset",
+    boxSizing: "border-box",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    borderRadius: "xl",
+    fontFamily: "sans",
+    fontWeight: 600,
+    whiteSpace: "nowrap",
+    position: "relative",
+    overflow: "hidden",
+    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 2px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
-    -webkit-mask: linear-gradient(${colors.white} 0 0) content-box, linear-gradient(${colors.white} 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
+    /* Glass morphism border effect */
+    _before: {
+      content: '""',
+      position: "absolute",
+      inset: 0,
+      borderRadius: "inherit",
+      padding: "2px",
+      background:
+        "linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0))",
+      WebkitMask:
+        "linear-gradient(white 0 0) content-box, linear-gradient(white 0 0)",
+      WebkitMaskComposite: "xor",
+      maskComposite: "exclude",
+      opacity: 0,
+      transition: "opacity 0.2s",
+    },
 
-  &:hover::before {
-    opacity: 1;
-  }
+    _hover: {
+      _before: {
+        opacity: 1,
+      },
+    },
 
-  &:focus-visible {
-    outline: 2px solid #3b82f6;
-    outline-offset: ${spacing[2]};
-  }
+    _focusVisible: {
+      outline: "2px solid #3b82f6",
+      outlineOffset: "2",
+    },
 
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-    filter: grayscale(0.5);
-  }
+    _disabled: {
+      cursor: "not-allowed",
+      opacity: 0.5,
+      filter: "grayscale(0.5)",
+    },
 
-  &:active:not(:disabled) {
-    transform: scale(0.97) translateY(1px);
-  }
-`;
+    _active: {
+      transform: "scale(0.97) translateY(1px)",
+    },
+  },
+  variants: {
+    variant: {
+      primary: {
+        background:
+          "linear-gradient(135deg, {colors.primary.500} 0%, {colors.primary.600} 100%)",
+        color: "white",
+        border: "2px solid {colors.primary.700}",
+        boxShadow:
+          "0 4px 14px rgba(244, 63, 94, 0.4), 0 2px 6px rgba(244, 63, 94, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2)",
 
-const variantPrimary = css`
-  background: linear-gradient(135deg, ${colors.primary[500]} 0%, ${colors.primary[600]} 100%);
-  color: ${colors.white};
-  border: 2px solid ${colors.primary[700]};
-  box-shadow:
-    0 4px 14px rgba(244, 63, 94, 0.4),
-    0 2px 6px rgba(244, 63, 94, 0.2),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.2),
-    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        _hover: {
+          _disabled: {
+            background:
+              "linear-gradient(135deg, {colors.primary.500} 0%, {colors.primary.600} 100%)",
+            boxShadow:
+              "0 4px 14px rgba(244, 63, 94, 0.4), 0 2px 6px rgba(244, 63, 94, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2)",
+          },
+          background:
+            "linear-gradient(135deg, {colors.primary.400} 0%, {colors.primary.500} 100%)",
+          boxShadow:
+            "0 6px 20px rgba(244, 63, 94, 0.5), 0 3px 8px rgba(244, 63, 94, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.3)",
+        },
+      },
+      secondary: {
+        background:
+          "linear-gradient(135deg, {colors.white} 0%, {colors.neutral.100} 100%)",
+        color: "neutral.950",
+        border: "2px solid {colors.neutral.200}",
+        boxShadow:
+          "0 2px 10px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04), inset 0 1px 2px rgba(255, 255, 255, 0.8)",
 
-  &:hover:not(:disabled) {
-    background: linear-gradient(135deg, ${colors.primary[400]} 0%, ${colors.primary[500]} 100%);
-    box-shadow:
-      0 6px 20px rgba(244, 63, 94, 0.5),
-      0 3px 8px rgba(244, 63, 94, 0.3),
-      inset 0 -2px 4px rgba(0, 0, 0, 0.2),
-      inset 0 1px 2px rgba(255, 255, 255, 0.3);
-  }
-`;
+        _hover: {
+          _disabled: {
+            background:
+              "linear-gradient(135deg, {colors.white} 0%, {colors.neutral.100} 100%)",
+            borderColor: "neutral.200",
+            boxShadow:
+              "0 2px 10px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04), inset 0 1px 2px rgba(255, 255, 255, 0.8)",
+          },
+          background:
+            "linear-gradient(135deg, {colors.neutral.50} 0%, {colors.neutral.200} 100%)",
+          borderColor: "neutral.300",
+          boxShadow:
+            "0 4px 14px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.05), inset 0 1px 2px rgba(255, 255, 255, 0.9)",
+        },
+      },
+      outline: {
+        background: "rgba(255, 255, 255, 0.05)",
+        color: "neutral.950",
+        border: "2px solid {colors.neutral.300}",
+        backdropFilter: "blur(12px) saturate(180%)",
+        boxShadow:
+          "0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 2px rgba(255, 255, 255, 0.4)",
 
-const variantSecondary = css`
-  background: linear-gradient(135deg, ${colors.white} 0%, ${colors.neutral[100]} 100%);
-  color: ${colors.neutral[950]};
-  border: 2px solid ${colors.neutral[200]};
-  box-shadow:
-    0 2px 10px rgba(0, 0, 0, 0.08),
-    0 1px 4px rgba(0, 0, 0, 0.04),
-    inset 0 1px 2px rgba(255, 255, 255, 0.8);
-
-  &:hover:not(:disabled) {
-    background: linear-gradient(135deg, ${colors.neutral[50]} 0%, ${colors.neutral[200]} 100%);
-    border-color: ${colors.neutral[300]};
-    box-shadow:
-      0 4px 14px rgba(0, 0, 0, 0.1),
-      0 2px 6px rgba(0, 0, 0, 0.05),
-      inset 0 1px 2px rgba(255, 255, 255, 0.9);
-  }
-`;
-
-const variantOutline = css`
-  background: rgba(255, 255, 255, 0.05);
-  color: ${colors.neutral[950]};
-  border: 2px solid ${colors.neutral[300]};
-  backdrop-filter: blur(12px) saturate(180%);
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.06),
-    inset 0 1px 2px rgba(255, 255, 255, 0.4);
-
-  &:hover:not(:disabled) {
-    background: rgba(0, 0, 0, 0.04);
-    border-color: ${colors.neutral[950]};
-    backdrop-filter: blur(16px) saturate(200%);
-    box-shadow:
-      0 4px 12px rgba(0, 0, 0, 0.08),
-      inset 0 1px 2px rgba(255, 255, 255, 0.5);
-  }
-`;
-
-const sizeSm = css`
-  font-size: 0.8125rem;
-  padding: ${spacing[2]} ${spacing[4]};
-  min-height: ${spacing[9]};
-  line-height: 1.25;
-`;
-
-const sizeMd = css`
-  font-size: 0.9375rem;
-  padding: ${spacing[3]} ${spacing[7]};
-  min-height: ${spacing[11]};
-  line-height: 1.375;
-`;
-
-const sizeLg = css`
-  font-size: 1.0625rem;
-  padding: ${spacing[4]} ${spacing[9]};
-  min-height: ${spacing[14]};
-  line-height: 1.5;
-`;
+        _hover: {
+          _disabled: {
+            background: "rgba(255, 255, 255, 0.05)",
+            borderColor: "neutral.300",
+            backdropFilter: "blur(12px) saturate(180%)",
+            boxShadow:
+              "0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 2px rgba(255, 255, 255, 0.4)",
+          },
+          background: "rgba(0, 0, 0, 0.04)",
+          borderColor: "neutral.950",
+          backdropFilter: "blur(16px) saturate(200%)",
+          boxShadow:
+            "0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.5)",
+        },
+      },
+    },
+    size: {
+      sm: {
+        fontSize: "0.8125rem",
+        paddingX: "4",
+        paddingY: "2",
+        minHeight: "9",
+        lineHeight: 1.25,
+      },
+      md: {
+        fontSize: "0.9375rem",
+        paddingX: "7",
+        paddingY: "3",
+        minHeight: "11",
+        lineHeight: 1.375,
+      },
+      lg: {
+        fontSize: "1.0625rem",
+        paddingX: "9",
+        paddingY: "4",
+        minHeight: "14",
+        lineHeight: 1.5,
+      },
+    },
+  },
+  defaultVariants: {
+    variant: "primary",
+    size: "md",
+  },
+});
 
 /**
  * A versatile button component with multiple variants, sizes, and accessibility features.
  *
  * Features glass morphism effects, smooth transitions, and comprehensive keyboard navigation
- * support. Uses zero-runtime CSS-in-JS via Linaria for optimal performance.
+ * support. Uses Panda CSS for type-safe styling with zero-runtime CSS.
  *
  * @example
  * ```tsx
@@ -179,26 +211,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       type = "button",
       className,
+      css: cssProp,
       ...props
     },
     ref,
   ) {
-    const variantClass =
-      variant === "secondary"
-        ? variantSecondary
-        : variant === "outline"
-          ? variantOutline
-          : variantPrimary;
-
-    const sizeClass = size === "sm" ? sizeSm : size === "lg" ? sizeLg : sizeMd;
+    const styles = cx(
+      buttonRecipe({ variant, size }),
+      cssProp && css(cssProp),
+      className,
+    );
 
     return (
-      <button
-        ref={ref}
-        type={type}
-        className={cx(buttonBase, variantClass, sizeClass, className)}
-        {...props}
-      >
+      <button ref={ref} type={type} className={styles} {...props}>
         {children}
       </button>
     );

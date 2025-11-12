@@ -1,5 +1,6 @@
 import { Headline } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { HEADLINE_LEVEL_OPTIONS } from "./storybook-helpers";
 
 /**
  * Headline component stories
@@ -17,8 +18,8 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     level: {
-      control: { type: "inline-radio" },
-      options: [1, 2, 3],
+      control: { type: "inline-radio" as const },
+      options: HEADLINE_LEVEL_OPTIONS,
       description: "Visual hierarchy level (affects font size)",
       table: {
         defaultValue: { summary: "1" },
@@ -26,8 +27,8 @@ const meta = {
       },
     },
     as: {
-      control: { type: "select" },
-      options: ["h1", "h2", "h3", "h4", "h5", "h6"],
+      control: { type: "select" as const },
+      options: ["h1", "h2", "h3", "h4", "h5", "h6"] as const,
       description:
         "Semantic HTML element to render (overrides default element based on level)",
       table: {

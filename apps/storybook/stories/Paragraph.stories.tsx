@@ -16,8 +16,8 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     size: {
-      control: "select",
-      options: ["sm", "md", "lg"],
+      control: { type: "select" as const },
+      options: ["sm", "md", "lg"] as const,
       description: "Visual size variant",
       table: {
         type: { summary: "sm | md | lg" },
@@ -25,8 +25,8 @@ const meta = {
       },
     },
     align: {
-      control: "select",
-      options: ["left", "center", "right"],
+      control: { type: "select" as const },
+      options: ["left", "center", "right"] as const,
       description: "Text alignment",
       table: {
         type: { summary: "left | center | right" },

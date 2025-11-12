@@ -1,12 +1,11 @@
 import path from "node:path";
 import type { StorybookConfig } from "@storybook/react-vite";
-import wyw from "@wyw-in-js/vite";
 import { mergeConfig } from "vite";
 
 // Resolve paths from the storybook working directory
 const rootPath = path.resolve(process.cwd(), "../..");
-const uiPackagePath = path.resolve(rootPath, "packages/ui/src");
-const tokensPath = path.resolve(rootPath, "packages/tokens/src");
+const uiPackagePath = path.resolve(rootPath, "packages/ui");
+const tokensPackagePath = path.resolve(rootPath, "packages/tokens");
 
 const config: StorybookConfig = {
   stories: ["../stories/**/*.stories.@(ts|tsx)"],
@@ -24,40 +23,22 @@ const config: StorybookConfig = {
   },
   async viteFinal(config) {
     return mergeConfig(config, {
-      plugins: [
-        wyw({
-          include: ["**/*.{ts,tsx}"],
-          exclude: ["**/node_modules/**", "**/.storybook/**", "**/dist/**"],
-          displayName: true,
-          classNameSlug: (hash: string, title: string) => {
-            return `httpjpg-${title}-${hash}`;
-          },
-          babelOptions: {
-            presets: [
-              [
-                "@babel/preset-typescript",
-                { isTSX: true, allExtensions: true },
-              ],
-              ["@babel/preset-react", { runtime: "automatic" }],
-            ],
-          },
-        }),
-      ],
       resolve: {
         alias: {
-          "@httpjpg/ui": uiPackagePath,
-          "@httpjpg/tokens": tokensPath,
+          "@httpjpg/ui/styles.css": path.resolve(uiPackagePath, "styles.css"),
+          "@httpjpg/ui": path.resolve(uiPackagePath, "src"),
+          "@httpjpg/tokens/dist/tokens.css": path.resolve(
+            tokensPackagePath,
+            "dist/tokens.css",
+          ),
+          "@httpjpg/tokens": path.resolve(tokensPackagePath, "src"),
+          "styled-system": path.resolve(uiPackagePath, "styled-system"),
         },
         preserveSymlinks: false,
       },
       optimizeDeps: {
         include: ["@httpjpg/tokens"],
-        exclude: [
-          "@httpjpg/ui",
-          "@linaria/core",
-          "@linaria/react",
-          "@wyw-in-js/transform",
-        ],
+        exclude: ["@httpjpg/ui"],
       },
       server: {
         fs: {

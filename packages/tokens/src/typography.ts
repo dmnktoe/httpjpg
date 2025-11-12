@@ -5,14 +5,7 @@
 
 export const typography = {
   fontFamily: {
-    sans: [
-      "system-ui",
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      "sans-serif",
-    ],
+    sans: ["Impact", "Haettenschweiler", "Arial Narrow Bold", "sans-serif"],
     mono: [
       "ui-monospace",
       "SFMono-Regular",

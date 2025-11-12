@@ -1,7 +1,10 @@
 {
   "extends": "@httpjpg/tsconfig/nextjs.json",
   "compilerOptions": {
-    "plugins": [{ "name": "next" }]
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "styled-system/*": ["../../packages/ui/styled-system/*"]
+    }
   },
   "include": [
     "**/*.ts",

@@ -1,6 +1,7 @@
-import { colors, typography } from "@httpjpg/tokens";
-import { css, cx } from "@linaria/core";
+"use client";
+
 import type { HTMLAttributes, ReactNode } from "react";
+import { css, cva, cx } from "../../../styled-system/css";
 
 export interface ParagraphProps extends HTMLAttributes<HTMLParagraphElement> {
   /**
@@ -24,74 +25,82 @@ export interface ParagraphProps extends HTMLAttributes<HTMLParagraphElement> {
   maxWidth?: boolean;
 }
 
-const paragraphBase = css`
-  /* Reset & Base */
-  margin: 0;
-  padding: 0;
+const paragraphRecipe = cva({
+  base: {
+    /* Reset & Base */
+    margin: 0,
+    padding: 0,
 
-  /* Typography */
-  font-family: ${typography.fontFamily.sans.join(", ")};
-  font-weight: 400;
-  color: ${colors.neutral[700]};
+    /* Typography */
+    fontFamily: "sans",
+    fontWeight: 400,
+    color: "neutral.700",
 
-  /* Optimal line height for readability */
-  line-height: 1.75;
+    /* Optimal line height for readability */
+    lineHeight: 1.75,
 
-  /* Prevent orphans */
-  text-wrap: pretty;
-`;
+    /* Prevent orphans */
+    textWrap: "pretty",
+  },
+  variants: {
+    size: {
+      sm: {
+        fontSize: "0.875rem",
+        lineHeight: 1.65,
 
-const sizeSm = css`
-  font-size: 0.875rem;
-  line-height: 1.65;
+        md: {
+          fontSize: "0.9375rem",
+        },
+      },
+      md: {
+        fontSize: "1rem",
+        lineHeight: 1.75,
 
-  @media (min-width: 768px) {
-    font-size: 0.9375rem;
-  }
-`;
+        md: {
+          fontSize: "1.0625rem",
+        },
+      },
+      lg: {
+        fontSize: "1.125rem",
+        lineHeight: 1.8,
 
-const sizeMd = css`
-  font-size: 1rem;
-  line-height: 1.75;
-
-  @media (min-width: 768px) {
-    font-size: 1.0625rem;
-  }
-`;
-
-const sizeLg = css`
-  font-size: 1.125rem;
-  line-height: 1.8;
-
-  @media (min-width: 768px) {
-    font-size: 1.25rem;
-    line-height: 1.85;
-  }
-`;
-
-const alignLeft = css`
-  text-align: left;
-`;
-
-const alignCenter = css`
-  text-align: center;
-`;
-
-const alignRight = css`
-  text-align: right;
-`;
-
-const withMaxWidth = css`
-  /* Optimal reading width: ~60-75 characters per line */
-  max-width: 65ch;
-`;
+        md: {
+          fontSize: "1.25rem",
+          lineHeight: 1.85,
+        },
+      },
+    },
+    align: {
+      left: {
+        textAlign: "left",
+      },
+      center: {
+        textAlign: "center",
+      },
+      right: {
+        textAlign: "right",
+      },
+    },
+    maxWidth: {
+      true: {
+        /* Optimal reading width: ~60-75 characters per line */
+        maxWidth: "65ch",
+      },
+    },
+  },
+  defaultVariants: {
+    size: "md",
+    align: "left",
+    maxWidth: true,
+  },
+});
 
 /**
  * A responsive paragraph component for body text with optimal typography.
  *
  * Features responsive font sizing, optimal line height for readability,
  * optional max-width constraint for comfortable reading, and text wrapping
- * optimization. Uses zero-runtime CSS-in-JS via Linaria for optimal performance.
+ * optimization. Uses Panda CSS for zero-runtime styling with type-safe design tokens.
  *
  * @example
  * ```tsx
@@ -119,21 +128,10 @@ export function Paragraph({
   className,
   ...props
 }: ParagraphProps) {
-  const sizeClass = size === "sm" ? sizeSm : size === "lg" ? sizeLg : sizeMd;
-  const alignClass =
-    align === "center"
-      ? alignCenter
-      : align === "right"
-        ? alignRight
-        : alignLeft;
-
   return (
     <p
       className={cx(
-        paragraphBase,
-        sizeClass,
-        alignClass,
-        maxWidth && withMaxWidth,
+        css(paragraphRecipe.raw({ size, align, maxWidth })),
         className,
       )}
       {...props}

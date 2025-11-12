@@ -1,12 +1,12 @@
 "use client";
 
-import { colors, spacing, typography } from "@httpjpg/tokens";
-import { css, cx } from "@linaria/core";
-import type { HTMLAttributes, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { forwardRef } from "react";
+import type { SystemStyleObject } from "../../../styled-system/types";
 import { Box } from "../box/box";
 
-export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
+export interface DividerProps
+  extends Omit<ComponentPropsWithoutRef<"div">, "css"> {
   /**
    * Divider orientation
    * @default "horizontal"
@@ -32,42 +32,27 @@ export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
    */
   thickness?: "1px" | "2px" | "3px" | "4px";
   /**
-   * Divider color
+   * Divider color (Panda color token)
    * @default "neutral.300"
    */
   color?: string;
   /**
-   * Spacing around divider (using token scale)
-   * @default 4
+   * Spacing around divider (using Panda spacing tokens: 0-96)
+   * @default "4"
    */
-  spacing?: keyof typeof spacing;
+  spacing?: string | number;
+  /**
+   * CSS styles using Panda CSS style object
+   */
+  css?: SystemStyleObject;
 }
 
-const dividerBase = css`
-  box-sizing: border-box;
-  margin: 0;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const asciiPattern = css`
-  font-family: ${typography.fontFamily.mono.join(", ")};
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  user-select: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
 /**
- * Divider component - Visual separator with ASCII art support
+ * Divider component - Visual separator with ASCII art support built on Box
  *
  * Perfect for brutalist design with support for ASCII patterns,
  * custom content, or traditional lines. Embraces the aesthetic of
- * overlapping text and decorative separators.
+ * overlapping text and decorative separators. Uses Panda CSS for styling.
  *
  * @example
  * ```tsx
@@ -79,6 +64,9 @@ const asciiPattern = css`
  *
  * // Traditional solid line
  * <Divider variant="solid" />
+ *
+ * // Thick dashed divider with custom color
+ * <Divider variant="dashed" thickness="3px" color="primary.500" />
  * ```
  */
 export const Divider = forwardRef<HTMLDivElement, DividerProps>(
@@ -89,37 +77,42 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
       pattern = "*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚",
       children,
       thickness = "1px",
-      color: dividerColor = colors.neutral[300],
-      spacing: dividerSpacing = 4,
-      className,
-      style,
+      color: dividerColor = "neutral.300",
+      spacing: dividerSpacing = "4",
+      css: cssProp,
       ...props
     },
     ref,
   ) => {
-    const spacingValue =
-      spacing[dividerSpacing as keyof typeof spacing] || spacing[4];
-
     // ASCII or custom content divider
     if (variant === "ascii" || variant === "custom" || children) {
       return (
         <Box
           ref={ref}
-          className={cx(dividerBase, asciiPattern, className)}
-          style={{
+          css={{
+            m: 0,
+            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "mono",
+            fontWeight: 400,
+            letterSpacing: "0.05em",
+            userSelect: "none",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
             color: dividerColor,
-            width: orientation === "horizontal" ? "100%" : undefined,
-            marginTop: orientation === "horizontal" ? spacingValue : undefined,
-            marginBottom:
-              orientation === "horizontal" ? spacingValue : undefined,
+            w: orientation === "horizontal" ? "full" : undefined,
+            mt: orientation === "horizontal" ? dividerSpacing : undefined,
+            mb: orientation === "horizontal" ? dividerSpacing : undefined,
             textAlign: orientation === "horizontal" ? "center" : undefined,
             writingMode: orientation === "vertical" ? "vertical-rl" : undefined,
-            textOrientation: orientation === "vertical" ? "mixed" : undefined,
-            height: orientation === "vertical" ? "100%" : undefined,
-            minHeight: orientation === "vertical" ? "100px" : undefined,
-            marginLeft: orientation === "vertical" ? spacingValue : undefined,
-            marginRight: orientation === "vertical" ? spacingValue : undefined,
-            ...style,
+            h: orientation === "vertical" ? "full" : undefined,
+            minH: orientation === "vertical" ? "100px" : undefined,
+            ml: orientation === "vertical" ? dividerSpacing : undefined,
+            mr: orientation === "vertical" ? dividerSpacing : undefined,
+            ...cssProp,
           }}
           {...props}
         >
@@ -139,25 +132,26 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
     return (
       <Box
         ref={ref}
-        className={cx(dividerBase, className)}
-        style={{
-          width: orientation === "horizontal" ? "100%" : thickness,
-          height: orientation === "horizontal" ? thickness : "100%",
-          minHeight: orientation === "vertical" ? "20px" : undefined,
-          border: "none",
-          borderTop:
-            orientation === "horizontal"
-              ? `${thickness} ${borderStyle} ${dividerColor}`
-              : undefined,
-          borderLeft:
-            orientation === "vertical"
-              ? `${thickness} ${borderStyle} ${dividerColor}`
-              : undefined,
-          marginTop: orientation === "horizontal" ? spacingValue : undefined,
-          marginBottom: orientation === "horizontal" ? spacingValue : undefined,
-          marginLeft: orientation === "vertical" ? spacingValue : undefined,
-          marginRight: orientation === "vertical" ? spacingValue : undefined,
-          ...style,
+        css={{
+          m: 0,
+          flexShrink: 0,
+          w: orientation === "horizontal" ? "full" : thickness,
+          h: orientation === "horizontal" ? thickness : "full",
+          minH: orientation === "vertical" ? "20px" : undefined,
+          borderTopWidth: orientation === "horizontal" ? thickness : undefined,
+          borderTopStyle:
+            orientation === "horizontal" ? borderStyle : undefined,
+          borderTopColor:
+            orientation === "horizontal" ? dividerColor : undefined,
+          borderLeftWidth: orientation === "vertical" ? thickness : undefined,
+          borderLeftStyle: orientation === "vertical" ? borderStyle : undefined,
+          borderLeftColor:
+            orientation === "vertical" ? dividerColor : undefined,
+          mt: orientation === "horizontal" ? dividerSpacing : undefined,
+          mb: orientation === "horizontal" ? dividerSpacing : undefined,
+          ml: orientation === "vertical" ? dividerSpacing : undefined,
+          mr: orientation === "vertical" ? dividerSpacing : undefined,
+          ...cssProp,
         }}
         {...props}
       />

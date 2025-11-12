@@ -1,6 +1,7 @@
-import { colors, typography } from "@httpjpg/tokens";
-import { css, cx } from "@linaria/core";
+"use client";
+
 import type { HTMLAttributes, ReactNode } from "react";
+import { cva, cx } from "../../../styled-system/css";
 
 export interface HeadlineProps extends HTMLAttributes<HTMLHeadingElement> {
   /**
@@ -19,55 +20,61 @@ export interface HeadlineProps extends HTMLAttributes<HTMLHeadingElement> {
   as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 }
 
-const headlineBase = css`
-  /* Reset & Base */
-  margin: 0;
-  padding: 0;
+const headlineRecipe = cva({
+  base: {
+    /* Reset & Base */
+    margin: 0,
+    padding: 0,
 
-  /* Typography */
-  font-family: ${typography.fontFamily.sans.join(", ")};
-  font-weight: 700;
-  color: ${colors.black};
-  letter-spacing: -0.025em;
+    /* Typography */
+    fontFamily: "sans",
+    fontWeight: 700,
+    color: "black",
+    letterSpacing: "-0.025em",
 
-  /* Prevent text wrapping issues */
-  text-wrap: balance;
-`;
+    /* Prevent text wrapping issues */
+    textWrap: "balance",
+  },
+  variants: {
+    level: {
+      1: {
+        /* Level 1: Hero/Page Title */
+        fontSize: "clamp(2.25rem, 5vw + 1rem, 3.75rem)",
+        lineHeight: 1.1,
+        fontWeight: 900,
+        letterSpacing: "-0.035em",
 
-const level1 = css`
-  /* Level 1: Hero/Page Title */
-  font-size: clamp(2.25rem, 5vw + 1rem, 3.75rem);
-  line-height: 1.1;
-  font-weight: 900;
-  letter-spacing: -0.035em;
+        md: {
+          lineHeight: 1,
+        },
+      },
+      2: {
+        /* Level 2: Section Title */
+        fontSize: "clamp(1.875rem, 4vw + 1rem, 3rem)",
+        lineHeight: 1.2,
+        fontWeight: 800,
+        letterSpacing: "-0.03em",
 
-  @media (min-width: 768px) {
-    line-height: 1;
-  }
-`;
+        md: {
+          lineHeight: 1.1,
+        },
+      },
+      3: {
+        /* Level 3: Subsection Title */
+        fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.25rem)",
+        lineHeight: 1.3,
+        fontWeight: 700,
 
-const level2 = css`
-  /* Level 2: Section Title */
-  font-size: clamp(1.875rem, 4vw + 1rem, 3rem);
-  line-height: 1.2;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-
-  @media (min-width: 768px) {
-    line-height: 1.1;
-  }
-`;
-
-const level3 = css`
-  /* Level 3: Subsection Title */
-  font-size: clamp(1.5rem, 3vw + 0.5rem, 2.25rem);
-  line-height: 1.3;
-  font-weight: 700;
-
-  @media (min-width: 768px) {
-    line-height: 1.2;
-  }
-`;
+        md: {
+          lineHeight: 1.2,
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    level: 1,
+  },
+});
 
 const getDefaultElement = (level: 1 | 2 | 3): "h1" | "h2" | "h3" => {
   return `h${level}` as "h1" | "h2" | "h3";
@@ -77,8 +84,8 @@ const getDefaultElement = (level: 1 | 2 | 3): "h1" | "h2" | "h3" => {
  * A responsive headline component with semantic HTML and fluid typography.
  *
  * Features responsive font sizing using CSS clamp(), balanced text wrapping,
- * and polymorphic rendering for semantic flexibility. Uses zero-runtime CSS-in-JS
- * via Linaria for optimal performance.
+ * and polymorphic rendering for semantic flexibility. Uses Panda CSS for
+ * zero-runtime styling with type-safe design tokens.
  *
  * @example
  * ```tsx
@@ -100,12 +107,10 @@ export function Headline({
   ...props
 }: HeadlineProps) {
   const element = as ?? getDefaultElement(level);
-  const levelClass = level === 2 ? level2 : level === 3 ? level3 : level1;
-
   const Element = element;
 
   return (
-    <Element className={cx(headlineBase, levelClass, className)} {...props}>
+    <Element className={cx(headlineRecipe({ level }), className)} {...props}>
       {children}
     </Element>
   );

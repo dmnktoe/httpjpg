@@ -1,11 +1,13 @@
 import type { Preview } from "@storybook/react";
 // Import global CSS custom properties from tokens
 import "../../../packages/tokens/dist/tokens.css";
+// Import Panda CSS generated styles
+import "../../../packages/ui/styles.css";
 
 /**
  * Storybook preview configuration
  *
- * Imports global styles (CSS custom properties) for all stories
+ * Imports global styles (CSS custom properties and Panda CSS) for all stories
  */
 const preview: Preview = {
   parameters: {

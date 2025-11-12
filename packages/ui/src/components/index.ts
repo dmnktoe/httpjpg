@@ -1,6 +1,6 @@
 /**
  * @httpjpg/ui components
- * Reusable UI components built with Linaria
+ * Reusable UI components built with Panda CSS
  */
 
 // Layout Components
@@ -11,9 +11,9 @@ export { Button, type ButtonProps } from "./button";
 export { Center, type CenterProps } from "./center";
 export { Container, type ContainerProps } from "./container";
 export { Divider, type DividerProps } from "./divider";
-export { Grid, GridItem } from "./grid";
+export { Grid, GridItem, type GridItemProps, type GridProps } from "./grid";
 export { Headline } from "./headline";
-export { Image } from "./image";
+export { Image, type ImageProps } from "./image";
 export { Paragraph } from "./paragraph";
-export { Section } from "./section";
-export { HStack, Stack, VStack } from "./stack";
+export { Section, type SectionProps } from "./section";
+export { HStack, Stack, type StackProps, VStack } from "./stack";

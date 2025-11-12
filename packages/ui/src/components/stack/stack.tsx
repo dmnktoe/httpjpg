@@ -1,9 +1,8 @@
 "use client";
 
-import { spacing } from "@httpjpg/tokens";
-import { css, cx } from "@linaria/core";
 import type { HTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
+import type { SystemStyleObject } from "../../../styled-system/types";
 import { Box } from "../box/box";
 
 export interface StackProps extends HTMLAttributes<HTMLDivElement> {
@@ -13,10 +12,10 @@ export interface StackProps extends HTMLAttributes<HTMLDivElement> {
    */
   direction?: "vertical" | "horizontal";
   /**
-   * Spacing between items (using token scale)
-   * @default 4
+   * Spacing between items (Panda spacing token)
+   * @default "4"
    */
-  gap?: keyof typeof spacing;
+  gap?: string | number;
   /**
    * Alignment of items on cross axis
    * @default "stretch"
@@ -48,22 +47,42 @@ export interface StackProps extends HTMLAttributes<HTMLDivElement> {
    */
   fullWidth?: boolean;
   fullHeight?: boolean;
+  /**
+   * Additional Panda CSS styles
+   */
+  css?: SystemStyleObject;
 }
-
-const stackBase = css`
-  box-sizing: border-box;
-  display: flex;
-`;
 
 /**
  * Stack component - Flexible layout container
- * Use VStack/HStack for common cases
+ *
+ * Flexbox-based layout component with token-based gap and full alignment control.
+ * Use VStack/HStack for common cases.
+ *
+ * @example
+ * ```tsx
+ * <Stack direction="vertical" gap={4} align="stretch">
+ *   <Box>Item 1</Box>
+ *   <Box>Item 2</Box>
+ * </Stack>
+ *
+ * // Horizontal with space-between
+ * <Stack direction="horizontal" gap={2} justify="space-between" fullWidth>
+ *   <Button>Left</Button>
+ *   <Button>Right</Button>
+ * </Stack>
+ *
+ * // Wrapping stack
+ * <Stack direction="horizontal" wrap gap={4}>
+ *   {items.map(item => <Box key={item.id}>{item.content}</Box>)}
+ * </Stack>
+ * ```
  */
 export const Stack = forwardRef<HTMLDivElement, StackProps>(
   (
     {
       direction = "vertical",
-      gap = 4,
+      gap = "4",
       align = "stretch",
       justify = "start",
       wrap = false,
@@ -71,26 +90,25 @@ export const Stack = forwardRef<HTMLDivElement, StackProps>(
       fullHeight = false,
       className,
       children,
-      style,
+      css: cssProp,
       ...props
     },
     ref,
   ) => {
-    const gapValue = spacing[gap as keyof typeof spacing] || spacing[4];
-
     return (
       <Box
         ref={ref}
-        className={cx(stackBase, className)}
-        style={{
+        className={className}
+        css={{
+          display: "flex",
           flexDirection: direction === "vertical" ? "column" : "row",
-          gap: gapValue,
+          gap,
           alignItems: align,
           justifyContent: justify,
           flexWrap: wrap ? "wrap" : "nowrap",
-          width: fullWidth ? "100%" : undefined,
-          height: fullHeight ? "100%" : undefined,
-          ...style,
+          w: fullWidth ? "full" : undefined,
+          h: fullHeight ? "full" : undefined,
+          ...cssProp,
         }}
         {...props}
       >
@@ -104,7 +122,16 @@ Stack.displayName = "Stack";
 
 /**
  * VStack - Vertical Stack
- * Convenience component for vertical layouts
+ *
+ * Convenience component for vertical flexbox layouts.
+ *
+ * @example
+ * ```tsx
+ * <VStack gap={6} alignItems="stretch">
+ *   <Headline>Title</Headline>
+ *   <Paragraph>Content</Paragraph>
+ * </VStack>
+ * ```
  */
 export const VStack = forwardRef<HTMLDivElement, Omit<StackProps, "direction">>(
   (props, ref) => {
@@ -116,7 +143,16 @@ VStack.displayName = "VStack";
 
 /**
  * HStack - Horizontal Stack
- * Convenience component for horizontal layouts
+ *
+ * Convenience component for horizontal flexbox layouts.
+ *
+ * @example
+ * ```tsx
+ * <HStack gap={4} justifyContent="space-between">
+ *   <Button>Left</Button>
+ *   <Button>Right</Button>
+ * </HStack>
+ * ```
  */
 export const HStack = forwardRef<HTMLDivElement, Omit<StackProps, "direction">>(
   (props, ref) => {

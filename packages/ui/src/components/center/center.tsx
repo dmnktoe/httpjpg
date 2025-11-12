@@ -1,6 +1,5 @@
 "use client";
 
-import { css, cx } from "@linaria/core";
 import type { HTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
 import { Box } from "../box/box";
@@ -32,13 +31,30 @@ export interface CenterProps extends HTMLAttributes<HTMLDivElement> {
   minHeight?: string;
 }
 
-const centerBase = css`
-  box-sizing: border-box;
-`;
-
 /**
  * Center component - Center content horizontally and/or vertically
- * Perfect for hero sections and centered layouts
+ *
+ * Flexible centering component with control over horizontal/vertical centering
+ * and choice between flexbox or grid layout.
+ *
+ * Perfect for hero sections and centered layouts.
+ *
+ * @example
+ * ```tsx
+ * <Center minHeight="100vh">
+ *   <Headline>Centered Content</Headline>
+ * </Center>
+ *
+ * // Only horizontal centering
+ * <Center vertical={false}>
+ *   Content
+ * </Center>
+ *
+ * // Using grid layout
+ * <Center useFlex={false} minHeight="50vh">
+ *   Grid centered content
+ * </Center>
+ * ```
  */
 export const Center = forwardRef<HTMLDivElement, CenterProps>(
   (
@@ -57,8 +73,9 @@ export const Center = forwardRef<HTMLDivElement, CenterProps>(
     return (
       <Box
         ref={ref}
-        className={cx(centerBase, className)}
+        className={className}
         style={{
+          boxSizing: "border-box",
           display: useFlex ? "flex" : "grid",
           justifyContent: useFlex && horizontal ? "center" : undefined,
           justifyItems: !useFlex && horizontal ? "center" : undefined,

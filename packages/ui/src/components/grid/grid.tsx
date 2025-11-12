@@ -1,9 +1,9 @@
 "use client";
 
-import { spacing } from "@httpjpg/tokens";
-import { css, cx } from "@linaria/core";
 import type { HTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
+import { css, cx } from "../../../styled-system/css";
+import type { SystemStyleObject } from "../../../styled-system/types";
 
 export interface GridProps extends HTMLAttributes<HTMLDivElement> {
   /**
@@ -16,20 +16,20 @@ export interface GridProps extends HTMLAttributes<HTMLDivElement> {
    */
   columns?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | "auto";
   /**
-   * Gap between items (using token scale)
-   * @default 4
+   * Gap between items (Panda spacing token)
+   * @default "4"
    */
-  gap?: keyof typeof spacing;
+  gap?: string | number;
   /**
-   * Row gap (using token scale)
+   * Row gap (Panda spacing token)
    * If not set, uses gap value
    */
-  rowGap?: keyof typeof spacing;
+  rowGap?: string | number;
   /**
-   * Column gap (using token scale)
+   * Column gap (Panda spacing token)
    * If not set, uses gap value
    */
-  columnGap?: keyof typeof spacing;
+  columnGap?: string | number;
   /**
    * Alignment of items
    * @default "stretch"
@@ -50,26 +50,44 @@ export interface GridProps extends HTMLAttributes<HTMLDivElement> {
    * @default false
    */
   fullWidth?: boolean;
+  /**
+   * Additional Panda CSS styles
+   */
+  css?: SystemStyleObject;
 }
-
-const gridBase = css`
-  display: grid;
-  box-sizing: border-box;
-`;
 
 /**
  * Grid component - CSS Grid layout system
  *
- * A powerful 12-column grid system perfect for magazine-style brutalist layouts.
- * Provides precise control over columns, gaps, and alignment. Use with GridItem
- * for advanced positioning and spanning.
+ * A powerful 12-column grid system with token-based gaps and full control.
+ * Perfect for magazine-style brutalist layouts.
+ * Use with GridItem for advanced positioning and spanning.
+ *
+ * @example
+ * ```tsx
+ * <Grid columns={12} gap={4}>
+ *   <GridItem colSpan={6}>Half width</GridItem>
+ *   <GridItem colSpan={6}>Half width</GridItem>
+ * </Grid>
+ *
+ * // Auto-fit responsive grid
+ * <Grid columns="auto" gap={6} rowGap={8}>
+ *   {items.map(item => <Box key={item.id}>{item.content}</Box>)}
+ * </Grid>
+ *
+ * // Dense packing
+ * <Grid columns={4} flow="row-dense" gap={2}>
+ *   <GridItem colSpan={2}>Wide</GridItem>
+ *   <GridItem>Normal</GridItem>
+ * </Grid>
+ * ```
  */
 export const Grid = forwardRef<HTMLDivElement, GridProps>(
   (
     {
       children,
       columns = 12,
-      gap = 4,
+      gap = "4",
       rowGap,
       columnGap,
       align = "stretch",
@@ -77,39 +95,31 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
       flow = "row",
       fullWidth = false,
       className,
-      style,
+      css: cssProp,
       ...props
     },
     ref,
   ) => {
-    const gapValue = spacing[gap as keyof typeof spacing] || spacing[4];
-    const rowGapValue = rowGap
-      ? spacing[rowGap as keyof typeof spacing]
-      : undefined;
-    const columnGapValue = columnGap
-      ? spacing[columnGap as keyof typeof spacing]
-      : undefined;
+    const gridTemplateColumns =
+      columns === "auto"
+        ? "repeat(auto-fit, minmax(200px, 1fr))"
+        : `repeat(${columns}, 1fr)`;
+
+    const styles = css({
+      display: "grid",
+      gridTemplateColumns,
+      gap: rowGap || columnGap ? undefined : gap,
+      rowGap: rowGap || gap,
+      columnGap: columnGap || gap,
+      alignItems: align,
+      justifyItems: justify,
+      gridAutoFlow: flow,
+      w: fullWidth ? "full" : undefined,
+      ...cssProp,
+    });
 
     return (
-      <div
-        ref={ref}
-        className={cx(gridBase, className)}
-        style={{
-          gridTemplateColumns:
-            columns === "auto"
-              ? "repeat(auto-fit, minmax(200px, 1fr))"
-              : `repeat(${columns}, 1fr)`,
-          gap: rowGapValue || columnGapValue ? "0" : gapValue,
-          rowGap: rowGapValue,
-          columnGap: columnGapValue,
-          alignItems: align,
-          justifyItems: justify,
-          gridAutoFlow: flow,
-          width: fullWidth ? "100%" : undefined,
-          ...style,
-        }}
-        {...props}
-      >
+      <div ref={ref} className={cx(styles, className)} {...props}>
         {children}
       </div>
     );
@@ -151,15 +161,28 @@ export interface GridItemProps extends HTMLAttributes<HTMLDivElement> {
   rowEnd?: number;
 }
 
-const gridItemBase = css`
-  box-sizing: border-box;
-`;
-
 /**
  * GridItem component - Individual grid cell with precise control
  *
  * Use inside Grid to control specific positioning, spanning, and overlap.
  * Perfect for creating complex magazine-style layouts with overlapping elements.
+ *
+ * @example
+ * ```tsx
+ * <GridItem colSpan={6} rowSpan={2}>
+ *   Spans 6 columns and 2 rows
+ * </GridItem>
+ *
+ * // Precise positioning
+ * <GridItem colStart={2} colEnd={5} rowStart={1} rowEnd={3}>
+ *   Custom grid area
+ * </GridItem>
+ *
+ * // Full width
+ * <GridItem colSpan="full">
+ *   Full width content
+ * </GridItem>
+ * ```
  */
 export const GridItem = forwardRef<HTMLDivElement, GridItemProps>(
   (
@@ -190,8 +213,9 @@ export const GridItem = forwardRef<HTMLDivElement, GridItemProps>(
     return (
       <div
         ref={ref}
-        className={cx(gridItemBase, className)}
+        className={className}
         style={{
+          boxSizing: "border-box",
           gridColumn,
           gridRow,
           ...props.style,

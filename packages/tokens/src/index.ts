@@ -3,10 +3,6 @@
  * Central design tokens package for the httpjpg monorepo
  * Provides type-safe design tokens for colors, typography, spacing, and more.
  *
- * Note: For use with Linaria, tokens must be inlined as static values
- * or converted to CSS custom properties, as dynamic imports cannot be
- * evaluated at build-time.
- *
  * @packageDocumentation
  */
 

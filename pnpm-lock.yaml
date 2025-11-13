@@ -35,6 +35,9 @@ importers:
 
   apps/storybook:
     dependencies:
+      '@httpjpg/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
       '@httpjpg/ui':
         specifier: workspace:*
         version: link:../../packages/ui

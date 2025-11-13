@@ -38,22 +38,28 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Default container (lg size)
+ * Basic container with live controls
  */
-export const Default: Story = {
-  render: () => (
+export const Basic: Story = {
+  args: {
+    size: "lg",
+    px: 4,
+    center: true,
+    children: (
+      <div style={{ background: "white", padding: "2rem" }}>
+        <Headline level={1}>Container Content</Headline>
+        <Paragraph style={{ marginTop: "1rem" }}>
+          This container has configurable size and padding. Change the controls
+          to see how it responds.
+        </Paragraph>
+      </div>
+    ),
+  },
+  render: (args) => (
     <div
       style={{ background: "#f5f5f5", minHeight: "100vh", padding: "2rem 0" }}
     >
-      <Container>
-        <div style={{ background: "white", padding: "2rem" }}>
-          <Headline level={1}>Container Content</Headline>
-          <Paragraph style={{ marginTop: "1rem" }}>
-            This container has a max-width of 1024px (lg) and is centered on the
-            page.
-          </Paragraph>
-        </div>
-      </Container>
+      <Container {...args} />
     </div>
   ),
 };
@@ -62,6 +68,9 @@ export const Default: Story = {
  * Different container sizes
  */
 export const Sizes: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <div
       style={{ background: "#f5f5f5", minHeight: "100vh", padding: "2rem 0" }}
@@ -145,6 +154,9 @@ export const Sizes: Story = {
  * Article layout
  */
 export const ArticleLayout: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <Container size="md" py={16}>
       <Headline level={1}>Article Title</Headline>

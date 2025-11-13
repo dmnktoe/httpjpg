@@ -24,6 +24,30 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
+ * Basic VStack with live controls
+ */
+export const Basic: Story = {
+  args: {
+    gap: "4",
+    align: "stretch",
+    justify: "start",
+    children: null,
+  },
+  argTypes: {
+    gap: spacingArgType("Spacing between items", "4"),
+    align: alignArgType("Alignment on cross axis", "stretch"),
+    justify: justifyArgType("Justification on main axis", "start"),
+  },
+  render: (args) => (
+    <VStack gap={args.gap} align={args.align} justify={args.justify}>
+      <Box css={{ bg: "neutral.100", p: "4", w: "full" }}>Item 1</Box>
+      <Box css={{ bg: "neutral.200", p: "4", w: "full" }}>Item 2</Box>
+      <Box css={{ bg: "neutral.300", p: "4", w: "full" }}>Item 3</Box>
+    </VStack>
+  ),
+};
+
+/**
  * Interactive Playground - Try different gap, align and justify values!
  */
 export const Playground: Story = {

@@ -85,6 +85,9 @@ export default defineConfig({
           // Divider component props
           borderTopStyle: ["solid", "dashed", "dotted"],
           borderBottomStyle: ["solid", "dashed", "dotted"],
+
+          // Container component max-width values
+          maxWidth: ["640px", "768px", "1024px", "1280px", "1536px", "100%"],
         },
       },
     ],

@@ -46,16 +46,16 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Basic grid with 3 columns - Minimalist
+ * Basic grid with live controls
  */
 export const Basic: Story = {
   args: {
-    children: null,
     columns: 3,
     gap: 6,
+    children: null,
   },
   render: (args) => (
-    <Grid {...args} css={{ p: "8" }}>
+    <Grid columns={args.columns} gap={args.gap} css={{ p: "8" }}>
       <AspectRatio ratio="4/3">
         <img
           src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop"

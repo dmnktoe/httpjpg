@@ -87,7 +87,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
       <Box
         ref={ref}
         css={{
-          w: "full",
+          w: "100%",
           maxW: sizeMap[size],
           px,
           py,

@@ -61,6 +61,18 @@ const mediumText =
 const shortText = "A brief statement about design principles.";
 
 /**
+ * Basic paragraph with live controls
+ */
+export const Basic: Story = {
+  args: {
+    size: "md",
+    align: "left",
+    maxWidth: true,
+    children: mediumText,
+  },
+};
+
+/**
  * Default paragraph with medium size and left alignment.
  */
 export const Default: Story = {
@@ -131,6 +143,9 @@ export const FullWidth: Story = {
  * Multiple paragraphs demonstrating typical content flow.
  */
 export const MultiParagraph: Story = {
+  args: {
+    children: null,
+  },
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
       <Paragraph size="lg">

@@ -34,22 +34,34 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Basic section with default padding
+ * Basic section with live controls
  */
 export const Basic: Story = {
   args: {
     pt: 16,
     pb: 16,
-    children: (
+    pl: 0,
+    pr: 0,
+    fullWidth: true,
+    children: null,
+  },
+  render: (args) => (
+    <Section
+      pt={args.pt}
+      pb={args.pb}
+      pl={args.pl}
+      pr={args.pr}
+      fullWidth={args.fullWidth}
+    >
       <Container>
         <Headline level={2}>Section Title</Headline>
         <Paragraph css={{ mt: "4" }}>
-          This is a basic section with default padding. Sections help organize
-          content with consistent vertical rhythm.
+          This is a basic section with configurable padding. Use the controls to
+          adjust spacing and see how it affects the layout.
         </Paragraph>
       </Container>
-    ),
-  },
+    </Section>
+  ),
 };
 
 /**
@@ -70,7 +82,11 @@ export const LargePadding: Story = {
           <Headline level={1} css={{ fontSize: "3rem", m: 0 }}>
             LARGE SPACING
           </Headline>
-          <Paragraph css={{ mt: "6", fontSize: "lg" }}>
+          <Paragraph
+            align="center"
+            maxWidth={false}
+            css={{ mt: "6", fontSize: "lg" }}
+          >
             Use large padding for hero sections and important content areas.
           </Paragraph>
         </Box>

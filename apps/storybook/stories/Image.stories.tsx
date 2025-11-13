@@ -62,13 +62,17 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Basic image without copyright
+ * Basic image with live controls
  */
 export const Basic: Story = {
   args: {
     src: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop",
     alt: "Modern architecture",
     aspectRatio: "16/9",
+    copyright: "",
+    copyrightPosition: "inline",
+    blurOnLoad: false,
+    objectFit: "cover",
   },
 };
 
@@ -157,6 +161,10 @@ export const Square: Story = {
  * Gallery with different copyright styles
  */
 export const Gallery: Story = {
+  args: {
+    src: "",
+    alt: "",
+  },
   render: () => (
     <VStack gap={8} style={{ padding: "2rem" }}>
       <Box>
@@ -196,6 +204,10 @@ export const Gallery: Story = {
  * Brutalist card with image
  */
 export const BrutalistCard: Story = {
+  args: {
+    src: "",
+    alt: "",
+  },
   render: () => (
     <Box
       style={{

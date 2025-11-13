@@ -5,7 +5,9 @@
 
 export const typography = {
   fontFamily: {
-    sans: ["Impact", "Haettenschweiler", "Arial Narrow Bold", "sans-serif"],
+    sans: ["Arial", "Helvetica", "sans-serif"],
+    headline: ["Impact", "Haettenschweiler", "Arial Narrow Bold", "sans-serif"],
+    accent: ["Trattatello", "serif"],
     mono: [
       "ui-monospace",
       "SFMono-Regular",

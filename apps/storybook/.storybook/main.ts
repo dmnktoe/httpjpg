@@ -33,6 +33,8 @@ const config: StorybookConfig = {
           ),
           "@httpjpg/tokens": path.resolve(tokensPackagePath, "src"),
           "styled-system": path.resolve(uiPackagePath, "styled-system"),
+          // Mock Next.js Link for Storybook
+          "next/link": path.resolve(__dirname, "next-link-mock.tsx"),
         },
         preserveSymlinks: false,
       },

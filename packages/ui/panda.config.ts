@@ -135,6 +135,7 @@ export default defineConfig({
     },
     body: {
       fontFamily: "sans",
+      fontSize: "12px",
       color: "black",
     },
     "img, picture, video, canvas, svg": {
@@ -156,6 +157,8 @@ export default defineConfig({
         colors: toPandaTokens(colors),
         fonts: {
           sans: { value: typography.fontFamily.sans.join(", ") },
+          headline: { value: typography.fontFamily.headline.join(", ") },
+          accent: { value: typography.fontFamily.accent.join(", ") },
           mono: { value: typography.fontFamily.mono.join(", ") },
         },
         fontWeights: toPandaTokens(typography.fontWeight),

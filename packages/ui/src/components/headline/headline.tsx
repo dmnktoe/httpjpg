@@ -33,7 +33,7 @@ const headlineRecipe = cva({
     padding: 0,
 
     /* Typography */
-    fontFamily: "sans",
+    fontFamily: "headline",
     fontWeight: 700,
     color: "black",
     letterSpacing: "-0.025em",

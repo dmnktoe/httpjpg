@@ -74,29 +74,63 @@ export const Navigation = ({
         <Box css={{ w: { xl: "33.333333%" } }}>
           <span style={{ fontWeight: "bold" }}>⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S</span>
           <br />
-          {personalWork.map((work) => (
-            <NavLink
-              key={work.id}
-              variant="personal"
-              href={`/work/${work.slug}`}
-            >
-              {work.title}
-            </NavLink>
-          ))}
-          <NavLink variant="personal" href="/feed">
-            music ⋆.˚✮🎧✮˚.⋆ &nd pics ˙✧˖°📷 ༘ ⋆｡˚
-          </NavLink>
+          {personalWork.length > 0 ? (
+            <>
+              {personalWork.map((work) => (
+                <NavLink
+                  key={work.id}
+                  variant="personal"
+                  href={`/work/${work.slug}`}
+                >
+                  {work.title}
+                </NavLink>
+              ))}
+              <NavLink variant="personal" href="/feed">
+                music ⋆.˚✮🎧✮˚.⋆ &nd pics ˙✧˖°📷 ༘ ⋆｡˚
+              </NavLink>
+            </>
+          ) : (
+            <span style={{ fontSize: "0.75rem", opacity: 0.5 }}>
+              ╭─────────────────╮
+              <br />│ ∅ coming soon ∅ │
+              <br />
+              ╰─────────────────╯
+            </span>
+          )}
         </Box>
 
         {/* Right Column - Recent Client Work */}
         <Box css={{ w: { xl: "33.333333%" } }}>
           <span style={{ fontWeight: "bold" }}>⇝ᵣₑcꫀₙₜ 𝒞𝓁LI€NT</span>
           <br />
-          {clientWork.map((work) => (
-            <NavLink key={work.id} variant="client" href={`/work/${work.slug}`}>
-              {work.title}
-            </NavLink>
-          ))}
+          {clientWork.length > 0 ? (
+            clientWork.map((work) => {
+              // Check if slug is external URL
+              const isExternal =
+                work.slug.startsWith("http://") ||
+                work.slug.startsWith("https://");
+              const href = isExternal ? work.slug : `/work/${work.slug}`;
+
+              return (
+                <NavLink
+                  key={work.id}
+                  variant="client"
+                  href={href}
+                  isExternal={isExternal}
+                  showExternalIcon={isExternal}
+                >
+                  {work.title}
+                </NavLink>
+              );
+            })
+          ) : (
+            <span style={{ fontSize: "0.75rem", opacity: 0.5 }}>
+              ╭───────────────────╮
+              <br />│ ⊹ taking clients ⊹ │
+              <br />
+              ╰───────────────────╯
+            </span>
+          )}
         </Box>
       </Box>
     </Box>

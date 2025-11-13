@@ -131,28 +131,6 @@ importers:
         specifier: workspace:*
         version: link:../packages/typescript
 
-  packages/storyblok-richtext:
-    dependencies:
-      '@httpjpg/ui':
-        specifier: workspace:*
-        version: link:../ui
-      react:
-        specifier: ^19.0.0
-        version: 19.2.0
-      storyblok-rich-text-react-renderer:
-        specifier: ^3.0.1
-        version: 3.0.1(react@19.2.0)
-    devDependencies:
-      '@httpjpg/tsconfig':
-        specifier: workspace:*
-        version: link:../typescript
-      '@types/react':
-        specifier: ^19.0.7
-        version: 19.2.4
-      typescript:
-        specifier: ^5.9.2
-        version: 5.9.2
-
   packages/storyblok-ui:
     dependencies:
       '@httpjpg/ui':
@@ -3067,11 +3045,6 @@ packages:
   split2@4.2.0:
     resolution: {integrity: sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg==}
     engines: {node: '>= 10.x'}
-
-  storyblok-rich-text-react-renderer@3.0.1:
-    resolution: {integrity: sha512-gd1nvjc95LEMLT4kVVXlN3p1qQUcIb/K4+LYnyAypX3MDP3dr2+DAX64nZb4CNbd8qHd+lM6SLxIxO53hgmK2Q==}
-    peerDependencies:
-      react: '>=16.0.0'
 
   storybook@8.6.14:
     resolution: {integrity: sha512-sVKbCj/OTx67jhmauhxc2dcr1P+yOgz/x3h0krwjyMgdc5Oubvxyg4NYDZmzAw+ym36g/lzH8N0Ccp4dwtdfxw==}
@@ -6131,10 +6104,6 @@ snapshots:
   source-map@0.6.1: {}
 
   split2@4.2.0: {}
-
-  storyblok-rich-text-react-renderer@3.0.1(react@19.2.0):
-    dependencies:
-      react: 19.2.0
 
   storybook@8.6.14(prettier@3.2.5):
     dependencies:

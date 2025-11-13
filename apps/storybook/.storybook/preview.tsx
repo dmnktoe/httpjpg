@@ -6,7 +6,7 @@ import "@httpjpg/tokens/dist/tokens.css";
 import "@httpjpg/ui/styles.css";
 
 /**
- * Brutalist Black & White Theme with Impact Typography
+ * Brutalist Black & White Theme with Token-based Typography
  */
 const brutalistTheme = create({
   base: "light",
@@ -15,9 +15,9 @@ const brutalistTheme = create({
   brandTitle: "httpjpg",
   brandUrl: "https://httpjpg.com",
 
-  // Typography - Impact everywhere
-  fontBase: '"Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif',
-  fontCode: 'ui-monospace, "SFMono-Regular", monospace',
+  // Typography - Using design tokens
+  fontBase: "Arial, Helvetica, sans-serif", // Body text uses sans token
+  fontCode: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
 
   // Colors - Pure black & white brutalism
   colorPrimary: "#000000",
@@ -76,6 +76,48 @@ const preview: Preview = {
       theme: brutalistTheme,
     },
   },
+  decorators: [
+    (Story) => (
+      <>
+        <style>
+          {`
+            /* Body text uses sans token */
+            .sbdocs-content,
+            .sbdocs-p,
+            .docblock-argstable,
+            .docblock-description,
+            body,
+            p,
+            span,
+            div,
+            td,
+            th,
+            label {
+              font-family: Arial, Helvetica, sans-serif !important;
+            }
+
+            /* Headlines use headline token with !important to override */
+            .sbdocs-h1,
+            .sbdocs-h2,
+            .sbdocs-h3,
+            .sbdocs-h4,
+            .sbdocs-h5,
+            .sbdocs-h6,
+            .sbdocs-title,
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+              font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif !important;
+            }
+          `}
+        </style>
+        <Story />
+      </>
+    ),
+  ],
 };
 
 export default preview;

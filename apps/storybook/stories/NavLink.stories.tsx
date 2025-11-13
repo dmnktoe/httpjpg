@@ -2,7 +2,7 @@ import { Box, NavLink } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "Components/NavLink",
+  title: "Navigation/NavLink",
   component: NavLink,
   parameters: {
     layout: "centered",

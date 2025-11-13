@@ -34,12 +34,19 @@ export interface LinkProps
 
 const linkRecipe = cva({
   base: {
-    /* Reset */
-    textDecoration: "none",
+    /* Base styles */
+    textDecoration: "underline",
+    textDecorationThickness: "1px",
+    textUnderlineOffset: "2px",
     color: "inherit",
 
     /* Transitions */
-    transition: "all 150ms ease-in-out",
+    transition: "text-decoration-style 150ms ease-in-out",
+
+    /* Hover state - wavy underline */
+    _hover: {
+      textDecorationStyle: "wavy",
+    },
 
     /* Focus states */
     outline: "none",
@@ -101,6 +108,10 @@ export const Link = ({
         className={
           className ? `${combinedStyles} ${className}` : combinedStyles
         }
+        style={{
+          cursor:
+            'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><text x="0" y="15" font-size="16">↗</text></svg>\') 10 5, pointer',
+        }}
         {...externalProps}
         {...props}
       >

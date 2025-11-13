@@ -2,7 +2,7 @@ import { Box, Link } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "Components/Link",
+  title: "Navigation/Link",
   component: Link,
   parameters: {
     layout: "centered",

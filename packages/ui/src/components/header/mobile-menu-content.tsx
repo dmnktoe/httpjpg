@@ -1,7 +1,6 @@
 "use client";
 
 import { Box } from "../box/box";
-import { Divider } from "../divider/divider";
 import { Link } from "../link/link";
 import { NavLink } from "../nav-link/nav-link";
 import type { HeaderProps } from "./header";
@@ -19,6 +18,8 @@ export const MobileMenuContent = ({
   setIsOpen,
   nav,
   personalWork = [],
+  clientWork = [],
+  isDark = false,
 }: MobileMenuContentProps) => {
   const handleMenuItemClick = () => {
     setIsOpen(false);
@@ -64,11 +65,14 @@ export const MobileMenuContent = ({
             flexGrow: 1,
             flexDirection: "column",
             alignItems: "stretch",
-            bg: "white",
-            color: "black",
+            bg: isDark ? "black" : "white",
+            color: isDark ? "white" : "black",
             m: { md: "6" },
-            borderRadius: { md: "2xl" },
-            boxShadow: { md: "xl" },
+            border: isDark ? "3px solid white" : "3px solid black",
+            borderRadius: 0,
+            boxShadow: isDark
+              ? "8px 8px 0px 0px white"
+              : "8px 8px 0px 0px black",
           }}
         >
           <Box
@@ -78,9 +82,16 @@ export const MobileMenuContent = ({
               flexGrow: 1,
               flexDirection: "column",
               p: { base: "2", md: "6" },
-              fontSize: "2xl",
+              fontSize: { base: "lg", md: "xl" },
             }}
           >
+            <Box css={{ mb: "4", fontWeight: "bold", fontSize: "sm" }}>
+              ╭─────────────────────╮
+              <br />│ ⇝ MENU NAVIGATION │
+              <br />
+              ╰─────────────────────╯
+            </Box>
+
             {nav.map((item) => (
               <Link
                 key={item.name}
@@ -99,21 +110,85 @@ export const MobileMenuContent = ({
               </Link>
             ))}
 
-            <Divider variant="solid" spacing={16} />
+            <Box
+              css={{
+                my: "3",
+                fontSize: "xs",
+                opacity: 0.6,
+                fontFamily: "mono",
+              }}
+            >
+              ╶─────────────────────╴
+            </Box>
 
-            {personalWork.map((work) => (
-              <NavLink
-                key={work.id}
-                variant="personal"
-                href={`/work/${work.slug}`}
-                onClick={handleMenuItemClick}
-                css={{
-                  fontSize: "inherit",
-                }}
-              >
-                {work.title}
-              </NavLink>
-            ))}
+            <Box css={{ mb: "2", fontWeight: "bold", fontSize: "sm" }}>
+              🎀 ୧ꔛꗃ˖ PERSONAL WORK
+            </Box>
+
+            {personalWork.length > 0 ? (
+              personalWork.map((work) => (
+                <NavLink
+                  key={work.id}
+                  variant="personal"
+                  href={`/work/${work.slug}`}
+                  onClick={handleMenuItemClick}
+                  css={{
+                    fontSize: { base: "sm", md: "md" },
+                  }}
+                >
+                  {work.title}
+                </NavLink>
+              ))
+            ) : (
+              <Box css={{ fontSize: "xs", opacity: 0.4, ml: "2" }}>
+                ∅ ɴᴏ ᴡᴏʀᴋ ʏᴇᴛ ⊹
+              </Box>
+            )}
+
+            <Box
+              css={{
+                my: "3",
+                fontSize: "xs",
+                opacity: 0.6,
+                fontFamily: "mono",
+              }}
+            >
+              ╶─────────────────────╴
+            </Box>
+
+            <Box css={{ mb: "2", fontWeight: "bold", fontSize: "sm" }}>
+              (^‿^)-𝒷))) CLIENT WORK
+            </Box>
+
+            {clientWork.length > 0 ? (
+              clientWork.map((work) => {
+                // Check if slug is external URL
+                const isExternal =
+                  work.slug.startsWith("http://") ||
+                  work.slug.startsWith("https://");
+                const href = isExternal ? work.slug : `/work/${work.slug}`;
+
+                return (
+                  <NavLink
+                    key={work.id}
+                    variant="client"
+                    href={href}
+                    isExternal={isExternal}
+                    showExternalIcon={isExternal}
+                    onClick={handleMenuItemClick}
+                    css={{
+                      fontSize: { base: "sm", md: "md" },
+                    }}
+                  >
+                    {work.title}
+                  </NavLink>
+                );
+              })
+            ) : (
+              <Box css={{ fontSize: "xs", opacity: 0.4, ml: "2" }}>
+                ⊹ ᴛᴀᴋɪɴɢ ᴄʟɪᴇɴᴛꜱ ⊹
+              </Box>
+            )}
           </Box>
         </Box>
       </Box>

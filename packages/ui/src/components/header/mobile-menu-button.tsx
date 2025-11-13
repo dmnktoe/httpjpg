@@ -8,7 +8,7 @@ interface MobileMenuButtonProps {
 }
 
 /**
- * Mobile Menu Toggle Button
+ * Mobile Menu Toggle Button with Brutalist ASCII Style
  */
 export const MobileMenuButton = ({
   isOpen,
@@ -25,44 +25,37 @@ export const MobileMenuButton = ({
         display: { base: "block", xl: "none" },
       }}
     >
-      <Box css={{ display: "flex", flexDirection: "row", gap: "3" }}>
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: "9999px",
-            backgroundColor: "rgba(0, 0, 0, 0.75)",
-            backdropFilter: "blur(12px)",
-            padding: "0.75rem",
-            color: "white",
-            transition: "all 200ms",
-            border: "none",
-            cursor: "pointer",
-          }}
-          className="hover:scale-95 hover:bg-black active:scale-75 active:bg-neutral-700"
-          aria-label={isOpen ? "Close menu" : "Open menu"}
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ color: "inherit" }}
-            aria-hidden="true"
-          >
-            <path
-              d="M2 3h12M2 8h12M2 13h12"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
-        </button>
-      </Box>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "transparent",
+          color: "black",
+          border: "none",
+          padding: "0.5rem 0.75rem",
+          cursor: "pointer",
+          fontFamily: "Impact, Haettenschweiler, sans-serif",
+          fontSize: "0.65rem",
+          lineHeight: "1",
+          letterSpacing: "0.05em",
+          transition: "opacity 150ms ease-in-out",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.opacity = "0.5";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.opacity = "1";
+        }}
+        aria-label={isOpen ? "Close menu" : "Open menu"}
+      >
+        <span style={{ marginBottom: "0.15rem" }}>╔═══╗</span>
+        <span style={{ marginBottom: "0.15rem" }}>║ ☰ ║</span>
+        <span>╚═══╝</span>
+      </button>
     </Box>
   );
 };

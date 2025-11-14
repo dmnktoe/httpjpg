@@ -11,6 +11,7 @@ export { Button, type ButtonProps } from "./button";
 export { Center, type CenterProps } from "./center";
 export { Container, type ContainerProps } from "./container";
 export { Divider, type DividerProps } from "./divider";
+export * from "./footer";
 export { Grid, GridItem, type GridItemProps, type GridProps } from "./grid";
 export {
   Header,
@@ -23,5 +24,6 @@ export { Image, type ImageProps } from "./image";
 export { Link, type LinkProps } from "./link";
 export { NavLink, type NavLinkProps } from "./nav-link";
 export { Paragraph } from "./paragraph";
-export { Section, type SectionProps } from "./section";
-export { HStack, Stack, type StackProps, VStack } from "./stack";
+export * from "./scaled-container";
+export * from "./section";
+export * from "./stack";

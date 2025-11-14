@@ -97,7 +97,7 @@ export const Outline: Story = {
 
 export const Disabled: Story = {
   args: {
-    disabled: true,
+    variant: "disabled",
     children: "Disabled Button",
   },
 };
@@ -170,6 +170,17 @@ export const AllVariants: Story = {
         </Button>
         <Button {...args} variant="outline" size="lg">
           Outline LG
+        </Button>
+      </div>
+      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <Button {...args} variant="disabled" size="sm">
+          Disabled SM
+        </Button>
+        <Button {...args} variant="disabled" size="md">
+          Disabled MD
+        </Button>
+        <Button {...args} variant="disabled" size="lg">
+          Disabled LG
         </Button>
       </div>
     </div>

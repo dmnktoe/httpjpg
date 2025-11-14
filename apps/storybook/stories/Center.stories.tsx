@@ -281,46 +281,48 @@ export const BrutalistCard: Story = {
       horizontal
       vertical
       minHeight="500px"
-      style={{ background: "#f5f5f5" }}
+      style={{ background: "transparent" }}
     >
       <Box
         style={{
-          background: "white",
-          border: "4px solid black",
+          background: "transparent",
           maxWidth: "500px",
-          boxShadow: "16px 16px 0 black",
+          position: "relative",
         }}
       >
         <Box
           style={{
-            background: "#171717",
-            color: "white",
-            padding: "1rem",
-            borderBottom: "4px solid black",
+            padding: "2rem",
+            fontFamily: "sans-serif",
           }}
         >
           <Box
             style={{
-              fontFamily: "monospace",
-              fontSize: "0.75rem",
-              marginBottom: "0.5rem",
-              opacity: 0.7,
+              fontSize: "0.65rem",
+              marginBottom: "0.75rem",
+              letterSpacing: "0.1em",
+              opacity: 0.6,
             }}
           >
-            PROJECT / 001
+            ⇝ᵣₑcꫀₙₜ 𝒞𝓁LI€NT / 001
           </Box>
           <Headline
             level={2}
-            style={{ color: "white", margin: 0, fontSize: "2rem" }}
+            style={{ margin: 0, fontSize: "2rem", fontWeight: 600 }}
           >
-            CENTERED DESIGN
+            ⋆.˚ ᡣ𐭩 .𖥔˚ CENTERED DESIGN ⋆.˚✮
           </Headline>
-        </Box>
-        <Box style={{ padding: "2rem" }}>
-          <Paragraph style={{ margin: 0, lineHeight: 1.8 }}>
-            Center component makes it easy to create perfectly centered layouts
-            with brutalist aesthetics. Combine with other components for maximum
-            impact.
+          <Paragraph
+            style={{
+              marginTop: "1rem",
+              lineHeight: 1.8,
+              fontSize: "0.95rem",
+              opacity: 0.8,
+            }}
+          >
+            🎀 ୧ꔛꗃ˖ Center component makes it easy to create perfectly centered
+            layouts with modern aesthetics. Combine with other components for
+            maximum impact ･ﾟ⋆
           </Paragraph>
         </Box>
       </Box>

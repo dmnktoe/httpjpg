@@ -38,14 +38,7 @@ export const ALIGN_OPTIONS = [
 /**
  * Flexbox/Grid justify options
  */
-export const JUSTIFY_OPTIONS = [
-  "start",
-  "center",
-  "end",
-  "space-between",
-  "space-around",
-  "space-evenly",
-] as const;
+export const JUSTIFY_OPTIONS = ["start", "center", "end", "stretch"] as const;
 
 /**
  * Flex direction options
@@ -61,6 +54,16 @@ export const FLEX_WRAP_OPTIONS = ["wrap", "nowrap"] as const;
  * Grid column options
  */
 export const GRID_COLUMN_OPTIONS = [1, 2, 3, 4, 6, 12, "auto"] as const;
+
+/**
+ * Grid flow options
+ */
+export const GRID_FLOW_OPTIONS = [
+  "row",
+  "column",
+  "row-dense",
+  "column-dense",
+] as const;
 
 /**
  * Border style options
@@ -129,6 +132,7 @@ export const BUTTON_VARIANT_OPTIONS = [
   "primary",
   "secondary",
   "outline",
+  "disabled",
 ] as const;
 
 /**

@@ -188,40 +188,52 @@ export const BrutalistCard: Story = {
     <Box
       as="article"
       style={{
-        background: "white",
-        border: "4px solid #171717",
-        padding: "0",
+        background: "transparent",
         maxWidth: "400px",
-        boxShadow: "8px 8px 0 #171717",
+        position: "relative",
       }}
     >
       <Box
         style={{
-          background: "#171717",
-          color: "white",
           padding: "1.5rem",
-          borderBottom: "4px solid #171717",
+          fontFamily: "sans-serif",
         }}
       >
-        <Headline level={3} style={{ color: "white", margin: 0 }}>
-          PROJECT TITLE
+        <Box
+          style={{
+            fontSize: "0.65rem",
+            marginBottom: "0.75rem",
+            letterSpacing: "0.1em",
+            opacity: 0.6,
+          }}
+        >
+          ⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S / 001
+        </Box>
+        <Headline
+          level={3}
+          style={{ margin: 0, fontSize: "1.25rem", fontWeight: 600 }}
+        >
+          🎀 ୧ꔛꗃ˖ PROJECT TITLE ･ﾟ⋆
         </Headline>
-      </Box>
-      <Box style={{ padding: "1.5rem" }}>
-        <Paragraph>
-          A brutalist card design with bold borders and strong shadows. Perfect
-          for portfolio items.
+        <Paragraph
+          style={{
+            marginTop: "0.75rem",
+            fontSize: "0.875rem",
+            opacity: 0.8,
+            lineHeight: 1.6,
+          }}
+        >
+          ⋆.˚ ᡣ𐭩 .𖥔˚ Bold design with modern aesthetics. Perfect for portfolio
+          items ⋆.˚✮
         </Paragraph>
         <Box
           style={{
-            background: "#f5f5f5",
-            padding: "0.75rem",
             marginTop: "1rem",
-            fontFamily: "monospace",
-            fontSize: "0.875rem",
+            fontSize: "0.75rem",
+            opacity: 0.6,
           }}
         >
-          Tags: Design, Typography, Brutalism
+          ꪻꪖᧁડ: Design ･ Typography ･ Brutalism
         </Box>
       </Box>
     </Box>

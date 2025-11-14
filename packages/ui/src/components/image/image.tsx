@@ -117,7 +117,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
     const dynamicAspectRatio = aspectRatio
       ? (() => {
           const [width, height] = aspectRatio.split("/").map(Number);
-          return { paddingBottom: `${(height / width) * 100}%`, height: 0 };
+          return { aspectRatio: `${width} / ${height}`, width: "100%" };
         })()
       : undefined;
 
@@ -171,12 +171,6 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
                 boxSizing: "border-box",
                 transition: "opacity 0.3s ease-in-out",
               }),
-              aspectRatio &&
-                css({
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                }),
               className,
             )}
             style={{

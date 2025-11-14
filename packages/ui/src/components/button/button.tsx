@@ -11,7 +11,7 @@ export interface ButtonProps
    * Visual style variant
    * @default "primary"
    */
-  variant?: "primary" | "secondary" | "outline";
+  variant?: "primary" | "secondary" | "outline" | "disabled";
   /**
    * Button size
    * @default "md"
@@ -36,35 +36,21 @@ const buttonRecipe = cva({
     alignItems: "center",
     justifyContent: "center",
     cursor: "pointer",
-    borderRadius: "xl",
+    borderRadius: "9999px",
     fontFamily: "sans",
-    fontWeight: 600,
     whiteSpace: "nowrap",
     position: "relative",
-    overflow: "hidden",
+    overflow: "visible",
     transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    isolation: "isolate",
 
-    /* Glass morphism border effect */
+    /* Blurred background layer */
     _before: {
       content: '""',
       position: "absolute",
       inset: 0,
       borderRadius: "inherit",
-      padding: "2px",
-      background:
-        "linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0))",
-      WebkitMask:
-        "linear-gradient(white 0 0) content-box, linear-gradient(white 0 0)",
-      WebkitMaskComposite: "xor",
-      maskComposite: "exclude",
-      opacity: 0,
-      transition: "opacity 0.2s",
-    },
-
-    _hover: {
-      _before: {
-        opacity: 1,
-      },
+      zIndex: -1,
     },
 
     _focusVisible: {
@@ -85,70 +71,84 @@ const buttonRecipe = cva({
   variants: {
     variant: {
       primary: {
-        background:
-          "linear-gradient(135deg, {colors.primary.500} 0%, {colors.primary.600} 100%)",
         color: "white",
-        border: "2px solid {colors.primary.700}",
-        boxShadow:
-          "0 4px 14px rgba(244, 63, 94, 0.4), 0 2px 6px rgba(244, 63, 94, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2)",
+
+        _before: {
+          background: "rgba(102, 126, 234, 0.9)",
+          filter: "blur(5px)",
+          inset: "-3px",
+          boxShadow:
+            "0 0 20px 0 rgba(102, 126, 234, 0.3), 0 0 40px 0 rgba(102, 126, 234, 0.15)",
+        },
 
         _hover: {
-          _disabled: {
-            background:
-              "linear-gradient(135deg, {colors.primary.500} 0%, {colors.primary.600} 100%)",
+          _before: {
+            background: "rgba(123, 147, 245, 0.95)",
+            filter: "blur(5px)",
             boxShadow:
-              "0 4px 14px rgba(244, 63, 94, 0.4), 0 2px 6px rgba(244, 63, 94, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2)",
+              "0 0 25px 0 rgba(123, 147, 245, 0.4), 0 0 45px 0 rgba(123, 147, 245, 0.2)",
           },
-          background:
-            "linear-gradient(135deg, {colors.primary.400} 0%, {colors.primary.500} 100%)",
-          boxShadow:
-            "0 6px 20px rgba(244, 63, 94, 0.5), 0 3px 8px rgba(244, 63, 94, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.3)",
         },
       },
       secondary: {
-        background:
-          "linear-gradient(135deg, {colors.white} 0%, {colors.neutral.100} 100%)",
-        color: "neutral.950",
-        border: "2px solid {colors.neutral.200}",
-        boxShadow:
-          "0 2px 10px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04), inset 0 1px 2px rgba(255, 255, 255, 0.8)",
+        color: "white",
+
+        _before: {
+          background:
+            "linear-gradient(135deg, rgba(255, 140, 107, 0.9), rgba(245, 87, 108, 0.9))",
+          filter: "blur(5px)",
+          inset: "-3px",
+          boxShadow:
+            "0 0 20px 0 rgba(255, 140, 107, 0.3), 0 0 40px 0 rgba(245, 87, 108, 0.15)",
+        },
 
         _hover: {
-          _disabled: {
+          _before: {
             background:
-              "linear-gradient(135deg, {colors.white} 0%, {colors.neutral.100} 100%)",
-            borderColor: "neutral.200",
+              "linear-gradient(135deg, rgba(255, 160, 127, 0.95), rgba(247, 109, 127, 0.95))",
+            filter: "blur(5px)",
             boxShadow:
-              "0 2px 10px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04), inset 0 1px 2px rgba(255, 255, 255, 0.8)",
+              "0 0 25px 0 rgba(255, 160, 127, 0.4), 0 0 45px 0 rgba(247, 109, 127, 0.2)",
           },
-          background:
-            "linear-gradient(135deg, {colors.neutral.50} 0%, {colors.neutral.200} 100%)",
-          borderColor: "neutral.300",
-          boxShadow:
-            "0 4px 14px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.05), inset 0 1px 2px rgba(255, 255, 255, 0.9)",
         },
       },
       outline: {
-        background: "rgba(255, 255, 255, 0.05)",
-        color: "neutral.950",
-        border: "2px solid {colors.neutral.300}",
-        backdropFilter: "blur(12px) saturate(180%)",
-        boxShadow:
-          "0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 2px rgba(255, 255, 255, 0.4)",
+        color: "white",
+
+        _before: {
+          background: "rgba(102, 126, 234, 0.4)",
+          filter: "blur(5px)",
+          inset: "-3px",
+          boxShadow:
+            "0 0 20px 0 rgba(102, 126, 234, 0.2), 0 0 40px 0 rgba(102, 126, 234, 0.1)",
+        },
 
         _hover: {
-          _disabled: {
-            background: "rgba(255, 255, 255, 0.05)",
-            borderColor: "neutral.300",
-            backdropFilter: "blur(12px) saturate(180%)",
+          _before: {
+            background: "rgba(123, 147, 245, 0.5)",
+            filter: "blur(5px)",
             boxShadow:
-              "0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 2px rgba(255, 255, 255, 0.4)",
+              "0 0 25px 0 rgba(123, 147, 245, 0.3), 0 0 45px 0 rgba(123, 147, 245, 0.15)",
           },
-          background: "rgba(0, 0, 0, 0.04)",
-          borderColor: "neutral.950",
-          backdropFilter: "blur(16px) saturate(200%)",
-          boxShadow:
-            "0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.5)",
+        },
+      },
+      disabled: {
+        color: "rgba(150, 150, 150, 0.7)",
+        cursor: "not-allowed",
+
+        _before: {
+          background: "rgba(100, 100, 100, 0.3)",
+          filter: "blur(5px)",
+          inset: "-3px",
+          boxShadow: "0 0 15px 0 rgba(100, 100, 100, 0.2)",
+        },
+
+        _hover: {
+          _before: {
+            background: "rgba(100, 100, 100, 0.3)",
+            filter: "blur(5px)",
+            boxShadow: "0 0 15px 0 rgba(100, 100, 100, 0.2)",
+          },
         },
       },
     },

@@ -85,9 +85,16 @@ export const Navigation = ({
                   {work.title}
                 </NavLink>
               ))}
-              <NavLink variant="personal" href="/feed">
-                music ⋆.˚✮🎧✮˚.⋆ &nd pics ˙✧˖°📷 ༘ ⋆｡˚
-              </NavLink>
+              <Link
+                href="/feed"
+                css={{
+                  display: "block",
+                  textDecoration: "none",
+                  _hover: { textDecoration: "underline" },
+                }}
+              >
+                ⋆.˚ ᡣ𐭩 .𖥔˚ music ⋆.˚✮🎧✮˚.⋆ &nd pics ˙✧˖°📷 ༘ ⋆｡˚
+              </Link>
             </>
           ) : (
             <span style={{ fontSize: "0.75rem", opacity: 0.5 }}>

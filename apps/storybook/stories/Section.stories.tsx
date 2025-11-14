@@ -275,29 +275,39 @@ export const BrutalistPortfolio: Story = {
           <Box style={{ flex: 1 }}>
             <Box
               style={{
-                fontFamily: "monospace",
-                fontSize: "0.75rem",
+                fontSize: "0.65rem",
                 marginBottom: "1rem",
-                opacity: 0.5,
+                opacity: 0.6,
+                letterSpacing: "0.1em",
               }}
             >
-              SELECTED WORK / 2024-2025
+              ⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S / 2024-2025
             </Box>
             <Headline
               level={1}
-              style={{ fontSize: "3rem", margin: 0, lineHeight: 1.1 }}
+              style={{
+                fontSize: "3rem",
+                margin: 0,
+                lineHeight: 1.1,
+                fontWeight: 600,
+              }}
             >
-              PORTFOLIO
+              🎀 ୧ꔛꗃ˖ PORTFOLIO ･ﾟ⋆
             </Headline>
           </Box>
 
           {/* Right column */}
           <Box style={{ flex: 1, paddingTop: "1rem" }}>
             <Paragraph
-              style={{ margin: 0, fontSize: "0.875rem", lineHeight: 1.8 }}
+              style={{
+                margin: 0,
+                fontSize: "0.875rem",
+                lineHeight: 1.8,
+                opacity: 0.8,
+              }}
             >
-              A collection of brutalist design work showcasing bold typography,
-              strong visual hierarchy, and minimalist aesthetics.
+              ⋆.˚ ᡣ𐭩 A collection of modern design work showcasing bold
+              typography, strong visual hierarchy, and clean aesthetics ⋆.˚✮
             </Paragraph>
           </Box>
         </Box>
@@ -311,55 +321,68 @@ export const BrutalistPortfolio: Story = {
             marginTop: "4rem",
           }}
         >
-          {[1, 2, 3].map((i) => (
+          {[
+            {
+              id: 1,
+              img: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",
+            },
+            {
+              id: 2,
+              img: "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)",
+            },
+            {
+              id: 3,
+              img: "https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)",
+            },
+          ].map((project) => (
             <Box
-              key={i}
+              key={project.id}
               style={{
-                border: "2px solid black",
-                background: i === 2 ? "#171717" : "white",
+                background: "transparent",
               }}
             >
               <Box
                 style={{
                   aspectRatio: "4/3",
-                  background: "#f5f5f5",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderBottom: "2px solid black",
+                  overflow: "hidden",
                 }}
               >
+                <img
+                  src={project.img}
+                  alt={`Project ${project.id}`}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              </Box>
+              <Box style={{ padding: "1.5rem 0" }}>
                 <Box
                   style={{
-                    fontFamily: "monospace",
-                    fontSize: "2rem",
-                    opacity: 0.2,
+                    fontSize: "0.65rem",
+                    marginBottom: "0.5rem",
+                    opacity: 0.6,
+                    letterSpacing: "0.1em",
                   }}
                 >
-                  {String(i).padStart(2, "0")}
+                  ⇝ PROJECT / {String(project.id).padStart(2, "0")}
                 </Box>
-              </Box>
-              <Box style={{ padding: "1.5rem" }}>
                 <Headline
                   level={3}
                   style={{
                     margin: 0,
                     fontSize: "1.25rem",
-                    color: i === 2 ? "white" : "black",
+                    fontWeight: 600,
                   }}
                 >
-                  Project {i}
+                  ⋆.˚ ᡣ𐭩 Work {project.id}
                 </Headline>
                 <Paragraph
                   style={{
                     margin: 0,
                     marginTop: "0.5rem",
                     fontSize: "0.875rem",
-                    color: i === 2 ? "white" : "black",
                     opacity: 0.8,
                   }}
                 >
-                  Editorial Design
+                  🎀 ୧ꔛꗃ˖ Editorial Design
                 </Paragraph>
               </Box>
             </Box>

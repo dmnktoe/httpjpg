@@ -66,8 +66,8 @@ type Story = StoryObj<typeof meta>;
  */
 export const Basic: Story = {
   args: {
-    src: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop",
-    alt: "Modern architecture",
+    src: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",
+    alt: "Video still 1",
     aspectRatio: "16/9",
     copyright: "",
     copyrightPosition: "inline",
@@ -81,8 +81,8 @@ export const Basic: Story = {
  */
 export const InlineCopyright: Story = {
   args: {
-    src: "https://images.unsplash.com/photo-1618556450991-2f1af64e8191?w=1200&auto=format&fit=crop",
-    alt: "Minimalist interior",
+    src: "https://a.storyblok.com//f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)",
+    alt: "Video still 2",
     copyright: "© 2025 John Doe",
     copyrightPosition: "inline",
     aspectRatio: "4/3",
@@ -94,8 +94,8 @@ export const InlineCopyright: Story = {
  */
 export const BelowCopyright: Story = {
   args: {
-    src: "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=1200&auto=format&fit=crop",
-    alt: "Abstract composition",
+    src: "https://a.storyblok.com//f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)",
+    alt: "Video still 3",
     copyright: "© 2025 Jane Smith / Unsplash",
     copyrightPosition: "below",
     aspectRatio: "16/9",
@@ -107,8 +107,8 @@ export const BelowCopyright: Story = {
  */
 export const OverlayCopyright: Story = {
   args: {
-    src: "https://images.unsplash.com/photo-1618172193622-ae2d025f4032?w=1200&auto=format&fit=crop",
-    alt: "Urban landscape",
+    src: "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/2000x1125/smart/filters:quality(75)",
+    alt: "Klosterkirche Nordshausen",
     copyright: "© 2025 Photographer Name",
     copyrightPosition: "overlay",
     aspectRatio: "21/9",
@@ -120,7 +120,7 @@ export const OverlayCopyright: Story = {
  */
 export const BlurUpLoading: Story = {
   args: {
-    src: "https://images.unsplash.com/photo-1618556450991-2f1af64e8191?w=1200&auto=format&fit=crop",
+    src: "https://a.storyblok.com//f/281211/1500x2000/e04c56fe25/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0225.jpg/m/2000x1125/smart/filters:quality(75)",
     alt: "Loading example",
     blurOnLoad: true,
     blurDataURL:
@@ -136,7 +136,7 @@ export const BlurUpLoading: Story = {
  */
 export const Portrait: Story = {
   args: {
-    src: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=1400&auto=format&fit=crop",
+    src: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",
     alt: "Portrait format",
     copyright: "© 2025 Artist",
     copyrightPosition: "overlay",
@@ -149,7 +149,7 @@ export const Portrait: Story = {
  */
 export const Square: Story = {
   args: {
-    src: "https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?w=1000&auto=format&fit=crop",
+    src: "https://a.storyblok.com//f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)",
     alt: "Square format",
     copyright: "© 2025 Creator",
     copyrightPosition: "below",
@@ -169,8 +169,8 @@ export const Gallery: Story = {
     <VStack gap={8} style={{ padding: "2rem" }}>
       <Box>
         <Image
-          src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop"
-          alt="Architecture 1"
+          src="https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)"
+          alt="Video still 1"
           copyright="© 2025 John Architect"
           copyrightPosition="inline"
           aspectRatio="16/9"
@@ -179,9 +179,9 @@ export const Gallery: Story = {
 
       <Box>
         <Image
-          src="https://images.unsplash.com/photo-1618556450991-2f1af64e8191?w=1200&auto=format&fit=crop"
-          alt="Architecture 2"
-          copyright="© 2025 Jane Designer / Unsplash"
+          src="https://a.storyblok.com//f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)"
+          alt="Video still 2"
+          copyright="© 2025 Jane Designer"
           copyrightPosition="below"
           aspectRatio="4/3"
         />
@@ -189,8 +189,8 @@ export const Gallery: Story = {
 
       <Box>
         <Image
-          src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=1200&auto=format&fit=crop"
-          alt="Architecture 3"
+          src="https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/2000x1125/smart/filters:quality(75)"
+          alt="Klosterkirche Nordshausen"
           copyright="© 2025 Studio XYZ"
           copyrightPosition="overlay"
           aspectRatio="21/9"
@@ -212,33 +212,47 @@ export const BrutalistCard: Story = {
     <Box
       style={{
         maxWidth: "600px",
-        border: "4px solid black",
-        boxShadow: "12px 12px 0 black",
-        background: "white",
+        background: "transparent",
+        position: "relative",
       }}
     >
       <Image
-        src="https://images.unsplash.com/photo-1618172193622-ae2d025f4032?w=1200&auto=format&fit=crop"
+        src="https://a.storyblok.com//f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)"
         alt="Featured work"
-        copyright="© 2025 Photographer Name"
+        copyright="© 2025 httpjpg"
         copyrightPosition="overlay"
         aspectRatio="16/9"
-        style={{ filter: "grayscale(100%)" }}
       />
-      <Box style={{ padding: "2rem" }}>
+      <Box style={{ padding: "1.5rem 0", fontFamily: "sans-serif" }}>
         <Box
           style={{
-            fontFamily: "monospace",
-            fontSize: "0.75rem",
-            marginBottom: "0.5rem",
-            opacity: 0.5,
+            fontSize: "0.65rem",
+            marginBottom: "0.75rem",
+            letterSpacing: "0.1em",
+            opacity: 0.6,
           }}
         >
-          PROJECT / 2025
+          ⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S / 2025
         </Box>
-        <h3 style={{ margin: 0, fontSize: "1.5rem" }}>Brutalist Design</h3>
-        <p style={{ marginTop: "1rem", fontSize: "0.875rem" }}>
-          Bold typography and strong visual hierarchy create impact.
+        <h3
+          style={{
+            margin: 0,
+            fontSize: "1.25rem",
+            fontWeight: 600,
+            marginBottom: "0.5rem",
+          }}
+        >
+          ⋆.˚ ᡣ𐭩 .𖥔˚ Featured Work ⋆.˚✮
+        </h3>
+        <p
+          style={{
+            marginTop: "0.5rem",
+            fontSize: "0.875rem",
+            opacity: 0.8,
+            lineHeight: 1.6,
+          }}
+        >
+          🎀 ୧ꔛꗃ˖ Bold visual storytelling with modern aesthetics ･ﾟ⋆
         </p>
       </Box>
     </Box>

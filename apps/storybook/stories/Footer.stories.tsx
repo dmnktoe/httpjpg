@@ -212,10 +212,10 @@ export const DarkMode: Story = {
     <Footer
       {...args}
       css={{
-        bg: "neutral.900",
+        bg: "black",
         color: "white",
         borderTop: "1px solid",
-        borderColor: "neutral.700",
+        borderColor: "black",
       }}
     />
   ),

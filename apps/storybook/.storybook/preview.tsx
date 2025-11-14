@@ -1,3 +1,4 @@
+import { LazyMotionProvider } from "@httpjpg/ui";
 import type { Preview } from "@storybook/react";
 import { create } from "@storybook/theming/create";
 // Import global CSS custom properties from tokens
@@ -78,7 +79,7 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => (
-      <>
+      <LazyMotionProvider>
         <style>
           {`
             /* Body text uses sans token */
@@ -115,7 +116,7 @@ const preview: Preview = {
           `}
         </style>
         <Story />
-      </>
+      </LazyMotionProvider>
     ),
   ],
 };

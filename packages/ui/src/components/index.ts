@@ -4,6 +4,7 @@
  */
 
 // Layout Components
+export * from "./animate-in-view";
 export { AspectRatio, type AspectRatioProps } from "./aspect-ratio";
 export { Box, type BoxProps } from "./box";
 // UI Components
@@ -20,10 +21,16 @@ export {
   type WorkItem,
 } from "./header";
 export { Headline } from "./headline";
+export * from "./icon";
 export { Image, type ImageProps } from "./image";
+export * from "./lazy-motion-provider";
 export { Link, type LinkProps } from "./link";
 export { NavLink, type NavLinkProps } from "./nav-link";
+export * from "./page";
 export { Paragraph } from "./paragraph";
 export * from "./scaled-container";
 export * from "./section";
+export * from "./slideshow";
 export * from "./stack";
+export * from "./work-card";
+export * from "./work-list";

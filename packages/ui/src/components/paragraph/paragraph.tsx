@@ -51,29 +51,16 @@ const paragraphRecipe = cva({
   variants: {
     size: {
       sm: {
-        fontSize: "0.875rem",
-        lineHeight: 1.65,
-
-        md: {
-          fontSize: "0.9375rem",
-        },
+        fontSize: "0.75rem",
+        lineHeight: 1.75,
       },
       md: {
         fontSize: "1rem",
         lineHeight: 1.75,
-
-        md: {
-          fontSize: "1.0625rem",
-        },
       },
       lg: {
         fontSize: "1.125rem",
         lineHeight: 1.8,
-
-        md: {
-          fontSize: "1.25rem",
-          lineHeight: 1.85,
-        },
       },
     },
     align: {
@@ -95,7 +82,7 @@ const paragraphRecipe = cva({
     },
   },
   defaultVariants: {
-    size: "md",
+    size: "sm",
     align: "left",
     maxWidth: true,
   },

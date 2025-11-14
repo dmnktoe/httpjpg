@@ -41,6 +41,26 @@ export const ALIGN_OPTIONS = [
 export const JUSTIFY_OPTIONS = ["start", "center", "end", "stretch"] as const;
 
 /**
+ * Grid alignment options (alignItems)
+ */
+export const GRID_ALIGN_OPTIONS = [
+  "start",
+  "center",
+  "end",
+  "stretch",
+] as const;
+
+/**
+ * Grid justify options (justifyItems)
+ */
+export const GRID_JUSTIFY_OPTIONS = [
+  "start",
+  "center",
+  "end",
+  "stretch",
+] as const;
+
+/**
  * Flex direction options
  */
 export const FLEX_DIRECTION_OPTIONS = ["row", "column"] as const;

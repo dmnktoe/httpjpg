@@ -1,10 +1,10 @@
 import { Box, Grid, GridItem, Headline, Image, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import {
-  alignArgType,
+  GRID_ALIGN_OPTIONS,
   GRID_COLUMN_OPTIONS,
   GRID_FLOW_OPTIONS,
-  justifyArgType,
+  GRID_JUSTIFY_OPTIONS,
   spacingArgType,
 } from "./storybook-helpers";
 
@@ -31,8 +31,24 @@ const meta = {
       },
     },
     gap: spacingArgType("Gap between grid items (using spacing tokens)", "4"),
-    align: alignArgType("Alignment of items", "stretch"),
-    justify: justifyArgType("Justification of items", "start"),
+    align: {
+      control: { type: "select" as const },
+      options: GRID_ALIGN_OPTIONS,
+      description:
+        "Vertical alignment of items in their grid areas (alignItems)",
+      table: {
+        defaultValue: { summary: "stretch" },
+      },
+    },
+    justify: {
+      control: { type: "select" as const },
+      options: GRID_JUSTIFY_OPTIONS,
+      description:
+        "Horizontal alignment of items in their grid areas (justifyItems)",
+      table: {
+        defaultValue: { summary: "start" },
+      },
+    },
     flow: {
       control: { type: "select" as const },
       options: GRID_FLOW_OPTIONS,
@@ -59,7 +75,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const Basic: Story = {
   args: {
-    columns: "auto",
+    columns: 3,
     gap: 6,
     align: "stretch",
     justify: "start",
@@ -69,6 +85,10 @@ export const Basic: Story = {
   },
   render: (args) => (
     <Box css={{ minH: "600px", bg: "neutral.50", p: "8" }}>
+      <Box css={{ mb: "4", fontSize: "xs", fontFamily: "mono", opacity: 0.6 }}>
+        columns: {args.columns} | gap: {args.gap} | align: {args.align} |
+        justify: {args.justify} | flow: {args.flow}
+      </Box>
       <Grid
         columns={args.columns}
         gap={args.gap}
@@ -76,38 +96,233 @@ export const Basic: Story = {
         justify={args.justify}
         flow={args.flow}
         fullWidth={args.fullWidth}
-        css={{ minH: "500px" }}
+        css={{ gridAutoRows: "300px" }}
       >
-        <Image
-          src="https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)"
-          alt="Video still 1"
-          aspectRatio="4/3"
-        />
-        <Image
-          src="https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)"
-          alt="Video still 2"
-          aspectRatio="4/3"
-        />
-        <Image
-          src="https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)"
-          alt="Video still 3"
-          aspectRatio="4/3"
-        />
-        <Image
-          src="https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/2000x1125/smart/filters:quality(75)"
-          alt="Klosterkirche"
-          aspectRatio="4/3"
-        />
-        <Image
-          src="https://a.storyblok.com/f/281211/1500x2000/e04c56fe25/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0225.jpg/m/2000x1125/smart/filters:quality(75)"
-          alt="Klosterkirche 2"
-          aspectRatio="4/3"
-        />
-        <Image
-          src="https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)"
-          alt="Video still 1"
-          aspectRatio="4/3"
-        />
+        <Box
+          style={{
+            justifySelf: args.justify,
+            alignSelf: args.align,
+            maxWidth: args.justify === "stretch" ? "none" : "200px",
+          }}
+        >
+          <Image
+            src="https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)"
+            alt="Video still 1"
+            aspectRatio="4/3"
+          />
+        </Box>
+        <Box
+          style={{
+            justifySelf: args.justify,
+            alignSelf: args.align,
+            maxWidth: args.justify === "stretch" ? "none" : "200px",
+          }}
+        >
+          <Image
+            src="https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)"
+            alt="Video still 2"
+            aspectRatio="16/9"
+          />
+        </Box>
+        <Box
+          style={{
+            justifySelf: args.justify,
+            alignSelf: args.align,
+            maxWidth: args.justify === "stretch" ? "none" : "200px",
+          }}
+        >
+          <Image
+            src="https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)"
+            alt="Video still 3"
+            aspectRatio="1/1"
+          />
+        </Box>
+        <Box
+          style={{
+            justifySelf: args.justify,
+            alignSelf: args.align,
+            maxWidth: args.justify === "stretch" ? "none" : "200px",
+          }}
+        >
+          <Image
+            src="https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/2000x1125/smart/filters:quality(75)"
+            alt="Klosterkirche"
+            aspectRatio="4/3"
+          />
+        </Box>
+        <Box
+          style={{
+            justifySelf: args.justify,
+            alignSelf: args.align,
+            maxWidth: args.justify === "stretch" ? "none" : "200px",
+          }}
+        >
+          <Image
+            src="https://a.storyblok.com/f/281211/1500x2000/e04c56fe25/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0225.jpg/m/2000x1125/smart/filters:quality(75)"
+            alt="Klosterkirche 2"
+            aspectRatio="3/4"
+          />
+        </Box>
+        <Box
+          style={{
+            justifySelf: args.justify,
+            alignSelf: args.align,
+            maxWidth: args.justify === "stretch" ? "none" : "200px",
+          }}
+        >
+          <Image
+            src="https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)"
+            alt="Video still 1"
+            aspectRatio="21/9"
+          />
+        </Box>
+      </Grid>
+    </Box>
+  ),
+};
+
+/**
+ * Basic grid with colored boxes - For testing layout controls
+ */
+export const BasicWithBoxes: Story = {
+  args: {
+    columns: 3,
+    gap: 6,
+    align: "stretch",
+    justify: "start",
+    flow: "row",
+    fullWidth: false,
+    children: null,
+  },
+  render: (args) => (
+    <Box css={{ minH: "600px", bg: "neutral.50", p: "8" }}>
+      <Box css={{ mb: "4", fontSize: "xs", fontFamily: "mono", opacity: 0.6 }}>
+        columns: {args.columns} | gap: {args.gap} | align: {args.align} |
+        justify: {args.justify} | flow: {args.flow}
+      </Box>
+      <Grid
+        columns={args.columns}
+        gap={args.gap}
+        align="start"
+        justify="start"
+        flow={args.flow}
+        fullWidth={args.fullWidth}
+        css={{ gridAutoRows: "300px" }}
+      >
+        <Box
+          style={{
+            alignSelf: args.align,
+            justifySelf: args.justify,
+          }}
+          css={{
+            bg: "blue.500",
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "3xl",
+            fontWeight: "bold",
+            w: args.justify === "stretch" ? "100%" : "120px",
+            h: args.align === "stretch" ? "100%" : "120px",
+          }}
+        >
+          1
+        </Box>
+        <Box
+          style={{
+            alignSelf: args.align,
+            justifySelf: args.justify,
+          }}
+          css={{
+            bg: "red.500",
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "3xl",
+            fontWeight: "bold",
+            w: args.justify === "stretch" ? "100%" : "120px",
+            h: args.align === "stretch" ? "100%" : "120px",
+          }}
+        >
+          2
+        </Box>
+        <Box
+          style={{
+            alignSelf: args.align,
+            justifySelf: args.justify,
+          }}
+          css={{
+            bg: "green.500",
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "3xl",
+            fontWeight: "bold",
+            w: args.justify === "stretch" ? "100%" : "120px",
+            h: args.align === "stretch" ? "100%" : "120px",
+          }}
+        >
+          3
+        </Box>
+        <Box
+          style={{
+            alignSelf: args.align,
+            justifySelf: args.justify,
+          }}
+          css={{
+            bg: "purple.500",
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "3xl",
+            fontWeight: "bold",
+            w: args.justify === "stretch" ? "100%" : "120px",
+            h: args.align === "stretch" ? "100%" : "120px",
+          }}
+        >
+          4
+        </Box>
+        <Box
+          style={{
+            alignSelf: args.align,
+            justifySelf: args.justify,
+          }}
+          css={{
+            bg: "orange.500",
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "3xl",
+            fontWeight: "bold",
+            w: args.justify === "stretch" ? "100%" : "120px",
+            h: args.align === "stretch" ? "100%" : "120px",
+          }}
+        >
+          5
+        </Box>
+        <Box
+          style={{
+            alignSelf: args.align,
+            justifySelf: args.justify,
+          }}
+          css={{
+            bg: "pink.500",
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "3xl",
+            fontWeight: "bold",
+            w: args.justify === "stretch" ? "100%" : "120px",
+            h: args.align === "stretch" ? "100%" : "120px",
+          }}
+        >
+          6
+        </Box>
       </Grid>
     </Box>
   ),
@@ -306,7 +521,7 @@ export const OverlappingLayout: Story = {
             alt="Architecture hero"
             aspectRatio="21/9"
           />
-          {/* Overlapping Title Card */}
+          {/* Overlapping Title Card - Modern Style */}
           <Box
             css={{
               position: "absolute",
@@ -314,26 +529,25 @@ export const OverlappingLayout: Story = {
               right: "8",
               bg: "white",
               p: "8 12",
-              border: "4px solid black",
-              boxShadow: "12px 12px 0 black",
+              backdropFilter: "blur(8px)",
               maxW: "500px",
             }}
           >
             <Box
               css={{
-                fontFamily: "mono",
                 fontSize: "xs",
                 mb: "2",
                 opacity: 0.5,
+                letterSpacing: "0.15em",
               }}
             >
-              PORTFOLIO / 2025
+              ⇝ᵣₑcꫀₙₜ / 2025
             </Box>
             <Headline
               level={1}
               css={{ fontSize: "2.5rem", m: 0, lineHeight: 1.1 }}
             >
-              VISUAL IMPACT
+              🎀 ୧ꔛꗃ˖ VISUAL IMPACT
             </Headline>
           </Box>
         </Box>
@@ -342,8 +556,8 @@ export const OverlappingLayout: Story = {
       {/* Description Block */}
       <GridItem colSpan={5} colStart={2} css={{ mt: "24", pr: "8" }}>
         <Paragraph size="sm">
-          Overlapping elements create depth and visual hierarchy. Strategic
-          layering draws attention to key content.
+          ⋆.˚ ᡣ𐭩 Overlapping elements create depth and visual hierarchy.
+          Strategic layering draws attention to key content ･ﾟ⋆
         </Paragraph>
       </GridItem>
 
@@ -378,16 +592,20 @@ export const OverlappingLayout: Story = {
           }}
         >
           <Box
-            css={{ fontFamily: "mono", fontSize: "xs", mb: "4", opacity: 0.7 }}
+            css={{
+              fontSize: "xs",
+              mb: "4",
+              opacity: 0.7,
+              letterSpacing: "0.15em",
+            }}
           >
-            DETAILS
+            ꀷꏂ꓄ꋬꂑ꒒ꌗ
           </Box>
           <Box css={{ fontSize: "sm", lineHeight: 2 }}>
-            Client: Studio XYZ
+            ⋆.˚ Client: Studio XYZ
+            <br />🎀 Year: 2025
             <br />
-            Year: 2025
-            <br />
-            Type: Editorial
+            ･ﾟ⋆ Type: Editorial
           </Box>
         </Box>
       </GridItem>

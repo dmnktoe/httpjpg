@@ -104,12 +104,13 @@ export const BelowCopyright: Story = {
 
 /**
  * Image with overlay copyright (gradient bottom)
+ * Modern design with decorative ASCII elements
  */
 export const OverlayCopyright: Story = {
   args: {
     src: "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/2000x1125/smart/filters:quality(75)",
     alt: "Klosterkirche Nordshausen",
-    copyright: "© 2025 Photographer Name",
+    copyright: "⋆.˚ ᡣ𐭩 .𖥔˚ © 2025 ˙✧˖°📷 ༘ ⋆｡˚ Photographer Name",
     copyrightPosition: "overlay",
     aspectRatio: "21/9",
   },
@@ -117,6 +118,7 @@ export const OverlayCopyright: Story = {
 
 /**
  * Image with blur-up loading
+ * Progressive loading with decorative copyright
  */
 export const BlurUpLoading: Story = {
   args: {
@@ -125,7 +127,7 @@ export const BlurUpLoading: Story = {
     blurOnLoad: true,
     blurDataURL:
       "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/AB//2Q==",
-    copyright: "© 2025 Studio Name",
+    copyright: "🎀 ୧ꔛꗃ˖ © 2025 Studio Name ･ﾟ⋆",
     copyrightPosition: "inline",
     aspectRatio: "4/3",
   },
@@ -133,12 +135,13 @@ export const BlurUpLoading: Story = {
 
 /**
  * Portrait image (9:16)
+ * Vertical format with overlay copyright
  */
 export const Portrait: Story = {
   args: {
     src: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",
     alt: "Portrait format",
-    copyright: "© 2025 Artist",
+    copyright: "⇝ © 2025 ୧ꔛꗃ˖ Artist",
     copyrightPosition: "overlay",
     aspectRatio: "9/16",
   },
@@ -146,12 +149,13 @@ export const Portrait: Story = {
 
 /**
  * Square image (1:1)
+ * Perfect square with copyright below
  */
 export const Square: Story = {
   args: {
     src: "https://a.storyblok.com//f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)",
     alt: "Square format",
-    copyright: "© 2025 Creator",
+    copyright: "⋆.˚✮🎧✮˚.⋆ © 2025 Creator",
     copyrightPosition: "below",
     aspectRatio: "1/1",
   },

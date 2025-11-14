@@ -2,6 +2,7 @@
 
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { forwardRef } from "react";
+import { token } from "styled-system/tokens";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 
@@ -86,6 +87,9 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
   ) => {
     // ASCII or custom content divider
     if (variant === "ascii" || variant === "custom" || children) {
+      // Convert token to actual color value for text
+      const resolvedTextColor = token(`colors.${dividerColor}`);
+
       return (
         <Box
           ref={ref}
@@ -102,7 +106,6 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            color: dividerColor,
             w: orientation === "horizontal" ? "full" : undefined,
             mt: orientation === "horizontal" ? dividerSpacing : undefined,
             mb: orientation === "horizontal" ? dividerSpacing : undefined,
@@ -113,6 +116,9 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
             ml: orientation === "vertical" ? dividerSpacing : undefined,
             mr: orientation === "vertical" ? dividerSpacing : undefined,
             ...cssProp,
+          }}
+          style={{
+            color: resolvedTextColor,
           }}
           {...props}
         >
@@ -129,6 +135,9 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
           ? "dotted"
           : "solid";
 
+    // Convert token to actual color value
+    const resolvedColor = token(`colors.${dividerColor}`);
+
     return (
       <Box
         ref={ref}
@@ -138,13 +147,6 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
           w: orientation === "horizontal" ? "full" : undefined,
           h: orientation === "horizontal" ? undefined : "full",
           minH: orientation === "vertical" ? "20px" : undefined,
-          borderTopStyle:
-            orientation === "horizontal" ? borderStyle : undefined,
-          borderTopColor:
-            orientation === "horizontal" ? dividerColor : undefined,
-          borderLeftStyle: orientation === "vertical" ? borderStyle : undefined,
-          borderLeftColor:
-            orientation === "vertical" ? dividerColor : undefined,
           mt: orientation === "horizontal" ? dividerSpacing : undefined,
           mb: orientation === "horizontal" ? dividerSpacing : undefined,
           ml: orientation === "vertical" ? dividerSpacing : undefined,
@@ -152,11 +154,15 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
           ...cssProp,
         }}
         style={{
-          // thickness must be inline style - it's a dynamic CSS value
-          width: orientation === "vertical" ? thickness : undefined,
-          height: orientation === "horizontal" ? thickness : undefined,
           borderTopWidth: orientation === "horizontal" ? thickness : undefined,
+          borderTopStyle:
+            orientation === "horizontal" ? borderStyle : undefined,
+          borderTopColor:
+            orientation === "horizontal" ? resolvedColor : undefined,
           borderLeftWidth: orientation === "vertical" ? thickness : undefined,
+          borderLeftStyle: orientation === "vertical" ? borderStyle : undefined,
+          borderLeftColor:
+            orientation === "vertical" ? resolvedColor : undefined,
         }}
         {...props}
       />

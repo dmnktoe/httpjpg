@@ -51,6 +51,32 @@ const meta = {
         defaultValue: { summary: "1px" },
       },
     },
+    color: {
+      control: { type: "select" as const },
+      options: [
+        "black",
+        "white",
+        "neutral.50",
+        "neutral.100",
+        "neutral.200",
+        "neutral.300",
+        "neutral.400",
+        "neutral.500",
+        "neutral.600",
+        "neutral.700",
+        "neutral.800",
+        "neutral.900",
+        "neutral.950",
+        "primary.500",
+        "primary.600",
+        "accent.500",
+        "accent.600",
+      ],
+      description: "Divider color (Panda color token)",
+      table: {
+        defaultValue: { summary: "neutral.300" },
+      },
+    },
   },
 } satisfies Meta<typeof Divider>;
 
@@ -66,6 +92,7 @@ export const Basic: Story = {
     orientation: "horizontal",
     spacing: 4,
     thickness: "1px",
+    color: "neutral.300",
     children: null,
   },
   render: (args) => (

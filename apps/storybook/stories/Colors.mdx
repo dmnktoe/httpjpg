@@ -1,0 +1,157 @@
+import { Meta, ColorPalette, ColorItem } from '@storybook/blocks';
+import { colors } from '@httpjpg/tokens';
+
+<Meta title="Colors" />
+
+# Colors
+
+Monochromatic palette with vibrant accent colors following brutalistic design principles.
+
+## Base Colors
+
+<ColorPalette>
+  <ColorItem
+    title="black"
+    subtitle="Primary text, dramatic backgrounds"
+    colors={{ Black: colors.black }}
+  />
+  <ColorItem
+    title="white"
+    subtitle="Default background, inverted text"
+    colors={{ White: colors.white }}
+  />
+</ColorPalette>
+
+## Neutral Scale
+
+Complete gray scale for backgrounds, borders, and text. Perfect for brutalist layouts that need strong contrast.
+
+<ColorPalette>
+  <ColorItem
+    title="neutral"
+    subtitle="Gray scale from light to dark"
+    colors={{
+      50: colors.neutral[50],
+      100: colors.neutral[100],
+      200: colors.neutral[200],
+      300: colors.neutral[300],
+      400: colors.neutral[400],
+      500: colors.neutral[500],
+      600: colors.neutral[600],
+      700: colors.neutral[700],
+      800: colors.neutral[800],
+      900: colors.neutral[900],
+      950: colors.neutral[950],
+    }}
+  />
+</ColorPalette>
+
+### Usage
+
+```tsx
+import { Box, Paragraph } from '@httpjpg/ui';
+
+<Box css={{ bg: 'neutral.100', p: '24px' }}>
+  <Paragraph css={{ color: 'neutral.700' }}>
+    Body text on subtle background
+  </Paragraph>
+</Box>
+```
+
+## Primary Colors
+
+Vibrant rose/pink tones for primary actions and brand moments.
+
+<ColorPalette>
+  <ColorItem
+    title="primary"
+    subtitle="Rose/pink for primary actions"
+    colors={{
+      50: colors.primary[50],
+      100: colors.primary[100],
+      200: colors.primary[200],
+      300: colors.primary[300],
+      400: colors.primary[400],
+      500: colors.primary[500],
+      600: colors.primary[600],
+      700: colors.primary[700],
+      800: colors.primary[800],
+      900: colors.primary[900],
+      950: colors.primary[950],
+    }}
+  />
+</ColorPalette>
+
+### Usage
+
+```tsx
+import { Button } from '@httpjpg/ui';
+
+<Button css={{ bg: 'primary.500', color: 'white' }}>
+  Primary Action
+</Button>
+```
+
+## Accent Colors
+
+Vibrant orange tones for accents, highlights, and creative energy.
+
+<ColorPalette>
+  <ColorItem
+    title="accent"
+    subtitle="Orange for highlights and accents"
+    colors={{
+      50: colors.accent[50],
+      100: colors.accent[100],
+      200: colors.accent[200],
+      300: colors.accent[300],
+      400: colors.accent[400],
+      500: colors.accent[500],
+      600: colors.accent[600],
+      700: colors.accent[700],
+      800: colors.accent[800],
+      900: colors.accent[900],
+      950: colors.accent[950],
+    }}
+  />
+</ColorPalette>
+
+### Usage
+
+```tsx
+import { Box } from '@httpjpg/ui';
+
+<Box css={{ borderLeft: '4px solid', borderColor: 'accent.500' }}>
+  Highlighted content
+</Box>
+```
+
+## Color Semantics
+
+### Text Colors
+
+- `black` - Primary text (default)
+- `neutral.700` - Body text
+- `neutral.500` - Secondary text
+- `neutral.400` - Disabled text
+- `white` - Inverted text
+- `primary.500` - Links, primary actions
+- `accent.500` - Highlights, emphasis
+
+### Background Colors
+
+- `white` - Default background
+- `neutral.50` - Subtle background
+- `neutral.100` - Section background
+- `black` - Dramatic sections
+- `primary.50` - Subtle brand background
+- `accent.50` - Subtle accent background
+
+### Border Colors
+
+- `neutral.200` - Default borders
+- `neutral.300` - Hover borders
+- `neutral.400` - Active borders
+- `black` - Strong borders
+- `primary.500` - Brand borders
+- `accent.500` - Accent borders

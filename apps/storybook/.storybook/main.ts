@@ -8,7 +8,7 @@ const uiPackagePath = path.resolve(rootPath, "packages/ui");
 const tokensPackagePath = path.resolve(rootPath, "packages/tokens");
 
 const config: StorybookConfig = {
-  stories: ["../stories/**/*.stories.@(ts|tsx)"],
+  stories: ["../stories/**/*.mdx", "../stories/**/*.stories.@(ts|tsx)"],
   addons: [
     "@storybook/addon-essentials",
     "@storybook/addon-links",

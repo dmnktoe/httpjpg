@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from "@storybook/react";
  * Slideshow component stories
  *
  * Image carousel with Swiper. Supports autoplay, navigation,
- * copyright notices, and scroll animations.
+ * copyright notices, scroll animations, and slide transitions.
  */
 const meta = {
   title: "Components/Slideshow",
@@ -28,9 +28,25 @@ const meta = {
         "slideUp",
         "slideDown",
       ],
-      description: "Entrance animation type",
+      description: "Entrance animation type for the entire slideshow",
       table: {
         defaultValue: { summary: "none" },
+      },
+    },
+    effect: {
+      control: "select",
+      options: [
+        "slide",
+        "fade",
+        "cube",
+        "coverflow",
+        "flip",
+        "cards",
+        "creative",
+      ],
+      description: "Swiper slide transition effect",
+      table: {
+        defaultValue: { summary: "slide" },
       },
     },
     aspectRatio: {
@@ -51,7 +67,7 @@ const meta = {
       control: { type: "range", min: 200, max: 2000, step: 100 },
       description: "Transition speed in milliseconds",
       table: {
-        defaultValue: { summary: "0" },
+        defaultValue: { summary: "300" },
       },
     },
     showNavigation: {
@@ -84,22 +100,25 @@ const sampleImages = [
 ];
 
 /**
- * Default slideshow with 3 images
+ * Default slideshow with instant transitions
  */
 export const Default: Story = {
   args: {
     images: sampleImages,
+    speed: 0,
   },
 };
 
 /**
- * With sharpen animation
+ * With entrance animation and smooth slide transitions
  */
 export const WithAnimation: Story = {
   args: {
     images: sampleImages,
     animation: "sharpen",
     animationDelay: 0.2,
+    speed: 600,
+    effect: "slide",
   },
 };
 
@@ -112,8 +131,84 @@ export const SingleImage: Story = {
   },
 };
 
+// === Transition Effects ===
+
 /**
- * Fast autoplay
+ * Fade transition between slides
+ */
+export const FadeTransition: Story = {
+  args: {
+    images: sampleImages,
+    effect: "fade",
+    speed: 800,
+    autoplayDelay: 4000,
+  },
+};
+
+/**
+ * Cube 3D transition
+ */
+export const CubeTransition: Story = {
+  args: {
+    images: sampleImages,
+    effect: "cube",
+    speed: 1000,
+    autoplayDelay: 5000,
+  },
+};
+
+/**
+ * Coverflow 3D transition
+ */
+export const CoverflowTransition: Story = {
+  args: {
+    images: sampleImages,
+    effect: "coverflow",
+    speed: 600,
+    autoplayDelay: 4000,
+  },
+};
+
+/**
+ * Flip 3D transition
+ */
+export const FlipTransition: Story = {
+  args: {
+    images: sampleImages,
+    effect: "flip",
+    speed: 800,
+    autoplayDelay: 4000,
+  },
+};
+
+/**
+ * Cards stacked transition
+ */
+export const CardsTransition: Story = {
+  args: {
+    images: sampleImages,
+    effect: "cards",
+    speed: 600,
+    autoplayDelay: 4000,
+  },
+};
+
+/**
+ * Creative custom transition
+ */
+export const CreativeTransition: Story = {
+  args: {
+    images: sampleImages,
+    effect: "creative",
+    speed: 800,
+    autoplayDelay: 4000,
+  },
+};
+
+// === Timing & Speed ===
+
+/**
+ * Fast autoplay with quick transitions
  */
 export const FastAutoplay: Story = {
   args: {
@@ -124,15 +219,18 @@ export const FastAutoplay: Story = {
 };
 
 /**
- * Slow transitions
+ * Slow, cinematic transitions
  */
 export const SlowTransitions: Story = {
   args: {
     images: sampleImages,
     speed: 1500,
-    autoplayDelay: 5000,
+    autoplayDelay: 6000,
+    effect: "fade",
   },
 };
+
+// === Aspect Ratios ===
 
 /**
  * Square aspect ratio
@@ -162,6 +260,8 @@ export const PortraitAspect: Story = {
     aspectRatio: "2/3",
   },
 };
+
+// === Features ===
 
 /**
  * Without navigation arrows
@@ -194,34 +294,30 @@ export const WithCopyright: Story = {
 };
 
 /**
- * Zoom sharpen animation
+ * Mixed content with video slide
  */
-export const ZoomSharpen: Story = {
+export const WithVideo: Story = {
   args: {
-    images: sampleImages,
-    animation: "zoomSharpen",
-    animationDelay: 0.3,
-  },
-};
-
-/**
- * Slide in animation
- */
-export const SlideIn: Story = {
-  args: {
-    images: sampleImages,
-    animation: "slideInFromLeft",
-    animationDelay: 0.2,
-  },
-};
-
-/**
- * Instant transition (no animation, speed 0)
- */
-export const InstantTransition: Story = {
-  args: {
-    images: sampleImages,
-    speed: 0,
-    autoplayDelay: 3000,
+    images: [
+      {
+        url: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",
+        alt: "Video still 1",
+      },
+      {
+        url: "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)",
+        alt: "Image slide",
+        videoUrl:
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        videoPoster:
+          "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)",
+        copyright: "Big Buck Bunny",
+      },
+      {
+        url: "https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)",
+        alt: "Video still 3",
+      },
+    ],
+    speed: 600,
+    autoplayDelay: 8000,
   },
 };

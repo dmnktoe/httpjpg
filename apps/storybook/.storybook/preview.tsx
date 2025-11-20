@@ -60,6 +60,11 @@ const brutalistTheme = create({
  */
 const preview: Preview = {
   parameters: {
+    options: {
+      storySort: {
+        order: ["Welcome", "Colors", "Typography", "Spacing", "Shadows", "*"],
+      },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

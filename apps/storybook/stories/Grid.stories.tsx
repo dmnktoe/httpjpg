@@ -342,8 +342,8 @@ export const MagazineLayout: Story = {
       {/* Hero Image - Breathe */}
       <GridItem colSpan={8} colStart={3}>
         <Image
-          src="https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)"
-          alt="Hero"
+          src="https://a.storyblok.com/f/281211/5000x2400/609e58d1fb/outlet-store_slideshow-1.jpg/m/2000x1125/smart/filters:quality(75)"
+          alt="Outlet Store Hero"
           aspectRatio="16/9"
         />
       </GridItem>
@@ -385,8 +385,8 @@ export const MagazineLayout: Story = {
       <GridItem colSpan={3} colStart={9}>
         <Box css={{ mt: "48" }}>
           <Image
-            src="https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)"
-            alt="Detail"
+            src="https://a.storyblok.com/f/281211/5000x2400/7de0835b62/outlet-store_slideshow-2.jpg/m/2000x1125/smart/filters:quality(75)"
+            alt="Outlet Store Detail"
             aspectRatio="1/1"
           />
         </Box>
@@ -406,8 +406,8 @@ export const MagazineLayout: Story = {
       <GridItem colSpan={10} colStart={2}>
         <Box css={{ mt: "64", mb: "64" }}>
           <Image
-            src="https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)"
-            alt="Wide"
+            src="https://a.storyblok.com/f/281211/5000x2400/92dcf912ab/outlet-store_slideshow-3.jpg/m/2000x1125/smart/filters:quality(75)"
+            alt="Outlet Store Wide"
             aspectRatio="21/9"
           />
         </Box>

@@ -181,7 +181,9 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       display: "-webkit-box",
+                      // @ts-expect-error - Webkit prefix not in Panda types
                       WebkitLineClamp: { base: 5, xl: "none" },
+                      // @ts-expect-error - Webkit prefix not in Panda types
                       WebkitBoxOrient: "vertical",
                     }}
                   >

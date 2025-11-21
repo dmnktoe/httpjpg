@@ -88,7 +88,7 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
     // ASCII or custom content divider
     if (variant === "ascii" || variant === "custom" || children) {
       // Convert token to actual color value for text
-      const resolvedTextColor = token(`colors.${dividerColor}`);
+      const resolvedTextColor = token(`colors.${dividerColor}` as any);
 
       return (
         <Box
@@ -136,7 +136,7 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
           : "solid";
 
     // Convert token to actual color value
-    const resolvedColor = token(`colors.${dividerColor}`);
+    const resolvedColor = token(`colors.${dividerColor}` as any);
 
     return (
       <Box

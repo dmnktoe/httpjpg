@@ -1,6 +1,6 @@
 "use client";
 
-import { StoryblokComponent } from "@storyblok/react/rsc";
+import { StoryblokComponent } from "@storyblok/react";
 import type { BlokItem } from "./types";
 
 export interface DynamicRenderProps {

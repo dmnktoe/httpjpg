@@ -15,10 +15,24 @@ export const metadata: Metadata = {
     template: `%s | ${config.appName}`,
   },
   description:
-    "Personal portfolio showcasing my skills and projects with Panda CSS",
+    "Personal portfolio showcasing creative work, design, and development projects",
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  openGraph: {
+    type: "website",
+    locale: "de_DE",
+    siteName: config.appName,
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
+/**
+ * Root Layout
+ * - Loads Panda CSS styles
+ * - Initializes Storyblok Bridge for Visual Editor
+ * - Google Analytics integration
+ */
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="de">

@@ -1,6 +1,1 @@
-export {
-  type SbImageType,
-  type SbLinkType,
-  SbPageWork,
-  type SbPageWorkProps,
-} from "./SbPageWork";
+export { SbPageWork, type SbPageWorkProps } from "./SbPageWork";

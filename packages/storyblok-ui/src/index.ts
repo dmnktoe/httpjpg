@@ -20,7 +20,6 @@ export {
   SbPage,
   type SbPageProps,
 } from "./components/page";
-export type { SbLinkType } from "./components/page-work";
 export {
   SbPageWork,
   type SbPageWorkProps,

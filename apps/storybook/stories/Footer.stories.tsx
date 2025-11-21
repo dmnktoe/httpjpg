@@ -8,7 +8,7 @@ import type { Meta, StoryObj } from "@storybook/react";
  * Perfect for brutalist design with centered content and optional links.
  */
 const meta = {
-  title: "Layout/Footer",
+  title: "Navigation/Footer",
   component: Footer,
   parameters: {
     layout: "fullscreen",

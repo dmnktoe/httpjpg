@@ -1,0 +1,52 @@
+import { DynamicRender } from "@httpjpg/storyblok-utils";
+import { Section } from "@httpjpg/ui";
+import { type SbBlokData, storyblokEditable } from "@storyblok/react/rsc";
+
+export interface SbSectionProps {
+  blok: {
+    _uid: string;
+    content?: SbBlokData[];
+    bgColor?: string;
+    paddingTop?: string;
+    paddingBottom?: string;
+    marginTop?: string;
+    marginBottom?: string;
+    width?: "container" | "full";
+  };
+}
+
+/**
+ * Storyblok Section Component
+ * Semantic section wrapper with spacing and background options
+ */
+export function SbSection({ blok }: SbSectionProps) {
+  const {
+    content,
+    bgColor,
+    paddingTop,
+    paddingBottom,
+    marginTop,
+    marginBottom,
+    width = "container",
+  } = blok;
+
+  if (!content || content.length === 0) {
+    return null;
+  }
+
+  return (
+    <Section
+      {...storyblokEditable(blok)}
+      css={{
+        width: width === "container" ? "container" : "full",
+        bg: bgColor || undefined,
+        pt: paddingTop || undefined,
+        pb: paddingBottom || undefined,
+        mt: marginTop || undefined,
+        mb: marginBottom || undefined,
+      }}
+    >
+      <DynamicRender data={content as any} />
+    </Section>
+  );
+}

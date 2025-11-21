@@ -76,11 +76,12 @@ export const Navigation = ({
           <br />
           {personalWork.length > 0 ? (
             <>
-              {personalWork.map((work) => (
+              {clientWork.map((work) => (
                 <NavLink
                   key={work.id}
-                  variant="personal"
+                  variant="client"
                   href={`/work/${work.slug}`}
+                  data-preview-image={work.imageUrl}
                 >
                   {work.title}
                 </NavLink>
@@ -125,6 +126,7 @@ export const Navigation = ({
                   href={href}
                   isExternal={isExternal}
                   showExternalIcon={isExternal}
+                  data-cursor-image={work.imageUrl}
                 >
                   {work.title}
                 </NavLink>

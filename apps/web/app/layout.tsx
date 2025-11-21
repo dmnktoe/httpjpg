@@ -1,9 +1,11 @@
 import { config } from "@httpjpg/config";
+import { env } from "@httpjpg/env";
 import "@httpjpg/tokens/dist/tokens.css";
 import "@httpjpg/ui/styles.css";
-import { Header } from "@httpjpg/ui";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
+import { StoryblokProvider } from "./storyblok-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,37 +16,17 @@ export const metadata: Metadata = {
   },
   description:
     "Personal portfolio showcasing my skills and projects with Panda CSS",
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
 };
-
-// Navigation data
-const navItems = [
-  { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Work", href: "/work" },
-  { name: "Contact", href: "/contact" },
-];
-
-const personalWork = [
-  { id: "1", slug: "brutalist-portfolio", title: "Brutalist Portfolio 2024" },
-  { id: "2", slug: "design-system", title: "httpjpg Design System" },
-  { id: "3", slug: "experimental-ui", title: "Experimental UI Kit" },
-];
-
-const clientWork = [
-  { id: "1", slug: "client-project-1", title: "Client Alpha - Branding" },
-  { id: "2", slug: "client-project-2", title: "Client Beta - Web Design" },
-];
 
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
-    <html lang="en">
+    <html lang="de">
       <body>
-        <Header
-          nav={navItems}
-          personalWork={personalWork}
-          clientWork={clientWork}
-        />
-        {children}
+        <StoryblokProvider>{children}</StoryblokProvider>
+        {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+          <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+        )}
       </body>
     </html>
   );

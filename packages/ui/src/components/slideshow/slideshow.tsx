@@ -125,7 +125,7 @@ export interface SlideshowProps {
  * />
  * ```
  */
-export const Slideshow = ({
+export function Slideshow({
   images,
   animation = "none",
   animationDelay,
@@ -136,7 +136,7 @@ export const Slideshow = ({
   showNavigation = true,
   css: cssProp,
   ...props
-}: SlideshowProps) => {
+}: SlideshowProps) {
   const swiperRef = useRef<SwiperType | null>(null);
 
   const handlePrev = useCallback(() => {
@@ -339,4 +339,4 @@ export const Slideshow = ({
       )}
     </Box>
   );
-};
+}

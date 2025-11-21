@@ -1,0 +1,23 @@
+{
+  "name": "@httpjpg/storyblok-api",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "biome check src",
+    "lint:fix": "biome check --write src"
+  },
+  "dependencies": {
+    "@httpjpg/env": "workspace:*",
+    "storyblok-js-client": "^6.9.4"
+  },
+  "devDependencies": {
+    "@httpjpg/tsconfig": "workspace:*",
+    "@types/node": "^22.9.0",
+    "typescript": "~5.7.2"
+  }
+}

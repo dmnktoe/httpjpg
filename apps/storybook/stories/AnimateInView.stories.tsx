@@ -8,7 +8,7 @@ import type { Meta, StoryObj } from "@storybook/react";
  * reduced motion preferences for accessibility.
  */
 const meta = {
-  title: "Animation/AnimateInView",
+  title: "Animation & Effects/AnimateInView",
   component: AnimateInView,
   parameters: {
     layout: "centered",

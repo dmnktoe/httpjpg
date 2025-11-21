@@ -62,7 +62,17 @@ const preview: Preview = {
   parameters: {
     options: {
       storySort: {
-        order: ["Welcome", "Colors", "Typography", "Spacing", "Shadows", "*"],
+        order: [
+          "Introduction",
+          "Colors",
+          "Typography",
+          "Spacing",
+          "Shadows",
+          "Layout",
+          "Components",
+          "Navigation",
+          "Animation & Effects",
+        ],
       },
     },
     controls: {

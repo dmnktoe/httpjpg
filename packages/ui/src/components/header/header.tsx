@@ -18,6 +18,10 @@ export interface WorkItem {
   id: string;
   slug: string;
   title: string;
+  /**
+   * Main preview image URL for cursor hover
+   */
+  imageUrl?: string;
 }
 
 export interface HeaderProps {

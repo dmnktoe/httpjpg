@@ -13,8 +13,14 @@
   },
   "dependencies": {
     "@httpjpg/config": "workspace:*",
+    "@httpjpg/env": "workspace:*",
+    "@httpjpg/storyblok-api": "workspace:*",
+    "@httpjpg/storyblok-richtext": "workspace:*",
+    "@httpjpg/storyblok-utils": "workspace:*",
     "@httpjpg/tokens": "workspace:*",
     "@httpjpg/ui": "workspace:*",
+    "@next/third-parties": "^16.0.3",
+    "@sentry/nextjs": "^10.26.0",
     "next": "^15.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

@@ -3,32 +3,33 @@
  * Reusable UI components built with Panda CSS
  */
 
+// External packages
+export { NowPlaying, type NowPlayingProps } from "@httpjpg/now-playing";
 // Layout Components
 export * from "./animate-in-view";
-export { AspectRatio, type AspectRatioProps } from "./aspect-ratio";
-export { Box, type BoxProps } from "./box";
-// UI Components
-export { Button, type ButtonProps } from "./button";
-export { Center, type CenterProps } from "./center";
-export { Container, type ContainerProps } from "./container";
-export { Divider, type DividerProps } from "./divider";
+export * from "./aspect-ratio";
+export * from "./box";
+export * from "./button";
+export * from "./center";
+export * from "./container";
+export * from "./custom-cursor";
+export * from "./divider";
 export * from "./footer";
-export { Grid, GridItem, type GridItemProps, type GridProps } from "./grid";
-export {
-  Header,
-  type HeaderProps,
-  type NavItem,
-  type WorkItem,
-} from "./header";
-export { Headline } from "./headline";
+export * from "./grid";
+export * from "./header";
+export * from "./headline";
 export * from "./icon";
-export { Image, type ImageProps } from "./image";
+export * from "./image";
+export * from "./image-preview";
 export * from "./lazy-motion-provider";
-export { Link, type LinkProps } from "./link";
-export { NavLink, type NavLinkProps } from "./nav-link";
+export * from "./link";
+export * from "./loading";
+export * from "./mouse-trail";
+export * from "./nav-link";
 export * from "./page";
-export { Paragraph } from "./paragraph";
+export * from "./paragraph";
 export * from "./scaled-container";
+export * from "./scroll-progress";
 export * from "./section";
 export * from "./slideshow";
 export * from "./stack";

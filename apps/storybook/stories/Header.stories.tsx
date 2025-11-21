@@ -1,4 +1,4 @@
-import { Header } from "@httpjpg/ui";
+import { Header, ImagePreview } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
 /**
@@ -292,6 +292,122 @@ export const WithContent: Story = {
           </div>
         </div>
       </main>
+    </div>
+  ),
+};
+
+const mockPersonalWorkWithImages = [
+  {
+    id: "1",
+    slug: "brutalist-portfolio",
+    title: "Brutalist Portfolio 2024",
+    imageUrl:
+      "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/600x400/smart/filters:quality(75)",
+  },
+  {
+    id: "2",
+    slug: "design-system",
+    title: "httpjpg Design System",
+    imageUrl:
+      "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/600x400/smart/filters:quality(75)",
+  },
+  {
+    id: "3",
+    slug: "experimental-ui",
+    title: "Experimental UI Kit",
+    imageUrl:
+      "https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/600x400/smart/filters:quality(75)",
+  },
+  {
+    id: "4",
+    slug: "ascii-art-generator",
+    title: "ASCII Art Generator",
+    imageUrl:
+      "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/600x400/smart/filters:quality(75)",
+  },
+];
+
+const mockClientWorkWithImages = [
+  {
+    id: "1",
+    slug: "client-project-1",
+    title: "Client Alpha - Branding",
+    imageUrl:
+      "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/600x400/smart/filters:quality(75)",
+  },
+  {
+    id: "2",
+    slug: "client-project-2",
+    title: "Client Beta - Web Design",
+    imageUrl:
+      "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/600x400/smart/filters:quality(75)",
+  },
+  {
+    id: "3",
+    slug: "client-project-3",
+    title: "Client Gamma - App Dev",
+    imageUrl:
+      "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/600x400/smart/filters:quality(75)",
+  },
+];
+
+/**
+ * Header with image preview on work items
+ * Hover over work items in the navigation to see featured images
+ * Note: Add ImagePreview component to your root layout to enable this feature
+ */
+export const WithImagePreview: Story = {
+  args: {
+    nav: mockNav,
+    personalWork: mockPersonalWorkWithImages,
+    clientWork: mockClientWorkWithImages,
+  },
+  render: (args) => (
+    <div>
+      <ImagePreview />
+      <Header {...args} />
+      <div
+        style={{
+          padding: "6rem 2rem 2rem",
+          minHeight: "100vh",
+          background: "white",
+        }}
+      >
+        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+          <h1
+            style={{
+              fontSize: "3rem",
+              marginBottom: "1.5rem",
+              fontFamily: "Impact, sans-serif",
+            }}
+          >
+            HOVER OVER WORK ITEMS
+          </h1>
+          <p style={{ fontSize: "1.25rem", lineHeight: 1.6, opacity: 0.8 }}>
+            Open the header menu and hover over the work items in the
+            "Personal/Things" and "Client Work" sections to see the featured
+            image preview following your cursor. This creates an engaging
+            preview experience for portfolio navigation.
+          </p>
+
+          <div style={{ marginTop: "3rem" }}>
+            <h2 style={{ fontSize: "2rem", marginBottom: "1rem" }}>
+              Image Preview Feature
+            </h2>
+            <p style={{ lineHeight: 1.75, opacity: 0.8, marginBottom: "1rem" }}>
+              The header uses the ImagePreview component which is independent
+              from cursor styling. When a work item has an imageUrl property,
+              hovering over the link displays a 300x200px preview image that
+              follows your cursor.
+            </p>
+            <p style={{ lineHeight: 1.75, opacity: 0.8 }}>
+              This provides an immediate visual preview of the project without
+              requiring navigation, creating a more interactive and engaging
+              browsing experience.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   ),
 };

@@ -36,7 +36,7 @@ export const Navigation = ({
             w: { xl: "33.333333%" },
           }}
         >
-          <Box css={{ maxW: "28rem" }}>
+          <Box css={{ maxW: "28rem", lineHeight: "1.3" }}>
             <span style={{ fontWeight: "bold" }}>⇝HE𝓁𝓁O www.httpjpg.com</span>
             <br />
             <span style={{ textAlign: "justify" }}>
@@ -71,18 +71,24 @@ export const Navigation = ({
         </Box>
 
         {/* Middle Column - Recent Personal Work */}
-        <Box css={{ w: { xl: "33.333333%" } }}>
+        <Box css={{ w: { xl: "33.333333%" }, lineHeight: "1.3" }}>
           <span style={{ fontWeight: "bold" }}>⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S</span>
           <br />
           {personalWork.length > 0 ? (
             <>
-              {clientWork.map((work) => (
+              {personalWork.map((work) => (
                 <NavLink
                   key={work.id}
-                  variant="client"
+                  variant="personal"
                   href={`/work/${work.slug}`}
                   data-preview-image={work.imageUrl}
+                  css={{
+                    backgroundColor: work.isDraft ? "yellow" : "transparent",
+                    color: work.isDraft ? "black" : "inherit",
+                    padding: work.isDraft ? "0 4px" : "0",
+                  }}
                 >
+                  {work.isDraft && "[DRAFT] "}
                   {work.title}
                 </NavLink>
               ))}
@@ -108,7 +114,7 @@ export const Navigation = ({
         </Box>
 
         {/* Right Column - Recent Client Work */}
-        <Box css={{ w: { xl: "33.333333%" } }}>
+        <Box css={{ w: { xl: "33.333333%" }, lineHeight: "1.3" }}>
           <span style={{ fontWeight: "bold" }}>⇝ᵣₑcꫀₙₜ 𝒞𝓁LI€NT</span>
           <br />
           {clientWork.length > 0 ? (
@@ -126,8 +132,14 @@ export const Navigation = ({
                   href={href}
                   isExternal={isExternal}
                   showExternalIcon={isExternal}
-                  data-cursor-image={work.imageUrl}
+                  data-preview-image={work.imageUrl}
+                  css={{
+                    backgroundColor: work.isDraft ? "yellow" : "transparent",
+                    color: work.isDraft ? "black" : "inherit",
+                    padding: work.isDraft ? "0 4px" : "0",
+                  }}
                 >
+                  {work.isDraft && "[DRAFT] "}
                   {work.title}
                 </NavLink>
               );

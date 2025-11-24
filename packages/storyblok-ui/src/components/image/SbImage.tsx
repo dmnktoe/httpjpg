@@ -1,22 +1,16 @@
 import type { StoryblokRichTextProps } from "@httpjpg/storyblok-richtext";
-import { StoryblokRichText } from "@httpjpg/storyblok-richtext";
 import { getProcessedImage } from "@httpjpg/storyblok-utils";
 import { Image } from "@httpjpg/ui";
 import { storyblokEditable } from "@storyblok/react/rsc";
-
-export interface SbImageType {
-  id: number;
-  filename: string;
-  alt?: string;
-  focus?: string;
-  name?: string;
-  title?: string;
-}
+import { memo } from "react";
+import type { StoryblokImage } from "../../types";
+import { Caption } from "../caption";
+import { MediaWrapper } from "../media-wrapper";
 
 export interface SbImageProps {
   blok: {
     _uid: string;
-    image: SbImageType;
+    image: StoryblokImage;
     alt?: string;
     caption?: StoryblokRichTextProps["data"];
     aspectRatio?: "16/9" | "4/3" | "1/1" | "3/4" | "9/16";
@@ -32,13 +26,12 @@ export interface SbImageProps {
  * Storyblok Image Component
  * Optimized image with Storyblok image service
  */
-export function SbImage({ blok }: SbImageProps) {
+export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
   const {
     image,
     alt,
     caption,
     aspectRatio,
-    width = "full",
     isFullHeight = false,
     isLoadingEager = false,
     spacingTop,
@@ -58,12 +51,10 @@ export function SbImage({ blok }: SbImageProps) {
   );
 
   return (
-    <div
-      {...storyblokEditable(blok)}
-      style={{
-        marginTop: spacingTop,
-        marginBottom: spacingBottom,
-      }}
+    <MediaWrapper
+      spacingTop={spacingTop}
+      spacingBottom={spacingBottom}
+      editable={storyblokEditable(blok)}
     >
       <Image
         src={processedSrc || image.filename}
@@ -77,13 +68,7 @@ export function SbImage({ blok }: SbImageProps) {
         loading={isLoadingEager ? "eager" : "lazy"}
       />
 
-      {caption && (
-        <div
-          style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "#666" }}
-        >
-          <StoryblokRichText data={caption} />
-        </div>
-      )}
-    </div>
+      {caption && <Caption data={caption} />}
+    </MediaWrapper>
   );
-}
+});

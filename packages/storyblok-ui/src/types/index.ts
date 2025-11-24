@@ -112,7 +112,31 @@ export interface StoryblokLink {
   cached_url?: string;
   anchor?: string;
   target?: "_blank" | "_self";
+  email?: string;
   story?: StoryblokStory;
+}
+
+/**
+ * Base Storyblok Block
+ */
+export interface StoryblokBlok {
+  _uid: string;
+  component: string;
+  _editable?: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Storyblok Video Asset
+ */
+export interface StoryblokVideoAsset {
+  id?: number;
+  alt?: string;
+  name?: string;
+  title?: string;
+  filename: string;
+  copyright?: string;
+  fieldtype?: "asset";
 }
 
 /**

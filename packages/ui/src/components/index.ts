@@ -11,6 +11,7 @@ export * from "./aspect-ratio";
 export * from "./box";
 export * from "./button";
 export * from "./center";
+export * from "./component-not-found";
 export * from "./container";
 export * from "./custom-cursor";
 export * from "./divider";

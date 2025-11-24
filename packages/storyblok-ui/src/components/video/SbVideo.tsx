@@ -1,25 +1,21 @@
 import type { StoryblokRichTextProps } from "@httpjpg/storyblok-richtext";
-import { StoryblokRichText } from "@httpjpg/storyblok-richtext";
 import type { VideoSource } from "@httpjpg/ui";
 import { video as VideoComponent } from "@httpjpg/ui";
 import { storyblokEditable } from "@storyblok/react/rsc";
-
-export interface SbVideoAssetType {
-  id: number;
-  filename: string;
-  alt?: string;
-  title?: string;
-}
+import { memo } from "react";
+import type { StoryblokVideoAsset } from "../../types";
+import { Caption } from "../caption";
+import { MediaWrapper } from "../media-wrapper";
 
 export interface SbVideoProps {
   blok: {
     _uid: string;
     source: "native" | "youtube" | "vimeo";
-    video?: SbVideoAssetType;
+    video?: StoryblokVideoAsset;
     videoUrl?: string;
     youtubeId?: string;
     vimeoId?: string;
-    poster?: SbVideoAssetType;
+    poster?: StoryblokVideoAsset;
     caption?: StoryblokRichTextProps["data"];
     aspectRatio?: "16/9" | "4/3" | "1/1" | "21/9";
     controls?: boolean;
@@ -38,7 +34,7 @@ export interface SbVideoProps {
  * Storyblok Video Component
  * Supports native videos, YouTube and Vimeo embeds
  */
-export function SbVideo({ blok }: SbVideoProps) {
+export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
   const {
     source = "native",
     video,
@@ -74,20 +70,11 @@ export function SbVideo({ blok }: SbVideoProps) {
   }
 
   return (
-    <div
-      {...storyblokEditable(blok)}
-      style={{
-        marginTop: spacingTop,
-        marginBottom: spacingBottom,
-        maxWidth:
-          width === "full"
-            ? "100%"
-            : width === "container"
-              ? "1200px"
-              : "800px",
-        marginLeft: width !== "full" ? "auto" : undefined,
-        marginRight: width !== "full" ? "auto" : undefined,
-      }}
+    <MediaWrapper
+      spacingTop={spacingTop}
+      spacingBottom={spacingBottom}
+      width={width}
+      editable={storyblokEditable(blok)}
     >
       <VideoComponent
         src={videoSrc}
@@ -105,13 +92,7 @@ export function SbVideo({ blok }: SbVideoProps) {
         }}
       />
 
-      {caption && (
-        <div
-          style={{ marginTop: "0.5rem", fontSize: "0.875rem", color: "#666" }}
-        >
-          <StoryblokRichText data={caption} />
-        </div>
-      )}
-    </div>
+      {caption && <Caption data={caption} />}
+    </MediaWrapper>
   );
-}
+});

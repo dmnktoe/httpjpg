@@ -7,6 +7,7 @@ import {
   WorkList,
 } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { OPTIMIZED_IMAGES } from "./storybook-fixtures";
 
 /**
  * WorkList component stories
@@ -36,11 +37,11 @@ const sampleWorks = [
     slug: "brand-identity",
     images: [
       {
-        url: "https://a.storyblok.com/f/281211/5000x2400/609e58d1fb/outlet-store_slideshow-1.jpg/m/2000x1125/smart/filters:quality(75)",
+        url: OPTIMIZED_IMAGES.outletStore1,
         alt: "Outlet Store 1",
       },
       {
-        url: "https://a.storyblok.com/f/281211/5000x2400/7de0835b62/outlet-store_slideshow-2.jpg/m/2000x1125/smart/filters:quality(75)",
+        url: OPTIMIZED_IMAGES.outletStore2,
         alt: "Outlet Store 2",
         copyright: "Studio XYZ",
       },
@@ -54,15 +55,15 @@ const sampleWorks = [
     slug: "ecommerce-redesign",
     images: [
       {
-        url: "https://a.storyblok.com/f/281211/5000x2400/92dcf912ab/outlet-store_slideshow-3.jpg/m/2000x1125/smart/filters:quality(75)",
+        url: OPTIMIZED_IMAGES.outletStore3,
         alt: "Outlet Store 3",
       },
       {
-        url: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",
+        url: OPTIMIZED_IMAGES.videoStill1,
         alt: "Video still 1",
       },
       {
-        url: "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/2000x1125/smart/filters:quality(75)",
+        url: OPTIMIZED_IMAGES.landscape,
         alt: "Klosterkirche",
       },
     ],
@@ -75,7 +76,7 @@ const sampleWorks = [
     slug: "creative-exhibition",
     images: [
       {
-        url: "https://a.storyblok.com/f/281211/5000x2400/7de0835b62/outlet-store_slideshow-2.jpg/m/2000x1125/smart/filters:quality(75)",
+        url: OPTIMIZED_IMAGES.outletStore2,
         alt: "Exhibition space",
         copyright: "John Photographer",
       },
@@ -89,11 +90,11 @@ const sampleWorks = [
     slug: "magazine-layout",
     images: [
       {
-        url: "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)",
+        url: OPTIMIZED_IMAGES.videoStill2,
         alt: "Video still 2",
       },
       {
-        url: "https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)",
+        url: OPTIMIZED_IMAGES.videoStill3,
         alt: "Video still 3",
       },
     ],
@@ -223,20 +224,6 @@ export const NoDates: Story = {
 };
 
 /**
- * Dark background showcase
- */
-export const DarkBackground: Story = {
-  args: {
-    works: sampleWorks,
-    css: {
-      bg: "black",
-      color: "white",
-      py: "64px",
-    },
-  },
-};
-
-/**
  * Work list with ASCII dividers between items
  */
 export const WithDividers: Story = {
@@ -272,7 +259,7 @@ export const CustomizableWorkCard: Story = {
       images={
         args.images || [
           {
-            url: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",
+            url: OPTIMIZED_IMAGES.videoStill1,
             alt: "Default image",
           },
         ]
@@ -287,11 +274,11 @@ export const CustomizableWorkCard: Story = {
     slug: "brand-identity",
     images: [
       {
-        url: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",
+        url: OPTIMIZED_IMAGES.videoStill1,
         alt: "Video still 1",
       },
       {
-        url: "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)",
+        url: OPTIMIZED_IMAGES.videoStill2,
         alt: "Video still 2",
         copyright: "Studio XYZ",
       },

@@ -1,1 +1,1 @@
-export { SbImage, type SbImageProps, type SbImageType } from "./SbImage";
+export { SbImage, type SbImageProps } from "./SbImage";

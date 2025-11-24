@@ -134,45 +134,6 @@ export const WithHorizontalPadding: Story = {
 };
 
 /**
- * Dark section with background
- */
-export const DarkSection: Story = {
-  args: {
-    pt: 24,
-    pb: 24,
-    style: { background: "#171717" },
-    children: (
-      <Container>
-        <Box
-          style={{
-            fontFamily: "monospace",
-            fontSize: "0.75rem",
-            color: "white",
-            marginBottom: "1rem",
-            opacity: 0.7,
-          }}
-        >
-          DARK MODE / 2025
-        </Box>
-        <Headline level={2} style={{ color: "white", margin: 0 }}>
-          Dark Section
-        </Headline>
-        <Paragraph
-          style={{
-            color: "white",
-            marginTop: "1rem",
-            fontSize: "1rem",
-            opacity: 0.9,
-          }}
-        >
-          Sections can have custom backgrounds and styling for visual variety.
-        </Paragraph>
-      </Container>
-    ),
-  },
-};
-
-/**
  * Multiple sections with different backgrounds
  */
 export const MultipleSections: Story = {
@@ -216,36 +177,6 @@ export const MultipleSections: Story = {
           <Headline level={2}>Second Section</Headline>
           <Paragraph style={{ marginTop: "1rem" }}>
             Light gray background creates visual separation between sections.
-          </Paragraph>
-        </Container>
-      </Section>
-
-      <Section pt={24} pb={24} style={{ background: "#171717" }}>
-        <Container>
-          <Box
-            style={{
-              fontFamily: "monospace",
-              fontSize: "0.75rem",
-              color: "white",
-              marginBottom: "1rem",
-              opacity: 0.7,
-            }}
-          >
-            03 / CONTACT
-          </Box>
-          <Headline level={2} style={{ color: "white", margin: 0 }}>
-            Third Section
-          </Headline>
-          <Paragraph
-            style={{
-              color: "white",
-              marginTop: "1rem",
-              fontSize: "1rem",
-              opacity: 0.9,
-            }}
-          >
-            Dark background for high contrast and impact. Great for CTAs and
-            footer areas.
           </Paragraph>
         </Container>
       </Section>

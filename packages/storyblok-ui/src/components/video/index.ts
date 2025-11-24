@@ -1,2 +1,1 @@
-export type { SbVideoAssetType, SbVideoProps } from "./SbVideo";
-export { SbVideo } from "./SbVideo";
+export { SbVideo, type SbVideoProps } from "./SbVideo";

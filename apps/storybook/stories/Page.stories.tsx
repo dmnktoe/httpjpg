@@ -236,32 +236,3 @@ export const ContentOnly: Story = {
     </Page>
   ),
 };
-
-/**
- * Dark theme page
- */
-export const DarkTheme: Story = {
-  args: {
-    header: {
-      nav: sampleNav,
-      personalWork: samplePersonalWork,
-      isDark: true,
-    },
-    footer: {
-      backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
-    },
-  },
-  render: (args) => (
-    <Page {...args} css={{ bg: "black", color: "white" }}>
-      <Section css={{ py: "32" }}>
-        <Headline level={1} css={{ color: "white" }}>
-          Dark Theme Page
-        </Headline>
-        <Paragraph css={{ color: "neutral.300" }}>
-          This page uses dark mode styling with inverted header colors. Perfect
-          for dramatic presentations or night mode.
-        </Paragraph>
-      </Section>
-    </Page>
-  ),
-};

@@ -17,6 +17,7 @@
     "@httpjpg/env": "workspace:*",
     "@httpjpg/storyblok-api": "workspace:*",
     "@httpjpg/storyblok-richtext": "workspace:*",
+    "@httpjpg/storyblok-ui": "workspace:*",
     "@httpjpg/storyblok-utils": "workspace:*",
     "@httpjpg/tokens": "workspace:*",
     "@httpjpg/ui": "workspace:*",

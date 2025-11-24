@@ -80,6 +80,7 @@ export const Page = forwardRef<HTMLDivElement, PageProps>(
           css={{
             flex: 1,
             paddingBottom: footer ? `${footerHeight}px` : "0",
+            width: "100%",
             // Add data attribute for Storyblok visual editor (future)
             ...(blok && { "data-blok-c": JSON.stringify(blok) }),
           }}

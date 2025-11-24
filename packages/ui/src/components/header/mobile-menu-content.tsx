@@ -19,7 +19,6 @@ export const MobileMenuContent = ({
   nav,
   personalWork = [],
   clientWork = [],
-  isDark = false,
 }: MobileMenuContentProps) => {
   const handleMenuItemClick = () => {
     setIsOpen(false);
@@ -65,14 +64,12 @@ export const MobileMenuContent = ({
             flexGrow: 1,
             flexDirection: "column",
             alignItems: "stretch",
-            bg: isDark ? "black" : "white",
-            color: isDark ? "white" : "black",
+            bg: "white",
+            color: "black",
             m: { md: "6" },
-            border: isDark ? "3px solid white" : "3px solid black",
+            border: "3px solid black",
             borderRadius: 0,
-            boxShadow: isDark
-              ? "8px 8px 0px 0px white"
-              : "8px 8px 0px 0px black",
+            boxShadow: "8px 8px 0px 0px black",
           }}
         >
           <Box
@@ -132,6 +129,7 @@ export const MobileMenuContent = ({
                   variant="personal"
                   href={`/work/${work.slug}`}
                   onClick={handleMenuItemClick}
+                  data-preview-image={work.imageUrl}
                   css={{
                     fontSize: { base: "sm", md: "md" },
                   }}
@@ -176,6 +174,7 @@ export const MobileMenuContent = ({
                     isExternal={isExternal}
                     showExternalIcon={isExternal}
                     onClick={handleMenuItemClick}
+                    data-preview-image={work.imageUrl}
                     css={{
                       fontSize: { base: "sm", md: "md" },
                     }}

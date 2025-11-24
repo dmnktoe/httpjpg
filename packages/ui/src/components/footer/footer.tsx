@@ -21,6 +21,10 @@ export interface FooterProps {
    */
   showDefaultLinks?: boolean;
   /**
+   * Copyright text to display
+   */
+  copyrightText?: string;
+  /**
    * Additional Panda CSS styles
    */
   css?: SystemStyleObject;
@@ -45,6 +49,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       children,
       backgroundImage,
       showDefaultLinks = true,
+      copyrightText,
       css: cssProp,
       ...props
     },
@@ -54,24 +59,26 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       <Box
         as="footer"
         ref={ref}
-        style={
-          backgroundImage
+        style={{
+          ...(backgroundImage
             ? {
                 backgroundImage: `url(${backgroundImage})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }
-            : undefined
-        }
+            : {}),
+          paddingTop: "16rem",
+          paddingBottom: "16rem",
+        }}
         css={{
           borderTop: "1px solid black",
-          py: "64",
           textAlign: "center",
+          w: "100%",
           ...cssProp,
         }}
         {...props}
       >
-        <Box css={{ maxW: "1200px", mx: "auto", px: "4", py: "4" }}>
+        <Box css={{ w: "100%", mx: "auto", px: "4" }}>
           {children ? (
             children
           ) : (
@@ -90,7 +97,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
               )}
               *ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚
               <br />
-              ༺yl33ly httpjpg icon.icon.iconn te3shay༻
+              {copyrightText || "༺yl33ly httpjpg icon.icon.iconn te3shay༻"}
             </Box>
           )}
         </Box>

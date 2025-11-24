@@ -84,20 +84,28 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
     ref,
   ) => {
     return (
-      <Box
+      <div
         ref={ref}
-        css={{
-          w: "100%",
-          maxW: sizeMap[size],
-          px,
-          py,
-          mx: center ? "auto" : undefined,
-          ...cssProp,
+        style={{
+          width: "100%",
+          paddingLeft: "1rem",
+          paddingRight: "1rem",
         }}
         {...props}
       >
-        {children}
-      </Box>
+        <Box
+          css={{
+            maxWidth: sizeMap[size],
+            marginLeft: center ? "auto" : "0",
+            marginRight: center ? "auto" : "0",
+            px,
+            py,
+            ...cssProp,
+          }}
+        >
+          {children}
+        </Box>
+      </div>
     );
   },
 );

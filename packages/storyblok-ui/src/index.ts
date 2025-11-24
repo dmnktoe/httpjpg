@@ -4,6 +4,10 @@
  */
 
 export {
+  Caption,
+  type CaptionProps,
+} from "./components/caption";
+export {
   SbContainer,
   type SbContainerProps,
 } from "./components/container";
@@ -16,6 +20,10 @@ export {
   type SbImageProps,
   type SbImageType,
 } from "./components/image";
+export {
+  MediaWrapper,
+  type MediaWrapperProps,
+} from "./components/media-wrapper";
 export {
   SbPage,
   type SbPageProps,
@@ -57,16 +65,41 @@ export {
   SbWorkList,
   type SbWorkListProps,
 } from "./components/work-list";
+// Export constants
+export {
+  ASPECT_RATIOS,
+  type AspectRatio,
+  CONTAINER_WIDTHS,
+  COPYRIGHT_POSITIONS,
+  type CopyrightPosition,
+  DEFAULTS,
+  IMAGE_SIZES,
+  type ImageSize,
+  SPACING_SIZES,
+  type SpacingSize,
+  VIDEO_SOURCES,
+  type VideoSource,
+  WIDTH_OPTIONS,
+  type WidthOption,
+} from "./lib/constants";
 
+// Export utility functions
+export {
+  getLayoutStyles,
+  getSpacingStyles,
+  getWidthStyles,
+} from "./lib/spacing-utils";
 // Export shared types
 export type {
   BaseStoryblokProps,
   LayoutProps,
   SpacingProps,
   StoryblokApiResponse,
+  StoryblokBlok,
   StoryblokImage,
   StoryblokLink as StoryblokLinkType,
   StoryblokRichText,
   StoryblokStory,
+  StoryblokVideoAsset,
   StoryMetadata,
 } from "./types";

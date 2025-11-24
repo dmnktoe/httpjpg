@@ -38,8 +38,8 @@ export const SbSection = memo(function SbSection({ blok }: SbSectionProps) {
   return (
     <Section
       {...storyblokEditable(blok)}
+      useContainer={width === "container"}
       css={{
-        width: width === "container" ? "container" : "full",
         bg: bgColor || undefined,
         pt: paddingTop || undefined,
         pb: paddingBottom || undefined,

@@ -1,11 +1,13 @@
 import { Slideshow } from "@httpjpg/ui";
 import { storyblokEditable } from "@storyblok/react/rsc";
-import type { SbImageType } from "../image";
+import { memo } from "react";
+import type { StoryblokImage } from "../../types";
+import { MediaWrapper } from "../media-wrapper";
 
 export interface SbSlideshowProps {
   blok: {
     _uid: string;
-    images: SbImageType[];
+    images: StoryblokImage[];
     aspectRatio?: "16/9" | "4/3" | "1/1" | "3/4" | "9/16";
     speed?: number;
     spacingTop?: string;
@@ -18,7 +20,9 @@ export interface SbSlideshowProps {
  * Storyblok Slideshow Component
  * Carousel/slideshow of images
  */
-export function SbSlideshow({ blok }: SbSlideshowProps) {
+export const SbSlideshow = memo(function SbSlideshow({
+  blok,
+}: SbSlideshowProps) {
   const {
     images,
     aspectRatio = "16/9",
@@ -33,12 +37,11 @@ export function SbSlideshow({ blok }: SbSlideshowProps) {
   }
 
   return (
-    <div
-      {...storyblokEditable(blok)}
-      style={{
-        marginTop: spacingTop,
-        marginBottom: spacingBottom,
-      }}
+    <MediaWrapper
+      spacingTop={spacingTop}
+      spacingBottom={spacingBottom}
+      width={width}
+      editable={storyblokEditable(blok)}
     >
       <Slideshow
         images={images.map((img) => ({
@@ -47,15 +50,7 @@ export function SbSlideshow({ blok }: SbSlideshowProps) {
         }))}
         aspectRatio={aspectRatio}
         autoplayDelay={speed * 1000}
-        css={{
-          width:
-            width === "narrow"
-              ? "container.sm"
-              : width === "container"
-                ? "container"
-                : "full",
-        }}
       />
-    </div>
+    </MediaWrapper>
   );
-}
+});

@@ -1,5 +1,6 @@
 import { Box, Image, VStack } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { OPTIMIZED_IMAGES } from "./storybook-fixtures";
 import { OBJECT_FIT_OPTIONS } from "./storybook-helpers";
 
 /**
@@ -66,7 +67,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const Basic: Story = {
   args: {
-    src: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",
+    src: OPTIMIZED_IMAGES.videoStill1,
     alt: "Video still 1",
     aspectRatio: "16/9",
     copyright: "",
@@ -81,7 +82,7 @@ export const Basic: Story = {
  */
 export const InlineCopyright: Story = {
   args: {
-    src: "https://a.storyblok.com//f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)",
+    src: OPTIMIZED_IMAGES.videoStill2,
     alt: "Video still 2",
     copyright: "© 2025 John Doe",
     copyrightPosition: "inline",
@@ -94,7 +95,7 @@ export const InlineCopyright: Story = {
  */
 export const BelowCopyright: Story = {
   args: {
-    src: "https://a.storyblok.com//f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)",
+    src: OPTIMIZED_IMAGES.videoStill3,
     alt: "Video still 3",
     copyright: "© 2025 Jane Smith / Unsplash",
     copyrightPosition: "below",
@@ -108,7 +109,7 @@ export const BelowCopyright: Story = {
  */
 export const OverlayCopyright: Story = {
   args: {
-    src: "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/2000x1125/smart/filters:quality(75)",
+    src: OPTIMIZED_IMAGES.landscape,
     alt: "Klosterkirche Nordshausen",
     copyright: "⋆.˚ ᡣ𐭩 .𖥔˚ © 2025 ˙✧˖°📷 ༘ ⋆｡˚ Photographer Name",
     copyrightPosition: "overlay",
@@ -122,7 +123,7 @@ export const OverlayCopyright: Story = {
  */
 export const BlurUpLoading: Story = {
   args: {
-    src: "https://a.storyblok.com//f/281211/1500x2000/e04c56fe25/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0225.jpg/m/2000x1125/smart/filters:quality(75)",
+    src: OPTIMIZED_IMAGES.portrait,
     alt: "Loading example",
     blurOnLoad: true,
     blurDataURL:
@@ -139,7 +140,7 @@ export const BlurUpLoading: Story = {
  */
 export const Portrait: Story = {
   args: {
-    src: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",
+    src: OPTIMIZED_IMAGES.videoStill1,
     alt: "Portrait format",
     copyright: "⇝ © 2025 ୧ꔛꗃ˖ Artist",
     copyrightPosition: "overlay",
@@ -153,7 +154,7 @@ export const Portrait: Story = {
  */
 export const Square: Story = {
   args: {
-    src: "https://a.storyblok.com//f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)",
+    src: OPTIMIZED_IMAGES.videoStill2,
     alt: "Square format",
     copyright: "⋆.˚✮🎧✮˚.⋆ © 2025 Creator",
     copyrightPosition: "below",
@@ -173,7 +174,7 @@ export const Gallery: Story = {
     <VStack gap={8} style={{ padding: "2rem" }}>
       <Box>
         <Image
-          src="https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)"
+          src={OPTIMIZED_IMAGES.videoStill1}
           alt="Video still 1"
           copyright="© 2025 John Architect"
           copyrightPosition="inline"
@@ -183,7 +184,7 @@ export const Gallery: Story = {
 
       <Box>
         <Image
-          src="https://a.storyblok.com//f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)"
+          src={OPTIMIZED_IMAGES.videoStill2}
           alt="Video still 2"
           copyright="© 2025 Jane Designer"
           copyrightPosition="below"
@@ -193,7 +194,7 @@ export const Gallery: Story = {
 
       <Box>
         <Image
-          src="https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/2000x1125/smart/filters:quality(75)"
+          src={OPTIMIZED_IMAGES.landscape}
           alt="Klosterkirche Nordshausen"
           copyright="© 2025 Studio XYZ"
           copyrightPosition="overlay"
@@ -221,7 +222,7 @@ export const BrutalistCard: Story = {
       }}
     >
       <Image
-        src="https://a.storyblok.com//f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)"
+        src={OPTIMIZED_IMAGES.videoStill3}
         alt="Featured work"
         copyright="© 2025 httpjpg"
         copyrightPosition="overlay"

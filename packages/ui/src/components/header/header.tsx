@@ -22,6 +22,10 @@ export interface WorkItem {
    * Main preview image URL for cursor hover
    */
   imageUrl?: string;
+  /**
+   * Is this a draft (unpublished) story?
+   */
+  isDraft?: boolean;
 }
 
 export interface HeaderProps {
@@ -38,13 +42,13 @@ export interface HeaderProps {
    */
   clientWork?: WorkItem[];
   /**
-   * Dark mode variant (inverts colors for dark backgrounds)
-   */
-  isDark?: boolean;
-  /**
    * Additional content or custom elements
    */
   children?: ReactNode;
+  /**
+   * Center the container horizontally (default: true)
+   */
+  center?: boolean;
 }
 
 /**
@@ -70,8 +74,8 @@ export const Header = ({
   nav,
   personalWork = [],
   clientWork = [],
-  isDark = false,
   children,
+  center = true,
 }: HeaderProps) => {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(280);
@@ -111,12 +115,18 @@ export const Header = ({
           right: 0,
           width: "100%",
           background: "transparent",
-          color: isDark ? "white" : "black",
+          color: "black",
           zIndex: 50,
           pointerEvents: "auto",
+          paddingTop: "1rem",
+          paddingBottom: "1rem",
         }}
       >
-        <Container size="xl">
+        <Container
+          size="2xl"
+          px={{ base: "4", md: "6", lg: "8" }}
+          center={center}
+        >
           <Box
             css={{
               display: "flex",
@@ -124,7 +134,6 @@ export const Header = ({
               alignItems: "flex-start",
               justifyContent: "space-between",
               gap: "12",
-              py: "4",
             }}
           >
             <Navigation
@@ -146,7 +155,6 @@ export const Header = ({
           nav={nav}
           personalWork={personalWork}
           clientWork={clientWork}
-          isDark={isDark}
         />
 
         {children}

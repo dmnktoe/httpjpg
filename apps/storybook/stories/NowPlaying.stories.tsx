@@ -303,33 +303,6 @@ export const PortfolioContext: Story = {
 };
 
 /**
- * Dark background variant
- */
-export const DarkBackground: Story = {
-  args: {
-    title: "Nights",
-    artist: "Frank Ocean",
-    artwork: "https://picsum.photos/400/400?random=12",
-    isPlaying: true,
-    initialPosition: { x: 20, y: 20 },
-    size: "md",
-  },
-  render: (args: NowPlayingProps) => (
-    <Box css={{ minH: "100vh", bg: "black", p: "8" }}>
-      <Box css={{ maxW: "4xl", mx: "auto", color: "white" }}>
-        <Headline level={1} css={{ mb: "4" }}>
-          DARK MODE CONTEXT
-        </Headline>
-        <Paragraph size="lg" css={{ mb: "8", opacity: 0.7 }}>
-          The Spotify-green glassmorphism pops beautifully on dark backgrounds
-        </Paragraph>
-      </Box>
-      <NowPlaying {...args} />
-    </Box>
-  ),
-};
-
-/**
  * Playground with all controls
  */
 export const Playground: Story = {

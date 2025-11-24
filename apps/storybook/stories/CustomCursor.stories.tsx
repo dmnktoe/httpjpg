@@ -7,6 +7,7 @@ import {
   Paragraph,
 } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { OPTIMIZED_IMAGES } from "./storybook-fixtures";
 
 /**
  * Custom Cursor component stories
@@ -202,53 +203,6 @@ export const SmallSymbols: Story = {
 };
 
 /**
- * White cursor on dark background
- */
-export const DarkMode: Story = {
-  render: (args) => (
-    <>
-      <CustomCursor {...args} />
-      <Box css={{ maxW: "800px", mx: "auto" }}>
-        <Headline level={1} css={{ color: "white" }}>
-          DARK MODE CURSOR
-        </Headline>
-        <Paragraph css={{ mt: "24px", mb: "32px", color: "white" }}>
-          White cursor with mix-blend-mode for dark backgrounds.
-        </Paragraph>
-
-        <Box css={{ display: "flex", gap: "16px", mb: "32px" }}>
-          <Button data-cursor="LIGHT">Light Button</Button>
-          <Box
-            as="button"
-            data-cursor="INVERTED"
-            css={{
-              px: "24px",
-              py: "12px",
-              bg: "transparent",
-              border: "2px solid white",
-              color: "white",
-              cursor: "pointer",
-            }}
-          >
-            Ghost Button
-          </Box>
-        </Box>
-      </Box>
-    </>
-  ),
-  args: {
-    color: "white",
-  },
-  decorators: [
-    (Story) => (
-      <Box css={{ minH: "100vh", p: "64px", bg: "black" }}>
-        <Story />
-      </Box>
-    ),
-  ],
-};
-
-/**
  * Without labels (minimal)
  */
 export const NoLabels: Story = {
@@ -297,7 +251,7 @@ export const WithImagePreview: Story = {
         >
           <Link
             href="#"
-            data-cursor-image="https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/600x400/smart/filters:quality(75)"
+            data-cursor-image={OPTIMIZED_IMAGES.videoStill1Preview}
             data-cursor="VIEW PROJECT"
             css={{
               fontSize: "xl",
@@ -311,7 +265,7 @@ export const WithImagePreview: Story = {
 
           <Link
             href="#"
-            data-cursor-image="https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/600x400/smart/filters:quality(75)"
+            data-cursor-image={OPTIMIZED_IMAGES.videoStill2Preview}
             data-cursor="EXPLORE"
             css={{
               fontSize: "xl",
@@ -325,7 +279,7 @@ export const WithImagePreview: Story = {
 
           <Link
             href="#"
-            data-cursor-image="https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/600x400/smart/filters:quality(75)"
+            data-cursor-image={OPTIMIZED_IMAGES.videoStill3Preview}
             data-cursor="DISCOVER"
             css={{
               fontSize: "xl",
@@ -339,7 +293,7 @@ export const WithImagePreview: Story = {
 
           <Link
             href="#"
-            data-cursor-image="https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/600x400/smart/filters:quality(75)"
+            data-cursor-image={OPTIMIZED_IMAGES.landscapePreview}
             data-cursor="SEE MORE"
             css={{
               fontSize: "xl",

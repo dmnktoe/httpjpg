@@ -341,37 +341,6 @@ export const PortfolioExample: Story = {
 };
 
 /**
- * Dark background variant
- */
-export const DarkBackground: Story = {
-  args: {
-    character: "✦",
-    count: 30,
-    lifetime: 1500,
-    size: "28px",
-    color: "white",
-  },
-  render: (args) => (
-    <Box>
-      <MouseTrail {...args} />
-      <Box
-        css={{
-          minH: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          p: "8",
-          bg: "black",
-          color: "white",
-        }}
-      >
-        <Headline level={1}>DARK MODE TRAIL</Headline>
-      </Box>
-    </Box>
-  ),
-};
-
-/**
  * Playground with all controls
  */
 export const Playground: Story = {

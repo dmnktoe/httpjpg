@@ -11,20 +11,6 @@ const nextConfig: NextConfig = {
     "@httpjpg/storyblok-utils",
   ],
 
-  // Sentry Configuration
-  sentry: {
-    // Upload source maps in production builds
-    hideSourceMaps: true,
-    // Disable Sentry during development
-    disableServerWebpackPlugin: process.env.NODE_ENV !== "production",
-    disableClientWebpackPlugin: process.env.NODE_ENV !== "production",
-  },
-
-  // Instrumentation for Sentry
-  experimental: {
-    instrumentationHook: true,
-  },
-
   // Image optimization for Storyblok assets
   images: {
     formats: ["image/avif", "image/webp"],
@@ -59,7 +45,21 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  webpack: (config) => {
+  webpack: (config, { dev }) => {
+    // Suppress all warnings in development
+    if (dev) {
+      config.infrastructureLogging = {
+        level: "error",
+      };
+
+      // Ignore specific warnings from OpenTelemetry/Sentry
+      config.ignoreWarnings = [
+        { module: /node_modules\/@opentelemetry/ },
+        { module: /node_modules\/@sentry/ },
+        /Critical dependency: the request of a dependency is an expression/,
+      ];
+    }
+
     config.resolve.alias = {
       ...config.resolve.alias,
       "styled-system": path.resolve(

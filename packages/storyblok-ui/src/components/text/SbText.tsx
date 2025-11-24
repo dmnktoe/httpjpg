@@ -1,5 +1,6 @@
 import { Headline, Paragraph } from "@httpjpg/ui";
 import { storyblokEditable } from "@storyblok/react/rsc";
+import { memo } from "react";
 
 export interface SbTextProps {
   blok: {
@@ -22,7 +23,7 @@ export interface SbTextProps {
  * Storyblok Text Component
  * Flexible text component for headings and paragraphs
  */
-export function SbText({ blok }: SbTextProps) {
+export const SbText = memo(function SbText({ blok }: SbTextProps) {
   const {
     text,
     variant = "paragraph",
@@ -68,4 +69,4 @@ export function SbText({ blok }: SbTextProps) {
       {text}
     </Paragraph>
   );
-}
+});

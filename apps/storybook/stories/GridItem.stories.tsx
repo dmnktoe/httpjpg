@@ -1,5 +1,6 @@
 import { Box, Grid, GridItem, Headline, Image, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { OPTIMIZED_IMAGES } from "./storybook-fixtures";
 
 /**
  * GridItem component stories
@@ -171,7 +172,7 @@ export const Overlapping: Story = {
       {/* Base image */}
       <GridItem colSpan={8} colStart={1} rowSpan={2}>
         <Image
-          src="https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)"
+          src={OPTIMIZED_IMAGES.videoStill1}
           alt="Base"
           aspectRatio="16/9"
         />
@@ -225,7 +226,7 @@ export const MagazineLayout: Story = {
           {/* Large feature - spans multiple rows */}
           <GridItem colSpan={4} rowSpan={3}>
             <Image
-              src="https://a.storyblok.com/f/281211/1500x2000/e04c56fe25/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0225.jpg/m/2000x1125/smart/filters:quality(75)"
+              src={OPTIMIZED_IMAGES.portrait}
               alt="Feature"
               aspectRatio="3/4"
             />
@@ -251,9 +252,9 @@ export const MagazineLayout: Story = {
           </GridItem>
 
           {/* Small image */}
-          <GridItem colSpan={3}>
+          <GridItem colSpan={3} rowSpan={2}>
             <Image
-              src="https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)"
+              src={OPTIMIZED_IMAGES.videoStill2}
               alt="Detail"
               aspectRatio="1/1"
             />
@@ -272,7 +273,7 @@ export const MagazineLayout: Story = {
       {/* Wide image - full width */}
       <GridItem colSpan="full">
         <Image
-          src="https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)"
+          src={OPTIMIZED_IMAGES.videoStill3}
           alt="Wide"
           aspectRatio="21/9"
         />

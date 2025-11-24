@@ -11,6 +11,14 @@ export { type Colors, colors } from "./colors";
 export { type Shadows, shadows } from "./shadows";
 export { type Spacing, spacing } from "./spacing";
 export { type Typography, typography } from "./typography";
+export {
+  clamp,
+  getColor,
+  getSpacing,
+  pxToRem,
+  remToPx,
+  responsiveSpacing,
+} from "./utils";
 
 import { borderRadius } from "./border-radius";
 import { colors } from "./colors";

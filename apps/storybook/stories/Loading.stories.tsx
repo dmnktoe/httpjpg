@@ -17,16 +17,3 @@ type Story = StoryObj<typeof meta>;
  * Default rainbow loading text animation
  */
 export const Default: Story = {};
-
-/**
- * Loading on dark background
- */
-export const DarkBackground: Story = {
-  decorators: [
-    (Story) => (
-      <div style={{ background: "#000", minHeight: "100vh" }}>
-        <Story />
-      </div>
-    ),
-  ],
-};

@@ -25,29 +25,25 @@ const navLinkRecipe = cva({
   base: {
     /* Reset & Base */
     display: "block",
-    textDecoration: "none",
     color: "inherit",
     fontFamily: "sans",
     fontSize: "inherit",
     lineHeight: "inherit",
 
+    /* Spacing */
+    py: "2px",
+    px: "2px",
+
     /* Overflow handling */
-    overflow: "hidden",
+    overflow: "visible",
     textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
 
     /* Transitions */
     transition: "all 150ms ease-in-out",
 
-    /* Hover state - underline only */
-    _hover: {
-      textDecoration: "underline",
-    },
-
     /* Focus states */
     outline: "none",
     _focusVisible: {
-      textDecoration: "underline",
       outline: "2px solid",
       outlineColor: "blue.500",
       outlineOffset: "2px",
@@ -96,6 +92,10 @@ export const NavLink = ({
       {...linkProps}
       showExternalIcon={showExternalIcon}
       className={className ? cx(navLinkStyles, className) : navLinkStyles}
+      css={{
+        textDecoration: "none",
+        _hover: { textDecoration: "underline" },
+      }}
     >
       {children}
     </Link>

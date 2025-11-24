@@ -2,12 +2,16 @@ import { config } from "@httpjpg/config";
 import { env } from "@httpjpg/env";
 import "@httpjpg/tokens/dist/tokens.css";
 import "@httpjpg/ui/styles.css";
-import { Footer, Header } from "@httpjpg/ui";
+import { Footer, Header, ImagePreview } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import { PreviewNotification } from "../components/preview-notification";
-import { getFooterConfig, getNavigation } from "../lib/get-config";
+import {
+  getFooterConfig,
+  getNavigation,
+  getRecentWork,
+} from "../lib/get-config";
 import { StoryblokProvider } from "./storyblok-provider";
 import "./globals.css";
 
@@ -41,24 +45,18 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: PropsWithChildren) {
   const navigation = await getNavigation();
   const footerConfig = await getFooterConfig();
+  const { personalWork, clientWork } = await getRecentWork();
 
   return (
     <html lang="de">
       <body style={{ margin: 0, padding: 0, backgroundColor: "#ffffff" }}>
         <StoryblokProvider>
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderBottom: "1px solid #000000",
-            }}
-          >
-            <Header
-              nav={navigation}
-              personalWork={[]}
-              clientWork={[]}
-              isDark={false}
-            />
-          </div>
+          <ImagePreview width={300} height={200} />
+          <Header
+            nav={navigation}
+            personalWork={personalWork}
+            clientWork={clientWork}
+          />
 
           <main
             style={{
@@ -71,26 +69,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             {children}
           </main>
 
-          <div
-            style={{
-              position: "fixed",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              width: "100%",
-              zIndex: 40,
-            }}
-          >
-            <Footer
-              backgroundImage={footerConfig.backgroundImage}
-              showDefaultLinks={footerConfig.showDefaultLinks}
-            >
-              <div style={{ fontSize: "0.875rem" }}>
-                {footerConfig.copyrightText ||
-                  `© ${new Date().getFullYear()} httpjpg. All rights reserved.`}
-              </div>
-            </Footer>
-          </div>
+          <Footer
+            backgroundImage={footerConfig.backgroundImage}
+            showDefaultLinks={footerConfig.showDefaultLinks}
+            copyrightText={footerConfig.copyrightText}
+          />
 
           {/* Preview Mode Notification Banner */}
           <PreviewNotification />

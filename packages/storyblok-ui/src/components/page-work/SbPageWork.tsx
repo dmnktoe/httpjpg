@@ -2,6 +2,7 @@ import { type BlokItem, DynamicRender } from "@httpjpg/storyblok-utils";
 import { Page } from "@httpjpg/ui";
 import { type SbBlokData, storyblokEditable } from "@storyblok/react/rsc";
 import { memo } from "react";
+import type { StoryblokImage } from "../../types";
 
 /**
  * Work Page Component Props
@@ -10,7 +11,15 @@ export interface SbPageWorkProps {
   blok: {
     _uid: string;
     body?: SbBlokData[];
-    isDark?: boolean;
+    /**
+     * Featured images for the work item
+     * First image will be used as preview in navigation
+     */
+    images?: StoryblokImage[];
+    /**
+     * Optional title override
+     */
+    title?: string;
   };
 }
 
@@ -24,16 +33,10 @@ export interface SbPageWorkProps {
  * - No fixed structure - full creative freedom
  */
 export const SbPageWork = memo(function SbPageWork({ blok }: SbPageWorkProps) {
-  const { body, isDark = false } = blok;
+  const { body } = blok;
 
   return (
-    <Page
-      {...storyblokEditable(blok)}
-      css={{
-        bg: isDark ? "black" : "white",
-        color: isDark ? "white" : "black",
-      }}
-    >
+    <Page {...storyblokEditable(blok)}>
       {body && <DynamicRender data={body as BlokItem[]} />}
     </Page>
   );

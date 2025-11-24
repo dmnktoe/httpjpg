@@ -27,10 +27,6 @@ const meta = {
       control: "object",
       description: "Recent client work items",
     },
-    isDark: {
-      control: "boolean",
-      description: "Dark mode variant for dark backgrounds",
-    },
   },
 } satisfies Meta<typeof Header>;
 
@@ -136,43 +132,6 @@ export const NoWorkItems: Story = {
     personalWork: [],
     clientWork: [],
   },
-};
-
-/**
- * Dark mode variant for dark backgrounds
- */
-export const DarkMode: Story = {
-  args: {
-    nav: mockNav,
-    personalWork: mockPersonalWork,
-    clientWork: mockClientWork,
-    isDark: true,
-  },
-  render: (args) => (
-    <div style={{ backgroundColor: "black", minHeight: "100vh" }}>
-      <div>
-        <Header {...args} />
-        <main style={{ color: "white" }}>
-          <div
-            style={{
-              maxWidth: "1024px",
-              margin: "0 auto",
-              padding: "2rem",
-            }}
-          >
-            <h1 style={{ fontSize: "3rem", marginBottom: "1rem" }}>
-              Dark Mode Header
-            </h1>
-            <p style={{ fontSize: "1.25rem", lineHeight: 1.6, opacity: 0.8 }}>
-              The header automatically adapts to dark backgrounds with inverted
-              colors. The transparent overlay effect creates a seamless
-              integration with the content.
-            </p>
-          </div>
-        </main>
-      </div>
-    </div>
-  ),
 };
 
 /**

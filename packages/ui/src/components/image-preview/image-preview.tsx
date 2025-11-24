@@ -7,12 +7,12 @@ import { Box } from "../box/box";
 export interface ImagePreviewProps {
   /**
    * Preview image width in pixels
-   * @default 150
+   * @default 300
    */
   width?: number;
   /**
    * Preview image height in pixels
-   * @default 100
+   * @default 200
    */
   height?: number;
   /**
@@ -38,8 +38,8 @@ export interface ImagePreviewProps {
  * ```
  */
 export function ImagePreview({
-  width = 150,
-  height = 100,
+  width = 300,
+  height = 200,
   offset = { x: 20, y: 20 },
 }: ImagePreviewProps) {
   const [previewImage, setPreviewImage] = useState("");

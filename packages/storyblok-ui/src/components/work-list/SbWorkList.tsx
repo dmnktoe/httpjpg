@@ -1,6 +1,7 @@
 import { renderStoryblokRichText } from "@httpjpg/storyblok-richtext";
 import { WorkList } from "@httpjpg/ui";
 import { storyblokEditable } from "@storyblok/react/rsc";
+import { memo } from "react";
 
 export interface SbWorkListProps {
   blok: {
@@ -34,7 +35,10 @@ export interface SbWorkListProps {
  * Storyblok Work List Component
  * Displays a list of portfolio work items
  */
-export function SbWorkList({ blok, baseUrl = "/work" }: SbWorkListProps) {
+export const SbWorkList = memo(function SbWorkList({
+  blok,
+  baseUrl = "/work",
+}: SbWorkListProps) {
   const { work } = blok;
 
   if (!work || work.length === 0) {
@@ -74,4 +78,4 @@ export function SbWorkList({ blok, baseUrl = "/work" }: SbWorkListProps) {
       <WorkList works={workItems} />
     </div>
   );
-}
+});

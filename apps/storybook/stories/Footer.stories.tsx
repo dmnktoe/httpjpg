@@ -199,24 +199,3 @@ export const Minimal: Story = {
     </Footer>
   ),
 };
-
-/**
- * Footer in dark mode
- */
-export const DarkMode: Story = {
-  args: {
-    backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
-    showDefaultLinks: true,
-  },
-  render: (args) => (
-    <Footer
-      {...args}
-      css={{
-        bg: "black",
-        color: "white",
-        borderTop: "1px solid",
-        borderColor: "black",
-      }}
-    />
-  ),
-};

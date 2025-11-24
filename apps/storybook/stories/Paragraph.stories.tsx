@@ -107,6 +107,7 @@ export const Large: Story = {
 export const Centered: Story = {
   args: {
     align: "center",
+    maxWidth: false,
     children: shortText,
   },
 };
@@ -117,6 +118,7 @@ export const Centered: Story = {
 export const RightAligned: Story = {
   args: {
     align: "right",
+    maxWidth: false,
     children: shortText,
   },
 };

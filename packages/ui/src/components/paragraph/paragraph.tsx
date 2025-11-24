@@ -69,9 +69,12 @@ const paragraphRecipe = cva({
       },
       center: {
         textAlign: "center",
+        marginLeft: "auto",
+        marginRight: "auto",
       },
       right: {
         textAlign: "right",
+        marginLeft: "auto",
       },
     },
     maxWidth: {
@@ -82,7 +85,7 @@ const paragraphRecipe = cva({
     },
   },
   defaultVariants: {
-    size: "sm",
+    size: "md",
     align: "left",
     maxWidth: true,
   },

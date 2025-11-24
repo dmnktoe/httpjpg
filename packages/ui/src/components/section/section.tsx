@@ -4,6 +4,7 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { forwardRef } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
+import { Container } from "../container/container";
 
 export interface SectionProps
   extends Omit<ComponentPropsWithoutRef<"section">, "css"> {
@@ -36,6 +37,16 @@ export interface SectionProps
    * @default true
    */
   fullWidth?: boolean;
+  /**
+   * Use container wrapper for content
+   * @default true
+   */
+  useContainer?: boolean;
+  /**
+   * Container size when useContainer is true
+   * @default "2xl"
+   */
+  containerSize?: "sm" | "md" | "lg" | "xl" | "2xl" | "fluid";
   /**
    * CSS styles using Panda CSS style object
    */
@@ -78,11 +89,21 @@ export const Section = forwardRef<HTMLElement, SectionProps>(
       pl = "0",
       pr = "0",
       fullWidth = true,
+      useContainer = true,
+      containerSize = "2xl",
       css: cssProp,
       ...props
     },
     ref,
   ) => {
+    const content = useContainer ? (
+      <Container size={containerSize} px="0" py="0">
+        {children}
+      </Container>
+    ) : (
+      children
+    );
+
     return (
       <Box
         ref={ref}
@@ -97,7 +118,7 @@ export const Section = forwardRef<HTMLElement, SectionProps>(
         }}
         {...props}
       >
-        {children}
+        {content}
       </Box>
     );
   },

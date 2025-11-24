@@ -31,6 +31,8 @@ export interface StoriesParams {
   page?: number;
   sort_by?: string;
   filter_query?: Record<string, unknown>;
+  cv?: number;
+  version?: "draft" | "published";
 }
 
 /**
@@ -77,7 +79,9 @@ export function getStoryblokApi(config: StoryblokConfig = {}) {
    * Get multiple stories with filtering options
    */
   async function getStories(params: StoriesParams = {}) {
-    const version = draftMode ? "draft" : env.NEXT_PUBLIC_STORYBLOK_VERSION;
+    const version =
+      params.version ||
+      (draftMode ? "draft" : env.NEXT_PUBLIC_STORYBLOK_VERSION);
 
     try {
       const response = await client.get("cdn/stories", {
@@ -91,6 +95,7 @@ export function getStoryblokApi(config: StoryblokConfig = {}) {
         page: params.page || 1,
         sort_by: params.sort_by,
         filter_query: params.filter_query,
+        cv: params.cv,
       });
 
       return {

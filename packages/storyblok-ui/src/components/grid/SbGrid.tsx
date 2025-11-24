@@ -1,6 +1,7 @@
-import { DynamicRender } from "@httpjpg/storyblok-utils";
+import { type BlokItem, DynamicRender } from "@httpjpg/storyblok-utils";
 import { Grid } from "@httpjpg/ui";
 import { type SbBlokData, storyblokEditable } from "@storyblok/react/rsc";
+import { memo } from "react";
 import { css } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
@@ -24,7 +25,7 @@ export interface SbGridProps {
  * Storyblok Grid Component
  * Responsive grid layout with configurable columns and gap
  */
-export function SbGrid({ blok }: SbGridProps) {
+export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
   const {
     items,
     columns = 1,
@@ -63,7 +64,7 @@ export function SbGrid({ blok }: SbGridProps) {
       >
         {items.map((item) => (
           <li key={item._uid}>
-            <DynamicRender data={[item] as any} />
+            <DynamicRender data={[item as BlokItem]} />
           </li>
         ))}
       </ul>
@@ -74,9 +75,9 @@ export function SbGrid({ blok }: SbGridProps) {
     <Grid {...storyblokEditable(blok)} css={gridStyles}>
       {items.map((item) => (
         <div key={item._uid}>
-          <DynamicRender data={[item] as any} />
+          <DynamicRender data={[item as BlokItem]} />
         </div>
       ))}
     </Grid>
   );
-}
+});

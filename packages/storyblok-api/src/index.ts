@@ -3,4 +3,7 @@ export type {
   StoryblokConfig,
   StoryParams,
 } from "./api";
-export { CACHE_TAGS, getStoryblokApi } from "./api";
+export {
+  CACHE_TAGS,
+  getStoryblokApi,
+} from "./api";

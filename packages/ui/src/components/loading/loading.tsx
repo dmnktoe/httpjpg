@@ -7,9 +7,7 @@ const rainbowTextStyles = css({
   backgroundSize: "400% 400%",
   animation: "rainbow 3s ease infinite",
   backgroundClip: "text",
-  // @ts-expect-error - Webkit prefix not in Panda types
   WebkitBackgroundClip: "text",
-  // @ts-expect-error - Webkit prefix not in Panda types
   WebkitTextFillColor: "transparent",
   fontWeight: "bold",
 
@@ -18,7 +16,7 @@ const rainbowTextStyles = css({
     "50%": { backgroundPosition: "100% 50%" },
     "100%": { backgroundPosition: "0% 50%" },
   },
-});
+} as any);
 
 /**
  * Rainbow Loading Text Component

@@ -1,7 +1,7 @@
-import { DynamicRender } from "@httpjpg/storyblok-utils";
+import { type BlokItem, DynamicRender } from "@httpjpg/storyblok-utils";
 import { Page } from "@httpjpg/ui";
 import { type SbBlokData, storyblokEditable } from "@storyblok/react/rsc";
-import type { ComponentProps } from "react";
+import { type ComponentProps, memo } from "react";
 
 /**
  * Storyblok Page Component Props
@@ -20,7 +20,7 @@ export interface SbPageProps extends ComponentProps<typeof Page> {
  * Dark mode controlled by Storyblok isDark field only
  * @param blok - Storyblok content block with optional body items to render
  */
-export function SbPage({ blok }: SbPageProps) {
+export const SbPage = memo(function SbPage({ blok }: SbPageProps) {
   const { body, isDark = false } = blok;
 
   return (
@@ -31,7 +31,7 @@ export function SbPage({ blok }: SbPageProps) {
         color: isDark ? "white" : "black",
       }}
     >
-      {body && <DynamicRender data={body as any} />}
+      {body && <DynamicRender data={body as BlokItem[]} />}
     </Page>
   );
-}
+});

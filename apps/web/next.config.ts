@@ -11,6 +11,20 @@ const nextConfig: NextConfig = {
     "@httpjpg/storyblok-utils",
   ],
 
+  // Sentry Configuration
+  sentry: {
+    // Upload source maps in production builds
+    hideSourceMaps: true,
+    // Disable Sentry during development
+    disableServerWebpackPlugin: process.env.NODE_ENV !== "production",
+    disableClientWebpackPlugin: process.env.NODE_ENV !== "production",
+  },
+
+  // Instrumentation for Sentry
+  experimental: {
+    instrumentationHook: true,
+  },
+
   // Image optimization for Storyblok assets
   images: {
     formats: ["image/avif", "image/webp"],

@@ -1,9 +1,11 @@
 /**
  * Base Storyblok Block type
+ * Compatible with @storyblok/react SbBlokData
  */
 export interface BlokItem {
   _uid: string;
   component: string;
+  _editable?: string;
   [key: string]: unknown;
 }
 

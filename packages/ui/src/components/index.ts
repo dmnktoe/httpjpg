@@ -33,5 +33,6 @@ export * from "./scroll-progress";
 export * from "./section";
 export * from "./slideshow";
 export * from "./stack";
+export * from "./video";
 export * from "./work-card";
 export * from "./work-list";

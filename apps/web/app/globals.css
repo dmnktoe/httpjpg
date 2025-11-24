@@ -21,25 +21,24 @@ html {
 
 body {
 	min-height: 100vh;
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	color: white;
+	background: #ffffff;
+	color: #000000;
+	margin: 0;
+	padding: 0;
 }
 
 /* Focus styles */
 :focus-visible {
-	outline: 2px solid var(--color-black);
+	outline: 2px solid #000000;
 	outline-offset: 2px;
 }
 
 main {
-	background: rgba(255, 255, 255, 0.95);
-	border-radius: 1rem;
-	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-	color: #333;
-	margin: 2rem;
+	background: #ffffff;
+	color: #000000;
 }
 
 p {
 	line-height: 1.8;
-	color: #555;
+	color: #000000;
 }

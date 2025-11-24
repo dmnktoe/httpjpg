@@ -1,6 +1,7 @@
-import { DynamicRender } from "@httpjpg/storyblok-utils";
+import { type BlokItem, DynamicRender } from "@httpjpg/storyblok-utils";
 import { Page } from "@httpjpg/ui";
 import { type SbBlokData, storyblokEditable } from "@storyblok/react/rsc";
+import { memo } from "react";
 
 /**
  * Work Page Component Props
@@ -22,7 +23,7 @@ export interface SbPageWorkProps {
  * - Arrange them freely in the Visual Editor
  * - No fixed structure - full creative freedom
  */
-export function SbPageWork({ blok }: SbPageWorkProps) {
+export const SbPageWork = memo(function SbPageWork({ blok }: SbPageWorkProps) {
   const { body, isDark = false } = blok;
 
   return (
@@ -33,7 +34,7 @@ export function SbPageWork({ blok }: SbPageWorkProps) {
         color: isDark ? "white" : "black",
       }}
     >
-      {body && <DynamicRender data={body as any} />}
+      {body && <DynamicRender data={body as BlokItem[]} />}
     </Page>
   );
-}
+});

@@ -1,6 +1,7 @@
-import { DynamicRender } from "@httpjpg/storyblok-utils";
+import { type BlokItem, DynamicRender } from "@httpjpg/storyblok-utils";
 import { Section } from "@httpjpg/ui";
 import { type SbBlokData, storyblokEditable } from "@storyblok/react/rsc";
+import { memo } from "react";
 
 export interface SbSectionProps {
   blok: {
@@ -19,7 +20,7 @@ export interface SbSectionProps {
  * Storyblok Section Component
  * Semantic section wrapper with spacing and background options
  */
-export function SbSection({ blok }: SbSectionProps) {
+export const SbSection = memo(function SbSection({ blok }: SbSectionProps) {
   const {
     content,
     bgColor,
@@ -46,7 +47,7 @@ export function SbSection({ blok }: SbSectionProps) {
         mb: marginBottom || undefined,
       }}
     >
-      <DynamicRender data={content as any} />
+      <DynamicRender data={content as BlokItem[]} />
     </Section>
   );
-}
+});

@@ -1,6 +1,7 @@
 "use client";
 
 import { StoryblokComponent } from "@storyblok/react";
+import { memo } from "react";
 import type { BlokItem } from "./types";
 
 export interface DynamicRenderProps {
@@ -10,8 +11,12 @@ export interface DynamicRenderProps {
 
 /**
  * Dynamically render Storyblok components
+ * Memoized for performance optimization
  */
-export function DynamicRender({ data, asList = false }: DynamicRenderProps) {
+export const DynamicRender = memo(function DynamicRender({
+  data,
+  asList = false,
+}: DynamicRenderProps) {
   if (!data) {
     return null;
   }
@@ -41,4 +46,4 @@ export function DynamicRender({ data, asList = false }: DynamicRenderProps) {
 
   // Render single block
   return <StoryblokComponent blok={data} />;
-}
+});

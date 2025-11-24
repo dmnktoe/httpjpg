@@ -176,16 +176,15 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
                 {/* Description */}
                 {description && (
                   <Paragraph
-                    size="sm"
-                    css={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "-webkit-box",
-                      // @ts-expect-error - Webkit prefix not in Panda types
-                      WebkitLineClamp: { base: 5, xl: "none" },
-                      // @ts-expect-error - Webkit prefix not in Panda types
-                      WebkitBoxOrient: "vertical",
-                    }}
+                    css={
+                      {
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        display: "-webkit-box",
+                        WebkitLineClamp: { base: 5, xl: "none" },
+                        WebkitBoxOrient: "vertical",
+                      } as any
+                    }
                   >
                     {description}
                   </Paragraph>

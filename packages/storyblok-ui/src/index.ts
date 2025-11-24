@@ -29,6 +29,13 @@ export {
   type SbSectionProps,
 } from "./components/section";
 export {
+  type FooterConfig,
+  type MenuLink,
+  SbConfig,
+  type SbConfigStory,
+  type SocialLink,
+} from "./components/settings/SbSettings";
+export {
   SbSlideshow,
   type SbSlideshowProps,
 } from "./components/slideshow";
@@ -42,6 +49,24 @@ export {
   type SbTextProps,
 } from "./components/text";
 export {
+  SbVideo,
+  type SbVideoAssetType,
+  type SbVideoProps,
+} from "./components/video";
+export {
   SbWorkList,
   type SbWorkListProps,
 } from "./components/work-list";
+
+// Export shared types
+export type {
+  BaseStoryblokProps,
+  LayoutProps,
+  SpacingProps,
+  StoryblokApiResponse,
+  StoryblokImage,
+  StoryblokLink as StoryblokLinkType,
+  StoryblokRichText,
+  StoryblokStory,
+  StoryMetadata,
+} from "./types";

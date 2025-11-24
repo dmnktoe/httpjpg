@@ -1,6 +1,7 @@
-import { getStoryblokApi } from "@httpjpg/storyblok-api";
+import { CACHE_TAGS, getStoryblokApi } from "@httpjpg/storyblok-api";
 import { DynamicRender } from "@httpjpg/storyblok-utils";
 import type { Metadata } from "next";
+import { unstable_cache } from "next/cache";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
@@ -11,6 +12,32 @@ interface PageProps {
 }
 
 /**
+ * Fetch story with caching
+ * In draft mode: Direct fetch with preview token (no cache)
+ * In production: Cached fetch with ISR (1 hour revalidation)
+ */
+const fetchStoryWithCache = async (fullSlug: string, isDraft: boolean) => {
+  // Draft mode: Always fetch fresh with preview token
+  if (isDraft) {
+    const { getStory } = getStoryblokApi({ draftMode: true });
+    return await getStory({ slug: fullSlug });
+  }
+
+  // Production: Use ISR cache with revalidation tags
+  return unstable_cache(
+    async () => {
+      const { getStory } = getStoryblokApi();
+      return await getStory({ slug: fullSlug });
+    },
+    [`story-${fullSlug}`],
+    {
+      tags: [CACHE_TAGS.STORY(fullSlug), CACHE_TAGS.STORIES],
+      revalidate: 3600, // 1 hour
+    },
+  )();
+};
+
+/**
  * Generate metadata for dynamic Storyblok pages
  */
 export async function generateMetadata({
@@ -18,10 +45,9 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const { isEnabled } = await draftMode();
-  const { getStory } = getStoryblokApi({ draftMode: isEnabled });
 
   const fullSlug = slug ? slug.join("/") : "";
-  const story = await getStory({ slug: fullSlug });
+  const story = await fetchStoryWithCache(fullSlug, isEnabled);
 
   if (!story) {
     return {
@@ -106,37 +132,75 @@ function extractPlainTextFromRichText(richText: any): string {
  * Dynamic catch-all route for all Storyblok pages
  * Handles: /work/*, /about, /contact, etc.
  */
-export default async function DynamicPage({ params }: PageProps) {
+export default async function DynamicPage({
+  params,
+  searchParams,
+}: PageProps & {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const { slug } = await params;
+  const search = await searchParams;
   const { isEnabled } = await draftMode();
-  const { getStory } = getStoryblokApi({ draftMode: isEnabled });
+
+  // Check if we're in Visual Editor mode (has _storyblok param or _draft param)
+  const isVisualEditor = search._storyblok || search._draft;
+  const isDraft = isEnabled || isVisualEditor;
 
   const fullSlug = slug ? slug.join("/") : "";
-  const story = await getStory({ slug: fullSlug });
+  const story = await fetchStoryWithCache(fullSlug, isDraft);
+
+  console.log(
+    `[DynamicPage] slug="${fullSlug}", draftMode=${isEnabled}, visualEditor=${!!isVisualEditor}, isDraft=${isDraft}, story=`,
+    story ? "loaded" : "null",
+  );
 
   if (!story) {
     return notFound();
   }
 
-  return <DynamicRender data={story.content} />;
+  // Use live preview for draft mode (enables live editing in Visual Editor)
+  if (isDraft) {
+    const { StoryblokLivePreviewWrapper } = await import(
+      "../../../components/storyblok-live-preview-wrapper"
+    );
+    return <StoryblokLivePreviewWrapper story={story} />;
+  }
+
+  // Static render for production with error boundary
+  const { StoryblokErrorBoundary } = await import(
+    "../../../components/storyblok-error-boundary"
+  );
+  return (
+    <StoryblokErrorBoundary>
+      <DynamicRender data={story.content} />
+    </StoryblokErrorBoundary>
+  );
 }
 
 /**
  * Generate static params for all Storyblok stories at build time
  */
 export async function generateStaticParams() {
-  const { getAllSlugs } = getStoryblokApi();
+  try {
+    const { getAllSlugs } = getStoryblokApi();
 
-  const slugs = await getAllSlugs({
-    starts_with: "", // Get all stories except home
-  });
+    const slugs = await getAllSlugs({
+      starts_with: "", // Get all stories except home
+    });
 
-  return slugs
-    .filter((item) => !item.isFolder && item.slug !== "home") // Exclude folders and home (root route)
-    .map((item) => ({
-      slug: item.slug.split("/").filter(Boolean),
-    }));
+    return slugs
+      .filter((item) => !item.isFolder && item.slug !== "home") // Exclude folders and home (root route)
+      .map((item) => ({
+        slug: item.slug.split("/").filter(Boolean),
+      }));
+  } catch (error) {
+    console.error("Error generating static params:", error);
+    return []; // Return empty array on error to allow fallback rendering
+  }
 }
 
 // Enable ISR with revalidation
 export const revalidate = 3600; // Revalidate every hour
+
+// Enable dynamic params for stories created after build
+export const dynamicParams = true;

@@ -16,8 +16,21 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log error to Sentry
-    Sentry.captureException(error);
+    // Log error to Sentry with additional context
+    Sentry.captureException(error, {
+      level: "fatal",
+      tags: {
+        errorBoundary: "global",
+        digest: error.digest,
+      },
+      contexts: {
+        error: {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        },
+      },
+    });
   }, [error]);
 
   return (

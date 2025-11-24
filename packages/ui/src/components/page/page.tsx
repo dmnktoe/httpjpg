@@ -57,6 +57,8 @@ export interface PageProps {
  */
 export const Page = forwardRef<HTMLDivElement, PageProps>(
   ({ header, footer, children, css: cssProp, blok, ...props }, ref) => {
+    const footerHeight = 100; // Approximate footer height
+
     return (
       <Box
         ref={ref}
@@ -64,6 +66,7 @@ export const Page = forwardRef<HTMLDivElement, PageProps>(
           display: "flex",
           flexDirection: "column",
           minHeight: "100vh",
+          background: "#ffffff",
           ...cssProp,
         }}
         {...props}
@@ -76,6 +79,7 @@ export const Page = forwardRef<HTMLDivElement, PageProps>(
           as="main"
           css={{
             flex: 1,
+            paddingBottom: footer ? `${footerHeight}px` : "0",
             // Add data attribute for Storyblok visual editor (future)
             ...(blok && { "data-blok-c": JSON.stringify(blok) }),
           }}

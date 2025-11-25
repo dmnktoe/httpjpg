@@ -1,4 +1,4 @@
-import { Box, Image, VStack } from "@httpjpg/ui";
+import { Box, Image, Stack } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import { OPTIMIZED_IMAGES } from "./storybook-fixtures";
 import { OBJECT_FIT_OPTIONS } from "./storybook-helpers";
@@ -84,7 +84,7 @@ export const InlineCopyright: Story = {
   args: {
     src: OPTIMIZED_IMAGES.videoStill2,
     alt: "Video still 2",
-    copyright: "© 2025 John Doe",
+    copyright: "2025 John Doe",
     copyrightPosition: "inline",
     aspectRatio: "4/3",
   },
@@ -97,7 +97,7 @@ export const BelowCopyright: Story = {
   args: {
     src: OPTIMIZED_IMAGES.videoStill3,
     alt: "Video still 3",
-    copyright: "© 2025 Jane Smith / Unsplash",
+    copyright: "2025 Jane Smith / Unsplash",
     copyrightPosition: "below",
     aspectRatio: "16/9",
   },
@@ -111,7 +111,7 @@ export const OverlayCopyright: Story = {
   args: {
     src: OPTIMIZED_IMAGES.landscape,
     alt: "Klosterkirche Nordshausen",
-    copyright: "⋆.˚ ᡣ𐭩 .𖥔˚ © 2025 ˙✧˖°📷 ༘ ⋆｡˚ Photographer Name",
+    copyright: "⋆.˚ ᡣ𐭩 .𖥔˚ 2025 ˙✧˖°📷 ༘ ⋆｡˚ Photographer Name",
     copyrightPosition: "overlay",
     aspectRatio: "21/9",
   },
@@ -128,7 +128,7 @@ export const BlurUpLoading: Story = {
     blurOnLoad: true,
     blurDataURL:
       "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/AB//2Q==",
-    copyright: "🎀 ୧ꔛꗃ˖ © 2025 Studio Name ･ﾟ⋆",
+    copyright: "🎀 ୧ꔛꗃ˖ 2025 Studio Name ･ﾟ⋆",
     copyrightPosition: "inline",
     aspectRatio: "4/3",
   },
@@ -142,7 +142,7 @@ export const Portrait: Story = {
   args: {
     src: OPTIMIZED_IMAGES.videoStill1,
     alt: "Portrait format",
-    copyright: "⇝ © 2025 ୧ꔛꗃ˖ Artist",
+    copyright: "⇝ 2025 ୧ꔛꗃ˖ Artist",
     copyrightPosition: "overlay",
     aspectRatio: "9/16",
   },
@@ -156,7 +156,7 @@ export const Square: Story = {
   args: {
     src: OPTIMIZED_IMAGES.videoStill2,
     alt: "Square format",
-    copyright: "⋆.˚✮🎧✮˚.⋆ © 2025 Creator",
+    copyright: "⋆.˚✮🎧✮˚.⋆ 2025 Creator",
     copyrightPosition: "below",
     aspectRatio: "1/1",
   },
@@ -171,12 +171,12 @@ export const Gallery: Story = {
     alt: "",
   },
   render: () => (
-    <VStack gap={8} style={{ padding: "2rem" }}>
+    <Stack direction="vertical" gap="8" css={{ padding: "2rem" }}>
       <Box>
         <Image
           src={OPTIMIZED_IMAGES.videoStill1}
           alt="Video still 1"
-          copyright="© 2025 John Architect"
+          copyright="2025 John Architect"
           copyrightPosition="inline"
           aspectRatio="16/9"
         />
@@ -186,7 +186,7 @@ export const Gallery: Story = {
         <Image
           src={OPTIMIZED_IMAGES.videoStill2}
           alt="Video still 2"
-          copyright="© 2025 Jane Designer"
+          copyright="2025 Jane Designer"
           copyrightPosition="below"
           aspectRatio="4/3"
         />
@@ -196,12 +196,12 @@ export const Gallery: Story = {
         <Image
           src={OPTIMIZED_IMAGES.landscape}
           alt="Klosterkirche Nordshausen"
-          copyright="© 2025 Studio XYZ"
+          copyright="2025 Studio XYZ"
           copyrightPosition="overlay"
           aspectRatio="21/9"
         />
       </Box>
-    </VStack>
+    </Stack>
   ),
 };
 
@@ -224,7 +224,7 @@ export const BrutalistCard: Story = {
       <Image
         src={OPTIMIZED_IMAGES.videoStill3}
         alt="Featured work"
-        copyright="© 2025 httpjpg"
+        copyright="2025 httpjpg"
         copyrightPosition="overlay"
         aspectRatio="16/9"
       />

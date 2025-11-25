@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import {
   Autoplay,
   EffectCards,
@@ -23,8 +23,80 @@ import "swiper/css/effect-creative";
 import type { SystemStyleObject } from "styled-system/types";
 import { AnimateInView, type AnimationType } from "../animate-in-view";
 import { Box } from "../box/box";
-import { Icon } from "../icon/icon";
+import { CopyrightLabel, type CopyrightPosition } from "../copyright-label";
+import { IconButton } from "../icon-button";
 import { Image } from "../image/image";
+import { HStack } from "../stack/stack";
+import { video } from "../video/video";
+
+// Swiper effect configurations
+const SWIPER_FADE_EFFECT = {
+  crossFade: true,
+};
+
+const SWIPER_CUBE_EFFECT = {
+  shadow: true,
+  slideShadows: true,
+  shadowOffset: 20,
+  shadowScale: 0.94,
+};
+
+const SWIPER_COVERFLOW_EFFECT = {
+  rotate: 50,
+  stretch: 0,
+  depth: 100,
+  modifier: 1,
+  slideShadows: true,
+};
+
+const SWIPER_FLIP_EFFECT = {
+  slideShadows: true,
+  limitRotation: true,
+};
+
+const SWIPER_CARDS_EFFECT = {
+  slideShadows: true,
+};
+
+const SWIPER_CREATIVE_EFFECT = {
+  prev: {
+    shadow: true,
+    translate: ["-20%", 0, -1],
+  },
+  next: {
+    translate: ["100%", 0, 0],
+  },
+};
+
+// Sub-component: Video Slide
+interface SlideshowVideoSlideProps {
+  videoUrl: string;
+  videoPoster?: string;
+  aspectRatio: string;
+}
+
+function SlideshowVideoSlide({
+  videoUrl,
+  videoPoster,
+  aspectRatio,
+}: SlideshowVideoSlideProps) {
+  const VideoComponent = video;
+  return (
+    <VideoComponent
+      src={videoUrl}
+      poster={videoPoster}
+      aspectRatio={aspectRatio as "16/9" | "4/3" | "1/1" | "21/9" | "9/16"}
+      autoPlay
+      muted
+      loop
+      controls={false}
+      css={{
+        w: "full",
+        h: "full",
+      }}
+    />
+  );
+}
 
 export interface SlideshowImage {
   /**
@@ -36,9 +108,14 @@ export interface SlideshowImage {
    */
   alt: string;
   /**
-   * Copyright notice (displayed vertically on right side)
+   * Copyright notice
    */
   copyright?: string;
+  /**
+   * Copyright position
+   * @default "vertical-right"
+   */
+  copyrightPosition?: CopyrightPosition;
   /**
    * Image focus point for cropping (e.g., "50x50", "25x75")
    */
@@ -147,38 +224,23 @@ export function Slideshow({
     swiperRef.current?.slideNext();
   }, []);
 
+  // Effect modules lookup table
+  const EFFECT_MODULES: Record<SwiperEffect, typeof EffectFade | undefined> = {
+    slide: undefined,
+    fade: EffectFade,
+    cube: EffectCube,
+    coverflow: EffectCoverflow,
+    flip: EffectFlip,
+    cards: EffectCards,
+    creative: EffectCreative,
+  };
+
   // Determine which modules to load based on effect
-  const getModules = () => {
+  const modules = useMemo(() => {
     const baseModules = [Navigation, Autoplay];
-
-    switch (effect) {
-      case "fade":
-        return [...baseModules, EffectFade];
-      case "cube":
-        return [...baseModules, EffectCube];
-      case "coverflow":
-        return [...baseModules, EffectCoverflow];
-      case "flip":
-        return [...baseModules, EffectFlip];
-      case "cards":
-        return [...baseModules, EffectCards];
-      case "creative":
-        return [...baseModules, EffectCreative];
-      default:
-        return baseModules;
-    }
-  };
-
-  // Creative effect configuration
-  const creativeEffect = {
-    prev: {
-      shadow: true,
-      translate: ["-20%", 0, -1],
-    },
-    next: {
-      translate: ["100%", 0, 0],
-    },
-  };
+    const effectModule = EFFECT_MODULES[effect];
+    return effectModule ? [...baseModules, effectModule] : baseModules;
+  }, [effect]);
 
   return (
     <Box
@@ -187,7 +249,7 @@ export function Slideshow({
     >
       <AnimateInView animation={animation} delay={animationDelay}>
         <Swiper
-          modules={getModules()}
+          modules={modules}
           effect={effect}
           speed={speed}
           spaceBetween={15}
@@ -199,30 +261,12 @@ export function Slideshow({
             disableOnInteraction: false,
           }}
           loop={images.length > 1}
-          fadeEffect={{
-            crossFade: true,
-          }}
-          cubeEffect={{
-            shadow: true,
-            slideShadows: true,
-            shadowOffset: 20,
-            shadowScale: 0.94,
-          }}
-          coverflowEffect={{
-            rotate: 50,
-            stretch: 0,
-            depth: 100,
-            modifier: 1,
-            slideShadows: true,
-          }}
-          flipEffect={{
-            slideShadows: true,
-            limitRotation: true,
-          }}
-          cardsEffect={{
-            slideShadows: true,
-          }}
-          creativeEffect={creativeEffect}
+          fadeEffect={SWIPER_FADE_EFFECT}
+          cubeEffect={SWIPER_CUBE_EFFECT}
+          coverflowEffect={SWIPER_COVERFLOW_EFFECT}
+          flipEffect={SWIPER_FLIP_EFFECT}
+          cardsEffect={SWIPER_CARDS_EFFECT}
+          creativeEffect={SWIPER_CREATIVE_EFFECT}
         >
           {images.map((image, index) => (
             <SwiperSlide key={index}>
@@ -231,26 +275,14 @@ export function Slideshow({
                   position: "relative",
                   w: "full",
                   h: "full",
-                  overflow: "hidden",
                 }}
               >
                 {image.videoUrl ? (
-                  <Box
-                    as="video"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    poster={image.videoPoster}
-                    css={{
-                      w: "full",
-                      h: "full",
-                      objectFit: "cover",
-                      aspectRatio,
-                    }}
-                  >
-                    <source src={image.videoUrl} type="video/mp4" />
-                  </Box>
+                  <SlideshowVideoSlide
+                    videoUrl={image.videoUrl}
+                    videoPoster={image.videoPoster}
+                    aspectRatio={aspectRatio}
+                  />
                 ) : (
                   <Image
                     src={image.url}
@@ -260,22 +292,10 @@ export function Slideshow({
                   />
                 )}
                 {image.copyright && (
-                  <Box
-                    css={{
-                      position: "absolute",
-                      right: "-40px",
-                      bottom: "48px",
-                      transform: "rotate(-90deg)",
-                      transformOrigin: "right center",
-                      fontSize: "xs",
-                      color: "black",
-                      whiteSpace: "nowrap",
-                      zIndex: 10,
-                      pointerEvents: "none",
-                    }}
-                  >
-                    © {image.copyright}
-                  </Box>
+                  <CopyrightLabel
+                    text={image.copyright}
+                    position={image.copyrightPosition || "vertical-right"}
+                  />
                 )}
               </Box>
             </SwiperSlide>
@@ -285,57 +305,70 @@ export function Slideshow({
 
       {/* Navigation Arrows - Outside AnimateInView for absolute positioning */}
       {showNavigation && images.length > 1 && (
-        <Box
+        <HStack
+          gap="4px"
           css={{
             position: "absolute",
             top: "16px",
             right: "32px",
             zIndex: 20,
-            display: "flex",
-            gap: "12px",
           }}
         >
-          <Box
-            as="button"
+          <IconButton
+            icon="arrow-left"
+            variant="default"
             onClick={handlePrev}
+            aria-label="Previous slide"
             css={{
-              cursor: "pointer",
-              bg: "transparent",
-              border: "none",
-              p: 0,
               color: "white",
-              transition: "color 0.2s",
+              opacity: 0.35,
+              transition: "opacity 0.2s",
               _hover: {
-                color: "white",
+                opacity: 1,
               },
-              "@media (min-width: 1280px)": {
-                color: "rgba(255, 255, 255, 0.35)",
+              md: {
+                "& svg": {
+                  width: "48px !important",
+                  height: "48px !important",
+                },
+              },
+              lg: {
+                "& svg": {
+                  width: "64px !important",
+                  height: "64px !important",
+                },
               },
             }}
-          >
-            <Icon name="arrow-left" size="64px" />
-          </Box>
-          <Box
-            as="button"
+            iconSize="32px"
+          />
+          <IconButton
+            icon="arrow-right"
+            variant="default"
             onClick={handleNext}
+            aria-label="Next slide"
             css={{
-              cursor: "pointer",
-              bg: "transparent",
-              border: "none",
-              p: 0,
               color: "white",
-              transition: "color 0.2s",
+              opacity: 0.35,
+              transition: "opacity 0.2s",
               _hover: {
-                color: "white",
+                opacity: 1,
               },
-              "@media (min-width: 1280px)": {
-                color: "rgba(255, 255, 255, 0.35)",
+              md: {
+                "& svg": {
+                  width: "48px !important",
+                  height: "48px !important",
+                },
+              },
+              lg: {
+                "& svg": {
+                  width: "64px !important",
+                  height: "64px !important",
+                },
               },
             }}
-          >
-            <Icon name="arrow-right" size="64px" />
-          </Box>
-        </Box>
+            iconSize="32px"
+          />
+        </HStack>
       )}
     </Box>
   );

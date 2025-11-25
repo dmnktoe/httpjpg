@@ -91,7 +91,6 @@ const sampleImages = [
   {
     url: "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)",
     alt: "Video still 2",
-    copyright: "Architecture Studio",
   },
   {
     url: "https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)",
@@ -274,22 +273,37 @@ export const NoNavigation: Story = {
 };
 
 /**
- * With copyright notices
+ * With copyright notices - showcasing all 4 position variants
  */
 export const WithCopyright: Story = {
   args: {
     images: [
       {
         url: "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/2000x1125/smart/filters:quality(75)",
-        alt: "Klosterkirche",
+        alt: "Klosterkirche - vertical-right (white, rotated)",
         copyright: "Studio XYZ 2024",
+        copyrightPosition: "vertical-right",
       },
       {
         url: "https://a.storyblok.com/f/281211/1500x2000/e04c56fe25/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0225.jpg/m/2000x1125/smart/filters:quality(75)",
-        alt: "Klosterkirche 2",
+        alt: "Klosterkirche - inline (black, rotated, no ©)",
         copyright: "John Photographer",
+        copyrightPosition: "inline",
+      },
+      {
+        url: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",
+        alt: "Video still - overlay (gradient bottom)",
+        copyright: "Visual Arts Studio",
+        copyrightPosition: "overlay",
+      },
+      {
+        url: "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)",
+        alt: "Video still - below (under image)",
+        copyright: "Creative Agency",
+        copyrightPosition: "below",
       },
     ],
+    speed: 600,
   },
 };
 

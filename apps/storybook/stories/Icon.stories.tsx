@@ -1,5 +1,16 @@
-import { Box, Icon } from "@httpjpg/ui";
+import { Box, Icon, type IconName } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+
+const ICON_NAMES: IconName[] = [
+  "arrow-up",
+  "arrow-down",
+  "arrow-left",
+  "arrow-right",
+  "play",
+  "pause",
+  "volume",
+  "volume-mute",
+];
 
 /**
  * Icon component stories
@@ -17,7 +28,7 @@ const meta = {
   argTypes: {
     name: {
       control: "select",
-      options: ["arrow-up", "arrow-down", "arrow-left", "arrow-right"],
+      options: ICON_NAMES,
       description: "Icon name",
     },
     size: {
@@ -34,161 +45,174 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Default arrow up icon
+ * Playground with live controls
  */
-export const Default: Story = {
-  args: {
-    name: "arrow-up",
-    size: "32px",
-  },
-};
-
-/**
- * Arrow down
- */
-export const ArrowDown: Story = {
-  args: {
-    name: "arrow-down",
-    size: "32px",
-  },
-};
-
-/**
- * Arrow left
- */
-export const ArrowLeft: Story = {
-  args: {
-    name: "arrow-left",
-    size: "32px",
-  },
-};
-
-/**
- * Arrow right
- */
-export const ArrowRight: Story = {
-  args: {
-    name: "arrow-right",
-    size: "32px",
-  },
-};
-
-/**
- * Large size (96px)
- */
-export const Large: Story = {
-  args: {
-    name: "arrow-up",
-    size: "96px",
-  },
-};
-
-/**
- * Small size (16px)
- */
-export const Small: Story = {
-  args: {
-    name: "arrow-up",
-    size: "16px",
-  },
-};
-
-/**
- * With custom color
- */
-export const CustomColor: Story = {
+export const Playground: Story = {
   args: {
     name: "arrow-up",
     size: "48px",
   },
-  render: (args) => <Icon {...args} css={{ color: "primary.500" }} />,
-};
-
-/**
- * Rotated (90deg for horizontal arrow)
- */
-export const Rotated: Story = {
-  args: {
-    name: "arrow-up",
-    size: "48px",
-  },
-  render: (args) => <Icon {...args} css={{ transform: "rotate(90deg)" }} />,
 };
 
 /**
  * All icons overview
  */
-export const AllIcons: Story = {
+export const Overview: Story = {
+  args: {
+    name: "arrow-up",
+  },
+  parameters: {
+    layout: "padded",
+  },
   render: () => (
     <Box
       css={{
         display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
-        gap: "32px",
-        p: "32px",
+        gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+        gap: "24px",
       }}
     >
-      <Box css={{ textAlign: "center" }}>
-        <Icon name="arrow-up" size="48px" />
-        <Box css={{ mt: "8px", fontSize: "sm" }}>arrow-up</Box>
-      </Box>
-      <Box css={{ textAlign: "center" }}>
-        <Icon name="arrow-down" size="48px" />
-        <Box css={{ mt: "8px", fontSize: "sm" }}>arrow-down</Box>
-      </Box>
-      <Box css={{ textAlign: "center" }}>
-        <Icon name="arrow-left" size="48px" />
-        <Box css={{ mt: "8px", fontSize: "sm" }}>arrow-left</Box>
-      </Box>
-      <Box css={{ textAlign: "center" }}>
-        <Icon name="arrow-right" size="48px" />
-        <Box css={{ mt: "8px", fontSize: "sm" }}>arrow-right</Box>
-      </Box>
+      {ICON_NAMES.map((iconName) => (
+        <Box
+          key={iconName}
+          css={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "12px",
+            p: "16px",
+            borderRadius: "8px",
+            border: "1px solid",
+            borderColor: "neutral.200",
+            _hover: {
+              bg: "neutral.50",
+              borderColor: "neutral.300",
+            },
+          }}
+        >
+          <Icon name={iconName} size="48px" />
+          <Box
+            css={{
+              fontSize: "xs",
+              fontFamily: "mono",
+              color: "neutral.600",
+              textAlign: "center",
+            }}
+          >
+            {iconName}
+          </Box>
+        </Box>
+      ))}
     </Box>
   ),
 };
 
 /**
- * Rotations demonstration
+ * Different sizes
  */
-export const Rotations: Story = {
+export const Sizes: Story = {
+  args: {
+    name: "arrow-up",
+  },
+  parameters: {
+    layout: "padded",
+  },
   render: () => (
     <Box
       css={{
-        display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
+        display: "flex",
+        alignItems: "center",
         gap: "32px",
-        p: "32px",
+        flexWrap: "wrap",
       }}
     >
-      <Box css={{ textAlign: "center" }}>
-        <Icon name="arrow-up" size="48px" css={{ transform: "rotate(0deg)" }} />
-        <Box css={{ mt: "8px", fontSize: "sm" }}>0° (up)</Box>
-      </Box>
-      <Box css={{ textAlign: "center" }}>
-        <Icon
-          name="arrow-up"
-          size="48px"
-          css={{ transform: "rotate(90deg)" }}
-        />
-        <Box css={{ mt: "8px", fontSize: "sm" }}>90° (right)</Box>
-      </Box>
-      <Box css={{ textAlign: "center" }}>
-        <Icon
-          name="arrow-up"
-          size="48px"
-          css={{ transform: "rotate(180deg)" }}
-        />
-        <Box css={{ mt: "8px", fontSize: "sm" }}>180° (down)</Box>
-      </Box>
-      <Box css={{ textAlign: "center" }}>
-        <Icon
-          name="arrow-up"
-          size="48px"
-          css={{ transform: "rotate(-90deg)" }}
-        />
-        <Box css={{ mt: "8px", fontSize: "sm" }}>-90° (left)</Box>
-      </Box>
+      {["16px", "24px", "32px", "48px", "64px", "96px"].map((size) => (
+        <Box
+          key={size}
+          css={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <Icon name="arrow-up" size={size} />
+          <Box
+            css={{ fontSize: "xs", fontFamily: "mono", color: "neutral.600" }}
+          >
+            {size}
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  ),
+};
+
+/**
+ * With colors
+ */
+export const Colors: Story = {
+  args: {
+    name: "arrow-up",
+  },
+  parameters: {
+    layout: "padded",
+  },
+  render: () => (
+    <Box
+      css={{
+        display: "flex",
+        gap: "24px",
+        flexWrap: "wrap",
+      }}
+    >
+      <Icon name="arrow-up" size="48px" css={{ color: "neutral.900" }} />
+      <Icon name="arrow-up" size="48px" css={{ color: "blue" }} />
+      <Icon name="arrow-up" size="48px" css={{ color: "red" }} />
+      <Icon name="arrow-up" size="48px" css={{ color: "green" }} />
+      <Icon name="arrow-up" size="48px" css={{ color: "neutral.400" }} />
+    </Box>
+  ),
+};
+
+/**
+ * All arrow directions
+ */
+export const Arrows: Story = {
+  args: {
+    name: "arrow-up",
+  },
+  parameters: {
+    layout: "padded",
+  },
+  render: () => (
+    <Box
+      css={{
+        display: "flex",
+        gap: "48px",
+        flexWrap: "wrap",
+      }}
+    >
+      {(["arrow-up", "arrow-right", "arrow-down", "arrow-left"] as const).map(
+        (iconName) => (
+          <Box
+            key={iconName}
+            css={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <Icon name={iconName} size="48px" />
+            <Box
+              css={{ fontSize: "xs", fontFamily: "mono", color: "neutral.600" }}
+            >
+              {iconName}
+            </Box>
+          </Box>
+        ),
+      )}
     </Box>
   ),
 };

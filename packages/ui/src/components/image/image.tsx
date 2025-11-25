@@ -5,6 +5,7 @@ import { forwardRef, useState } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
+import { CopyrightLabel, type CopyrightPosition } from "../copyright-label";
 
 /**
  * Image component props
@@ -27,7 +28,7 @@ export interface ImageProps
    * Copyright position
    * @default "inline"
    */
-  copyrightPosition?: "inline" | "below" | "overlay";
+  copyrightPosition?: CopyrightPosition;
   /**
    * Enable blur-up loading effect
    * @default false
@@ -124,7 +125,9 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
     const showBlur = blurOnLoad && !isLoaded && blurDataURL;
     const showCopyrightInside =
       copyright &&
-      (copyrightPosition === "inline" || copyrightPosition === "overlay");
+      (copyrightPosition === "inline" ||
+        copyrightPosition === "overlay" ||
+        copyrightPosition === "vertical-right");
 
     return (
       <>
@@ -185,61 +188,23 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
 
           {/* Copyright inline (vertical on right side) */}
           {showCopyrightInside && copyrightPosition === "inline" && (
-            <Box
-              css={{
-                position: "absolute",
-                bottom: "0.5rem",
-                right: "0.5rem",
-                p: "0.5rem 0.25rem",
-                fontFamily: "mono",
-                fontSize: "0.75rem",
-                opacity: 0.7,
-                color: "black",
-                writingMode: "vertical-rl",
-                transform: "rotate(180deg)",
-                boxSizing: "border-box",
-              }}
-            >
-              {copyright}
-            </Box>
+            <CopyrightLabel text={copyright} position="inline" />
           )}
 
           {/* Copyright overlay (bottom gradient) */}
           {showCopyrightInside && copyrightPosition === "overlay" && (
-            <Box
-              css={{
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                background:
-                  "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
-                p: "1rem",
-                fontFamily: "mono",
-                fontSize: "0.75rem",
-                opacity: 0.7,
-                color: "white",
-                boxSizing: "border-box",
-              }}
-            >
-              {copyright}
-            </Box>
+            <CopyrightLabel text={copyright} position="overlay" />
+          )}
+
+          {/* Copyright vertical right */}
+          {showCopyrightInside && copyrightPosition === "vertical-right" && (
+            <CopyrightLabel text={copyright} position="vertical-right" />
           )}
         </Box>
 
         {/* Copyright below image */}
         {copyright && copyrightPosition === "below" && (
-          <Box
-            css={{
-              fontFamily: "mono",
-              fontSize: "0.75rem",
-              opacity: 0.7,
-              p: "0.5rem 0",
-              color: "currentColor",
-            }}
-          >
-            {copyright}
-          </Box>
+          <CopyrightLabel text={copyright} position="below" />
         )}
       </>
     );

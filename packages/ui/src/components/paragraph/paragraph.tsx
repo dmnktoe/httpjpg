@@ -26,6 +26,11 @@ export interface ParagraphProps
    */
   maxWidth?: boolean;
   /**
+   * Add bottom spacing for multiple paragraphs
+   * @default false
+   */
+  spacing?: boolean;
+  /**
    * Custom styles using Panda CSS SystemStyleObject
    */
   css?: SystemStyleObject;
@@ -83,11 +88,18 @@ const paragraphRecipe = cva({
         maxWidth: "65ch",
       },
     },
+    spacing: {
+      true: {
+        /* Bottom spacing for multiple paragraphs */
+        marginBottom: "1rem",
+      },
+    },
   },
   defaultVariants: {
     size: "md",
     align: "left",
     maxWidth: true,
+    spacing: false,
   },
 });
 
@@ -120,13 +132,14 @@ export function Paragraph({
   size = "md",
   align = "left",
   maxWidth = true,
+  spacing = false,
   children,
   className,
   css: cssProp,
   ...props
 }: ParagraphProps) {
   const styles = cx(
-    css(paragraphRecipe.raw({ size, align, maxWidth })),
+    css(paragraphRecipe.raw({ size, align, maxWidth, spacing })),
     cssProp && css(cssProp),
     className,
   );

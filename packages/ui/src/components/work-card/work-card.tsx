@@ -153,6 +153,7 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
                         transform: "rotate(90deg)",
                         "@media (min-width: 1280px)": {
                           width: "5.5vw",
+                          top: "1.62vw",
                         },
                       }}
                     />
@@ -176,6 +177,7 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
                 {/* Description */}
                 {description && (
                   <Paragraph
+                    size="sm"
                     css={
                       {
                         overflow: "hidden",

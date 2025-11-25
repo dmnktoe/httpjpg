@@ -16,8 +16,8 @@ const meta: Meta<typeof video> = {
     },
     aspectRatio: {
       control: "select",
-      options: ["16/9", "4/3", "1/1", "21/9"],
-      description: "Video aspect ratio",
+      options: ["1/1", "4/3", "16/9", "21/9", "9/16"],
+      description: "Video aspect ratio (or custom number)",
     },
     controls: {
       control: "boolean",

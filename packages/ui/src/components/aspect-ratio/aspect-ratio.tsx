@@ -33,21 +33,27 @@ const getRatioValue = (ratio: AspectRatioProps["ratio"]): string => {
  * AspectRatio component - Maintain aspect ratio for media
  *
  * Perfect for images and videos in grid layouts. Supports both preset ratios
- * and custom numeric values.
+ * and custom numeric values. Children are automatically positioned absolutely
+ * to fill the container.
  *
  * @example
  * ```tsx
  * <AspectRatio ratio="16/9">
- *   <img src="/photo.jpg" alt="Photo" />
+ *   <img src="/photo.jpg" alt="Photo" style={{ objectFit: 'cover' }} />
  * </AspectRatio>
  *
  * <AspectRatio ratio="1/1">
  *   <video src="/video.mp4" />
  * </AspectRatio>
  *
- * // Custom numeric ratio
+ * // Custom numeric ratio (e.g., 2.35:1 for cinema)
  * <AspectRatio ratio={2.35}>
  *   <img src="/ultrawide.jpg" alt="Cinema" />
+ * </AspectRatio>
+ *
+ * // With iframe (YouTube, Vimeo)
+ * <AspectRatio ratio="16/9">
+ *   <iframe src="..." />
  * </AspectRatio>
  * ```
  */
@@ -62,7 +68,7 @@ export const AspectRatio = forwardRef<HTMLDivElement, AspectRatioProps>(
         css={{
           position: "relative",
           w: "100%",
-          boxSizing: "border-box",
+          overflow: "hidden",
           ...cssProp,
         }}
         style={{ aspectRatio: ratioValue }}
@@ -71,8 +77,7 @@ export const AspectRatio = forwardRef<HTMLDivElement, AspectRatioProps>(
         <Box
           css={{
             position: "absolute",
-            top: 0,
-            left: 0,
+            inset: 0,
             w: "100%",
             h: "100%",
           }}

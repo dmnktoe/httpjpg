@@ -20,8 +20,8 @@ const meta = {
       description: "Project title",
     },
     description: {
-      control: "text",
-      description: "Project description",
+      control: false,
+      description: "Project description (can be rich text/ReactNode)",
     },
     date: {
       control: "text",
@@ -45,13 +45,49 @@ type Story = StoryObj<typeof meta>;
 /**
  * Default work card with multiple images
  */
+
 export const Default: Story = {
   args: {
-    title: "Brand Identity",
-    description:
-      "Comprehensive brand identity system for a modern tech startup. Includes logo design, color palette, typography, and brand guidelines.",
+    title: "BLENCE NETWORK™ INC., 2025",
+    description: (
+      <>
+        <p style={{ marginBottom: "1rem" }}>
+          BLENCE NETWORK™ INCORPORATED, 2024–2025, 1-channel video, 10:40 min,
+          color, 1920x1080, © Domenik Töfflinger / httpjpg
+        </p>
+        <p style={{ marginBottom: "1rem" }}>
+          Submitted on 28/09/2025 by Domenik Toefflinger for the Final
+          Examination at Kunsthochschule Kassel under Prof. Joel Baumann and
+          Prof. Jan Peters in the New Media class
+        </p>
+        <p style={{ marginBottom: "1rem" }}>
+          BLENCE NETWORK™ INCORPORATED is a fictional corporation in an
+          intermediate world—an audiovisual system that exposes compulsion as a
+          product. The work examines dermatillomania as a neurophysiological
+          cycle of tension, action, and reward, reflecting it in the mechanisms
+          of capitalist media environments. Fragmented video and sound sequences
+          intertwine personal experience, digital overstimulation, and economic
+          logic.
+        </p>
+        <p style={{ marginBottom: "1rem" }}>
+          The “corporation” serves as a metaphor for a system that creates needs
+          in order to immediately exploit them: attention becomes currency, the
+          body becomes an interface, impulse becomes a resource. Every action
+          remains trapped in the cycle of self-optimization—a permanent
+          readjustment that promises relief but produces exhaustion.
+        </p>
+        <p style={{ marginBottom: "1rem" }}>
+          Between documentary observation, sample aesthetics, and auditory
+          overload, a loop emerges that offers no solution but rather reveals
+          its own architecture. BLENCE NETWORK™ INCORPORATED is thus less a
+          narrative than a diagnosis—a media experiment that translates personal
+          compulsion, neural mechanics, and capitalist structure into one
+          another.
+        </p>
+      </>
+    ),
     date: "2024-03-15",
-    slug: "brand-identity",
+    slug: "blence-network-incorporated_2024.html",
     images: [
       {
         url: OPTIMIZED_IMAGES.videoStill1,

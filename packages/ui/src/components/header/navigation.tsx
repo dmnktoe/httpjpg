@@ -36,7 +36,7 @@ export const Navigation = ({
             w: { xl: "33.333333%" },
           }}
         >
-          <Box css={{ maxW: "28rem", lineHeight: "1.3" }}>
+          <Box css={{ maxW: "24rem", lineHeight: "1.3" }}>
             <span style={{ fontWeight: "bold" }}>⇝HE𝓁𝓁O www.httpjpg.com</span>
             <br />
             <span style={{ textAlign: "justify" }}>

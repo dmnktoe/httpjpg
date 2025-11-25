@@ -51,7 +51,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     <html lang="de">
       <body style={{ margin: 0, padding: 0, backgroundColor: "#ffffff" }}>
         <StoryblokProvider>
-          <ImagePreview width={300} height={200} />
+          <ImagePreview />
           <Header
             nav={navigation}
             personalWork={personalWork}

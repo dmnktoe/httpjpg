@@ -1,8 +1,6 @@
 "use client";
 
-import { m } from "framer-motion";
-import { useEffect, useState } from "react";
-import { Box } from "../box/box";
+import { useEffect, useRef, useState } from "react";
 
 export interface ImagePreviewProps {
   /**
@@ -38,23 +36,26 @@ export interface ImagePreviewProps {
  * ```
  */
 export function ImagePreview({
-  width = 300,
-  height = 200,
+  width = 100,
   offset = { x: 20, y: 20 },
-}: ImagePreviewProps) {
+}: Omit<ImagePreviewProps, "height">) {
   const [previewImage, setPreviewImage] = useState("");
   const [isVisible, setIsVisible] = useState(false);
-  const [cursorX, setCursorX] = useState(-1000);
-  const [cursorY, setCursorY] = useState(-1000);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setCursorX(e.clientX + offset.x);
-      setCursorY(e.clientY + offset.y);
+      if (containerRef.current) {
+        containerRef.current.style.transform = `translate(${e.clientX + offset.x}px, ${e.clientY + offset.y}px)`;
+      }
     };
 
-    const handleMouseEnter = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+
       const imageElement =
         target.closest("[data-preview-image]") ||
         (target.hasAttribute("data-preview-image") ? target : null);
@@ -68,8 +69,12 @@ export function ImagePreview({
       }
     };
 
-    const handleMouseLeave = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
+    const handleMouseOut = (e: MouseEvent) => {
+      const target = e.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+
       const imageElement =
         target.closest("[data-preview-image]") ||
         (target.hasAttribute("data-preview-image") ? target : null);
@@ -82,46 +87,47 @@ export function ImagePreview({
 
     // Add listeners to document
     document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseenter", handleMouseEnter, true);
-    document.addEventListener("mouseleave", handleMouseLeave, true);
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseenter", handleMouseEnter, true);
-      document.removeEventListener("mouseleave", handleMouseLeave, true);
+      document.removeEventListener("mouseover", handleMouseOver, true);
+      document.removeEventListener("mouseout", handleMouseOut, true);
     };
   }, [offset.x, offset.y]);
+
+  const height = Math.round((width * 9) / 16); // 16:9 ratio
 
   if (!isVisible || !previewImage) {
     return null;
   }
 
   return (
-    <Box
-      as={m.div}
+    <div
+      ref={containerRef}
       style={{
-        x: cursorX,
-        y: cursorY,
-      }}
-      css={{
         position: "fixed",
         top: 0,
         left: 0,
+        width: `${width}px`,
+        height: `${height}px`,
+        transform: "translate(-1000px, -1000px)",
         pointerEvents: "none",
         zIndex: 9999,
       }}
     >
-      <Box
-        as="img"
+      <img
         src={previewImage}
         alt="Preview"
-        css={{
-          width: `${width}px`,
-          height: `${height}px`,
+        style={{
+          width: "100%",
+          height: "100%",
           objectFit: "cover",
+          display: "block",
         }}
       />
-    </Box>
+    </div>
   );
 }
 

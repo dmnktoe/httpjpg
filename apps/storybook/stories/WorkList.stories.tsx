@@ -1,19 +1,12 @@
-import {
-  Box,
-  Divider,
-  Headline,
-  Paragraph,
-  WorkCard,
-  WorkList,
-} from "@httpjpg/ui";
+import { Box, Headline, Paragraph, WorkList } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import { OPTIMIZED_IMAGES } from "./storybook-fixtures";
 
 /**
  * WorkList component stories
  *
- * Portfolio work showcase list with slideshow, animated titles,
- * and project details. Perfect for displaying multiple projects.
+ * Portfolio work showcase list built on VStack with optional dividers.
+ * Displays WorkCard components with slideshow, animated titles, and project details.
  */
 const meta = {
   title: "Components/WorkList",
@@ -107,26 +100,27 @@ const sampleWorks = [
 export const Default: Story = {
   args: {
     works: sampleWorks,
+    gap: 24,
   },
 };
 
 /**
- * Work list with custom gap
+ * Work list with large spacing
  */
-export const CustomGap: Story = {
+export const LargeSpacing: Story = {
   args: {
     works: sampleWorks,
-    gap: "192px",
+    gap: 48,
   },
 };
 
 /**
- * Work list with compact gap
+ * Work list with compact spacing
  */
 export const Compact: Story = {
   args: {
     works: sampleWorks,
-    gap: "48px",
+    gap: 16,
   },
 };
 
@@ -136,18 +130,22 @@ export const Compact: Story = {
 export const WithHeader: Story = {
   args: {
     works: sampleWorks,
+    gap: 24,
     header: (
       <Box
         css={{
-          px: { base: "16px", md: "48px" },
-          py: "64px",
+          w: "full",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
           textAlign: "center",
+          py: 16,
         }}
       >
-        <Headline level={1} css={{ mb: "16px" }}>
+        <Headline level={1} css={{ mb: 4 }}>
           Selected Works
         </Headline>
-        <Paragraph css={{ fontSize: "lg", maxW: "2xl", mx: "auto" }}>
+        <Paragraph css={{ fontSize: "lg", maxW: "2xl" }}>
           A curated collection of recent projects showcasing brand identities,
           digital experiences, and creative explorations.
         </Paragraph>
@@ -162,15 +160,19 @@ export const WithHeader: Story = {
 export const WithFooter: Story = {
   args: {
     works: sampleWorks.slice(0, 2),
+    gap: 24,
     footer: (
       <Box
         css={{
-          px: { base: "16px", md: "48px" },
-          py: "64px",
+          w: "full",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
           textAlign: "center",
+          py: 16,
         }}
       >
-        <Headline level={2} css={{ mb: "16px" }}>
+        <Headline level={2} css={{ mb: 4 }}>
           More Projects Coming Soon
         </Headline>
         <Paragraph css={{ fontSize: "lg" }}>
@@ -207,7 +209,7 @@ export const Minimal: Story = {
       ...work,
       description: undefined,
     })),
-    gap: "64px",
+    gap: 16,
   },
 };
 
@@ -224,86 +226,68 @@ export const NoDates: Story = {
 };
 
 /**
- * Work list with ASCII dividers between items
+ * Work list with solid dividers
  */
-export const WithDividers: Story = {
-  render: () => (
-    <Box>
-      {sampleWorks.map((work, index) => (
-        <Box key={work.slug}>
-          <WorkList works={[work]} />
-          {index < sampleWorks.length - 1 && (
-            <Box css={{ py: "96px" }}>
-              <Divider variant="ascii" pattern="*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚" spacing="0" />
-            </Box>
-          )}
-        </Box>
-      ))}
-    </Box>
-  ),
+export const WithSolidDividers: Story = {
+  args: {
+    works: sampleWorks,
+    gap: 16,
+    showDividers: true,
+    dividerProps: {
+      variant: "solid",
+      color: "neutral.300",
+      spacing: 12,
+    },
+  },
 };
 
 /**
- * Single customizable work card with live controls
+ * Work list with dashed dividers
  */
-export const CustomizableWorkCard: Story = {
-  render: (args) => (
-    <WorkCard
-      title={args.title || "My Project"}
-      description={
-        args.description ||
-        "Project description goes here. You can edit this in the controls panel."
-      }
-      date={args.date || "2024-03-15"}
-      slug={args.slug || "my-project"}
-      images={
-        args.images || [
-          {
-            url: OPTIMIZED_IMAGES.videoStill1,
-            alt: "Default image",
-          },
-        ]
-      }
-    />
-  ),
+export const WithDashedDividers: Story = {
   args: {
-    title: "Brand Identity",
-    description:
-      "Comprehensive brand identity system for a modern tech startup. Includes logo design, color palette, typography, and brand guidelines.",
-    date: "2024-03-15",
-    slug: "brand-identity",
-    images: [
-      {
-        url: OPTIMIZED_IMAGES.videoStill1,
-        alt: "Video still 1",
-      },
-      {
-        url: OPTIMIZED_IMAGES.videoStill2,
-        alt: "Video still 2",
-        copyright: "Studio XYZ",
-      },
-    ],
+    works: sampleWorks,
+    gap: 16,
+    showDividers: true,
+    dividerProps: {
+      variant: "dashed",
+      color: "neutral.400",
+      thickness: "2px",
+      spacing: 12,
+    },
   },
-  argTypes: {
-    title: {
-      control: "text",
-      description: "Project title",
+};
+
+/**
+ * Work list with ASCII dividers (brutalist aesthetic)
+ */
+export const WithASCIIDividers: Story = {
+  args: {
+    works: sampleWorks,
+    gap: 16,
+    showDividers: true,
+    dividerProps: {
+      variant: "ascii",
+      pattern: "*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚",
+      color: "neutral.500",
+      spacing: 12,
     },
-    description: {
-      control: "text",
-      description: "Project description",
-    },
-    date: {
-      control: "text",
-      description: "Project date",
-    },
-    slug: {
-      control: "text",
-      description: "Project URL slug",
-    },
-    images: {
-      control: "object",
-      description: "Array of slideshow images",
+  },
+};
+
+/**
+ * Work list with custom ASCII pattern
+ */
+export const WithCustomPattern: Story = {
+  args: {
+    works: sampleWorks.slice(0, 3),
+    gap: 16,
+    showDividers: true,
+    dividerProps: {
+      variant: "ascii",
+      pattern: "· · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·",
+      color: "neutral.600",
+      spacing: 16,
     },
   },
 };

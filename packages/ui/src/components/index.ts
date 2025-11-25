@@ -32,7 +32,6 @@ export * from "./nav-link";
 export * from "./page";
 export * from "./paragraph";
 export * from "./scaled-container";
-export * from "./scroll-progress";
 export * from "./section";
 export * from "./slideshow";
 export * from "./stack";

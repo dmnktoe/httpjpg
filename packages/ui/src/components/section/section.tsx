@@ -1,7 +1,7 @@
 "use client";
 
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 import { Container } from "../container/container";
@@ -14,24 +14,28 @@ export interface SectionProps
   children: ReactNode;
   /**
    * Padding top (using Panda spacing tokens: 0-96)
+   * Supports responsive values: { base: 8, md: 16, lg: 24 }
    * @default "16"
    */
-  pt?: string | number;
+  pt?: string | number | Record<string, string | number>;
   /**
    * Padding bottom (using Panda spacing tokens: 0-96)
+   * Supports responsive values: { base: 8, md: 16, lg: 24 }
    * @default "16"
    */
-  pb?: string | number;
+  pb?: string | number | Record<string, string | number>;
   /**
    * Padding left (using Panda spacing tokens: 0-96)
+   * Supports responsive values: { base: 0, md: 4 }
    * @default "0"
    */
-  pl?: string | number;
+  pl?: string | number | Record<string, string | number>;
   /**
    * Padding right (using Panda spacing tokens: 0-96)
+   * Supports responsive values: { base: 0, md: 4 }
    * @default "0"
    */
-  pr?: string | number;
+  pr?: string | number | Record<string, string | number>;
   /**
    * Full width
    * @default true
@@ -64,14 +68,22 @@ export interface SectionProps
  * ```tsx
  * // Using numeric tokens (maps to spacing scale)
  * <Section pt={16} pb={16}>
- *   <Container>
- *     <Headline>Section Title</Headline>
- *   </Container>
+ *   <Headline>Section Title</Headline>
+ * </Section>
+ *
+ * // Responsive padding for different screen sizes
+ * <Section pt={{ base: 8, md: 16, lg: 24 }} pb={{ base: 8, md: 16 }}>
+ *   Hero Section
  * </Section>
  *
  * // Asymmetric padding with string tokens
  * <Section pt="24" pb="12" pl="4" pr="4">
  *   Content
+ * </Section>
+ *
+ * // With container size control
+ * <Section pt={16} pb={16} containerSize="fluid">
+ *   Full Width Content
  * </Section>
  *
  * // With additional Panda CSS props
@@ -96,12 +108,16 @@ export const Section = forwardRef<HTMLElement, SectionProps>(
     },
     ref,
   ) => {
-    const content = useContainer ? (
-      <Container size={containerSize} px="0" py="0">
-        {children}
-      </Container>
-    ) : (
-      children
+    const content = useMemo(
+      () =>
+        useContainer ? (
+          <Container size={containerSize} px="0" py="0">
+            {children}
+          </Container>
+        ) : (
+          children
+        ),
+      [useContainer, containerSize, children],
     );
 
     return (

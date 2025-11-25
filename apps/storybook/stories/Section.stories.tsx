@@ -27,6 +27,21 @@ const meta = {
         defaultValue: { summary: "true" },
       },
     },
+    useContainer: {
+      control: "boolean",
+      description: "Use container wrapper for content",
+      table: {
+        defaultValue: { summary: "true" },
+      },
+    },
+    containerSize: {
+      control: "select",
+      options: ["sm", "md", "lg", "xl", "2xl", "fluid"],
+      description: "Container size when useContainer is true",
+      table: {
+        defaultValue: { summary: "2xl" },
+      },
+    },
   },
 } satisfies Meta<typeof Section>;
 
@@ -43,6 +58,8 @@ export const Basic: Story = {
     pl: 0,
     pr: 0,
     fullWidth: true,
+    useContainer: true,
+    containerSize: "2xl",
     children: null,
   },
   render: (args) => (
@@ -52,14 +69,15 @@ export const Basic: Story = {
       pl={args.pl}
       pr={args.pr}
       fullWidth={args.fullWidth}
+      useContainer={args.useContainer}
+      containerSize={args.containerSize}
     >
-      <Container>
-        <Headline level={2}>Section Title</Headline>
-        <Paragraph css={{ mt: "4" }}>
-          This is a basic section with configurable padding. Use the controls to
-          adjust spacing and see how it affects the layout.
-        </Paragraph>
-      </Container>
+      <Headline level={2}>Section Title</Headline>
+      <Paragraph css={{ mt: "4" }}>
+        This is a basic section with configurable padding. Use the controls to
+        adjust spacing and see how it affects the layout. Try changing
+        containerSize to "fluid" to see the difference.
+      </Paragraph>
     </Section>
   ),
 };
@@ -325,12 +343,67 @@ export const BrutalistPortfolio: Story = {
 };
 
 /**
+ * Fluid container - full width content
+ */
+export const FluidContainer: Story = {
+  args: {
+    pt: 16,
+    pb: 16,
+    useContainer: true,
+    containerSize: "fluid",
+    children: (
+      <>
+        <Headline level={2}>Fluid Container</Headline>
+        <Paragraph css={{ mt: "4" }}>
+          This section uses a fluid container that spans the full width. Compare
+          this to the Basic story with a 2xl container to see the difference.
+        </Paragraph>
+        <Box
+          css={{
+            mt: "8",
+            p: "4",
+            bg: "neutral.100",
+            borderRadius: "md",
+          }}
+        >
+          <Paragraph css={{ fontSize: "sm", opacity: 0.7 }}>
+            The fluid container allows content to use the full available width,
+            perfect for full-width layouts or when you want maximum space.
+          </Paragraph>
+        </Box>
+      </>
+    ),
+  },
+};
+
+/**
+ * Without container wrapper
+ */
+export const WithoutContainer: Story = {
+  args: {
+    pt: 16,
+    pb: 16,
+    useContainer: false,
+    children: (
+      <Box css={{ px: "4" }}>
+        <Headline level={2}>No Container Wrapper</Headline>
+        <Paragraph css={{ mt: "4" }}>
+          This section has useContainer=false, so you have full control over the
+          content layout. You'll need to add your own Container or padding.
+        </Paragraph>
+      </Box>
+    ),
+  },
+};
+
+/**
  * No padding - full bleed section
  */
 export const FullBleed: Story = {
   args: {
     pt: 0,
     pb: 0,
+    useContainer: false,
     style: { background: "#171717" },
     children: (
       <Box

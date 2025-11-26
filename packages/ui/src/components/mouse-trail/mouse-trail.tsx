@@ -76,8 +76,8 @@ export function MouseTrail({
     const handleMouseMove = (e: MouseEvent) => {
       const now = Date.now();
 
-      // Throttle particle creation (every 50ms)
-      if (now - lastTime < 50) {
+      // Throttle particle creation (every 30ms for smoother trail)
+      if (now - lastTime < 30) {
         return;
       }
       lastTime = now;
@@ -125,7 +125,7 @@ export function MouseTrail({
         w: "100%",
         h: "100%",
         pointerEvents: "none",
-        zIndex: 9997,
+        zIndex: 9999,
         ...cssProp,
       }}
     >

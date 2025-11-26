@@ -305,7 +305,7 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
             overflow: "visible",
           }}
         >
-          <Slideshow animation="sharpen" images={images} />
+          <Slideshow speed={0} animation="sharpen" images={images} />
         </Box>
 
         {/* Content */}

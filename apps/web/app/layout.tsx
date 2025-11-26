@@ -6,6 +6,7 @@ import { Footer, Header, ImagePreview } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
+import { CustomCursorWrapper } from "../components/custom-cursor-wrapper";
 import { NowPlayingWidget } from "../components/now-playing-widget";
 import { PreviewNotification } from "../components/preview-notification";
 import {
@@ -52,6 +53,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     <html lang="de">
       <body style={{ margin: 0, padding: 0, backgroundColor: "#ffffff" }}>
         <StoryblokProvider>
+          <CustomCursorWrapper />
           <ImagePreview />
           <Header
             nav={navigation}

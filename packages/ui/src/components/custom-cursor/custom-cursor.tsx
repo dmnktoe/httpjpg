@@ -1,6 +1,5 @@
 "use client";
 
-import { m, useMotionValue } from "framer-motion";
 import { useEffect, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
@@ -54,9 +53,7 @@ export function CustomCursor({
   symbol = "✦",
   css: cssProp,
 }: CustomCursorProps) {
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-
+  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
   const [currentSymbol, setCurrentSymbol] = useState(symbol);
   const [hoverText, setHoverText] = useState("");
   const [isVisible, setIsVisible] = useState(false);
@@ -66,8 +63,7 @@ export function CustomCursor({
     let symbolIndex = 0;
 
     const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
+      setCursorPos({ x: e.clientX, y: e.clientY });
 
       if (!isVisible) {
         setIsVisible(true);
@@ -136,7 +132,7 @@ export function CustomCursor({
         el.removeEventListener("mouseleave", handleMouseLeave);
       });
     };
-  }, [cursorX, cursorY, isVisible]);
+  }, [isVisible, symbol]);
 
   // Hide default cursor
   useEffect(() => {
@@ -167,25 +163,20 @@ export function CustomCursor({
     <>
       {/* ASCII Symbol Cursor */}
       <Box
-        as={m.div}
         style={{
-          x: cursorX,
-          y: cursorY,
-        }}
-        css={{
           position: "fixed",
           top: 0,
           left: 0,
           pointerEvents: "none",
           zIndex: 10000,
-          transform: "translate(-50%, -50%)",
+          transform: `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0) translate(-50%, -50%)`,
           fontSize: `${size}px`,
           color,
           fontWeight: "bold",
-          mixBlendMode: "difference",
           userSelect: "none",
-          ...cssProp,
+          willChange: "transform",
         }}
+        css={cssProp}
       >
         {currentSymbol}
       </Box>
@@ -193,21 +184,16 @@ export function CustomCursor({
       {/* Hover Text Label */}
       {showLabel && hoverText && (
         <Box
-          as={m.div}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
           style={{
-            x: cursorX,
-            y: cursorY,
-          }}
-          css={{
             position: "fixed",
             top: 0,
             left: 0,
             pointerEvents: "none",
             zIndex: 9998,
-            transform: "translate(-50%, calc(-100% - 30px))",
+            transform: `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0) translate(-50%, calc(-100% - 30px))`,
+            willChange: "transform",
+          }}
+          css={{
             bg: "black",
             color: "white",
             px: "12px",
@@ -215,7 +201,7 @@ export function CustomCursor({
             fontSize: "sm",
             fontFamily: "mono",
             textTransform: "uppercase",
-            letterSpacing: "wider", // token: typography.letterSpacing.wider (0.05em)
+            letterSpacing: "wider",
             whiteSpace: "nowrap",
           }}
         >

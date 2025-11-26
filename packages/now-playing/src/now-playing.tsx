@@ -2,7 +2,7 @@
 
 import { Marquee } from "@httpjpg/ui";
 import { m } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { type ExtractedColor, extractVibrantColor } from "./extract-color";
 
 export interface NowPlayingProps {
@@ -59,26 +59,42 @@ interface MarqueeTextProps {
   speed?: number;
 }
 
-const MarqueeText = ({ children, speed = 10 }: MarqueeTextProps) => {
+const MarqueeText = React.memo(({ children, speed = 10 }: MarqueeTextProps) => {
   const [shouldAnimate, setShouldAnimate] = useState(false);
+  const [isMeasuring, setIsMeasuring] = useState(true);
+  const [currentText, setCurrentText] = useState(children);
   const textRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Force re-measurement when text changes
+    if (currentText !== children) {
+      setCurrentText(children);
+      setIsMeasuring(true);
+      setShouldAnimate(false);
+    }
+
     const checkOverflow = () => {
       if (textRef.current && containerRef.current) {
         const textWidth = textRef.current.scrollWidth;
         const containerWidth = containerRef.current.clientWidth;
-        setShouldAnimate(textWidth > containerWidth);
+        const needsMarquee = textWidth > containerWidth;
+        setShouldAnimate(needsMarquee);
+        setIsMeasuring(false);
       }
     };
 
-    checkOverflow();
+    // Delay to ensure proper measurement after render
+    const timeoutId = setTimeout(checkOverflow, 100);
     window.addEventListener("resize", checkOverflow);
-    return () => window.removeEventListener("resize", checkOverflow);
-  }, [children]);
+    return () => {
+      window.removeEventListener("resize", checkOverflow);
+      clearTimeout(timeoutId);
+    };
+  }, [children, currentText]);
 
-  if (!shouldAnimate) {
+  // Show static text while measuring or if no animation needed
+  if (isMeasuring || !shouldAnimate) {
     return (
       <div
         ref={containerRef}
@@ -92,26 +108,24 @@ const MarqueeText = ({ children, speed = 10 }: MarqueeTextProps) => {
     );
   }
 
+  // Show marquee animation
   return (
     <div
-      ref={containerRef}
       style={{
+        overflow: "hidden",
+        whiteSpace: "nowrap",
         maskImage: "linear-gradient(to right, black 95%, transparent)",
         WebkitMaskImage: "linear-gradient(to right, black 95%, transparent)",
       }}
     >
-      <Marquee
-        speed={speed}
-        iosStyle
-        pauseDuration={2}
-        repeat={2}
-        css={{ px: "0" }}
-      >
+      <Marquee speed={speed} iosStyle pauseDuration={2}>
         {children}
       </Marquee>
     </div>
   );
-};
+});
+
+MarqueeText.displayName = "MarqueeText";
 
 const sizeConfig = {
   sm: {

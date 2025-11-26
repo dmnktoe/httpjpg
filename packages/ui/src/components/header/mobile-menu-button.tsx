@@ -40,8 +40,8 @@ export const MobileMenuButton = ({
           cursor: "pointer",
           fontFamily: "Impact, Haettenschweiler, sans-serif",
           fontSize: "0.65rem",
-          lineHeight: "1",
-          letterSpacing: "0.05em",
+          lineHeight: "none", // token: typography.lineHeight.none (1)
+          letterSpacing: "wider", // token: typography.letterSpacing.wider (0.05em)
           transition: "opacity 150ms ease-in-out",
         }}
         onMouseEnter={(e) => {

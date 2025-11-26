@@ -46,7 +46,7 @@ export const ComponentNotFound = forwardRef<
         backgroundColor: "#fff0f0",
         color: "red",
         fontFamily: "monospace",
-        fontSize: "12px",
+        fontSize: "sm", // token: fontSizes.sm (12px)
         ...cssProp,
       }}
       {...props}

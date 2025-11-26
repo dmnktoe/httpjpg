@@ -1,7 +1,9 @@
 "use client";
 
+import { Marquee } from "@httpjpg/ui";
 import { m } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { type ExtractedColor, extractVibrantColor } from "./extract-color";
 
 export interface NowPlayingProps {
   /**
@@ -22,13 +24,28 @@ export interface NowPlayingProps {
    */
   isPlaying?: boolean;
   /**
+   * Automatically extract vibrant color from artwork
+   * @default true
+   */
+  autoExtractColor?: boolean;
+  /**
+   * Manual vibrant color override (disables autoExtractColor)
+   * If provided, uses this instead of auto-extraction
+   */
+  vibrantColor?: string;
+  /**
+   * Manual text color override (disables auto-extraction)
+   * @default "white"
+   */
+  textColor?: "black" | "white";
+  /**
    * Initial position
    * @default { x: 20, y: 20 }
    */
   initialPosition?: { x: number; y: number };
   /**
    * Size of the widget
-   * @default "md"
+   * @default "sm"
    */
   size?: "sm" | "md" | "lg";
   /**
@@ -42,7 +59,7 @@ interface MarqueeTextProps {
   speed?: number;
 }
 
-const MarqueeText = ({ children, speed = 30 }: MarqueeTextProps) => {
+const MarqueeText = ({ children, speed = 10 }: MarqueeTextProps) => {
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const textRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -79,33 +96,19 @@ const MarqueeText = ({ children, speed = 30 }: MarqueeTextProps) => {
     <div
       ref={containerRef}
       style={{
-        overflow: "hidden",
-        position: "relative",
-        maskImage:
-          "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
-        WebkitMaskImage:
-          "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+        maskImage: "linear-gradient(to right, black 95%, transparent)",
+        WebkitMaskImage: "linear-gradient(to right, black 95%, transparent)",
       }}
     >
-      <m.div
-        ref={textRef}
-        animate={{
-          x: [0, -(textRef.current?.scrollWidth || 0)],
-        }}
-        transition={{
-          duration: (textRef.current?.scrollWidth || 0) / speed,
-          repeat: Number.POSITIVE_INFINITY,
-          ease: "linear",
-          repeatDelay: 2,
-        }}
-        style={{
-          display: "inline-block",
-          whiteSpace: "nowrap",
-          paddingRight: "2em",
-        }}
+      <Marquee
+        speed={speed}
+        iosStyle
+        pauseDuration={2}
+        repeat={2}
+        css={{ px: "0" }}
       >
         {children}
-      </m.div>
+      </Marquee>
     </div>
   );
 };
@@ -159,11 +162,57 @@ export const NowPlaying = ({
   artist,
   artwork,
   isPlaying = false,
-  initialPosition = { x: 20, y: 20 },
-  size = "md",
+  autoExtractColor = true,
+  vibrantColor,
+  textColor,
+  initialPosition = {
+    x: typeof window !== "undefined" ? window.innerWidth - 280 : 20,
+    y: 40,
+  },
+  size = "sm",
   style,
 }: NowPlayingProps) => {
   const config = sizeConfig[size];
+
+  // Internal color extraction state
+  const [extractedColor, setExtractedColor] = useState<ExtractedColor | null>(
+    null,
+  );
+  const [currentArtwork, setCurrentArtwork] = useState<string>("");
+  const [isExtracting, setIsExtracting] = useState(false);
+
+  // Extract color from artwork when it changes
+  useEffect(() => {
+    if (!autoExtractColor || vibrantColor) {
+      return;
+    }
+    if (artwork === currentArtwork) {
+      return;
+    }
+
+    setCurrentArtwork(artwork);
+    setIsExtracting(true);
+
+    extractVibrantColor(artwork).then((color) => {
+      if (color) {
+        setExtractedColor(color);
+        // Small delay before showing the color to allow smooth transition
+        setTimeout(() => setIsExtracting(false), 100);
+      } else {
+        setIsExtracting(false);
+      }
+    });
+  }, [artwork, currentArtwork, autoExtractColor, vibrantColor]);
+
+  // Determine final colors: manual override > auto-extracted > defaults
+  const finalVibrantColor = vibrantColor || extractedColor?.rgba;
+  const finalTextColor = textColor || extractedColor?.textColor || "white";
+
+  // Determine glow color: vibrantColor > neutral gray (no Spotify green)
+  const hasVibrantColor = !!finalVibrantColor && !isExtracting;
+  const glowColor = hasVibrantColor
+    ? finalVibrantColor
+    : "rgba(163, 163, 163, 0.6)";
 
   return (
     <m.div
@@ -187,17 +236,20 @@ export const NowPlaying = ({
         scale: 1.05,
       }}
     >
-      {/* Blurred background layer - Spotify green */}
+      {/* Blurred background layer - vibrant color, Spotify green, or neutral gray */}
       <div
         style={{
           position: "absolute",
           inset: "-3px",
-          background: "rgba(29, 185, 84, 0.9)",
+          background: glowColor,
           filter: "blur(8px)",
           borderRadius: "9999px",
-          boxShadow:
-            "0 0 25px 0 rgba(29, 185, 84, 0.4), 0 0 50px 0 rgba(29, 185, 84, 0.2)",
+          boxShadow: hasVibrantColor
+            ? `0 0 25px 0 ${finalVibrantColor?.replace("0.9)", "0.4)")}, 0 0 50px 0 ${finalVibrantColor?.replace("0.9)", "0.2)")}`
+            : "0 0 15px 0 rgba(163, 163, 163, 0.3)",
           zIndex: -1,
+          transition:
+            "background 0.6s ease-in-out, box-shadow 0.6s ease-in-out",
         }}
       />
 
@@ -249,7 +301,8 @@ export const NowPlaying = ({
             flexDirection: "column",
             justifyContent: "center",
             gap: 2,
-            color: "white",
+            color: finalTextColor,
+            transition: "color 0.6s ease-in-out",
             fontFamily:
               '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
           }}
@@ -291,7 +344,7 @@ export const NowPlaying = ({
                 }}
                 style={{
                   width: 2,
-                  backgroundColor: "white",
+                  backgroundColor: finalTextColor,
                   borderRadius: 2,
                 }}
               />

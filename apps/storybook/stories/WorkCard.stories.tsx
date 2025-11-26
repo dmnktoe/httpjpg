@@ -12,6 +12,13 @@ const meta = {
   component: WorkCard,
   parameters: {
     layout: "fullscreen",
+    // Prevent layout shift jitter in docs by using iframe
+    docs: {
+      story: {
+        inline: false,
+        iframeHeight: 800, // Set explicit height for iframe
+      },
+    },
   },
   tags: ["autodocs"],
   argTypes: {

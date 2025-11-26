@@ -212,10 +212,10 @@ export function CustomCursor({
             color: "white",
             px: "12px",
             py: "6px",
-            fontSize: "xs",
+            fontSize: "sm",
             fontFamily: "mono",
             textTransform: "uppercase",
-            letterSpacing: "0.05em",
+            letterSpacing: "wider", // token: typography.letterSpacing.wider (0.05em)
             whiteSpace: "nowrap",
           }}
         >

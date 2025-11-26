@@ -9,6 +9,7 @@ import { Icon } from "../icon/icon";
 import { Link } from "../link/link";
 import { Paragraph } from "../paragraph/paragraph";
 import { Slideshow, type SlideshowImage } from "../slideshow/slideshow";
+import { HStack, VStack } from "../stack";
 
 export interface WorkCardProps {
   /**
@@ -43,6 +44,215 @@ export interface WorkCardProps {
 }
 
 /**
+ * Month symbols for creative display
+ */
+const MONTH_SYMBOLS: Record<number, string> = {
+  0: "❄", // Januar - Snowflake
+  1: "❤", // Februar - Heart
+  2: "🌱", // März - Seedling
+  3: "🌸", // April - Blossom
+  4: "☀", // Mai - Sun
+  5: "🌊", // Juni - Wave
+  6: "🔥", // Juli - Fire
+  7: "🌾", // August - Grain
+  8: "🍂", // September - Falling leaf
+  9: "🎃", // Oktober - Pumpkin
+  10: "🍁", // November - Maple leaf
+  11: "✨", // Dezember - Sparkles
+};
+
+/**
+ * Format date parts
+ */
+function formatWorkCardDate(date: string | Date): {
+  day: string;
+  month: string;
+  year: string;
+  monthSymbol: string;
+} {
+  const dateObj = new Date(date);
+  const parts = new Intl.DateTimeFormat("de-DE", {
+    year: "2-digit",
+    month: "narrow",
+    day: "2-digit",
+  }).formatToParts(dateObj);
+
+  return {
+    day: parts.find((p) => p.type === "day")?.value || "",
+    month: parts.find((p) => p.type === "month")?.value || "",
+    year: parts.find((p) => p.type === "year")?.value || "",
+    monthSymbol: MONTH_SYMBOLS[dateObj.getMonth()] || "●",
+  };
+}
+
+/**
+ * WorkCard Date component
+ */
+function WorkCardDate({ date }: { date: string | Date }) {
+  const { day, year, monthSymbol } = formatWorkCardDate(date);
+
+  return (
+    <HStack
+      gap="2"
+      align="center"
+      css={{
+        fontFamily: "mono",
+        fontSize: "sm", // token: fontSizes.sm (12px)
+        mb: "4px",
+      }}
+    >
+      <Box css={{ opacity: 0.5 }}>╱╱</Box>
+      <Box css={{ letterSpacing: "wider" }}>
+        {day}.
+        <Box
+          as="span"
+          css={{
+            fontFamily: "system-ui",
+            fontSize: "md",
+            mx: "1",
+            position: "relative",
+            top: "1px",
+          }}
+        >
+          {monthSymbol}
+        </Box>
+        {year}
+      </Box>
+      <Box css={{ opacity: 0.3, fontSize: "0.65rem" }}>⌘ρτ</Box>
+    </HStack>
+  );
+}
+
+/**
+ * WorkCard Title component
+ */
+function WorkCardTitle({ title }: { title: string }) {
+  return (
+    <Box
+      css={{
+        w: { base: "full", xl: "1/2" },
+        mt: { base: "-12px", md: "-24px", xl: "-5vw" },
+        "@media (min-width: 1536px)": {
+          ml: "-24px",
+          mr: "24px",
+        },
+      }}
+    >
+      <Box
+        css={{
+          textAlign: "right",
+          fontSize: { base: "8.5vw", xl: "6vw" },
+          lineHeight: 0.8,
+          letterSpacing: "tighter",
+        }}
+      >
+        <AnimateInView animation="fadeIn" delay={0.5} once={true}>
+          <Box as="span" css={{ display: "inline-block" }}>
+            <Icon
+              name="arrow-up"
+              size="7.5vw"
+              css={{
+                position: "relative",
+                top: "0.8vw",
+                transform: "rotate(90deg)",
+                "@media (min-width: 1280px)": {
+                  width: "5.5vw",
+                  top: "1.62vw",
+                },
+              }}
+            />
+          </Box>
+          {title}
+        </AnimateInView>
+      </Box>
+    </Box>
+  );
+}
+
+/**
+ * WorkCard Meta component (Date & Link)
+ */
+function WorkCardMeta({
+  date,
+  slug,
+  baseUrl,
+}: {
+  date?: string | Date;
+  slug: string;
+  baseUrl: string;
+}) {
+  return (
+    <Box>
+      {date && <WorkCardDate date={date} />}
+      <Box>
+        <Link
+          href={`${baseUrl}/${slug}`}
+          css={{
+            fontSize: "sm",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            display: "block",
+            color: "blue",
+            textDecoration: "none",
+            _hover: {
+              textDecoration: "underline",
+            },
+          }}
+        >
+          -̸̨̱̠̳̩̼͙̈̀̀̄̃̆́͠ͅ↳↳↳{slug}↳↳↳
+        </Link>
+      </Box>
+    </Box>
+  );
+}
+
+/**
+ * WorkCard Content component (Description & Meta)
+ */
+function WorkCardContent({
+  description,
+  date,
+  slug,
+  baseUrl,
+}: {
+  description?: ReactNode;
+  date?: string | Date;
+  slug: string;
+  baseUrl: string;
+}) {
+  return (
+    <Box css={{ w: { base: "full", xl: "1/2" } }}>
+      <VStack
+        gap="4"
+        css={{
+          mx: "auto",
+          w: { base: "full", md: "10/12", xl: "full" },
+        }}
+      >
+        {description && (
+          <Paragraph
+            size="sm"
+            css={
+              {
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: "-webkit-box",
+                WebkitLineClamp: { base: 5, xl: "none" },
+                WebkitBoxOrient: "vertical",
+              } as any
+            }
+          >
+            {description}
+          </Paragraph>
+        )}
+        <WorkCardMeta date={date} slug={slug} baseUrl={baseUrl} />
+      </VStack>
+    </Box>
+  );
+}
+
+/**
  * WorkCard component - Project showcase card
  *
  * Displays a project with slideshow, animated title, description, date,
@@ -73,21 +283,13 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
     },
     ref,
   ) => {
-    const formattedDate = date
-      ? new Date(date).toLocaleDateString("de-DE", {
-          year: "2-digit",
-          month: "narrow",
-          day: "2-digit",
-        })
-      : null;
-
     return (
       <Box
         ref={ref}
         css={{
           display: "flex",
           flexDirection: "column",
-          gap: "8px",
+          gap: "2", // token: spacing[8] (8px)
           ...cssProp,
         }}
         {...props}
@@ -112,144 +314,19 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
             css={{
               display: "flex",
               flexDirection: { base: "column", xl: "row" },
-              gap: "8px",
+              gap: "2",
               "@media (min-width: 1536px)": {
                 px: "192px",
               },
             }}
           >
-            {/* Title */}
-            <Box
-              css={{
-                w: { base: "full", xl: "1/2" },
-                mt: { base: "-12px", md: "-24px", xl: "-5vw" },
-                "@media (min-width: 1536px)": {
-                  ml: "-24px",
-                  mr: "24px",
-                },
-              }}
-            >
-              <Box
-                css={{
-                  textAlign: "right",
-                  fontSize: { base: "8.5vw", xl: "6vw" },
-                  lineHeight: "0.8",
-                  letterSpacing: "-0.05em",
-                }}
-              >
-                <AnimateInView animation="fadeIn" delay={0.5}>
-                  <Box
-                    as="span"
-                    css={{
-                      display: "inline-block",
-                    }}
-                  >
-                    <Icon
-                      name="arrow-up"
-                      size="7.5vw"
-                      css={{
-                        position: "relative",
-                        top: "0.8vw",
-                        transform: "rotate(90deg)",
-                        "@media (min-width: 1280px)": {
-                          width: "5.5vw",
-                          top: "1.62vw",
-                        },
-                      }}
-                    />
-                  </Box>
-                  {title}
-                </AnimateInView>
-              </Box>
-            </Box>
-
-            {/* Description & Meta */}
-            <Box css={{ w: { base: "full", xl: "1/2" } }}>
-              <Box
-                css={{
-                  mx: "auto",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "16px",
-                  w: { base: "full", md: "10/12", xl: "full" },
-                }}
-              >
-                {/* Description */}
-                {description && (
-                  <Paragraph
-                    size="sm"
-                    css={
-                      {
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "-webkit-box",
-                        WebkitLineClamp: { base: 5, xl: "none" },
-                        WebkitBoxOrient: "vertical",
-                      } as any
-                    }
-                  >
-                    {description}
-                  </Paragraph>
-                )}
-
-                {/* Date & Link */}
-                <Box>
-                  {formattedDate && (
-                    <Box
-                      css={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        fontFamily: "mono",
-                        fontSize: "0.75rem",
-                        mb: "4px",
-                      }}
-                    >
-                      <Box
-                        css={{
-                          opacity: 0.5,
-                        }}
-                      >
-                        ╱╱
-                      </Box>
-                      <Box
-                        css={{
-                          letterSpacing: "0.05em",
-                        }}
-                      >
-                        {formattedDate}
-                      </Box>
-                      <Box
-                        css={{
-                          opacity: 0.3,
-                          fontSize: "0.65rem",
-                        }}
-                      >
-                        ⌘ρτ
-                      </Box>
-                    </Box>
-                  )}
-                  <Box>
-                    <Link
-                      href={`${baseUrl}/${slug}`}
-                      css={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        display: "block",
-                        color: "blue",
-                        textDecoration: "none",
-                        _hover: {
-                          textDecoration: "underline",
-                        },
-                      }}
-                    >
-                      -̸̨̱̠̳̩̼͙̈̀̀̄̃̆́͠ͅ↳↳↳{slug}↳↳↳
-                    </Link>
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
+            <WorkCardTitle title={title} />
+            <WorkCardContent
+              description={description}
+              date={date}
+              slug={slug}
+              baseUrl={baseUrl}
+            />
           </Box>
         </Box>
       </Box>

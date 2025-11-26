@@ -1,35 +1,52 @@
 "use client";
 
-import type { HTMLAttributes, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
+import { forwardRef } from "react";
 import { css, cva, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
 export interface ParagraphProps
-  extends Omit<HTMLAttributes<HTMLParagraphElement>, "css"> {
+  extends Omit<ComponentPropsWithoutRef<"p">, "css"> {
+  /**
+   * Render as different HTML element
+   * @default "p"
+   */
+  as?: ElementType;
   /**
    * Visual size variant
-   * @default "md"
+   * @default "sm"
    */
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   /**
    * Text alignment
    * @default "left"
    */
-  align?: "left" | "center" | "right";
+  align?: "left" | "center" | "right" | "justify";
   /**
    * Paragraph content
    */
   children: ReactNode;
   /**
    * Maximum width for optimal reading (approx. 60-75 characters)
+   * Can be boolean or custom ch value
    * @default true
    */
-  maxWidth?: boolean;
+  maxWidth?: boolean | string;
   /**
    * Add bottom spacing for multiple paragraphs
    * @default false
    */
   spacing?: boolean;
+  /**
+   * Text color variant
+   * @default "default"
+   */
+  color?: "default" | "muted" | "dimmed";
+  /**
+   * Font weight
+   * @default "normal"
+   */
+  weight?: "normal" | "medium" | "semibold";
   /**
    * Custom styles using Panda CSS SystemStyleObject
    */
@@ -44,8 +61,6 @@ const paragraphRecipe = cva({
 
     /* Typography */
     fontFamily: "sans",
-    fontWeight: 400,
-    color: "neutral.700",
 
     /* Optimal line height for readability */
     lineHeight: 1.75,
@@ -56,15 +71,19 @@ const paragraphRecipe = cva({
   variants: {
     size: {
       sm: {
-        fontSize: "0.75rem",
+        fontSize: "sm", // 12px - token: fontSizes.sm
         lineHeight: 1.75,
       },
       md: {
-        fontSize: "1rem",
+        fontSize: "md", // 14px - token: fontSizes.md
         lineHeight: 1.75,
       },
       lg: {
-        fontSize: "1.125rem",
+        fontSize: "lg", // 16px - token: fontSizes.lg
+        lineHeight: 1.8,
+      },
+      xl: {
+        fontSize: "xl", // 18px - token: fontSizes.xl
         lineHeight: 1.8,
       },
     },
@@ -81,11 +100,34 @@ const paragraphRecipe = cva({
         textAlign: "right",
         marginLeft: "auto",
       },
+      justify: {
+        textAlign: "justify",
+        textJustify: "inter-word",
+      },
     },
-    maxWidth: {
-      true: {
-        /* Optimal reading width: ~60-75 characters per line */
-        maxWidth: "65ch",
+    color: {
+      default: {
+        color: "black",
+        opacity: 1,
+      },
+      muted: {
+        color: "black",
+        opacity: 0.7,
+      },
+      dimmed: {
+        color: "black",
+        opacity: 0.5,
+      },
+    },
+    weight: {
+      normal: {
+        fontWeight: 400,
+      },
+      medium: {
+        fontWeight: 500,
+      },
+      semibold: {
+        fontWeight: 600,
       },
     },
     spacing: {
@@ -96,9 +138,10 @@ const paragraphRecipe = cva({
     },
   },
   defaultVariants: {
-    size: "md",
+    size: "sm",
     align: "left",
-    maxWidth: true,
+    color: "default",
+    weight: "normal",
     spacing: false,
   },
 });
@@ -122,31 +165,54 @@ const paragraphRecipe = cva({
  *   This is a large centered paragraph with constrained width for readability.
  * </Paragraph>
  *
- * // Small paragraph without max width constraint
- * <Paragraph size="sm" maxWidth={false}>
- *   This is a small paragraph that can span the full container width.
+ * // Custom max width
+ * <Paragraph maxWidth="80ch">
+ *   Wide paragraph with 80 character max width.
+ * </Paragraph>
+ *
+ * // As different element with custom styling
+ * <Paragraph as="span" size="sm" color="muted" weight="medium">
+ *   This renders as a span with custom styling.
  * </Paragraph>
  * ```
  */
-export function Paragraph({
-  size = "md",
-  align = "left",
-  maxWidth = true,
-  spacing = false,
-  children,
-  className,
-  css: cssProp,
-  ...props
-}: ParagraphProps) {
-  const styles = cx(
-    css(paragraphRecipe.raw({ size, align, maxWidth, spacing })),
-    cssProp && css(cssProp),
-    className,
-  );
+export const Paragraph = forwardRef<HTMLParagraphElement, ParagraphProps>(
+  (
+    {
+      as: Component = "p",
+      size = "sm",
+      align = "left",
+      color = "default",
+      weight = "normal",
+      maxWidth = true,
+      spacing = false,
+      children,
+      className,
+      css: cssProp,
+      ...props
+    },
+    ref,
+  ) => {
+    const maxWidthValue =
+      typeof maxWidth === "string"
+        ? maxWidth
+        : maxWidth === true
+          ? "65ch"
+          : undefined;
 
-  return (
-    <p className={styles} {...props}>
-      {children}
-    </p>
-  );
-}
+    const styles = cx(
+      css(paragraphRecipe.raw({ size, align, color, weight, spacing })),
+      maxWidthValue && css({ maxWidth: maxWidthValue }),
+      className,
+      cssProp && css(cssProp),
+    );
+
+    return (
+      <Component ref={ref} className={styles} {...props}>
+        {children}
+      </Component>
+    );
+  },
+);
+
+Paragraph.displayName = "Paragraph";

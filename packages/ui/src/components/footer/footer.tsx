@@ -67,8 +67,8 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                 backgroundPosition: "center",
               }
             : {}),
-          paddingTop: "16rem",
-          paddingBottom: "16rem",
+          paddingTop: "256px", // token: spacing[256] (16rem)
+          paddingBottom: "256px", // token: spacing[256] (16rem)
         }}
         css={{
           borderTop: "1px solid black",
@@ -78,7 +78,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
         }}
         {...props}
       >
-        <Box css={{ w: "100%", mx: "auto", px: "4" }}>
+        <Box css={{ w: "100%", mx: "auto", px: "4", fontSize: "sm" }}>
           {children ? (
             children
           ) : (

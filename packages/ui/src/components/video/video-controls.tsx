@@ -237,12 +237,12 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
         <Box
           css={{
             color: "white",
-            fontSize: "0.875rem",
+            fontSize: "sm", // token: fontSizes.sm (12px)
             fontFamily: "mono",
             whiteSpace: "nowrap",
           }}
         >
-          {formatTime(currentTime)} / {formatTime(duration)}
+          ╱╱ {formatTime(currentTime)} ⋄ {formatTime(duration)} ╱╱
         </Box>
 
         {/* Spacer */}

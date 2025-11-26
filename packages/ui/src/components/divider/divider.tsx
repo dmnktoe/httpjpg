@@ -100,8 +100,8 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
             alignItems: "center",
             justifyContent: "center",
             fontFamily: "mono",
-            fontWeight: 400,
-            letterSpacing: "0.05em",
+            fontWeight: "normal", // token: typography.fontWeight.normal (400)
+            letterSpacing: "wider", // token: typography.letterSpacing.wider (0.05em)
             userSelect: "none",
             whiteSpace: "nowrap",
             overflow: "hidden",

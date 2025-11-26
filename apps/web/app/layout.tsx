@@ -6,6 +6,7 @@ import { Footer, Header, ImagePreview } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
+import { NowPlayingWidget } from "../components/now-playing-widget";
 import { PreviewNotification } from "../components/preview-notification";
 import {
   getFooterConfig,
@@ -77,6 +78,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
           {/* Preview Mode Notification Banner */}
           <PreviewNotification />
+
+          {/* Spotify Now Playing Widget */}
+          <NowPlayingWidget />
         </StoryblokProvider>
 
         {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (

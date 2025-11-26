@@ -15,31 +15,62 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
+    as: {
+      control: { type: "select" },
+      options: ["p", "span", "div"],
+      description: "Render as different HTML element",
+      table: {
+        defaultValue: { summary: "p" },
+      },
+    },
     size: {
-      control: { type: "select" as const },
-      options: ["sm", "md", "lg"] as const,
+      control: { type: "select" },
+      options: ["sm", "md", "lg", "xl"],
       description: "Visual size variant",
       table: {
-        type: { summary: "sm | md | lg" },
-        defaultValue: { summary: "md" },
+        type: { summary: "sm | md | lg | xl" },
+        defaultValue: { summary: "sm" },
       },
     },
     align: {
-      control: { type: "select" as const },
-      options: ["left", "center", "right"] as const,
+      control: { type: "select" },
+      options: ["left", "center", "right", "justify"],
       description: "Text alignment",
       table: {
-        type: { summary: "left | center | right" },
+        type: { summary: "left | center | right | justify" },
         defaultValue: { summary: "left" },
       },
     },
-    maxWidth: {
-      control: "boolean",
-      description:
-        "Apply max-width constraint for optimal reading (~60-75 characters per line)",
+    color: {
+      control: { type: "select" },
+      options: ["default", "muted", "dimmed"],
+      description: "Text color variant",
       table: {
-        type: { summary: "boolean" },
+        defaultValue: { summary: "default" },
+      },
+    },
+    weight: {
+      control: { type: "select" },
+      options: ["normal", "medium", "semibold"],
+      description: "Font weight",
+      table: {
+        defaultValue: { summary: "normal" },
+      },
+    },
+    maxWidth: {
+      control: "text",
+      description:
+        "Max width constraint (true=65ch, false=none, or custom like '80ch')",
+      table: {
+        type: { summary: "boolean | string" },
         defaultValue: { summary: "true" },
+      },
+    },
+    spacing: {
+      control: "boolean",
+      description: "Add bottom spacing for multiple paragraphs",
+      table: {
+        defaultValue: { summary: "false" },
       },
     },
     children: {
@@ -65,28 +96,22 @@ const shortText = "A brief statement about design principles.";
  */
 export const Basic: Story = {
   args: {
-    size: "md",
-    align: "left",
-    maxWidth: true,
-    children: mediumText,
-  },
-};
-
-/**
- * Default paragraph with medium size and left alignment.
- */
-export const Default: Story = {
-  args: {
-    children: mediumText,
-  },
-};
-
-/**
- * Small paragraph for secondary or supporting content.
- */
-export const Small: Story = {
-  args: {
     size: "sm",
+    align: "left",
+    color: "default",
+    weight: "normal",
+    maxWidth: true,
+    spacing: false,
+    children: mediumText,
+  },
+};
+
+/**
+ * Medium size for standard body text.
+ */
+export const Medium: Story = {
+  args: {
+    size: "md",
     children: mediumText,
   },
 };
@@ -97,6 +122,16 @@ export const Small: Story = {
 export const Large: Story = {
   args: {
     size: "lg",
+    children: longText,
+  },
+};
+
+/**
+ * Extra large paragraph for hero or prominent text.
+ */
+export const ExtraLarge: Story = {
+  args: {
+    size: "xl",
     children: longText,
   },
 };
@@ -124,6 +159,56 @@ export const RightAligned: Story = {
 };
 
 /**
+ * Justified paragraph for formal layouts.
+ */
+export const Justified: Story = {
+  args: {
+    align: "justify",
+    children: longText,
+  },
+};
+
+/**
+ * Muted color for secondary text.
+ */
+export const MutedColor: Story = {
+  args: {
+    color: "muted",
+    children: mediumText,
+  },
+};
+
+/**
+ * Dimmed color for tertiary text.
+ */
+export const DimmedColor: Story = {
+  args: {
+    color: "dimmed",
+    children: mediumText,
+  },
+};
+
+/**
+ * Medium weight for emphasis.
+ */
+export const MediumWeight: Story = {
+  args: {
+    weight: "medium",
+    children: mediumText,
+  },
+};
+
+/**
+ * Semibold weight for strong emphasis.
+ */
+export const SemiboldWeight: Story = {
+  args: {
+    weight: "semibold",
+    children: mediumText,
+  },
+};
+
+/**
  * Paragraph without max-width constraint, spans full container width.
  */
 export const FullWidth: Story = {
@@ -131,13 +216,26 @@ export const FullWidth: Story = {
     maxWidth: false,
     children: longText,
   },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Without the max-width constraint, the paragraph will span the full width of its container. This can be useful in narrow containers or specific layout requirements.",
-      },
-    },
+};
+
+/**
+ * Custom max-width for specific layouts.
+ */
+export const CustomMaxWidth: Story = {
+  args: {
+    maxWidth: "80ch",
+    children: longText,
+  },
+};
+
+/**
+ * Render as span element.
+ */
+export const AsSpan: Story = {
+  args: {
+    as: "span",
+    size: "sm",
+    children: "This renders as a <span> element.",
   },
 };
 
@@ -149,44 +247,68 @@ export const MultiParagraph: Story = {
     children: null,
   },
   render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-      <Paragraph size="lg">
+    <>
+      <Paragraph size="lg" spacing>
         Typography is fundamental to good design. It creates hierarchy,
         organizes information, and makes content accessible.
       </Paragraph>
-      <Paragraph>
+      <Paragraph spacing>
         The choice of typeface, size, spacing, and alignment all contribute to
         the overall reading experience. Proper typography enhances comprehension
         and keeps readers engaged.
       </Paragraph>
-      <Paragraph size="sm">
+      <Paragraph size="sm" color="muted">
         Small text is perfect for captions, footnotes, or supplementary
         information that supports the main content without overwhelming it.
       </Paragraph>
-    </div>
+    </>
   ),
 };
 
 /**
- * Paragraph with custom styling using className prop.
+ * Combined features showcase.
+ */
+export const CombinedFeatures: Story = {
+  args: {
+    children: null,
+  },
+  render: () => (
+    <>
+      <Paragraph size="xl" weight="semibold" spacing>
+        Large Bold Heading Paragraph
+      </Paragraph>
+      <Paragraph size="lg" color="muted" spacing>
+        Medium muted introduction text with optimal reading width.
+      </Paragraph>
+      <Paragraph align="justify" spacing>
+        {longText}
+      </Paragraph>
+      <Paragraph size="sm" color="dimmed" maxWidth="40ch">
+        Small dimmed footnote with narrow max-width for captions.
+      </Paragraph>
+    </>
+  ),
+};
+
+/**
+ * Custom styling with css prop.
+ * Note: Use token reference syntax {tokenName} for design tokens in css prop.
  */
 export const CustomStyled: Story = {
   args: {
-    children: "This paragraph has custom styling applied via className.",
-    className: "custom-paragraph",
-    style: {
-      color: "#E11D48",
-      fontStyle: "italic",
-      borderLeft: "4px solid #F43F5E",
-      paddingLeft: "1rem",
-    },
+    children:
+      "This paragraph uses the css prop for custom styling with token references.",
   },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "You can extend the component with custom styles using the className prop or inline styles for one-off cases.",
-      },
-    },
-  },
+  render: (args) => (
+    <Paragraph
+      {...args}
+      css={{
+        fontSize: "{fontSizes.base}", // Token reference syntax for Panda CSS
+        color: "#DC2626",
+        fontStyle: "italic",
+        borderLeft: "4px solid #F87171",
+        pl: "4",
+      }}
+    />
+  ),
 };

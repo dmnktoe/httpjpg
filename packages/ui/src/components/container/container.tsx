@@ -88,8 +88,8 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
         ref={ref}
         style={{
           width: "100%",
-          paddingLeft: "1rem",
-          paddingRight: "1rem",
+          paddingLeft: "16px", // token: spacing[16] (1rem)
+          paddingRight: "16px", // token: spacing[16] (1rem)
         }}
         {...props}
       >

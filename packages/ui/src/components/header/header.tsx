@@ -118,8 +118,9 @@ export const Header = ({
           color: "black",
           zIndex: 50,
           pointerEvents: "auto",
-          paddingTop: "1rem",
-          paddingBottom: "1rem",
+          paddingTop: "4", // token: spacing[16] (1rem)
+          paddingBottom: "4", // token: spacing[16] (1rem)
+          fontSize: "12px", // token: fontSizes.sm
         }}
       >
         <Container

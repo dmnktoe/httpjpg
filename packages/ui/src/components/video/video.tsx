@@ -230,7 +230,7 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
                     "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
                   p: "1rem",
                   fontFamily: "mono",
-                  fontSize: "0.75rem",
+                  fontSize: "sm",
                   opacity: 0.7,
                   color: "white",
                   boxSizing: "border-box",
@@ -246,7 +246,7 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
             <Box
               css={{
                 fontFamily: "mono",
-                fontSize: "0.75rem",
+                fontSize: "sm",
                 opacity: 0.7,
                 p: "0.5rem 0",
                 color: "currentColor",
@@ -305,7 +305,7 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
                     "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
                   p: "1rem",
                   fontFamily: "mono",
-                  fontSize: "0.75rem",
+                  fontSize: "sm",
                   opacity: 0.7,
                   color: "white",
                   boxSizing: "border-box",
@@ -321,7 +321,7 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
             <Box
               css={{
                 fontFamily: "mono",
-                fontSize: "0.75rem",
+                fontSize: "sm",
                 opacity: 0.7,
                 p: "0.5rem 0",
                 color: "currentColor",
@@ -388,7 +388,7 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
                   "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
                 p: "1rem",
                 fontFamily: "mono",
-                fontSize: "0.75rem",
+                fontSize: "sm",
                 opacity: 0.7,
                 color: "white",
                 boxSizing: "border-box",
@@ -404,7 +404,7 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
           <Box
             css={{
               fontFamily: "mono",
-              fontSize: "0.75rem",
+              fontSize: "sm",
               opacity: 0.7,
               p: "0.5rem 0",
               color: "currentColor",

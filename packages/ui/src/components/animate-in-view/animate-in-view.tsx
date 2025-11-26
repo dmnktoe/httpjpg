@@ -64,7 +64,11 @@ export const AnimateInView = ({
 }: AnimateInViewProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const isInView = useInView(ref, { once });
+  const isInView = useInView(ref, {
+    once,
+    margin: "0px 0px -100px 0px", // Trigger earlier to prevent jitter
+    amount: 0.3, // Require 30% visibility before triggering
+  });
 
   // Don't animate if animation is disabled
   if (animation === "none") {

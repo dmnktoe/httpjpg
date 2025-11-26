@@ -29,6 +29,15 @@ export const env = createEnv({
     SENTRY_ORG: z.string().optional(),
     SENTRY_PROJECT: z.string().optional(),
 
+    // Spotify
+    SPOTIFY_CLIENT_ID: z.string().min(1, "SPOTIFY_CLIENT_ID is required"),
+    SPOTIFY_CLIENT_SECRET: z
+      .string()
+      .min(1, "SPOTIFY_CLIENT_SECRET is required"),
+    SPOTIFY_REFRESH_TOKEN: z
+      .string()
+      .min(1, "SPOTIFY_REFRESH_TOKEN is required"),
+
     // Node.js
     NODE_ENV: z
       .enum(["development", "production", "test"])
@@ -71,6 +80,11 @@ export const env = createEnv({
     SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
     SENTRY_ORG: process.env.SENTRY_ORG,
     SENTRY_PROJECT: process.env.SENTRY_PROJECT,
+
+    // Server - Spotify
+    SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
+    SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
+    SPOTIFY_REFRESH_TOKEN: process.env.SPOTIFY_REFRESH_TOKEN,
 
     // Server - Node.js
     NODE_ENV: process.env.NODE_ENV,

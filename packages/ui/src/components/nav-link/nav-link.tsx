@@ -35,8 +35,9 @@ const navLinkRecipe = cva({
     px: "2px",
 
     /* Overflow handling */
-    overflow: "visible",
+    overflow: "hidden",
     textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
 
     /* Transitions */
     transition: "all 150ms ease-in-out",

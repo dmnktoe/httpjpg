@@ -148,7 +148,7 @@ export default defineConfig({
     // Body defaults using design tokens
     body: {
       fontFamily: "sans",
-      fontSize: "12px",
+      fontSize: "sm",
       color: "black",
     },
     // Media element defaults
@@ -177,6 +177,7 @@ export default defineConfig({
           accent: { value: typography.fontFamily.accent.join(", ") },
           mono: { value: typography.fontFamily.mono.join(", ") },
         },
+        fontSizes: toPandaTokens(typography.fontSize),
         fontWeights: toPandaTokens(typography.fontWeight),
         letterSpacings: toPandaTokens(typography.letterSpacing),
         lineHeights: toPandaTokens(typography.lineHeight),

@@ -67,9 +67,17 @@ export const MobileMenuContent = ({
             bg: "white",
             color: "black",
             m: { md: "6" },
-            border: "3px solid black",
+            border: "2px solid black",
             borderRadius: 0,
-            boxShadow: "8px 8px 0px 0px black",
+            position: "relative",
+            _before: {
+              content: '""',
+              position: "absolute",
+              inset: "-6px",
+              border: "1px dashed black",
+              opacity: 0.3,
+              pointerEvents: "none",
+            },
           }}
         >
           <Box
@@ -110,7 +118,7 @@ export const MobileMenuContent = ({
             <Box
               css={{
                 my: "3",
-                fontSize: "xs",
+                fontSize: "sm",
                 opacity: 0.6,
                 fontFamily: "mono",
               }}
@@ -138,7 +146,7 @@ export const MobileMenuContent = ({
                 </NavLink>
               ))
             ) : (
-              <Box css={{ fontSize: "xs", opacity: 0.4, ml: "2" }}>
+              <Box css={{ fontSize: "sm", opacity: 0.4, ml: "2" }}>
                 ∅ ɴᴏ ᴡᴏʀᴋ ʏᴇᴛ ⊹
               </Box>
             )}
@@ -146,7 +154,7 @@ export const MobileMenuContent = ({
             <Box
               css={{
                 my: "3",
-                fontSize: "xs",
+                fontSize: "sm",
                 opacity: 0.6,
                 fontFamily: "mono",
               }}
@@ -184,7 +192,7 @@ export const MobileMenuContent = ({
                 );
               })
             ) : (
-              <Box css={{ fontSize: "xs", opacity: 0.4, ml: "2" }}>
+              <Box css={{ fontSize: "sm", opacity: 0.4, ml: "2" }}>
                 ⊹ ᴛᴀᴋɪɴɢ ᴄʟɪᴇɴᴛꜱ ⊹
               </Box>
             )}

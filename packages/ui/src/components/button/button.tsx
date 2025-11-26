@@ -154,21 +154,21 @@ const buttonRecipe = cva({
     },
     size: {
       sm: {
-        fontSize: "0.8125rem",
+        fontSize: "sm", // token: fontSizes.sm (12px) - matches Paragraph sm
         paddingX: "4",
         paddingY: "2",
         minHeight: "9",
-        lineHeight: 1.25,
+        lineHeight: 1.5,
       },
       md: {
-        fontSize: "0.9375rem",
+        fontSize: "md", // token: fontSizes.md (14px) - matches Paragraph md
         paddingX: "7",
         paddingY: "3",
         minHeight: "11",
-        lineHeight: 1.375,
+        lineHeight: 1.5,
       },
       lg: {
-        fontSize: "1.0625rem",
+        fontSize: "lg", // token: fontSizes.lg (16px) - matches Paragraph lg
         paddingX: "9",
         paddingY: "4",
         minHeight: "14",

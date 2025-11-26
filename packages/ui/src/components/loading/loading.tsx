@@ -1,42 +1,42 @@
-import { Box, Headline } from "@httpjpg/ui";
-import { css } from "styled-system/css";
+"use client";
 
-const rainbowTextStyles = css({
-  background:
-    "linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)",
-  backgroundSize: "400% 400%",
-  animation: "rainbow 3s ease infinite",
-  backgroundClip: "text",
-  WebkitBackgroundClip: "text",
-  WebkitTextFillColor: "transparent",
-  fontWeight: "bold",
+import { useEffect, useState } from "react";
+import { token } from "styled-system/tokens";
 
-  "@keyframes rainbow": {
-    "0%": { backgroundPosition: "0% 50%" },
-    "50%": { backgroundPosition: "100% 50%" },
-    "100%": { backgroundPosition: "0% 50%" },
-  },
-} as any);
+const colors = [
+  "#ff0000",
+  "#ff7f00",
+  "#ffff00",
+  "#00ff00",
+  "#0000ff",
+  "#4b0082",
+  "#9400d3",
+];
 
 /**
  * Rainbow Loading Text Component
- * Animated gradient text for loading states
+ * Fast rainbow color animation for loading states
  */
 export function Loading() {
+  const [colorIndex, setColorIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setColorIndex((prev) => (prev + 1) % colors.length);
+    }, 100); // 100ms per color
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <Box
-      as="main"
-      css={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        minH: "100vh",
-        p: "4",
+    <span
+      style={{
+        fontSize: token("fontSizes.sm"), // token: fontSizes.sm (12px)
+        color: colors[colorIndex],
+        transition: "color 0.07s linear",
       }}
     >
-      <Headline level={1} className={rainbowTextStyles}>
-        Loading...
-      </Headline>
-    </Box>
+      Loading...
+    </span>
   );
 }

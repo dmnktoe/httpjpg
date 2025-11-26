@@ -1,5 +1,5 @@
 import type { NowPlayingProps } from "@httpjpg/now-playing";
-import { NowPlaying } from "@httpjpg/now-playing";
+import { NowPlaying, NowPlayingLoading } from "@httpjpg/now-playing";
 import { Box, Headline, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
@@ -44,32 +44,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const PageLayout = ({ children }: { children: React.ReactNode }) => (
-  <Box css={{ minH: "100vh", bg: "neutral.50", p: "8" }}>
-    <Box css={{ maxW: "4xl", mx: "auto" }}>
-      <Headline level={1} css={{ mb: "4" }}>
-        DRAG THE NOW PLAYING WIDGET
-      </Headline>
-      <Paragraph size="lg" css={{ mb: "8" }}>
-        Click and drag the floating widget anywhere on the screen. Notice the
-        smooth animations and marquee effect on long text.
-      </Paragraph>
-      <Box css={{ bg: "white", p: "8", borderRadius: "lg", shadow: "sm" }}>
-        <Paragraph css={{ mb: "4" }}>
-          This is some example content. The Now Playing widget floats above
-          everything and can be positioned wherever you want.
-        </Paragraph>
-        <Paragraph>
-          Try dragging it around and watch how it follows your cursor with a
-          subtle scale effect. The glassmorphism background creates depth while
-          keeping the album artwork crisp and clear.
-        </Paragraph>
-      </Box>
-    </Box>
-    {children}
-  </Box>
-);
-
 /**
  * Default Now Playing widget
  */
@@ -79,14 +53,8 @@ export const Default: Story = {
     artist: "The Weeknd",
     artwork: "https://picsum.photos/400/400?random=1",
     isPlaying: true,
-    initialPosition: { x: 20, y: 20 },
-    size: "md",
+    size: "sm",
   },
-  render: (args) => (
-    <PageLayout>
-      <NowPlaying {...args} />
-    </PageLayout>
-  ),
 };
 
 /**
@@ -98,14 +66,8 @@ export const LongTitle: Story = {
     artist: "Queen",
     artwork: "https://picsum.photos/400/400?random=2",
     isPlaying: true,
-    initialPosition: { x: 20, y: 20 },
-    size: "md",
+    size: "sm",
   },
-  render: (args: NowPlayingProps) => (
-    <PageLayout>
-      <NowPlaying {...args} />
-    </PageLayout>
-  ),
 };
 
 /**
@@ -117,14 +79,8 @@ export const LongArtist: Story = {
     artist: "Daft Punk feat. Romanthony & DJ Sneak",
     artwork: "https://picsum.photos/400/400?random=3",
     isPlaying: true,
-    initialPosition: { x: 20, y: 20 },
-    size: "md",
+    size: "sm",
   },
-  render: (args: NowPlayingProps) => (
-    <PageLayout>
-      <NowPlaying {...args} />
-    </PageLayout>
-  ),
 };
 
 /**
@@ -136,14 +92,8 @@ export const BothLong: Story = {
     artist: "Pink Floyd with the Royal Philharmonic Orchestra",
     artwork: "https://picsum.photos/400/400?random=4",
     isPlaying: true,
-    initialPosition: { x: 20, y: 20 },
-    size: "md",
+    size: "sm",
   },
-  render: (args: NowPlayingProps) => (
-    <PageLayout>
-      <NowPlaying {...args} />
-    </PageLayout>
-  ),
 };
 
 /**
@@ -155,93 +105,74 @@ export const Paused: Story = {
     artist: "M83",
     artwork: "https://picsum.photos/400/400?random=5",
     isPlaying: false,
-    initialPosition: { x: 20, y: 20 },
-    size: "md",
-  },
-  render: (args: NowPlayingProps) => (
-    <PageLayout>
-      <NowPlaying {...args} />
-    </PageLayout>
-  ),
-};
-
-/**
- * Small size variant
- */
-export const SmallSize: Story = {
-  args: {
-    title: "Levitating",
-    artist: "Dua Lipa",
-    artwork: "https://picsum.photos/400/400?random=6",
-    isPlaying: true,
-    initialPosition: { x: 20, y: 20 },
     size: "sm",
   },
-  render: (args: NowPlayingProps) => (
-    <PageLayout>
-      <NowPlaying {...args} />
-    </PageLayout>
-  ),
 };
 
 /**
- * Large size variant
+ * Loading state
+ * Shows a draggable loading widget with skeleton animation while fetching data
  */
-export const LargeSize: Story = {
-  args: {
-    title: "Starboy",
-    artist: "The Weeknd ft. Daft Punk",
-    artwork: "https://picsum.photos/400/400?random=7",
-    isPlaying: true,
-    initialPosition: { x: 20, y: 20 },
-    size: "lg",
-  },
-  render: (args: NowPlayingProps) => (
-    <PageLayout>
-      <NowPlaying {...args} />
-    </PageLayout>
-  ),
+export const Loading = {
+  render: () => <NowPlayingLoading />,
 };
 
 /**
- * Multiple widgets at once
+ * Nothing Playing
+ * Shows empty state when no track is playing
  */
-export const MultipleWidgets: Story = {
+export const NothingPlaying: Story = {
   args: {
-    title: "Multiple Widgets Demo",
-    artist: "Various Artists",
-    artwork: "https://picsum.photos/400/400?random=14",
-    isPlaying: true,
-    initialPosition: { x: 20, y: 20 },
-    size: "md",
+    title: "╱╱ Nothing playing ╱╱",
+    artist: "⋄ ⋄ ⋄",
+    artwork:
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23a3a3a3' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='40' text-anchor='middle' dy='.3em' fill='white'%3E♪%3C/text%3E%3C/svg%3E",
+    isPlaying: false,
+    vibrantColor: "rgba(163, 163, 163, 0.6)",
+    size: "sm",
   },
+};
+
+/**
+ * Error State
+ * Shows error badge when something goes wrong
+ */
+export const ErrorState = {
   render: () => (
-    <PageLayout>
+    <>
       <NowPlaying
-        title="Blinding Lights"
-        artist="The Weeknd"
-        artwork="https://picsum.photos/400/400?random=8"
-        isPlaying={true}
-        initialPosition={{ x: 20, y: 20 }}
-        size="sm"
+        title="Error Loading Track"
+        artist="Failed to fetch data"
+        artwork="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ef4444' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='50' text-anchor='middle' dy='.3em' fill='white'%3E⚠%3C/text%3E%3C/svg%3E"
+        isPlaying={false}
+        autoExtractColor={false}
+        vibrantColor="rgba(239, 68, 68, 0.9)"
+        textColor="white"
       />
-      <NowPlaying
-        title="Bohemian Rhapsody"
-        artist="Queen"
-        artwork="https://picsum.photos/400/400?random=9"
-        isPlaying={true}
-        initialPosition={{ x: 20, y: 100 }}
-        size="md"
-      />
-      <NowPlaying
-        title="One More Time"
-        artist="Daft Punk"
-        artwork="https://picsum.photos/400/400?random=10"
-        isPlaying={true}
-        initialPosition={{ x: 20, y: 190 }}
-        size="lg"
-      />
-    </PageLayout>
+      <div
+        style={{
+          position: "fixed",
+          top: 20,
+          left: "50%",
+          transform: "translateX(-50%)",
+          padding: "1rem 1.5rem",
+          background: "rgba(239, 68, 68, 0.95)",
+          color: "white",
+          fontFamily: "monospace",
+          fontSize: "13px",
+          fontWeight: 600,
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(239, 68, 68, 0.4)",
+          border: "2px solid rgba(255, 255, 255, 0.2)",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
+      >
+        <span style={{ fontSize: "18px" }}>⚠️</span>
+        <span>Failed to connect to Spotify API</span>
+      </div>
+    </>
   ),
 };
 
@@ -254,8 +185,7 @@ export const PortfolioContext: Story = {
     artist: "Lo-Fi Hip Hop Beats",
     artwork: "https://picsum.photos/400/400?random=11",
     isPlaying: true,
-    initialPosition: { x: 20, y: 20 },
-    size: "md",
+    size: "sm",
   },
   render: (args: NowPlayingProps) => (
     <Box css={{ minH: "100vh", bg: "black", color: "white", p: "8" }}>
@@ -311,12 +241,6 @@ export const Playground: Story = {
     artist: "Your Favorite Artist",
     artwork: "https://picsum.photos/400/400?random=13",
     isPlaying: true,
-    initialPosition: { x: 20, y: 20 },
-    size: "md",
+    size: "sm",
   },
-  render: (args: NowPlayingProps) => (
-    <PageLayout>
-      <NowPlaying {...args} />
-    </PageLayout>
-  ),
 };

@@ -1,12 +1,22 @@
-import { Box, Headline, Link, Paragraph } from "@httpjpg/ui";
+import { Box, Headline, Image, Link, Paragraph } from "@httpjpg/ui";
 import type { ComponentProps, ReactNode } from "react";
 import {
+  MARK_BOLD,
   MARK_CODE,
+  MARK_ITALIC,
   MARK_LINK,
+  MARK_STRIKE,
+  MARK_UNDERLINE,
+  NODE_BLOCKQUOTE,
+  NODE_BR,
   NODE_CODEBLOCK,
   NODE_HEADING,
+  NODE_HR,
   NODE_IMAGE,
+  NODE_LI,
+  NODE_OL,
   NODE_PARAGRAPH,
+  NODE_UL,
   render,
 } from "storyblok-rich-text-react-renderer";
 
@@ -18,6 +28,34 @@ export type ISbRichtext = {
   content?: ISbRichtext[];
   [key: string]: any;
 };
+
+/**
+ * Custom resolver for bold text
+ */
+function MarkBold(children: ReactNode) {
+  return <strong>{children}</strong>;
+}
+
+/**
+ * Custom resolver for italic text
+ */
+function MarkItalic(children: ReactNode) {
+  return <em>{children}</em>;
+}
+
+/**
+ * Custom resolver for strikethrough text
+ */
+function MarkStrike(children: ReactNode) {
+  return <s>{children}</s>;
+}
+
+/**
+ * Custom resolver for underlined text
+ */
+function MarkUnderline(children: ReactNode) {
+  return <u>{children}</u>;
+}
 
 /**
  * Custom resolver for links in rich text
@@ -81,25 +119,123 @@ function NodeParagraph(children: ReactNode) {
 }
 
 /**
- * Custom resolver for images
+ * Custom resolver for images - uses Image component from @httpjpg/ui
  */
 function NodeImage(_children: ReactNode, props: any) {
-  const { src, alt, title } = props;
+  const { src, alt, title, copyright } = props;
 
   return (
     <Box css={{ my: "6" }}>
-      <img
+      <Image
         src={src}
         alt={alt || ""}
         title={title}
-        style={{
-          maxWidth: "100%",
-          height: "auto",
-          borderRadius: "8px",
-        }}
+        copyright={copyright}
+        copyrightPosition="below"
+        aspectRatio="16/9"
+        objectFit="cover"
       />
     </Box>
   );
+}
+
+/**
+ * Custom resolver for unordered lists
+ */
+function NodeUL(children: ReactNode) {
+  return (
+    <Box
+      as="ul"
+      css={{
+        listStyleType: "disc",
+        pl: "6",
+        my: "4",
+        "& li": {
+          mb: "2",
+        },
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
+
+/**
+ * Custom resolver for ordered lists
+ */
+function NodeOL(children: ReactNode) {
+  return (
+    <Box
+      as="ol"
+      css={{
+        listStyleType: "decimal",
+        pl: "6",
+        my: "4",
+        "& li": {
+          mb: "2",
+        },
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
+
+/**
+ * Custom resolver for list items
+ */
+function NodeLI(children: ReactNode) {
+  return (
+    <Box as="li" css={{ fontSize: "sm", lineHeight: 1.75 }}>
+      {children}
+    </Box>
+  );
+}
+
+/**
+ * Custom resolver for blockquotes
+ */
+function NodeBlockquote(children: ReactNode) {
+  return (
+    <Box
+      as="blockquote"
+      css={{
+        borderLeft: "4px solid",
+        borderColor: "neutral.300",
+        pl: "4",
+        py: "2",
+        my: "6",
+        fontStyle: "italic",
+        color: "neutral.600",
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
+
+/**
+ * Custom resolver for horizontal rules
+ */
+function NodeHR() {
+  return (
+    <Box
+      as="hr"
+      css={{
+        border: "none",
+        borderTop: "1px solid",
+        borderColor: "neutral.200",
+        my: "8",
+      }}
+    />
+  );
+}
+
+/**
+ * Custom resolver for line breaks
+ */
+function NodeBR() {
+  return <br />;
 }
 
 /**
@@ -143,6 +279,10 @@ export function renderStoryblokRichText(data: ISbRichtext) {
 
   return render(data, {
     markResolvers: {
+      [MARK_BOLD]: MarkBold,
+      [MARK_ITALIC]: MarkItalic,
+      [MARK_STRIKE]: MarkStrike,
+      [MARK_UNDERLINE]: MarkUnderline,
       [MARK_LINK]: MarkLink,
       [MARK_CODE]: MarkCode,
     },
@@ -150,6 +290,12 @@ export function renderStoryblokRichText(data: ISbRichtext) {
       [NODE_HEADING]: NodeHeading,
       [NODE_PARAGRAPH]: NodeParagraph,
       [NODE_IMAGE]: NodeImage,
+      [NODE_UL]: NodeUL,
+      [NODE_OL]: NodeOL,
+      [NODE_LI]: NodeLI,
+      [NODE_BLOCKQUOTE]: NodeBlockquote,
+      [NODE_HR]: NodeHR,
+      [NODE_BR]: NodeBR,
       [NODE_CODEBLOCK]: NodeCodeblock,
     },
     defaultBlokResolver: DefaultBlokResolver,

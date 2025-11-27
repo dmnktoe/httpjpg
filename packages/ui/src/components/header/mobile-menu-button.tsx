@@ -25,37 +25,37 @@ export const MobileMenuButton = ({
         display: { base: "block", xl: "none" },
       }}
     >
-      <button
+      <Box
+        as="button"
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        style={{
+        css={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "transparent",
+          bg: "transparent",
           color: "black",
           border: "none",
-          padding: "0.5rem 0.75rem",
+          p: "2 3",
           cursor: "pointer",
           fontFamily: "Impact, Haettenschweiler, sans-serif",
-          fontSize: "0.65rem",
-          lineHeight: "none", // token: typography.lineHeight.none (1)
-          letterSpacing: "wider", // token: typography.letterSpacing.wider (0.05em)
+          fontSize: "xs",
+          lineHeight: "none",
+          letterSpacing: "wider",
           transition: "opacity 150ms ease-in-out",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.opacity = "0.5";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.opacity = "1";
+          _hover: { opacity: 0.5 },
         }}
         aria-label={isOpen ? "Close menu" : "Open menu"}
       >
-        <span style={{ marginBottom: "0.15rem" }}>╔═══╗</span>
-        <span style={{ marginBottom: "0.15rem" }}>║ ☰ ║</span>
-        <span>╚═══╝</span>
-      </button>
+        <Box as="span" css={{ mb: "0.15rem" }}>
+          ╔═══╗
+        </Box>
+        <Box as="span" css={{ mb: "0.15rem" }}>
+          ║ ☰ ║
+        </Box>
+        <Box as="span">╚═══╝</Box>
+      </Box>
     </Box>
   );
 };

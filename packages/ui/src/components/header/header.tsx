@@ -106,28 +106,24 @@ export const Header = ({
 
   return (
     <>
-      <header
+      <Box
         ref={headerRef}
-        style={{
+        as="header"
+        css={{
           position: "fixed",
           top: 0,
           left: 0,
           right: 0,
-          width: "100%",
-          background: "transparent",
+          w: "full",
+          bg: "transparent",
           color: "black",
           zIndex: 50,
           pointerEvents: "auto",
-          paddingTop: "4", // token: spacing[16] (1rem)
-          paddingBottom: "4", // token: spacing[16] (1rem)
-          fontSize: "12px", // token: fontSizes.sm
+          py: 4,
+          fontSize: "sm",
         }}
       >
-        <Container
-          size="2xl"
-          px={{ base: "4", md: "6", lg: "8" }}
-          center={center}
-        >
+        <Container size="2xl" px={{ base: 4, md: 6, lg: 8 }} center={center}>
           <Box
             css={{
               display: "flex",
@@ -159,15 +155,10 @@ export const Header = ({
         />
 
         {children}
-      </header>
+      </Box>
 
       {/* Spacer to prevent content overlap */}
-      <div
-        style={{
-          height: `${headerHeight}px`,
-        }}
-        aria-hidden="true"
-      />
+      <Box css={{ h: `${headerHeight}px` }} aria-hidden="true" />
     </>
   );
 };

@@ -27,14 +27,16 @@ export interface ContainerProps
   size?: keyof typeof sizeMap;
   /**
    * Horizontal padding (using Panda spacing tokens: 0-96)
+   * Supports responsive values: { base: "4", md: "6", lg: "8" }
    * @default "4"
    */
-  px?: string | number;
+  px?: string | number | Record<string, string | number>;
   /**
    * Vertical padding (using Panda spacing tokens: 0-96)
+   * Supports responsive values: { base: "4", md: "6" }
    * @default "0"
    */
-  py?: string | number;
+  py?: string | number | Record<string, string | number>;
   /**
    * Center the container
    * @default true
@@ -59,6 +61,11 @@ export interface ContainerProps
  *   <Headline>Content</Headline>
  * </Container>
  *
+ * // Responsive padding
+ * <Container size="2xl" px={{ base: "4", md: "6", lg: "8" }}>
+ *   Responsive content
+ * </Container>
+ *
  * // Fluid container without max-width
  * <Container size="fluid" px={8} py={4}>
  *   Full-width content
@@ -75,8 +82,8 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
     {
       children,
       size = "lg",
-      px = "4",
-      py = "0",
+      px = 4,
+      py = 0,
       center = true,
       css: cssProp,
       ...props
@@ -84,28 +91,20 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
     ref,
   ) => {
     return (
-      <div
+      <Box
         ref={ref}
-        style={{
-          width: "100%",
-          paddingLeft: "16px", // token: spacing[16] (1rem)
-          paddingRight: "16px", // token: spacing[16] (1rem)
+        css={{
+          w: "full",
+          maxW: sizeMap[size],
+          mx: center ? "auto" : "0",
+          px,
+          py,
+          ...cssProp,
         }}
         {...props}
       >
-        <Box
-          css={{
-            maxWidth: sizeMap[size],
-            marginLeft: center ? "auto" : "0",
-            marginRight: center ? "auto" : "0",
-            px,
-            py,
-            ...cssProp,
-          }}
-        >
-          {children}
-        </Box>
-      </div>
+        {children}
+      </Box>
     );
   },
 );

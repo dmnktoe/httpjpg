@@ -37,16 +37,16 @@ export const Navigation = ({
           }}
         >
           <Box css={{ maxW: "24rem", lineHeight: "snug" }}>
-            {" "}
-            {/* token: typography.lineHeight.snug (1.375 ~ 1.3) */}
-            <span style={{ fontWeight: "bold" }}>⇝HE𝓁𝓁O www.httpjpg.com</span>
+            <Box as="span" css={{ fontWeight: "bold" }}>
+              ⇝HE𝓁𝓁O www.httpjpg.com
+            </Box>
             <br />
-            <span style={{ textAlign: "justify" }}>
+            <Box as="span" css={{ textAlign: "justify" }}>
               ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ——— ꠹ρᧁ! :))))) hׁׅ֮υׁׅhׁׅ֮υׁׅυׁׅυׁׅ hׁׅ֮tׁׅtׁׅ℘ &&& ——— յׁׅ℘ᧁׁ!
               <br /> :))))) ⋈ꮺ⋈ꮺꮺꮺ ⋈ᯅᯅꔛ &&& ————P̵̨̢͇̗̘̩̖̜̰̠͛̓Ĺ̴͙̝͎̼̌̒̓̌̀͊̎̔̍̉͛̋̔͝E̴̢̢̛̦̣̩̝̩͙̲̠͊̒̀̊̾̕͝Ä̴́̔̈̌͌̑ͅS̶̡̰̪̭͕̤̥͈̗̞͛́̍̾̑͜͜͝Ę̶̧̛̲̠̱̜̖͈̋͒̑̋̇̐̈́̓͊̃̈̕ ̸̡̛̣̹̠͖͊̓̊̒̅͗̏͌͑̐̚̕Y̴͎̘̙͓͕̺͒̽̃͛̂̓̊̎̕̚̚Ǫ̴̛̼̻̌̊͊̉͆́͋̔̀͒Ü̷̟̤͙̲̙̹̘̝̟̯̤̍̌͋͗̋͛̓̋̎̓̔̀͌S̸̩͔̿̒̔͗͘̚͝E̵̡̺̘̞̗͉̬̞̟͖͍̍͌ ̷̪͔̲̯̫̉̅͒̀͑͂̍͠T̷̯̹́͒̅̉̊̅̈́͠H̷͎̣̦̘̪͆͐́͝E̷͈͕̗̬̠̹͔͚̪͔̐
               <br />
               ̵͖̥̥͔͚̭̗̪̠͕̭̞̤̯̞̀̌͋́͒͠͝N̸̼̪̘̘̩͍̗͓̼͇̪͓̲̈̓̆͑͛̽͆̽͘A̵̧̪̱͖̦̭̎̓̓̾̌̓̎͠͝ͅW̴̙͑̑̈̕̚͝I̷̥͓̱̺̟͔̳̔̒̇͜͜Ģ̶͔̠̣̯̱̼̀̈́À̷͚̋̏͘͘͠T̴̨̰̭̓͋̔̀̓͊̄͐̇̇͒͐̓́͝I̵̡͓̖̼̒̈́͌̇͜Z̶̬̦̟̥͇͍̦͉̰̬͗͗̌̍̿̔̽͗̑̇͋̑͠͝͝O̴͖͇͈̾ͅN̷̝̺̺͎̻̟̞͓̳̠̎͜ͅ—— ୨୧ꔛꗃ! :))))) ꃅꀎꃅꀎꀎꀎ ꃅ꓄꓄ꉣ&nbsp;
-            </span>
+            </Box>
             {nav.map((item) => (
               <span key={item.name}>
                 🎀 ⋆ﾟ･
@@ -65,18 +65,18 @@ export const Navigation = ({
                 &ensp;ꗃ&ensp;
               </span>
             ))}
-            <span style={{ textAlign: "justify" }}>
+            <Box as="span" css={{ textAlign: "justify" }}>
               —————— ꀭꉣꁅ! :))))) ･ﾟ⋆
               <br /> 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷)))) 🎀 ⋆ﾟ･
-            </span>
+            </Box>
           </Box>
         </Box>
 
         {/* Middle Column - Recent Personal Work */}
         <Box css={{ w: { xl: "33.333333%" }, lineHeight: "snug" }}>
-          {" "}
-          {/* token: typography.lineHeight.snug (1.375 ~ 1.3) */}
-          <span style={{ fontWeight: "bold" }}>⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S</span>
+          <Box as="span" css={{ fontWeight: "bold" }}>
+            ⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S
+          </Box>
           <br />
           {personalWork.length > 0 ? (
             <>
@@ -108,20 +108,20 @@ export const Navigation = ({
               </Link>
             </>
           ) : (
-            <span style={{ fontSize: "0.75rem", opacity: 0.5 }}>
+            <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
               ╭─────────────────╮
               <br />│ ∅ coming soon ∅ │
               <br />
               ╰─────────────────╯
-            </span>
+            </Box>
           )}
         </Box>
 
         {/* Right Column - Recent Client Work */}
         <Box css={{ w: { xl: "33.333333%" }, lineHeight: "snug" }}>
-          {" "}
-          {/* token: typography.lineHeight.snug (1.375 ~ 1.3) */}
-          <span style={{ fontWeight: "bold" }}>⇝ᵣₑcꫀₙₜ 𝒞𝓁LI€NT</span>
+          <Box as="span" css={{ fontWeight: "bold" }}>
+            ⇝ᵣₑcꫀₙₜ 𝒞𝓁LI€NT
+          </Box>
           <br />
           {clientWork.length > 0 ? (
             clientWork.map((work) => {
@@ -151,12 +151,12 @@ export const Navigation = ({
               );
             })
           ) : (
-            <span style={{ fontSize: "0.75rem", opacity: 0.5 }}>
+            <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
               ╭───────────────────╮
               <br />│ ⊹ taking clients ⊹ │
               <br />
               ╰───────────────────╯
-            </span>
+            </Box>
           )}
         </Box>
       </Box>

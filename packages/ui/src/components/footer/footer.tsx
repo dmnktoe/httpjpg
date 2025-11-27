@@ -5,6 +5,7 @@ import { forwardRef } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 import { Link } from "../link/link";
+import { VStack } from "../stack/stack";
 
 export interface FooterProps {
   /**
@@ -67,13 +68,12 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                 backgroundPosition: "center",
               }
             : {}),
-          paddingTop: "256px", // token: spacing[256] (16rem)
-          paddingBottom: "256px", // token: spacing[256] (16rem)
         }}
         css={{
+          py: 64,
           borderTop: "1px solid black",
           textAlign: "center",
-          w: "100%",
+          w: "full",
           ...cssProp,
         }}
         {...props}
@@ -82,7 +82,9 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
           {children ? (
             children
           ) : (
-            <Box
+            <VStack
+              gap="2"
+              align="center"
               css={{
                 filter: "drop-shadow(0 35px 35px rgba(0,0,0,0.25))",
               }}
@@ -90,15 +92,14 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
               {showDefaultLinks && (
                 <>
                   <Link href="/legal">Legal</Link>
-                  <br />
                   <Link href="/privacy">Privacy</Link>
-                  <br />
                 </>
               )}
-              *ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚
-              <br />
-              {copyrightText || "༺yl33ly httpjpg icon.icon.iconn te3shay༻"}
-            </Box>
+              <Box as="span">*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚</Box>
+              <Box as="span">
+                {copyrightText || "༺yl33ly httpjpg icon.icon.iconn te3shay༻"}
+              </Box>
+            </VStack>
           )}
         </Box>
       </Box>

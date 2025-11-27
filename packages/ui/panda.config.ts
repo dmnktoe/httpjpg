@@ -82,6 +82,8 @@ export default defineConfig({
           paddingBottom: spacingValues,
           paddingLeft: spacingValues,
           paddingRight: spacingValues,
+          paddingBlock: spacingValues,
+          paddingInline: spacingValues,
 
           // Grid component columns prop (auto-generated 1-12 + auto-fit)
           gridTemplateColumns: [
@@ -132,11 +134,9 @@ export default defineConfig({
   // Global CSS for base styles
   // Applied automatically when Panda CSS is initialized
   globalCss: {
-    // Universal box-sizing reset
+    // Universal box-sizing reset (but don't reset padding/margin globally)
     "*, *::before, *::after": {
       boxSizing: "border-box",
-      margin: 0,
-      padding: 0,
     },
     // Root HTML improvements
     html: {
@@ -203,8 +203,11 @@ export default defineConfig({
   jsxFramework: "react",
 
   // Production optimizations
-  minify: true, // Minify generated CSS for smaller bundle sizes
-  hash: true, // Hash class names for better long-term caching and avoid conflicts
+  minify: process.env.NODE_ENV === "production", // Minify CSS only in production
+  hash: process.env.NODE_ENV === "production", // Hash class names only in production for better debugging in dev
+
+  // Logging level for build-time debugging
+  logLevel: process.env.NODE_ENV === "development" ? "debug" : "info",
 
   // Strict mode for better type safety
   // Catches common mistakes at build time

@@ -7,8 +7,6 @@
 *::before,
 *::after {
 	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
 }
 
 html {
@@ -24,7 +22,16 @@ body {
 	background: #ffffff;
 	color: #000000;
 	margin: 0;
+}
+
+/* Reset for specific elements that need margin/padding removed */
+h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote, dl, dd {
+	margin: 0;
 	padding: 0;
+}
+
+ul, ol {
+	list-style: none;
 }
 
 /* Focus styles */

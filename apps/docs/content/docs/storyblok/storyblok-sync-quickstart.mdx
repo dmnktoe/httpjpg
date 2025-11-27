@@ -15,19 +15,25 @@ STORYBLOK_MANAGEMENT_TOKEN=your-personal-access-token
 STORYBLOK_SPACE_ID=your-space-id
 ```
 
-2. **Sync datasources** (design tokens):
+2. **Sync component groups** (folders):
+
+```bash
+pnpm --filter @httpjpg/storyblok-sync sync:groups
+```
+
+3. **Sync datasources** (design tokens):
 
 ```bash
 pnpm --filter @httpjpg/storyblok-sync sync:datasources
 ```
 
-3. **Sync components** (schemas):
+4. **Sync components** (schemas):
 
 ```bash
 pnpm --filter @httpjpg/storyblok-sync sync:components
 ```
 
-4. **Or sync everything**:
+5. **Or sync everything** (runs all in correct order):
 
 ```bash
 pnpm --filter @httpjpg/storyblok-sync sync:all
@@ -56,21 +62,34 @@ pnpm --filter @httpjpg/storyblok-sync sync:all
 - `animation-duration` - Fast, Normal, Slow
 - `animation-easing` - Linear, Ease, Ease In/Out
 
+### Component Groups (3 folders)
+
+Organize components in the Block Library:
+- 📁 **Layout** - Section, Container, Grid
+- 📁 **Content** - Headline, Paragraph
+- 📁 **Media** - Image, Video, Slideshow
+
 ### Components (8 total)
 
-**Layout:**
+**Layout** (📁):
 - `section` - Semantic section wrapper with responsive spacing
 - `container` - Content container with width options
 - `grid` - Responsive grid layout
 
-**Typography:**
+**Content** (📁):
 - `headline` - H1-H3 headings with styling options
 - `paragraph` - Body text with styling options
 
-**Media:**
+**Media** (📁):
 - `image` - Responsive images with aspect ratio
 - `video` - Video player (Asset/YouTube/Vimeo)
 - `slideshow` - Image carousel
+
+Each component includes:
+- ✅ Custom icon and color
+- ✅ Field descriptions and tooltips
+- ✅ Datasource integration for token-based values
+- ✅ Component whitelists for nested blocks
 
 ## Using in Storyblok
 

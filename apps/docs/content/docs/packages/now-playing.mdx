@@ -1,0 +1,261 @@
+---
+title: "@httpjpg/now-playing"
+description: Real-time Spotify "Now Playing" widget with color extraction
+---
+
+# @httpjpg/now-playing
+
+Real-time Spotify integration showing currently playing track with album art and color extraction.
+
+## Installation
+
+```bash
+pnpm add @httpjpg/now-playing
+```
+
+## Setup
+
+### 1. Create Spotify App
+
+1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+2. Create new app
+3. Add redirect URI: `http://localhost:3000/api/callback`
+4. Note your Client ID and Client Secret
+
+### 2. Get Refresh Token
+
+Run the token script:
+
+```bash
+cd packages/now-playing
+node scripts/get-spotify-token.cjs
+```
+
+Follow the instructions to authorize and get your refresh token.
+
+### 3. Configure Environment
+
+```bash title=".env.local"
+SPOTIFY_CLIENT_ID=your-client-id
+SPOTIFY_CLIENT_SECRET=your-client-secret
+SPOTIFY_REFRESH_TOKEN=your-refresh-token
+```
+
+## Usage
+
+### Basic Component
+
+```tsx
+import { NowPlaying } from '@httpjpg/now-playing';
+
+export default function Sidebar() {
+  return <NowPlaying />;
+}
+```
+
+### With Custom Styling
+
+```tsx
+import { NowPlaying } from '@httpjpg/now-playing';
+
+<NowPlaying
+  className="my-custom-class"
+  showArtist={true}
+  showAlbum={true}
+/>
+```
+
+## Hook Usage
+
+### useNowPlaying
+
+Access the Spotify data directly:
+
+```tsx
+import { useNowPlaying } from '@httpjpg/now-playing';
+
+export function CustomPlayer() {
+  const { data, isLoading, error } = useNowPlaying();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading track</div>;
+  if (!data?.isPlaying) return <div>Not playing</div>;
+
+  return (
+    <div>
+      <img src={data.albumImageUrl} alt={data.album} />
+      <h3>{data.title}</h3>
+      <p>{data.artist}</p>
+    </div>
+  );
+}
+```
+
+## Data Structure
+
+```typescript
+interface NowPlayingData {
+  isPlaying: boolean;
+  title: string;
+  artist: string;
+  album: string;
+  albumImageUrl: string;
+  songUrl: string;
+  dominantColor?: string; // Extracted from album art
+}
+```
+
+## Features
+
+### 🎨 Color Extraction
+
+Automatically extracts dominant color from album artwork:
+
+```tsx
+const { data } = useNowPlaying();
+
+// Use extracted color for backgrounds
+<div style={{ backgroundColor: data?.dominantColor }}>
+```
+
+### 🔄 Real-time Updates
+
+Data refreshes automatically every 30 seconds.
+
+### ⚡ Loading States
+
+Built-in loading component:
+
+```tsx
+import { NowPlayingLoading } from '@httpjpg/now-playing';
+
+{isLoading && <NowPlayingLoading />}
+```
+
+### 🎵 Playback Status
+
+Shows whether music is currently playing:
+
+```tsx
+{data?.isPlaying ? (
+  <span>Now Playing</span>
+) : (
+  <span>Not Playing</span>
+)}
+```
+
+## API Endpoint
+
+The package includes a Next.js API route:
+
+```typescript
+// app/api/now-playing/route.ts
+import { GET } from '@httpjpg/now-playing/api';
+
+export { GET };
+```
+
+**Response:**
+
+```json
+{
+  "isPlaying": true,
+  "title": "Song Title",
+  "artist": "Artist Name",
+  "album": "Album Name",
+  "albumImageUrl": "https://...",
+  "songUrl": "https://open.spotify.com/track/...",
+  "dominantColor": "#1DB954"
+}
+```
+
+## Spotify API Functions
+
+### getNowPlaying()
+
+```typescript
+import { getNowPlaying } from '@httpjpg/now-playing/spotify-api';
+
+const data = await getNowPlaying();
+```
+
+### getAccessToken()
+
+```typescript
+import { getAccessToken } from '@httpjpg/now-playing/spotify-api';
+
+const token = await getAccessToken();
+```
+
+## Color Extraction
+
+### extractDominantColor()
+
+```typescript
+import { extractDominantColor } from '@httpjpg/now-playing/extract-color';
+
+const color = await extractDominantColor(imageUrl);
+// Returns: "#1DB954"
+```
+
+Uses canvas API to extract the most prominent color from album artwork.
+
+## Styling Example
+
+```tsx
+import { useNowPlaying } from '@httpjpg/now-playing';
+import { css } from '@httpjpg/ui/styled-system/css';
+
+export function StyledPlayer() {
+  const { data } = useNowPlaying();
+
+  if (!data?.isPlaying) return null;
+
+  return (
+    <div className={css({
+      background: `linear-gradient(to right, ${data.dominantColor}, transparent)`,
+      padding: '4',
+      borderRadius: 'lg',
+    })}>
+      <img
+        src={data.albumImageUrl}
+        alt={data.album}
+        className={css({ width: '16', height: '16', borderRadius: 'md' })}
+      />
+      <div>
+        <h4>{data.title}</h4>
+        <p>{data.artist}</p>
+      </div>
+    </div>
+  );
+}
+```
+
+## Troubleshooting
+
+### Token Expired
+
+If you get 401 errors, refresh your token:
+
+```bash
+node packages/now-playing/scripts/get-spotify-token.cjs
+```
+
+### CORS Errors
+
+Ensure your Spotify app has correct redirect URIs configured.
+
+### No Data
+
+Check that:
+1. Spotify is actively playing
+2. Environment variables are set correctly
+3. Refresh token is valid
+
+## Best Practices
+
+1. **Cache API responses** to reduce Spotify API calls
+2. **Handle offline states** gracefully
+3. **Use loading states** for better UX
+4. **Extract colors sparingly** (it's computationally expensive)
+5. **Respect rate limits** (use 30s polling interval)

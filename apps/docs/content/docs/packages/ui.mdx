@@ -1,0 +1,84 @@
+---
+title: "@httpjpg/ui"
+description: React component library built with Panda CSS
+---
+
+# @httpjpg/ui
+
+A production-ready React component library built with **Panda CSS** providing 30+ components for layouts, typography, media, and interactions.
+
+## Installation
+
+```bash
+pnpm add @httpjpg/ui
+```
+
+## Components
+
+### Layout
+- **Section** - Semantic section wrapper with spacing
+- **Container** - Content container with width options
+- **Grid** - Responsive grid layout
+- **Stack** - Vertical/horizontal stack with spacing
+- **Center** - Center content
+- **Box** - Flexible box primitive
+
+### Typography
+- **Headline** - H1-H3 headings
+- **Paragraph** - Body text
+
+### Media
+- **Image** - Responsive images with aspect ratio
+- **Video** - Video player
+- **Slideshow** - Image carousel
+
+### Navigation
+- **Link** - Next.js Link wrapper
+- **NavLink** - Navigation link with active state
+- **Header** - Site header
+- **Footer** - Site footer
+
+### Interactive
+- **Button** - Primary/secondary buttons
+- **IconButton** - Icon-only button
+- **CustomCursor** - Custom cursor effects
+
+## Usage
+
+```tsx
+import { Section, Container, Headline, Button } from '@httpjpg/ui';
+
+export function Hero() {
+  return (
+    <Section py="16" bgColor="neutral.50">
+      <Container width="container">
+        <Headline as="h1" size="xl">
+          Welcome
+        </Headline>
+        <Button variant="primary">Get Started</Button>
+      </Container>
+    </Section>
+  );
+}
+```
+
+## Styling
+
+Components use Panda CSS with design tokens:
+
+```tsx
+<Section
+  py={{ base: "8", md: "12", lg: "16" }}
+  bgColor="primary.500"
+/>
+```
+
+## Storybook
+
+View all components interactively:
+
+```bash
+pnpm --filter storybook dev
+```
+
+Open http://localhost:6006

@@ -1,0 +1,14 @@
+{
+  "title": "Packages",
+  "pages": [
+    "overview",
+    "ui",
+    "tokens",
+    "storyblok-ui",
+    "storyblok-api",
+    "storyblok-utils",
+    "storyblok-richtext",
+    "now-playing",
+    "env"
+  ]
+}

@@ -34,13 +34,28 @@ STORYBLOK_SPACE_ID=your-space-id
 
 ## Usage
 
-### Sync Design Tokens to Datasources
+### 1. Sync Component Groups (Folders)
+
+**Run this first** to create folders in the Block Library:
+
+```bash
+pnpm --filter @httpjpg/storyblok-sync sync:groups
+```
+
+This creates the following folders:
+
+- 📁 **Layout** - Section, Container, Grid components
+- 📁 **Content** - Headline, Paragraph components
+- 📁 **Media** - Image, Video, Slideshow components
+
+### 2. Sync Design Tokens to Datasources
 
 ```bash
 pnpm --filter @httpjpg/storyblok-sync sync:datasources
 ```
 
-This creates/updates the following datasources:
+This creates/updates 11 datasources:
+
 - `spacing-options` - Padding/margin values (None, XS, Small, Medium, Large, XL, 2XL, 3XL, 4XL)
 - `width-options` - Container widths (Full Width, Container, Narrow)
 - `grid-columns` - Grid columns (1-6, Auto Fit)
@@ -53,16 +68,26 @@ This creates/updates the following datasources:
 - `animation-duration` - Animation timings (Fast, Normal, Slow)
 - `animation-easing` - Easing functions (Linear, Ease, Ease In/Out)
 
-### Sync Component Schemas
+### 3. Sync Component Schemas
 
 ```bash
 pnpm --filter @httpjpg/storyblok-sync sync:components
 ```
 
-This creates/updates the following components:
-- **Layout**: `section`, `container`, `grid`
-- **Typography**: `headline`, `paragraph`
-- **Media**: `image`, `video`, `slideshow`
+This creates/updates 8 components with full schema definitions:
+
+- **Layout** (📁): `section`, `container`, `grid`
+- **Content** (📁): `headline`, `paragraph`
+- **Media** (📁): `image`, `video`, `slideshow`
+
+Each component includes:
+
+- ✅ Component group (folder) assignment
+- ✅ Custom icon and color
+- ✅ Field descriptions and tooltips
+- ✅ Datasource integration for token-based values
+- ✅ Component whitelists for nested blocks
+- ✅ Position ordering (pos property)
 
 ### Sync Everything
 
@@ -70,11 +95,15 @@ This creates/updates the following components:
 pnpm --filter @httpjpg/storyblok-sync sync:all
 ```
 
+Runs all three sync scripts in the correct order:
+
+1. Component Groups → 2. Datasources → 3. Components
+
 ## Architecture
 
 ### File Structure
 
-```
+```plaintext
 packages/storyblok-sync/
 ├── src/
 │   ├── api.ts          # Storyblok API utilities
@@ -89,12 +118,14 @@ packages/storyblok-sync/
 ### How It Works
 
 #### Datasource Sync
+
 1. Reads design tokens from code
 2. Generates datasource entries with human-friendly labels
 3. Creates or updates datasources via Management API
 4. Removes deprecated entries
 
 #### Component Sync
+
 1. Defines component schemas based on TypeScript interfaces
 2. Maps TypeScript types to Storyblok field types:
    - `string` → `text` or `textarea`
@@ -102,6 +133,7 @@ packages/storyblok-sync/
    - `number` → `number`
    - `SbBlokData[]` → `bloks` (nested components)
    - Asset types → `asset` with filetypes
+
 3. Creates or updates components via Management API
 
 ### Mapping System
@@ -143,7 +175,7 @@ function generateMyDatasource(): {
 }
 ```
 
-2. Add to sync array:
+1. Add to sync array:
 
 ```typescript
 const datasources = [
@@ -174,7 +206,7 @@ function getSbMyComponent(): StoryblokComponent {
 }
 ```
 
-2. Add to sync array:
+1. Add to sync array:
 
 ```typescript
 const components = [
@@ -187,7 +219,7 @@ const components = [
 
 ### Missing Environment Variables
 
-```
+```plaintext
 ❌ Missing STORYBLOK_MANAGEMENT_TOKEN environment variable
 ```
 
@@ -195,7 +227,7 @@ const components = [
 
 ### API Errors
 
-```
+```plaintext
 Storyblok API error (401): Unauthorized
 ```
 

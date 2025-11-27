@@ -1,0 +1,8 @@
+{
+  "title": "Storyblok",
+  "pages": [
+    "storyblok-sync-quickstart",
+    "storyblok-datasources",
+    "storyblok-datasources-examples"
+  ]
+}

@@ -1,54 +1,88 @@
 ---
-title: Documentation
-description: Comprehensive documentation for the httpjpg monorepo
+title: Introduction
+description: Welcome to the httpjpg monorepo documentation
 ---
 
-Welcome to the httpjpg documentation! This monorepo contains packages for Storyblok CMS integration with automated synchronization and design token management.
+import { Card, Cards } from 'fumadocs-ui/components/card';
 
-## 📚 Documentation
+# httpjpg Monorepo
+
+A modern, type-safe web development monorepo built with **Turborepo**, **Next.js 16**, **Panda CSS**, and **Storyblok CMS**.
+
+## What's Inside
+
+This monorepo contains a complete portfolio suite with reusable packages, a headless CMS integration, and comprehensive design system.
 
 <Cards>
   <Card
-    title="Storyblok Sync Quick Start"
-    href="/docs/storyblok-sync-quickstart"
-    description="Get started with automatic synchronization of design tokens and components to Storyblok"
+    title="Getting Started"
+    description="Installation, setup, and quick start guide"
+    href="/docs/getting-started/installation"
   />
   <Card
-    title="Storyblok Datasources"
-    href="/docs/storyblok-datasources"
-    description="Understand how design tokens are synchronized to Storyblok datasources"
+    title="Packages"
+    description="Reusable libraries: UI, Tokens, Storyblok utilities"
+    href="/docs/packages/overview"
   />
   <Card
-    title="Datasource Examples"
-    href="/docs/storyblok-datasources-examples"
-    description="Complete examples for all available datasources and their usage"
+    title="Applications"
+    description="Web app, Storybook, and documentation site"
+    href="/docs/apps/overview"
+  />
+  <Card
+    title="Storyblok Integration"
+    description="CMS integration, sync, and components"
+    href="/docs/storyblok/storyblok-sync-quickstart"
   />
 </Cards>
 
-## 🚀 Quick Start
+## Architecture
 
-Get started in 3 steps:
+```plaintext
+httpjpg/
+├── apps/
+│   ├── web/          # Next.js portfolio website
+│   ├── storybook/    # Component library showcase
+│   └── docs/         # This documentation site
+├── packages/
+│   ├── ui/           # React component library (Panda CSS)
+│   ├── tokens/       # Design tokens (spacing, colors, typography)
+│   ├── storyblok-ui/ # Storyblok component implementations
+│   ├── storyblok-sync/ # Automated CMS synchronization
+│   ├── storyblok-api/ # Storyblok API client
+│   ├── now-playing/  # Spotify integration
+│   └── env/          # Type-safe environment variables
+```
 
-1. **Setup Environment Variables**
-   ```bash
-   STORYBLOK_MANAGEMENT_TOKEN=your-token
-   STORYBLOK_SPACE_ID=your-space-id
-   ```
+## Key Features
 
-2. **Sync Everything**
-   ```bash
-   pnpm --filter @httpjpg/storyblok-sync sync:all
-   ```
+### 🎨 Design System
+- **Panda CSS** - Zero-runtime CSS-in-JS with design tokens
+- **Design Tokens** - Consistent spacing, colors, typography
+- **Component Library** - 30+ reusable React components
+- **Storybook** - Interactive component documentation
 
-3. **Start Developing**
-   ```bash
-   pnpm dev
-   ```
+### 🚀 Modern Stack
+- **Next.js 16** - App Router with Turbopack
+- **TypeScript** - Full type safety across the monorepo
+- **Turborepo** - Fast, incremental builds
+- **pnpm** - Efficient package management
 
-## 📦 Packages
+### 📝 Headless CMS
+- **Storyblok** - Visual editing with live preview
+- **Automated Sync** - Design tokens → CMS datasources
+- **Type-safe Components** - TypeScript → Storyblok schemas
+- **Real-time Preview** - Live editing in Visual Editor
 
-- **@httpjpg/storyblok-sync** - Automated sync of tokens and components
-- **@httpjpg/storyblok-ui** - Storyblok component implementations
-- **@httpjpg/tokens** - Design token definitions
-- **@httpjpg/ui** - Base UI component library
-- **@httpjpg/env** - Environment variable validation
+## Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| Framework | Next.js 16, React 19 |
+| Styling | Panda CSS, CSS-in-JS |
+| CMS | Storyblok |
+| Build | Turborepo, Turbopack |
+| Language | TypeScript 5.9 |
+| Package Manager | pnpm 9.x |
+| Linting | Biome |
+| Documentation | Fumadocs |

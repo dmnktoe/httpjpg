@@ -35,6 +35,32 @@ async function getComponent(name: string): Promise<{ id: number } | null> {
 }
 
 /**
+ * Get all component groups (folders)
+ */
+async function getComponentGroups(): Promise<
+  Array<{ id: number; name: string; uuid: string }>
+> {
+  try {
+    const response = await storyblokRequest<{
+      component_groups: Array<{ id: number; name: string; uuid: string }>;
+    }>("/component_groups");
+    return response.component_groups || [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Find component group UUID by name
+ */
+async function getComponentGroupUuid(
+  name: string,
+): Promise<string | undefined> {
+  const groups = await getComponentGroups();
+  return groups.find((g) => g.name === name)?.uuid;
+}
+
+/**
  * Create or update a component
  */
 async function createOrUpdateComponent(
@@ -69,82 +95,104 @@ async function createOrUpdateComponent(
  * Based on TypeScript interfaces from src/components/
  */
 
-function getSbSectionComponent(): StoryblokComponent {
+async function getSbSectionComponent(): Promise<StoryblokComponent> {
+  const layoutGroupUuid = await getComponentGroupUuid("Layout");
+
   return {
     name: "section",
     display_name: "Section",
     is_root: false,
     is_nestable: true,
+    component_group_uuid: layoutGroupUuid,
+    icon: "block-section",
+    color: "#4a5568",
     schema: {
       content: {
         type: "bloks",
         display_name: "Content",
+        description: "Add nested components like Container, Grid, etc.",
         required: true,
         restrict_components: true,
-        component_whitelist: [],
+        component_whitelist: ["container", "grid", "headline", "paragraph"],
+        pos: 0,
       },
       bgColor: {
         type: "option",
         display_name: "Background Color",
+        description: "Choose a background color from the design tokens",
         source: "internal",
         datasource_slug: "background-color-options",
+        pos: 1,
       },
       paddingTop: {
         type: "option",
         display_name: "Padding Top",
+        description: "Spacing above content (mobile)",
         source: "internal",
         datasource_slug: "spacing-options",
+        pos: 2,
       },
       paddingBottom: {
         type: "option",
         display_name: "Padding Bottom",
+        description: "Spacing below content (mobile)",
         source: "internal",
         datasource_slug: "spacing-options",
+        pos: 3,
       },
       paddingLeft: {
         type: "option",
         display_name: "Padding Left",
         source: "internal",
         datasource_slug: "spacing-options",
+        pos: 4,
       },
       paddingRight: {
         type: "option",
         display_name: "Padding Right",
         source: "internal",
         datasource_slug: "spacing-options",
+        pos: 5,
       },
       marginTop: {
         type: "option",
         display_name: "Margin Top",
         source: "internal",
         datasource_slug: "spacing-options",
+        pos: 6,
       },
       marginBottom: {
         type: "option",
         display_name: "Margin Bottom",
         source: "internal",
         datasource_slug: "spacing-options",
+        pos: 7,
       },
       width: {
         type: "option",
         display_name: "Width",
+        description: "Container or full-width layout",
         default_value: "container",
         options: [
           { name: "Container", value: "container" },
           { name: "Full Width", value: "full" },
         ],
+        pos: 8,
       },
       paddingTopMd: {
         type: "option",
         display_name: "Padding Top (Tablet)",
+        description: "Override padding for tablet screens",
         source: "internal",
         datasource_slug: "spacing-options",
+        pos: 9,
       },
       paddingBottomMd: {
         type: "option",
         display_name: "Padding Bottom (Tablet)",
         source: "internal",
         datasource_slug: "spacing-options",
+        pos: 10,
       },
       paddingLeftMd: {
         type: "option",
@@ -186,12 +234,17 @@ function getSbSectionComponent(): StoryblokComponent {
   };
 }
 
-function getSbContainerComponent(): StoryblokComponent {
+async function getSbContainerComponent(): Promise<StoryblokComponent> {
+  const layoutGroupUuid = await getComponentGroupUuid("Layout");
+
   return {
     name: "container",
     display_name: "Container",
     is_root: false,
     is_nestable: true,
+    component_group_uuid: layoutGroupUuid,
+    icon: "block-container",
+    color: "#4a5568",
     schema: {
       body: {
         type: "bloks",
@@ -286,12 +339,17 @@ function getSbContainerComponent(): StoryblokComponent {
   };
 }
 
-function getSbGridComponent(): StoryblokComponent {
+async function getSbGridComponent(): Promise<StoryblokComponent> {
+  const layoutGroupUuid = await getComponentGroupUuid("Layout");
+
   return {
     name: "grid",
     display_name: "Grid",
     is_root: false,
     is_nestable: true,
+    component_group_uuid: layoutGroupUuid,
+    icon: "block-grid",
+    color: "#4a5568",
     schema: {
       items: {
         type: "bloks",
@@ -360,12 +418,17 @@ function getSbGridComponent(): StoryblokComponent {
   };
 }
 
-function getSbHeadlineComponent(): StoryblokComponent {
+async function getSbHeadlineComponent(): Promise<StoryblokComponent> {
+  const contentGroupUuid = await getComponentGroupUuid("Content");
+
   return {
     name: "headline",
     display_name: "Headline",
     is_root: false,
     is_nestable: true,
+    component_group_uuid: contentGroupUuid,
+    icon: "block-heading-2",
+    color: "#2d3748",
     schema: {
       text: {
         type: "text",
@@ -438,12 +501,17 @@ function getSbHeadlineComponent(): StoryblokComponent {
   };
 }
 
-function getSbParagraphComponent(): StoryblokComponent {
+async function getSbParagraphComponent(): Promise<StoryblokComponent> {
+  const contentGroupUuid = await getComponentGroupUuid("Content");
+
   return {
     name: "paragraph",
     display_name: "Paragraph",
     is_root: false,
     is_nestable: true,
+    component_group_uuid: contentGroupUuid,
+    icon: "block-paragraph",
+    color: "#2d3748",
     schema: {
       text: {
         type: "textarea",
@@ -506,12 +574,17 @@ function getSbParagraphComponent(): StoryblokComponent {
   };
 }
 
-function getSbImageComponent(): StoryblokComponent {
+async function getSbImageComponent(): Promise<StoryblokComponent> {
+  const mediaGroupUuid = await getComponentGroupUuid("Media");
+
   return {
     name: "image",
     display_name: "Image",
     is_root: false,
     is_nestable: true,
+    component_group_uuid: mediaGroupUuid,
+    icon: "block-image",
+    color: "#38b2ac",
     schema: {
       image: {
         type: "asset",
@@ -568,12 +641,17 @@ function getSbImageComponent(): StoryblokComponent {
   };
 }
 
-function getSbVideoComponent(): StoryblokComponent {
+async function getSbVideoComponent(): Promise<StoryblokComponent> {
+  const mediaGroupUuid = await getComponentGroupUuid("Media");
+
   return {
     name: "video",
     display_name: "Video",
     is_root: false,
     is_nestable: true,
+    component_group_uuid: mediaGroupUuid,
+    icon: "block-video",
+    color: "#38b2ac",
     schema: {
       videoAsset: {
         type: "asset",
@@ -666,12 +744,17 @@ function getSbVideoComponent(): StoryblokComponent {
   };
 }
 
-function getSbSlideshowComponent(): StoryblokComponent {
+async function getSbSlideshowComponent(): Promise<StoryblokComponent> {
+  const mediaGroupUuid = await getComponentGroupUuid("Media");
+
   return {
     name: "slideshow",
     display_name: "Slideshow",
     is_root: false,
     is_nestable: true,
+    component_group_uuid: mediaGroupUuid,
+    icon: "block-slideshow",
+    color: "#38b2ac",
     schema: {
       images: {
         type: "multiasset",
@@ -721,22 +804,23 @@ async function syncComponents(): Promise<void> {
 
   validateEnv();
 
-  const components = [
-    getSbSectionComponent(),
-    getSbContainerComponent(),
-    getSbGridComponent(),
-    getSbHeadlineComponent(),
-    getSbParagraphComponent(),
-    getSbImageComponent(),
-    getSbVideoComponent(),
-    getSbSlideshowComponent(),
+  const componentGetters = [
+    getSbSectionComponent,
+    getSbContainerComponent,
+    getSbGridComponent,
+    getSbHeadlineComponent,
+    getSbParagraphComponent,
+    getSbImageComponent,
+    getSbVideoComponent,
+    getSbSlideshowComponent,
   ];
 
-  for (const component of components) {
+  for (const getComponent of componentGetters) {
     try {
+      const component = await getComponent();
       await createOrUpdateComponent(component);
     } catch (error) {
-      console.error(`❌ Failed to sync ${component.name}:`, error);
+      console.error("❌ Failed to sync component:", error);
     }
   }
 

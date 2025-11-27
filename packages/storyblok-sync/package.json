@@ -6,12 +6,14 @@
   "description": "Sync design tokens and component schemas to Storyblok via Management API",
   "bin": {
     "storyblok-sync-datasources": "./scripts/sync-datasources.ts",
-    "storyblok-sync-components": "./scripts/sync-components.ts"
+    "storyblok-sync-components": "./scripts/sync-components.ts",
+    "storyblok-sync-groups": "./scripts/sync-component-groups.ts"
   },
   "scripts": {
+    "sync:groups": "tsx scripts/sync-component-groups.ts",
     "sync:datasources": "tsx scripts/sync-datasources.ts",
     "sync:components": "tsx scripts/sync-components.ts",
-    "sync:all": "pnpm sync:datasources && pnpm sync:components",
+    "sync:all": "pnpm sync:groups && pnpm sync:datasources && pnpm sync:components",
     "lint": "biome check .",
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit"

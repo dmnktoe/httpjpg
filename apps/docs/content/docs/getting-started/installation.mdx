@@ -1,0 +1,180 @@
+---
+title: Installation
+description: Set up your development environment for the httpjpg monorepo
+---
+
+# Installation
+
+Get started with the httpjpg monorepo in minutes.
+
+## Prerequisites
+
+Ensure you have the following installed:
+
+- **Node.js** ≥ 20.x (LTS recommended)
+- **pnpm** ≥ 9.x
+- **Git**
+
+### Install pnpm
+
+If you don't have pnpm installed:
+
+```bash
+npm install -g pnpm@latest
+```
+
+Or with Homebrew (macOS):
+
+```bash
+brew install pnpm
+```
+
+## Clone Repository
+
+```bash
+git clone https://github.com/dmnktoe/httpjpg.git
+cd httpjpg
+```
+
+## Install Dependencies
+
+Install all workspace dependencies:
+
+```bash
+pnpm install
+```
+
+This installs dependencies for all apps and packages in the monorepo.
+
+## Environment Setup
+
+### 1. Copy Environment Files
+
+```bash
+# Root environment
+cp .env.example .env.local
+
+# Web app environment
+cp apps/web/.env.example apps/web/.env.local
+```
+
+### 2. Configure Environment Variables
+
+Edit `.env.local` and `apps/web/.env.local` with your credentials:
+
+```bash title=".env.local"
+# Storyblok Management API
+STORYBLOK_MANAGEMENT_TOKEN=your-management-token
+STORYBLOK_SPACE_ID=your-space-id
+
+# Storyblok Content Delivery API
+STORYBLOK_PREVIEW_TOKEN=your-preview-token
+
+# Spotify Integration (optional)
+SPOTIFY_CLIENT_ID=your-client-id
+SPOTIFY_CLIENT_SECRET=your-client-secret
+SPOTIFY_REFRESH_TOKEN=your-refresh-token
+```
+
+<Callout type="info">
+  Get Storyblok tokens from [app.storyblok.com](https://app.storyblok.com)
+  - Management Token: Settings → Access Tokens
+  - Space ID: Settings → General
+  - Preview Token: Settings → Access Tokens
+</Callout>
+
+## Build Packages
+
+Build all packages before running apps:
+
+```bash
+pnpm build:packages
+```
+
+Or build specific packages:
+
+```bash
+# Build UI package
+pnpm --filter @httpjpg/ui build
+
+# Build tokens
+pnpm --filter @httpjpg/tokens build
+```
+
+## Development
+
+### Run All Apps
+
+Start all development servers:
+
+```bash
+pnpm dev
+```
+
+This starts:
+- **Web App**: http://localhost:3001
+- **Storybook**: http://localhost:6006
+- **Docs**: http://localhost:3000
+
+### Run Specific App
+
+```bash
+# Web app only
+pnpm --filter web dev
+
+# Storybook only
+pnpm --filter storybook dev
+
+# Docs only
+pnpm --filter docs dev
+```
+
+## Verify Installation
+
+Check that everything works:
+
+```bash
+# Run type checking
+pnpm typecheck
+
+# Run linting
+pnpm lint
+
+# Run all checks
+pnpm check
+```
+
+## Troubleshooting
+
+### Port Already in Use
+
+If a port is already in use, update `package.json` scripts:
+
+```json
+"dev": "next dev -p 3002"
+```
+
+### Module Not Found
+
+If you see module errors, rebuild packages:
+
+```bash
+pnpm clean
+pnpm install
+pnpm build:packages
+```
+
+### Type Errors
+
+Ensure TypeScript is using workspace versions:
+
+```bash
+pnpm install
+pnpm typecheck
+```
+
+## Next Steps
+
+- [Quick Start Guide](/docs/getting-started/quick-start) - Build your first page
+- [Project Structure](/docs/getting-started/project-structure) - Understand the monorepo layout
+- [Development Workflow](/docs/getting-started/development-workflow) - Learn best practices

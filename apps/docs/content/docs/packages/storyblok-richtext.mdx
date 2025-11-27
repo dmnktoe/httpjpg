@@ -1,0 +1,387 @@
+---
+title: "@httpjpg/storyblok-richtext"
+description: Render Storyblok rich text to React components
+---
+
+# @httpjpg/storyblok-richtext
+
+Render Storyblok rich text content to React components with custom styling.
+
+## Installation
+
+```bash
+pnpm add @httpjpg/storyblok-richtext
+```
+
+## Usage
+
+### Basic Usage
+
+```tsx
+import { RichText } from '@httpjpg/storyblok-richtext';
+
+export function Article({ content }) {
+  return <RichText content={content} />;
+}
+```
+
+### With Custom Styling
+
+```tsx
+import { RichText } from '@httpjpg/storyblok-richtext';
+import { css } from '@httpjpg/ui/styled-system/css';
+
+<RichText
+  content={content}
+  className={css({
+    fontSize: 'lg',
+    lineHeight: 'relaxed',
+    color: 'neutral.800',
+  })}
+/>
+```
+
+## Supported Elements
+
+### Headings
+
+```json
+{
+  "type": "heading",
+  "attrs": { "level": 2 },
+  "content": [{ "type": "text", "text": "Heading" }]
+}
+```
+
+Renders: `<h2>Heading</h2>`
+
+### Paragraphs
+
+```json
+{
+  "type": "paragraph",
+  "content": [{ "type": "text", "text": "Paragraph text" }]
+}
+```
+
+Renders: `<p>Paragraph text</p>`
+
+### Lists
+
+**Bullet List:**
+```json
+{
+  "type": "bullet_list",
+  "content": [
+    {
+      "type": "list_item",
+      "content": [{ "type": "paragraph", "content": [...] }]
+    }
+  ]
+}
+```
+
+Renders: `<ul><li>...</li></ul>`
+
+**Ordered List:**
+```json
+{
+  "type": "ordered_list",
+  "content": [...]
+}
+```
+
+Renders: `<ol><li>...</li></ol>`
+
+### Text Formatting
+
+**Bold:**
+```json
+{
+  "type": "text",
+  "text": "Bold text",
+  "marks": [{ "type": "bold" }]
+}
+```
+
+Renders: `<strong>Bold text</strong>`
+
+**Italic:**
+```json
+{
+  "marks": [{ "type": "italic" }]
+}
+```
+
+Renders: `<em>Italic text</em>`
+
+**Code:**
+```json
+{
+  "marks": [{ "type": "code" }]
+}
+```
+
+Renders: `<code>Code text</code>`
+
+### Links
+
+```json
+{
+  "type": "text",
+  "text": "Click here",
+  "marks": [
+    {
+      "type": "link",
+      "attrs": {
+        "href": "/page",
+        "target": "_blank",
+        "linktype": "url"
+      }
+    }
+  ]
+}
+```
+
+Renders: `<a href="/page" target="_blank">Click here</a>`
+
+### Blockquotes
+
+```json
+{
+  "type": "blockquote",
+  "content": [{ "type": "paragraph", "content": [...] }]
+}
+```
+
+Renders: `<blockquote><p>...</p></blockquote>`
+
+### Code Blocks
+
+```json
+{
+  "type": "code_block",
+  "attrs": { "class": "language-typescript" },
+  "content": [{ "type": "text", "text": "const x = 1;" }]
+}
+```
+
+Renders: `<pre><code class="language-typescript">const x = 1;</code></pre>`
+
+### Horizontal Rule
+
+```json
+{
+  "type": "horizontal_rule"
+}
+```
+
+Renders: `<hr />`
+
+### Images
+
+```json
+{
+  "type": "image",
+  "attrs": {
+    "src": "https://...",
+    "alt": "Description"
+  }
+}
+```
+
+Renders: `<img src="..." alt="Description" />`
+
+## Custom Resolvers
+
+Override default rendering:
+
+```tsx
+import { RichText } from '@httpjpg/storyblok-richtext';
+
+<RichText
+  content={content}
+  resolvers={{
+    // Custom heading renderer
+    heading: ({ level, children }) => {
+      const Tag = `h${level}` as const;
+      return (
+        <Tag className="custom-heading">
+          {children}
+        </Tag>
+      );
+    },
+
+    // Custom link renderer
+    link: ({ href, children, target }) => {
+      return (
+        <a
+          href={href}
+          target={target}
+          className="custom-link"
+        >
+          {children}
+        </a>
+      );
+    },
+
+    // Custom image renderer
+    image: ({ src, alt }) => {
+      return (
+        <figure>
+          <img src={src} alt={alt} loading="lazy" />
+          <figcaption>{alt}</figcaption>
+        </figure>
+      );
+    },
+  }}
+/>
+```
+
+## Styling Examples
+
+### With Panda CSS
+
+```tsx
+import { RichText } from '@httpjpg/storyblok-richtext';
+import { css } from '@httpjpg/ui/styled-system/css';
+
+<RichText
+  content={content}
+  className={css({
+    '& h2': {
+      fontSize: '3xl',
+      fontWeight: 'bold',
+      marginTop: '8',
+      marginBottom: '4',
+    },
+    '& p': {
+      fontSize: 'lg',
+      lineHeight: 'relaxed',
+      marginBottom: '4',
+    },
+    '& a': {
+      color: 'primary.500',
+      textDecoration: 'underline',
+      _hover: { color: 'primary.600' },
+    },
+    '& code': {
+      backgroundColor: 'neutral.100',
+      padding: '0.5',
+      borderRadius: 'sm',
+      fontFamily: 'mono',
+    },
+  })}
+/>
+```
+
+### Typography Styles
+
+```tsx
+import { RichText } from '@httpjpg/storyblok-richtext';
+
+<article className="prose prose-lg max-w-none">
+  <RichText content={content} />
+</article>
+```
+
+## Complex Example
+
+```tsx
+import { RichText } from '@httpjpg/storyblok-richtext';
+import { css } from '@httpjpg/ui/styled-system/css';
+import Link from 'next/link';
+import Image from 'next/image';
+
+export function BlogPost({ story }) {
+  return (
+    <article>
+      <h1>{story.content.title}</h1>
+
+      <RichText
+        content={story.content.body}
+        className={css({
+          fontSize: 'lg',
+          lineHeight: '1.75',
+          color: 'neutral.800',
+        })}
+        resolvers={{
+          heading: ({ level, children }) => {
+            const Tag = `h${level}` as const;
+            return (
+              <Tag
+                className={css({
+                  fontSize: level === 2 ? '2xl' : 'xl',
+                  fontWeight: 'bold',
+                  marginTop: '8',
+                  marginBottom: '4',
+                })}
+              >
+                {children}
+              </Tag>
+            );
+          },
+
+          link: ({ href, children }) => {
+            // Use Next.js Link for internal links
+            if (href?.startsWith('/')) {
+              return <Link href={href}>{children}</Link>;
+            }
+            return (
+              <a href={href} target="_blank" rel="noopener">
+                {children}
+              </a>
+            );
+          },
+
+          image: ({ src, alt }) => {
+            return (
+              <figure className={css({ marginY: '8' })}>
+                <Image
+                  src={src!}
+                  alt={alt || ''}
+                  width={800}
+                  height={600}
+                  className={css({ borderRadius: 'lg' })}
+                />
+                {alt && (
+                  <figcaption
+                    className={css({
+                      textAlign: 'center',
+                      fontSize: 'sm',
+                      color: 'neutral.600',
+                      marginTop: '2',
+                    })}
+                  >
+                    {alt}
+                  </figcaption>
+                )}
+              </figure>
+            );
+          },
+        }}
+      />
+    </article>
+  );
+}
+```
+
+## TypeScript Types
+
+```typescript
+import type {
+  RichTextContent,
+  RichTextResolvers,
+  RichTextProps,
+} from '@httpjpg/storyblok-richtext';
+```
+
+## Best Practices
+
+1. **Always provide resolvers** for consistent styling
+2. **Use Next.js Image** for image optimization
+3. **Handle internal links** with Next.js Link
+4. **Add loading="lazy"** to images
+5. **Style with Panda CSS** for consistency
+6. **Sanitize user content** if needed
+7. **Test with empty content** (null/undefined handling)

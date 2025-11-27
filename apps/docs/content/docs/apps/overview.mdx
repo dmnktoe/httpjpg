@@ -1,0 +1,106 @@
+---
+title: Applications Overview
+description: Overview of all applications in the httpjpg monorepo
+---
+
+# Applications Overview
+
+The monorepo contains 3 applications.
+
+## Web App
+
+**Next.js 16 portfolio website**
+
+Production-ready portfolio with Storyblok CMS, Spotify integration, and custom cursor.
+
+- **Framework**: Next.js 16 (App Router)
+- **Styling**: Panda CSS
+- **CMS**: Storyblok with live preview
+- **Features**: Now Playing, Custom Cursor, SEO
+- **Port**: 3001
+
+[→ Read documentation](/docs/apps/web)
+
+### Key Features
+- ✅ Storyblok Visual Editor integration
+- ✅ Real-time Spotify "Now Playing" widget
+- ✅ Custom cursor with trail effects
+- ✅ SEO optimized (sitemap, robots.txt)
+- ✅ Image optimization with Next.js
+
+## Storybook
+
+**Component library showcase**
+
+Interactive documentation for all UI components with live editing.
+
+- **Framework**: Storybook 8
+- **Components**: 30+ stories
+- **Features**: Dark mode, responsive preview
+- **Port**: 6006
+
+[→ Read documentation](/docs/apps/storybook)
+
+### Key Features
+- ✅ All @httpjpg/ui components
+- ✅ Design token documentation
+- ✅ Interactive controls
+- ✅ Responsive viewport testing
+
+## Docs
+
+**Documentation site (this site)**
+
+Comprehensive documentation built with Fumadocs.
+
+- **Framework**: Fumadocs + Next.js 16
+- **Content**: MDX files
+- **Features**: Search, dark mode, syntax highlighting
+- **Port**: 3000
+
+[→ Read documentation](/docs/apps/docs)
+
+### Key Features
+- ✅ Full-text search
+- ✅ Syntax highlighting
+- ✅ Dark mode support
+- ✅ Auto-generated navigation
+
+## Running Apps
+
+### All Apps
+
+```bash
+pnpm dev
+```
+
+### Individual Apps
+
+```bash
+# Web app
+pnpm --filter web dev
+
+# Storybook
+pnpm --filter storybook dev
+
+# Docs
+pnpm --filter docs dev
+```
+
+## Building
+
+```bash
+# Build all
+pnpm build
+
+# Build specific app
+pnpm --filter web build
+```
+
+## Deployment
+
+All apps are deployment-ready for Vercel:
+
+```bash
+vercel --prod
+```

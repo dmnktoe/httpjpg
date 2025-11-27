@@ -13,7 +13,7 @@ export interface StoryblokLinkObject {
   anchor?: string;
 }
 
-export interface StoryblokLinkProps extends Omit<LinkProps, "href"> {
+export interface SbLinkProps extends Omit<LinkProps, "href"> {
   /**
    * Storyblok link object
    */
@@ -46,14 +46,10 @@ const getStoryblokHref = (link: StoryblokLinkObject): string => {
 };
 
 /**
- * StoryblokLink Component
+ * SbLink Component
  * Wrapper around base Link component that consumes Storyblok link objects
  */
-export const StoryblokLink = ({
-  link,
-  children,
-  ...props
-}: StoryblokLinkProps) => {
+export const SbLink = ({ link, children, ...props }: SbLinkProps) => {
   const href = getStoryblokHref(link);
 
   return (
@@ -63,4 +59,4 @@ export const StoryblokLink = ({
   );
 };
 
-StoryblokLink.displayName = "StoryblokLink";
+SbLink.displayName = "SbLink";

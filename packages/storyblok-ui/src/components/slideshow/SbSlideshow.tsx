@@ -2,7 +2,7 @@ import { Slideshow } from "@httpjpg/ui";
 import { storyblokEditable } from "@storyblok/react/rsc";
 import { memo } from "react";
 import type { StoryblokImage } from "../../types";
-import { MediaWrapper } from "../media-wrapper";
+import { SbMediaWrapper } from "../media-wrapper";
 
 export interface SbSlideshowProps {
   blok: {
@@ -37,10 +37,10 @@ export const SbSlideshow = memo(function SbSlideshow({
   }
 
   return (
-    <MediaWrapper
+    <SbMediaWrapper
       spacingTop={spacingTop}
       spacingBottom={spacingBottom}
-      width={width}
+      width={boundingWidth}
       editable={storyblokEditable(blok)}
     >
       <Slideshow
@@ -51,6 +51,6 @@ export const SbSlideshow = memo(function SbSlideshow({
         aspectRatio={aspectRatio}
         autoplayDelay={speed * 1000}
       />
-    </MediaWrapper>
+    </SbMediaWrapper>
   );
 });

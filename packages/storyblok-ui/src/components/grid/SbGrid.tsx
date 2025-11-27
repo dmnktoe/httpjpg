@@ -4,13 +4,15 @@ import { type SbBlokData, storyblokEditable } from "@storyblok/react/rsc";
 import { memo } from "react";
 import { css } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
+import { mapSpacingToToken } from "../../lib/spacing-utils";
+import { mapGridColumnsToToken } from "../../lib/token-mapping";
 
 export interface SbGridProps {
   blok: {
     _uid: string;
     items?: SbBlokData[];
-    columns?: 1 | 2 | 3 | 4 | 6 | 12;
-    columnsMd?: 1 | 2 | 3 | 4 | 6 | 12;
+    columns?: string;
+    columnsMd?: string;
     gap?: string;
     boundingWidth?: "container" | "full";
     isList?: boolean;
@@ -28,9 +30,9 @@ export interface SbGridProps {
 export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
   const {
     items,
-    columns = 1,
+    columns,
     columnsMd,
-    gap = "4",
+    gap,
     isList = false,
     pt,
     pb,
@@ -44,13 +46,15 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
 
   const gridStyles: SystemStyleObject = {
     display: "grid",
-    gridTemplateColumns: columns.toString(),
-    md: columnsMd ? { gridTemplateColumns: columnsMd.toString() } : undefined,
-    gap,
-    pt: pt || undefined,
-    pb: pb || undefined,
-    mt: mt || undefined,
-    mb: mb || undefined,
+    gridTemplateColumns: mapGridColumnsToToken(columns),
+    md: columnsMd
+      ? { gridTemplateColumns: mapGridColumnsToToken(columnsMd) }
+      : undefined,
+    gap: mapSpacingToToken(gap),
+    pt: mapSpacingToToken(pt),
+    pb: mapSpacingToToken(pb),
+    mt: mapSpacingToToken(mt),
+    mb: mapSpacingToToken(mb),
   };
 
   if (isList) {

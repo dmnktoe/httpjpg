@@ -29,22 +29,6 @@ const nextConfig: NextConfig = {
   // React Strict Mode for better error detection
   reactStrictMode: true,
 
-  // Rewrites to make URLs cleaner (remove portfolio folder from URL)
-  async rewrites() {
-    const mainFolder = process.env.NEXT_PUBLIC_STORYBLOK_MAIN_FOLDER;
-
-    if (!mainFolder) {
-      return [];
-    }
-
-    return [
-      {
-        source: `/${mainFolder}/:path*`,
-        destination: "/:path*",
-      },
-    ];
-  },
-
   webpack: (config, { dev }) => {
     // Suppress all warnings in development
     if (dev) {

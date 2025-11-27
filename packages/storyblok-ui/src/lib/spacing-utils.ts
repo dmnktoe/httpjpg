@@ -4,6 +4,7 @@
  */
 
 import type { SystemStyleObject } from "styled-system/types";
+import { SPACING_SIZES } from "./constants";
 
 /**
  * Maps common spacing values to Panda CSS tokens
@@ -156,4 +157,38 @@ export function getLayoutStyles(
     ...getSpacingStyles(spacingTop, spacingBottom),
     ...getWidthStyles(width),
   };
+}
+
+/**
+ * Maps Storyblok datasource spacing values to Panda CSS tokens
+ * Handles both datasource labels (e.g., "Medium", "Large") and direct token values
+ *
+ * @example
+ * ```ts
+ * mapSpacingToToken("Medium") // "8"
+ * mapSpacingToToken("Large") // "16"
+ * mapSpacingToToken("16") // "16" (passthrough)
+ * ```
+ */
+export function mapSpacingToToken(value?: string | null): string {
+  if (!value) return SPACING_SIZES.medium;
+
+  // Direct numeric token value (e.g., "8", "16")
+  if (/^\d+$/.test(value)) return value;
+
+  // Named value from datasource (case-insensitive)
+  const normalized = value.toLowerCase().replace(/\s+/g, "");
+
+  // Map common datasource labels to tokens
+  const labelMap: Record<string, string> = {
+    none: SPACING_SIZES.none,
+    xs: SPACING_SIZES.xs,
+    small: SPACING_SIZES.small,
+    medium: SPACING_SIZES.medium,
+    large: SPACING_SIZES.large,
+    xl: SPACING_SIZES.xl,
+    "2xl": SPACING_SIZES["2xl"],
+  };
+
+  return labelMap[normalized] || SPACING_SIZES.medium;
 }

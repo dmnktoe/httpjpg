@@ -1,0 +1,54 @@
+---
+title: Documentation
+description: Comprehensive documentation for the httpjpg monorepo
+---
+
+Welcome to the httpjpg documentation! This monorepo contains packages for Storyblok CMS integration with automated synchronization and design token management.
+
+## 📚 Documentation
+
+<Cards>
+  <Card
+    title="Storyblok Sync Quick Start"
+    href="/docs/storyblok-sync-quickstart"
+    description="Get started with automatic synchronization of design tokens and components to Storyblok"
+  />
+  <Card
+    title="Storyblok Datasources"
+    href="/docs/storyblok-datasources"
+    description="Understand how design tokens are synchronized to Storyblok datasources"
+  />
+  <Card
+    title="Datasource Examples"
+    href="/docs/storyblok-datasources-examples"
+    description="Complete examples for all available datasources and their usage"
+  />
+</Cards>
+
+## 🚀 Quick Start
+
+Get started in 3 steps:
+
+1. **Setup Environment Variables**
+   ```bash
+   STORYBLOK_MANAGEMENT_TOKEN=your-token
+   STORYBLOK_SPACE_ID=your-space-id
+   ```
+
+2. **Sync Everything**
+   ```bash
+   pnpm --filter @httpjpg/storyblok-sync sync:all
+   ```
+
+3. **Start Developing**
+   ```bash
+   pnpm dev
+   ```
+
+## 📦 Packages
+
+- **@httpjpg/storyblok-sync** - Automated sync of tokens and components
+- **@httpjpg/storyblok-ui** - Storyblok component implementations
+- **@httpjpg/tokens** - Design token definitions
+- **@httpjpg/ui** - Base UI component library
+- **@httpjpg/env** - Environment variable validation

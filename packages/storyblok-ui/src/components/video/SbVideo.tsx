@@ -4,8 +4,8 @@ import { video as VideoComponent } from "@httpjpg/ui";
 import { storyblokEditable } from "@storyblok/react/rsc";
 import { memo } from "react";
 import type { StoryblokVideoAsset } from "../../types";
-import { Caption } from "../caption";
-import { MediaWrapper } from "../media-wrapper";
+import { SbCaption } from "../caption";
+import { SbMediaWrapper } from "../media-wrapper";
 
 export interface SbVideoProps {
   blok: {
@@ -70,10 +70,10 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
   }
 
   return (
-    <MediaWrapper
+    <SbMediaWrapper
       spacingTop={spacingTop}
       spacingBottom={spacingBottom}
-      width={width}
+      width={boundingWidth}
       editable={storyblokEditable(blok)}
     >
       <VideoComponent
@@ -92,7 +92,7 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
         }}
       />
 
-      {caption && <Caption data={caption} />}
-    </MediaWrapper>
+      {caption && <SbCaption data={caption} />}
+    </SbMediaWrapper>
   );
 });

@@ -1,0 +1,328 @@
+---
+title: Storyblok Datasources Examples
+description: Vollständige Beispiele für alle verfügbaren Datasources und deren Verwendung
+---
+
+## 📚 Alle verfügbaren Datasources
+
+Nach dem Sync (`pnpm --filter @httpjpg/tokens sync:storyblok`) haben Sie folgende Datasources:
+
+### 📐 Spacing & Layout
+- `spacing-options` - None, XS, Small, Medium, Large, XL, 2XL, 3XL, 4XL
+- `width-options` - Full Width, Container, Narrow
+- `grid-columns` - 1-6 Columns, Auto Fit
+- `aspect-ratio-options` - 16:9, 4:3, 1:1, 3:4, 9:16, 21:9
+
+### 🎨 Colors
+- `background-color-options` - White, Black, Light Gray, Gray, Dark Gray, Primary, Accent
+- `text-color-options` - Black, White, Gray, Dark Gray, Light Gray, Primary, Accent
+
+### ✏️ Typography
+- `font-family` - Sans (Body), Headline (Impact), Accent (Script), Mono (Code)
+- `font-size` - Small (12px), Medium (14px), Base (16px), Large (16px), XL (18px)
+- `font-weight` - Light, Normal, Medium, Semibold, Bold, Black
+
+### 🎬 Animations
+- `animation-duration` - Instant, Fast (150ms), Normal (300ms), Slow (500ms), Very Slow (1s)
+- `animation-easing` - Linear, Ease, Ease In, Ease Out, Ease In Out
+
+---
+
+## 🔧 Beispiel: Text Component in Storyblok
+
+### 1. Component Schema in Storyblok erstellen
+
+```json
+{
+  "name": "text",
+  "display_name": "Text",
+  "schema": {
+    "content": {
+      "type": "richtext",
+      "display_name": "Content"
+    },
+    "font_family": {
+      "type": "option",
+      "display_name": "Font Family",
+      "datasource": "font-family",
+      "default_value": "Sans (Body)"
+    },
+    "font_size": {
+      "type": "option",
+      "display_name": "Font Size",
+      "datasource": "font-size",
+      "default_value": "Base (16px)"
+    },
+    "font_weight": {
+      "type": "option",
+      "display_name": "Font Weight",
+      "datasource": "font-weight",
+      "default_value": "Normal (400)"
+    },
+    "text_color": {
+      "type": "option",
+      "display_name": "Text Color",
+      "datasource": "text-color-options",
+      "default_value": "Black"
+    },
+    "spacing_top": {
+      "type": "option",
+      "display_name": "Spacing Top",
+      "datasource": "spacing-options",
+      "default_value": "Medium"
+    },
+    "spacing_bottom": {
+      "type": "option",
+      "display_name": "Spacing Bottom",
+      "datasource": "spacing-options",
+      "default_value": "Medium"
+    }
+  }
+}
+```
+
+### 2. React Component implementieren
+
+```tsx
+// packages/storyblok-ui/src/components/text/SbText.tsx
+import { Paragraph } from "@httpjpg/ui";
+import { storyblokEditable } from "@storyblok/react/rsc";
+import { memo } from "react";
+import {
+  mapColorToToken,
+  mapFontFamilyToToken,
+  mapFontSizeToToken,
+  mapFontWeightToToken,
+  mapSpacingToToken,
+} from "../../lib/token-mapping";
+import { mapSpacingToToken as mapSpacing } from "../../lib/spacing-utils";
+
+export interface SbTextProps {
+  blok: {
+    _uid: string;
+    content: string;
+    font_family?: string;
+    font_size?: string;
+    font_weight?: string;
+    text_color?: string;
+    spacing_top?: string;
+    spacing_bottom?: string;
+  };
+}
+
+export const SbText = memo(function SbText({ blok }: SbTextProps) {
+  const {
+    content,
+    font_family,
+    font_size,
+    font_weight,
+    text_color,
+    spacing_top,
+    spacing_bottom,
+  } = blok;
+
+  return (
+    <Paragraph
+      {...storyblokEditable(blok)}
+      css={{
+        fontFamily: mapFontFamilyToToken(font_family),
+        fontSize: mapFontSizeToToken(font_size),
+        fontWeight: mapFontWeightToToken(font_weight),
+        color: mapColorToToken(text_color),
+        mt: mapSpacing(spacing_top),
+        mb: mapSpacing(spacing_bottom),
+      }}
+    >
+      {content}
+    </Paragraph>
+  );
+});
+```
+
+---
+
+## 🎨 Beispiel: Animated Box Component
+
+### 1. Schema in Storyblok
+
+```json
+{
+  "name": "animated_box",
+  "display_name": "Animated Box",
+  "schema": {
+    "content": {
+      "type": "bloks",
+      "display_name": "Content"
+    },
+    "bg_color": {
+      "type": "option",
+      "display_name": "Background Color",
+      "datasource": "background-color-options",
+      "default_value": "White"
+    },
+    "padding": {
+      "type": "option",
+      "display_name": "Padding",
+      "datasource": "spacing-options",
+      "default_value": "Medium"
+    },
+    "animation_duration": {
+      "type": "option",
+      "display_name": "Animation Duration",
+      "datasource": "animation-duration",
+      "default_value": "Normal (300ms)"
+    },
+    "animation_easing": {
+      "type": "option",
+      "display_name": "Animation Easing",
+      "datasource": "animation-easing",
+      "default_value": "Ease Out"
+    }
+  }
+}
+```
+
+### 2. React Component
+
+```tsx
+import { Box } from "@httpjpg/ui";
+import { DynamicRender } from "@httpjpg/storyblok-utils";
+import { storyblokEditable } from "@storyblok/react/rsc";
+import { memo } from "react";
+import {
+  mapAnimationDurationToToken,
+  mapAnimationEasingToToken,
+  mapColorToToken,
+} from "../../lib/token-mapping";
+import { mapSpacingToToken } from "../../lib/spacing-utils";
+
+export const SbAnimatedBox = memo(function SbAnimatedBox({ blok }) {
+  return (
+    <Box
+      {...storyblokEditable(blok)}
+      css={{
+        bg: mapColorToToken(blok.bg_color),
+        p: mapSpacingToToken(blok.padding),
+        transition: `all ${mapAnimationDurationToToken(blok.animation_duration)} ${mapAnimationEasingToToken(blok.animation_easing)}`,
+        _hover: {
+          transform: "scale(1.05)",
+        },
+      }}
+    >
+      <DynamicRender data={blok.content} />
+    </Box>
+  );
+});
+```
+
+---
+
+## 🖼️ Beispiel: Grid Component
+
+### 1. Schema
+
+```json
+{
+  "name": "grid",
+  "display_name": "Grid",
+  "schema": {
+    "items": {
+      "type": "bloks",
+      "display_name": "Grid Items"
+    },
+    "columns": {
+      "type": "option",
+      "display_name": "Columns",
+      "datasource": "grid-columns",
+      "default_value": "3 Columns"
+    },
+    "gap": {
+      "type": "option",
+      "display_name": "Gap",
+      "datasource": "spacing-options",
+      "default_value": "Medium"
+    },
+    "width": {
+      "type": "option",
+      "display_name": "Width",
+      "datasource": "width-options",
+      "default_value": "Container"
+    }
+  }
+}
+```
+
+### 2. Component
+
+```tsx
+import { Grid } from "@httpjpg/ui";
+import { DynamicRender } from "@httpjpg/storyblok-utils";
+import { storyblokEditable } from "@storyblok/react/rsc";
+import { mapGridColumnsToToken, mapWidthToToken } from "../../lib/token-mapping";
+import { mapSpacingToToken } from "../../lib/spacing-utils";
+
+export const SbGrid = memo(function SbGrid({ blok }) {
+  const columns = mapGridColumnsToToken(blok.columns);
+
+  return (
+    <Grid
+      {...storyblokEditable(blok)}
+      css={{
+        gridTemplateColumns:
+          columns === "auto-fit"
+            ? "repeat(auto-fit, minmax(250px, 1fr))"
+            : `repeat(${columns}, 1fr)`,
+        gap: mapSpacingToToken(blok.gap),
+        maxWidth: mapWidthToToken(blok.width) === "narrow"
+          ? "container.sm"
+          : mapWidthToToken(blok.width) === "container"
+          ? "container"
+          : "full",
+      }}
+    >
+      <DynamicRender data={blok.items} />
+    </Grid>
+  );
+});
+```
+
+---
+
+## 📋 Mapping-Übersicht
+
+### Was Redakteure sehen → Was im Code verwendet wird
+
+| Datasource | Redakteur wählt | Code erhält |
+|------------|----------------|-------------|
+| `spacing-options` | "Medium" | `"8"` → `2rem` |
+| `background-color-options` | "Primary" | `"primary.500"` → `#F43F5E` |
+| `font-family` | "Headline (Impact)" | `"headline"` |
+| `font-size` | "Large (16px)" | `"lg"` |
+| `font-weight` | "Bold (700)" | `"bold"` |
+| `grid-columns` | "3 Columns" | `"3"` |
+| `animation-duration` | "Fast (150ms)" | `"150ms"` |
+
+---
+
+## 🚀 Best Practices
+
+### ✅ DO:
+- Nutzen Sie Datasources für alle wiederverwendbaren Optionen
+- Verwenden Sie immer die Mapping-Funktionen im Code
+- Synchronisieren Sie nach Token-Änderungen
+- Geben Sie aussagekräftige Labels (z.B. "Medium (14px)")
+
+### ❌ DON'T:
+- Keine technischen Werte direkt in Storyblok eingeben
+- Keine Custom Options ohne Datasource verwenden
+- Keine Hex-Codes oder px-Werte in Dropdowns
+
+---
+
+## 🔄 Workflow-Zusammenfassung
+
+1. **Entwickler:** Token in `packages/tokens/src/` ändern
+2. **Entwickler:** `pnpm --filter @httpjpg/tokens sync:storyblok` ausführen
+3. **Redakteur:** Im Visual Editor aus Dropdowns wählen
+4. **Code:** Automatisches Mapping zu korrekten Token-Werten
+5. **Result:** Type-safe, konsistent, wartbar! 🎉

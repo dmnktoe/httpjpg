@@ -22,6 +22,7 @@ export const env = createEnv({
       .string()
       .min(1, "STORYBLOK_REVALIDATE_SECRET is required for webhooks"),
     STORYBLOK_MANAGEMENT_TOKEN: z.string().optional(),
+    STORYBLOK_SPACE_ID: z.string().optional(),
 
     // Sentry
     SENTRY_DSN: z.string().url().optional(),
@@ -58,7 +59,6 @@ export const env = createEnv({
     NEXT_PUBLIC_STORYBLOK_VERSION: z
       .enum(["draft", "published"])
       .default("published"),
-    NEXT_PUBLIC_STORYBLOK_MAIN_FOLDER: z.string().default("portfolio"),
 
     // Analytics
     NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().optional(),
@@ -74,6 +74,7 @@ export const env = createEnv({
     STORYBLOK_PREVIEW_SECRET: process.env.STORYBLOK_PREVIEW_SECRET,
     STORYBLOK_REVALIDATE_SECRET: process.env.STORYBLOK_REVALIDATE_SECRET,
     STORYBLOK_MANAGEMENT_TOKEN: process.env.STORYBLOK_MANAGEMENT_TOKEN,
+    STORYBLOK_SPACE_ID: process.env.STORYBLOK_SPACE_ID,
 
     // Server - Sentry
     SENTRY_DSN: process.env.SENTRY_DSN,
@@ -96,8 +97,6 @@ export const env = createEnv({
     NEXT_PUBLIC_STORYBLOK_API_URL: process.env.NEXT_PUBLIC_STORYBLOK_API_URL,
     NEXT_PUBLIC_STORYBLOK_TOKEN: process.env.NEXT_PUBLIC_STORYBLOK_TOKEN,
     NEXT_PUBLIC_STORYBLOK_VERSION: process.env.NEXT_PUBLIC_STORYBLOK_VERSION,
-    NEXT_PUBLIC_STORYBLOK_MAIN_FOLDER:
-      process.env.NEXT_PUBLIC_STORYBLOK_MAIN_FOLDER,
 
     // Client - Analytics
     NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,

@@ -4,8 +4,8 @@ import { Image } from "@httpjpg/ui";
 import { storyblokEditable } from "@storyblok/react/rsc";
 import { memo } from "react";
 import type { StoryblokImage } from "../../types";
-import { Caption } from "../caption";
-import { MediaWrapper } from "../media-wrapper";
+import { SbCaption } from "../caption";
+import { SbMediaWrapper } from "../media-wrapper";
 
 export interface SbImageProps {
   blok: {
@@ -51,7 +51,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
   );
 
   return (
-    <MediaWrapper
+    <SbMediaWrapper
       spacingTop={spacingTop}
       spacingBottom={spacingBottom}
       editable={storyblokEditable(blok)}
@@ -68,7 +68,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
         loading={isLoadingEager ? "eager" : "lazy"}
       />
 
-      {caption && <Caption data={caption} />}
-    </MediaWrapper>
+      {caption && <SbCaption data={caption} />}
+    </SbMediaWrapper>
   );
 });

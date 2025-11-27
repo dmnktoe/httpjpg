@@ -4,8 +4,8 @@
  */
 
 export {
-  Caption,
-  type CaptionProps,
+  SbCaption,
+  type SbCaptionProps,
 } from "./components/caption";
 export {
   SbContainer,
@@ -16,13 +16,22 @@ export {
   type SbGridProps,
 } from "./components/grid";
 export {
+  SbHeadline,
+  type SbHeadlineProps,
+} from "./components/headline";
+export {
   SbImage,
   type SbImageProps,
   type SbImageType,
 } from "./components/image";
 export {
-  MediaWrapper,
-  type MediaWrapperProps,
+  SbLink,
+  type SbLinkProps,
+  type StoryblokLinkObject,
+} from "./components/link";
+export {
+  SbMediaWrapper,
+  type SbMediaWrapperProps,
 } from "./components/media-wrapper";
 export {
   SbPage,
@@ -32,6 +41,10 @@ export {
   SbPageWork,
   type SbPageWorkProps,
 } from "./components/page-work";
+export {
+  SbParagraph,
+  type SbParagraphProps,
+} from "./components/paragraph";
 export {
   SbSection,
   type SbSectionProps,
@@ -47,15 +60,6 @@ export {
   SbSlideshow,
   type SbSlideshowProps,
 } from "./components/slideshow";
-export {
-  StoryblokLink,
-  type StoryblokLinkObject,
-  type StoryblokLinkProps,
-} from "./components/storyblok-link";
-export {
-  SbText,
-  type SbTextProps,
-} from "./components/text";
 export {
   SbVideo,
   type SbVideoAssetType,
@@ -88,7 +92,21 @@ export {
   getLayoutStyles,
   getSpacingStyles,
   getWidthStyles,
+  mapSpacingToToken,
 } from "./lib/spacing-utils";
+
+// Export token mapping functions
+export {
+  mapAnimationDurationToToken,
+  mapAnimationEasingToToken,
+  mapAspectRatioToToken,
+  mapColorToToken,
+  mapFontFamilyToToken,
+  mapFontSizeToToken,
+  mapFontWeightToToken,
+  mapGridColumnsToToken,
+  mapWidthToToken,
+} from "./lib/token-mapping";
 // Export shared types
 export type {
   BaseStoryblokProps,

@@ -1,2 +1,2 @@
-export type { CaptionProps } from "./Caption";
-export { Caption } from "./Caption";
+export type { SbCaptionProps } from "./SbCaption";
+export { SbCaption } from "./SbCaption";

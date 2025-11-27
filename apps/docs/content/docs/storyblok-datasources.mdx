@@ -1,0 +1,198 @@
+---
+title: Storyblok Datasources
+description: Automatische Synchronisation von Design Tokens zu Storyblok Datasources für den Visual Editor
+---
+
+## 🎯 Überblick
+
+Dieses System synchronisiert Ihre Design Tokens (`@httpjpg/tokens`) automatisch mit Storyblok Datasources, damit Redakteure im Visual Editor benutzerfreundliche Dropdowns statt technischer Werte sehen.
+
+## 📊 Erstelle Datasources
+
+### 1. Umgebungsvariablen einrichten
+
+Erstellen Sie eine `.env.local` Datei im Root:
+
+```bash
+# Storyblok Management API (für Datasource-Sync)
+STORYBLOK_MANAGEMENT_TOKEN=your_personal_access_token
+STORYBLOK_SPACE_ID=your_space_id
+```
+
+**Token erstellen:**
+1. Öffne [Storyblok Account Settings](https://app.storyblok.com/#!/me/account?tab=token)
+2. Erstelle einen **Personal Access Token**
+3. Kopiere den Token in `.env.local`
+
+**Space ID finden:**
+1. Öffne dein Storyblok Space
+2. Settings → General
+3. Die Space ID ist die Nummer in der URL: `https://app.storyblok.com/#!/me/spaces/[SPACE_ID]`
+
+### 2. Datasources synchronisieren
+
+```bash
+# Im Root des Projekts
+pnpm --filter @httpjpg/tokens sync:storyblok
+```
+
+Das Script erstellt/aktualisiert folgende Datasources:
+
+- **`spacing-options`** - None, XS, Small, Medium, Large, XL, 2XL, 3XL, 4XL
+- **`background-color-options`** - White, Black, Light Gray, Gray, Dark Gray, Primary, Accent
+- **`width-options`** - Full Width, Container, Narrow
+- **`aspect-ratio-options`** - 16:9, 4:3, 1:1, 3:4, 9:16, 21:9
+
+## 🔧 In Storyblok Component Schema verwenden
+
+### Beispiel: Section Component
+
+```json
+{
+  "name": "section",
+  "display_name": "Section",
+  "schema": {
+    "padding_top": {
+      "type": "option",
+      "display_name": "Padding Top",
+      "datasource": "spacing-options",
+      "default_value": "Medium"
+    },
+    "padding_bottom": {
+      "type": "option",
+      "display_name": "Padding Bottom",
+      "datasource": "spacing-options",
+      "default_value": "Medium"
+    },
+    "bg_color": {
+      "type": "option",
+      "display_name": "Background Color",
+      "datasource": "background-color-options",
+      "default_value": "White"
+    },
+    "width": {
+      "type": "option",
+      "display_name": "Width",
+      "datasource": "width-options",
+      "default_value": "Container"
+    }
+  }
+}
+```
+
+## 💻 Im Code verwenden
+
+Die Mapping-Funktionen konvertieren Datasource-Werte automatisch zu Tokens:
+
+```typescript
+import { mapSpacingToToken } from "@httpjpg/storyblok-ui/lib/spacing-utils";
+import { mapColorToToken } from "@httpjpg/storyblok-ui/lib/token-mapping";
+
+// Im Component
+<Section
+  css={{
+    pt: mapSpacingToToken(blok.paddingTop),  // "Medium" → "8"
+    bg: mapColorToToken(blok.bgColor),        // "White" → "white"
+  }}
+>
+  {children}
+</Section>
+```
+
+## 🔄 Workflow
+
+### Entwickler (Code):
+
+1. Design Tokens in `packages/tokens/src/` bearbeiten
+2. `pnpm --filter @httpjpg/tokens sync:storyblok` ausführen
+3. Datasources sind automatisch aktualisiert
+
+### Redakteure (Storyblok):
+
+1. Öffne Story im Visual Editor
+2. Wähle "Medium" aus Dropdown (nicht "8")
+3. Code verwendet automatisch `spacing[8]`
+
+## 📝 Mapping-Funktionen
+
+### `mapSpacingToToken(value)`
+
+Konvertiert Datasource-Labels zu Spacing-Tokens:
+
+| Datasource Value | Token | CSS Output |
+|-----------------|-------|------------|
+| None | 0 | 0 |
+| XS | 2 | 0.5rem |
+| Small | 4 | 1rem |
+| Medium | 8 | 2rem |
+| Large | 16 | 4rem |
+| XL | 24 | 6rem |
+| 2XL | 32 | 8rem |
+
+### `mapColorToToken(value)`
+
+Konvertiert Datasource-Labels zu Color-Tokens:
+
+| Datasource Value | Token | CSS Output |
+|-----------------|-------|------------|
+| White | white | #FFFFFF |
+| Black | black | #000000 |
+| Light Gray | neutral.50 | #FAFAFA |
+| Gray | neutral.100 | #F5F5F5 |
+| Primary | primary.500 | #F43F5E |
+
+### `mapWidthToToken(value)`
+
+Konvertiert Width-Labels:
+
+| Datasource Value | Token |
+|-----------------|-------|
+| Full Width | full |
+| Container | container |
+| Narrow | narrow |
+
+### `mapAspectRatioToToken(value)`
+
+Konvertiert Aspect Ratio-Labels:
+
+| Datasource Value | Token |
+|-----------------|-------|
+| 16:9 (Landscape) | 16/9 |
+| 4:3 (Standard) | 4/3 |
+| 1:1 (Square) | 1/1 |
+
+## ✨ Vorteile
+
+### Für Redakteure:
+- ✅ Benutzerfreundliche Labels ("Medium" statt "8")
+- ✅ Konsistente Design-Auswahl
+- ✅ Keine technischen Werte
+
+### Für Entwickler:
+- ✅ Single Source of Truth in Code
+- ✅ Type Safety bleibt erhalten
+- ✅ Automatische Synchronisation
+- ✅ Keine manuelle Pflege in Storyblok
+
+## 🔄 Updates
+
+Wenn Sie neue Spacing-Werte oder Farben hinzufügen:
+
+1. Tokens in `packages/tokens/src/` aktualisieren
+2. Sync-Script in `packages/tokens/scripts/sync-storyblok-datasources.ts` anpassen
+3. `pnpm --filter @httpjpg/tokens sync:storyblok` ausführen
+4. Component Schemas in Storyblok bleiben unverändert
+
+## 🚨 Wichtig
+
+- **Niemals** Token-Werte direkt in Storyblok eingeben
+- **Immer** Datasources verwenden für wiederverwendbare Werte
+- **Regelmäßig** synchronisieren nach Token-Änderungen
+- **.env.local** nicht committen (bereits in .gitignore)
+
+## 📚 Weitere Ressourcen
+
+- [Storyblok Datasources Docs](https://www.storyblok.com/docs/guide/in-depth/datasources)
+- [Management API Docs](https://www.storyblok.com/docs/api/management)
+- Design Tokens: `packages/tokens/src/`
+- Mapping Utils: `packages/storyblok-ui/src/lib/`

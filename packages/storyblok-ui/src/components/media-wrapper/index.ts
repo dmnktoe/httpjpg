@@ -1,2 +1,2 @@
-export type { MediaWrapperProps } from "./MediaWrapper";
-export { MediaWrapper } from "./MediaWrapper";
+export type { SbMediaWrapperProps } from "./SbMediaWrapper";
+export { SbMediaWrapper } from "./SbMediaWrapper";

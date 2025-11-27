@@ -90,6 +90,8 @@ async function createOrUpdateDatasource(
           },
         });
       }
+      // Wait 180ms between entry operations (max ~5.5 req/sec)
+      await new Promise((resolve) => setTimeout(resolve, 180));
     }
 
     // Delete entries that no longer exist in tokens
@@ -119,6 +121,8 @@ async function createOrUpdateDatasource(
           value: entry.value,
         },
       });
+      // Wait 180ms between entry operations (max ~5.5 req/sec)
+      await new Promise((resolve) => setTimeout(resolve, 180));
     }
   }
 }
@@ -397,6 +401,13 @@ function generateAnimationEasingDatasource(): {
 }
 
 /**
+ * Sleep helper to avoid rate limits
+ */
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
  * Main sync function
  */
 async function syncDatasources(): Promise<void> {
@@ -429,6 +440,8 @@ async function syncDatasources(): Promise<void> {
     try {
       await createOrUpdateDatasource(datasource, entries);
       console.log(`✅ ${datasource.name} synced (${entries.length} entries)\n`);
+      // Wait 200ms between datasources to avoid rate limiting (5 req/sec max)
+      await sleep(200);
     } catch (error) {
       console.error(`❌ Failed to sync ${datasource.name}:`, error);
       process.exit(1);

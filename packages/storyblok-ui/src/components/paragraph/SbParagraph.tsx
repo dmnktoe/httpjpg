@@ -25,7 +25,8 @@ export interface SbParagraphProps {
 
 /**
  * Storyblok Paragraph Component
- * Body text component with configurable styling
+ * Simple body text component with configurable styling
+ * For rich text with formatting, use SbRichText instead
  */
 export const SbParagraph = memo(function SbParagraph({
   blok,
@@ -42,15 +43,14 @@ export const SbParagraph = memo(function SbParagraph({
     paddingBottom,
   } = blok;
 
-  // Paragraph only supports sm, md, lg
+  // Paragraph only supports sm, md, lg, xl
   const mappedSize = mapFontSizeToToken(size);
-  const validSize =
-    mappedSize === "xs" || mappedSize === "xl" ? undefined : mappedSize;
+  const validSize = mappedSize === "xs" ? undefined : mappedSize;
 
   return (
     <Paragraph
       {...storyblokEditable(blok)}
-      size={validSize as "sm" | "md" | "lg" | undefined}
+      size={validSize as "sm" | "md" | "lg" | "xl" | undefined}
       css={{
         textAlign: align,
         color: mapColorToToken(color),

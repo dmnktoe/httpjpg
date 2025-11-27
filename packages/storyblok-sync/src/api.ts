@@ -59,5 +59,11 @@ export async function storyblokRequest<T>(
     throw new Error(`Storyblok API error (${response.status}): ${error}`);
   }
 
-  return response.json();
+  // Some endpoints return empty responses (DELETE, some PUTs)
+  const text = await response.text();
+  if (!text || text.trim() === "") {
+    return {} as T;
+  }
+
+  return JSON.parse(text);
 }

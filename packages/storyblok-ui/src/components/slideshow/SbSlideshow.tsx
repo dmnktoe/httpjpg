@@ -9,7 +9,28 @@ export interface SbSlideshowProps {
     _uid: string;
     images: StoryblokImage[];
     aspectRatio?: "16/9" | "4/3" | "1/1" | "3/4" | "9/16";
+    effect?:
+      | "slide"
+      | "fade"
+      | "cube"
+      | "coverflow"
+      | "flip"
+      | "cards"
+      | "creative";
+    autoplayDelay?: number;
     speed?: number;
+    showNavigation?: boolean;
+    animation?:
+      | "none"
+      | "fadeIn"
+      | "zoomIn"
+      | "sharpen"
+      | "zoomSharpen"
+      | "slideInFromLeft"
+      | "slideInFromRight"
+      | "slideUp"
+      | "slideDown";
+    animationDelay?: number;
     spacingTop?: string;
     spacingBottom?: string;
     width?: "full" | "container" | "narrow";
@@ -26,7 +47,12 @@ export const SbSlideshow = memo(function SbSlideshow({
   const {
     images,
     aspectRatio = "16/9",
-    speed = 1,
+    effect = "slide",
+    autoplayDelay = 7000,
+    speed = 300,
+    showNavigation = true,
+    animation = "none",
+    animationDelay = 0,
     spacingTop,
     spacingBottom,
     width = "full",
@@ -40,16 +66,23 @@ export const SbSlideshow = memo(function SbSlideshow({
     <SbMediaWrapper
       spacingTop={spacingTop}
       spacingBottom={spacingBottom}
-      width={boundingWidth}
+      width={width}
       editable={storyblokEditable(blok)}
     >
       <Slideshow
         images={images.map((img) => ({
           url: img.filename,
           alt: img.alt || img.title || "",
+          copyright: img.copyright,
+          focus: img.focus,
         }))}
         aspectRatio={aspectRatio}
-        autoplayDelay={speed * 1000}
+        effect={effect}
+        autoplayDelay={autoplayDelay}
+        speed={speed}
+        showNavigation={showNavigation}
+        animation={animation}
+        animationDelay={animationDelay}
       />
     </SbMediaWrapper>
   );

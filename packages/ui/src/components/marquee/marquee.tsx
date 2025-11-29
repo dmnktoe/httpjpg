@@ -135,9 +135,14 @@ export function Marquee({
           }}
         >
           {Array.from({ length: repeat }).map((_, i) => (
-            <>
+            <Box
+              key={`marquee-item-${i}`}
+              as="span"
+              css={{
+                display: "inline-block",
+              }}
+            >
               <Box
-                key={`${i}-content`}
                 as="span"
                 css={{
                   display: "inline-block",
@@ -146,7 +151,6 @@ export function Marquee({
                 {children}
               </Box>
               <Box
-                key={`${i}-spacer`}
                 as="span"
                 css={{
                   display: "inline-block",
@@ -155,7 +159,7 @@ export function Marquee({
               >
                 &nbsp;
               </Box>
-            </>
+            </Box>
           ))}
         </Box>
       </Box>

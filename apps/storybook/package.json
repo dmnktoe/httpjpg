@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "storybook dev -p 6006",
+    "dev": "storybook dev -p 3002",
+    "dev:https": "storybook dev -p 3002",
     "build": "storybook build",
     "preview": "storybook preview",
     "type-check": "tsc --noEmit",

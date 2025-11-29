@@ -10,11 +10,13 @@ import {
   SbContainer,
   SbGrid,
   SbImage,
+  SbMissing,
   SbPage,
   SbPageWork,
+  SbParagraph,
+  SbRichText,
   SbSection,
   SbSlideshow,
-  SbText,
   SbVideo,
   SbWorkList,
 } from "@httpjpg/storyblok-ui";
@@ -26,6 +28,8 @@ import { StoryblokErrorBoundary } from "../components/storyblok-error-boundary";
 /**
  * Storyblok component registry
  * Register all Storyblok components for dynamic rendering
+ *
+ * Missing components will fallback to SbMissing (shows warning in dev)
  */
 const components = {
   // Page types
@@ -39,7 +43,9 @@ const components = {
 
   // Content components
   image: SbImage,
-  text: SbText,
+  paragraph: SbParagraph,
+  richtext: SbRichText,
+  text: SbParagraph, // Legacy: map "text" to "paragraph"
   slideshow: SbSlideshow,
   video: SbVideo,
 
@@ -64,7 +70,13 @@ function initializeStoryblok() {
     accessToken: process.env.NEXT_PUBLIC_STORYBLOK_TOKEN,
     use: [apiPlugin],
     // Type assertion needed due to React 18/19 type compatibility
-    components: components as any,
+    components: {
+      ...components,
+      // Fallback for missing components (shows warning in dev)
+      ...(process.env.NODE_ENV === "development" && {
+        _fallback: SbMissing,
+      }),
+    } as any,
     apiOptions: {
       region: "eu",
     },

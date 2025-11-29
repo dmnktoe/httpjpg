@@ -7,6 +7,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import { CustomCursorWrapper } from "../components/custom-cursor-wrapper";
+import { MotionProvider } from "../components/motion-provider";
 import { NowPlayingWidget } from "../components/now-playing-widget";
 import { PreviewNotification } from "../components/preview-notification";
 import {
@@ -43,6 +44,11 @@ export const metadata: Metadata = {
  * - Google Analytics integration
  * - Fixed Header and Footer
  * - Dynamic Navigation from Storyblok
+ *
+ * IMPORTANT: This layout provides the shell (Header/Footer/Global UI).
+ * Content is rendered WITHOUT automatic containers - pages/sections
+ * must handle their own Container/Section components for proper
+ * full-width breakouts and responsive layouts.
  */
 export default async function RootLayout({ children }: PropsWithChildren) {
   const navigation = await getNavigation();
@@ -52,38 +58,44 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="de">
       <body style={{ margin: 0, padding: 0, backgroundColor: "#ffffff" }}>
-        <StoryblokProvider>
-          <CustomCursorWrapper />
-          <ImagePreview />
-          <Header
-            nav={navigation}
-            personalWork={personalWork}
-            clientWork={clientWork}
-          />
+        <MotionProvider>
+          <StoryblokProvider>
+            {/* Global UI Elements (not affected by page containers) */}
+            <CustomCursorWrapper />
+            <ImagePreview />
+            <NowPlayingWidget />
+            <PreviewNotification />
 
-          <main
-            style={{
-              minHeight: "calc(100vh - 280px - 80px)",
-              paddingTop: "0",
-              paddingBottom: "80px",
-              background: "#ffffff",
-            }}
-          >
-            {children}
-          </main>
+            {/* Fixed Header - always full width */}
+            <Header
+              nav={navigation}
+              personalWork={personalWork}
+              clientWork={clientWork}
+            />
 
-          <Footer
-            backgroundImage={footerConfig.backgroundImage}
-            showDefaultLinks={footerConfig.showDefaultLinks}
-            copyrightText={footerConfig.copyrightText}
-          />
+            {/* Main Content Area - NO container wrapper here
+              Pages must use Container/Section components themselves
+              This allows for full-width sections and controlled breakouts */}
+            <main
+              style={{
+                minHeight: "calc(100vh - 280px - 80px)",
+                paddingTop: "0",
+                paddingBottom: "80px",
+                background: "#ffffff",
+                width: "100%",
+              }}
+            >
+              {children}
+            </main>
 
-          {/* Preview Mode Notification Banner */}
-          <PreviewNotification />
-
-          {/* Spotify Now Playing Widget */}
-          <NowPlayingWidget />
-        </StoryblokProvider>
+            {/* Fixed Footer - always full width */}
+            <Footer
+              backgroundImage={footerConfig.backgroundImage}
+              showDefaultLinks={footerConfig.showDefaultLinks}
+              copyrightText={footerConfig.copyrightText}
+            />
+          </StoryblokProvider>
+        </MotionProvider>
 
         {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
           <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />

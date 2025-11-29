@@ -15,7 +15,7 @@ export interface ImagePreviewProps {
   height?: number;
   /**
    * Offset from cursor in pixels
-   * @default { x: 20, y: 20 }
+   * @default { x: 5, y: 5 }
    */
   offset?: { x: number; y: number };
 }
@@ -37,7 +37,7 @@ export interface ImagePreviewProps {
  */
 export function ImagePreview({
   width = 100,
-  offset = { x: 20, y: 20 },
+  offset = { x: 5, y: 5 },
 }: Omit<ImagePreviewProps, "height">) {
   const [previewImage, setPreviewImage] = useState("");
   const [isVisible, setIsVisible] = useState(false);

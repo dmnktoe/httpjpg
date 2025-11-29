@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 
@@ -37,7 +37,7 @@ export interface MouseTrailProps {
 }
 
 interface TrailParticle {
-  id: number;
+  id: string;
   x: number;
   y: number;
   timestamp: number;
@@ -67,7 +67,7 @@ export function MouseTrail({
   css: cssProp,
 }: MouseTrailProps) {
   const [particles, setParticles] = useState<TrailParticle[]>([]);
-  const [particleId, setParticleId] = useState(0);
+  const particleIdRef = useRef(0);
 
   useEffect(() => {
     let rafId: number;
@@ -83,14 +83,16 @@ export function MouseTrail({
       lastTime = now;
 
       setParticles((prev) => {
+        // Generate unique ID using ref + timestamp for guaranteed uniqueness
+        particleIdRef.current += 1;
+        const uniqueId = `${particleIdRef.current}-${now}`;
+
         const newParticle: TrailParticle = {
-          id: particleId,
+          id: uniqueId,
           x: e.clientX,
           y: e.clientY,
           timestamp: now,
         };
-
-        setParticleId((id) => id + 1);
 
         // Keep only the latest particles
         const updated = [...prev, newParticle];
@@ -114,7 +116,7 @@ export function MouseTrail({
       window.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(rafId);
     };
-  }, [count, lifetime, particleId]);
+  }, [count, lifetime]);
 
   return (
     <Box
@@ -125,7 +127,7 @@ export function MouseTrail({
         w: "100%",
         h: "100%",
         pointerEvents: "none",
-        zIndex: 9999,
+        zIndex: 9998,
         ...cssProp,
       }}
     >

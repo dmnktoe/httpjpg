@@ -34,6 +34,10 @@ export {
   type SbMediaWrapperProps,
 } from "./components/media-wrapper";
 export {
+  SbMissing,
+  type SbMissingProps,
+} from "./components/missing";
+export {
   SbPage,
   type SbPageProps,
 } from "./components/page";
@@ -45,6 +49,10 @@ export {
   SbParagraph,
   type SbParagraphProps,
 } from "./components/paragraph";
+export {
+  SbRichText,
+  type SbRichTextProps,
+} from "./components/richtext";
 export {
   SbSection,
   type SbSectionProps,

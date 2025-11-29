@@ -110,7 +110,7 @@ export const Header = ({
         ref={headerRef}
         as="header"
         css={{
-          position: "fixed",
+          position: "sticky",
           top: 0,
           left: 0,
           right: 0,

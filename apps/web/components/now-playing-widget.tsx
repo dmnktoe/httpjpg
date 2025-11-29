@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
  * Automatically polls every 10 seconds
  */
 export function NowPlayingWidget() {
+  const [isMounted, setIsMounted] = useState(false);
   const { data, isLoading, error } = useNowPlaying({
     endpoint: "/api/spotify/now-playing",
     pollInterval: 10000,
@@ -22,11 +23,17 @@ export function NowPlayingWidget() {
   const [position, setPosition] = useState({ x: 20, y: 40 });
 
   useEffect(() => {
+    setIsMounted(true);
     setPosition({
       x: window.innerWidth - 280,
       y: 40,
     });
   }, []);
+
+  // Don't render during SSR
+  if (!isMounted) {
+    return null;
+  }
 
   // Show loading state initially
   if (isLoading) {

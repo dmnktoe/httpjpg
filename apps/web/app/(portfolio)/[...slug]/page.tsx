@@ -17,24 +17,32 @@ interface PageProps {
  * In production: Cached fetch with ISR (1 hour revalidation)
  */
 const fetchStoryWithCache = async (fullSlug: string, isDraft: boolean) => {
-  // Draft mode: Always fetch fresh with preview token
-  if (isDraft) {
-    const { getStory } = getStoryblokApi({ draftMode: true });
-    return await getStory({ slug: fullSlug });
-  }
-
-  // Production: Use ISR cache with revalidation tags
-  return unstable_cache(
-    async () => {
-      const { getStory } = getStoryblokApi();
+  try {
+    // Draft mode: Always fetch fresh with preview token
+    if (isDraft) {
+      const { getStory } = getStoryblokApi({ draftMode: true });
       return await getStory({ slug: fullSlug });
-    },
-    [`story-${fullSlug}`],
-    {
-      tags: [CACHE_TAGS.STORY(fullSlug), CACHE_TAGS.STORIES],
-      revalidate: 3600, // 1 hour
-    },
-  )();
+    }
+
+    // Production: Use ISR cache with revalidation tags
+    return unstable_cache(
+      async () => {
+        const { getStory } = getStoryblokApi();
+        return await getStory({ slug: fullSlug });
+      },
+      [`story-${fullSlug}`],
+      {
+        tags: [CACHE_TAGS.STORY(fullSlug), CACHE_TAGS.STORIES],
+        revalidate: 3600, // 1 hour
+      },
+    )();
+  } catch (error) {
+    // Let notFound() handle 404s, re-throw other errors
+    if (error instanceof Error && error.message.includes("404")) {
+      return null;
+    }
+    throw error;
+  }
 };
 
 /**
@@ -147,34 +155,44 @@ export default async function DynamicPage({
   const isDraft = isEnabled || isVisualEditor;
 
   const fullSlug = slug ? slug.join("/") : "";
-  const story = await fetchStoryWithCache(fullSlug, isDraft);
 
-  console.log(
-    `[DynamicPage] slug="${fullSlug}", draftMode=${isEnabled}, visualEditor=${!!isVisualEditor}, isDraft=${isDraft}, story=`,
-    story ? "loaded" : "null",
-  );
+  try {
+    const story = await fetchStoryWithCache(fullSlug, isDraft);
 
-  if (!story) {
-    return notFound();
-  }
-
-  // Use live preview for draft mode (enables live editing in Visual Editor)
-  if (isDraft) {
-    const { StoryblokLivePreviewWrapper } = await import(
-      "../../../components/storyblok-live-preview-wrapper"
+    console.log(
+      `[DynamicPage] slug="${fullSlug}", draftMode=${isEnabled}, visualEditor=${!!isVisualEditor}, isDraft=${isDraft}, story=`,
+      story ? "loaded" : "null",
     );
-    return <StoryblokLivePreviewWrapper story={story} />;
-  }
 
-  // Static render for production with error boundary
-  const { StoryblokErrorBoundary } = await import(
-    "../../../components/storyblok-error-boundary"
-  );
-  return (
-    <StoryblokErrorBoundary>
-      <DynamicRender data={story.content} />
-    </StoryblokErrorBoundary>
-  );
+    if (!story) {
+      return notFound();
+    }
+
+    // Use live preview for draft mode (enables live editing in Visual Editor)
+    if (isDraft) {
+      const { StoryblokLivePreviewWrapper } = await import(
+        "../../../components/storyblok-live-preview-wrapper"
+      );
+      return <StoryblokLivePreviewWrapper story={story} />;
+    }
+
+    // Static render for production with error boundary
+    const { StoryblokErrorBoundary } = await import(
+      "../../../components/storyblok-error-boundary"
+    );
+    return (
+      <StoryblokErrorBoundary>
+        <DynamicRender data={story.content} />
+      </StoryblokErrorBoundary>
+    );
+  } catch (error) {
+    console.error(`[DynamicPage] Error loading story "${fullSlug}":`, {
+      error: error instanceof Error ? error.message : String(error),
+      slug: fullSlug,
+      isDraft,
+    });
+    throw error; // Let Next.js error boundary handle it
+  }
 }
 
 /**

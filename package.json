@@ -14,7 +14,10 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "dev:https": "turbo run dev --filter=@httpjpg/storybook & pnpm --filter @httpjpg/web dev:https",
+    "dev:web": "turbo run dev --filter=@httpjpg/web",
+    "dev:docs": "turbo run dev --filter=@httpjpg/docs",
+    "dev:storybook": "turbo run dev --filter=@httpjpg/storybook",
+    "dev:https": "turbo run dev:https",
     "lint": "biome lint .",
     "lint:fix": "biome lint . --fix",
     "type-check": "turbo run type-check",

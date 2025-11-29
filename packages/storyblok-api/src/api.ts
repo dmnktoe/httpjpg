@@ -70,7 +70,23 @@ export function getStoryblokApi(config: StoryblokConfig = {}) {
 
       return response.data.story;
     } catch (error) {
-      console.error(`Error fetching story: ${params.slug}`, error);
+      // Check if it's a 404 (story not found)
+      if (error && typeof error === "object" && "response" in error) {
+        const apiError = error as {
+          response?: { status?: number; data?: unknown };
+        };
+        if (apiError.response?.status === 404) {
+          console.warn(`Story not found: ${params.slug}`);
+          return null;
+        }
+      }
+
+      // For other errors, log more details
+      console.error(`Error fetching story: ${params.slug}`, {
+        error: error instanceof Error ? error.message : String(error),
+        slug: params.slug,
+        version,
+      });
       return null;
     }
   }

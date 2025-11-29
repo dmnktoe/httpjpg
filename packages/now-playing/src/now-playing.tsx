@@ -235,12 +235,13 @@ export const NowPlaying = ({
       dragElastic={0.1}
       dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
       initial={initialPosition}
+      data-draggable="true"
       style={{
         position: "fixed",
         width: config.width,
         height: config.height,
         cursor: "grab",
-        zIndex: 9999,
+        zIndex: 10000,
         touchAction: "none",
         userSelect: "none",
         ...style,
@@ -330,39 +331,69 @@ export const NowPlaying = ({
           </div>
         </div>
 
-        {/* Playing indicator */}
+        {/* Playing indicator - ASCII animation */}
         {isPlaying && (
           <div
             style={{
               flexShrink: 0,
-              width: 16,
-              height: 16,
               marginRight: 4,
+              fontSize: config.fontSize.title,
+              lineHeight: 1,
+              color: finalTextColor,
               display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "center",
-              gap: 2,
+              alignItems: "center",
             }}
           >
-            {[0, 1, 2].map((i) => (
-              <m.div
-                key={i}
-                animate={{
-                  height: ["40%", "100%", "40%"],
-                }}
-                transition={{
-                  duration: 0.8,
-                  repeat: Number.POSITIVE_INFINITY,
-                  delay: i * 0.15,
-                  ease: "easeInOut",
-                }}
-                style={{
-                  width: 2,
-                  backgroundColor: finalTextColor,
-                  borderRadius: 2,
-                }}
-              />
-            ))}
+            <m.span
+              animate={{
+                scale: [1, 1.3, 1],
+                rotate: [0, 10, -10, 0],
+              }}
+              transition={{
+                duration: 0.6,
+                repeat: Number.POSITIVE_INFINITY,
+                ease: "easeInOut",
+              }}
+              style={{
+                display: "inline-block",
+              }}
+            >
+              ⋆
+            </m.span>
+            <m.span
+              animate={{
+                y: [0, -3, 0],
+                rotate: [0, -15, 15, 0],
+              }}
+              transition={{
+                duration: 0.8,
+                repeat: Number.POSITIVE_INFINITY,
+                ease: "easeInOut",
+                delay: 0.1,
+              }}
+              style={{
+                display: "inline-block",
+              }}
+            >
+              ˚
+            </m.span>
+            <m.span
+              animate={{
+                scale: [1, 1.4, 1],
+                opacity: [1, 0.6, 1],
+              }}
+              transition={{
+                duration: 0.7,
+                repeat: Number.POSITIVE_INFINITY,
+                ease: "easeInOut",
+                delay: 0.2,
+              }}
+              style={{
+                display: "inline-block",
+              }}
+            >
+              ✮
+            </m.span>
           </div>
         )}
       </div>

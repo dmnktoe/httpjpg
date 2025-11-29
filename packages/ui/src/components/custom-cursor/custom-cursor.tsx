@@ -61,9 +61,21 @@ export function CustomCursor({
   useEffect(() => {
     const symbols = ["✦", "◆", "✧", "◇", "⬥", "⬦"];
     let symbolIndex = 0;
+    let rafId: number | null = null;
+    let currentX = -100;
+    let currentY = -100;
 
     const moveCursor = (e: MouseEvent) => {
-      setCursorPos({ x: e.clientX, y: e.clientY });
+      currentX = e.clientX;
+      currentY = e.clientY;
+
+      // Use requestAnimationFrame for smooth 60fps updates
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          setCursorPos({ x: currentX, y: currentY });
+          rafId = null;
+        });
+      }
 
       if (!isVisible) {
         setIsVisible(true);
@@ -124,6 +136,9 @@ export function CustomCursor({
     });
 
     return () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
       window.removeEventListener("mousemove", moveCursor);
       window.removeEventListener("mouseout", handleMouseOut);
 
@@ -139,10 +154,12 @@ export function CustomCursor({
     document.body.style.cursor = "none";
     document.documentElement.style.cursor = "none";
 
-    // Apply cursor: none to all elements
+    // Apply cursor: none to all elements EXCEPT draggable elements and their children
     const style = document.createElement("style");
     style.innerHTML = `
-      *, *::before, *::after {
+      *:not([draggable="true"]):not([data-draggable="true"]):not([draggable="true"] *):not([data-draggable="true"] *),
+      *:not([draggable="true"]):not([data-draggable="true"]):not([draggable="true"] *):not([data-draggable="true"] *)::before,
+      *:not([draggable="true"]):not([data-draggable="true"]):not([draggable="true"] *):not([data-draggable="true"] *)::after {
         cursor: none !important;
       }
     `;
@@ -168,13 +185,16 @@ export function CustomCursor({
           top: 0,
           left: 0,
           pointerEvents: "none",
-          zIndex: 10000,
+          zIndex: 9999,
           transform: `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0) translate(-50%, -50%)`,
           fontSize: `${size}px`,
           color,
           fontWeight: "bold",
           userSelect: "none",
           willChange: "transform",
+          // Force hardware acceleration
+          backfaceVisibility: "hidden",
+          perspective: 1000,
         }}
         css={cssProp}
       >
@@ -189,9 +209,12 @@ export function CustomCursor({
             top: 0,
             left: 0,
             pointerEvents: "none",
-            zIndex: 9998,
+            zIndex: 9997,
             transform: `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0) translate(-50%, calc(-100% - 30px))`,
             willChange: "transform",
+            // Force hardware acceleration
+            backfaceVisibility: "hidden",
+            perspective: 1000,
           }}
           css={{
             bg: "black",

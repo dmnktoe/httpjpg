@@ -22,7 +22,7 @@ export const MobileMenuButton = ({
         top: { base: "3", md: "auto" },
         zIndex: 65,
         ml: "auto",
-        display: { base: "block", xl: "none" },
+        display: { base: "block", lg: "none" },
       }}
     >
       <Box

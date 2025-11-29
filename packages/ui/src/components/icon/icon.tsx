@@ -71,9 +71,10 @@ const icons: Record<IconName, JSX.Element> = {
  * ```
  */
 export const Icon = forwardRef<SVGSVGElement, IconProps>(
-  ({ name, size = "32px", css: cssProp, style, ...props }) => {
+  ({ name, size = "32px", css: cssProp, style, ...props }, ref) => {
     return (
       <Box
+        ref={ref}
         as="svg"
         xmlns="http://www.w3.org/2000/svg"
         viewBox={

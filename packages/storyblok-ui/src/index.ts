@@ -74,6 +74,10 @@ export {
   type SbVideoProps,
 } from "./components/video";
 export {
+  SbWorkCard,
+  type SbWorkCardProps,
+} from "./components/work-card";
+export {
   SbWorkList,
   type SbWorkListProps,
 } from "./components/work-list";

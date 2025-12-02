@@ -14,6 +14,16 @@
  *   STORYBLOK_SPACE_ID - Your Storyblok Space ID
  */
 
+import { config } from "dotenv";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
+
+// Load environment variables from workspace root
+const __dirname = dirname(fileURLToPath(import.meta.url));
+config({ path: resolve(__dirname, "../../../.env.local") });
+
+// Import design tokens dynamically
+import { spacing, typography } from "@httpjpg/tokens";
 import {
   type Datasource,
   type DatasourceEntry,
@@ -128,30 +138,26 @@ async function createOrUpdateDatasource(
 }
 
 /**
- * Generate spacing options datasource from tokens
+ * Generate spacing options datasource dynamically from tokens
  */
 function generateSpacingDatasource(): {
   datasource: Datasource;
   entries: DatasourceEntry[];
 } {
-  const entries: DatasourceEntry[] = [
-    { name: "None", value: "0" },
-    { name: "XS", value: "2" },
-    { name: "Small", value: "4" },
-    { name: "Medium", value: "8" },
-    { name: "Large", value: "16" },
-    { name: "XL", value: "24" },
-    { name: "2XL", value: "32" },
-    { name: "3XL", value: "40" },
-    { name: "4XL", value: "48" },
-  ];
+  // Dynamically generate from spacing tokens
+  const spacingEntries = Object.entries(spacing)
+    .sort(([a], [b]) => Number(a) - Number(b))
+    .map(([key, value]) => ({
+      name: `${value} (${key}px)`,
+      value: key,
+    }));
 
   return {
     datasource: {
       name: "Spacing Options",
       slug: "spacing-options",
     },
-    entries,
+    entries: spacingEntries,
   };
 }
 
@@ -189,9 +195,12 @@ function generateWidthDatasource(): {
   entries: DatasourceEntry[];
 } {
   const entries: DatasourceEntry[] = [
-    { name: "Full Width", value: "full" },
-    { name: "Container", value: "container" },
-    { name: "Narrow", value: "narrow" },
+    { name: "Small (640px)", value: "sm" },
+    { name: "Medium (768px)", value: "md" },
+    { name: "Large (1024px)", value: "lg" },
+    { name: "XL (1280px)", value: "xl" },
+    { name: "2XL (1536px)", value: "2xl" },
+    { name: "Fluid (100%)", value: "fluid" },
   ];
 
   return {
@@ -278,56 +287,55 @@ function generateFontFamilyDatasource(): {
 }
 
 /**
- * Generate font size datasource
+ * Generate font size datasource dynamically from typography tokens
  */
 function generateFontSizeDatasource(): {
   datasource: Datasource;
   entries: DatasourceEntry[];
 } {
-  const entries: DatasourceEntry[] = [
-    { name: "Small (12px)", value: "sm" },
-    { name: "Medium (14px)", value: "md" },
-    { name: "Base (16px)", value: "base" },
-    { name: "Large (16px)", value: "lg" },
-    { name: "XL (18px)", value: "xl" },
-  ];
+  // Dynamically generate from typography.fontSize tokens
+  const fontSizeEntries = Object.entries(typography.fontSize).map(
+    ([key, value]) => ({
+      name: `${key.toUpperCase()} (${value})`,
+      value: key,
+    }),
+  );
 
   return {
     datasource: {
       name: "Font Size",
       slug: "font-size",
     },
-    entries,
+    entries: fontSizeEntries,
   };
 }
 
 /**
- * Generate font weight datasource
+ * Generate font weight datasource dynamically from typography tokens
  */
 function generateFontWeightDatasource(): {
   datasource: Datasource;
   entries: DatasourceEntry[];
 } {
-  const entries: DatasourceEntry[] = [
-    { name: "Light (300)", value: "light" },
-    { name: "Normal (400)", value: "normal" },
-    { name: "Medium (500)", value: "medium" },
-    { name: "Semibold (600)", value: "semibold" },
-    { name: "Bold (700)", value: "bold" },
-    { name: "Black (900)", value: "black" },
-  ];
+  // Dynamically generate from typography.fontWeight tokens
+  const fontWeightEntries = Object.entries(typography.fontWeight).map(
+    ([key, value]) => ({
+      name: `${key.charAt(0).toUpperCase() + key.slice(1)} (${value})`,
+      value: key,
+    }),
+  );
 
   return {
     datasource: {
       name: "Font Weight",
       slug: "font-weight",
     },
-    entries,
+    entries: fontWeightEntries,
   };
 }
 
 /**
- * Generate text color datasource
+ * Generate text color datasource dynamically from color tokens
  */
 function generateTextColorDatasource(): {
   datasource: Datasource;
@@ -336,11 +344,12 @@ function generateTextColorDatasource(): {
   const entries: DatasourceEntry[] = [
     { name: "Black", value: "black" },
     { name: "White", value: "white" },
+    // Generate from color tokens
+    { name: "Gray Light", value: "neutral.300" },
     { name: "Gray", value: "neutral.500" },
-    { name: "Dark Gray", value: "neutral.700" },
-    { name: "Light Gray", value: "neutral.300" },
+    { name: "Gray Dark", value: "neutral.700" },
     { name: "Primary", value: "primary.500" },
-    { name: "Accent", value: "accent.500" },
+    { name: "Accent (Orange)", value: "accent.500" },
   ];
 
   return {

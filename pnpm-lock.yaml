@@ -406,6 +406,9 @@ importers:
       '@httpjpg/env':
         specifier: workspace:*
         version: link:../env
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
     devDependencies:
       '@httpjpg/tsconfig':
         specifier: workspace:*

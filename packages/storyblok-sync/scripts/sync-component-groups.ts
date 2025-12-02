@@ -13,6 +13,14 @@
  *   STORYBLOK_SPACE_ID - Your Storyblok Space ID
  */
 
+import { config } from "dotenv";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
+
+// Load environment variables from workspace root
+const __dirname = dirname(fileURLToPath(import.meta.url));
+config({ path: resolve(__dirname, "../../../.env.local") });
+
 import {
   type ComponentGroup,
   storyblokRequest,
@@ -77,6 +85,11 @@ const componentGroups: ComponentGroup[] = [
   },
   {
     name: "Media",
+    parent_id: null,
+    parent_uuid: null,
+  },
+  {
+    name: "Pages",
     parent_id: null,
     parent_uuid: null,
   },

@@ -1,44 +1,43 @@
 /**
  * Color mapping utilities for Storyblok components
- * Maps Storyblok datasource color values to Panda CSS token paths
+ * Maps Storyblok datasource color values to CSS custom properties
  */
 
 /**
- * Maps Storyblok datasource color values to Panda CSS color tokens
- * Handles both datasource labels (e.g., "White", "Primary") and direct token paths
+ * Maps Storyblok datasource color values to CSS color values
+ * Converts Panda token references to CSS custom properties for runtime use
  *
  * @example
  * ```ts
- * mapColorToToken("White") // "white"
- * mapColorToToken("Primary") // "primary.500"
- * mapColorToToken("neutral.100") // "neutral.100" (passthrough)
+ * mapColorToToken("accent.500") // "var(--colors-accent-500)"
+ * mapColorToToken("black") // "var(--colors-black)"
+ * mapColorToToken("#FF0000") // "#FF0000" (passthrough)
  * ```
  */
 export function mapColorToToken(value?: string | null): string | undefined {
-  if (!value) return undefined;
+  if (!value) {
+    return undefined;
+  }
 
-  // Direct color token path (e.g., "neutral.100", "primary.500")
-  if (value.includes(".")) return value;
+  // CSS color value (e.g., "#FF0000", "rgb(255, 0, 0)") - pass through
+  if (value.startsWith("#") || value.startsWith("rgb")) {
+    return value;
+  }
 
-  // CSS color value (e.g., "#FF0000", "rgb(255, 0, 0)")
-  if (value.startsWith("#") || value.startsWith("rgb")) return value;
+  // Already a CSS custom property - pass through
+  if (value.startsWith("var(--")) {
+    return value;
+  }
 
-  // Named value from datasource (case-insensitive)
-  const normalized = value.toLowerCase().replace(/\s+/g, "");
+  // Convert token path to CSS custom property
+  // "accent.500" → "var(--colors-accent-500)"
+  // "black" → "var(--colors-black)"
+  // "neutral.100" → "var(--colors-neutral-100)"
+  const cssVarName = value.includes(".")
+    ? `--colors-${value.replace(".", "-")}`
+    : `--colors-${value}`;
 
-  // Map common datasource labels to token paths
-  const colorMap: Record<string, string> = {
-    white: "white",
-    black: "black",
-    lightgray: "neutral.50",
-    gray: "neutral.100",
-    darkgray: "neutral.800",
-    primary: "primary.500",
-    accent: "accent.500",
-    transparent: "transparent",
-  };
-
-  return colorMap[normalized] || undefined;
+  return `var(${cssVarName})`;
 }
 
 /**

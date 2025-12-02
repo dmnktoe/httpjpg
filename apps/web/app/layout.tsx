@@ -9,7 +9,6 @@ import type { PropsWithChildren } from "react";
 import { ConsentProvider } from "../components/consent-provider";
 import { CustomCursorWrapper } from "../components/custom-cursor-wrapper";
 import { FooterWrapper } from "../components/footer-wrapper";
-import { MotionProvider } from "../components/motion-provider";
 import { NowPlayingWidget } from "../components/now-playing-widget";
 import { ObservabilityProvider } from "../components/observability-provider";
 import { PreviewNotification } from "../components/preview-notification";
@@ -65,43 +64,41 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <ConsentProvider />
         <ObservabilityProvider />
         <WebVitalsReporter />
-        <MotionProvider>
-          <StoryblokProvider>
-            {/* Global UI Elements (not affected by page containers) */}
-            <CustomCursorWrapper />
-            <ImagePreview />
-            <NowPlayingWidget />
-            <PreviewNotification />
+        <StoryblokProvider>
+          {/* Global UI Elements (not affected by page containers) */}
+          <CustomCursorWrapper />
+          <ImagePreview />
+          <NowPlayingWidget />
+          <PreviewNotification />
 
-            {/* Sticky Header - always full width, pushes content down naturally */}
-            <Header
-              nav={navigation}
-              personalWork={personalWork}
-              clientWork={clientWork}
-            />
+          {/* Sticky Header - always full width, pushes content down naturally */}
+          <Header
+            nav={navigation}
+            personalWork={personalWork}
+            clientWork={clientWork}
+          />
 
-            {/* Main Content Area - NO container wrapper here
+          {/* Main Content Area - NO container wrapper here
               Pages must use Container/Section components themselves
               This allows for full-width sections and controlled breakouts */}
-            <Box
-              as="main"
-              css={{
-                bg: "white",
-                w: "full",
-                minH: "100vh",
-              }}
-            >
-              {children}
-            </Box>
+          <Box
+            as="main"
+            css={{
+              bg: "white",
+              w: "full",
+              minH: "100vh",
+            }}
+          >
+            {children}
+          </Box>
 
-            {/* Footer - always full width */}
-            <FooterWrapper
-              backgroundImage={footerConfig.backgroundImage}
-              showDefaultLinks={footerConfig.showDefaultLinks}
-              copyrightText={footerConfig.copyrightText}
-            />
-          </StoryblokProvider>
-        </MotionProvider>
+          {/* Footer - always full width */}
+          <FooterWrapper
+            backgroundImage={footerConfig.backgroundImage}
+            showDefaultLinks={footerConfig.showDefaultLinks}
+            copyrightText={footerConfig.copyrightText}
+          />
+        </StoryblokProvider>
 
         {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
           <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />

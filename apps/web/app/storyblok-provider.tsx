@@ -9,6 +9,7 @@ import {
   SbConfig,
   SbContainer,
   SbGrid,
+  SbHeadline,
   SbImage,
   SbMissing,
   SbPage,
@@ -18,10 +19,11 @@ import {
   SbSection,
   SbSlideshow,
   SbVideo,
+  SbWorkCard,
   SbWorkList,
 } from "@httpjpg/storyblok-ui";
 import { apiPlugin, storyblokInit } from "@storyblok/react/rsc";
-import { type ReactNode, useEffect, useMemo } from "react";
+import { type ReactNode, useEffect } from "react";
 
 import { StoryblokErrorBoundary } from "../components/storyblok-error-boundary";
 
@@ -42,6 +44,7 @@ const components = {
   section: SbSection,
 
   // Content components
+  headline: SbHeadline,
   image: SbImage,
   paragraph: SbParagraph,
   richtext: SbRichText,
@@ -50,7 +53,8 @@ const components = {
   video: SbVideo,
 
   // Work/Portfolio components
-  "work-list": SbWorkList,
+  work_card: SbWorkCard,
+  work_list: SbWorkList,
 
   // Configuration
   config: SbConfig,
@@ -80,9 +84,11 @@ function initializeStoryblok() {
     apiOptions: {
       region: "eu",
     },
+    bridge: true, // Enable bridge for Visual Editor
   });
 
   isInitialized = true;
+  console.log("[Storyblok] SDK initialized with bridge enabled");
 }
 
 /**
@@ -107,6 +113,7 @@ function StoryblokBridgeLoader() {
     );
 
     if (existingScript) {
+      console.log("[Storyblok Bridge] Script already loaded");
       return;
     }
 
@@ -114,8 +121,16 @@ function StoryblokBridgeLoader() {
     const script = document.createElement("script");
     script.src = "https://app.storyblok.com/f/storyblok-v2-latest.js";
     script.async = true;
-    document.body.appendChild(script);
 
+    script.onload = () => {
+      console.log("[Storyblok Bridge] Bridge script loaded successfully");
+    };
+
+    script.onerror = () => {
+      console.error("[Storyblok Bridge] Failed to load bridge script");
+    };
+
+    document.body.appendChild(script);
     console.log("[Storyblok Bridge] Loading bridge script for Visual Editor");
 
     return () => {
@@ -135,7 +150,7 @@ function StoryblokBridgeLoader() {
  */
 export function StoryblokProvider({ children }: { children: ReactNode }) {
   // Initialize Storyblok on mount
-  useMemo(() => {
+  useEffect(() => {
     initializeStoryblok();
   }, []);
 

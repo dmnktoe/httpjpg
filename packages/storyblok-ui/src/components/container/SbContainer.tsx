@@ -9,7 +9,7 @@ export interface SbContainerProps {
   blok: {
     _uid: string;
     body?: SbBlokData[];
-    width?: "full" | "container" | "narrow";
+    width?: "sm" | "md" | "lg" | "xl" | "2xl" | "fluid";
     px?: string;
     py?: string;
     pt?: string;
@@ -35,7 +35,7 @@ export const SbContainer = memo(function SbContainer({
 }: SbContainerProps) {
   const {
     body,
-    width = "container",
+    width = "lg",
     px,
     py,
     pt,
@@ -79,15 +79,10 @@ export const SbContainer = memo(function SbContainer({
   return (
     <Container
       {...storyblokEditable(blok)}
+      size={width}
       px={responsivePx}
       py={responsivePy}
       css={{
-        width:
-          width === "narrow"
-            ? "container.sm"
-            : width === "container"
-              ? "container"
-              : "full",
         pt: mapSpacingToToken(pt),
         pb: mapSpacingToToken(pb),
         mt: mapSpacingToToken(mt),

@@ -2,38 +2,114 @@
 
 import { DynamicRender } from "@httpjpg/storyblok-utils";
 import type { ISbStoryData } from "@storyblok/react";
-import { useStoryblokBridge } from "@storyblok/react/rsc";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface StoryblokLivePreviewProps {
   story: ISbStoryData;
-  resolveRelations?: string[];
 }
 
 /**
  * Client Component for Storyblok Live Preview
- * Wraps story content and enables live editing in Visual Editor
- *
- * Common resolve_relations patterns:
- * - "menu_link.link" - Navigation menu items that reference stories
- * - "featured_articles.articles" - Article references
- * - "global_reference.reference" - Global component references
+ * Manual Bridge integration for reliable live updates
  */
 export function StoryblokLivePreview({
   story: initialStory,
-  resolveRelations = ["menu_link.link", "global_reference.reference"],
 }: StoryblokLivePreviewProps) {
   const [story, setStory] = useState(initialStory);
 
-  // useStoryblokBridge handles live updates from Visual Editor
-  // Initialize bridge only on client-side (hook checks for window internally)
-  useStoryblokBridge(story.id, (newStory) => setStory(newStory), {
-    resolveRelations,
-  });
+  useEffect(() => {
+    let bridgeInitialized = false;
+    let checkInterval: NodeJS.Timeout | undefined;
+
+    const initBridge = () => {
+      if (bridgeInitialized) {
+        return;
+      }
+
+      const sbBridge = (window as any).storyblok;
+      if (!sbBridge) {
+        return;
+      }
+
+      bridgeInitialized = true;
+
+      // Listen for input events (real-time editing)
+      sbBridge.on("input", (event: any) => {
+        if (event.story?.id === story.id) {
+          setStory(event.story);
+        }
+      });
+
+      // Listen for change events
+      sbBridge.on("change", (event: any) => {
+        if (event.story?.id === story.id) {
+          setStory(event.story);
+        }
+      });
+
+      // Listen for published events
+      sbBridge.on("published", () => {
+        window.location.reload();
+      });
+
+      // Ping the Visual Editor
+      sbBridge.pingEditor(() => {
+        console.log("[Storyblok] Visual Editor connected");
+      });
+    };
+
+    // Check if bridge is available
+    const checkBridgeAvailable = () => {
+      return (window as any).StoryblokBridge || (window as any).storyblok;
+    };
+
+    if (checkBridgeAvailable()) {
+      // Create instance if needed
+      if ((window as any).StoryblokBridge && !(window as any).storyblok) {
+        (window as any).storyblok = new (window as any).StoryblokBridge();
+      }
+      initBridge();
+    } else {
+      // Wait for bridge script to load
+      checkInterval = setInterval(() => {
+        const bridge = checkBridgeAvailable();
+        if (bridge) {
+          if ((window as any).StoryblokBridge && !(window as any).storyblok) {
+            (window as any).storyblok = new (window as any).StoryblokBridge();
+          }
+
+          initBridge();
+
+          if (checkInterval) {
+            clearInterval(checkInterval);
+            checkInterval = undefined;
+          }
+        }
+      }, 200);
+
+      // Timeout after 10 seconds
+      const timeout = setTimeout(() => {
+        if (checkInterval) {
+          clearInterval(checkInterval);
+          checkInterval = undefined;
+        }
+        if (!bridgeInitialized) {
+          console.error("[Storyblok] Bridge failed to load");
+        }
+      }, 10000);
+
+      return () => {
+        if (checkInterval) {
+          clearInterval(checkInterval);
+        }
+        clearTimeout(timeout);
+      };
+    }
+  }, [story.id]);
 
   if (!story?.content) {
     return null;
   }
 
-  return <DynamicRender data={story.content} />;
+  return <DynamicRender data={story.content as any} />;
 }

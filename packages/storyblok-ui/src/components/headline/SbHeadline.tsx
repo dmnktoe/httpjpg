@@ -34,13 +34,16 @@ export const SbHeadline = memo(function SbHeadline({ blok }: SbHeadlineProps) {
     paddingBottom,
   } = blok;
 
+  const mappedColor = mapColorToToken(color);
+  const editableProps = storyblokEditable(blok);
+
   return (
     <Headline
-      {...storyblokEditable(blok)}
+      {...editableProps}
       level={level}
       css={{
         textAlign: align,
-        color: mapColorToToken(color),
+        color: mappedColor,
         mt: mapSpacingToToken(marginTop),
         mb: mapSpacingToToken(marginBottom),
         pt: mapSpacingToToken(paddingTop),

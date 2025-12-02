@@ -331,7 +331,7 @@ export const NowPlaying = ({
                 borderRadius: "9999px",
                 overflow: "hidden",
                 boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
-                background: isLoading
+                backgroundImage: isLoading
                   ? "linear-gradient(90deg, rgba(163, 163, 163, 0.8) 0%, rgba(200, 200, 200, 0.8) 50%, rgba(163, 163, 163, 0.8) 100%)"
                   : undefined,
                 backgroundSize: "200% 100%",

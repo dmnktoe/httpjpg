@@ -19,7 +19,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@httpjpg/env": "workspace:*"
+    "@httpjpg/env": "workspace:*",
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
     "@httpjpg/tsconfig": "workspace:*",

@@ -13,6 +13,14 @@
  *   STORYBLOK_SPACE_ID - Your Storyblok Space ID
  */
 
+import { config } from "dotenv";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
+
+// Load environment variables from workspace root
+const __dirname = dirname(fileURLToPath(import.meta.url));
+config({ path: resolve(__dirname, "../../../.env.local") });
+
 import {
   type StoryblokComponent,
   storyblokRequest,
@@ -255,13 +263,11 @@ async function getSbContainerComponent(): Promise<StoryblokComponent> {
       },
       width: {
         type: "option",
-        display_name: "Width",
-        default_value: "container",
-        options: [
-          { name: "Full Width", value: "full" },
-          { name: "Container", value: "container" },
-          { name: "Narrow", value: "narrow" },
-        ],
+        display_name: "Container Size",
+        description: "Choose from predefined container widths",
+        default_value: "lg",
+        source: "internal",
+        datasource_slug: "width-options",
       },
       px: {
         type: "option",
@@ -981,6 +987,82 @@ async function getSbWorkListComponent(): Promise<StoryblokComponent> {
   };
 }
 
+async function getSbPageWorkComponent(): Promise<StoryblokComponent> {
+  const pagesGroupUuid = await getComponentGroupUuid("Pages");
+
+  return {
+    name: "work",
+    display_name: "Work Page",
+    is_root: true,
+    is_nestable: false,
+    component_group_uuid: pagesGroupUuid,
+    icon: "block-suitcase",
+    color: "#f59e0b",
+    schema: {
+      body: {
+        type: "bloks",
+        display_name: "Body",
+        description: "Add any components to build your work page",
+        restrict_components: false,
+      },
+      title: {
+        type: "text",
+        display_name: "Title",
+        translatable: true,
+      },
+      description: {
+        type: "richtext",
+        display_name: "Description",
+        translatable: true,
+      },
+      images: {
+        type: "multiasset",
+        display_name: "Featured Images",
+        description: "First image will be used as preview in navigation",
+        filetypes: ["images"],
+      },
+      link: {
+        type: "multilink",
+        display_name: "Link",
+        description: "Optional external link (e.g. project URL)",
+      },
+    },
+  };
+}
+
+async function getSbPageComponent(): Promise<StoryblokComponent> {
+  const pagesGroupUuid = await getComponentGroupUuid("Pages");
+
+  return {
+    name: "page",
+    display_name: "Page",
+    is_root: true,
+    is_nestable: false,
+    component_group_uuid: pagesGroupUuid,
+    icon: "block-doc",
+    color: "#3b82f6",
+    schema: {
+      body: {
+        type: "bloks",
+        display_name: "Body",
+        description: "Add any components to build your page",
+        restrict_components: false,
+      },
+      title: {
+        type: "text",
+        display_name: "Title",
+        translatable: true,
+      },
+      isDark: {
+        type: "boolean",
+        display_name: "Dark Mode",
+        default_value: "false",
+        description: "Enable dark mode for this page",
+      },
+    },
+  };
+}
+
 /**
  * Sleep helper to avoid rate limits
  */
@@ -1008,6 +1090,8 @@ async function syncComponents(): Promise<void> {
     getSbSlideshowComponent,
     getSbWorkCardComponent,
     getSbWorkListComponent,
+    getSbPageComponent,
+    getSbPageWorkComponent,
   ];
 
   for (const getComponent of componentGetters) {
@@ -1038,6 +1122,9 @@ async function syncComponents(): Promise<void> {
   console.log("\n   Portfolio:");
   console.log("   - work_card (Project showcase card)");
   console.log("   - work_list (Portfolio list)");
+  console.log("\n   Pages (Content Types):");
+  console.log("   - page (Generic Page)");
+  console.log("   - work (Work/Portfolio Page)");
   console.log("\nNext steps:");
   console.log("1. Open Storyblok Visual Editor");
   console.log("2. Components are now available in the editor");

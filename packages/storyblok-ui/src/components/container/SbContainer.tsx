@@ -1,9 +1,12 @@
+"use client";
+
 import { type BlokItem, DynamicRender } from "@httpjpg/storyblok-utils";
 import { Container } from "@httpjpg/ui";
-import { type SbBlokData, storyblokEditable } from "@storyblok/react/rsc";
+import type { SbBlokData } from "@storyblok/react/rsc";
 import { memo } from "react";
 import { mapSpacingToToken } from "../../lib/spacing-utils";
 import { mapColorToToken } from "../../lib/token-mapping";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 
 export interface SbContainerProps {
   blok: {
@@ -50,6 +53,8 @@ export const SbContainer = memo(function SbContainer({
     pyLg,
   } = blok;
 
+  const editableProps = useStoryblokEditable(blok);
+
   if (!body || !Array.isArray(body)) {
     return null;
   }
@@ -78,17 +83,19 @@ export const SbContainer = memo(function SbContainer({
 
   return (
     <Container
-      {...storyblokEditable(blok)}
+      {...editableProps}
       size={width}
       px={responsivePx}
       py={responsivePy}
+      style={{
+        backgroundColor: mapColorToToken(bgColor) || undefined,
+      }}
       css={{
         pt: mapSpacingToToken(pt),
         pb: mapSpacingToToken(pb),
         mt: mapSpacingToToken(mt),
         mb: mapSpacingToToken(mb),
         my: mapSpacingToToken(my),
-        bg: mapColorToToken(bgColor),
       }}
     >
       <DynamicRender data={body as BlokItem[]} />

@@ -1,7 +1,10 @@
+"use client";
+
 import { type BlokItem, DynamicRender } from "@httpjpg/storyblok-utils";
 import { Page } from "@httpjpg/ui";
-import { type SbBlokData, storyblokEditable } from "@storyblok/react/rsc";
+import type { SbBlokData } from "@storyblok/react/rsc";
 import { type ComponentProps, memo } from "react";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 
 /**
  * Storyblok Page Component Props
@@ -22,10 +25,11 @@ export interface SbPageProps extends ComponentProps<typeof Page> {
  */
 export const SbPage = memo(function SbPage({ blok }: SbPageProps) {
   const { body, isDark = false } = blok;
+  const editableProps = useStoryblokEditable(blok);
 
   return (
     <Page
-      {...storyblokEditable(blok)}
+      {...editableProps}
       css={{
         bg: isDark ? "black" : "white",
         color: isDark ? "white" : "black",

@@ -1,8 +1,10 @@
+"use client";
+
 import { Headline } from "@httpjpg/ui";
-import { storyblokEditable } from "@storyblok/react/rsc";
 import { memo } from "react";
 import { mapSpacingToToken } from "../../lib/spacing-utils";
 import { mapColorToToken } from "../../lib/token-mapping";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 
 export interface SbHeadlineProps {
   blok: {
@@ -35,15 +37,17 @@ export const SbHeadline = memo(function SbHeadline({ blok }: SbHeadlineProps) {
   } = blok;
 
   const mappedColor = mapColorToToken(color);
-  const editableProps = storyblokEditable(blok);
+  const editableProps = useStoryblokEditable(blok);
 
   return (
     <Headline
       {...editableProps}
       level={level}
+      style={{
+        color: mappedColor || "black",
+      }}
       css={{
         textAlign: align,
-        color: mappedColor,
         mt: mapSpacingToToken(marginTop),
         mb: mapSpacingToToken(marginBottom),
         pt: mapSpacingToToken(paddingTop),

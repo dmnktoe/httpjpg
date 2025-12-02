@@ -35,7 +35,6 @@ const headlineRecipe = cva({
     /* Typography */
     fontFamily: "headline",
     fontWeight: "bold", // token: typography.fontWeight.bold (700)
-    color: "black",
     letterSpacing: "tight", // token: typography.letterSpacing.tight (-0.025em)
 
     /* Prevent text wrapping issues */

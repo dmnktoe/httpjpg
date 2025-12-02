@@ -1,8 +1,10 @@
+"use client";
+
 import type { StoryblokRichTextProps } from "@httpjpg/storyblok-richtext";
 import type { VideoSource } from "@httpjpg/ui";
 import { video as VideoComponent } from "@httpjpg/ui";
-import { storyblokEditable } from "@storyblok/react/rsc";
 import { memo } from "react";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 import type { StoryblokVideoAsset } from "../../types";
 import { SbCaption } from "../caption";
 import { SbMediaWrapper } from "../media-wrapper";
@@ -65,6 +67,8 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
     videoSrc = vimeoId || videoUrl || "";
   }
 
+  const editableProps = useStoryblokEditable(blok);
+
   if (!videoSrc) {
     return null;
   }
@@ -73,8 +77,8 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
     <SbMediaWrapper
       spacingTop={spacingTop}
       spacingBottom={spacingBottom}
-      width={boundingWidth}
-      editable={storyblokEditable(blok)}
+      width={width}
+      editable={editableProps}
     >
       <VideoComponent
         src={videoSrc}

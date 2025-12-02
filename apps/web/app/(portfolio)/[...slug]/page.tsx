@@ -151,7 +151,7 @@ export default async function DynamicPage({
   const { isEnabled } = await draftMode();
 
   // Check if we're in Visual Editor mode (has _storyblok param or _draft param)
-  const isVisualEditor = search._storyblok || search._draft;
+  const isVisualEditor = !!(search._storyblok || search._draft);
   const isDraft = isEnabled || isVisualEditor;
 
   const fullSlug = slug ? slug.join("/") : "";
@@ -170,21 +170,14 @@ export default async function DynamicPage({
 
     // Use live preview for draft mode (enables live editing in Visual Editor)
     if (isDraft) {
-      const { StoryblokLivePreviewWrapper } = await import(
-        "../../../components/storyblok-live-preview-wrapper"
+      const { StoryblokLivePreview } = await import(
+        "../../../components/storyblok-live-preview"
       );
-      return <StoryblokLivePreviewWrapper story={story} />;
+      return <StoryblokLivePreview story={story} />;
     }
 
-    // Static render for production with error boundary
-    const { StoryblokErrorBoundary } = await import(
-      "../../../components/storyblok-error-boundary"
-    );
-    return (
-      <StoryblokErrorBoundary>
-        <DynamicRender data={story.content} />
-      </StoryblokErrorBoundary>
-    );
+    // Static render for production
+    return <DynamicRender data={story.content} />;
   } catch (error) {
     console.error(`[DynamicPage] Error loading story "${fullSlug}":`, {
       error: error instanceof Error ? error.message : String(error),

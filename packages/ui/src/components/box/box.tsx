@@ -163,9 +163,7 @@ export const Box = forwardRef(
       </Component>
     );
   },
-) as <C extends ElementType = "div">(
-  props: BoxProps<C> & { ref?: PolymorphicRef<C> },
-) => JSX.Element;
+);
 
 // Display name for better debugging experience
 Box.displayName = "Box";

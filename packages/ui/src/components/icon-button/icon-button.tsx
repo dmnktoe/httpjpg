@@ -150,7 +150,6 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         bg: "transparent",
         border: "none",
         outline: "none",
-        color: "currentColor", // Default color
         _focusVisible: {
           outline: "2px solid",
           outlineColor: "blue.500",

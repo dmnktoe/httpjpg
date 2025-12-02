@@ -113,9 +113,20 @@ function NodeHeading(children: ReactNode, props: any) {
 
 /**
  * Custom resolver for paragraphs
+ * Accepts maxWidth from context for dynamic prose width
  */
-function NodeParagraph(children: ReactNode) {
-  return <Paragraph css={{ mb: "4" }}>{children}</Paragraph>;
+function NodeParagraph(
+  children: ReactNode,
+  _props: any,
+  context?: { maxWidth?: string | boolean },
+) {
+  const maxWidth = context?.maxWidth ?? true;
+  console.log("[NodeParagraph] context:", context, "maxWidth:", maxWidth);
+  return (
+    <Paragraph maxWidth={maxWidth} style={{ marginBottom: "1.5rem" }}>
+      {children}
+    </Paragraph>
+  );
 }
 
 /**
@@ -272,7 +283,11 @@ function DefaultBlokResolver(name: string, props: any) {
 /**
  * Render Storyblok Rich Text to React components
  */
-export function renderStoryblokRichText(data: ISbRichtext) {
+export function renderStoryblokRichText(
+  data: ISbRichtext,
+  options?: { maxWidth?: string | boolean },
+) {
+  console.log("[renderStoryblokRichText] options:", options);
   if (!data) {
     return null;
   }
@@ -288,7 +303,9 @@ export function renderStoryblokRichText(data: ISbRichtext) {
     },
     nodeResolvers: {
       [NODE_HEADING]: NodeHeading,
-      [NODE_PARAGRAPH]: NodeParagraph,
+      // @ts-expect-error - storyblok-rich-text-react-renderer types don't support context parameter
+      [NODE_PARAGRAPH]: (children: any, props: any) =>
+        NodeParagraph(children, props, options),
       [NODE_IMAGE]: NodeImage,
       [NODE_UL]: NodeUL,
       [NODE_OL]: NodeOL,
@@ -307,14 +324,24 @@ export function renderStoryblokRichText(data: ISbRichtext) {
  */
 export interface StoryblokRichTextProps extends ComponentProps<"div"> {
   data?: ISbRichtext;
+  /**
+   * Maximum width for paragraph text (optimal reading width)
+   * @default true (65ch)
+   */
+  maxWidth?: string | boolean;
 }
 
-export function StoryblokRichText({ data, ...props }: StoryblokRichTextProps) {
+export function StoryblokRichText({
+  data,
+  maxWidth = true,
+  ...props
+}: StoryblokRichTextProps) {
+  console.log("[StoryblokRichText] maxWidth prop:", maxWidth);
   if (!data) {
     return null;
   }
 
-  const content = renderStoryblokRichText(data);
+  const content = renderStoryblokRichText(data, { maxWidth });
 
   return <Box {...props}>{content}</Box>;
 }

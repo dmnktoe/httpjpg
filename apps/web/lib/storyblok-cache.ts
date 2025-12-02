@@ -3,20 +3,19 @@ import {
   type StoriesParams,
   type StoryblokConfig,
 } from "@httpjpg/storyblok-api";
-import { cache } from "react";
 
 /**
  * Cached Storyblok API utilities for Next.js Server Components
- * These use React's cache() for request-level memoization
+ * Note: Caching is handled by Next.js fetch() cache by default
  */
 
 /**
  * Cached version of getStoryblokApi for production use
  * Reuses the same client instance across requests
  */
-export const getCachedStoryblokApi = cache((config: StoryblokConfig = {}) => {
+export const getCachedStoryblokApi = (config: StoryblokConfig = {}) => {
   return getStoryblokApi(config);
-});
+};
 
 /**
  * Cached story fetcher for use in Server Components
@@ -25,12 +24,13 @@ export const getCachedStoryblokApi = cache((config: StoryblokConfig = {}) => {
  * const story = await fetchStory('home');
  * ```
  */
-export const fetchStory = cache(
-  async (slug: string, config: StoryblokConfig = {}) => {
-    const api = getStoryblokApi(config);
-    return api.getStory({ slug });
-  },
-);
+export const fetchStory = async (
+  slug: string,
+  config: StoryblokConfig = {},
+) => {
+  const api = getStoryblokApi(config);
+  return api.getStory({ slug });
+};
 
 /**
  * Cached stories fetcher for use in Server Components
@@ -39,9 +39,10 @@ export const fetchStory = cache(
  * const { stories } = await fetchStories({ starts_with: 'work/' });
  * ```
  */
-export const fetchStories = cache(
-  async (params: StoriesParams = {}, config: StoryblokConfig = {}) => {
-    const api = getStoryblokApi(config);
-    return api.getStories(params);
-  },
-);
+export const fetchStories = async (
+  params: StoriesParams = {},
+  config: StoryblokConfig = {},
+) => {
+  const api = getStoryblokApi(config);
+  return api.getStories(params);
+};

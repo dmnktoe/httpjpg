@@ -1,13 +1,17 @@
+"use client";
+
 import { StoryblokRichText } from "@httpjpg/storyblok-richtext";
 import { Box } from "@httpjpg/ui";
-import { storyblokEditable } from "@storyblok/react/rsc";
 import { memo } from "react";
 import { mapSpacingToToken } from "../../lib/spacing-utils";
+import { mapProseMaxWidthToToken } from "../../lib/token-mapping";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 
 export interface SbRichTextProps {
   blok: {
     _uid: string;
     content: any;
+    maxWidth?: string;
     marginTop?: string;
     marginBottom?: string;
     paddingTop?: string;
@@ -20,7 +24,21 @@ export interface SbRichTextProps {
  * Renders rich text with automatic Headline, Paragraph, Link, etc. components
  */
 export const SbRichText = memo(function SbRichText({ blok }: SbRichTextProps) {
-  const { content, marginTop, marginBottom, paddingTop, paddingBottom } = blok;
+  const {
+    content,
+    maxWidth,
+    marginTop,
+    marginBottom,
+    paddingTop,
+    paddingBottom,
+  } = blok;
+
+  const mappedMaxWidth = mapProseMaxWidthToToken(maxWidth);
+  const editableProps = useStoryblokEditable(blok);
+
+  console.log("[SbRichText] Full blok:", blok);
+  console.log("[SbRichText] maxWidth raw:", maxWidth);
+  console.log("[SbRichText] maxWidth mapped:", mappedMaxWidth);
 
   if (!content) {
     return null;
@@ -28,7 +46,7 @@ export const SbRichText = memo(function SbRichText({ blok }: SbRichTextProps) {
 
   return (
     <Box
-      {...storyblokEditable(blok)}
+      {...editableProps}
       css={{
         mt: mapSpacingToToken(marginTop),
         mb: mapSpacingToToken(marginBottom),
@@ -36,7 +54,7 @@ export const SbRichText = memo(function SbRichText({ blok }: SbRichTextProps) {
         pb: mapSpacingToToken(paddingBottom),
       }}
     >
-      <StoryblokRichText data={content} />
+      <StoryblokRichText data={content} maxWidth={mappedMaxWidth} />
     </Box>
   );
 });

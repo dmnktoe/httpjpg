@@ -42,21 +42,14 @@ export default async function HomePage({
 
   // Use live preview for draft mode (enables live editing in Visual Editor)
   if (isDraft) {
-    const { StoryblokLivePreviewWrapper } = await import(
-      "../components/storyblok-live-preview-wrapper"
+    const { StoryblokLivePreview } = await import(
+      "../components/storyblok-live-preview"
     );
-    return <StoryblokLivePreviewWrapper story={story} />;
+    return <StoryblokLivePreview story={story} />;
   }
 
-  // Static render for production with error boundary
-  const { StoryblokErrorBoundary } = await import(
-    "../components/storyblok-error-boundary"
-  );
-  return (
-    <StoryblokErrorBoundary>
-      <DynamicRender data={story.content} />
-    </StoryblokErrorBoundary>
-  );
+  // Static render for production
+  return <DynamicRender data={story.content} />;
 }
 
 // Enable ISR with revalidation

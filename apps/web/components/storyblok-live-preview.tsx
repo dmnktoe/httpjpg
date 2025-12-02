@@ -1,37 +1,77 @@
 "use client";
 
 import { DynamicRender } from "@httpjpg/storyblok-utils";
+import * as Sentry from "@sentry/nextjs";
 import type { ISbStoryData } from "@storyblok/react";
-import { useEffect, useState } from "react";
+import {
+  Component,
+  type ErrorInfo,
+  type ReactNode,
+  useEffect,
+  useState,
+} from "react";
 
 interface StoryblokLivePreviewProps {
   story: ISbStoryData;
 }
 
 /**
- * Client Component for Storyblok Live Preview
- * Manual Bridge integration for reliable live updates
+ * Error Boundary for Storyblok Components
  */
-export function StoryblokLivePreview({
+class StoryblokErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  public state = { hasError: false, error: undefined as Error | undefined };
+
+  public static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    Sentry.captureException(error, {
+      contexts: { react: { componentStack: errorInfo.componentStack } },
+      tags: { errorBoundary: "storyblok" },
+    });
+  }
+
+  public render() {
+    if (this.state.hasError) {
+      return (
+        <div
+          style={{
+            padding: "2rem",
+            textAlign: "center",
+            color: "#ef4444",
+          }}
+        >
+          <h2>Fehler beim Laden des Storyblok-Inhalts</h2>
+          <p style={{ color: "#6b7280", marginTop: "0.5rem" }}>
+            {this.state.error?.message}
+          </p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+/**
+ * Storyblok Live Preview Component
+ * Uses window.StoryblokBridge API for reliable Visual Editor integration
+ */
+function StoryblokLivePreviewInner({
   story: initialStory,
 }: StoryblokLivePreviewProps) {
   const [story, setStory] = useState(initialStory);
 
   useEffect(() => {
-    let bridgeInitialized = false;
-    let checkInterval: NodeJS.Timeout | undefined;
-
+    // Wait for Storyblok Bridge to be available
     const initBridge = () => {
-      if (bridgeInitialized) {
-        return;
-      }
-
       const sbBridge = (window as any).storyblok;
       if (!sbBridge) {
-        return;
+        return false;
       }
-
-      bridgeInitialized = true;
 
       // Listen for input events (real-time editing)
       sbBridge.on("input", (event: any) => {
@@ -52,59 +92,38 @@ export function StoryblokLivePreview({
         window.location.reload();
       });
 
-      // Ping the Visual Editor
+      // Ping editor
       sbBridge.pingEditor(() => {
-        console.log("[Storyblok] Visual Editor connected");
+        if (process.env.NODE_ENV === "development") {
+          console.log("[Storyblok] Visual Editor connected");
+        }
       });
+
+      return true;
     };
 
-    // Check if bridge is available
-    const checkBridgeAvailable = () => {
-      return (window as any).StoryblokBridge || (window as any).storyblok;
-    };
-
-    if (checkBridgeAvailable()) {
-      // Create instance if needed
+    // Try to initialize immediately
+    if ((window as any).storyblok || (window as any).StoryblokBridge) {
       if ((window as any).StoryblokBridge && !(window as any).storyblok) {
         (window as any).storyblok = new (window as any).StoryblokBridge();
       }
       initBridge();
-    } else {
-      // Wait for bridge script to load
-      checkInterval = setInterval(() => {
-        const bridge = checkBridgeAvailable();
-        if (bridge) {
-          if ((window as any).StoryblokBridge && !(window as any).storyblok) {
-            (window as any).storyblok = new (window as any).StoryblokBridge();
-          }
-
-          initBridge();
-
-          if (checkInterval) {
-            clearInterval(checkInterval);
-            checkInterval = undefined;
-          }
-        }
-      }, 200);
-
-      // Timeout after 10 seconds
-      const timeout = setTimeout(() => {
-        if (checkInterval) {
-          clearInterval(checkInterval);
-          checkInterval = undefined;
-        }
-        if (!bridgeInitialized) {
-          console.error("[Storyblok] Bridge failed to load");
-        }
-      }, 10000);
-
-      return () => {
-        if (checkInterval) {
-          clearInterval(checkInterval);
-        }
-        clearTimeout(timeout);
-      };
+      return;
     }
+
+    // Otherwise wait for bridge to load
+    const checkInterval = setInterval(() => {
+      if ((window as any).StoryblokBridge || (window as any).storyblok) {
+        if ((window as any).StoryblokBridge && !(window as any).storyblok) {
+          (window as any).storyblok = new (window as any).StoryblokBridge();
+        }
+        if (initBridge()) {
+          clearInterval(checkInterval);
+        }
+      }
+    }, 200);
+
+    return () => clearInterval(checkInterval);
   }, [story.id]);
 
   if (!story?.content) {
@@ -112,4 +131,15 @@ export function StoryblokLivePreview({
   }
 
   return <DynamicRender data={story.content as any} />;
+}
+
+/**
+ * Main export with error boundary
+ */
+export function StoryblokLivePreview(props: StoryblokLivePreviewProps) {
+  return (
+    <StoryblokErrorBoundary>
+      <StoryblokLivePreviewInner {...props} />
+    </StoryblokErrorBoundary>
+  );
 }

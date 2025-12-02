@@ -1,6 +1,8 @@
+"use client";
+
 import { WorkCard } from "@httpjpg/ui";
-import { storyblokEditable } from "@storyblok/react/rsc";
 import { memo } from "react";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 import type { StoryblokImage } from "../../types";
 
 export interface SbWorkCardProps {
@@ -21,6 +23,7 @@ export interface SbWorkCardProps {
  */
 export const SbWorkCard = memo(function SbWorkCard({ blok }: SbWorkCardProps) {
   const { title, description, date, slug, images, baseUrl = "/work" } = blok;
+  const editableProps = useStoryblokEditable(blok);
 
   if (!images || images.length === 0) {
     return null;
@@ -28,7 +31,7 @@ export const SbWorkCard = memo(function SbWorkCard({ blok }: SbWorkCardProps) {
 
   return (
     <WorkCard
-      {...storyblokEditable(blok)}
+      {...editableProps}
       title={title}
       description={description}
       date={date}

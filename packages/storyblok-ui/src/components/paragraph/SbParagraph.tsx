@@ -1,5 +1,6 @@
+"use client";
+
 import { Paragraph } from "@httpjpg/ui";
-import { storyblokEditable } from "@storyblok/react/rsc";
 import { memo } from "react";
 import { mapSpacingToToken } from "../../lib/spacing-utils";
 import {
@@ -7,6 +8,7 @@ import {
   mapFontSizeToToken,
   mapFontWeightToToken,
 } from "../../lib/token-mapping";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 
 export interface SbParagraphProps {
   blok: {
@@ -46,10 +48,11 @@ export const SbParagraph = memo(function SbParagraph({
   // Paragraph only supports sm, md, lg, xl
   const mappedSize = mapFontSizeToToken(size);
   const validSize = mappedSize === "xs" ? undefined : mappedSize;
+  const editableProps = useStoryblokEditable(blok);
 
   return (
     <Paragraph
-      {...storyblokEditable(blok)}
+      {...editableProps}
       size={validSize as "sm" | "md" | "lg" | "xl" | undefined}
       css={{
         textAlign: align,

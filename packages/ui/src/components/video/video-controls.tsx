@@ -8,7 +8,7 @@ export interface VideoControlsProps {
   /**
    * Reference to the video element
    */
-  videoRef: RefObject<HTMLVideoElement>;
+  videoRef: RefObject<HTMLVideoElement | null>;
   /**
    * Show controls
    */
@@ -144,9 +144,11 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
           opacity: 1,
         },
       }}
+      // @ts-expect-error - Mouse event types
       onMouseEnter={(e) => {
         e.currentTarget.style.opacity = "1";
       }}
+      // @ts-expect-error - Mouse event types
       onMouseLeave={(e) => {
         e.currentTarget.style.opacity = "0";
       }}

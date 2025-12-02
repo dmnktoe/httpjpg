@@ -23,7 +23,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 config({ path: resolve(__dirname, "../../../.env.local") });
 
 // Import design tokens dynamically
-import { spacing, typography } from "@httpjpg/tokens";
+import { colors, spacing, typography } from "@httpjpg/tokens";
 import {
   type Datasource,
   type DatasourceEntry,
@@ -148,7 +148,7 @@ function generateSpacingDatasource(): {
   const spacingEntries = Object.entries(spacing)
     .sort(([a], [b]) => Number(a) - Number(b))
     .map(([key, value]) => ({
-      name: `${value} (${key}px)`,
+      name: `${key} (${value})`,
       value: key,
     }));
 
@@ -162,26 +162,28 @@ function generateSpacingDatasource(): {
 }
 
 /**
- * Generate color options datasource from tokens
+ * Generate unified color options datasource for both text and backgrounds
+ * Uses actual hex values for runtime compatibility
  */
 function generateColorDatasource(): {
   datasource: Datasource;
   entries: DatasourceEntry[];
 } {
   const entries: DatasourceEntry[] = [
-    { name: "White", value: "white" },
-    { name: "Black", value: "black" },
-    { name: "Light Gray", value: "neutral.50" },
-    { name: "Gray", value: "neutral.100" },
-    { name: "Dark Gray", value: "neutral.800" },
-    { name: "Primary", value: "primary.500" },
-    { name: "Accent", value: "accent.500" },
+    { name: "White", value: colors.white },
+    { name: "Black", value: colors.black },
+    { name: "Light Gray", value: colors.neutral[50] },
+    { name: "Gray", value: colors.neutral[100] },
+    { name: "Gray Medium", value: colors.neutral[500] },
+    { name: "Dark Gray", value: colors.neutral[800] },
+    { name: "Primary", value: colors.primary[500] },
+    { name: "Accent", value: colors.accent[500] },
   ];
 
   return {
     datasource: {
-      name: "Background Color Options",
-      slug: "background-color-options",
+      name: "Color Options",
+      slug: "color-options",
     },
     entries,
   };
@@ -232,6 +234,30 @@ function generateAspectRatioDatasource(): {
     datasource: {
       name: "Aspect Ratio Options",
       slug: "aspect-ratio-options",
+    },
+    entries,
+  };
+}
+
+/**
+ * Generate prose max width datasource
+ */
+function generateProseMaxWidthDatasource(): {
+  datasource: Datasource;
+  entries: DatasourceEntry[];
+} {
+  const entries: DatasourceEntry[] = [
+    { name: "None (Full width)", value: "none" },
+    { name: "Narrow (45ch)", value: "45ch" },
+    { name: "Readable (65ch)", value: "65ch" },
+    { name: "Wide (80ch)", value: "80ch" },
+    { name: "Extra Wide (100ch)", value: "100ch" },
+  ];
+
+  return {
+    datasource: {
+      name: "Prose Max Width Options",
+      slug: "prose-max-width-options",
     },
     entries,
   };
@@ -337,19 +363,23 @@ function generateFontWeightDatasource(): {
 /**
  * Generate text color datasource dynamically from color tokens
  */
+/**
+ * Generate text color options datasource
+ * Uses actual hex values for runtime compatibility
+ */
 function generateTextColorDatasource(): {
   datasource: Datasource;
   entries: DatasourceEntry[];
 } {
   const entries: DatasourceEntry[] = [
-    { name: "Black", value: "black" },
-    { name: "White", value: "white" },
+    { name: "Black", value: colors.black },
+    { name: "White", value: colors.white },
     // Generate from color tokens
-    { name: "Gray Light", value: "neutral.300" },
-    { name: "Gray", value: "neutral.500" },
-    { name: "Gray Dark", value: "neutral.700" },
-    { name: "Primary", value: "primary.500" },
-    { name: "Accent (Orange)", value: "accent.500" },
+    { name: "Gray Light", value: colors.neutral[300] },
+    { name: "Gray", value: colors.neutral[500] },
+    { name: "Gray Dark", value: colors.neutral[700] },
+    { name: "Primary", value: colors.primary[500] },
+    { name: "Accent (Orange)", value: colors.accent[500] },
   ];
 
   return {
@@ -386,24 +416,29 @@ function generateAnimationDurationDatasource(): {
 }
 
 /**
- * Generate animation easing datasource
+ * Generate animation type datasource
+ * Based on AnimationType from @httpjpg/ui AnimateInView component
  */
-function generateAnimationEasingDatasource(): {
+function generateAnimationTypeDatasource(): {
   datasource: Datasource;
   entries: DatasourceEntry[];
 } {
   const entries: DatasourceEntry[] = [
-    { name: "Linear", value: "linear" },
-    { name: "Ease", value: "ease" },
-    { name: "Ease In", value: "ease-in" },
-    { name: "Ease Out", value: "ease-out" },
-    { name: "Ease In Out", value: "ease-in-out" },
+    { name: "None (No Animation)", value: "none" },
+    { name: "Fade In", value: "fadeIn" },
+    { name: "Zoom In", value: "zoomIn" },
+    { name: "Zoom Sharpen", value: "zoomSharpen" },
+    { name: "Sharpen", value: "sharpen" },
+    { name: "Slide In From Left", value: "slideInFromLeft" },
+    { name: "Slide In From Right", value: "slideInFromRight" },
+    { name: "Slide Up", value: "slideUp" },
+    { name: "Slide Down", value: "slideDown" },
   ];
 
   return {
     datasource: {
-      name: "Animation Easing",
-      slug: "animation-easing",
+      name: "Animation Type",
+      slug: "animation-type",
     },
     entries,
   };
@@ -425,32 +460,31 @@ async function syncDatasources(): Promise<void> {
   validateEnv();
 
   const datasources = [
-    // Spacing & Layout
+    // Spacing & Layout (3)
     generateSpacingDatasource(),
     generateWidthDatasource(),
-    generateGridColumnsDatasource(),
     generateAspectRatioDatasource(),
 
-    // Colors
+    // Colors (1 unified)
     generateColorDatasource(),
-    generateTextColorDatasource(),
 
-    // Typography
+    // Typography (3)
     generateFontFamilyDatasource(),
     generateFontSizeDatasource(),
     generateFontWeightDatasource(),
 
-    // Animations
-    generateAnimationDurationDatasource(),
-    generateAnimationEasingDatasource(),
+    // Content & Animation (3)
+    generateGridColumnsDatasource(),
+    generateProseMaxWidthDatasource(),
+    generateAnimationTypeDatasource(),
   ];
 
   for (const { datasource, entries } of datasources) {
     try {
       await createOrUpdateDatasource(datasource, entries);
       console.log(`✅ ${datasource.name} synced (${entries.length} entries)\n`);
-      // Wait 200ms between datasources to avoid rate limiting (5 req/sec max)
-      await sleep(200);
+      // Wait 500ms between datasources to avoid rate limiting (max 2 req/sec to stay safe)
+      await sleep(500);
     } catch (error) {
       console.error(`❌ Failed to sync ${datasource.name}:`, error);
       process.exit(1);

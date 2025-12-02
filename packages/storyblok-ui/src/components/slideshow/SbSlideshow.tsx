@@ -1,6 +1,8 @@
+"use client";
+
 import { Slideshow } from "@httpjpg/ui";
-import { storyblokEditable } from "@storyblok/react/rsc";
 import { memo } from "react";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 import type { StoryblokImage } from "../../types";
 import { SbMediaWrapper } from "../media-wrapper";
 
@@ -58,6 +60,8 @@ export const SbSlideshow = memo(function SbSlideshow({
     width = "full",
   } = blok;
 
+  const editableProps = useStoryblokEditable(blok);
+
   if (!images || images.length === 0) {
     return null;
   }
@@ -67,7 +71,7 @@ export const SbSlideshow = memo(function SbSlideshow({
       spacingTop={spacingTop}
       spacingBottom={spacingBottom}
       width={width}
-      editable={storyblokEditable(blok)}
+      editable={editableProps}
     >
       <Slideshow
         images={images.map((img) => ({

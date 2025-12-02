@@ -25,8 +25,6 @@ import {
 import { apiPlugin, storyblokInit } from "@storyblok/react/rsc";
 import { type ReactNode, useEffect } from "react";
 
-import { StoryblokErrorBoundary } from "../components/storyblok-error-boundary";
-
 /**
  * Storyblok component registry
  * Register all Storyblok components for dynamic rendering
@@ -70,6 +68,11 @@ function initializeStoryblok() {
     return;
   }
 
+  console.log(
+    "[Storyblok] Initializing SDK with components:",
+    Object.keys(components),
+  );
+
   storyblokInit({
     accessToken: process.env.NEXT_PUBLIC_STORYBLOK_TOKEN,
     use: [apiPlugin],
@@ -88,8 +91,11 @@ function initializeStoryblok() {
   });
 
   isInitialized = true;
-  console.log("[Storyblok] SDK initialized with bridge enabled");
+  console.log("[Storyblok] SDK initialized successfully");
 }
+
+// Initialize immediately on module load
+initializeStoryblok();
 
 /**
  * Storyblok Bridge Loader for Visual Editor
@@ -155,10 +161,10 @@ export function StoryblokProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <StoryblokErrorBoundary>
+    <>
       {children}
       <StoryblokBridgeLoader />
-    </StoryblokErrorBoundary>
+    </>
   );
 }
 

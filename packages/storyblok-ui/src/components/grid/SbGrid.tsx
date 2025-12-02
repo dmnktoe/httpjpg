@@ -1,11 +1,14 @@
+"use client";
+
 import { type BlokItem, DynamicRender } from "@httpjpg/storyblok-utils";
 import { Grid } from "@httpjpg/ui";
-import { type SbBlokData, storyblokEditable } from "@storyblok/react/rsc";
+import type { SbBlokData } from "@storyblok/react/rsc";
 import { memo } from "react";
 import { css } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 import { mapSpacingToToken } from "../../lib/spacing-utils";
 import { mapGridColumnsToToken } from "../../lib/token-mapping";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 
 export interface SbGridProps {
   blok: {
@@ -40,6 +43,8 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
     mb,
   } = blok;
 
+  const editableProps = useStoryblokEditable(blok);
+
   if (!items || items.length === 0) {
     return null;
   }
@@ -60,7 +65,7 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
   if (isList) {
     return (
       <ul
-        {...storyblokEditable(blok)}
+        {...editableProps}
         className={css({
           ...gridStyles,
           listStyle: "none",
@@ -76,7 +81,7 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
   }
 
   return (
-    <Grid {...storyblokEditable(blok)} css={gridStyles}>
+    <Grid {...editableProps} css={gridStyles}>
       {items.map((item) => (
         <div key={item._uid}>
           <DynamicRender data={[item as BlokItem]} />

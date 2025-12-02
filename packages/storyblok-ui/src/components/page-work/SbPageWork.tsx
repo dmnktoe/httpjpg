@@ -1,7 +1,10 @@
+"use client";
+
 import { type BlokItem, DynamicRender } from "@httpjpg/storyblok-utils";
 import { Page } from "@httpjpg/ui";
-import { type SbBlokData, storyblokEditable } from "@storyblok/react/rsc";
+import type { SbBlokData } from "@storyblok/react/rsc";
 import { memo } from "react";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 import type { StoryblokImage } from "../../types";
 
 /**
@@ -11,15 +14,16 @@ export interface SbPageWorkProps {
   blok: {
     _uid: string;
     body?: SbBlokData[];
-    /**
-     * Featured images for the work item
-     * First image will be used as preview in navigation
-     */
-    images?: StoryblokImage[];
-    /**
-     * Optional title override
-     */
     title?: string;
+    description?: any;
+    images?: StoryblokImage[];
+    link?: {
+      url?: string;
+      cached_url?: string;
+      linktype?: string;
+      target?: string;
+    };
+    external_only?: boolean;
   };
 }
 
@@ -33,11 +37,12 @@ export interface SbPageWorkProps {
  * - No fixed structure - full creative freedom
  */
 export const SbPageWork = memo(function SbPageWork({ blok }: SbPageWorkProps) {
-  const { body } = blok;
+  const { body, external_only } = blok;
+  const editableProps = useStoryblokEditable(blok);
 
   return (
-    <Page {...storyblokEditable(blok)}>
-      {body && <DynamicRender data={body as BlokItem[]} />}
+    <Page {...editableProps}>
+      {!external_only && body && <DynamicRender data={body as BlokItem[]} />}
     </Page>
   );
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import type { SVGProps } from "react";
+import type { ReactElement, SVGProps } from "react";
 import { forwardRef } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
@@ -30,7 +30,7 @@ export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "css"> {
   css?: SystemStyleObject;
 }
 
-const icons: Record<IconName, JSX.Element> = {
+const icons: Record<IconName, ReactElement> = {
   "arrow-up": (
     <path d="m26.71 10.29-10-10a1 1 0 0 0-1.41 0l-10 10 1.41 1.41L15 3.41V32h2V3.41l8.29 8.29z" />
   ),

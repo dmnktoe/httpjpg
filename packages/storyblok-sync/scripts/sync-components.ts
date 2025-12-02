@@ -129,7 +129,7 @@ async function getSbSectionComponent(): Promise<StoryblokComponent> {
         display_name: "Background Color",
         description: "Choose a background color from the design tokens",
         source: "internal",
-        datasource_slug: "background-color-options",
+        datasource_slug: "color-options",
         pos: 1,
       },
       paddingTop: {
@@ -315,7 +315,7 @@ async function getSbContainerComponent(): Promise<StoryblokComponent> {
         type: "option",
         display_name: "Background Color",
         source: "internal",
-        datasource_slug: "background-color-options",
+        datasource_slug: "color-options",
       },
       pxMd: {
         type: "option",
@@ -465,7 +465,7 @@ async function getSbHeadlineComponent(): Promise<StoryblokComponent> {
         type: "option",
         display_name: "Text Color",
         source: "internal",
-        datasource_slug: "text-color-options",
+        datasource_slug: "color-options",
       },
       marginTop: {
         type: "option",
@@ -538,7 +538,7 @@ async function getSbParagraphComponent(): Promise<StoryblokComponent> {
         type: "option",
         display_name: "Text Color",
         source: "internal",
-        datasource_slug: "text-color-options",
+        datasource_slug: "color-options",
       },
       marginTop: {
         type: "option",
@@ -585,6 +585,12 @@ async function getSbRichTextComponent(): Promise<StoryblokComponent> {
         display_name: "Content",
         required: true,
         translatable: true,
+      },
+      maxWidth: {
+        type: "option",
+        display_name: "Max Width",
+        source: "internal",
+        datasource_slug: "prose-max-width-options",
       },
       marginTop: {
         type: "option",
@@ -976,7 +982,7 @@ async function getSbWorkListComponent(): Promise<StoryblokComponent> {
         type: "option",
         display_name: "Divider Color",
         source: "internal",
-        datasource_slug: "text-color-options",
+        datasource_slug: "color-options",
       },
       dividerSpacing: {
         type: "number",
@@ -1025,6 +1031,12 @@ async function getSbPageWorkComponent(): Promise<StoryblokComponent> {
         type: "multilink",
         display_name: "Link",
         description: "Optional external link (e.g. project URL)",
+      },
+      external_only: {
+        type: "boolean",
+        display_name: "External Only",
+        description: "Hide body content and show only external link",
+        default_value: false,
       },
     },
   };

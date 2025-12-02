@@ -22,7 +22,6 @@ export {
 export {
   SbImage,
   type SbImageProps,
-  type SbImageType,
 } from "./components/image";
 export {
   SbLink,
@@ -70,7 +69,6 @@ export {
 } from "./components/slideshow";
 export {
   SbVideo,
-  type SbVideoAssetType,
   type SbVideoProps,
 } from "./components/video";
 export {
@@ -98,7 +96,6 @@ export {
   WIDTH_OPTIONS,
   type WidthOption,
 } from "./lib/constants";
-
 // Export utility functions
 export {
   getLayoutStyles,
@@ -106,7 +103,6 @@ export {
   getWidthStyles,
   mapSpacingToToken,
 } from "./lib/spacing-utils";
-
 // Export token mapping functions
 export {
   mapAnimationDurationToToken,
@@ -117,8 +113,10 @@ export {
   mapFontSizeToToken,
   mapFontWeightToToken,
   mapGridColumnsToToken,
+  mapProseMaxWidthToToken,
   mapWidthToToken,
 } from "./lib/token-mapping";
+export { useStoryblokEditable } from "./lib/use-storyblok-editable";
 // Export shared types
 export type {
   BaseStoryblokProps,

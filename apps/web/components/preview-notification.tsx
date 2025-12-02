@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 /**
  * Preview Notification Banner
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
  * Shows a banner when draft mode is active
  * Provides link to exit draft mode
  */
-export function PreviewNotification() {
+function PreviewNotificationContent() {
   const [isPreview, setIsPreview] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -62,5 +62,13 @@ export function PreviewNotification() {
         Beenden
       </a>
     </div>
+  );
+}
+
+export function PreviewNotification() {
+  return (
+    <Suspense fallback={null}>
+      <PreviewNotificationContent />
+    </Suspense>
   );
 }

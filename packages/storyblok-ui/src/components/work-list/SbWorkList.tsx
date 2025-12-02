@@ -1,7 +1,9 @@
+"use client";
+
 import { renderStoryblokRichText } from "@httpjpg/storyblok-richtext";
 import { WorkList } from "@httpjpg/ui";
-import { storyblokEditable } from "@storyblok/react/rsc";
 import { memo } from "react";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 
 export interface SbWorkListProps {
   blok: {
@@ -40,6 +42,7 @@ export const SbWorkList = memo(function SbWorkList({
   baseUrl = "/work",
 }: SbWorkListProps) {
   const { work } = blok;
+  const editableProps = useStoryblokEditable(blok);
 
   if (!work || work.length === 0) {
     return null;
@@ -74,7 +77,7 @@ export const SbWorkList = memo(function SbWorkList({
   });
 
   return (
-    <div {...storyblokEditable(blok)}>
+    <div {...editableProps}>
       <WorkList works={workItems} />
     </div>
   );

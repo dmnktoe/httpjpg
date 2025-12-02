@@ -123,11 +123,13 @@ export function Marquee({
               animationPlayState: "running",
             }),
           }}
+          // @ts-expect-error - Mouse event types
           onMouseEnter={(e) => {
             if (pauseOnHover) {
               e.currentTarget.style.animationPlayState = "paused";
             }
           }}
+          // @ts-expect-error - Mouse event types
           onMouseLeave={(e) => {
             if (pauseOnHover) {
               e.currentTarget.style.animationPlayState = "running";

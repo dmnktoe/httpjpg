@@ -1,17 +1,19 @@
 /**
  * Color mapping utilities for Storyblok components
- * Maps Storyblok datasource color values to CSS custom properties
+ * Maps Storyblok datasource color values (hex codes) directly for runtime use
  */
+
+import { colors } from "@httpjpg/tokens";
 
 /**
  * Maps Storyblok datasource color values to CSS color values
- * Converts Panda token references to CSS custom properties for runtime use
+ * Supports both new hex values and legacy token paths for backwards compatibility
  *
  * @example
  * ```ts
- * mapColorToToken("accent.500") // "var(--colors-accent-500)"
- * mapColorToToken("black") // "var(--colors-black)"
- * mapColorToToken("#FF0000") // "#FF0000" (passthrough)
+ * mapColorToToken("#F97316") // "#F97316" (hex from datasource)
+ * mapColorToToken("primary.500") // "#F43F5E" (legacy token path)
+ * mapColorToToken("black") // "#000000" (legacy simple token)
  * ```
  */
 export function mapColorToToken(value?: string | null): string | undefined {
@@ -24,20 +26,82 @@ export function mapColorToToken(value?: string | null): string | undefined {
     return value;
   }
 
-  // Already a CSS custom property - pass through
+  // Already a CSS custom property - pass through (legacy support)
   if (value.startsWith("var(--")) {
     return value;
   }
 
-  // Convert token path to CSS custom property
-  // "accent.500" → "var(--colors-accent-500)"
-  // "black" → "var(--colors-black)"
-  // "neutral.100" → "var(--colors-neutral-100)"
-  const cssVarName = value.includes(".")
-    ? `--colors-${value.replace(".", "-")}`
-    : `--colors-${value}`;
+  // Legacy token path (e.g., "primary.500", "accent.500", "neutral.50")
+  if (value.includes(".")) {
+    const [colorKey, shade] = value.split(".");
+    const colorGroup = colors[colorKey as keyof typeof colors];
 
-  return `var(${cssVarName})`;
+    if (colorGroup && typeof colorGroup === "object") {
+      // @ts-expect-error - Dynamic shade lookup
+      const hexValue = colorGroup[shade];
+      if (hexValue) {
+        return hexValue as string;
+      }
+    }
+  }
+
+  // Legacy simple token (e.g., "black", "white")
+  const simpleColor = colors[value as keyof typeof colors];
+  if (simpleColor && typeof simpleColor === "string") {
+    return simpleColor;
+  }
+
+  // If we get here, it's an invalid value
+  if (process.env.NODE_ENV === "development") {
+    console.warn(
+      `[mapColorToToken] Unknown color token: "${value}". Please update to use hex values.`,
+    );
+  }
+
+  return undefined;
+}
+
+/**
+ * Maps Storyblok prose max width options to CSS values
+ *
+ * @example
+ * ```ts
+ * mapProseMaxWidthToToken("none") // false (no max width)
+ * mapProseMaxWidthToToken("65ch") // "65ch"
+ * mapProseMaxWidthToToken("Readable (65ch)") // "65ch"
+ * ```
+ */
+export function mapProseMaxWidthToToken(
+  value?: string | null,
+): string | boolean | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  // "none" means no max-width constraint
+  if (value === "none") {
+    return false;
+  }
+
+  // Direct ch value (e.g., "65ch", "80ch", "45ch")
+  if (/^\d+ch$/.test(value)) {
+    return value;
+  }
+
+  // Extract ch value from labeled option (e.g., "Readable (65ch)", "Narrow (45ch)")
+  const match = value.match(/(\d+ch)/);
+  if (match) {
+    return match[1];
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    console.log("[mapProseMaxWidthToToken]", {
+      value,
+      result: "defaulting to true (65ch)",
+    });
+  }
+
+  return true; // Default to true (65ch)
 }
 
 /**

@@ -1,9 +1,12 @@
+"use client";
+
 import { type BlokItem, DynamicRender } from "@httpjpg/storyblok-utils";
 import { Section } from "@httpjpg/ui";
-import { type SbBlokData, storyblokEditable } from "@storyblok/react/rsc";
+import type { SbBlokData } from "@storyblok/react/rsc";
 import { memo } from "react";
 import { mapSpacingToToken } from "../../lib/spacing-utils";
 import { mapColorToToken } from "../../lib/token-mapping";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 
 export interface SbSectionProps {
   blok: {
@@ -53,6 +56,8 @@ export const SbSection = memo(function SbSection({ blok }: SbSectionProps) {
     paddingLeftLg,
     paddingRightLg,
   } = blok;
+
+  const editableProps = useStoryblokEditable(blok);
 
   if (!content || content.length === 0) {
     return null;
@@ -114,14 +119,16 @@ export const SbSection = memo(function SbSection({ blok }: SbSectionProps) {
 
   return (
     <Section
-      {...storyblokEditable(blok)}
+      {...editableProps}
       useContainer={width === "container"}
       pt={responsivePt}
       pb={responsivePb}
       pl={responsivePl}
       pr={responsivePr}
+      style={{
+        backgroundColor: mapColorToToken(bgColor) || undefined,
+      }}
       css={{
-        bg: mapColorToToken(bgColor),
         mt: mapSpacingToToken(marginTop),
         mb: mapSpacingToToken(marginBottom),
       }}

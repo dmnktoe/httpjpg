@@ -1,28 +1,33 @@
 "use client";
 
 import { Marquee } from "@httpjpg/ui";
-import { m } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
+import Draggable from "react-draggable";
 import { type ExtractedColor, extractVibrantColor } from "./extract-color";
 
 export interface NowPlayingProps {
   /**
    * Song title
    */
-  title: string;
+  title?: string;
   /**
    * Artist name
    */
-  artist: string;
+  artist?: string;
   /**
    * Album artwork URL
    */
-  artwork: string;
+  artwork?: string;
   /**
    * Whether the track is currently playing
    * @default false
    */
   isPlaying?: boolean;
+  /**
+   * Show loading state
+   * @default false
+   */
+  isLoading?: boolean;
   /**
    * Automatically extract vibrant color from artwork
    * @default true
@@ -39,19 +44,10 @@ export interface NowPlayingProps {
    */
   textColor?: "black" | "white";
   /**
-   * Initial position
-   * @default { x: 20, y: 20 }
-   */
-  initialPosition?: { x: number; y: number };
-  /**
    * Size of the widget
    * @default "sm"
    */
   size?: "sm" | "md" | "lg";
-  /**
-   * Additional CSS styles
-   */
-  style?: React.CSSProperties;
 }
 
 interface MarqueeTextProps {
@@ -114,8 +110,8 @@ const MarqueeText = React.memo(({ children, speed = 10 }: MarqueeTextProps) => {
       style={{
         overflow: "hidden",
         whiteSpace: "nowrap",
-        maskImage: "linear-gradient(to right, black 95%, transparent)",
-        WebkitMaskImage: "linear-gradient(to right, black 95%, transparent)",
+        maskImage: "linear-gradient(to right, black 94%, transparent)",
+        WebkitMaskImage: "linear-gradient(to right, black 94%, transparent)",
       }}
     >
       <Marquee speed={speed} iosStyle pauseDuration={2}>
@@ -157,9 +153,9 @@ const sizeConfig = {
 /**
  * A draggable floating "Now Playing" widget inspired by Spotify.
  *
- * Features glassmorphism design with Spotify's signature green (#1DB954),
+ * Features glassmorphism design with vibrant colors extracted from artwork,
  * crisp album artwork, and iOS-style marquee for long text overflow.
- * Fully draggable with smooth animations powered by Framer Motion.
+ * Draggable with react-draggable.
  *
  * @example
  * ```tsx
@@ -176,17 +172,14 @@ export const NowPlaying = ({
   artist,
   artwork,
   isPlaying = false,
+  isLoading = false,
   autoExtractColor = true,
   vibrantColor,
   textColor,
-  initialPosition = {
-    x: typeof window !== "undefined" ? window.innerWidth - 280 : 20,
-    y: 40,
-  },
   size = "sm",
-  style,
 }: NowPlayingProps) => {
   const config = sizeConfig[size];
+  const nodeRef = useRef<HTMLDivElement>(null);
 
   // Internal color extraction state
   const [extractedColor, setExtractedColor] = useState<ExtractedColor | null>(
@@ -197,7 +190,7 @@ export const NowPlaying = ({
 
   // Extract color from artwork when it changes
   useEffect(() => {
-    if (!autoExtractColor || vibrantColor) {
+    if (!autoExtractColor || vibrantColor || !artwork) {
       return;
     }
     if (artwork === currentArtwork) {
@@ -210,7 +203,6 @@ export const NowPlaying = ({
     extractVibrantColor(artwork).then((color) => {
       if (color) {
         setExtractedColor(color);
-        // Small delay before showing the color to allow smooth transition
         setTimeout(() => setIsExtracting(false), 100);
       } else {
         setIsExtracting(false);
@@ -222,181 +214,230 @@ export const NowPlaying = ({
   const finalVibrantColor = vibrantColor || extractedColor?.rgba;
   const finalTextColor = textColor || extractedColor?.textColor || "white";
 
-  // Determine glow color: vibrantColor > neutral gray (no Spotify green)
+  // Determine glow color
   const hasVibrantColor = !!finalVibrantColor && !isExtracting;
   const glowColor = hasVibrantColor
     ? finalVibrantColor
     : "rgba(163, 163, 163, 0.6)";
 
   return (
-    <m.div
-      drag
-      dragMomentum={false}
-      dragElastic={0.1}
-      dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
-      initial={initialPosition}
-      data-draggable="true"
-      style={{
-        position: "fixed",
-        width: config.width,
-        height: config.height,
-        cursor: "grab",
-        zIndex: 10000,
-        touchAction: "none",
-        userSelect: "none",
-        ...style,
-      }}
-      whileDrag={{
-        cursor: "grabbing",
-        scale: 1.05,
-      }}
-    >
-      {/* Blurred background layer - vibrant color, Spotify green, or neutral gray */}
-      <div
-        style={{
-          position: "absolute",
-          inset: "-3px",
-          background: glowColor,
-          filter: "blur(8px)",
-          borderRadius: "9999px",
-          boxShadow: hasVibrantColor
-            ? `0 0 25px 0 ${finalVibrantColor?.replace("0.9)", "0.4)")}, 0 0 50px 0 ${finalVibrantColor?.replace("0.9)", "0.2)")}`
-            : "0 0 15px 0 rgba(163, 163, 163, 0.3)",
-          zIndex: -1,
-          transition:
-            "background 0.6s ease-in-out, box-shadow 0.6s ease-in-out",
-        }}
-      />
-
-      {/* Content container */}
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          gap: config.gap,
-          padding: config.padding,
-          borderRadius: "9999px",
-          overflow: "hidden",
-          isolation: "isolate",
-        }}
-      >
-        {/* Album artwork - crisp, no blur */}
+    <>
+      <style>
+        {`
+          @keyframes skeleton-shimmer {
+            0% {
+              background-position: -200% 0;
+            }
+            100% {
+              background-position: 200% 0;
+            }
+          }
+          .sparkle-1 {
+            display: inline-block;
+            animation: sparkle-1 0.6s ease-in-out infinite;
+          }
+          @keyframes sparkle-1 {
+            0%, 100% {
+              transform: scale(1) rotate(0deg);
+            }
+            50% {
+              transform: scale(1.3) rotate(10deg);
+            }
+          }
+          .sparkle-2 {
+            display: inline-block;
+            animation: sparkle-2 0.8s ease-in-out infinite;
+            animation-delay: 0.1s;
+          }
+          @keyframes sparkle-2 {
+            0%, 100% {
+              transform: translateY(0) rotate(0deg);
+            }
+            50% {
+              transform: translateY(-3px) rotate(-15deg);
+            }
+          }
+          .sparkle-3 {
+            display: inline-block;
+            animation: sparkle-3 0.7s ease-in-out infinite;
+            animation-delay: 0.2s;
+          }
+          @keyframes sparkle-3 {
+            0%, 100% {
+              transform: scale(1);
+              opacity: 1;
+            }
+            50% {
+              transform: scale(1.4);
+              opacity: 0.6;
+            }
+          }
+        `}
+      </style>
+      <Draggable nodeRef={nodeRef} cancel=".no-drag">
         <div
+          ref={nodeRef}
+          data-draggable="true"
           style={{
-            width: config.artworkSize,
-            height: config.artworkSize,
-            flexShrink: 0,
-            borderRadius: "9999px",
-            overflow: "hidden",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+            position: "fixed",
+            bottom: 40,
+            right: 40,
+            width: config.width,
+            height: config.height,
+            cursor: "grab",
+            zIndex: 9999,
+            touchAction: "none",
+            userSelect: "none",
           }}
         >
-          <img
-            src={artwork}
-            alt={`${title} artwork`}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              display: "block",
-            }}
-            draggable={false}
-          />
-        </div>
-
-        {/* Text content with marquee */}
-        <div
-          style={{
-            flex: 1,
-            minWidth: 0,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            gap: 2,
-            color: finalTextColor,
-            transition: "color 0.6s ease-in-out",
-            fontFamily:
-              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-          }}
-        >
-          <div style={{ fontSize: config.fontSize.title, fontWeight: 600 }}>
-            <MarqueeText>{title}</MarqueeText>
-          </div>
-
-          <div style={{ fontSize: config.fontSize.artist, opacity: 0.9 }}>
-            <MarqueeText speed={25}>{artist}</MarqueeText>
-          </div>
-        </div>
-
-        {/* Playing indicator - ASCII animation */}
-        {isPlaying && (
+          {/* Blurred background layer - vibrant color, Spotify green, or neutral gray */}
           <div
             style={{
-              flexShrink: 0,
-              marginRight: 4,
-              fontSize: config.fontSize.title,
-              lineHeight: 1,
-              color: finalTextColor,
+              position: "absolute",
+              inset: "-3px",
+              background: glowColor,
+              filter: "blur(8px)",
+              borderRadius: "9999px",
+              boxShadow: hasVibrantColor
+                ? `0 0 25px 0 ${finalVibrantColor?.replace("0.9)", "0.4)")}, 0 0 50px 0 ${finalVibrantColor?.replace("0.9)", "0.2)")}`
+                : "0 0 15px 0 rgba(163, 163, 163, 0.3)",
+              zIndex: -1,
+              transition:
+                "background 0.6s ease-in-out, box-shadow 0.6s ease-in-out",
+            }}
+          />
+
+          {/* Content container */}
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              height: "100%",
               display: "flex",
               alignItems: "center",
+              gap: config.gap,
+              padding: config.padding,
+              borderRadius: "9999px",
+              overflow: "hidden",
+              isolation: "isolate",
             }}
           >
-            <m.span
-              animate={{
-                scale: [1, 1.3, 1],
-                rotate: [0, 10, -10, 0],
-              }}
-              transition={{
-                duration: 0.6,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-              }}
+            {/* Album artwork - crisp, no blur (or skeleton) */}
+            <div
               style={{
-                display: "inline-block",
+                width: config.artworkSize,
+                height: config.artworkSize,
+                flexShrink: 0,
+                borderRadius: "9999px",
+                overflow: "hidden",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+                background: isLoading
+                  ? "linear-gradient(90deg, rgba(163, 163, 163, 0.8) 0%, rgba(200, 200, 200, 0.8) 50%, rgba(163, 163, 163, 0.8) 100%)"
+                  : undefined,
+                backgroundSize: "200% 100%",
+                animation: isLoading
+                  ? "skeleton-shimmer 2s ease-in-out infinite"
+                  : undefined,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              ⋆
-            </m.span>
-            <m.span
-              animate={{
-                y: [0, -3, 0],
-                rotate: [0, -15, 15, 0],
-              }}
-              transition={{
-                duration: 0.8,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-                delay: 0.1,
-              }}
+              {isLoading ? (
+                <span style={{ fontSize: "1.5rem", opacity: 0.5 }}>♪</span>
+              ) : (
+                <img
+                  src={artwork}
+                  alt={`${title} artwork`}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    display: "block",
+                  }}
+                  draggable={false}
+                />
+              )}
+            </div>
+
+            {/* Text content with marquee (or skeleton) */}
+            <div
               style={{
-                display: "inline-block",
+                flex: 1,
+                minWidth: 0,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                gap: isLoading ? 6 : 2,
+                color: finalTextColor,
+                transition: "color 0.6s ease-in-out",
+                fontFamily:
+                  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               }}
             >
-              ˚
-            </m.span>
-            <m.span
-              animate={{
-                scale: [1, 1.4, 1],
-                opacity: [1, 0.6, 1],
-              }}
-              transition={{
-                duration: 0.7,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-                delay: 0.2,
-              }}
-              style={{
-                display: "inline-block",
-              }}
-            >
-              ✮
-            </m.span>
+              {isLoading ? (
+                <>
+                  <div
+                    style={{
+                      height: config.fontSize.title,
+                      width: "80%",
+                      borderRadius: "4px",
+                      background:
+                        "linear-gradient(90deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0.3) 100%)",
+                      backgroundSize: "200% 100%",
+                      animation: "skeleton-shimmer 2s ease-in-out infinite",
+                    }}
+                  />
+                  <div
+                    style={{
+                      height: config.fontSize.artist,
+                      width: "60%",
+                      borderRadius: "4px",
+                      background:
+                        "linear-gradient(90deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0.2) 100%)",
+                      backgroundSize: "200% 100%",
+                      animation: "skeleton-shimmer 2s ease-in-out infinite",
+                    }}
+                  />
+                </>
+              ) : (
+                <>
+                  <div
+                    style={{ fontSize: config.fontSize.title, fontWeight: 600 }}
+                  >
+                    <MarqueeText>{title || ""}</MarqueeText>
+                  </div>
+                  <div
+                    style={{ fontSize: config.fontSize.artist, opacity: 0.9 }}
+                  >
+                    <MarqueeText speed={25}>{artist || ""}</MarqueeText>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Playing indicator - ASCII animation */}
+            {isPlaying && (
+              <div
+                style={{
+                  flexShrink: 0,
+                  marginRight: 4,
+                  fontSize: config.fontSize.title,
+                  lineHeight: 1,
+                  color: finalTextColor,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1px",
+                }}
+              >
+                <span className="sparkle-1">⋆</span>
+                <span className="sparkle-2">˚</span>
+                <span className="sparkle-3">✮</span>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </m.div>
+        </div>
+      </Draggable>
+    </>
   );
 };

@@ -57,6 +57,7 @@ export function CustomCursor({
   const [currentSymbol, setCurrentSymbol] = useState(symbol);
   const [hoverText, setHoverText] = useState("");
   const [isVisible, setIsVisible] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     const symbols = ["✦", "◆", "✧", "◇", "⬥", "⬦"];
@@ -88,6 +89,18 @@ export function CustomCursor({
       const isInteractive =
         target.hasAttribute("data-cursor") ||
         target.closest("[data-cursor]") !== null;
+      const isDraggable =
+        target.hasAttribute("draggable") ||
+        target.hasAttribute("data-draggable") ||
+        target.closest("[draggable='true']") !== null ||
+        target.closest("[data-draggable='true']") !== null;
+
+      // Show hand cursor for draggable elements
+      if (isDraggable) {
+        setCurrentSymbol("👋");
+        setIsDragging(true);
+        return;
+      }
 
       // Change symbol on hover
       if (isLink || isInteractive) {
@@ -110,6 +123,7 @@ export function CustomCursor({
     const handleMouseLeave = () => {
       setCurrentSymbol(symbol);
       setHoverText("");
+      setIsDragging(false);
     };
 
     // Hide cursor when leaving window
@@ -127,7 +141,7 @@ export function CustomCursor({
 
     // Add event listeners to all interactive elements
     const interactiveElements = document.querySelectorAll(
-      'a, button, [data-cursor], input, textarea, select, [role="button"]',
+      'a, button, [data-cursor], input, textarea, select, [role="button"], [draggable="true"], [data-draggable="true"]',
     );
 
     interactiveElements.forEach((el) => {
@@ -147,19 +161,19 @@ export function CustomCursor({
         el.removeEventListener("mouseleave", handleMouseLeave);
       });
     };
-  }, [isVisible, symbol]);
+  }, [isVisible, symbol, isDragging]);
 
   // Hide default cursor
   useEffect(() => {
     document.body.style.cursor = "none";
     document.documentElement.style.cursor = "none";
 
-    // Apply cursor: none to all elements EXCEPT draggable elements and their children
+    // Apply cursor: none to ALL elements including draggable ones
     const style = document.createElement("style");
     style.innerHTML = `
-      *:not([draggable="true"]):not([data-draggable="true"]):not([draggable="true"] *):not([data-draggable="true"] *),
-      *:not([draggable="true"]):not([data-draggable="true"]):not([draggable="true"] *):not([data-draggable="true"] *)::before,
-      *:not([draggable="true"]):not([data-draggable="true"]):not([draggable="true"] *):not([data-draggable="true"] *)::after {
+      *,
+      *::before,
+      *::after {
         cursor: none !important;
       }
     `;
@@ -185,9 +199,9 @@ export function CustomCursor({
           top: 0,
           left: 0,
           pointerEvents: "none",
-          zIndex: 9999,
+          zIndex: 10000,
           transform: `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0) translate(-50%, -50%)`,
-          fontSize: `${size}px`,
+          fontSize: isDragging ? `${size * 1.2}px` : `${size}px`,
           color,
           fontWeight: "bold",
           userSelect: "none",
@@ -195,6 +209,7 @@ export function CustomCursor({
           // Force hardware acceleration
           backfaceVisibility: "hidden",
           perspective: 1000,
+          transition: "font-size 0.15s ease-out",
         }}
         css={cssProp}
       >
@@ -209,7 +224,7 @@ export function CustomCursor({
             top: 0,
             left: 0,
             pointerEvents: "none",
-            zIndex: 9997,
+            zIndex: 10000,
             transform: `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0) translate(-50%, calc(-100% - 30px))`,
             willChange: "transform",
             // Force hardware acceleration

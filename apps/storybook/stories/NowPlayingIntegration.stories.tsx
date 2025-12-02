@@ -1,8 +1,4 @@
-import {
-  type ExtractedColor,
-  NowPlaying,
-  NowPlayingLoading,
-} from "@httpjpg/now-playing";
+import { type ExtractedColor, NowPlaying } from "@httpjpg/now-playing";
 import type { Meta } from "@storybook/react";
 import { useEffect, useState } from "react";
 
@@ -29,8 +25,8 @@ const ColorDebugBadge = ({ data }: { data: { artwork: string } | null }) => {
     <div
       style={{
         position: "fixed",
-        bottom: 20,
-        right: 20,
+        top: 20,
+        left: 20,
         padding: "0.75rem 1rem",
         background: "rgba(0, 0, 0, 0.9)",
         color: "white",
@@ -38,6 +34,7 @@ const ColorDebugBadge = ({ data }: { data: { artwork: string } | null }) => {
         fontSize: "11px",
         borderRadius: "8px",
         border: `2px solid ${color.rgb}`,
+        zIndex: 10000,
       }}
     >
       🎨 {color.rgb} · Text: {color.textColor}
@@ -109,7 +106,15 @@ export const LiveData = {
     }, []);
 
     if (isLoading) {
-      return <NowPlayingLoading />;
+      return (
+        <NowPlaying
+          title="Loading..."
+          artist="..."
+          artwork="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23a3a3a3' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='40' text-anchor='middle' dy='.3em' fill='white'%3E♪%3C/text%3E%3C/svg%3E"
+          isPlaying={false}
+          isLoading={true}
+        />
+      );
     }
 
     if (error) {

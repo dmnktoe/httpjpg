@@ -16,7 +16,8 @@
     "colorthief": "^2.6.0",
     "framer-motion": "^11.15.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-draggable": "^4.5.0"
   },
   "devDependencies": {
     "@httpjpg/tsconfig": "workspace:*",

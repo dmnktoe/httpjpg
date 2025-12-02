@@ -1,4 +1,3 @@
-import { aj, ajApi, ajWebhook } from "@httpjpg/security";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
@@ -56,45 +55,21 @@ async function validateStoryblokToken(request: NextRequest): Promise<boolean> {
 }
 
 /**
- * Middleware to handle Arcjet security and Storyblok Visual Editor integration
+ * Lightweight Middleware for Storyblok Visual Editor integration
+ *
+ * Note: Arcjet security (rate limiting, bot detection) is now handled
+ * at the API route level to keep middleware bundle size under 1MB.
+ * See: https://vercel.link/edge-function-size
  *
  * Features:
- * - Arcjet protection (shield, bot detection, rate limiting)
  * - Validates Storyblok Visual Editor tokens
  * - Adds security headers for iframe embedding
  * - Disables caching for Visual Editor requests
  */
 export async function middleware(request: NextRequest) {
-  const { pathname, searchParams } = request.nextUrl;
+  const { searchParams } = request.nextUrl;
   const storyblokParam = searchParams.get("_storyblok");
   const hasStoryblokToken = searchParams.has("_storyblok_tk[space_id]");
-
-  // Apply Arcjet protection
-  let arcjetInstance = aj; // Default protection
-
-  // Stricter protection for API routes
-  if (pathname.startsWith("/api/")) {
-    arcjetInstance = ajApi;
-  }
-
-  // Very strict protection for webhooks
-  if (pathname.includes("/webhook") || pathname.includes("/revalidate")) {
-    arcjetInstance = ajWebhook;
-  }
-
-  const decision = await arcjetInstance.protect(request);
-
-  if (decision.isDenied()) {
-    if (decision.reason.isRateLimit()) {
-      return NextResponse.json({ error: "Too Many Requests" }, { status: 429 });
-    }
-
-    if (decision.reason.isBot()) {
-      return NextResponse.json({ error: "Bot Detected" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
 
   const response = NextResponse.next();
 

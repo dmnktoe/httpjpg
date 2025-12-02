@@ -1,3 +1,4 @@
+import { aj, ajApi, ajWebhook } from "@httpjpg/security";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
@@ -55,17 +56,45 @@ async function validateStoryblokToken(request: NextRequest): Promise<boolean> {
 }
 
 /**
- * Middleware to handle Storyblok Visual Editor integration
+ * Middleware to handle Arcjet security and Storyblok Visual Editor integration
  *
  * Features:
+ * - Arcjet protection (shield, bot detection, rate limiting)
  * - Validates Storyblok Visual Editor tokens
  * - Adds security headers for iframe embedding
  * - Disables caching for Visual Editor requests
  */
 export async function middleware(request: NextRequest) {
-  const { searchParams } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
   const storyblokParam = searchParams.get("_storyblok");
   const hasStoryblokToken = searchParams.has("_storyblok_tk[space_id]");
+
+  // Apply Arcjet protection
+  let arcjetInstance = aj; // Default protection
+
+  // Stricter protection for API routes
+  if (pathname.startsWith("/api/")) {
+    arcjetInstance = ajApi;
+  }
+
+  // Very strict protection for webhooks
+  if (pathname.includes("/webhook") || pathname.includes("/revalidate")) {
+    arcjetInstance = ajWebhook;
+  }
+
+  const decision = await arcjetInstance.protect(request);
+
+  if (decision.isDenied()) {
+    if (decision.reason.isRateLimit()) {
+      return NextResponse.json({ error: "Too Many Requests" }, { status: 429 });
+    }
+
+    if (decision.reason.isBot()) {
+      return NextResponse.json({ error: "Bot Detected" }, { status: 403 });
+    }
+
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const response = NextResponse.next();
 

@@ -1,0 +1,32 @@
+{
+  "name": "@httpjpg/consent",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    },
+    "./banner": {
+      "import": "./src/components/cookie-banner.tsx"
+    }
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@httpjpg/ui": "workspace:*",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@httpjpg/tsconfig": "workspace:*",
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.12",
+    "typescript": "~5.7.2"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}

@@ -13,8 +13,12 @@
     "lint:fix": "biome lint . --fix"
   },
   "dependencies": {
+    "@httpjpg/analytics": "workspace:*",
     "@httpjpg/config": "workspace:*",
+    "@httpjpg/consent": "workspace:*",
     "@httpjpg/env": "workspace:*",
+    "@httpjpg/observability": "workspace:*",
+    "@httpjpg/security": "workspace:*",
     "@httpjpg/storyblok-api": "workspace:*",
     "@httpjpg/storyblok-richtext": "workspace:*",
     "@httpjpg/storyblok-ui": "workspace:*",
@@ -22,7 +26,6 @@
     "@httpjpg/tokens": "workspace:*",
     "@httpjpg/ui": "workspace:*",
     "@next/third-parties": "^16.0.3",
-    "@sentry/nextjs": "^10.26.0",
     "next": "^15.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

@@ -1,0 +1,29 @@
+{
+  "name": "@httpjpg/analytics",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Analytics and tracking utilities for httpjpg",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./google": {
+      "types": "./src/google/index.ts",
+      "default": "./src/google/index.ts"
+    }
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@httpjpg/env": "workspace:*"
+  },
+  "devDependencies": {
+    "@httpjpg/tsconfig": "workspace:*",
+    "typescript": "^5.7.3"
+  }
+}

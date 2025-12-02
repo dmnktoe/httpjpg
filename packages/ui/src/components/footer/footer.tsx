@@ -26,6 +26,10 @@ export interface FooterProps {
    */
   copyrightText?: string;
   /**
+   * Callback when cookie settings button is clicked
+   */
+  onCookieSettingsClick?: () => void;
+  /**
    * Additional Panda CSS styles
    */
   css?: SystemStyleObject;
@@ -51,6 +55,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       backgroundImage,
       showDefaultLinks = true,
       copyrightText,
+      onCookieSettingsClick,
       css: cssProp,
       ...props
     },
@@ -71,7 +76,6 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
         }}
         css={{
           py: 64,
-          borderTop: "1px solid black",
           textAlign: "center",
           w: "full",
           ...cssProp,
@@ -82,18 +86,35 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
           {children ? (
             children
           ) : (
-            <VStack
-              gap="2"
-              align="center"
-              css={{
-                filter: "drop-shadow(0 35px 35px rgba(0,0,0,0.25))",
-              }}
-            >
+            <VStack gap="0" align="center">
               {showDefaultLinks && (
                 <>
                   <Link href="/legal">Legal</Link>
                   <Link href="/privacy">Privacy</Link>
                 </>
+              )}
+              {onCookieSettingsClick && (
+                <Box
+                  as="button"
+                  onClick={onCookieSettingsClick}
+                  css={{
+                    bg: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    p: 0,
+                    textDecoration: "underline",
+                    textDecorationThickness: "1px",
+                    textUnderlineOffset: "2px",
+                    color: "inherit",
+                    fontSize: "inherit",
+                    transition: "text-decoration-style 150ms ease-in-out",
+                    _hover: {
+                      textDecorationStyle: "wavy",
+                    },
+                  }}
+                >
+                  Cookie Settings
+                </Box>
               )}
               <Box as="span">*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚</Box>
               <Box as="span">

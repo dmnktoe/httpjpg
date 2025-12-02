@@ -2,14 +2,18 @@ import { config } from "@httpjpg/config";
 import { env } from "@httpjpg/env";
 import "@httpjpg/tokens/dist/tokens.css";
 import "@httpjpg/ui/styles.css";
-import { Footer, Header, ImagePreview } from "@httpjpg/ui";
+import { Box, Header, ImagePreview } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
+import { ConsentProvider } from "../components/consent-provider";
 import { CustomCursorWrapper } from "../components/custom-cursor-wrapper";
+import { FooterWrapper } from "../components/footer-wrapper";
 import { MotionProvider } from "../components/motion-provider";
 import { NowPlayingWidget } from "../components/now-playing-widget";
+import { ObservabilityProvider } from "../components/observability-provider";
 import { PreviewNotification } from "../components/preview-notification";
+import { WebVitalsReporter } from "../components/web-vitals-reporter";
 import {
   getFooterConfig,
   getNavigation,
@@ -58,6 +62,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="de">
       <body style={{ margin: 0, padding: 0, backgroundColor: "#ffffff" }}>
+        <ConsentProvider />
+        <ObservabilityProvider />
+        <WebVitalsReporter />
         <MotionProvider>
           <StoryblokProvider>
             {/* Global UI Elements (not affected by page containers) */}
@@ -66,7 +73,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             <NowPlayingWidget />
             <PreviewNotification />
 
-            {/* Fixed Header - always full width */}
+            {/* Sticky Header - always full width, pushes content down naturally */}
             <Header
               nav={navigation}
               personalWork={personalWork}
@@ -76,20 +83,19 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             {/* Main Content Area - NO container wrapper here
               Pages must use Container/Section components themselves
               This allows for full-width sections and controlled breakouts */}
-            <main
-              style={{
-                minHeight: "calc(100vh - 280px - 80px)",
-                paddingTop: "0",
-                paddingBottom: "80px",
-                background: "#ffffff",
-                width: "100%",
+            <Box
+              as="main"
+              css={{
+                bg: "white",
+                w: "full",
+                minH: "100vh",
               }}
             >
               {children}
-            </main>
+            </Box>
 
-            {/* Fixed Footer - always full width */}
-            <Footer
+            {/* Footer - always full width */}
+            <FooterWrapper
               backgroundImage={footerConfig.backgroundImage}
               showDefaultLinks={footerConfig.showDefaultLinks}
               copyrightText={footerConfig.copyrightText}

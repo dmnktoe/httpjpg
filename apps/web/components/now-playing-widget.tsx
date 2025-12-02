@@ -1,5 +1,6 @@
 "use client";
 
+import { trackNowPlayingClick } from "@httpjpg/analytics";
 import {
   NowPlaying,
   NowPlayingLoading,
@@ -13,6 +14,9 @@ import { useEffect, useState } from "react";
  * Automatically polls every 10 seconds
  */
 export function NowPlayingWidget() {
+  const handleClick = () => {
+    trackNowPlayingClick();
+  };
   const [isMounted, setIsMounted] = useState(false);
   const { data, isLoading, error } = useNowPlaying({
     endpoint: "/api/spotify/now-playing",
@@ -43,17 +47,31 @@ export function NowPlayingWidget() {
   // Show nothing playing state when no data or error
   if (error || !data) {
     return (
-      <NowPlaying
-        title="╱╱ Nothing playing ╱╱"
-        artist="⋄ ⋄ ⋄"
-        artwork="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23a3a3a3' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='40' text-anchor='middle' dy='.3em' fill='white'%3E♪%3C/text%3E%3C/svg%3E"
-        isPlaying={false}
-        autoExtractColor={false}
-        vibrantColor="rgba(163, 163, 163, 0.6)"
-        initialPosition={position}
-      />
+      <button
+        type="button"
+        onClick={handleClick}
+        style={{ all: "unset", cursor: "pointer" }}
+      >
+        <NowPlaying
+          title="╱╱ Nothing playing ╱╱"
+          artist="⋄ ⋄ ⋄"
+          artwork="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23a3a3a3' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='40' text-anchor='middle' dy='.3em' fill='white'%3E♪%3C/text%3E%3C/svg%3E"
+          isPlaying={false}
+          autoExtractColor={false}
+          vibrantColor="rgba(163, 163, 163, 0.6)"
+          initialPosition={position}
+        />
+      </button>
     );
   }
 
-  return <NowPlaying {...data} initialPosition={position} />;
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      style={{ all: "unset", cursor: "pointer" }}
+    >
+      <NowPlaying {...data} initialPosition={position} />
+    </button>
+  );
 }

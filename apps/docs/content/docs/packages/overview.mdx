@@ -1,0 +1,157 @@
+---
+title: Packages Overview
+description: Overview of all reusable packages in the httpjpg monorepo
+---
+
+# Packages Overview
+
+The httpjpg monorepo contains 9 reusable packages organized by functionality.
+
+## Design System
+
+### @httpjpg/ui
+**React component library with Panda CSS**
+
+30+ production-ready components including layouts, typography, media, and interactive elements.
+
+[→ Read documentation](/docs/packages/ui)
+
+### @httpjpg/tokens
+**Design tokens for consistent styling**
+
+Centralized spacing, colors, typography, shadows, and border-radius tokens used across all packages.
+
+[→ Read documentation](/docs/packages/tokens)
+
+## Storyblok Integration
+
+### @httpjpg/storyblok-sync
+**Automated CMS synchronization**
+
+Sync design tokens to datasources and TypeScript interfaces to component schemas automatically.
+
+[→ Read documentation](/docs/storyblok/storyblok-sync-quickstart)
+
+### @httpjpg/storyblok-ui
+**Storyblok component implementations**
+
+14 Storyblok-compatible components with token mapping and responsive design.
+
+[→ Read documentation](/docs/packages/storyblok-ui)
+
+### @httpjpg/storyblok-api
+**Storyblok API client**
+
+Type-safe client for Storyblok Content Delivery API with caching and error handling.
+
+[→ Read documentation](/docs/packages/storyblok-api)
+
+### @httpjpg/storyblok-richtext
+**Rich text renderer**
+
+Render Storyblok rich text to React components with custom styling.
+
+[→ Read documentation](/docs/packages/storyblok-richtext)
+
+### @httpjpg/storyblok-utils
+**Storyblok utilities**
+
+Helper functions for image processing, link resolution, asset handling, and slug generation.
+
+[→ Read documentation](/docs/packages/storyblok-utils)
+
+## Features
+
+### @httpjpg/now-playing
+**Spotify integration**
+
+Real-time "Now Playing" widget with album art, color extraction, and playback status.
+
+[→ Read documentation](/docs/packages/now-playing)
+
+## Configuration
+
+### @httpjpg/env
+**Type-safe environment variables**
+
+Zod-based environment validation with TypeScript types for all env variables.
+
+[→ Read documentation](/docs/packages/env)
+
+### @httpjpg/tsconfig
+**Shared TypeScript configurations**
+
+Base TypeScript configs for Next.js apps and React libraries.
+
+## Package Dependencies
+
+```mermaid
+graph TD
+    A[apps/web] --> B[@httpjpg/ui]
+    A --> C[@httpjpg/storyblok-ui]
+    A --> D[@httpjpg/now-playing]
+    A --> E[@httpjpg/env]
+
+    B --> F[@httpjpg/tokens]
+    C --> B
+    C --> G[@httpjpg/storyblok-api]
+    C --> H[@httpjpg/storyblok-utils]
+
+    I[@httpjpg/storyblok-sync] --> F
+    I --> E
+```
+
+## Installation
+
+All packages are automatically installed when you clone the repository:
+
+```bash
+pnpm install
+```
+
+## Using Packages
+
+Import from any package in your app:
+
+```tsx
+// UI Components
+import { Button, Section, Container } from '@httpjpg/ui';
+
+// Design Tokens
+import { colors, spacing } from '@httpjpg/tokens';
+
+// Storyblok Components
+import { SbSection, SbHeadline } from '@httpjpg/storyblok-ui';
+
+// Utilities
+import { getStoryblokApi } from '@httpjpg/storyblok-api';
+```
+
+## Development
+
+### Build All Packages
+
+```bash
+pnpm build:packages
+```
+
+### Build Specific Package
+
+```bash
+pnpm --filter @httpjpg/ui build
+```
+
+### Watch Mode
+
+```bash
+pnpm --filter @httpjpg/tokens dev
+```
+
+## Contributing
+
+When adding a new package:
+
+1. Create folder in `/packages/<name>`
+2. Add `package.json` with workspace dependencies
+3. Add to `pnpm-workspace.yaml`
+4. Update this documentation

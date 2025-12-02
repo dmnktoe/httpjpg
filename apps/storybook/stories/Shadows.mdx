@@ -1,0 +1,146 @@
+import { Meta } from '@storybook/blocks';
+import { shadows } from '@httpjpg/tokens';
+
+<Meta title="Shadows" />
+
+# Shadows
+
+Minimal shadow values following brutalistic design principles. Use sparingly for depth and hierarchy.
+
+## Shadow Scale
+
+<div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginTop: '2rem' }}>
+  {Object.entries(shadows).map(([key, value]) => (
+    <div key={key}>
+      <div style={{
+        fontFamily: 'monospace',
+        fontSize: '0.875rem',
+        marginBottom: '0.5rem',
+        opacity: 0.6
+      }}>
+        {key}
+      </div>
+      <div style={{
+        padding: '2rem',
+        backgroundColor: 'white',
+        boxShadow: value,
+        border: '1px solid #E5E5E5',
+        borderRadius: '4px',
+      }}>
+        <div style={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
+          {value}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
+## Usage
+
+### Subtle Depth
+
+```tsx
+import { Box } from '@httpjpg/ui';
+
+<Box css={{ boxShadow: 'sm' }}>
+  Subtle elevation
+</Box>
+```
+
+### Cards & Overlays
+
+```tsx
+import { Box } from '@httpjpg/ui';
+
+<Box css={{ boxShadow: 'md' }}>
+  Card with medium shadow
+</Box>
+```
+
+### Modals & Popovers
+
+```tsx
+import { Box } from '@httpjpg/ui';
+
+<Box css={{ boxShadow: 'xl' }}>
+  Floating element with strong shadow
+</Box>
+```
+
+### Inner Shadow
+
+```tsx
+import { Box } from '@httpjpg/ui';
+
+<Box css={{ boxShadow: 'inner' }}>
+  Inset shadow for inputs
+</Box>
+```
+
+## Guidelines
+
+### When to Use
+
+- **Cards**: Use `sm` or `base` for subtle elevation
+- **Dropdowns**: Use `md` or `lg` for clear separation
+- **Modals**: Use `xl` or `2xl` for maximum depth
+- **Inputs**: Use `inner` for inset effect
+- **Hover states**: Increase shadow level on interaction
+
+### When Not to Use
+
+- **Brutalist sections**: Keep flat, no shadows
+- **Text elements**: Never use shadows on text
+- **Backgrounds**: Use solid colors instead
+- **Borders**: Prefer solid borders for structure
+
+## Hover Effects
+
+```tsx
+import { Box } from '@httpjpg/ui';
+
+<Box css={{
+  boxShadow: 'sm',
+  transition: 'box-shadow 0.2s',
+  _hover: {
+    boxShadow: 'md',
+  }
+}}>
+  Interactive card with shadow transition
+</Box>
+```
+
+## Custom Shadows
+
+For special cases, you can define custom shadow values:
+
+```tsx
+import { Box } from '@httpjpg/ui';
+
+<Box css={{
+  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+}}>
+  Custom shadow
+</Box>
+```
+
+## Brutalist Alternative
+
+Instead of shadows, consider using:
+
+- **Solid borders**: `border: '2px solid black'`
+- **Offset backgrounds**: Layered boxes with offset
+- **Color contrast**: Strong color changes for depth
+- **Spacing**: Generous whitespace for separation
+
+```tsx
+import { Box } from '@httpjpg/ui';
+
+// Instead of shadow
+<Box css={{
+  border: '2px solid black',
+  position: 'relative',
+}}>
+  Brutalist card with border
+</Box>
+```

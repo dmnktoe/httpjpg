@@ -1,0 +1,300 @@
+---
+title: "@httpjpg/storyblok-ui"
+description: Storyblok-compatible React components with token mapping
+---
+
+# @httpjpg/storyblok-ui
+
+14 Storyblok-compatible React components with automatic token mapping and responsive design.
+
+## Installation
+
+```bash
+pnpm add @httpjpg/storyblok-ui
+```
+
+## Components
+
+### Layout Components
+
+#### SbSection
+Semantic section wrapper with responsive spacing and background colors.
+
+```tsx
+import { SbSection } from '@httpjpg/storyblok-ui';
+
+<SbSection
+  blok={{
+    bgColor: "Medium Gray",
+    paddingTop: "Large",
+    paddingBottom: "Large",
+    content: [/* nested components */]
+  }}
+/>
+```
+
+**Fields:**
+- `bgColor` - Background color (datasource: background-color-options)
+- `paddingTop/Bottom/Left/Right` - Spacing (datasource: spacing-options)
+- `paddingTopMd/Lg`, `paddingBottomMd/Lg` - Responsive spacing
+- `content` - Nested bloks
+
+#### SbContainer
+Content container with configurable width.
+
+```tsx
+<SbContainer
+  blok={{
+    width: "container",
+    px: "Medium",
+    py: "Large",
+    body: [/* nested components */]
+  }}
+/>
+```
+
+**Width Options:**
+- `full` - 100% width
+- `container` - Max-width container
+- `narrow` - Narrow container
+
+#### SbGrid
+Responsive grid layout.
+
+```tsx
+<SbGrid
+  blok={{
+    columns: "3",
+    gap: "Medium",
+    items: [/* grid items */]
+  }}
+/>
+```
+
+### Typography Components
+
+#### SbHeadline
+H1-H3 headings with styling options.
+
+```tsx
+<SbHeadline
+  blok={{
+    text: "Hello World",
+    tag: "h1",
+    fontSize: "4xl",
+    fontWeight: "Bold",
+    textAlign: "center",
+    color: "Primary"
+  }}
+/>
+```
+
+**Fields:**
+- `text` - Heading text (required)
+- `tag` - HTML tag (h1, h2, h3)
+- `fontSize` - Font size (datasource: font-size)
+- `fontWeight` - Font weight (datasource: font-weight)
+- `textAlign` - left, center, right
+- `color` - Text color (datasource: text-color-options)
+
+#### SbParagraph
+Body text with styling options.
+
+```tsx
+<SbParagraph
+  blok={{
+    text: "Lorem ipsum...",
+    fontSize: "base",
+    lineHeight: "relaxed"
+  }}
+/>
+```
+
+### Media Components
+
+#### SbImage
+Responsive images with aspect ratio support.
+
+```tsx
+<SbImage
+  blok={{
+    image: { filename: "..." },
+    alt: "Description",
+    aspectRatio: "16:9",
+    priority: true
+  }}
+/>
+```
+
+**Fields:**
+- `image` - Storyblok asset (required)
+- `alt` - Alt text (required)
+- `aspectRatio` - Aspect ratio (datasource: aspect-ratio-options)
+- `caption` - Image caption
+- `priority` - Next.js priority loading
+
+#### SbVideo
+Video player supporting Assets, YouTube, and Vimeo.
+
+```tsx
+<SbVideo
+  blok={{
+    source: "youtube",
+    videoUrl: "https://youtube.com/watch?v=...",
+    aspectRatio: "16:9",
+    autoplay: false
+  }}
+/>
+```
+
+**Sources:**
+- `asset` - Upload video file
+- `youtube` - YouTube URL
+- `vimeo` - Vimeo URL
+
+#### SbSlideshow
+Image carousel with navigation.
+
+```tsx
+<SbSlideshow
+  blok={{
+    images: [
+      { image: {...}, alt: "..." },
+      { image: {...}, alt: "..." }
+    ],
+    autoplay: true,
+    interval: 5000
+  }}
+/>
+```
+
+### Utility Components
+
+#### SbLink
+Next.js Link with Storyblok link resolution.
+
+```tsx
+<SbLink
+  blok={{
+    link: { linktype: "story", id: "..." },
+    text: "Click here"
+  }}
+/>
+```
+
+#### SbCaption
+Text caption for media elements.
+
+```tsx
+<SbCaption
+  blok={{
+    text: "Image caption",
+    align: "center"
+  }}
+/>
+```
+
+## Token Mapping
+
+All components use token mapping to convert Storyblok datasource values to design tokens:
+
+```typescript
+// In Storyblok: User selects "Large" from spacing dropdown
+paddingTop: "Large"
+
+// Component maps to token
+mapSpacingToToken("Large") // → "16"
+
+// Panda CSS compiles
+padding-top: 4rem; // (16 * 0.25rem)
+```
+
+### Mapping Functions
+
+```typescript
+import {
+  mapColorToToken,
+  mapSpacingToToken,
+  mapFontSizeToToken,
+  mapFontWeightToToken,
+  mapFontFamilyToToken,
+} from '@httpjpg/storyblok-ui/lib/token-mapping';
+```
+
+## Responsive Design
+
+Components support responsive props with `Md` and `Lg` suffixes:
+
+```tsx
+<SbSection
+  blok={{
+    paddingTop: "8",      // Mobile: 2rem
+    paddingTopMd: "12",   // Tablet: 3rem
+    paddingTopLg: "16",   // Desktop: 4rem
+  }}
+/>
+```
+
+This generates:
+
+```tsx
+padding={{
+  base: "8",
+  md: "12",
+  lg: "16"
+}}
+```
+
+## Usage in Web App
+
+Components are automatically registered for Storyblok:
+
+```tsx
+// apps/web/app/storyblok-provider.tsx
+import { storyblokInit } from '@storyblok/react/rsc';
+import * as StoryblokComponents from '@httpjpg/storyblok-ui';
+
+storyblokInit({
+  components: StoryblokComponents,
+});
+```
+
+## Dynamic Rendering
+
+Use the dynamic renderer:
+
+```tsx
+import { DynamicStoryblokComponent } from '@httpjpg/storyblok-utils';
+
+<DynamicStoryblokComponent blok={blok} />
+```
+
+## Storyblok Sync
+
+Sync component schemas to Storyblok:
+
+```bash
+pnpm --filter @httpjpg/storyblok-sync sync:components
+```
+
+This creates/updates all 14 component schemas in your Storyblok space.
+
+## TypeScript Types
+
+All components are fully typed:
+
+```typescript
+import type {
+  SbSectionBlok,
+  SbHeadlineBlok,
+  SbImageBlok
+} from '@httpjpg/storyblok-ui';
+```
+
+## Best Practices
+
+1. **Always provide alt text** for images
+2. **Use token-mapped values** instead of hardcoded numbers
+3. **Test responsive spacing** on mobile, tablet, desktop
+4. **Configure component whitelists** in Storyblok for bloks fields
+5. **Use semantic HTML** (h1 for main heading, h2 for sections, etc.)

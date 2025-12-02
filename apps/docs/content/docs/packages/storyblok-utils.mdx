@@ -1,0 +1,329 @@
+---
+title: "@httpjpg/storyblok-utils"
+description: Utility functions for Storyblok integration
+---
+
+# @httpjpg/storyblok-utils
+
+Helper functions for Storyblok image processing, link resolution, asset handling, and slug generation.
+
+## Installation
+
+```bash
+pnpm add @httpjpg/storyblok-utils
+```
+
+## Functions
+
+### Dynamic Component Rendering
+
+#### DynamicStoryblokComponent
+
+Dynamically render Storyblok components:
+
+```tsx
+import { DynamicStoryblokComponent } from '@httpjpg/storyblok-utils';
+
+export function ContentArea({ bloks }) {
+  return (
+    <>
+      {bloks.map((blok) => (
+        <DynamicStoryblokComponent key={blok._uid} blok={blok} />
+      ))}
+    </>
+  );
+}
+```
+
+### Image Processing
+
+#### getImageDimensions()
+
+Extract width and height from Storyblok image URL:
+
+```typescript
+import { getImageDimensions } from '@httpjpg/storyblok-utils';
+
+const dimensions = getImageDimensions('https://a.storyblok.com/f/123/1920x1080/image.jpg');
+// { width: 1920, height: 1080 }
+```
+
+#### optimizeStoryblokImage()
+
+Generate optimized image URL with transformations:
+
+```typescript
+import { optimizeStoryblokImage } from '@httpjpg/storyblok-utils';
+
+const optimized = optimizeStoryblokImage(
+  'https://a.storyblok.com/f/123/image.jpg',
+  {
+    width: 800,
+    height: 600,
+    quality: 80,
+    format: 'webp',
+    fit: 'cover',
+  }
+);
+// Returns: https://a.storyblok.com/f/123/800x600/filters:quality(80):format(webp)/image.jpg
+```
+
+**Options:**
+- `width` - Target width
+- `height` - Target height
+- `quality` - Image quality (1-100)
+- `format` - Output format (webp, jpg, png)
+- `fit` - Resize mode (cover, contain, fill)
+- `focus` - Focus point (center, top, bottom, left, right)
+
+### Link Resolution
+
+#### resolveLinkUrl()
+
+Convert Storyblok link to Next.js URL:
+
+```typescript
+import { resolveLinkUrl } from '@httpjpg/storyblok-utils';
+
+// Internal story link
+const url = resolveLinkUrl({
+  linktype: 'story',
+  cached_url: 'about/team',
+});
+// Returns: '/about/team'
+
+// External URL
+const external = resolveLinkUrl({
+  linktype: 'url',
+  url: 'https://example.com',
+});
+// Returns: 'https://example.com'
+
+// Email link
+const email = resolveLinkUrl({
+  linktype: 'email',
+  email: 'hello@example.com',
+});
+// Returns: 'mailto:hello@example.com'
+```
+
+#### getLinkTarget()
+
+Get target attribute for links:
+
+```typescript
+import { getLinkTarget } from '@httpjpg/storyblok-utils';
+
+const target = getLinkTarget({
+  linktype: 'url',
+  target: '_blank',
+});
+// Returns: '_blank'
+```
+
+### Asset Handling
+
+#### getAssetType()
+
+Determine asset type from filename:
+
+```typescript
+import { getAssetType } from '@httpjpg/storyblok-utils';
+
+getAssetType('video.mp4');  // 'video'
+getAssetType('image.jpg');  // 'image'
+getAssetType('file.pdf');   // 'document'
+getAssetType('song.mp3');   // 'audio'
+```
+
+#### isVideoAsset()
+
+Check if asset is a video:
+
+```typescript
+import { isVideoAsset } from '@httpjpg/storyblok-utils';
+
+isVideoAsset({ filename: 'video.mp4' });  // true
+isVideoAsset({ filename: 'image.jpg' });  // false
+```
+
+#### getVideoThumbnail()
+
+Generate video thumbnail URL:
+
+```typescript
+import { getVideoThumbnail } from '@httpjpg/storyblok-utils';
+
+const thumb = getVideoThumbnail('https://a.storyblok.com/f/123/video.mp4');
+// Returns: https://a.storyblok.com/f/123/video.mp4/m/thumb.jpg
+```
+
+### Slug Utilities
+
+#### generateSlug()
+
+Generate URL-safe slug from text:
+
+```typescript
+import { generateSlug } from '@httpjpg/storyblok-utils';
+
+generateSlug('Hello World!');        // 'hello-world'
+generateSlug('Über uns & Kontakt');  // 'ueber-uns-kontakt'
+generateSlug('   Multiple   Spaces   ');  // 'multiple-spaces'
+```
+
+#### slugToTitle()
+
+Convert slug to readable title:
+
+```typescript
+import { slugToTitle } from '@httpjpg/storyblok-utils';
+
+slugToTitle('hello-world');          // 'Hello World'
+slugToTitle('about-us');             // 'About Us'
+slugToTitle('my-blog-post');         // 'My Blog Post'
+```
+
+### Relations
+
+#### resolveRelations()
+
+Resolve related stories:
+
+```typescript
+import { resolveRelations } from '@httpjpg/storyblok-utils';
+
+const story = await fetchStory();
+const resolved = resolveRelations(story, ['author', 'category']);
+```
+
+### Logging
+
+#### logger
+
+Development logger with styled output:
+
+```typescript
+import { logger } from '@httpjpg/storyblok-utils';
+
+logger.info('Fetching story...');
+logger.success('Story fetched!');
+logger.warning('Slow response');
+logger.error('Failed to fetch', error);
+```
+
+Only logs in development mode.
+
+## Complete Examples
+
+### Image Component with Optimization
+
+```tsx
+import { optimizeStoryblokImage, getImageDimensions } from '@httpjpg/storyblok-utils';
+import Image from 'next/image';
+
+export function StoryblokImage({ asset, alt, priority = false }) {
+  const dimensions = getImageDimensions(asset.filename);
+
+  return (
+    <Image
+      src={optimizeStoryblokImage(asset.filename, {
+        width: 1200,
+        quality: 85,
+        format: 'webp',
+      })}
+      alt={alt}
+      width={dimensions.width}
+      height={dimensions.height}
+      priority={priority}
+    />
+  );
+}
+```
+
+### Link Component
+
+```tsx
+import { resolveLinkUrl, getLinkTarget } from '@httpjpg/storyblok-utils';
+import Link from 'next/link';
+
+export function StoryblokLink({ link, children }) {
+  const href = resolveLinkUrl(link);
+  const target = getLinkTarget(link);
+  const isExternal = link.linktype === 'url';
+
+  if (isExternal) {
+    return (
+      <a href={href} target={target} rel="noopener noreferrer">
+        {children}
+      </a>
+    );
+  }
+
+  return <Link href={href}>{children}</Link>;
+}
+```
+
+### Video Player with Thumbnail
+
+```tsx
+import {
+  isVideoAsset,
+  getVideoThumbnail,
+  getAssetType
+} from '@httpjpg/storyblok-utils';
+
+export function MediaPlayer({ asset }) {
+  if (!isVideoAsset(asset)) {
+    return <Image src={asset.filename} alt={asset.alt} />;
+  }
+
+  return (
+    <video
+      src={asset.filename}
+      poster={getVideoThumbnail(asset.filename)}
+      controls
+    />
+  );
+}
+```
+
+### Breadcrumbs from Slug
+
+```tsx
+import { slugToTitle } from '@httpjpg/storyblok-utils';
+
+export function Breadcrumbs({ path }) {
+  const segments = path.split('/').filter(Boolean);
+
+  return (
+    <nav>
+      {segments.map((segment, i) => (
+        <span key={i}>
+          {slugToTitle(segment)}
+          {i < segments.length - 1 && ' / '}
+        </span>
+      ))}
+    </nav>
+  );
+}
+```
+
+## TypeScript Types
+
+```typescript
+import type {
+  StoryblokAsset,
+  StoryblokLink,
+  ImageTransformOptions,
+} from '@httpjpg/storyblok-utils';
+```
+
+## Best Practices
+
+1. **Always optimize images** before rendering
+2. **Use webp format** for better compression
+3. **Handle external links** with proper rel attributes
+4. **Log errors** in development for debugging
+5. **Type your components** with Storyblok types
+6. **Cache optimized URLs** to reduce processing

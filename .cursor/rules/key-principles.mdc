@@ -1,0 +1,164 @@
+---
+description: >
+  Code generation and architectural rules for the “httpjpg” project – a minimalistic, brutalistic
+  artist portfolio built as a Turborepo monorepo with Next.js (App Router), TypeScript, React,
+  Storyblok CMS and Linaria (CSS-in-JS).
+
+globs:
+  - "apps/**/*.{ts,tsx}"
+  - "packages/**/*.{ts,tsx}"
+  - "apps/web/**/*.{ts,tsx}"
+  - "packages/ui/**/*.{ts,tsx}"
+  - "packages/lib/**/*.{ts,tsx}"
+  - "packages/storyblok/**/*.{ts,tsx}"
+
+alwaysApply: true
+---
+
+# httpjpg – Code Generation & Architecture Rules
+
+## Project Overview
+
+**httpjpg** is a **minimalistic, brutalistic artist portfolio**.
+It emphasizes **raw digital aesthetics**, **strong typography**, and **functional structure** — merging artistic expression with code precision.
+All content and layout data are managed via **Storyblok**, while the frontend uses **Next.js App Router** with a modular Turborepo setup for scalability and maintainability.
+
+---
+
+## Core Principles
+
+### 1. Minimalism & Brutalism
+- Design should feel **intentional, structured, and raw**.
+- Typography and grid define hierarchy — not decoration.
+- No excessive animation or color gradients.
+- Whitespace and contrast are functional design tools.
+
+### 2. Storyblok-Driven Architecture
+- Every page, section, and content block is a **Storyblok component**.
+- Implement `@storyblok/react/rsc` for **React Server Components**.
+- All components must use `storyblokEditable(blok)` for live editing.
+- Data fetching follows official [Storyblok + Next.js guide](https://www.storyblok.com/docs/guides/nextjs).
+
+### 3. Next.js App Router Standards
+- Follow official Next.js patterns for data fetching and rendering.
+- Use **Server Components** for async data loading and static optimization.
+- Each route follows this structure:
+	app/
+	layout.tsx
+	page.tsx
+	[slug]/page.tsx
+
+- Use `generateMetadata` and `revalidate` for SEO and caching.
+
+### 4. UI Libraries Integration
+- **Linaria** (css-in-js) for layout and typography.
+- Use a **monochromatic palette** (black, white, neutral).
+- Avoid shadows, rounded corners, and gradients unless conceptually justified.
+
+---
+
+## Coding Guidelines
+
+### TypeScript & Functional Patterns
+- Always use **TypeScript**.
+- Components must be **functional** and **pure**.
+- Use **hooks** for state and effects.
+- Favor **composition over inheritance**.
+- Prefer **iteration and modularization** to duplication.
+
+### File Structure
+Each file should be organized as:
+1. **Exported Component** (default)
+2. **Subcomponents** (internal to file)
+3. **Helpers / hooks**
+4. **Static content or constants**
+5. **Types and interfaces**
+
+Example:
+components/storyblok/ImageBlock.tsx
+lib/fetchStoryblok.ts
+types/storyblok.ts
+
+### Naming Conventions
+- Boolean: `isLoading`, `hasError`, `isVisible`
+- Content: `artistProfile`, `projectList`, `galleryImage`
+- Avoid abbreviations except for known conventions (`id`, `url`, `api`).
+
+---
+
+## Storyblok Component Example
+
+```tsx
+// packages/storyblok/components/ImageBlock.tsx
+import { storyblokEditable, StoryblokComponentProps } from "@storyblok/react/rsc";
+import Image from "next/image";
+
+type ImageBlockProps = StoryblokComponentProps<{
+  image: { filename: string; alt?: string };
+  caption?: string;
+}>;
+
+export default function ImageBlock({ blok }: ImageBlockProps) {
+  return (
+    <figure {...storyblokEditable(blok)} className="space-y-2">
+      <Image
+        src={blok.image.filename}
+        alt={blok.image.alt ?? ""}
+        width={1600}
+        height={1200}
+        className="w-full object-cover grayscale"
+      />
+      {blok.caption && (
+        <figcaption className="text-sm uppercase tracking-tight text-neutral-700">
+          {blok.caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+```
+## Rendering Logic Example (App Router)
+
+```tsx
+// apps/web/app/[slug]/page.tsx
+import { storyblokInit, apiPlugin, getStoryblokApi, StoryblokComponent } from "@storyblok/react/rsc";
+import { components } from "@httpjpg/storyblok";
+
+storyblokInit({
+  accessToken: process.env.STORYBLOK_TOKEN,
+  use: [apiPlugin],
+  components,
+});
+
+export default async function Page({ params }: { params: { slug: string[] } }) {
+  const slug = params.slug?.join("/") || "home";
+  const storyblokApi = getStoryblokApi();
+  const { data } = await storyblokApi.get(`cdn/stories/${slug}`, {
+    version: "published",
+  });
+
+  return <StoryblokComponent blok={data.story.content} />;
+}
+```
+
+## Turborepo + Package Rules
+### Code Sharing
+- Shared logic (hooks, constants, utils) lives in @httpjpg/lib.
+- Shared Storyblok definitions and types in @httpjpg/storyblok.
+- Shared UI primitives in @httpjpg/ui.
+
+### TypeScript Config
+Use project references and path aliases:
+
+```tsx
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@httpjpg/ui/*": ["packages/ui/*"],
+      "@httpjpg/lib/*": ["packages/lib/*"],
+      "@httpjpg/storyblok/*": ["packages/storyblok/*"]
+    }
+  }
+}
+```

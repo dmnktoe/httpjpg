@@ -1,0 +1,11 @@
+# Panda CSS generated files
+styled-system/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+

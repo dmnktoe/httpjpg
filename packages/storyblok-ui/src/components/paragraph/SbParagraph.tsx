@@ -1,0 +1,70 @@
+"use client";
+
+import { Paragraph } from "@httpjpg/ui";
+import { memo } from "react";
+import { mapSpacingToToken } from "../../lib/spacing-utils";
+import {
+  mapColorToToken,
+  mapFontSizeToToken,
+  mapFontWeightToToken,
+} from "../../lib/token-mapping";
+import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
+
+export interface SbParagraphProps {
+  blok: {
+    _uid: string;
+    text: string;
+    size?: string;
+    weight?: string;
+    align?: "left" | "center" | "right";
+    color?: string;
+    marginTop?: string;
+    marginBottom?: string;
+    paddingTop?: string;
+    paddingBottom?: string;
+  };
+}
+
+/**
+ * Storyblok Paragraph Component
+ * Simple body text component with configurable styling
+ * For rich text with formatting, use SbRichText instead
+ */
+export const SbParagraph = memo(function SbParagraph({
+  blok,
+}: SbParagraphProps) {
+  const {
+    text,
+    size,
+    weight,
+    align,
+    color,
+    marginTop,
+    marginBottom,
+    paddingTop,
+    paddingBottom,
+  } = blok;
+
+  // Paragraph only supports sm, md, lg, xl
+  const mappedSize = mapFontSizeToToken(size);
+  const validSize = mappedSize === "xs" ? undefined : mappedSize;
+  const editableProps = useStoryblokEditable(blok);
+
+  return (
+    <Paragraph
+      {...editableProps}
+      size={validSize as "sm" | "md" | "lg" | "xl" | undefined}
+      css={{
+        textAlign: align,
+        color: mapColorToToken(color),
+        fontWeight: mapFontWeightToToken(weight),
+        mt: mapSpacingToToken(marginTop),
+        mb: mapSpacingToToken(marginBottom),
+        pt: mapSpacingToToken(paddingTop),
+        pb: mapSpacingToToken(paddingBottom),
+      }}
+    >
+      {text}
+    </Paragraph>
+  );
+});

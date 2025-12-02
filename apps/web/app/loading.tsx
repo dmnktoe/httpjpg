@@ -1,0 +1,15 @@
+import { Container, Loading } from "@httpjpg/ui";
+
+/**
+ * Root Loading State
+ *
+ * Matches header width (Container 2xl) and appears directly below it.
+ * No padding/margin to align perfectly with header container.
+ */
+export default function RootLoading() {
+  return (
+    <Container size="2xl" px={{ base: 4, md: 6, lg: 8 }}>
+      <Loading />
+    </Container>
+  );
+}

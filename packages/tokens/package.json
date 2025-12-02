@@ -1,0 +1,53 @@
+{
+  "name": "@httpjpg/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./colors": {
+      "types": "./src/colors.ts",
+      "import": "./src/colors.ts"
+    },
+    "./typography": {
+      "types": "./src/typography.ts",
+      "import": "./src/typography.ts"
+    },
+    "./spacing": {
+      "types": "./src/spacing.ts",
+      "import": "./src/spacing.ts"
+    },
+    "./border-radius": {
+      "types": "./src/border-radius.ts",
+      "import": "./src/border-radius.ts"
+    },
+    "./shadows": {
+      "types": "./src/shadows.ts",
+      "import": "./src/shadows.ts"
+    },
+    "./dist/tokens.css": "./dist/tokens.css"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsx scripts/generate-css-vars.ts",
+    "type-check": "tsc --noEmit",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint . --fix",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@httpjpg/tsconfig": "workspace:*",
+    "@biomejs/biome": "2.3.4",
+    "tsx": "^4.19.2",
+    "typescript": "5.9.2"
+  }
+}

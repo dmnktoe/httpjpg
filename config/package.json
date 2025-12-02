@@ -1,0 +1,36 @@
+{
+  "name": "@httpjpg/config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared runtime configuration for the httpjpg monorepo",
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./types": {
+      "types": "./types.ts",
+      "default": "./types.ts"
+    }
+  },
+  "files": [
+    "index.ts",
+    "types.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@httpjpg/tsconfig": "workspace:*"
+  },
+  "keywords": [
+    "config",
+    "configuration",
+    "monorepo",
+    "shared-config"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "@httpjpg/observability",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    },
+    "./sentry": {
+      "import": "./src/sentry/index.ts"
+    },
+    "./sentry/*.ts": {
+      "import": "./src/sentry/*.ts"
+    },
+    "./datadog": {
+      "import": "./src/datadog/index.ts"
+    }
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
+  },
+  "dependencies": {
+    "@httpjpg/env": "workspace:*",
+    "@sentry/nextjs": "^8.47.0",
+    "@datadog/browser-rum": "^5.35.0",
+    "@datadog/browser-logs": "^5.35.0"
+  },
+  "devDependencies": {
+    "@httpjpg/tsconfig": "workspace:*",
+    "@types/node": "^22.10.2",
+    "typescript": "~5.7.2"
+  }
+}

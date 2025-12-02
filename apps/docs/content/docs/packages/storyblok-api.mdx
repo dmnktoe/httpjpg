@@ -1,0 +1,202 @@
+---
+title: "@httpjpg/storyblok-api"
+description: Type-safe Storyblok Content Delivery API client
+---
+
+# @httpjpg/storyblok-api
+
+Type-safe client for Storyblok Content Delivery API with caching and error handling.
+
+## Installation
+
+```bash
+pnpm add @httpjpg/storyblok-api
+```
+
+## Setup
+
+Configure environment variables:
+
+```bash title=".env.local"
+STORYBLOK_PREVIEW_TOKEN=your-preview-token
+```
+
+## Basic Usage
+
+### Get API Instance
+
+```typescript
+import { getStoryblokApi } from '@httpjpg/storyblok-api';
+
+const api = getStoryblokApi();
+```
+
+### Fetch Story
+
+```typescript
+const { data } = await api.get('cdn/stories/home', {
+  version: 'draft', // or 'published'
+});
+
+const story = data.story;
+```
+
+### Fetch Multiple Stories
+
+```typescript
+const { data } = await api.get('cdn/stories', {
+  version: 'draft',
+  starts_with: 'blog/',
+  per_page: 10,
+});
+
+const stories = data.stories;
+```
+
+## API Methods
+
+### get()
+
+Fetch content from Storyblok:
+
+```typescript
+api.get(slug: string, params?: StoryblokParams)
+```
+
+**Parameters:**
+- `slug` - Story slug or endpoint path
+- `params` - Query parameters
+
+**Common Parameters:**
+```typescript
+{
+  version: 'draft' | 'published',
+  resolve_links: 'url' | 'story',
+  resolve_relations: string,
+  cv: number, // Cache version
+  language: string,
+  fallback_lang: string,
+}
+```
+
+## Caching
+
+The API client includes built-in ISR caching:
+
+```typescript
+export const revalidate = 3600; // 1 hour
+
+async function getData() {
+  const api = getStoryblokApi();
+  const { data } = await api.get('cdn/stories/home', {
+    version: 'published',
+  });
+  return data.story;
+}
+```
+
+## Error Handling
+
+```typescript
+try {
+  const { data } = await api.get('cdn/stories/not-found');
+} catch (error) {
+  if (error.status === 404) {
+    console.error('Story not found');
+  }
+}
+```
+
+## TypeScript Types
+
+```typescript
+import type {
+  ISbStoryData,
+  ISbStoriesParams,
+  ISbResult
+} from '@httpjpg/storyblok-api';
+```
+
+## Examples
+
+### Fetch Blog Posts
+
+```typescript
+const { data } = await api.get('cdn/stories', {
+  version: 'published',
+  starts_with: 'blog/',
+  sort_by: 'created_at:desc',
+  per_page: 100,
+});
+
+const posts = data.stories;
+```
+
+### Fetch with Relations
+
+```typescript
+const { data } = await api.get('cdn/stories/page', {
+  version: 'draft',
+  resolve_relations: 'post.author',
+});
+```
+
+### Fetch with Link Resolution
+
+```typescript
+const { data } = await api.get('cdn/stories/home', {
+  version: 'draft',
+  resolve_links: 'url', // Convert internal links to URLs
+});
+```
+
+## Next.js Integration
+
+### Server Component
+
+```tsx
+import { getStoryblokApi } from '@httpjpg/storyblok-api';
+
+export default async function Page() {
+  const api = getStoryblokApi();
+  const { data } = await api.get('cdn/stories/home', {
+    version: 'draft',
+  });
+
+  return <div>{data.story.content.title}</div>;
+}
+```
+
+### With ISR
+
+```tsx
+export const revalidate = 3600; // Revalidate every hour
+
+export default async function Page() {
+  // Same as above
+}
+```
+
+### Generate Static Params
+
+```tsx
+export async function generateStaticParams() {
+  const api = getStoryblokApi();
+  const { data } = await api.get('cdn/stories', {
+    version: 'published',
+    starts_with: 'blog/',
+  });
+
+  return data.stories.map((story) => ({
+    slug: story.slug,
+  }));
+}
+```
+
+## Best Practices
+
+1. **Use `published` version** in production
+2. **Enable ISR caching** with `revalidate`
+3. **Resolve links** when needed for navigation
+4. **Handle 404 errors** gracefully
+5. **Use TypeScript types** for type safety

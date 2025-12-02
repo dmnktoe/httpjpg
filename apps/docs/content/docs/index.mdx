@@ -1,0 +1,88 @@
+---
+title: Introduction
+description: Welcome to the httpjpg monorepo documentation
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+
+# httpjpg Monorepo
+
+A modern, type-safe web development monorepo built with **Turborepo**, **Next.js 16**, **Panda CSS**, and **Storyblok CMS**.
+
+## What's Inside
+
+This monorepo contains a complete portfolio suite with reusable packages, a headless CMS integration, and comprehensive design system.
+
+<Cards>
+  <Card
+    title="Getting Started"
+    description="Installation, setup, and quick start guide"
+    href="/docs/getting-started/installation"
+  />
+  <Card
+    title="Packages"
+    description="Reusable libraries: UI, Tokens, Storyblok utilities"
+    href="/docs/packages/overview"
+  />
+  <Card
+    title="Applications"
+    description="Web app, Storybook, and documentation site"
+    href="/docs/apps/overview"
+  />
+  <Card
+    title="Storyblok Integration"
+    description="CMS integration, sync, and components"
+    href="/docs/storyblok/storyblok-sync-quickstart"
+  />
+</Cards>
+
+## Architecture
+
+```plaintext
+httpjpg/
+├── apps/
+│   ├── web/          # Next.js portfolio website
+│   ├── storybook/    # Component library showcase
+│   └── docs/         # This documentation site
+├── packages/
+│   ├── ui/           # React component library (Panda CSS)
+│   ├── tokens/       # Design tokens (spacing, colors, typography)
+│   ├── storyblok-ui/ # Storyblok component implementations
+│   ├── storyblok-sync/ # Automated CMS synchronization
+│   ├── storyblok-api/ # Storyblok API client
+│   ├── now-playing/  # Spotify integration
+│   └── env/          # Type-safe environment variables
+```
+
+## Key Features
+
+### 🎨 Design System
+- **Panda CSS** - Zero-runtime CSS-in-JS with design tokens
+- **Design Tokens** - Consistent spacing, colors, typography
+- **Component Library** - 30+ reusable React components
+- **Storybook** - Interactive component documentation
+
+### 🚀 Modern Stack
+- **Next.js 16** - App Router with Turbopack
+- **TypeScript** - Full type safety across the monorepo
+- **Turborepo** - Fast, incremental builds
+- **pnpm** - Efficient package management
+
+### 📝 Headless CMS
+- **Storyblok** - Visual editing with live preview
+- **Automated Sync** - Design tokens → CMS datasources
+- **Type-safe Components** - TypeScript → Storyblok schemas
+- **Real-time Preview** - Live editing in Visual Editor
+
+## Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| Framework | Next.js 16, React 19 |
+| Styling | Panda CSS, CSS-in-JS |
+| CMS | Storyblok |
+| Build | Turborepo, Turbopack |
+| Language | TypeScript 5.9 |
+| Package Manager | pnpm 9.x |
+| Linting | Biome |
+| Documentation | Fumadocs |

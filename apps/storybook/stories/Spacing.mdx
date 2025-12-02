@@ -1,0 +1,129 @@
+import { Meta } from '@storybook/blocks';
+import { spacing } from '@httpjpg/tokens';
+
+<Meta title="Spacing" />
+
+# Spacing
+
+Functional spacing scale following brutalistic design principles. From 0.25rem (4px) to 24rem (384px).
+
+## Scale
+
+Our spacing system uses a consistent scale based on multiples of 0.25rem (4px).
+
+<div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
+  {Object.entries(spacing).map(([key, value]) => (
+    <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+      <div style={{ fontFamily: 'monospace', fontSize: '0.875rem', minWidth: '60px', opacity: 0.6 }}>
+        {key}
+      </div>
+      <div style={{ fontFamily: 'monospace', fontSize: '0.875rem', minWidth: '80px' }}>
+        {value}
+      </div>
+      <div style={{
+        width: value,
+        height: '24px',
+        backgroundColor: '#F43F5E',
+        border: '1px solid #E11D48'
+      }} />
+      <div style={{ fontFamily: 'monospace', fontSize: '0.75rem', opacity: 0.5 }}>
+        {value === '0' ? '0px' : `${parseFloat(value) * 16}px`}
+      </div>
+    </div>
+  ))}
+</div>
+
+## Common Uses
+
+### Padding & Margins
+
+```tsx
+import { Box } from '@httpjpg/ui';
+
+// Small spacing
+<Box css={{ p: '4' }}>16px padding</Box>
+
+// Medium spacing
+<Box css={{ p: '8' }}>32px padding</Box>
+
+// Large spacing
+<Box css={{ p: '16' }}>64px padding</Box>
+
+// Extra large
+<Box css={{ p: '32' }}>128px padding</Box>
+```
+
+### Gaps
+
+```tsx
+import { Stack } from '@httpjpg/ui';
+
+// Small gap
+<Stack gap="2">8px between items</Stack>
+
+// Medium gap
+<Stack gap="6">24px between items</Stack>
+
+// Large gap
+<Stack gap="12">48px between items</Stack>
+```
+
+### Responsive Spacing
+
+```tsx
+import { Box } from '@httpjpg/ui';
+
+<Box css={{
+  p: { base: '4', md: '8', xl: '16' }
+}}>
+  Responsive padding
+</Box>
+```
+
+## Spacing Guidelines
+
+### Component Spacing
+
+- **xs (1-2)**: Icon margins, tight spacing
+- **sm (3-4)**: Component internal padding
+- **md (6-8)**: Component external margins
+- **lg (12-16)**: Section padding
+- **xl (20-32)**: Page margins, hero sections
+
+### Layout Spacing
+
+- **Container padding**: 16px (base), 48px (md+)
+- **Section spacing**: 64px - 128px
+- **Grid gaps**: 16px - 48px
+- **Card padding**: 16px - 32px
+
+### Typography Spacing
+
+- **Paragraph margin**: 16px - 24px
+- **Heading margin**: 24px - 48px
+- **Line spacing**: Use line-height tokens
+- **Letter spacing**: Use letter-spacing tokens
+
+## Negative Spacing
+
+For overlapping elements (like WorkCard titles over slideshows):
+
+```tsx
+import { Box } from '@httpjpg/ui';
+
+<Box css={{ mt: '-12px' }}>
+  Negative margin pulls element up
+</Box>
+```
+
+## Custom Values
+
+While we recommend using tokens, you can use custom values when needed:
+
+```tsx
+import { Box } from '@httpjpg/ui';
+
+<Box css={{ p: '18px' }}>
+  Custom spacing value
+</Box>
+```

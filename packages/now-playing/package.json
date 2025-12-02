@@ -1,0 +1,29 @@
+{
+  "name": "@httpjpg/now-playing",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
+  },
+  "dependencies": {
+    "colorthief": "^2.6.0",
+    "framer-motion": "^11.15.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-draggable": "^4.5.0"
+  },
+  "devDependencies": {
+    "@httpjpg/tsconfig": "workspace:*",
+    "@types/colorthief": "^2.6.0",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "~5.7.2"
+  }
+}

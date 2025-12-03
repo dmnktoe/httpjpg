@@ -133,6 +133,26 @@ export const Header = ({
               gap: "12",
             }}
           >
+            {/* Mobile ASCII Logo */}
+            <Box
+              css={{
+                display: { base: "block", lg: "none" },
+                lineHeight: "snug",
+                fontSize: "xs",
+                maxW: "64",
+              }}
+            >
+              <Box as="span" css={{ fontWeight: "bold" }}>
+                ⇝HE𝓁𝓁O
+              </Box>
+              <br />
+              <Box as="span">www.httpjpg.com</Box>
+              <br />
+              <Box as="span" css={{ fontSize: "2xs", opacity: 0.7 }}>
+                ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ꠹ρᧁ! 🎀
+              </Box>
+            </Box>
+
             <Navigation
               nav={nav}
               personalWork={personalWork}

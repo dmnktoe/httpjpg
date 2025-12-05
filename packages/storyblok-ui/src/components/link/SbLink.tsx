@@ -36,7 +36,6 @@ const getStoryblokHref = (link: StoryblokLinkObject): string => {
     case "asset":
     case "url":
       return url || "";
-    case "story":
     default: {
       const path = cached_url || url || "";
       const cleanPath = path.startsWith("/") ? path : `/${path}`;

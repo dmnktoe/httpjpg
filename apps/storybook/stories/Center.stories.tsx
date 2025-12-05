@@ -149,6 +149,7 @@ export const WithFlex: Story = {
  * Hero section example
  */
 export const HeroSection: Story = {
+  args: { children: null },
   render: () => (
     <Center
       horizontal
@@ -201,6 +202,7 @@ export const HeroSection: Story = {
  * Modal content example
  */
 export const ModalContent: Story = {
+  args: { children: null },
   render: () => (
     <Box
       style={{
@@ -248,6 +250,7 @@ export const ModalContent: Story = {
  * Loading state example
  */
 export const LoadingState: Story = {
+  args: { children: null },
   render: () => (
     <Center horizontal vertical minHeight="400px">
       <Box style={{ textAlign: "center" }}>
@@ -276,6 +279,7 @@ export const LoadingState: Story = {
  * Brutalist card centered
  */
 export const BrutalistCard: Story = {
+  args: { children: null },
   render: () => (
     <Center
       horizontal

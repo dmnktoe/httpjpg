@@ -116,10 +116,14 @@ export function mapProseMaxWidthToToken(
 export function mapAspectRatioToToken(
   value?: string | null,
 ): string | undefined {
-  if (!value) return undefined;
+  if (!value) {
+    return undefined;
+  }
 
   // Direct aspect ratio value (e.g., "16/9")
-  if (/^\d+\/\d+$/.test(value)) return value;
+  if (/^\d+\/\d+$/.test(value)) {
+    return value;
+  }
 
   // Extract ratio from labeled value (e.g., "16:9 (Landscape)")
   const match = value.match(/(\d+)[:/](\d+)/);

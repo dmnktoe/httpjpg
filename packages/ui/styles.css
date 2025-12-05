@@ -1606,6 +1606,10 @@
     pointer-events: auto;
 }
 
+  .max-w_64 {
+    max-width: var(--sizes-64);
+}
+
   .pos_fixed {
     position: fixed;
 }
@@ -2703,6 +2707,14 @@
     align-items: flex-start;
 }
 
+  .lh_snug {
+    line-height: var(--line-heights-snug);
+}
+
+  .fs_2xs {
+    font-size: var(--font-sizes-2xs);
+}
+
   .right_2 {
     right: var(--spacing-2);
 }
@@ -2733,10 +2745,6 @@
 
   .ml_2 {
     margin-left: var(--spacing-2);
-}
-
-  .lh_snug {
-    line-height: var(--line-heights-snug);
 }
 
   .bg-c_yellow {

@@ -132,10 +132,6 @@ export const StoryblokWork: Story = {
     variant: "personal",
     href: "",
     children: "Photography Exhibition 2024",
-    storyblokLink: {
-      linktype: "story",
-      cached_url: "work/photography-exhibition-2024",
-    },
   },
 };
 

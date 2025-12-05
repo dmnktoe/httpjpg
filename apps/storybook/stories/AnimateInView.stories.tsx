@@ -214,6 +214,7 @@ export const WithDelay: Story = {
  * Multiple animated elements (scroll down to see)
  */
 export const Multiple: Story = {
+  args: { children: null },
   render: () => (
     <Box
       css={{

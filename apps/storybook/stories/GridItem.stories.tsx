@@ -326,7 +326,7 @@ export const Dashboard: Story = {
             borderColor: "neutral.200",
           }}
         >
-          <Headline level={4} css={{ m: 0, mb: "4" }}>
+          <Headline level={3} css={{ m: 0, mb: "4" }}>
             ⋆.˚ Recent Activity
           </Headline>
           <Paragraph size="sm">Latest updates and changes...</Paragraph>
@@ -341,7 +341,7 @@ export const Dashboard: Story = {
             borderColor: "neutral.200",
           }}
         >
-          <Headline level={4} css={{ m: 0, mb: "4" }}>
+          <Headline level={3} css={{ m: 0, mb: "4" }}>
             🎀 Quick Actions
           </Headline>
           <Paragraph size="sm">Common tasks and shortcuts...</Paragraph>

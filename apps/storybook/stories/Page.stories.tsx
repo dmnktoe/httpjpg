@@ -43,6 +43,7 @@ const sampleClientWork = [
  */
 export const Default: Story = {
   args: {
+    children: null,
     header: {
       nav: sampleNav,
       personalWork: samplePersonalWork,
@@ -77,6 +78,7 @@ export const Default: Story = {
  */
 export const WithSections: Story = {
   args: {
+    children: null,
     header: {
       nav: sampleNav,
       personalWork: samplePersonalWork,
@@ -183,6 +185,7 @@ export const WithSections: Story = {
  */
 export const HeaderOnly: Story = {
   args: {
+    children: null,
     header: {
       nav: sampleNav,
     },
@@ -204,6 +207,7 @@ export const HeaderOnly: Story = {
  */
 export const FooterOnly: Story = {
   args: {
+    children: null,
     footer: {
       backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
     },
@@ -224,6 +228,7 @@ export const FooterOnly: Story = {
  * Content-only page (no header/footer)
  */
 export const ContentOnly: Story = {
+  args: { children: null },
   render: () => (
     <Page>
       <Section css={{ py: "32" }}>

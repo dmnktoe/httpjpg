@@ -171,10 +171,14 @@ export function getLayoutStyles(
  * ```
  */
 export function mapSpacingToToken(value?: string | null): string {
-  if (!value) return SPACING_SIZES.medium;
+  if (!value) {
+    return SPACING_SIZES.medium;
+  }
 
   // Direct numeric token value (e.g., "8", "16")
-  if (/^\d+$/.test(value)) return value;
+  if (/^\d+$/.test(value)) {
+    return value;
+  }
 
   // Named value from datasource (case-insensitive)
   const normalized = value.toLowerCase().replace(/\s+/g, "");

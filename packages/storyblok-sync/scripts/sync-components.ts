@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+
 /**
  * Sync Storyblok Components from TypeScript Interfaces
  *
@@ -13,9 +14,9 @@
  *   STORYBLOK_SPACE_ID - Your Storyblok Space ID
  */
 
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { config } from "dotenv";
-import { dirname, resolve } from "path";
-import { fileURLToPath } from "url";
 
 // Load environment variables from workspace root
 const __dirname = dirname(fileURLToPath(import.meta.url));

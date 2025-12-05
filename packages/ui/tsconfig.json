@@ -8,6 +8,6 @@
       "styled-system/*": ["./styled-system/*"]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "styled-system"]
+  "include": ["src/**/*", "styled-system/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

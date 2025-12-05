@@ -1,8 +1,8 @@
-import fs from "fs";
-import { createServer } from "https";
+import fs from "node:fs";
+import { createServer } from "node:https";
+import { dirname, join } from "node:path";
+import { fileURLToPath, parse } from "node:url";
 import next from "next";
-import { dirname, join } from "path";
-import { fileURLToPath, parse } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

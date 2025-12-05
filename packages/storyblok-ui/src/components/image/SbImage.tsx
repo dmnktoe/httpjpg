@@ -49,7 +49,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
   // Process image with Storyblok image service
   const processedSrc = getProcessedImage(
     image.filename,
-    aspectRatio ? aspectRatio.replace("/", "x") + "/1200x0" : "",
+    aspectRatio ? `${aspectRatio.replace("/", "x")}/1200x0` : "",
     image.focus || "",
     "",
   );

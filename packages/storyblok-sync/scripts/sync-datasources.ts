@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+
 /**
  * Sync Design Tokens to Storyblok Datasources
  *
@@ -14,9 +15,9 @@
  *   STORYBLOK_SPACE_ID - Your Storyblok Space ID
  */
 
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { config } from "dotenv";
-import { dirname, resolve } from "path";
-import { fileURLToPath } from "url";
 
 // Load environment variables from workspace root
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -367,7 +368,7 @@ function generateFontWeightDatasource(): {
  * Generate text color options datasource
  * Uses actual hex values for runtime compatibility
  */
-function generateTextColorDatasource(): {
+function _generateTextColorDatasource(): {
   datasource: Datasource;
   entries: DatasourceEntry[];
 } {
@@ -394,7 +395,7 @@ function generateTextColorDatasource(): {
 /**
  * Generate animation duration datasource
  */
-function generateAnimationDurationDatasource(): {
+function _generateAnimationDurationDatasource(): {
   datasource: Datasource;
   entries: DatasourceEntry[];
 } {

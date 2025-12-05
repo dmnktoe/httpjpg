@@ -141,7 +141,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: 📦 Build ${{ matrix.app }}
-        run: pnpm run build --filter=${{ matrix.app }}
+        run: pnpm run build --filter=@httpjpg/${{ matrix.app }}
 
       - name: 📤 Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -153,9 +153,9 @@ jobs:
           retention-days: 1
 
   test:
-    name: 🏏 Jest Tests
+    name: 🧪 Unit Tests
     runs-on: ubuntu-latest
-    if: false # Enable when tests are added
+    needs: [lint, typecheck]
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
@@ -172,10 +172,13 @@ jobs:
       - name: 📥 Download deps
         run: pnpm install --frozen-lockfile
 
-      - name: 🃏 Run jest
-        run: pnpm run test -- --coverage --maxWorkers=2
+      - name: 🧪 Run Jest tests
+        run: pnpm run test:coverage -- --maxWorkers=2
+        env:
+          SKIP_ENV_VALIDATION: true
 
       - name: 📊 Upload coverage to Codecov
+        if: always()
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -228,7 +231,7 @@ jobs:
   summary:
     name: ✅ All Checks Passed
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, build-packages, build-apps, e2e]
+    needs: [lint, typecheck, build-packages, build-apps, test, e2e]
     if: always()
     steps:
       - name: ✅ Check status
@@ -237,6 +240,7 @@ jobs:
              [[ "${{ needs.typecheck.result }}" != "success" ]] || \
              [[ "${{ needs.build-packages.result }}" != "success" ]] || \
              [[ "${{ needs.build-apps.result }}" != "success" ]] || \
+             [[ "${{ needs.test.result }}" != "success" ]] || \
              [[ "${{ needs.e2e.result }}" != "success" ]]; then
             echo "❌ One or more jobs failed"
             exit 1

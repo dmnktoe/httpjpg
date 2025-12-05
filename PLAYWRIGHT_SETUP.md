@@ -80,15 +80,15 @@ e2e:
       with:
         name: web-build
         path: apps/web/.next
-    
+
     - name: 🌐 Install Playwright Browsers
       run: pnpm --filter=@httpjpg/web exec playwright install --with-deps chromium
-    
+
     - name: 🎭 Run Playwright tests
       run: pnpm --filter=@httpjpg/web run test:e2e
       env:
         PLAYWRIGHT_TEST_BASE_URL: http://localhost:3000
-    
+
     - name: 📸 Upload test results
       if: failure()
       uses: actions/upload-artifact@v4

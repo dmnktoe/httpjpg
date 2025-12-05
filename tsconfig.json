@@ -1,3 +1,4 @@
 {
-  "extends": "@httpjpg/tsconfig/base.json"
+  "extends": "@httpjpg/tsconfig/base.json",
+  "include": ["jest.d.ts"]
 }

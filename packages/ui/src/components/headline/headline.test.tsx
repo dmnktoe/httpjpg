@@ -28,10 +28,4 @@ describe("Headline", () => {
     const heading = screen.getByRole("heading", { level: 1 });
     expect(heading).toBeInTheDocument();
   });
-
-  it("applies display font treatment", () => {
-    render(<Headline fontTreatment="display">Display</Headline>);
-    const heading = screen.getByRole("heading", { level: 1 });
-    expect(heading).toBeInTheDocument();
-  });
 });

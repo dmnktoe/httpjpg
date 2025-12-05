@@ -1,3 +1,6 @@
+// Set SKIP_ENV_VALIDATION before any imports
+process.env.SKIP_ENV_VALIDATION = "true";
+
 const nextJest = require("next/jest");
 
 const createJestConfig = nextJest({
@@ -13,9 +16,6 @@ const customJestConfig = {
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
   testEnvironmentOptions: {
     customExportConditions: [""],
-  },
-  globals: {
-    "process.env.SKIP_ENV_VALIDATION": "true",
   },
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)
@@ -45,15 +45,24 @@ const customJestConfig = {
     "^.+\\.module\\.(css|sass|scss)$",
   ],
   collectCoverageFrom: [
-    "packages/*/src/**/*.{js,jsx,ts,tsx}",
+    // All packages
+    "packages/*/src/**/*.{js,jsx,ts,tsx,mjs}",
+    // Web app
     "apps/web/app/**/*.{js,jsx,ts,tsx}",
     "apps/web/components/**/*.{js,jsx,ts,tsx}",
+    "apps/web/lib/**/*.{js,jsx,ts,tsx}",
+    // Exclusions
     "!**/*.d.ts",
+    "!**/*.test.{js,jsx,ts,tsx}",
+    "!**/*.spec.{js,jsx,ts,tsx}",
     "!**/node_modules/**",
     "!**/.next/**",
     "!**/coverage/**",
     "!**/dist/**",
     "!**/styled-system/**",
+    "!**/scripts/**",
+    "!**/index.ts", // Barrel exports
+    "!**/types.ts", // Type definitions only
   ],
 };
 

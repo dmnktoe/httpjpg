@@ -7,7 +7,7 @@
     "paths": {
       "styled-system/*": ["./styled-system/*"]
     },
-    "types": ["@testing-library/jest-dom"]
+    "types": ["@testing-library/jest-dom", "node"]
   },
   "include": ["src/**/*", "styled-system/**/*", "../../jest.d.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.tsx", "**/*.test.ts"]

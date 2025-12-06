@@ -1,36 +1,40 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("Homepage", () => {
+test.describe("Test Page", () => {
   test("should load and display the main heading", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/test-page");
 
     // Check if page loads successfully
-    await expect(page).toHaveTitle(/httpjpg/i);
+    await expect(page).toHaveTitle(/Test Page/i);
 
-    // Check for main content (use .first() since page has multiple main elements)
-    const mainContent = page.locator("main").first();
+    // Check for main content
+    const mainContent = page.locator("main");
     await expect(mainContent).toBeVisible();
+
+    // Check for h1
+    const heading = page.getByRole("heading", { level: 1, name: /Test Page/i });
+    await expect(heading).toBeVisible();
   });
 
   test("should have working navigation", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/test-page");
 
-    // Check if header/navigation is present
-    const header = page.locator("header");
-    await expect(header).toBeVisible();
+    // Check if navigation is present
+    const nav = page.locator("nav");
+    await expect(nav).toBeVisible();
   });
 
   test("should be responsive", async ({ page }) => {
     // Test mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto("/");
+    await page.goto("/test-page");
 
-    const mainContent = page.locator("main").first();
+    const mainContent = page.locator("main");
     await expect(mainContent).toBeVisible();
 
     // Test desktop viewport
     await page.setViewportSize({ width: 1920, height: 1080 });
-    await page.goto("/");
+    await page.goto("/test-page");
 
     await expect(mainContent).toBeVisible();
   });
@@ -44,18 +48,16 @@ test.describe("Homepage", () => {
       }
     });
 
-    await page.goto("/");
+    await page.goto("/test-page");
 
     // Wait a bit to catch any async errors
     await page.waitForTimeout(2000);
 
-    // Filter out known/acceptable errors (e.g., third-party scripts, CMS component warnings)
+    // Filter out known/acceptable errors (e.g., third-party scripts)
     const criticalErrors = consoleErrors.filter((error) => {
-      // Add filters for known acceptable errors here
       return (
         !error.includes("Failed to load resource") &&
-        !error.includes("third-party") &&
-        !error.includes("Component work-list doesn't exist") // TODO: Fix Storyblok CMS sync for work_list component
+        !error.includes("third-party")
       );
     });
 

@@ -171,21 +171,33 @@ jobs:
       - name: 📤 Upload sourcemaps to Sentry
         if: matrix.app == 'web' && github.ref == 'refs/heads/main'
         continue-on-error: true
+        working-directory: apps/web
         run: |
           echo "📤 Uploading sourcemaps to Sentry..."
-          npx @sentry/cli releases new "${{ github.sha }}"
-          npx @sentry/cli releases files "${{ github.sha }}" upload-sourcemaps apps/web/.next --rewrite
-          npx @sentry/cli releases finalize "${{ github.sha }}"
-          npx @sentry/cli releases deploys "${{ github.sha }}" new -e production
-          echo "✅ Sourcemaps uploaded successfully!"
+          echo "Working directory: $(pwd)"
+          echo "Checking .next directory..."
+          ls -la .next/ || echo "No .next directory found"
+
+          if [ -d ".next" ]; then
+            npx --yes @sentry/cli@latest releases new "${{ github.sha }}"
+            npx --yes @sentry/cli@latest sourcemaps upload --release="${{ github.sha }}" .next
+            npx --yes @sentry/cli@latest releases finalize "${{ github.sha }}"
+            npx --yes @sentry/cli@latest releases deploys "${{ github.sha }}" new -e production
+            echo "✅ Sourcemaps uploaded successfully!"
+          else
+            echo "⚠️  No .next directory found, skipping sourcemap upload"
+          fi
 
       - name: 📤 Upload web build
         if: matrix.app == 'web'
         uses: actions/upload-artifact@v4
         with:
           name: web-build
-          path: apps/web/.next
+          path: |
+            apps/web/.next
+            !apps/web/.next/cache
           retention-days: 1
+          if-no-files-found: error
 
       - name: 📤 Upload storybook build
         if: matrix.app == 'storybook'

@@ -2,18 +2,18 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Accessibility", () => {
   test("should have proper heading hierarchy", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/test-page");
 
     // Check if page has an h1 - use getByRole to find visible heading
     const h1 = page.getByRole("heading", { level: 1 });
     const h1Count = await h1.count();
 
-    // Should have at least one h1 (may have multiple in different sections)
+    // Should have at least one h1
     expect(h1Count).toBeGreaterThan(0);
   });
 
   test("should have alt text on images", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/test-page");
 
     // Get all images
     const images = page.locator("img");

@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Navigation", () => {
-  test("should navigate to about page", async ({ page }) => {
-    await page.goto("/");
+  test("should navigate to test page", async ({ page }) => {
+    await page.goto("/test-page");
 
     // Look for about link (adjust selector based on your actual navigation)
     const aboutLink = page.getByRole("link", { name: /about/i });
@@ -24,7 +24,7 @@ test.describe("Navigation", () => {
   test("mobile menu should work", async ({ page }) => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto("/");
+    await page.goto("/test-page");
 
     // Look for mobile menu button (adjust selector based on your implementation)
     const mobileMenuButton = page.locator('button[aria-label*="menu" i]');

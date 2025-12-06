@@ -29,6 +29,9 @@ const nextConfig: NextConfig = {
   // React Strict Mode for better error detection
   reactStrictMode: true,
 
+  // Generate source maps for production (required for Sentry)
+  productionBrowserSourceMaps: true,
+
   webpack: (config, { dev }) => {
     // Suppress all warnings in development
     if (dev) {

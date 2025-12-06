@@ -2,42 +2,21 @@
   // Editor
   "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "explicit",
     "source.organizeImports.biome": "explicit"
-  },
-  "editor.rulers": [80, 120],
-  "editor.renderWhitespace": "boundary",
-  "editor.trimAutoWhitespace": true,
-  "editor.bracketPairColorization.enabled": true,
-  "editor.guides.bracketPairs": "active",
-  "editor.inlineSuggest.enabled": true,
-  "editor.suggestSelection": "first",
-  "editor.quickSuggestions": {
-    "strings": true
   },
 
   // Files
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
-  "files.trimFinalNewlines": true,
   "files.eol": "\n",
   "files.exclude": {
     "**/.turbo": true,
     "**/node_modules": true,
     "**/.next": true,
     "**/dist": true,
-    "**/coverage": true,
-    "**/.cache": true
-  },
-  "files.watcherExclude": {
-    "**/.turbo/**": true,
-    "**/node_modules/**": true,
-    "**/.next/**": true,
-    "**/dist/**": true,
-    "**/coverage/**": true,
-    "**/.cache/**": true
+    "**/coverage": true
   },
 
   // Search
@@ -47,68 +26,13 @@
     "**/.next": true,
     "**/dist": true,
     "**/coverage": true,
-    "**/.cache": true,
-    "**/pnpm-lock.yaml": true,
-    "**/package-lock.json": true,
-    "**/yarn.lock": true
+    "**/pnpm-lock.yaml": true
   },
 
   // TypeScript
-  "typescript.preferences.importModuleSpecifier": "non-relative",
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.suggest.autoImports": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "typescript.preferences.preferTypeOnlyAutoImports": true,
-  "typescript.inlayHints.parameterNames.enabled": "all",
-  "typescript.inlayHints.variableTypes.enabled": true,
-  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
-  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
-
-  // JavaScript
-  "javascript.suggest.autoImports": true,
-  "javascript.updateImportsOnFileMove.enabled": "always",
-
-  // Language-specific formatters
-  "[typescript]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[javascriptreact]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[markdown]": {
-    "editor.formatOnSave": false,
-    "editor.wordWrap": "on"
-  },
-
-  // Testing
-  "jest.autoRun": "off",
-  "jest.coverageFormatter": "DefaultFormatter",
-  "jest.showCoverageOnLoad": false,
-  "playwright.reuseBrowser": true,
-  "playwright.showTrace": "on",
-
-  // Git
-  "git.autofetch": true,
-  "git.confirmSync": false,
-  "git.enableSmartCommit": true,
-  "git.pruneOnFetch": true,
-
-  // Terminal
-  "terminal.integrated.defaultProfile.osx": "zsh",
-  "terminal.integrated.enablePersistentSessions": false,
 
   // Spell Checker
   "cSpell.words": [

@@ -16,9 +16,9 @@ test.describe("Navigation", () => {
   test("should handle 404 pages gracefully", async ({ page }) => {
     await page.goto("/this-page-does-not-exist-12345");
 
-    // Check if custom 404 page is shown
-    const notFoundContent = page.getByText(/not found|404/i);
-    await expect(notFoundContent).toBeVisible();
+    // Check if custom 404 page is shown - look for the heading specifically
+    const notFoundHeading = page.getByRole("heading", { name: /404/i });
+    await expect(notFoundHeading).toBeVisible();
   });
 
   test("mobile menu should work", async ({ page }) => {

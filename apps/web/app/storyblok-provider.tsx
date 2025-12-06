@@ -52,6 +52,10 @@ const components = {
 
   // Work/Portfolio components
   work_card: SbWorkCard,
+  // TODO: Fix Storyblok CMS component registration for work_list
+  // Error: "Component work-list doesn't exist" in production
+  // Component exists in code but not synced to Storyblok CMS
+  // Run: pnpm --filter @httpjpg/storyblok-sync run sync
   work_list: SbWorkList,
 
   // Configuration

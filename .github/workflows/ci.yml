@@ -5,6 +5,8 @@ on:
     branches:
       - main
   pull_request: {}
+  release:
+    types: [published]
 
 env:
   # Turborepo
@@ -32,6 +34,7 @@ env:
   SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
   SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
   # =============================================================================
   # Spotify API
@@ -152,7 +155,29 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: 📦 Build ${{ matrix.app }}
-        run: pnpm run build --filter=@httpjpg/${{ matrix.app }}
+        run: |
+          echo "🏗️  Building @httpjpg/${{ matrix.app }}..."
+          pnpm run build --filter=@httpjpg/${{ matrix.app }}
+
+          if [ "${{ matrix.app }}" == "web" ]; then
+            echo ""
+            echo "📊 Build Statistics:"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            du -sh apps/web/.next | awk '{print "📦 Total Size: " $1}'
+            find apps/web/.next -type f | wc -l | awk '{print "📄 Files: " $1}'
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          fi
+
+      - name: 📤 Upload sourcemaps to Sentry
+        if: matrix.app == 'web' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        run: |
+          echo "📤 Uploading sourcemaps to Sentry..."
+          npx @sentry/cli releases new "${{ github.sha }}"
+          npx @sentry/cli releases files "${{ github.sha }}" upload-sourcemaps apps/web/.next --rewrite
+          npx @sentry/cli releases finalize "${{ github.sha }}"
+          npx @sentry/cli releases deploys "${{ github.sha }}" new -e production
+          echo "✅ Sourcemaps uploaded successfully!"
 
       - name: 📤 Upload web build
         if: matrix.app == 'web'
@@ -191,7 +216,17 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: 🧪 Run Jest tests
-        run: pnpm run test:coverage
+        run: |
+          echo "🧪 Running unit tests with coverage..."
+          pnpm run test:coverage
+
+          echo ""
+          echo "📊 Test Summary:"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          if [ -f coverage/coverage-summary.json ]; then
+            cat coverage/coverage-summary.json | jq -r '.total | "✅ Coverage: \(.lines.pct)% lines | \(.statements.pct)% statements"'
+          fi
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       - name: 📊 Upload coverage to Codecov
         if: always()
@@ -229,7 +264,12 @@ jobs:
         run: pnpm --filter=@httpjpg/web exec playwright install --with-deps chromium
 
       - name: 🎭 Run Playwright tests
-        run: pnpm --filter=@httpjpg/web run test:e2e
+        run: |
+          echo "🎭 Running Playwright E2E tests..."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          pnpm --filter=@httpjpg/web run test:e2e
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ E2E tests completed successfully!"
 
       - name: 📸 Upload test results
         if: failure()
@@ -240,21 +280,53 @@ jobs:
           retention-days: 30
 
   summary:
-    name: ✅ All Checks Passed
+    name: 📊 CI Summary
     runs-on: ubuntu-latest
     needs: [lint, typecheck, build-packages, build-apps, test, e2e]
     if: always()
     steps:
-      - name: ✅ Check status
+      - name: 📊 Generate Summary
         run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "   ██╗  ██╗████████╗████████╗██████╗      ██╗██████╗  ██████╗ "
+          echo "   ██║  ██║╚══██╔══╝╚══██╔══╝██╔══██╗     ██║██╔══██╗██╔════╝ "
+          echo "   ███████║   ██║      ██║   ██████╔╝     ██║██████╔╝██║  ███╗"
+          echo "   ██╔══██║   ██║      ██║   ██╔═══╝ ██   ██║██╔═══╝ ██║   ██║"
+          echo "   ██║  ██║   ██║      ██║   ██║     ╚█████╔╝██║     ╚██████╔╝"
+          echo "   ╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚═╝      ╚════╝ ╚═╝      ╚═════╝ "
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "📋 CI Pipeline Results"
+          echo ""
+          echo "   🔬 Lint:           ${{ needs.lint.result }}"
+          echo "   Ŧ TypeScript:      ${{ needs.typecheck.result }}"
+          echo "   📦 Build Packages: ${{ needs.build-packages.result }}"
+          echo "   📦 Build Apps:     ${{ needs.build-apps.result }}"
+          echo "   🧪 Unit Tests:     ${{ needs.test.result }}"
+          echo "   🎭 E2E Tests:      ${{ needs.e2e.result }}"
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+
           if [[ "${{ needs.lint.result }}" != "success" ]] || \
              [[ "${{ needs.typecheck.result }}" != "success" ]] || \
              [[ "${{ needs.build-packages.result }}" != "success" ]] || \
              [[ "${{ needs.build-apps.result }}" != "success" ]] || \
              [[ "${{ needs.test.result }}" != "success" ]] || \
              [[ "${{ needs.e2e.result }}" != "success" ]]; then
-            echo "❌ One or more jobs failed"
+            echo "❌ Pipeline Failed - One or more jobs did not succeed"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             exit 1
           else
-            echo "✅ All checks passed!"
+            echo "✅ Pipeline Successful - All checks passed!"
+            echo ""
+            if [[ "${{ github.event_name }}" == "release" ]]; then
+              echo "🚀 Release: ${{ github.event.release.tag_name }}"
+              echo "📦 Ready for deployment"
+            fi
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           fi

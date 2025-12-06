@@ -34,12 +34,12 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.4",
+    "@biomejs/biome": "2.3.8",
     "@httpjpg/tsconfig": "workspace:*",
     "@playwright/test": "^1.57.0",
     "@types/node": "^22.19.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   }
 }

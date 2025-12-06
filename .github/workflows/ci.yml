@@ -127,6 +127,15 @@ jobs:
       - name: "📦 Build ${{ matrix.app }}"
         run: pnpm run build --filter=@httpjpg/${{ matrix.app }}
 
+      - name: "📤 Upload Sentry sourcemaps"
+        if: matrix.app == 'web'
+        run: |
+          pnpm --filter=@httpjpg/web exec sentry-cli sourcemaps upload \
+            --org=${{ secrets.SENTRY_ORG }} \
+            --project=${{ secrets.SENTRY_PROJECT }} \
+            --auth-token=${{ secrets.SENTRY_AUTH_TOKEN }} \
+            .next/static
+
   test:
     name: "🧪 Unit Tests"
     runs-on: ubuntu-latest

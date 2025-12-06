@@ -12,7 +12,7 @@
  * 4. Copy the refresh token to your .env file
  */
 
-const readline = require("readline");
+const readline = require("node:readline");
 
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;

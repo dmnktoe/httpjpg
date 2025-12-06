@@ -86,39 +86,79 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
           {children ? (
             children
           ) : (
-            <VStack gap="0" align="center">
-              {showDefaultLinks && (
-                <>
-                  <Link href="/legal">Legal</Link>
-                  <Link href="/privacy">Privacy</Link>
-                </>
-              )}
-              {onCookieSettingsClick && (
-                <Box
-                  as="button"
-                  onClick={onCookieSettingsClick}
-                  css={{
-                    bg: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                    p: 0,
-                    textDecoration: "underline",
-                    textDecorationThickness: "1px",
-                    textUnderlineOffset: "2px",
-                    color: "inherit",
-                    fontSize: "inherit",
-                    transition: "text-decoration-style 150ms ease-in-out",
-                    _hover: {
-                      textDecorationStyle: "wavy",
-                    },
-                  }}
-                >
-                  Cookie Settings
-                </Box>
-              )}
+            <VStack gap="1" align="center">
+              {/* Links Row */}
+              <Box
+                css={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "2",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                }}
+              >
+                {showDefaultLinks && (
+                  <>
+                    <Link href="/legal">Legal</Link>
+                    <Box as="span" css={{ opacity: 0.3 }}>
+                      ·
+                    </Box>
+                    <Link href="/privacy">Privacy</Link>
+                  </>
+                )}
+                {onCookieSettingsClick && (
+                  <>
+                    {showDefaultLinks && (
+                      <Box as="span" css={{ opacity: 0.3 }}>
+                        ·
+                      </Box>
+                    )}
+                    <Box
+                      as="button"
+                      onClick={onCookieSettingsClick}
+                      css={{
+                        bg: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        p: 0,
+                        textDecoration: "underline",
+                        textDecorationThickness: "1px",
+                        textUnderlineOffset: "2px",
+                        color: "inherit",
+                        fontSize: "inherit",
+                        transition: "text-decoration-style 150ms ease-in-out",
+                        _hover: {
+                          textDecorationStyle: "wavy",
+                        },
+                      }}
+                    >
+                      Cookie Settings
+                    </Box>
+                  </>
+                )}
+              </Box>
+
+              {/* Divider */}
               <Box as="span">*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚</Box>
+
+              {/* Copyright */}
               <Box as="span">
                 {copyrightText || "༺yl33ly httpjpg icon.icon.iconn te3shay༻"}
+              </Box>
+
+              {/* Version */}
+              <Box
+                as="span"
+                css={{
+                  fontSize: "xs",
+                  opacity: 0.4,
+                  fontFamily: "mono",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                {process.env.NEXT_PUBLIC_APP_VERSION
+                  ? `v${process.env.NEXT_PUBLIC_APP_VERSION.slice(0, 7)}`
+                  : "v-dev"}
               </Box>
             </VStack>
           )}

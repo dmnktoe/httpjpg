@@ -9,7 +9,8 @@
       "@httpjpg/ui": ["../../packages/ui/src"],
       "@httpjpg/ui/*": ["../../packages/ui/src/*"],
       "@httpjpg/ui/styled-system/*": ["../../packages/ui/styled-system/*"],
-      "@httpjpg/tokens": ["../../packages/tokens/src"]
+      "@httpjpg/tokens": ["../../packages/tokens/src"],
+      "styled-system/*": ["../../packages/ui/styled-system/*"]
     }
   },
   "include": [".storybook", "stories", "**/*.ts", "**/*.tsx"],

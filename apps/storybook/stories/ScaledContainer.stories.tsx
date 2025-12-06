@@ -70,10 +70,11 @@ type Story = StoryObj<typeof meta>;
  */
 export const Basic: Story = {
   args: {
-    designWidth: 1920,
-    designHeight: 1080,
+    children: null,
+    designWidth: 1200,
+    designHeight: 800,
     minScale: 0.3,
-    maxScale: 2,
+    maxScale: 1.5,
     scaleMode: "fit",
   },
   render: (args) => (
@@ -135,8 +136,9 @@ export const Basic: Story = {
  */
 export const PortfolioGrid: Story = {
   args: {
-    designWidth: 1920,
-    designHeight: 1080,
+    children: null,
+    designWidth: 1200,
+    designHeight: 800,
     scaleMode: "fit",
   },
   render: (args) => (
@@ -217,6 +219,7 @@ export const PortfolioGrid: Story = {
  */
 export const MagazineOverlap: Story = {
   args: {
+    children: null,
     designWidth: 1920,
     designHeight: 1200,
     scaleMode: "fit",
@@ -306,6 +309,7 @@ export const MagazineOverlap: Story = {
  */
 export const ScaledGrid: Story = {
   args: {
+    children: null,
     designWidth: 1920,
     designHeight: 1080,
     scaleMode: "fit",

@@ -63,6 +63,7 @@ export const Basic: Story = {
  * 16:9 aspect ratio (widescreen) - static example
  */
 export const Widescreen: Story = {
+  args: { children: null },
   render: () => (
     <div style={{ maxWidth: "800px" }}>
       <AspectRatio ratio="16/9">
@@ -89,6 +90,7 @@ export const Widescreen: Story = {
  * 1:1 aspect ratio (square)
  */
 export const Square: Story = {
+  args: { children: null },
   render: () => (
     <div style={{ maxWidth: "400px" }}>
       <AspectRatio ratio="1/1">
@@ -115,6 +117,7 @@ export const Square: Story = {
  * 4:3 aspect ratio (classic)
  */
 export const Classic: Story = {
+  args: { children: null },
   render: () => (
     <div style={{ maxWidth: "600px" }}>
       <AspectRatio ratio="4/3">
@@ -141,6 +144,7 @@ export const Classic: Story = {
  * 21:9 aspect ratio (ultrawide)
  */
 export const Ultrawide: Story = {
+  args: { children: null },
   render: () => (
     <div style={{ maxWidth: "900px" }}>
       <AspectRatio ratio="21/9">
@@ -167,6 +171,7 @@ export const Ultrawide: Story = {
  * 9:16 aspect ratio (portrait/mobile)
  */
 export const Portrait: Story = {
+  args: { children: null },
   render: () => (
     <div style={{ maxWidth: "300px" }}>
       <AspectRatio ratio="9/16">
@@ -193,6 +198,7 @@ export const Portrait: Story = {
  * With actual image
  */
 export const WithImage: Story = {
+  args: { children: null },
   render: () => (
     <div style={{ maxWidth: "800px" }}>
       <AspectRatio ratio="16/9">

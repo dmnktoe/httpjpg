@@ -75,6 +75,8 @@ export {
   SbWorkCard,
   type SbWorkCardProps,
 } from "./components/work-card";
+// TODO: Ensure work_list component is synced to Storyblok CMS
+// Component registered but not available in CMS, causing runtime warnings
 export {
   SbWorkList,
   type SbWorkListProps,

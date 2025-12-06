@@ -10,7 +10,9 @@
         "!.next/cache/**",
         "storybook-static/**",
         "dist/**",
-        "packages/tokens/dist/**"
+        "packages/tokens/dist/**",
+        "packages/ui/styled-system/**",
+        "packages/ui/styles.css"
       ],
       "env": [
         "STORYBLOK_PREVIEW_TOKEN",
@@ -62,7 +64,7 @@
       "cache": false
     },
     "type-check": {
-      "dependsOn": ["^type-check"],
+      "dependsOn": ["^build"],
       "outputs": ["*.tsbuildinfo"]
     },
     "clean": {

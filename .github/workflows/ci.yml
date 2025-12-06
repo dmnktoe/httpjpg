@@ -7,228 +7,198 @@ on:
   pull_request: {}
 
 env:
-  # Turborepo
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-
-  # Skip env validation in CI (we don't have all secrets in CI)
-  SKIP_ENV_VALIDATION: true
-
-  # Storyblok (required for builds)
-  NEXT_PUBLIC_STORYBLOK_TOKEN: ${{ secrets.NEXT_PUBLIC_STORYBLOK_TOKEN }}
-  NEXT_PUBLIC_STORYBLOK_API_URL: https://api.storyblok.com/v2/cdn
-  NEXT_PUBLIC_STORYBLOK_VERSION: published
   NEXT_PUBLIC_APP_URL: https://httpjpg.com
-  # NEXT_PUBLIC_STORYBLOK_MAIN_FOLDER not used (content is in root)
-
+  NEXT_PUBLIC_APP_VERSION: ${{ github.sha }}
+  NEXT_PUBLIC_STORYBLOK_API_URL: https://api.storyblok.com/v2/cdn
+  NEXT_PUBLIC_STORYBLOK_TOKEN: ${{ secrets.NEXT_PUBLIC_STORYBLOK_TOKEN }}
+  NEXT_PUBLIC_STORYBLOK_VERSION: published
   STORYBLOK_PREVIEW_TOKEN: ${{ secrets.STORYBLOK_PREVIEW_TOKEN }}
   STORYBLOK_PREVIEW_SECRET: ${{ secrets.STORYBLOK_PREVIEW_SECRET }}
   STORYBLOK_REVALIDATE_SECRET: ${{ secrets.STORYBLOK_REVALIDATE_SECRET }}
-
-  # Spotify - Not needed for builds (runtime-only via API routes)
-  # SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REFRESH_TOKEN
-  # are only required at runtime in production, not during CI builds
-
-  # Sentry (optional)
   SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
   SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+  SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+  SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+  ARCJET_KEY: ${{ secrets.ARCJET_KEY }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   lint:
-    name: 🔬 Lint
+    name: "🔬 Lint"
     runs-on: ubuntu-latest
     steps:
-      - name: ⬇️ Checkout repo
+      - name: "⬇️ Checkout"
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: 🤌 Setup pnpm
+      - name: "🤌 Setup pnpm"
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
-      - name: ⎔ Setup node
+      - name: "⎔ Setup Node"
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
-      - name: 📥 Download deps
+      - name: "📥 Install dependencies"
         run: pnpm install --frozen-lockfile
 
-      - name: 🔬 Run Biome lint
+      - name: "🔬 Lint"
         run: pnpm run lint
 
   typecheck:
-    name: ʦ TypeScript
+    name: "Ŧ TypeScript"
     runs-on: ubuntu-latest
     steps:
-      - name: ⬇️ Checkout repo
+      - name: "⬇️ Checkout"
         uses: actions/checkout@v4
 
-      - name: 🤌 Setup pnpm
+      - name: "🤌 Setup pnpm"
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
-      - name: ⎔ Setup node
+      - name: "⎔ Setup Node"
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
-      - name: 📥 Download deps
+      - name: "📥 Install dependencies"
         run: pnpm install --frozen-lockfile
 
-      - name: 🔎 Type check
+      - name: "🔎 Type check"
         run: pnpm run type-check
 
   build-packages:
-    name: 📦 Build Packages
+    name: "📦 Build Packages"
     runs-on: ubuntu-latest
     needs: [lint, typecheck]
     steps:
-      - name: ⬇️ Checkout repo
+      - name: "⬇️ Checkout"
         uses: actions/checkout@v4
 
-      - name: 🤌 Setup pnpm
+      - name: "🤌 Setup pnpm"
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
-      - name: ⎔ Setup node
+      - name: "⎔ Setup Node"
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
-      - name: 📥 Download deps
+      - name: "📥 Install dependencies"
         run: pnpm install --frozen-lockfile
 
-      - name: 📦 Build packages
+      - name: "📦 Build packages"
         run: pnpm run build --filter="./packages/*"
 
-      - name: 📤 Upload package artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: packages-dist
-          path: |
-            packages/*/dist
-            packages/tokens/dist
-          retention-days: 1
-
   build-apps:
-    name: 📦 Build Apps
+    name: "📦 Build Apps"
     runs-on: ubuntu-latest
     needs: [build-packages]
     strategy:
       matrix:
         app: [web, storybook]
     steps:
-      - name: ⬇️ Checkout repo
+      - name: "⬇️ Checkout"
         uses: actions/checkout@v4
 
-      - name: 🤌 Setup pnpm
+      - name: "🤌 Setup pnpm"
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
-      - name: ⎔ Setup node
+      - name: "⎔ Setup Node"
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
-      - name: 📥 Download deps
+      - name: "📥 Install dependencies"
         run: pnpm install --frozen-lockfile
 
-      - name: 📦 Build ${{ matrix.app }}
-        run: pnpm run build --filter=${{ matrix.app }}
+      - name: "📦 Build ${{ matrix.app }}"
+        run: pnpm run build --filter=@httpjpg/${{ matrix.app }}
 
-      - name: 📤 Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.app }}-build
-          path: |
-            apps/${{ matrix.app }}/.next
-            apps/${{ matrix.app }}/storybook-static
-          retention-days: 1
+      - name: "📤 Upload Sentry sourcemaps"
+        if: matrix.app == 'web'
+        run: |
+          pnpm --filter=@httpjpg/web exec sentry-cli sourcemaps upload \
+            --org=${{ secrets.SENTRY_ORG }} \
+            --project=${{ secrets.SENTRY_PROJECT }} \
+            --auth-token=${{ secrets.SENTRY_AUTH_TOKEN }} \
+            --release=${{ github.sha }} \
+            .next/static
 
   test:
-    name: 🃏 Jest Tests
+    name: "🧪 Unit Tests"
     runs-on: ubuntu-latest
-    if: false # Enable when tests are added
+    needs: [lint, typecheck]
     steps:
-      - name: ⬇️ Checkout repo
+      - name: "⬇️ Checkout"
         uses: actions/checkout@v4
 
-      - name: 🤌 Setup pnpm
+      - name: "🤌 Setup pnpm"
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
-      - name: ⎔ Setup node
+      - name: "⎔ Setup Node"
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
-      - name: 📥 Download deps
+      - name: "📥 Install dependencies"
         run: pnpm install --frozen-lockfile
 
-      - name: 🃏 Run jest
-        run: pnpm run test -- --coverage --maxWorkers=2
+      - name: "🧪 Run tests"
+        run: pnpm run test:coverage
 
-      - name: 📊 Upload coverage to Codecov
+      - name: "📊 Upload coverage"
+        if: always()
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/coverage-final.json
-          flags: unittests
           fail_ci_if_error: false
 
   e2e:
-    name: 🎭 Playwright E2E Tests
+    name: "🎭 E2E Tests"
     runs-on: ubuntu-latest
-    needs: [build-apps]
-    if: false # Enable when E2E tests are added
+    needs: [lint, typecheck]
     steps:
-      - name: ⬇️ Checkout repo
+      - name: "⬇️ Checkout"
         uses: actions/checkout@v4
 
-      - name: 🤌 Setup pnpm
+      - name: "🤌 Setup pnpm"
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
-      - name: ⎔ Setup node
+      - name: "⎔ Setup Node"
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
-      - name: 📥 Download deps
+      - name: "📥 Install dependencies"
         run: pnpm install --frozen-lockfile
 
-      - name: 🌐 Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
+      - name: "📦 Build web"
+        run: pnpm run build --filter=@httpjpg/web
 
-      - name: 📦 Download web build
-        uses: actions/download-artifact@v4
-        with:
-          name: web-build
-          path: apps/web
+      - name: "🌐 Install Playwright"
+        run: pnpm --filter=@httpjpg/web exec playwright install --with-deps chromium
 
-      - name: 🎭 Run Playwright tests
-        run: pnpm run test:e2e
+      - name: "🎭 Run E2E tests"
+        run: pnpm --filter=@httpjpg/web run test:e2e
 
-      - name: 📸 Upload test results
+      - name: "📸 Upload test results"
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -237,19 +207,32 @@ jobs:
           retention-days: 30
 
   summary:
-    name: ✅ All Checks Passed
+    name: "📊 CI Summary"
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, build-packages, build-apps]
+    needs: [lint, typecheck, build-packages, build-apps, test, e2e]
     if: always()
     steps:
-      - name: ✅ Check status
+      - name: "📊 Generate Summary"
         run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📋 CI Results"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🔬 Lint:           ${{ needs.lint.result }}"
+          echo "Ŧ TypeScript:      ${{ needs.typecheck.result }}"
+          echo "📦 Build Packages: ${{ needs.build-packages.result }}"
+          echo "📦 Build Apps:     ${{ needs.build-apps.result }}"
+          echo "🧪 Unit Tests:     ${{ needs.test.result }}"
+          echo "🎭 E2E Tests:      ${{ needs.e2e.result }}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
           if [[ "${{ needs.lint.result }}" != "success" ]] || \
              [[ "${{ needs.typecheck.result }}" != "success" ]] || \
              [[ "${{ needs.build-packages.result }}" != "success" ]] || \
-             [[ "${{ needs.build-apps.result }}" != "success" ]]; then
-            echo "❌ One or more jobs failed"
+             [[ "${{ needs.build-apps.result }}" != "success" ]] || \
+             [[ "${{ needs.test.result }}" != "success" ]] || \
+             [[ "${{ needs.e2e.result }}" != "success" ]]; then
+            echo "❌ Pipeline Failed"
             exit 1
           else
-            echo "✅ All checks passed!"
+            echo "✅ Pipeline Successful"
           fi

@@ -169,7 +169,7 @@ export function setDatadogUser(user: {
  */
 export function clearDatadogUser(): void {
   try {
-    datadogRum.removeUser();
+    datadogRum.clearUser();
   } catch (error) {
     console.error("Failed to clear Datadog user:", error);
   }

@@ -1,5 +1,10 @@
 "use client";
 
+// TODO: Fix Storyblok component registration
+// This component exists in code but throws "Component work-list doesn't exist" in CMS
+// Need to run: pnpm --filter @httpjpg/storyblok-sync run sync
+// Or manually create component in Storyblok dashboard
+
 import { renderStoryblokRichText } from "@httpjpg/storyblok-richtext";
 import { WorkList } from "@httpjpg/ui";
 import { memo } from "react";

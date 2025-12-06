@@ -154,13 +154,20 @@ jobs:
       - name: 📦 Build ${{ matrix.app }}
         run: pnpm run build --filter=@httpjpg/${{ matrix.app }}
 
-      - name: 📤 Upload build artifacts
+      - name: 📤 Upload web build
+        if: matrix.app == 'web'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.app }}-build
-          path: |
-            apps/${{ matrix.app }}/.next
-            apps/${{ matrix.app }}/storybook-static
+          name: web-build
+          path: apps/web/.next
+          retention-days: 1
+
+      - name: 📤 Upload storybook build
+        if: matrix.app == 'storybook'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-build
+          path: apps/storybook/storybook-static
           retention-days: 1
 
   test:

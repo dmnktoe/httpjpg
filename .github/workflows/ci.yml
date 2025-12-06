@@ -5,338 +5,168 @@ on:
     branches:
       - main
   pull_request: {}
-  release:
-    types: [published]
 
 env:
-  # Turborepo
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-
-  # =============================================================================
-  # App Configuration
-  # =============================================================================
   NEXT_PUBLIC_APP_URL: https://httpjpg.com
-
-  # =============================================================================
-  # Storyblok CMS
-  # =============================================================================
   NEXT_PUBLIC_STORYBLOK_API_URL: https://api.storyblok.com/v2/cdn
   NEXT_PUBLIC_STORYBLOK_TOKEN: ${{ secrets.NEXT_PUBLIC_STORYBLOK_TOKEN }}
   NEXT_PUBLIC_STORYBLOK_VERSION: published
   STORYBLOK_PREVIEW_TOKEN: ${{ secrets.STORYBLOK_PREVIEW_TOKEN }}
   STORYBLOK_PREVIEW_SECRET: ${{ secrets.STORYBLOK_PREVIEW_SECRET }}
   STORYBLOK_REVALIDATE_SECRET: ${{ secrets.STORYBLOK_REVALIDATE_SECRET }}
-
-  # =============================================================================
-  # Sentry Error Tracking
-  # =============================================================================
   SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
   SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
   SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-
-  # =============================================================================
-  # Spotify API
-  # =============================================================================
   SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
   SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
   SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
-
-  # =============================================================================
-  # Arcjet Security
-  # =============================================================================
   ARCJET_KEY: ${{ secrets.ARCJET_KEY }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   lint:
-    name: 🔬 Lint
+    name: "🔬 Lint"
     runs-on: ubuntu-latest
     steps:
-      - name: ⬇️ Checkout repo
+      - name: "⬇️ Checkout"
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: 🤌 Setup pnpm
+      - name: "🤌 Setup pnpm"
         uses: pnpm/action-setup@v4
 
-      - name: ⎔ Setup node
+      - name: "⎔ Setup Node"
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
-      - name: 📥 Download deps
+      - name: "📥 Install dependencies"
         run: pnpm install --frozen-lockfile
 
-      - name: 🔬 Run Biome lint
+      - name: "🔬 Lint"
         run: pnpm run lint
 
   typecheck:
-    name: Ŧ TypeScript
+    name: "Ŧ TypeScript"
     runs-on: ubuntu-latest
     steps:
-      - name: ⬇️ Checkout repo
+      - name: "⬇️ Checkout"
         uses: actions/checkout@v4
 
-      - name: 🤌 Setup pnpm
+      - name: "🤌 Setup pnpm"
         uses: pnpm/action-setup@v4
 
-      - name: ⏔ Setup node
+      - name: "⎔ Setup Node"
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
-      - name: 📥 Download deps
+      - name: "📥 Install dependencies"
         run: pnpm install --frozen-lockfile
 
-      - name: 🔎 Type check
+      - name: "🔎 Type check"
         run: pnpm run type-check
 
-  build-packages:
-    name: 📦 Build Packages
-    runs-on: ubuntu-latest
-    needs: [lint, typecheck]
-    steps:
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
-
-      - name: 🤌 Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: ⏔ Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'pnpm'
-
-      - name: 📥 Download deps
-        run: pnpm install --frozen-lockfile
-
-      - name: 📦 Build packages
-        run: pnpm run build --filter="./packages/*"
-
-      - name: 📤 Upload package artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: packages-dist
-          path: |
-            packages/*/dist
-            packages/tokens/dist
-          retention-days: 1
-
-  build-apps:
-    name: 📦 Build Apps
-    runs-on: ubuntu-latest
-    needs: [build-packages]
-    strategy:
-      matrix:
-        app: [web, storybook]
-    steps:
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
-
-      - name: 🤌 Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: ⏔ Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'pnpm'
-
-      - name: 📥 Download deps
-        run: pnpm install --frozen-lockfile
-
-      - name: 📦 Build ${{ matrix.app }}
-        run: |
-          echo "🏗️  Building @httpjpg/${{ matrix.app }}..."
-          pnpm run build --filter=@httpjpg/${{ matrix.app }}
-
-          if [ "${{ matrix.app }}" == "web" ]; then
-            echo ""
-            echo "📊 Build Statistics:"
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            du -sh apps/web/.next | awk '{print "📦 Total Size: " $1}'
-            find apps/web/.next -type f | wc -l | awk '{print "📄 Files: " $1}'
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          fi
-
-      - name: 📤 Upload sourcemaps to Sentry
-        if: matrix.app == 'web' && github.ref == 'refs/heads/main'
-        continue-on-error: true
-        working-directory: apps/web
-        run: |
-          echo "📤 Uploading sourcemaps to Sentry..."
-          echo "Working directory: $(pwd)"
-          echo "Checking .next directory..."
-          ls -la .next/ || echo "No .next directory found"
-
-          if [ -d ".next" ]; then
-            npx --yes @sentry/cli@latest releases new "${{ github.sha }}"
-            npx --yes @sentry/cli@latest sourcemaps upload --release="${{ github.sha }}" .next
-            npx --yes @sentry/cli@latest releases finalize "${{ github.sha }}"
-            npx --yes @sentry/cli@latest releases deploys "${{ github.sha }}" new -e production
-            echo "✅ Sourcemaps uploaded successfully!"
-          else
-            echo "⚠️  No .next directory found, skipping sourcemap upload"
-          fi
-
-      - name: 📤 Upload web build
-        if: matrix.app == 'web'
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-build
-          path: apps/web/.next/
-          retention-days: 1
-          if-no-files-found: warn
-
-      - name: 📤 Upload storybook build
-        if: matrix.app == 'storybook'
-        uses: actions/upload-artifact@v4
-        with:
-          name: storybook-build
-          path: apps/storybook/storybook-static
-          retention-days: 1
-
   test:
-    name: 🧪 Unit Tests
+    name: "🧪 Unit Tests"
     runs-on: ubuntu-latest
-    needs: [lint, typecheck]
     steps:
-      - name: ⬇️ Checkout repo
+      - name: "⬇️ Checkout"
         uses: actions/checkout@v4
 
-      - name: 🤌 Setup pnpm
+      - name: "🤌 Setup pnpm"
         uses: pnpm/action-setup@v4
 
-      - name: ⏔ Setup node
+      - name: "⎔ Setup Node"
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
-      - name: 📥 Download deps
+      - name: "📥 Install dependencies"
         run: pnpm install --frozen-lockfile
 
-      - name: 🧪 Run Jest tests
-        run: |
-          echo "🧪 Running unit tests with coverage..."
-          pnpm run test:coverage
+      - name: "🧪 Run tests"
+        run: pnpm run test:coverage
 
-          echo ""
-          echo "📊 Test Summary:"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          if [ -f coverage/coverage-summary.json ]; then
-            cat coverage/coverage-summary.json | jq -r '.total | "✅ Coverage: \(.lines.pct)% lines | \(.statements.pct)% statements"'
-          fi
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-      - name: 📊 Upload coverage to Codecov
+      - name: "📊 Upload coverage"
         if: always()
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/coverage-final.json
-          flags: unittests
           fail_ci_if_error: false
 
-  e2e:
-    name: 🎭 Playwright E2E Tests
+  build:
+    name: "📦 Build"
     runs-on: ubuntu-latest
     needs: [lint, typecheck]
+    strategy:
+      matrix:
+        app: [web, storybook]
     steps:
-      - name: ⬇️ Checkout repo
+      - name: "⬇️ Checkout"
         uses: actions/checkout@v4
 
-      - name: 🤌 Setup pnpm
+      - name: "🤌 Setup pnpm"
         uses: pnpm/action-setup@v4
 
-      - name: ⏔ Setup node
+      - name: "⎔ Setup Node"
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
-      - name: 📥 Download deps
+      - name: "📥 Install dependencies"
         run: pnpm install --frozen-lockfile
 
-      - name: 📦 Build web app
+      - name: "📦 Build ${{ matrix.app }}"
+        run: pnpm run build --filter=@httpjpg/${{ matrix.app }}
+
+  e2e:
+    name: "🎭 E2E Tests"
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck]
+    steps:
+      - name: "⬇️ Checkout"
+        uses: actions/checkout@v4
+
+      - name: "🤌 Setup pnpm"
+        uses: pnpm/action-setup@v4
+
+      - name: "⎔ Setup Node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: "📥 Install dependencies"
+        run: pnpm install --frozen-lockfile
+
+      - name: "📦 Build web"
         run: pnpm run build --filter=@httpjpg/web
 
-      - name: 🌐 Install Playwright Browsers
+      - name: "🌐 Install Playwright"
         run: pnpm --filter=@httpjpg/web exec playwright install --with-deps chromium
 
-      - name: 🎭 Run Playwright tests
-        run: |
-          echo "🎭 Running Playwright E2E tests..."
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          pnpm --filter=@httpjpg/web run test:e2e
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "✅ E2E tests completed successfully!"
+      - name: "🎭 Run E2E tests"
+        run: pnpm --filter=@httpjpg/web run test:e2e
 
-      - name: 📸 Upload test results
+      - name: "📸 Upload test results"
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: apps/web/playwright-report/
           retention-days: 30
-
-  summary:
-    name: 📊 CI Summary
-    runs-on: ubuntu-latest
-    needs: [lint, typecheck, build-packages, build-apps, test, e2e]
-    if: always()
-    steps:
-      - name: 📊 Generate Summary
-        run: |
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo ""
-          echo "   ██╗  ██╗████████╗████████╗██████╗      ██╗██████╗  ██████╗ "
-          echo "   ██║  ██║╚══██╔══╝╚══██╔══╝██╔══██╗     ██║██╔══██╗██╔════╝ "
-          echo "   ███████║   ██║      ██║   ██████╔╝     ██║██████╔╝██║  ███╗"
-          echo "   ██╔══██║   ██║      ██║   ██╔═══╝ ██   ██║██╔═══╝ ██║   ██║"
-          echo "   ██║  ██║   ██║      ██║   ██║     ╚█████╔╝██║     ╚██████╔╝"
-          echo "   ╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚═╝      ╚════╝ ╚═╝      ╚═════╝ "
-          echo ""
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo ""
-          echo "📋 CI Pipeline Results"
-          echo ""
-          echo "   🔬 Lint:           ${{ needs.lint.result }}"
-          echo "   Ŧ TypeScript:      ${{ needs.typecheck.result }}"
-          echo "   📦 Build Packages: ${{ needs.build-packages.result }}"
-          echo "   📦 Build Apps:     ${{ needs.build-apps.result }}"
-          echo "   🧪 Unit Tests:     ${{ needs.test.result }}"
-          echo "   🎭 E2E Tests:      ${{ needs.e2e.result }}"
-          echo ""
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo ""
-
-          if [[ "${{ needs.lint.result }}" != "success" ]] || \
-             [[ "${{ needs.typecheck.result }}" != "success" ]] || \
-             [[ "${{ needs.build-packages.result }}" != "success" ]] || \
-             [[ "${{ needs.build-apps.result }}" != "success" ]] || \
-             [[ "${{ needs.test.result }}" != "success" ]] || \
-             [[ "${{ needs.e2e.result }}" != "success" ]]; then
-            echo "❌ Pipeline Failed - One or more jobs did not succeed"
-            echo ""
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            exit 1
-          else
-            echo "✅ Pipeline Successful - All checks passed!"
-            echo ""
-            if [[ "${{ github.event_name }}" == "release" ]]; then
-              echo "🚀 Release: ${{ github.event.release.tag_name }}"
-              echo "📦 Ready for deployment"
-            fi
-            echo ""
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          fi

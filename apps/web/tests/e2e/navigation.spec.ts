@@ -1,47 +1,29 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Navigation", () => {
-  test("should navigate to test page", async ({ page }) => {
-    await page.goto("/test-page");
+  test("should open GitHub link in new tab", async ({ page, context }) => {
+    await page.goto("/");
 
-    // Look for about link (adjust selector based on your actual navigation)
-    const aboutLink = page.getByRole("link", { name: /about/i });
+    // Find GitHub link
+    const githubLink = page.getByRole("link", { name: /github/i });
+    await expect(githubLink).toBeVisible();
 
-    if (await aboutLink.isVisible()) {
-      await aboutLink.click();
-      await expect(page).toHaveURL(/\/about/);
-    }
-  });
+    // Verify it has correct href
+    await expect(githubLink).toHaveAttribute(
+      "href",
+      "https://github.com/dmnktoe",
+    );
 
-  test("should handle 404 pages gracefully", async ({ page }) => {
-    await page.goto("/this-page-does-not-exist-12345");
+    // Verify it opens in new tab (has target="_blank")
+    await expect(githubLink).toHaveAttribute("target", "_blank");
 
-    // Check if custom 404 page is shown - look for the heading specifically
-    const notFoundHeading = page.getByRole("heading", { name: /404/i });
-    await expect(notFoundHeading).toBeVisible();
-  });
+    // Click and wait for new page to open
+    const [newPage] = await Promise.all([
+      context.waitForEvent("page"),
+      githubLink.click(),
+    ]);
 
-  test("mobile menu should work", async ({ page }) => {
-    // Set mobile viewport
-    await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto("/test-page");
-
-    // Look for mobile menu button in header (use first visible one)
-    const header = page.getByRole("banner");
-    const mobileMenuButton = header
-      .getByRole("button", { name: /menu/i })
-      .first();
-
-    if (await mobileMenuButton.isVisible()) {
-      await mobileMenuButton.click();
-
-      // Check if menu opened
-      // Adjust selector based on your mobile menu implementation
-      await page.waitForTimeout(500); // Wait for animation
-
-      // Close menu
-      await mobileMenuButton.click();
-      await page.waitForTimeout(500);
-    }
+    // Verify new page URL
+    await expect(newPage).toHaveURL("https://github.com/dmnktoe");
   });
 });

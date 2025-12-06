@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@httpjpg/env": "workspace:*",
-    "@storyblok/react": "^5.4.18",
+    "@storyblok/react": "^5.4.20",
     "react": "^19.0.0"
   },
   "devDependencies": {

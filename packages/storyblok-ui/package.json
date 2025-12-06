@@ -19,7 +19,7 @@
     "@httpjpg/storyblok-richtext": "workspace:*",
     "@httpjpg/storyblok-utils": "workspace:*",
     "@httpjpg/ui": "workspace:*",
-    "@storyblok/react": "^5.4.18"
+    "@storyblok/react": "^5.4.20"
   },
   "devDependencies": {
     "@httpjpg/tsconfig": "workspace:*",

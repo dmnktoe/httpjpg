@@ -13,11 +13,11 @@
   },
   "dependencies": {
     "@httpjpg/env": "workspace:*",
-    "storyblok-js-client": "^6.9.4"
+    "storyblok-js-client": "^6.11.0"
   },
   "devDependencies": {
     "@httpjpg/tsconfig": "workspace:*",
-    "@types/node": "^22.9.0",
-    "typescript": "~5.7.2"
+    "@types/node": "^22.19.1",
+    "typescript": "~5.9.3"
   }
 }

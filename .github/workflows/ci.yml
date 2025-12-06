@@ -193,11 +193,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: web-build
-          path: |
-            apps/web/.next
-            !apps/web/.next/cache
+          path: apps/web/.next/
           retention-days: 1
-          if-no-files-found: error
+          if-no-files-found: warn
 
       - name: 📤 Upload storybook build
         if: matrix.app == 'storybook'

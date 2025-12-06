@@ -1,19 +1,24 @@
 // Set SKIP_ENV_VALIDATION before any imports
 process.env.SKIP_ENV_VALIDATION = "true";
 
+const path = require("path");
 const nextJest = require("next/jest");
+
+// Resolve to workspace root
+const workspaceRoot = path.resolve(__dirname, "../..");
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
-  dir: "./apps/web",
+  dir: path.join(workspaceRoot, "apps/web"),
 });
 
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
 const customJestConfig = {
+  rootDir: workspaceRoot,
   coverageProvider: "v8",
   testEnvironment: "jsdom",
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  setupFilesAfterEnv: ["<rootDir>/test/config/jest.setup.js"],
   testEnvironmentOptions: {
     customExportConditions: [""],
   },
@@ -22,11 +27,11 @@ const customJestConfig = {
     "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy",
 
     // Handle CSS imports (without CSS modules)
-    "^.+\\.(css|sass|scss)$": "<rootDir>/__mocks__/styleMock.js",
+    "^.+\\.(css|sass|scss)$": "<rootDir>/test/mocks/styleMock.js",
 
     // Handle image imports
     "^.+\\.(jpg|jpeg|png|gif|webp|avif|svg)$":
-      "<rootDir>/__mocks__/fileMock.js",
+      "<rootDir>/test/mocks/fileMock.js",
 
     // Handle module aliases
     "^@/(.*)$": "<rootDir>/apps/web/$1",

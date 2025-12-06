@@ -26,8 +26,11 @@ test.describe("Navigation", () => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto("/test-page");
 
-    // Look for mobile menu button (adjust selector based on your implementation)
-    const mobileMenuButton = page.locator('button[aria-label*="menu" i]');
+    // Look for mobile menu button in header (use first visible one)
+    const header = page.getByRole("banner");
+    const mobileMenuButton = header
+      .getByRole("button", { name: /menu/i })
+      .first();
 
     if (await mobileMenuButton.isVisible()) {
       await mobileMenuButton.click();

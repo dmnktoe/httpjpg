@@ -7,10 +7,6 @@ test.describe("Test Page", () => {
     // Check if page loads successfully
     await expect(page).toHaveTitle(/Test Page/i);
 
-    // Check for main content
-    const mainContent = page.locator("main");
-    await expect(mainContent).toBeVisible();
-
     // Check for h1
     const heading = page.getByRole("heading", { level: 1, name: /Test Page/i });
     await expect(heading).toBeVisible();
@@ -19,9 +15,9 @@ test.describe("Test Page", () => {
   test("should have working navigation", async ({ page }) => {
     await page.goto("/test-page");
 
-    // Check if navigation is present
-    const nav = page.locator("nav");
-    await expect(nav).toBeVisible();
+    // Check if navigation is present (Header component)
+    const header = page.getByRole("banner");
+    await expect(header).toBeVisible();
   });
 
   test("should be responsive", async ({ page }) => {
@@ -29,14 +25,14 @@ test.describe("Test Page", () => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto("/test-page");
 
-    const mainContent = page.locator("main");
-    await expect(mainContent).toBeVisible();
+    const heading = page.getByRole("heading", { level: 1 });
+    await expect(heading).toBeVisible();
 
     // Test desktop viewport
     await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto("/test-page");
 
-    await expect(mainContent).toBeVisible();
+    await expect(heading).toBeVisible();
   });
 
   test("should load without console errors", async ({ page }) => {

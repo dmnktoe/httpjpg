@@ -81,6 +81,7 @@ jobs:
   test:
     name: "🧪 Unit Tests"
     runs-on: ubuntu-latest
+    needs: [lint, typecheck]
     steps:
       - name: "⬇️ Checkout"
         uses: actions/checkout@v4
@@ -108,10 +109,33 @@ jobs:
           files: ./coverage/coverage-final.json
           fail_ci_if_error: false
 
-  build:
-    name: "📦 Build"
+  build-packages:
+    name: "📦 Build Packages"
     runs-on: ubuntu-latest
     needs: [lint, typecheck]
+    steps:
+      - name: "⬇️ Checkout"
+        uses: actions/checkout@v4
+
+      - name: "🤌 Setup pnpm"
+        uses: pnpm/action-setup@v4
+
+      - name: "⎔ Setup Node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: "📥 Install dependencies"
+        run: pnpm install --frozen-lockfile
+
+      - name: "📦 Build packages"
+        run: pnpm run build --filter="./packages/*"
+
+  build-apps:
+    name: "📦 Build Apps"
+    runs-on: ubuntu-latest
+    needs: [build-packages]
     strategy:
       matrix:
         app: [web, storybook]
@@ -137,7 +161,7 @@ jobs:
   e2e:
     name: "🎭 E2E Tests"
     runs-on: ubuntu-latest
-    needs: [lint, typecheck]
+    needs: [build-apps]
     steps:
       - name: "⬇️ Checkout"
         uses: actions/checkout@v4
@@ -170,3 +194,34 @@ jobs:
           name: playwright-report
           path: apps/web/playwright-report/
           retention-days: 30
+
+  summary:
+    name: "📊 CI Summary"
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, build-packages, build-apps, test, e2e]
+    if: always()
+    steps:
+      - name: "📊 Generate Summary"
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📋 CI Results"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🔬 Lint:           ${{ needs.lint.result }}"
+          echo "Ŧ TypeScript:      ${{ needs.typecheck.result }}"
+          echo "📦 Build Packages: ${{ needs.build-packages.result }}"
+          echo "📦 Build Apps:     ${{ needs.build-apps.result }}"
+          echo "🧪 Unit Tests:     ${{ needs.test.result }}"
+          echo "🎭 E2E Tests:      ${{ needs.e2e.result }}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          if [[ "${{ needs.lint.result }}" != "success" ]] || \
+             [[ "${{ needs.typecheck.result }}" != "success" ]] || \
+             [[ "${{ needs.build-packages.result }}" != "success" ]] || \
+             [[ "${{ needs.build-apps.result }}" != "success" ]] || \
+             [[ "${{ needs.test.result }}" != "success" ]] || \
+             [[ "${{ needs.e2e.result }}" != "success" ]]; then
+            echo "❌ Pipeline Failed"
+            exit 1
+          else
+            echo "✅ Pipeline Successful"
+          fi

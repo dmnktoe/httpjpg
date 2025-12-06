@@ -10,6 +10,7 @@ env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
   NEXT_PUBLIC_APP_URL: https://httpjpg.com
+  NEXT_PUBLIC_APP_VERSION: ${{ github.sha }}
   NEXT_PUBLIC_STORYBLOK_API_URL: https://api.storyblok.com/v2/cdn
   NEXT_PUBLIC_STORYBLOK_TOKEN: ${{ secrets.NEXT_PUBLIC_STORYBLOK_TOKEN }}
   NEXT_PUBLIC_STORYBLOK_VERSION: published
@@ -134,6 +135,7 @@ jobs:
             --org=${{ secrets.SENTRY_ORG }} \
             --project=${{ secrets.SENTRY_PROJECT }} \
             --auth-token=${{ secrets.SENTRY_AUTH_TOKEN }} \
+            --release=${{ github.sha }} \
             .next/static
 
   test:

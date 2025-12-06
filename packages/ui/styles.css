@@ -1594,6 +1594,14 @@
     transition: text-decoration-style 150ms ease-in-out;
 }
 
+  .op_0\.4 {
+    opacity: 0.4;
+}
+
+  .ls_0\.05em {
+    letter-spacing: 0.05em;
+}
+
   .pos_sticky {
     position: sticky;
 }
@@ -1676,10 +1684,6 @@
 
   .my_3 {
     margin-block: var(--spacing-3);
-}
-
-  .op_0\.4 {
-    opacity: 0.4;
 }
 
   .d_none {

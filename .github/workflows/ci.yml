@@ -159,7 +159,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: web-build
-          path: apps/web/.next
+          path: |
+            apps/web/.next/standalone
+            apps/web/.next/static
+            apps/web/.next/BUILD_ID
+            apps/web/.next/package.json
           retention-days: 1
 
       - name: 📤 Upload storybook build
@@ -233,8 +237,6 @@ jobs:
 
       - name: 🎭 Run Playwright tests
         run: pnpm --filter=@httpjpg/web run test:e2e
-        env:
-          PLAYWRIGHT_TEST_BASE_URL: http://localhost:3000
 
       - name: 📸 Upload test results
         if: failure()

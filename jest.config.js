@@ -36,9 +36,9 @@ const customJestConfig = {
   },
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
   testPathIgnorePatterns: [
-    "/node_modules/",
-    "/.next/",
-    "/apps/web/tests/e2e/", // Ignore Playwright E2E tests
+    "node_modules",
+    "\\.next",
+    "apps/web/tests/e2e", // Ignore Playwright E2E tests
   ],
   transformIgnorePatterns: [
     "/node_modules/",

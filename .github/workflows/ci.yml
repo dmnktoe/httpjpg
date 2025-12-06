@@ -173,7 +173,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: 🧪 Run Jest tests
-        run: pnpm run test:coverage -- --maxWorkers=2
+        run: pnpm run test:coverage
         env:
           SKIP_ENV_VALIDATION: true
 

@@ -19,7 +19,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.3"
+    "@biomejs/biome": "2.3.8"
   },
   "keywords": [
     "typescript",

@@ -13,24 +13,29 @@ import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 export interface SbWorkListProps {
   blok: {
     _uid: string;
-    work?: Array<{
-      name: string;
-      slug: string;
-      created_at: string;
-      published_at?: string;
-      first_published_at?: string;
-      content?: {
-        title?: string;
-        description?: any;
-        images?: Array<{
-          filename: string;
-          alt?: string;
-          title?: string;
-        }>;
-        date?: string;
-      };
-    }>;
+    work?: string[]; // Array of story UUIDs
   };
+  /**
+   * Resolved work stories from Storyblok API
+   */
+  workStories?: Array<{
+    name: string;
+    slug: string;
+    full_slug: string;
+    created_at: string;
+    published_at?: string;
+    first_published_at?: string;
+    content?: {
+      title?: string;
+      description?: any;
+      images?: Array<{
+        filename: string;
+        alt?: string;
+        title?: string;
+      }>;
+      date?: string;
+    };
+  }>;
   /**
    * Base URL for work links
    * @default "/work"
@@ -44,17 +49,17 @@ export interface SbWorkListProps {
  */
 export const SbWorkList = memo(function SbWorkList({
   blok,
+  workStories,
   baseUrl = "/work",
 }: SbWorkListProps) {
-  const { work } = blok;
   const editableProps = useStoryblokEditable(blok);
 
-  if (!work || work.length === 0) {
+  if (!workStories || workStories.length === 0) {
     return null;
   }
 
   // Transform Storyblok work data to WorkList format
-  const workItems = work.map((item) => {
+  const workItems = workStories.map((item) => {
     // Try to use custom date field first, then published_at, then first_published_at as fallback
     const dateString =
       item.content?.date ||

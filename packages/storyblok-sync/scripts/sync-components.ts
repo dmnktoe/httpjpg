@@ -947,12 +947,13 @@ async function getSbWorkListComponent(): Promise<StoryblokComponent> {
     icon: "block-list",
     color: "#8b5cf6",
     schema: {
-      works: {
-        type: "bloks",
-        display_name: "Works",
-        required: true,
-        restrict_components: true,
-        component_whitelist: ["work_card"],
+      work: {
+        type: "stories",
+        display_name: "Work Items",
+        required: false,
+        restrict_content_types: true,
+        component_whitelist: ["page_work"],
+        description: "Select work/portfolio stories to display",
       },
       gap: {
         type: "number",

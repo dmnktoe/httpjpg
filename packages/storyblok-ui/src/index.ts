@@ -98,6 +98,8 @@ export {
   WIDTH_OPTIONS,
   type WidthOption,
 } from "./lib/constants";
+// Lib exports
+export { resolveWorkRelations } from "./lib/resolve-work-relations";
 // Export utility functions
 export {
   getLayoutStyles,

@@ -2,7 +2,7 @@
 
 import { Box, Container, Headline, Link, Paragraph } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
-import { ConsoleFooter } from "./_components";
+import { CIStatusBadge, CodecovBadge, ConsoleFooter } from "./_components";
 
 interface ConsoleCard {
   title: string;
@@ -113,9 +113,9 @@ const initialCards: ConsoleCard[] = [
     icon: "📖",
     href: "https://docs.httpjpg.com/docs",
     stats: [
-      { label: "Guides", value: "12" },
-      { label: "API Refs", value: "8" },
-      { label: "Examples", value: "24" },
+      { label: "Guides", value: "Loading..." },
+      { label: "API Refs", value: "Loading..." },
+      { label: "Examples", value: "Loading..." },
     ],
   },
   {
@@ -124,9 +124,9 @@ const initialCards: ConsoleCard[] = [
     icon: "🎨",
     href: "https://storybook.httpjpg.com/",
     stats: [
-      { label: "Components", value: "32" },
-      { label: "Stories", value: "156" },
-      { label: "Variants", value: "240" },
+      { label: "Components", value: "Loading..." },
+      { label: "Stories", value: "Loading..." },
+      { label: "Variants", value: "Loading..." },
     ],
   },
 ];
@@ -135,8 +135,59 @@ export default function ConsolePage() {
   const [consoleCards, setConsoleCards] = useState<ConsoleCard[]>(initialCards);
 
   useEffect(() => {
-    const fetchConfigStats = async () => {
+    const fetchStats = async () => {
       try {
+        // Fetch docs stats
+        const docsResponse = await fetch("/api/docs-stats");
+        if (docsResponse.ok) {
+          const docsData = await docsResponse.json();
+
+          setConsoleCards((prev) =>
+            prev.map((card) => {
+              if (card.title === "Documentation") {
+                return {
+                  ...card,
+                  stats: [
+                    {
+                      label: "Guides",
+                      value: docsData.documentation.guides.toString(),
+                    },
+                    {
+                      label: "API Refs",
+                      value: docsData.documentation.apiRefs.toString(),
+                    },
+                    {
+                      label: "Examples",
+                      value: docsData.documentation.examples.toString(),
+                    },
+                  ],
+                };
+              }
+              if (card.title === "Storybook") {
+                return {
+                  ...card,
+                  stats: [
+                    {
+                      label: "Components",
+                      value: docsData.storybook.components.toString(),
+                    },
+                    {
+                      label: "Stories",
+                      value: docsData.storybook.stories.toString(),
+                    },
+                    {
+                      label: "Variants",
+                      value: docsData.storybook.variants.toString(),
+                    },
+                  ],
+                };
+              }
+              return card;
+            }),
+          );
+        }
+
+        // Fetch config stats (existing)
         const response = await fetch("/api/storyblok/config");
         if (response.ok) {
           const data = await response.json();
@@ -207,7 +258,7 @@ export default function ConsolePage() {
       }
     };
 
-    fetchConfigStats();
+    fetchStats();
     fetchStatusStats();
   }, []);
 
@@ -237,6 +288,18 @@ export default function ConsolePage() {
           monorepo. Access package versions, system status, documentation, and
           component library.
         </Paragraph>
+        <Box
+          css={{
+            mt: 4,
+            display: "flex",
+            gap: 2,
+            flexWrap: "wrap",
+            alignItems: "center",
+          }}
+        >
+          <CIStatusBadge />
+          <CodecovBadge />
+        </Box>
       </Container>
 
       {/* Cards Grid */}
@@ -332,14 +395,10 @@ export default function ConsolePage() {
 
                   {/* Stats */}
                   {card.stats && card.stats.length > 0 && (
-                    <Box
-                      css={{
-                        mt: 3,
-                        pt: 3,
-                        borderTop: "1px solid",
-                        borderColor: "black",
-                      }}
-                    >
+                    <Box css={{ mt: 3 }}>
+                      <Box css={{ fontSize: "0.75rem", opacity: 0.7, mb: 2 }}>
+                        ・゜゜・。。・゜゜・。
+                      </Box>
                       <Box
                         css={{
                           fontSize: "0.75rem",

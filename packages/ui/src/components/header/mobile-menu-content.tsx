@@ -135,7 +135,8 @@ export const MobileMenuContent = ({
                 <NavLink
                   key={work.id}
                   variant="personal"
-                  href={`/work/${work.slug}`}
+                  href={work.isExternal ? work.slug : `/work/${work.slug}`}
+                  isExternal={work.isExternal}
                   onClick={handleMenuItemClick}
                   data-preview-image={work.imageUrl}
                   css={{
@@ -167,30 +168,21 @@ export const MobileMenuContent = ({
             </Box>
 
             {clientWork.length > 0 ? (
-              clientWork.map((work) => {
-                // Check if slug is external URL
-                const isExternal =
-                  work.slug.startsWith("http://") ||
-                  work.slug.startsWith("https://");
-                const href = isExternal ? work.slug : `/work/${work.slug}`;
-
-                return (
-                  <NavLink
-                    key={work.id}
-                    variant="client"
-                    href={href}
-                    isExternal={isExternal}
-                    showExternalIcon={isExternal}
-                    onClick={handleMenuItemClick}
-                    data-preview-image={work.imageUrl}
-                    css={{
-                      fontSize: { base: "sm", md: "md" },
-                    }}
-                  >
-                    {work.title}
-                  </NavLink>
-                );
-              })
+              clientWork.map((work) => (
+                <NavLink
+                  key={work.id}
+                  variant="client"
+                  href={work.isExternal ? work.slug : `/work/${work.slug}`}
+                  isExternal={work.isExternal}
+                  onClick={handleMenuItemClick}
+                  data-preview-image={work.imageUrl}
+                  css={{
+                    fontSize: { base: "sm", md: "md" },
+                  }}
+                >
+                  {work.title}
+                </NavLink>
+              ))
             ) : (
               <Box css={{ fontSize: "sm", opacity: 0.4, ml: "2" }}>
                 ⊹ ᴛᴀᴋɪɴɢ ᴄʟɪᴇɴᴛꜱ ⊹

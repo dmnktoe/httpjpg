@@ -84,7 +84,8 @@ export const Navigation = ({
                 <NavLink
                   key={work.id}
                   variant="personal"
-                  href={`/work/${work.slug}`}
+                  href={work.isExternal ? work.slug : `/work/${work.slug}`}
+                  isExternal={work.isExternal}
                   data-preview-image={work.imageUrl}
                   css={{
                     backgroundColor: work.isDraft ? "yellow" : "transparent",
@@ -125,19 +126,15 @@ export const Navigation = ({
           <br />
           {clientWork.length > 0 ? (
             clientWork.map((work) => {
-              // Check if slug is external URL
-              const isExternal =
-                work.slug.startsWith("http://") ||
-                work.slug.startsWith("https://");
-              const href = isExternal ? work.slug : `/work/${work.slug}`;
+              const href = work.isExternal ? work.slug : `/work/${work.slug}`;
 
               return (
                 <NavLink
                   key={work.id}
                   variant="client"
                   href={href}
-                  isExternal={isExternal}
-                  showExternalIcon={isExternal}
+                  isExternal={work.isExternal}
+                  showExternalIcon={work.isExternal}
                   data-preview-image={work.imageUrl}
                   css={{
                     backgroundColor: work.isDraft ? "yellow" : "transparent",

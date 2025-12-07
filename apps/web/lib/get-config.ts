@@ -104,12 +104,14 @@ export async function getRecentWork(): Promise<{
     slug: string;
     title: string;
     imageUrl?: string;
+    isExternal?: boolean;
   }>;
   clientWork: Array<{
     id: string;
     slug: string;
     title: string;
     imageUrl?: string;
+    isExternal?: boolean;
   }>;
 }> {
   const fetchWork = async () => {
@@ -157,12 +159,22 @@ export async function getRecentWork(): Promise<{
       // Map all stories to work items
       const workItems = storiesToUse.slice(0, 10).map((story: any) => {
         const isDraft = !publishedUuids.has(story.uuid);
+
+        // Check if this is an external-only work item
+        const isExternalOnly = story.content?.external_only === true;
+        const externalUrl =
+          story.content?.link?.url || story.content?.link?.cached_url;
+
+        // Use external URL if external_only is set, otherwise use internal slug
+        const href = isExternalOnly && externalUrl ? externalUrl : story.slug;
+
         return {
           id: story.uuid,
-          slug: story.slug,
+          slug: href,
           title: story.content?.title || story.name,
           imageUrl: story.content?.images?.[0]?.filename,
           isDraft,
+          isExternal: isExternalOnly,
         };
       });
 

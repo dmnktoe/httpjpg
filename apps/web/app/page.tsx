@@ -1,5 +1,5 @@
 import { CACHE_TAGS, getStoryblokApi } from "@httpjpg/storyblok-api";
-import { DynamicRender } from "@httpjpg/storyblok-utils";
+import { DynamicRender, STORYBLOK_RELATIONS } from "@httpjpg/storyblok-utils";
 import { unstable_cache } from "next/cache";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
@@ -23,11 +23,17 @@ export default async function HomePage({
   // Draft mode: Fresh fetch with preview token
   // Production: Cached fetch with ISR
   const story = isDraft
-    ? await getStoryblokApi({ draftMode: true }).getStory({ slug: "home" })
+    ? await getStoryblokApi({ draftMode: true }).getStory({
+        slug: "home",
+        resolve_relations: [STORYBLOK_RELATIONS.WORK_LIST],
+      })
     : await unstable_cache(
         async () => {
           const { getStory } = getStoryblokApi();
-          return await getStory({ slug: "home" });
+          return await getStory({
+            slug: "home",
+            resolve_relations: [STORYBLOK_RELATIONS.WORK_LIST],
+          });
         },
         ["story-home"],
         {

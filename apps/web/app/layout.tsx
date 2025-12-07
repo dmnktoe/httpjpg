@@ -2,7 +2,7 @@ import { config } from "@httpjpg/config";
 import { env } from "@httpjpg/env";
 import "@httpjpg/tokens/dist/tokens.css";
 import "@httpjpg/ui/styles.css";
-import { Box, Header, ImagePreview } from "@httpjpg/ui";
+import { Box, Header, ImagePreview, LazyMotionProvider } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
@@ -64,41 +64,43 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <ConsentProvider />
         <ObservabilityProvider />
         <WebVitalsReporter />
-        <StoryblokProvider>
-          {/* Global UI Elements (not affected by page containers) */}
-          <CustomCursorWrapper />
-          <ImagePreview />
-          <NowPlayingWidget />
-          <PreviewNotification />
+        <LazyMotionProvider>
+          <StoryblokProvider>
+            {/* Global UI Elements (not affected by page containers) */}
+            <CustomCursorWrapper />
+            <ImagePreview />
+            <NowPlayingWidget />
+            <PreviewNotification />
 
-          {/* Sticky Header - always full width, pushes content down naturally */}
-          <Header
-            nav={navigation}
-            personalWork={personalWork}
-            clientWork={clientWork}
-          />
+            {/* Sticky Header - always full width, pushes content down naturally */}
+            <Header
+              nav={navigation}
+              personalWork={personalWork}
+              clientWork={clientWork}
+            />
 
-          {/* Main Content Area - NO container wrapper here
-              Pages must use Container/Section components themselves
-              This allows for full-width sections and controlled breakouts */}
-          <Box
-            as="main"
-            css={{
-              bg: "white",
-              w: "full",
-              minH: "100vh",
-            }}
-          >
-            {children}
-          </Box>
+            {/* Main Content Area - NO container wrapper here
+                Pages must use Container/Section components themselves
+                This allows for full-width sections and controlled breakouts */}
+            <Box
+              as="main"
+              css={{
+                bg: "white",
+                w: "full",
+                minH: "100vh",
+              }}
+            >
+              {children}
+            </Box>
 
-          {/* Footer - always full width */}
-          <FooterWrapper
-            backgroundImage={footerConfig.backgroundImage}
-            showDefaultLinks={footerConfig.showDefaultLinks}
-            copyrightText={footerConfig.copyrightText}
-          />
-        </StoryblokProvider>
+            {/* Footer - always full width */}
+            <FooterWrapper
+              backgroundImage={footerConfig.backgroundImage}
+              showDefaultLinks={footerConfig.showDefaultLinks}
+              copyrightText={footerConfig.copyrightText}
+            />
+          </StoryblokProvider>
+        </LazyMotionProvider>
 
         {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
           <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />

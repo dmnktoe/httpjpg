@@ -1,5 +1,5 @@
 import { CACHE_TAGS, getStoryblokApi } from "@httpjpg/storyblok-api";
-import { DynamicRender } from "@httpjpg/storyblok-utils";
+import { DynamicRender, STORYBLOK_RELATIONS } from "@httpjpg/storyblok-utils";
 import type { Metadata } from "next";
 import { unstable_cache } from "next/cache";
 import { draftMode } from "next/headers";
@@ -21,14 +21,20 @@ const fetchStoryWithCache = async (fullSlug: string, isDraft: boolean) => {
     // Draft mode: Always fetch fresh with preview token
     if (isDraft) {
       const { getStory } = getStoryblokApi({ draftMode: true });
-      return await getStory({ slug: fullSlug });
+      return await getStory({
+        slug: fullSlug,
+        resolve_relations: [STORYBLOK_RELATIONS.WORK_LIST],
+      });
     }
 
     // Production: Use ISR cache with revalidation tags
     return unstable_cache(
       async () => {
         const { getStory } = getStoryblokApi();
-        return await getStory({ slug: fullSlug });
+        return await getStory({
+          slug: fullSlug,
+          resolve_relations: [STORYBLOK_RELATIONS.WORK_LIST],
+        });
       },
       [`story-${fullSlug}`],
       {
@@ -158,11 +164,6 @@ export default async function DynamicPage({
 
   try {
     const story = await fetchStoryWithCache(fullSlug, isDraft);
-
-    console.log(
-      `[DynamicPage] slug="${fullSlug}", draftMode=${isEnabled}, visualEditor=${!!isVisualEditor}, isDraft=${isDraft}, story=`,
-      story ? "loaded" : "null",
-    );
 
     if (!story) {
       return notFound();

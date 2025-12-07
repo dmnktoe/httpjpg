@@ -121,6 +121,7 @@ export const Header = ({
           pointerEvents: "auto",
           py: 4,
           fontSize: "sm",
+          userSelect: "none",
         }}
       >
         <Container size="2xl" px={{ base: 4, md: 6, lg: 8 }} center={center}>

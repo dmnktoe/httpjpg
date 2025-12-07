@@ -12,6 +12,7 @@ import { FooterWrapper } from "../components/footer-wrapper";
 import { NowPlayingWidget } from "../components/now-playing-widget";
 import { ObservabilityProvider } from "../components/observability-provider";
 import { PreviewNotification } from "../components/preview-notification";
+import { PSNCard } from "../components/psn-card";
 import { WebVitalsReporter } from "../components/web-vitals-reporter";
 import {
   getFooterConfig,
@@ -70,6 +71,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             <CustomCursorWrapper />
             <ImagePreview />
             <NowPlayingWidget />
+            <PSNCard />
             <PreviewNotification />
 
             {/* Sticky Header - always full width, pushes content down naturally */}

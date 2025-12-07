@@ -1566,6 +1566,10 @@
     padding-block: var(--spacing-64);
 }
 
+  .op_0\.3 {
+    opacity: 0.3;
+}
+
   .bg_transparent {
     background: var(--colors-transparent);
 }
@@ -1881,10 +1885,6 @@
 
   .mx_1 {
     margin-inline: var(--spacing-1);
-}
-
-  .op_0\.3 {
-    opacity: 0.3;
 }
 
   .trf_rotate\(90deg\) {

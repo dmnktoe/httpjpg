@@ -23,6 +23,6 @@
   "devDependencies": {
     "@httpjpg/tsconfig": "workspace:*",
     "@types/node": "^22.10.2",
-    "typescript": "~5.7.2"
+    "typescript": "~5.9.0"
   }
 }

@@ -12,6 +12,7 @@ import { FooterWrapper } from "../components/footer-wrapper";
 import { NowPlayingWidget } from "../components/now-playing-widget";
 import { ObservabilityProvider } from "../components/observability-provider";
 import { PreviewNotification } from "../components/preview-notification";
+import { ScrollToTop } from "../components/scroll-to-top";
 import { WebVitalsReporter } from "../components/web-vitals-reporter";
 import {
   getFooterConfig,
@@ -64,6 +65,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <ConsentProvider />
         <ObservabilityProvider />
         <WebVitalsReporter />
+        <ScrollToTop />
         <LazyMotionProvider>
           <StoryblokProvider>
             {/* Global UI Elements (not affected by page containers) */}

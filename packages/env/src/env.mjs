@@ -75,7 +75,7 @@ export const env = createEnv({
     CODECOV_TOKEN: z.string().optional(),
 
     // GitHub
-    GITHUB_TOKEN: z.string().optional(),
+    GH_TOKEN: z.string().optional(),
 
     // Node.js
     NODE_ENV: z
@@ -149,7 +149,7 @@ export const env = createEnv({
     CODECOV_TOKEN: process.env.CODECOV_TOKEN,
 
     // Server - GitHub
-    GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+    GH_TOKEN: process.env.GH_TOKEN,
 
     // Server - Node.js
     NODE_ENV: process.env.NODE_ENV,

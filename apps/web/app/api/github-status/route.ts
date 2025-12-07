@@ -15,8 +15,8 @@ export async function GET() {
         headers: {
           Accept: "application/vnd.github+json",
           "X-GitHub-Api-Version": "2022-11-28",
-          ...(process.env.GITHUB_TOKEN && {
-            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          ...(process.env.GH_TOKEN && {
+            Authorization: `Bearer ${process.env.GH_TOKEN}`,
           }),
         },
         next: { revalidate: 60 },

@@ -13,6 +13,7 @@ import { NowPlayingWidget } from "../components/now-playing-widget";
 import { ObservabilityProvider } from "../components/observability-provider";
 import { PreviewNotification } from "../components/preview-notification";
 import { PSNCard } from "../components/psn-card";
+import { ScrollToTop } from "../components/scroll-to-top";
 import { WebVitalsReporter } from "../components/web-vitals-reporter";
 import {
   getFooterConfig,
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
   title: {
     absolute: config.appName,
     default: config.appName,
-    template: `%s | ${config.appName}`,
+    template: `%s ${config.appName}`,
   },
   description:
     "Personal portfolio showcasing creative work, design, and development projects",
@@ -65,6 +66,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <ConsentProvider />
         <ObservabilityProvider />
         <WebVitalsReporter />
+        <ScrollToTop />
         <LazyMotionProvider>
           <StoryblokProvider>
             {/* Global UI Elements (not affected by page containers) */}

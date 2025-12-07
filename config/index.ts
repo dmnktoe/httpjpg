@@ -1,7 +1,7 @@
 import type { Config } from "./types";
 
 export const config = {
-  appName: "httpjpg",
+  appName: "㋡httpjpg.com",
   // Frontend
   ui: {
     // the themes that should be available in the app

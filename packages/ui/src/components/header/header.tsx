@@ -26,6 +26,10 @@ export interface WorkItem {
    * Is this a draft (unpublished) story?
    */
   isDraft?: boolean;
+  /**
+   * Is this an external link?
+   */
+  isExternal?: boolean;
 }
 
 export interface HeaderProps {

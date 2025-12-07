@@ -103,6 +103,8 @@ export const Navigation = ({
                   display: "block",
                   textDecoration: "none",
                   _hover: { textDecoration: "underline" },
+                  py: "2px",
+                  px: "2px",
                 }}
               >
                 ⋆.˚ ᡣ𐭩 .𖥔˚ music ⋆.˚✮🎧✮˚.⋆ &nd pics ˙✧˖°📷 ༘ ⋆｡˚

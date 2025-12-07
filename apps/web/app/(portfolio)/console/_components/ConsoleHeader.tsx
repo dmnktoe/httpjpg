@@ -1,4 +1,4 @@
-import { Box, Headline, Link, Paragraph } from "@httpjpg/ui";
+import { Box, Container, Headline, Link, Paragraph } from "@httpjpg/ui";
 
 interface ConsoleHeaderProps {
   tag: string;
@@ -8,12 +8,10 @@ interface ConsoleHeaderProps {
 
 export function ConsoleHeader({ tag, title, description }: ConsoleHeaderProps) {
   return (
-    <Box
+    <Container
+      size="2xl"
+      px={{ base: 4, md: 6, lg: 8 }}
       css={{
-        maxW: "2xl",
-        mx: "auto",
-        w: "full",
-        px: { base: 4, md: 6, lg: 8 },
         py: 6,
         borderBottom: "1px solid",
         borderColor: "black",
@@ -51,7 +49,6 @@ export function ConsoleHeader({ tag, title, description }: ConsoleHeaderProps) {
       <Headline
         level={1}
         css={{
-          fontSize: { base: "2xl", md: "3xl" },
           mb: 3,
           textTransform: "uppercase",
         }}
@@ -59,6 +56,6 @@ export function ConsoleHeader({ tag, title, description }: ConsoleHeaderProps) {
         {title}
       </Headline>
       <Paragraph css={{ maxW: "2xl", opacity: 0.7 }}>{description}</Paragraph>
-    </Box>
+    </Container>
   );
 }

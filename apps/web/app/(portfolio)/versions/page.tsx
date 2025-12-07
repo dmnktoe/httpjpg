@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Headline, Link, Paragraph } from "@httpjpg/ui";
+import { Box, Container, Headline, Link, Paragraph } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 
 interface PackageInfo {
@@ -240,12 +240,10 @@ export default function VersionsPage() {
       }}
     >
       {/* Header */}
-      <Box
+      <Container
+        size="2xl"
+        px={{ base: 4, md: 6, lg: 8 }}
         css={{
-          maxW: "1536px",
-          mx: "auto",
-          w: "full",
-          px: { base: 4, md: 6, lg: 8 },
           py: 6,
           borderBottom: "1px solid",
           borderColor: "black",
@@ -284,20 +282,18 @@ export default function VersionsPage() {
           📦 Package Versions ･ﾟ⋆
         </Headline>
         <Paragraph css={{ fontSize: "sm", opacity: 0.6 }}>
-          ⋆.˚ ᡣ𐭩 .𖥔˚ Monorepo packages and changelogs ⋆.˚✮
+          ➕.˚ ạ̣ ჩऐჭჩ .ʖ¥ʔ˚ Monorepo packages and changelogs ➕.˚✤
         </Paragraph>
-      </Box>
+      </Container>
 
       {/* Content */}
       <Box css={{ flex: 1 }}>
-        <Box
+        <Container
+          size="2xl"
+          px={{ base: 4, md: 6, lg: 8 }}
           css={{
-            maxW: "1536px",
-            mx: "auto",
-            w: "full",
             display: "flex",
             flexDirection: { base: "column", md: "row" },
-            px: { base: 4, md: 6, lg: 8 },
           }}
         >
           {/* Left Sidebar */}
@@ -478,16 +474,14 @@ export default function VersionsPage() {
             )}
             <ChangelogViewer pkg={selectedPackage} />
           </Box>
-        </Box>
+        </Container>
       </Box>
 
       {/* Footer */}
-      <Box
+      <Container
+        size="2xl"
+        px={{ base: 4, md: 6, lg: 8 }}
         css={{
-          maxW: "1536px",
-          mx: "auto",
-          w: "full",
-          px: { base: 4, md: 6, lg: 8 },
           py: 6,
           borderTop: "1px solid",
           borderColor: "black",
@@ -497,7 +491,7 @@ export default function VersionsPage() {
         <Paragraph css={{ fontSize: "xs", opacity: 0.4, textAlign: "center" }}>
           Last updated: {new Date().toLocaleDateString()}
         </Paragraph>
-      </Box>
+      </Container>
     </Box>
   );
 }

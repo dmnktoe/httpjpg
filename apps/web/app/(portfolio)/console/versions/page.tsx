@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Link } from "@httpjpg/ui";
+import { Box, Container, Link } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 import { ConsoleFooter, ConsoleHeader } from "../_components";
 
@@ -228,14 +228,12 @@ export default function VersionsPage() {
       {/* Content */}
       <Box css={{ flex: 1 }}>
         {!isLoading && (
-          <Box
+          <Container
+            size="2xl"
+            px={{ base: 4, md: 6, lg: 8 }}
             css={{
-              maxW: "1536px",
-              mx: "auto",
-              w: "full",
               display: "flex",
               flexDirection: { base: "column", md: "row" },
-              px: { base: 4, md: 6, lg: 8 },
             }}
           >
             {/* Left Sidebar */}
@@ -416,7 +414,7 @@ export default function VersionsPage() {
               )}
               <ChangelogViewer pkg={selectedPackage} />
             </Box>
-          </Box>
+          </Container>
         )}
       </Box>
 

@@ -1,4 +1,4 @@
-import { Box, Paragraph } from "@httpjpg/ui";
+import { Container, Paragraph } from "@httpjpg/ui";
 
 interface ConsoleFooterProps {
   lastUpdated?: Date | null;
@@ -7,12 +7,10 @@ interface ConsoleFooterProps {
 
 export function ConsoleFooter({ lastUpdated, message }: ConsoleFooterProps) {
   return (
-    <Box
+    <Container
+      size="2xl"
+      px={{ base: 4, md: 6, lg: 8 }}
       css={{
-        maxW: "2xl",
-        mx: "auto",
-        w: "full",
-        px: { base: 4, md: 6, lg: 8 },
         py: 6,
         borderTop: "1px solid",
         borderColor: "black",
@@ -27,6 +25,6 @@ export function ConsoleFooter({ lastUpdated, message }: ConsoleFooterProps) {
           {message || "Developer Console · Built with Next.js"}
         </Paragraph>
       )}
-    </Box>
+    </Container>
   );
 }

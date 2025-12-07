@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Headline, Link, Paragraph } from "@httpjpg/ui";
+import { Box, Container, Headline, Link, Paragraph } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 import { ConsoleFooter } from "./_components";
 
@@ -14,6 +14,64 @@ interface ConsoleCard {
     value: string;
   }[];
 }
+
+interface QuickLink {
+  icon: string;
+  label: string;
+  description: string;
+  href: string;
+}
+
+const quickLinks: QuickLink[] = [
+  {
+    icon: "🔗",
+    label: "GitHub",
+    description: "Repository",
+    href: "https://github.com/dmnktoe/httpjpg",
+  },
+  {
+    icon: "📖",
+    label: "Docs",
+    description: "Documentation",
+    href: "https://docs.httpjpg.com/docs",
+  },
+  {
+    icon: "🎨",
+    label: "Storybook",
+    description: "Components",
+    href: "https://storybook.httpjpg.com/",
+  },
+  {
+    icon: "🟢",
+    label: "Uptime Kuma",
+    description: "Full Status",
+    href: "https://status.dmnktoe.de/status/httpjpg",
+  },
+  {
+    icon: "📱",
+    label: "Apps",
+    description: "Directory",
+    href: "https://github.com/dmnktoe/httpjpg/tree/main/apps",
+  },
+  {
+    icon: "📦",
+    label: "Packages",
+    description: "Directory",
+    href: "https://github.com/dmnktoe/httpjpg/tree/main/packages",
+  },
+  {
+    icon: "🔌",
+    label: "Status API",
+    description: "Endpoint",
+    href: "/api/status",
+  },
+  {
+    icon: "🔌",
+    label: "Versions API",
+    description: "Endpoint",
+    href: "/api/versions",
+  },
+];
 
 const initialCards: ConsoleCard[] = [
   {
@@ -162,12 +220,10 @@ export default function ConsolePage() {
       }}
     >
       {/* Header */}
-      <Box
+      <Container
+        size="2xl"
+        px={{ base: 4, md: 6, lg: 8 }}
         css={{
-          maxW: "1536px",
-          mx: "auto",
-          w: "full",
-          px: { base: 4, md: 6, lg: 8 },
           py: 8,
           borderBottom: "1px solid",
           borderColor: "black",
@@ -181,15 +237,13 @@ export default function ConsolePage() {
           monorepo. Access package versions, system status, documentation, and
           component library.
         </Paragraph>
-      </Box>
+      </Container>
 
       {/* Cards Grid */}
-      <Box
+      <Container
+        size="2xl"
+        px={{ base: 4, md: 6, lg: 8 }}
         css={{
-          maxW: "1536px",
-          mx: "auto",
-          w: "full",
-          px: { base: 4, md: 6, lg: 8 },
           py: 8,
           flex: 1,
         }}
@@ -257,7 +311,7 @@ export default function ConsolePage() {
                   {/* Description */}
                   <Box
                     css={{
-                      fontSize: "0.875rem",
+                      fontSize: "sm",
                       opacity: 0.8,
                       lineHeight: 1.6,
                       mb: 3,
@@ -344,220 +398,37 @@ export default function ConsolePage() {
               gap: 6,
             }}
           >
-            <Box
-              as="a"
-              href="https://github.com/dmnktoe/httpjpg"
-              target="_blank"
-              rel="noopener noreferrer"
-              css={{
-                display: "block",
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
+            {quickLinks.map((link) => (
               <Box
-                as="article"
+                key={link.href}
+                as="a"
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 css={{
-                  p: 1,
-                  background: "transparent",
-                  _hover: { background: "neutral.50" },
+                  display: "block",
+                  textDecoration: "none",
+                  color: "inherit",
                 }}
               >
-                <Box css={{ fontSize: "0.75rem", opacity: 0.6, mb: 1 }}>
-                  🔗 GitHub
+                <Box
+                  as="article"
+                  css={{
+                    p: 1,
+                    background: "transparent",
+                    _hover: { background: "neutral.50" },
+                  }}
+                >
+                  <Paragraph size="sm" weight="semibold">
+                    {link.icon} {link.label}
+                  </Paragraph>
+                  <Paragraph size="sm">{link.description}</Paragraph>
                 </Box>
-                <Paragraph css={{ fontSize: "0.875rem" }}>Repository</Paragraph>
               </Box>
-            </Box>
-
-            <Box
-              as="a"
-              href="https://docs.httpjpg.com/docs"
-              target="_blank"
-              rel="noopener noreferrer"
-              css={{
-                display: "block",
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
-              <Box
-                as="article"
-                css={{
-                  p: 1,
-                  background: "transparent",
-                  _hover: { background: "neutral.50" },
-                }}
-              >
-                <Box css={{ fontSize: "0.75rem", opacity: 0.6, mb: 1 }}>
-                  📖 Docs
-                </Box>
-                <Paragraph css={{ fontSize: "0.875rem" }}>
-                  Documentation
-                </Paragraph>
-              </Box>
-            </Box>
-
-            <Box
-              as="a"
-              href="https://storybook.httpjpg.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              css={{
-                display: "block",
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
-              <Box
-                as="article"
-                css={{
-                  p: 1,
-                  background: "transparent",
-                  _hover: { background: "neutral.50" },
-                }}
-              >
-                <Box css={{ fontSize: "0.75rem", opacity: 0.6, mb: 1 }}>
-                  🎨 Storybook
-                </Box>
-                <Paragraph css={{ fontSize: "0.875rem" }}>Components</Paragraph>
-              </Box>
-            </Box>
-
-            <Box
-              as="a"
-              href="https://status.dmnktoe.de/status/httpjpg"
-              target="_blank"
-              rel="noopener noreferrer"
-              css={{
-                display: "block",
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
-              <Box
-                as="article"
-                css={{
-                  p: 1,
-                  background: "transparent",
-                  _hover: { background: "neutral.50" },
-                }}
-              >
-                <Box css={{ fontSize: "0.75rem", opacity: 0.6, mb: 1 }}>
-                  🟢 Uptime Kuma
-                </Box>
-                <Paragraph css={{ fontSize: "0.875rem" }}>
-                  Full Status
-                </Paragraph>
-              </Box>
-            </Box>
-
-            <Box
-              as="a"
-              href="https://github.com/dmnktoe/httpjpg/tree/main/apps"
-              target="_blank"
-              rel="noopener noreferrer"
-              css={{
-                display: "block",
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
-              <Box
-                as="article"
-                css={{
-                  p: 1,
-                  background: "transparent",
-                  _hover: { background: "neutral.50" },
-                }}
-              >
-                <Box css={{ fontSize: "0.75rem", opacity: 0.6, mb: 1 }}>
-                  📱 Apps
-                </Box>
-                <Paragraph css={{ fontSize: "0.875rem" }}>Directory</Paragraph>
-              </Box>
-            </Box>
-
-            <Box
-              as="a"
-              href="https://github.com/dmnktoe/httpjpg/tree/main/packages"
-              target="_blank"
-              rel="noopener noreferrer"
-              css={{
-                display: "block",
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
-              <Box
-                as="article"
-                css={{
-                  p: 1,
-                  background: "transparent",
-                  _hover: { background: "neutral.50" },
-                }}
-              >
-                <Box css={{ fontSize: "0.75rem", opacity: 0.6, mb: 1 }}>
-                  📦 Packages
-                </Box>
-                <Paragraph css={{ fontSize: "0.875rem" }}>Directory</Paragraph>
-              </Box>
-            </Box>
-
-            <Box
-              as="a"
-              href="/api/status"
-              target="_blank"
-              rel="noopener noreferrer"
-              css={{
-                display: "block",
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
-              <Box
-                as="article"
-                css={{
-                  p: 1,
-                  background: "transparent",
-                  _hover: { background: "neutral.50" },
-                }}
-              >
-                <Box css={{ fontSize: "0.75rem", opacity: 0.6, mb: 1 }}>
-                  🔌 Status API
-                </Box>
-                <Paragraph css={{ fontSize: "0.875rem" }}>Endpoint</Paragraph>
-              </Box>
-            </Box>
-
-            <Box
-              as="a"
-              href="/api/versions"
-              target="_blank"
-              rel="noopener noreferrer"
-              css={{
-                display: "block",
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
-              <Box
-                as="article"
-                css={{
-                  p: 1,
-                  background: "transparent",
-                  _hover: { background: "neutral.50" },
-                }}
-              >
-                <Box css={{ fontSize: "0.75rem", opacity: 0.6, mb: 1 }}>
-                  🔌 Versions API
-                </Box>
-                <Paragraph css={{ fontSize: "0.875rem" }}>Endpoint</Paragraph>
-              </Box>
-            </Box>
+            ))}
           </Box>
         </Box>
-      </Box>
+      </Container>
 
       <ConsoleFooter message="Developer Console · Built with Next.js" />
     </Box>

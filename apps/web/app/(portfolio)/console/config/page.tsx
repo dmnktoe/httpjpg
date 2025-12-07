@@ -1,6 +1,6 @@
 "use client";
 
-import { Box } from "@httpjpg/ui";
+import { Box, Container } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 import { ConsoleFooter, ConsoleHeader, StatCard } from "../_components";
 
@@ -66,12 +66,10 @@ export default function ConfigPage() {
       />
 
       {/* Content */}
-      <Box
+      <Container
+        size="2xl"
+        px={{ base: 4, md: 6, lg: 8 }}
         css={{
-          maxW: "1536px",
-          mx: "auto",
-          w: "full",
-          px: { base: 4, md: 6, lg: 8 },
           py: 8,
           flex: 1,
         }}
@@ -368,7 +366,7 @@ export default function ConfigPage() {
             </Box>
           </>
         )}
-      </Box>
+      </Container>
 
       <ConsoleFooter message="CMS Configuration · Powered by Storyblok" />
     </Box>

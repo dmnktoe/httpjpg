@@ -1,6 +1,6 @@
 "use client";
 
-import { Box } from "@httpjpg/ui";
+import { Box, Container } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 import { ConsoleFooter, ConsoleHeader } from "../_components";
 
@@ -81,15 +81,7 @@ export default function StatusPage() {
             color: "white",
           }}
         >
-          <Box
-            css={{
-              maxW: "1536px",
-              mx: "auto",
-              w: "full",
-              px: { base: 4, md: 6, lg: 8 },
-              py: 6,
-            }}
-          >
+          <Container size="2xl" px={{ base: 4, md: 6, lg: 8 }} css={{ py: 6 }}>
             <Box css={{ display: "flex", alignItems: "center", gap: 3, mb: 2 }}>
               <Box
                 css={{
@@ -114,17 +106,15 @@ export default function StatusPage() {
                   ? "All services are running normally. Everything is working as expected."
                   : "Some services are experiencing slower than normal response times."}
             </Box>
-          </Box>
+          </Container>
         </Box>
       )}
 
       {/* Services List */}
-      <Box
+      <Container
+        size="2xl"
+        px={{ base: 4, md: 6, lg: 8 }}
         css={{
-          maxW: "1536px",
-          mx: "auto",
-          w: "full",
-          px: { base: 4, md: 6, lg: 8 },
           py: 6,
           flex: 1,
         }}
@@ -217,7 +207,7 @@ export default function StatusPage() {
             </Box>
           ))}
         </Box>
-      </Box>
+      </Container>
 
       <ConsoleFooter lastUpdated={lastUpdated} />
     </Box>

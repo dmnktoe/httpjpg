@@ -71,6 +71,12 @@ export const env = createEnv({
     // Arcjet
     ARCJET_KEY: z.string().min(1, "ARCJET_KEY is required"),
 
+    // Codecov
+    CODECOV_TOKEN: z.string().optional(),
+
+    // GitHub
+    GH_TOKEN: z.string().optional(),
+
     // Node.js
     NODE_ENV: z
       .enum(["development", "production", "test"])
@@ -138,6 +144,12 @@ export const env = createEnv({
 
     // Server - Arcjet
     ARCJET_KEY: process.env.ARCJET_KEY,
+
+    // Server - Codecov
+    CODECOV_TOKEN: process.env.CODECOV_TOKEN,
+
+    // Server - GitHub
+    GH_TOKEN: process.env.GH_TOKEN,
 
     // Server - Node.js
     NODE_ENV: process.env.NODE_ENV,

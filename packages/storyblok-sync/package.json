@@ -1,6 +1,6 @@
 {
   "name": "@httpjpg/storyblok-sync",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "private": true,
   "description": "Sync design tokens and component schemas to Storyblok via Management API",

@@ -47,6 +47,7 @@ export default defineConfig({
   include: [
     "./src/**/*.{ts,tsx,js,jsx}",
     "../../apps/storybook/stories/**/*.{ts,tsx}",
+    "../../apps/web/app/**/*.{ts,tsx}",
   ],
 
   // Files to exclude from scanning

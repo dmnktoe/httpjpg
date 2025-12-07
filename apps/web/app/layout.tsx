@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   title: {
     absolute: config.appName,
     default: config.appName,
-    template: `%s | ${config.appName}`,
+    template: `%s ${config.appName}`,
   },
   description:
     "Personal portfolio showcasing creative work, design, and development projects",

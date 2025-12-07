@@ -948,11 +948,11 @@ async function getSbWorkListComponent(): Promise<StoryblokComponent> {
     color: "#8b5cf6",
     schema: {
       work: {
-        type: "stories",
+        type: "options",
         display_name: "Work Items",
         required: false,
-        restrict_content_types: true,
-        component_whitelist: ["page_work"],
+        source: "internal_stories",
+        folder_slug: "work/",
         description: "Select work/portfolio stories to display",
       },
       gap: {

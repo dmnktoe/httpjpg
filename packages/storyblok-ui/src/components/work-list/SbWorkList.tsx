@@ -13,29 +13,28 @@ import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 export interface SbWorkListProps {
   blok: {
     _uid: string;
-    work?: string[]; // Array of story UUIDs
+    work?: Array<
+      | string
+      | {
+          name: string;
+          slug: string;
+          full_slug: string;
+          created_at: string;
+          published_at?: string;
+          first_published_at?: string;
+          content?: {
+            title?: string;
+            description?: any;
+            images?: Array<{
+              filename: string;
+              alt?: string;
+              title?: string;
+            }>;
+            date?: string;
+          };
+        }
+    >; // Array of story UUIDs or resolved stories
   };
-  /**
-   * Resolved work stories from Storyblok API
-   */
-  workStories?: Array<{
-    name: string;
-    slug: string;
-    full_slug: string;
-    created_at: string;
-    published_at?: string;
-    first_published_at?: string;
-    content?: {
-      title?: string;
-      description?: any;
-      images?: Array<{
-        filename: string;
-        alt?: string;
-        title?: string;
-      }>;
-      date?: string;
-    };
-  }>;
   /**
    * Base URL for work links
    * @default "/work"
@@ -49,10 +48,15 @@ export interface SbWorkListProps {
  */
 export const SbWorkList = memo(function SbWorkList({
   blok,
-  workStories,
   baseUrl = "/work",
 }: SbWorkListProps) {
   const editableProps = useStoryblokEditable(blok);
+  const { work } = blok;
+
+  // Filter out UUIDs and only keep resolved stories (objects)
+  const workStories = (work || []).filter(
+    (item): item is Exclude<typeof item, string> => typeof item === "object",
+  );
 
   if (!workStories || workStories.length === 0) {
     return null;

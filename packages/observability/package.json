@@ -23,13 +23,13 @@
   },
   "dependencies": {
     "@httpjpg/env": "workspace:*",
-    "@sentry/nextjs": "^8.47.0",
-    "@datadog/browser-rum": "^5.35.0",
-    "@datadog/browser-logs": "^5.35.0"
+    "@sentry/nextjs": "^8.55.0",
+    "@datadog/browser-rum": "^5.35.1",
+    "@datadog/browser-logs": "^5.35.1"
   },
   "devDependencies": {
     "@httpjpg/tsconfig": "workspace:*",
-    "@types/node": "^22.10.2",
-    "typescript": "~5.7.2"
+    "@types/node": "^22.19.1",
+    "typescript": "~5.9.3"
   }
 }

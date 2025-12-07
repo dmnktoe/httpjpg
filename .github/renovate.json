@@ -1,0 +1,90 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "assignees": ["dmnktoe"],
+  "extends": [
+    "config:base",
+    ":enablePreCommit",
+    ":preserveSemverRanges",
+    ":disableDependencyDashboard"
+  ],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "matchPaths": ["apps/web/**"],
+      "addLabels": ["app:web"]
+    },
+    {
+      "matchPaths": ["apps/docs/**"],
+      "addLabels": ["app:docs"]
+    },
+    {
+      "matchPaths": ["apps/storybook/**"],
+      "addLabels": ["app:storybook"]
+    },
+    {
+      "matchPaths": ["packages/analytics/**"],
+      "addLabels": ["pkg:analytics"]
+    },
+    {
+      "matchPaths": ["packages/consent/**"],
+      "addLabels": ["pkg:consent"]
+    },
+    {
+      "matchPaths": ["packages/env/**"],
+      "addLabels": ["pkg:env"]
+    },
+    {
+      "matchPaths": ["packages/now-playing/**"],
+      "addLabels": ["pkg:now-playing"]
+    },
+    {
+      "matchPaths": ["packages/observability/**"],
+      "addLabels": ["pkg:observability"]
+    },
+    {
+      "matchPaths": ["packages/security/**"],
+      "addLabels": ["pkg:security"]
+    },
+    {
+      "matchPaths": ["packages/storyblok-api/**"],
+      "addLabels": ["pkg:storyblok-api"]
+    },
+    {
+      "matchPaths": ["packages/storyblok-richtext/**"],
+      "addLabels": ["pkg:storyblok-richtext"]
+    },
+    {
+      "matchPaths": ["packages/storyblok-sync/**"],
+      "addLabels": ["pkg:storyblok-sync"]
+    },
+    {
+      "matchPaths": ["packages/storyblok-ui/**"],
+      "addLabels": ["pkg:storyblok-ui"]
+    },
+    {
+      "matchPaths": ["packages/storyblok-utils/**"],
+      "addLabels": ["pkg:storyblok-utils"]
+    },
+    {
+      "matchPaths": ["packages/tokens/**"],
+      "addLabels": ["pkg:tokens"]
+    },
+    {
+      "matchPaths": ["packages/typescript/**"],
+      "addLabels": ["pkg:typescript"]
+    },
+    {
+      "matchPaths": ["packages/ui/**"],
+      "addLabels": ["pkg:ui"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "addLabels": ["ci"]
+    },
+    {
+      "matchUpdateTypes": ["major", "minor"],
+      "matchManagers": ["npm"],
+      "addLabels": ["npm"]
+    }
+  ]
+}

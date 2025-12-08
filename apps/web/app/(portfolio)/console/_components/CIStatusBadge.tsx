@@ -27,7 +27,7 @@ export function CIStatusBadge() {
       <Box
         css={{
           display: "inline-block",
-          fontSize: "sm",
+          fontSize: "xs",
           fontFamily: "mono",
           background: "white",
           color: "neutral.500",
@@ -60,7 +60,7 @@ export function CIStatusBadge() {
     <Box
       css={{
         display: "inline-block",
-        fontSize: "sm",
+        fontSize: "xs",
         fontFamily: "mono",
         background: "white",
         color: statusColor,

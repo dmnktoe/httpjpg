@@ -6,16 +6,16 @@ import { Box, Header, ImagePreview, LazyMotionProvider } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
-import { ConsentProvider } from "../components/consent-provider";
-import { CustomCursorWrapper } from "../components/custom-cursor-wrapper";
-import { FooterWrapper } from "../components/footer-wrapper";
-import { NowPlayingWidget } from "../components/now-playing-widget";
-import { ObservabilityProvider } from "../components/observability-provider";
-import { PreviewNotification } from "../components/preview-notification";
-import { PSNCard } from "../components/psn-card";
-import { ScrollToTop } from "../components/scroll-to-top";
-import { StoryblokProvider } from "../components/storyblok-provider";
-import { WebVitalsReporter } from "../components/web-vitals-reporter";
+import { ConsentProvider } from "../components/providers/consent-provider";
+import { ObservabilityProvider } from "../components/providers/observability-provider";
+import { StoryblokProvider } from "../components/providers/storyblok-provider";
+import { CustomCursorWrapper } from "../components/ui/custom-cursor-wrapper";
+import { FooterWrapper } from "../components/ui/footer-wrapper";
+import { PreviewNotification } from "../components/ui/preview-notification";
+import { ScrollToTop } from "../components/ui/scroll-to-top";
+import { NowPlayingWidget } from "../components/widgets/now-playing-widget";
+import { PSNCard } from "../components/widgets/psn-card";
+import { WebVitalsReporter } from "../components/widgets/web-vitals-reporter";
 import {
   getFooterConfig,
   getNavigation,

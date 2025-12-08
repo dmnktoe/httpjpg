@@ -172,7 +172,7 @@ export default async function DynamicPage({
     // Use live preview for draft mode (enables live editing in Visual Editor)
     if (isDraft) {
       const { StoryblokLivePreview } = await import(
-        "../../../components/storyblok-live-preview"
+        "../../../components/providers/storyblok-live-preview"
       );
       return <StoryblokLivePreview story={story} />;
     }

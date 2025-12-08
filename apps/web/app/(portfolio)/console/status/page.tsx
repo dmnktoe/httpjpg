@@ -72,10 +72,10 @@ export default function StatusPage() {
         <Box
           css={{
             background: anyDown
-              ? "#ef4444"
+              ? "danger.500"
               : allOperational
-                ? "#22c55e"
-                : "#eab308",
+                ? "success.500"
+                : "warning.500",
             color: "white",
           }}
         >

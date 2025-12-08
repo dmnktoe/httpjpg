@@ -469,17 +469,6 @@
     --colors-lime-800: #3f6212;
     --colors-lime-900: #365314;
     --colors-lime-950: #1a2e05;
-    --colors-yellow-50: #fefce8;
-    --colors-yellow-100: #fef9c3;
-    --colors-yellow-200: #fef08a;
-    --colors-yellow-300: #fde047;
-    --colors-yellow-400: #facc15;
-    --colors-yellow-500: #eab308;
-    --colors-yellow-600: #ca8a04;
-    --colors-yellow-700: #a16207;
-    --colors-yellow-800: #854d0e;
-    --colors-yellow-900: #713f12;
-    --colors-yellow-950: #422006;
     --colors-amber-50: #fffbeb;
     --colors-amber-100: #fef3c7;
     --colors-amber-200: #fde68a;
@@ -592,6 +581,50 @@
     --colors-accent-800: #9A3412;
     --colors-accent-900: #7C2D12;
     --colors-accent-950: #431407;
+    --colors-success-50: #F0FDF4;
+    --colors-success-100: #DCFCE7;
+    --colors-success-200: #BBF7D0;
+    --colors-success-300: #86EFAC;
+    --colors-success-400: #4ADE80;
+    --colors-success-500: #22C55E;
+    --colors-success-600: #16A34A;
+    --colors-success-700: #15803D;
+    --colors-success-800: #166534;
+    --colors-success-900: #14532D;
+    --colors-success-950: #052E16;
+    --colors-warning-50: #FEFCE8;
+    --colors-warning-100: #FEF9C3;
+    --colors-warning-200: #FEF08A;
+    --colors-warning-300: #FDE047;
+    --colors-warning-400: #FACC15;
+    --colors-warning-500: #EAB308;
+    --colors-warning-600: #CA8A04;
+    --colors-warning-700: #A16207;
+    --colors-warning-800: #854D0E;
+    --colors-warning-900: #713F12;
+    --colors-warning-950: #422006;
+    --colors-danger-50: #FEF2F2;
+    --colors-danger-100: #FEE2E2;
+    --colors-danger-200: #FECACA;
+    --colors-danger-300: #FCA5A5;
+    --colors-danger-400: #F87171;
+    --colors-danger-500: #EF4444;
+    --colors-danger-600: #DC2626;
+    --colors-danger-700: #B91C1C;
+    --colors-danger-800: #991B1B;
+    --colors-danger-900: #7F1D1D;
+    --colors-danger-950: #450A0A;
+    --colors-yellow-50: #FEFCE8;
+    --colors-yellow-100: #FEF9C3;
+    --colors-yellow-200: #FEF08A;
+    --colors-yellow-300: #FDE047;
+    --colors-yellow-400: #FBBF24;
+    --colors-yellow-500: #EAB308;
+    --colors-yellow-600: #CA8A04;
+    --colors-yellow-700: #A16207;
+    --colors-yellow-800: #854D0E;
+    --colors-yellow-900: #713F12;
+    --colors-yellow-950: #422006;
     --fonts-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
     --fonts-sans: Arial, Helvetica, sans-serif;
     --fonts-headline: Impact, Haettenschweiler, Arial Narrow Bold, sans-serif;
@@ -1451,32 +1484,28 @@
     display: inline-block;
 }
 
-  .c_\#ef4444 {
-    color: #ef4444;
+  .c_danger\.500 {
+    color: var(--colors-danger-500);
 }
 
-  .c_\#eab308 {
-    color: #eab308;
+  .c_warning\.500 {
+    color: var(--colors-warning-500);
 }
 
-  .c_\#22c55e {
-    color: #22c55e;
+  .c_success\.500 {
+    color: var(--colors-success-500);
 }
 
   .py_6 {
     padding-block: var(--spacing-6);
 }
 
-  .bg_\#fef2f2 {
-    background: #fef2f2;
+  .bg_danger\.50 {
+    background: var(--colors-danger-50);
 }
 
   .tt_capitalize {
     text-transform: capitalize;
-}
-
-  .bg_\#FAFAFA {
-    background: #FAFAFA;
 }
 
   .p_3 {
@@ -1491,16 +1520,16 @@
     padding-block: var(--spacing-1);
 }
 
-  .bg_\#22c55e {
-    background: #22c55e;
+  .bg_success\.500 {
+    background: var(--colors-success-500);
 }
 
-  .bg_\#eab308 {
-    background: #eab308;
+  .bg_warning\.500 {
+    background: var(--colors-warning-500);
 }
 
-  .bg_\#ef4444 {
-    background: #ef4444;
+  .bg_danger\.500 {
+    background: var(--colors-danger-500);
 }
 
   .w_12px {
@@ -1539,10 +1568,6 @@
     height: 6px;
 }
 
-  .bg_\#F5F5F5 {
-    background: #F5F5F5;
-}
-
   .ta_left {
     text-align: left;
 }
@@ -1563,12 +1588,8 @@
     padding-inline: var(--spacing-1\.5);
 }
 
-  .bg_\#555 {
-    background: #555;
-}
-
-  .bg_\#4c1 {
-    background: #4c1;
+  .bg_neutral\.600 {
+    background: var(--colors-neutral-600);
 }
 
   .op_0\.4 {
@@ -2793,26 +2814,6 @@
     border-bottom-right-radius: var(--radii-sm);
 }
 
-  .fs_11px {
-    font-size: 11px;
-}
-
-  .bdr-tl_3px {
-    border-top-left-radius: 3px;
-}
-
-  .bdr-bl_3px {
-    border-bottom-left-radius: 3px;
-}
-
-  .bdr-tr_3px {
-    border-top-right-radius: 3px;
-}
-
-  .bdr-br_3px {
-    border-bottom-right-radius: 3px;
-}
-
   .lh_1\.5 {
     line-height: 1.5;
 }
@@ -2823,6 +2824,10 @@
 
   .bg-c_\#fff0f0 {
     background-color: #fff0f0;
+}
+
+  .fs_11px {
+    font-size: 11px;
 }
 
   .bottom_0 {

@@ -45,7 +45,11 @@ export function CodecovBadge() {
 
   const coverage = data.coverage || 0;
   const coverageColor =
-    coverage >= 80 ? "#22c55e" : coverage >= 60 ? "#eab308" : "#ef4444";
+    coverage >= 80
+      ? "success.500"
+      : coverage >= 60
+        ? "warning.500"
+        : "danger.500";
 
   const coverageText =
     coverage >= 80

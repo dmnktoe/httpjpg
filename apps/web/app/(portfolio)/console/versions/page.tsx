@@ -36,7 +36,7 @@ function PackageItem({
         justifyContent: "space-between",
         gap: 2,
         p: 3,
-        background: isActive || isHovered ? "#F5F5F5" : "white",
+        background: isActive || isHovered ? "neutral.100" : "white",
         transition: "all 0.2s",
         cursor: "pointer",
         textAlign: "left",
@@ -85,7 +85,7 @@ function PackageItem({
             h: "20px",
             display: "flex",
             alignItems: "center",
-            background: "#555",
+            background: "neutral.600",
             fontFamily: "mono",
             fontSize: "2xs",
             fontWeight: "semibold",
@@ -102,7 +102,7 @@ function PackageItem({
             h: "20px",
             display: "flex",
             alignItems: "center",
-            background: "#4c1",
+            background: "success.500",
             fontFamily: "mono",
             fontSize: "2xs",
             fontWeight: "semibold",
@@ -365,34 +365,34 @@ export default function VersionsPage() {
                     >
                       <Box
                         css={{
-                          px: "1.5",
+                          px: 1.5,
                           height: "20px",
                           display: "flex",
                           alignItems: "center",
-                          bg: "#555",
+                          bg: "neutral.600",
                           fontFamily: "mono",
-                          fontSize: "11px",
-                          fontWeight: "600",
+                          fontSize: "2xs",
+                          fontWeight: "semibold",
                           color: "white",
-                          borderTopLeftRadius: "3px",
-                          borderBottomLeftRadius: "3px",
+                          borderTopLeftRadius: "sm",
+                          borderBottomLeftRadius: "sm",
                         }}
                       >
                         v
                       </Box>
                       <Box
                         css={{
-                          px: "1.5",
+                          px: 1.5,
                           height: "20px",
                           display: "flex",
                           alignItems: "center",
-                          bg: "#4c1",
+                          bg: "success.500",
                           fontFamily: "mono",
-                          fontSize: "11px",
-                          fontWeight: "600",
+                          fontSize: "2xs",
+                          fontWeight: "semibold",
                           color: "white",
-                          borderTopRightRadius: "3px",
-                          borderBottomRightRadius: "3px",
+                          borderTopRightRadius: "sm",
+                          borderBottomRightRadius: "sm",
                         }}
                       >
                         v{selectedPackage.version}

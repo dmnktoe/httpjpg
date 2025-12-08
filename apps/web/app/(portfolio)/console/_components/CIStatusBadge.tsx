@@ -51,10 +51,10 @@ export function CIStatusBadge() {
 
   const statusColor =
     status.status === "success"
-      ? "#22c55e"
+      ? "success.500"
       : status.status === "failure"
-        ? "#ef4444"
-        : "#eab308";
+        ? "danger.500"
+        : "warning.500";
 
   return (
     <Box

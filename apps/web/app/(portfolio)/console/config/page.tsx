@@ -78,7 +78,7 @@ export default function ConfigPage() {
           <Box
             css={{
               p: 6,
-              background: "#fef2f2",
+              background: "danger.50",
             }}
           >
             <Box css={{ fontSize: "lg", fontWeight: "bold", mb: 2 }}>
@@ -266,7 +266,7 @@ export default function ConfigPage() {
             <Box
               css={{
                 p: 6,
-                background: "#FAFAFA",
+                background: "neutral.50",
               }}
             >
               <Box
@@ -303,7 +303,7 @@ export default function ConfigPage() {
                     css={{
                       px: 2,
                       py: 1,
-                      background: "#22c55e",
+                      background: "success.500",
                       color: "white",
                       fontSize: "xs",
                       fontWeight: "bold",
@@ -328,7 +328,7 @@ export default function ConfigPage() {
                     css={{
                       px: 2,
                       py: 1,
-                      background: "#22c55e",
+                      background: "success.500",
                       color: "white",
                       fontSize: "xs",
                       fontWeight: "bold",
@@ -353,7 +353,7 @@ export default function ConfigPage() {
                     css={{
                       px: 2,
                       py: 1,
-                      background: "#22c55e",
+                      background: "success.500",
                       color: "white",
                       fontSize: "xs",
                       fontWeight: "bold",

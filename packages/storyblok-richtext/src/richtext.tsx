@@ -1,4 +1,14 @@
-import { Box, Headline, Image, Link, Paragraph } from "@httpjpg/ui";
+import {
+  Box,
+  Divider,
+  Headline,
+  Image,
+  Link,
+  ListItem,
+  OrderedList,
+  Paragraph,
+  UnorderedList,
+} from "@httpjpg/ui";
 import type { ComponentProps, ReactNode } from "react";
 import {
   MARK_BOLD,
@@ -105,7 +115,7 @@ function MarkCode(children: ReactNode) {
 function NodeHeading(children: ReactNode, props: any) {
   const level = props.level as 1 | 2 | 3;
   return (
-    <Headline level={level} css={{ mt: "8", mb: "4" }}>
+    <Headline level={level} marginTop="6" marginBottom="3">
       {children}
     </Headline>
   );
@@ -114,16 +124,17 @@ function NodeHeading(children: ReactNode, props: any) {
 /**
  * Custom resolver for paragraphs
  * Accepts maxWidth from context for dynamic prose width
+ * Filters out empty paragraphs to avoid unnecessary spacing
  */
 function NodeParagraph(
   children: ReactNode,
   _props: any,
   context?: { maxWidth?: string | boolean },
 ) {
-  const maxWidth = context?.maxWidth ?? true;
-  console.log("[NodeParagraph] context:", context, "maxWidth:", maxWidth);
+  const maxWidth = context?.maxWidth ?? "readable";
+
   return (
-    <Paragraph maxWidth={maxWidth} style={{ marginBottom: "1.5rem" }}>
+    <Paragraph maxWidth={maxWidth} spacing>
       {children}
     </Paragraph>
   );
@@ -154,53 +165,21 @@ function NodeImage(_children: ReactNode, props: any) {
  * Custom resolver for unordered lists
  */
 function NodeUL(children: ReactNode) {
-  return (
-    <Box
-      as="ul"
-      css={{
-        listStyleType: "disc",
-        pl: "6",
-        my: "4",
-        "& li": {
-          mb: "2",
-        },
-      }}
-    >
-      {children}
-    </Box>
-  );
+  return <UnorderedList>{children}</UnorderedList>;
 }
 
 /**
  * Custom resolver for ordered lists
  */
 function NodeOL(children: ReactNode) {
-  return (
-    <Box
-      as="ol"
-      css={{
-        listStyleType: "decimal",
-        pl: "6",
-        my: "4",
-        "& li": {
-          mb: "2",
-        },
-      }}
-    >
-      {children}
-    </Box>
-  );
+  return <OrderedList>{children}</OrderedList>;
 }
 
 /**
  * Custom resolver for list items
  */
 function NodeLI(children: ReactNode) {
-  return (
-    <Box as="li" css={{ fontSize: "sm", lineHeight: 1.75 }}>
-      {children}
-    </Box>
-  );
+  return <ListItem>{children}</ListItem>;
 }
 
 /**
@@ -229,17 +208,7 @@ function NodeBlockquote(children: ReactNode) {
  * Custom resolver for horizontal rules
  */
 function NodeHR() {
-  return (
-    <Box
-      as="hr"
-      css={{
-        border: "none",
-        borderTop: "1px solid",
-        borderColor: "neutral.200",
-        my: "8",
-      }}
-    />
-  );
+  return <Divider variant="ascii" spacing="8" color="neutral.400" />;
 }
 
 /**
@@ -287,7 +256,6 @@ export function renderStoryblokRichText(
   data: ISbRichtext,
   options?: { maxWidth?: string | boolean },
 ) {
-  console.log("[renderStoryblokRichText] options:", options);
   if (!data) {
     return null;
   }
@@ -336,7 +304,6 @@ export function StoryblokRichText({
   maxWidth = true,
   ...props
 }: StoryblokRichTextProps) {
-  console.log("[StoryblokRichText] maxWidth prop:", maxWidth);
   if (!data) {
     return null;
   }

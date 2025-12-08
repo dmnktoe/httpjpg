@@ -28,10 +28,10 @@ export interface ParagraphProps
   children: ReactNode;
   /**
    * Maximum width for optimal reading (approx. 60-75 characters)
-   * Can be boolean or custom ch value
-   * @default true
+   * Can be boolean, named preset, or custom ch value
+   * @default false
    */
-  maxWidth?: boolean | string;
+  maxWidth?: boolean | "narrow" | "readable" | "wide" | "extra-wide" | string;
   /**
    * Add bottom spacing for multiple paragraphs
    * @default false
@@ -133,7 +133,7 @@ const paragraphRecipe = cva({
     spacing: {
       true: {
         /* Bottom spacing for multiple paragraphs */
-        marginBottom: "1rem",
+        marginBottom: 4,
       },
     },
   },
@@ -184,7 +184,7 @@ export const Paragraph = forwardRef<HTMLParagraphElement, ParagraphProps>(
       align = "left",
       color = "default",
       weight = "normal",
-      maxWidth = true,
+      maxWidth = false,
       spacing = false,
       children,
       className,
@@ -194,11 +194,19 @@ export const Paragraph = forwardRef<HTMLParagraphElement, ParagraphProps>(
     ref,
   ) => {
     const maxWidthValue =
-      typeof maxWidth === "string"
-        ? maxWidth
-        : maxWidth === true
+      maxWidth === "narrow"
+        ? "45ch"
+        : maxWidth === "readable"
           ? "65ch"
-          : undefined;
+          : maxWidth === "wide"
+            ? "80ch"
+            : maxWidth === "extra-wide"
+              ? "100ch"
+              : typeof maxWidth === "string"
+                ? maxWidth
+                : maxWidth === true
+                  ? "65ch"
+                  : undefined;
 
     const styles = cx(
       css(paragraphRecipe.raw({ size, align, color, weight, spacing })),

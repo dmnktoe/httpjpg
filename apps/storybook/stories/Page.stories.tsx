@@ -51,7 +51,10 @@ export const Default: Story = {
     },
     footer: {
       backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
-      showDefaultLinks: true,
+      footerLinks: [
+        { name: "Legal", href: "/legal", isExternal: false },
+        { name: "Privacy", href: "/privacy", isExternal: false },
+      ],
     },
   },
   render: (args) => (

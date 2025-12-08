@@ -53,7 +53,7 @@ export async function getConfig(): Promise<SbConfigStory | null> {
 export async function getNavigation() {
   const config = await getConfig();
 
-  if (!config?.header_menu || config.header_menu.length === 0) {
+  if (!config || !config.header_menu || config.header_menu.length === 0) {
     // Fallback navigation
     return [
       { name: "Home", href: "/", isExternal: false },

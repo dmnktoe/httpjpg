@@ -11,12 +11,6 @@ interface PackageInfo {
   changelog: string;
 }
 
-// Fallback data (no longer used, loaded from API)
-const _PACKAGES_DATA: { apps: PackageInfo[]; packages: PackageInfo[] } = {
-  apps: [],
-  packages: [],
-};
-
 function PackageItem({
   pkg,
   isActive,

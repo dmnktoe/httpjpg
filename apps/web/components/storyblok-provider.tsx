@@ -72,11 +72,6 @@ function initializeStoryblok() {
     return;
   }
 
-  console.log(
-    "[Storyblok] Initializing SDK with components:",
-    Object.keys(components),
-  );
-
   storyblokInit({
     accessToken: process.env.NEXT_PUBLIC_STORYBLOK_TOKEN,
     use: [apiPlugin],
@@ -95,7 +90,6 @@ function initializeStoryblok() {
   });
 
   isInitialized = true;
-  console.log("[Storyblok] SDK initialized successfully");
 }
 
 // Initialize immediately on module load
@@ -123,7 +117,6 @@ function StoryblokBridgeLoader() {
     );
 
     if (existingScript) {
-      console.log("[Storyblok Bridge] Script already loaded");
       return;
     }
 
@@ -132,16 +125,7 @@ function StoryblokBridgeLoader() {
     script.src = "https://app.storyblok.com/f/storyblok-v2-latest.js";
     script.async = true;
 
-    script.onload = () => {
-      console.log("[Storyblok Bridge] Bridge script loaded successfully");
-    };
-
-    script.onerror = () => {
-      console.error("[Storyblok Bridge] Failed to load bridge script");
-    };
-
     document.body.appendChild(script);
-    console.log("[Storyblok Bridge] Loading bridge script for Visual Editor");
 
     return () => {
       // Cleanup script on unmount

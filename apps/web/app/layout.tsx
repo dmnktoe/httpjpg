@@ -14,6 +14,7 @@ import { ObservabilityProvider } from "../components/observability-provider";
 import { PreviewNotification } from "../components/preview-notification";
 import { PSNCard } from "../components/psn-card";
 import { ScrollToTop } from "../components/scroll-to-top";
+import { StoryblokProvider } from "../components/storyblok-provider";
 import { WebVitalsReporter } from "../components/web-vitals-reporter";
 import {
   getFooterConfig,
@@ -21,7 +22,6 @@ import {
   getRecentWork,
   getWidgetConfig,
 } from "../lib/get-config";
-import { StoryblokProvider } from "./storyblok-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {

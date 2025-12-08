@@ -52,7 +52,11 @@
     "typescript": "5.9.2"
   },
   "lint-staged": {
-    "**/*.{ts,tsx,js,jsx}": [
+    "**/*.{ts,tsx}": [
+      "biome check --write --no-errors-on-unmatched",
+      "bash -c 'pnpm type-check'"
+    ],
+    "**/*.{js,jsx}": [
       "biome check --write --no-errors-on-unmatched"
     ],
     "**/*.json": [

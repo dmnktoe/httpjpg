@@ -19,12 +19,13 @@ const meta = {
       control: "text",
       description: "Background image URL",
     },
-    showDefaultLinks: {
-      control: "boolean",
-      description: "Show default Legal and Privacy links",
-      table: {
-        defaultValue: { summary: "true" },
-      },
+    footerLinks: {
+      control: "object",
+      description: "Custom footer links from CMS",
+    },
+    copyrightText: {
+      control: "text",
+      description: "Copyright text to display",
     },
   },
 } satisfies Meta<typeof Footer>;
@@ -46,7 +47,10 @@ export const Default: Story = {
  */
 export const NoBackground: Story = {
   args: {
-    showDefaultLinks: true,
+    footerLinks: [
+      { name: "Legal", href: "/legal", isExternal: false },
+      { name: "Privacy", href: "/privacy", isExternal: false },
+    ],
   },
   render: (args) => <Footer {...args} css={{ bg: "neutral.100" }} />,
 };
@@ -57,7 +61,6 @@ export const NoBackground: Story = {
 export const CustomContent: Story = {
   args: {
     backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
-    showDefaultLinks: false,
   },
   render: (args) => (
     <Footer {...args}>
@@ -88,7 +91,6 @@ export const CustomContent: Story = {
 export const MultiSection: Story = {
   args: {
     backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
-    showDefaultLinks: false,
   },
   render: (args) => (
     <Footer {...args}>
@@ -190,9 +192,7 @@ export const MultiSection: Story = {
  * Minimal footer
  */
 export const Minimal: Story = {
-  args: {
-    showDefaultLinks: false,
-  },
+  args: {},
   render: (args) => (
     <Footer {...args} css={{ py: "12", bg: "neutral.50" }}>
       <Box css={{ fontSize: "sm", opacity: 0.7 }}>⋆.˚ httpjpg × 2025 ･ﾟ⋆</Box>

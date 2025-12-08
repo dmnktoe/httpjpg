@@ -1,7 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { forwardRef } from "react";
+import React, { forwardRef, type ReactNode } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 import { Link } from "../link/link";
@@ -103,20 +102,12 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                 {footerLinks &&
                   footerLinks.length > 0 &&
                   footerLinks.map((link, index) => (
-                    <>
-                      {index > 0 && (
-                        <Box key={`sep-${index}`} as="span">
-                          ·
-                        </Box>
-                      )}
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        isExternal={link.isExternal}
-                      >
+                    <React.Fragment key={link.href}>
+                      {index > 0 && <Box as="span">·</Box>}
+                      <Link href={link.href} isExternal={link.isExternal}>
                         {link.name}
                       </Link>
-                    </>
+                    </React.Fragment>
                   ))}
                 {onCookieSettingsClick && (
                   <>
@@ -194,6 +185,39 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                 {process.env.NEXT_PUBLIC_APP_VERSION
                   ? `v${process.env.NEXT_PUBLIC_APP_VERSION.slice(0, 7)}`
                   : "v-dev"}
+              </Box>
+
+              {/* Retro Web Counters */}
+              <Box
+                css={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "4",
+                  mt: "6",
+                }}
+              >
+                {/* Flag Counter */}
+                <Box as="span">
+                  <a href="https://info.flagcounter.com/ncez">
+                    <img
+                      src="https://s01.flagcounter.com/count2/ncez/bg_FFFFFF/txt_000000/border_CCCCCC/columns_3/maxflags_9/viewers_0/labels_0/pageviews_1/flags_0/percent_0/"
+                      alt="Flag Counter"
+                      style={{ border: 0 }}
+                    />
+                  </a>
+                </Box>
+
+                {/* Hit Counter */}
+                <Box as="span" css={{ fontSize: "xs" }}>
+                  <a href="https://www.freevisitorcounters.com/en/home/stats/id/1455502">
+                    <img
+                      src="https://www.freevisitorcounters.com/en/counter/render/1455502/t/1"
+                      alt="visitor counter"
+                      style={{ border: 0 }}
+                    />
+                  </a>
+                </Box>
               </Box>
             </VStack>
           )}

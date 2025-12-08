@@ -2,7 +2,7 @@
 
 import { Box, Container, Headline, Link, Paragraph } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
-import { CIStatusBadge, CodecovBadge, ConsoleFooter } from "./_components";
+import { CIStatusBadge, CodecovBadge } from "./_components";
 
 interface ConsoleCard {
   title: string;
@@ -488,8 +488,6 @@ export default function ConsolePage() {
           </Box>
         </Box>
       </Container>
-
-      <ConsoleFooter message="Developer Console · Built with Next.js" />
     </Box>
   );
 }

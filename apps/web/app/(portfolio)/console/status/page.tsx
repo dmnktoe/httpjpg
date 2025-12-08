@@ -2,7 +2,7 @@
 
 import { Box, Container } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
-import { ConsoleFooter, ConsoleHeader } from "../_components";
+import { ConsoleHeader } from "../_components";
 
 interface ServiceStatus {
   id: number;
@@ -14,7 +14,6 @@ interface ServiceStatus {
 export default function StatusPage() {
   const [services, setServices] = useState<ServiceStatus[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -23,7 +22,6 @@ export default function StatusPage() {
         if (response.ok) {
           const data = await response.json();
           setServices(data.services);
-          setLastUpdated(new Date());
           setLoading(false);
         }
       } catch (error) {
@@ -208,8 +206,6 @@ export default function StatusPage() {
           ))}
         </Box>
       </Container>
-
-      <ConsoleFooter lastUpdated={lastUpdated} />
     </Box>
   );
 }

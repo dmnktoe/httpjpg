@@ -2,7 +2,7 @@
 
 import { Box, Container, Link } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
-import { ConsoleFooter, ConsoleHeader } from "../_components";
+import { ConsoleHeader } from "../_components";
 
 interface PackageInfo {
   name: string;
@@ -411,11 +411,6 @@ export default function VersionsPage() {
           </Container>
         )}
       </Box>
-
-      {/* Footer */}
-      <ConsoleFooter
-        message={`Last updated: ${new Date().toLocaleDateString()}`}
-      />
     </Box>
   );
 }

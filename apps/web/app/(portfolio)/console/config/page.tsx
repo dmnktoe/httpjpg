@@ -2,7 +2,7 @@
 
 import { Box, Container } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
-import { ConsoleFooter, ConsoleHeader, StatCard } from "../_components";
+import { ConsoleHeader, StatCard } from "../_components";
 
 interface StoryblokConfig {
   space?: {
@@ -367,8 +367,6 @@ export default function ConfigPage() {
           </>
         )}
       </Container>
-
-      <ConsoleFooter message="CMS Configuration · Powered by Storyblok" />
     </Box>
   );
 }

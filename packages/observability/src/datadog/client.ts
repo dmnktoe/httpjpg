@@ -77,6 +77,11 @@ export function initDatadogRum(): void {
     return;
   }
 
+  // Check if already initialized
+  if (datadogRum.getInitConfiguration()) {
+    return;
+  }
+
   try {
     datadogRum.init({
       applicationId: config.applicationId,
@@ -112,6 +117,11 @@ export function initDatadogLogs(): void {
 
   if (!config) {
     console.log("Datadog Logs initialization skipped");
+    return;
+  }
+
+  // Check if already initialized
+  if (datadogLogs.getInitConfiguration()) {
     return;
   }
 

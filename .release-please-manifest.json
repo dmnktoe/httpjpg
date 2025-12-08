@@ -1,6 +1,6 @@
 {
   "apps/docs": "1.0.0",
-  "apps/storybook": "1.0.0",
+  "apps/storybook": "1.1.0",
   "apps/web": "1.0.0",
   "packages/analytics": "1.0.0",
   "packages/consent": "1.0.0",

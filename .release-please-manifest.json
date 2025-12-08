@@ -1,0 +1,19 @@
+{
+  "apps/docs": "1.0.0",
+  "apps/storybook": "1.0.0",
+  "apps/web": "1.0.0",
+  "packages/analytics": "1.0.0",
+  "packages/consent": "1.0.0",
+  "packages/env": "1.0.0",
+  "packages/now-playing": "1.0.0",
+  "packages/observability": "1.0.0",
+  "packages/security": "1.0.0",
+  "packages/storyblok-api": "1.0.0",
+  "packages/storyblok-richtext": "1.0.0",
+  "packages/storyblok-sync": "1.0.0",
+  "packages/storyblok-ui": "1.0.0",
+  "packages/storyblok-utils": "1.0.0",
+  "packages/tokens": "1.0.0",
+  "packages/typescript": "0.0.0",
+  "packages/ui": "1.0.0"
+}

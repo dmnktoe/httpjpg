@@ -31,25 +31,21 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   useEffect(() => {
     // Listen for theme change events from pages
-    const handleThemeChange = (event: CustomEvent<{ isDark: boolean }>) => {
-      setIsDark(event.detail.isDark);
+    const handleThemeChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ isDark: boolean }>;
+      setIsDark(customEvent.detail.isDark);
       // Also update body attribute for CSS targeting
       document.body.setAttribute(
         "data-theme",
-        event.detail.isDark ? "dark" : "light",
+        customEvent.detail.isDark ? "dark" : "light",
       );
     };
 
-    window.addEventListener(
-      "themeChange" as any,
-      handleThemeChange as EventListener,
-    );
+    // Custom events require explicit type casting
+    window.addEventListener("themeChange", handleThemeChange);
 
     return () => {
-      window.removeEventListener(
-        "themeChange" as any,
-        handleThemeChange as EventListener,
-      );
+      window.removeEventListener("themeChange", handleThemeChange);
     };
   }, []);
 

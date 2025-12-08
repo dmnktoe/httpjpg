@@ -81,34 +81,34 @@ function PackageItem({
       >
         <Box
           css={{
-            px: "6px",
+            px: 1.5,
             h: "20px",
             display: "flex",
             alignItems: "center",
             background: "#555",
             fontFamily: "mono",
-            fontSize: "11px",
-            fontWeight: "600",
+            fontSize: "2xs",
+            fontWeight: "semibold",
             color: "white",
-            borderTopLeftRadius: "3px",
-            borderBottomLeftRadius: "3px",
+            borderTopLeftRadius: "sm",
+            borderBottomLeftRadius: "sm",
           }}
         >
           v
         </Box>
         <Box
           css={{
-            px: "6px",
+            px: 1.5,
             h: "20px",
             display: "flex",
             alignItems: "center",
             background: "#4c1",
             fontFamily: "mono",
-            fontSize: "11px",
-            fontWeight: "600",
+            fontSize: "2xs",
+            fontWeight: "semibold",
             color: "white",
-            borderTopRightRadius: "3px",
-            borderBottomRightRadius: "3px",
+            borderTopRightRadius: "sm",
+            borderBottomRightRadius: "sm",
           }}
         >
           {pkg.version}

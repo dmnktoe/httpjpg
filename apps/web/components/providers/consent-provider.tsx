@@ -12,7 +12,6 @@ export function ConsentProvider() {
 
   const initializeObservability = async () => {
     if (observabilityInitialized) {
-      console.log("⚠ Observability already initialized, skipping...");
       return;
     }
 
@@ -31,11 +30,8 @@ export function ConsentProvider() {
   };
 
   const handleAcceptAll = async (consent: ConsentState) => {
-    console.log("✓ Consent accepted:", consent);
-
     // Initialize analytics if consent given
     if (consent.analytics) {
-      console.log("→ Initializing Google Analytics...");
       // You can add GA initialization here
     }
 
@@ -46,15 +42,13 @@ export function ConsentProvider() {
   };
 
   const handleRejectAll = () => {
-    console.log("✗ Consent rejected - only required tracking enabled");
+    // Only required tracking enabled
   };
 
   const handleSavePreferences = async (consent: ConsentState) => {
-    console.log("⚙ Preferences saved:", consent);
-
     // Initialize only accepted services
     if (consent.analytics) {
-      console.log("→ Initializing Google Analytics...");
+      // You can add GA initialization here
     }
 
     if (consent.monitoring) {

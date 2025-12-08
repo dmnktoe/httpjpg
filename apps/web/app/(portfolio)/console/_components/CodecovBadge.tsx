@@ -28,10 +28,10 @@ export function CodecovBadge() {
       <Box
         css={{
           display: "inline-block",
-          fontSize: "0.75rem",
-          fontFamily: "monospace",
+          fontSize: "xs",
+          fontFamily: "mono",
           background: "white",
-          color: "#6b7280",
+          color: "neutral.500",
         }}
       >
         ░░ COV...
@@ -58,8 +58,8 @@ export function CodecovBadge() {
     <Box
       css={{
         display: "inline-block",
-        fontSize: "0.75rem",
-        fontFamily: "monospace",
+        fontSize: "xs",
+        fontFamily: "mono",
         background: "white",
         color: coverageColor,
       }}

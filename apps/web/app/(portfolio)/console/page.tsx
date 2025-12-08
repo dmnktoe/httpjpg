@@ -351,8 +351,8 @@ export default function ConsolePage() {
                   {/* Header mit Icon und Tag */}
                   <Box
                     css={{
-                      fontSize: "0.65rem",
-                      letterSpacing: "0.1em",
+                      fontSize: "2xs",
+                      letterSpacing: "wider",
                       opacity: 0.6,
                       mb: 2,
                     }}
@@ -396,12 +396,12 @@ export default function ConsolePage() {
                   {/* Stats */}
                   {card.stats && card.stats.length > 0 && (
                     <Box css={{ mt: 3 }}>
-                      <Box css={{ fontSize: "0.75rem", opacity: 0.7, mb: 2 }}>
+                      <Box css={{ fontSize: "xs", opacity: 0.7, mb: 2 }}>
                         ・゜゜・。。・゜゜・。
                       </Box>
                       <Box
                         css={{
-                          fontSize: "0.75rem",
+                          fontSize: "xs",
                           opacity: 0.6,
                           mb: 2,
                         }}
@@ -412,7 +412,7 @@ export default function ConsolePage() {
                         css={{
                           display: "flex",
                           gap: 2,
-                          fontSize: "0.75rem",
+                          fontSize: "xs",
                           opacity: 0.7,
                           flexWrap: "wrap",
                         }}
@@ -435,8 +435,8 @@ export default function ConsolePage() {
         <Box css={{ mt: 12 }}>
           <Box
             css={{
-              fontSize: "0.65rem",
-              letterSpacing: "0.1em",
+              fontSize: "2xs",
+              letterSpacing: "wider",
               opacity: 0.6,
               mb: 2,
             }}

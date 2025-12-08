@@ -38,8 +38,8 @@ export function ConsoleHeader({ tag, title, description }: ConsoleHeaderProps) {
       </Box>
       <Box
         css={{
-          fontSize: "0.65rem",
-          letterSpacing: "0.1em",
+          fontSize: "sm",
+          letterSpacing: "wider",
           opacity: 0.6,
           mb: 2,
         }}

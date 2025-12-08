@@ -1043,6 +1043,7 @@ async function getSbPageWorkComponent(): Promise<StoryblokComponent> {
       isDark: {
         type: "boolean",
         display_name: "Dark Mode",
+        // Note: Storyblok API expects string values for default_value
         default_value: "false",
         description: "Enable dark mode for this page",
       },

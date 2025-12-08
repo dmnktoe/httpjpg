@@ -1040,6 +1040,12 @@ async function getSbPageWorkComponent(): Promise<StoryblokComponent> {
         description: "Hide body content and show only external link",
         default_value: false,
       },
+      isDark: {
+        type: "boolean",
+        display_name: "Dark Mode",
+        default_value: "false",
+        description: "Enable dark mode for this page",
+      },
     },
   };
 }

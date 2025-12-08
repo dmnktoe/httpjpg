@@ -53,6 +53,10 @@ export interface HeaderProps {
    * Center the container horizontally (default: true)
    */
   center?: boolean;
+  /**
+   * Enable dark mode for header
+   */
+  isDark?: boolean;
 }
 
 /**
@@ -80,6 +84,7 @@ export const Header = ({
   clientWork = [],
   children,
   center = true,
+  isDark = false,
 }: HeaderProps) => {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(280);
@@ -120,7 +125,7 @@ export const Header = ({
           right: 0,
           w: "full",
           bg: "transparent",
-          color: "black",
+          color: isDark ? "white" : "black",
           zIndex: 50,
           pointerEvents: "auto",
           py: 4,

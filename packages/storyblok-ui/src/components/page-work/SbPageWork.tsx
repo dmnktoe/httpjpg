@@ -24,6 +24,7 @@ export interface SbPageWorkProps {
       target?: string;
     };
     external_only?: boolean;
+    isDark?: boolean;
   };
 }
 
@@ -37,11 +38,17 @@ export interface SbPageWorkProps {
  * - No fixed structure - full creative freedom
  */
 export const SbPageWork = memo(function SbPageWork({ blok }: SbPageWorkProps) {
-  const { body, external_only } = blok;
+  const { body, external_only, isDark = false } = blok;
   const editableProps = useStoryblokEditable(blok);
 
   return (
-    <Page {...editableProps}>
+    <Page
+      {...editableProps}
+      css={{
+        bg: isDark ? "black" : "white",
+        color: isDark ? "white" : "black",
+      }}
+    >
       {!external_only && body && <DynamicRender data={body as BlokItem[]} />}
     </Page>
   );

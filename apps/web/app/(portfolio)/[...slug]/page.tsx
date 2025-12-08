@@ -169,16 +169,33 @@ export default async function DynamicPage({
       return notFound();
     }
 
+    // Extract isDark from story content for theme support
+    const isDarkMode = story.content?.isDark === true;
+
     // Use live preview for draft mode (enables live editing in Visual Editor)
     if (isDraft) {
       const { StoryblokLivePreview } = await import(
         "../../../components/providers/storyblok-live-preview"
       );
-      return <StoryblokLivePreview story={story} />;
+      const { ThemeWrapper } = await import(
+        "../../../components/ui/theme-wrapper"
+      );
+      return (
+        <ThemeWrapper isDark={isDarkMode}>
+          <StoryblokLivePreview story={story} />
+        </ThemeWrapper>
+      );
     }
 
-    // Static render for production
-    return <DynamicRender data={story.content} />;
+    // Static render for production with theme wrapper
+    const { ThemeWrapper } = await import(
+      "../../../components/ui/theme-wrapper"
+    );
+    return (
+      <ThemeWrapper isDark={isDarkMode}>
+        <DynamicRender data={story.content} />
+      </ThemeWrapper>
+    );
   } catch (error) {
     console.error(`[DynamicPage] Error loading story "${fullSlug}":`, {
       error: error instanceof Error ? error.message : String(error),

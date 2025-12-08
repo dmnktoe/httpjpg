@@ -2,10 +2,10 @@
 
 import {
   createContext,
+  type ReactNode,
   useContext,
   useEffect,
   useState,
-  type ReactNode,
 } from "react";
 
 interface ThemeContextValue {
@@ -54,8 +54,6 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ isDark }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={{ isDark }}>{children}</ThemeContext.Provider>
   );
 }

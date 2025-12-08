@@ -1,6 +1,6 @@
 {
   "name": "@httpjpg/analytics",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Analytics and tracking utilities for httpjpg",
   "type": "module",

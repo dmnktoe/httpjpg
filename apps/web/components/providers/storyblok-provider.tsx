@@ -6,6 +6,7 @@
  * Register your Storyblok components here for dynamic rendering
  */
 import {
+  SbButton,
   SbConfig,
   SbContainer,
   SbGrid,
@@ -42,6 +43,7 @@ const components = {
   section: SbSection,
 
   // Content components
+  button: SbButton,
   headline: SbHeadline,
   image: SbImage,
   paragraph: SbParagraph,

@@ -4,6 +4,10 @@
  */
 
 export {
+  SbButton,
+  type SbButtonProps,
+} from "./components/button";
+export {
   SbCaption,
   type SbCaptionProps,
 } from "./components/caption";

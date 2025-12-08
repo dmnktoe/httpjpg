@@ -9,7 +9,7 @@
   "packages/observability": "1.0.0",
   "packages/security": "1.0.0",
   "packages/storyblok-api": "1.0.0",
-  "packages/storyblok-richtext": "1.0.0",
+  "packages/storyblok-richtext": "1.1.0",
   "packages/storyblok-sync": "1.0.0",
   "packages/storyblok-ui": "1.0.0",
   "packages/storyblok-utils": "1.0.0",

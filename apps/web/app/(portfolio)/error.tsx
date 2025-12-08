@@ -60,7 +60,7 @@ export default function PortfolioError({
 
           {error.digest && (
             <Paragraph
-              css={{ fontSize: "xs", opacity: 50, fontFamily: "mono" }}
+              css={{ fontSize: "sm", opacity: 50, fontFamily: "mono" }}
             >
               Error ID: {error.digest}
             </Paragraph>

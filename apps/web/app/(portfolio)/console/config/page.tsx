@@ -121,7 +121,7 @@ export default function ConfigPage() {
                     <Box>
                       <Box
                         css={{
-                          fontSize: "xs",
+                          fontSize: "sm",
                           opacity: 50,
                           mb: 1,
                           textTransform: "uppercase",
@@ -143,7 +143,7 @@ export default function ConfigPage() {
                     <Box>
                       <Box
                         css={{
-                          fontSize: "xs",
+                          fontSize: "sm",
                           opacity: 50,
                           mb: 1,
                           textTransform: "uppercase",
@@ -165,7 +165,7 @@ export default function ConfigPage() {
                     <Box>
                       <Box
                         css={{
-                          fontSize: "xs",
+                          fontSize: "sm",
                           opacity: 50,
                           mb: 1,
                           textTransform: "uppercase",
@@ -187,7 +187,7 @@ export default function ConfigPage() {
                     <Box>
                       <Box
                         css={{
-                          fontSize: "xs",
+                          fontSize: "sm",
                           opacity: 50,
                           mb: 1,
                           textTransform: "uppercase",
@@ -305,7 +305,7 @@ export default function ConfigPage() {
                       py: 1,
                       background: "success.500",
                       color: "white",
-                      fontSize: "xs",
+                      fontSize: "sm",
                       fontWeight: "bold",
                     }}
                   >
@@ -330,7 +330,7 @@ export default function ConfigPage() {
                       py: 1,
                       background: "success.500",
                       color: "white",
-                      fontSize: "xs",
+                      fontSize: "sm",
                       fontWeight: "bold",
                     }}
                   >
@@ -355,7 +355,7 @@ export default function ConfigPage() {
                       py: 1,
                       background: "success.500",
                       color: "white",
-                      fontSize: "xs",
+                      fontSize: "sm",
                       fontWeight: "bold",
                     }}
                   >

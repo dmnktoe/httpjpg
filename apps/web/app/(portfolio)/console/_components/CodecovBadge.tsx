@@ -28,7 +28,7 @@ export function CodecovBadge() {
       <Box
         css={{
           display: "inline-block",
-          fontSize: "xs",
+          fontSize: "sm",
           fontFamily: "mono",
           background: "white",
           color: "neutral.500",
@@ -62,7 +62,7 @@ export function CodecovBadge() {
     <Box
       css={{
         display: "inline-block",
-        fontSize: "xs",
+        fontSize: "sm",
         fontFamily: "mono",
         background: "white",
         color: coverageColor,

@@ -48,7 +48,7 @@ function PackageItem({
         <Box
           css={{
             fontFamily: "mono",
-            fontSize: "xs",
+            fontSize: "sm",
             fontWeight: "bold",
             mb: 1,
             overflow: "hidden",
@@ -61,7 +61,7 @@ function PackageItem({
         {pkg.description && (
           <Box
             css={{
-              fontSize: "2xs",
+              fontSize: "sm",
               opacity: 50,
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -88,7 +88,7 @@ function PackageItem({
             alignItems: "center",
             background: "neutral.600",
             fontFamily: "mono",
-            fontSize: "2xs",
+            fontSize: "sm",
             fontWeight: "semibold",
             color: "white",
             borderTopLeftRadius: "sm",
@@ -105,7 +105,7 @@ function PackageItem({
             alignItems: "center",
             background: "success.500",
             fontFamily: "mono",
-            fontSize: "2xs",
+            fontSize: "sm",
             fontWeight: "semibold",
             color: "white",
             borderTopRightRadius: "sm",
@@ -247,7 +247,7 @@ export default function VersionsPage() {
               <Box css={{ mb: 6 }}>
                 <Box
                   css={{
-                    fontSize: "xs",
+                    fontSize: "sm",
                     fontWeight: "bold",
                     mb: 2,
                     opacity: 50,
@@ -263,7 +263,7 @@ export default function VersionsPage() {
                     href="https://github.com/dmnktoe/httpjpg/tree/main/apps"
                     isExternal
                     css={{
-                      fontSize: "xs",
+                      fontSize: "sm",
                       opacity: 50,
                       _hover: { opacity: 100 },
                     }}
@@ -286,7 +286,7 @@ export default function VersionsPage() {
               <Box>
                 <Box
                   css={{
-                    fontSize: "xs",
+                    fontSize: "sm",
                     fontWeight: "bold",
                     mb: 2,
                     opacity: 50,
@@ -302,7 +302,7 @@ export default function VersionsPage() {
                     href="https://github.com/dmnktoe/httpjpg/tree/main/packages"
                     isExternal
                     css={{
-                      fontSize: "xs",
+                      fontSize: "sm",
                       opacity: 50,
                       _hover: { opacity: 100 },
                     }}
@@ -372,7 +372,7 @@ export default function VersionsPage() {
                           alignItems: "center",
                           bg: "neutral.600",
                           fontFamily: "mono",
-                          fontSize: "2xs",
+                          fontSize: "sm",
                           fontWeight: "semibold",
                           color: "white",
                           borderTopLeftRadius: "sm",
@@ -389,7 +389,7 @@ export default function VersionsPage() {
                           alignItems: "center",
                           bg: "success.500",
                           fontFamily: "mono",
-                          fontSize: "2xs",
+                          fontSize: "sm",
                           fontWeight: "semibold",
                           color: "white",
                           borderTopRightRadius: "sm",

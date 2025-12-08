@@ -152,7 +152,7 @@ export default defineConfig({
     // Body defaults using design tokens
     body: {
       fontFamily: "sans",
-      fontSize: "md",
+      fontSize: "sm",
       color: "black",
     },
     // Media element defaults

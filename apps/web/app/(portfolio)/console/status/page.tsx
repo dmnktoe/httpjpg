@@ -153,7 +153,7 @@ export default function StatusPage() {
                 </Box>
                 <Box
                   css={{
-                    fontSize: "xs",
+                    fontSize: "sm",
                     opacity: 50,
                     textTransform: "uppercase",
                     letterSpacing: "wider",
@@ -172,7 +172,7 @@ export default function StatusPage() {
                   py: 1,
                   borderRadius: "full",
                   color: "white",
-                  fontSize: "xs",
+                  fontSize: "sm",
                   fontWeight: "bold",
                   position: "relative",
                   isolation: "isolate",

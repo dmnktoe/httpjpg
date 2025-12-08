@@ -7,18 +7,31 @@ import type { MetadataRoute } from "next";
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = env.NEXT_PUBLIC_APP_URL;
-  const { getAllSlugs } = getStoryblokApi();
+  const { getStories } = getStoryblokApi();
+
+  // Internal pages that should not be in sitemap
+  const EXCLUDED_SLUGS = ["config", "page-not-found"];
 
   try {
-    const slugs = await getAllSlugs({ starts_with: "" });
+    // Use getStories with published version to get only published stories
+    const response = await getStories({
+      per_page: 100,
+      version: "published",
+    });
 
-    const entries: MetadataRoute.Sitemap = slugs
-      .filter((item) => !item.isFolder)
-      .map((item) => ({
-        url: `${baseUrl}/${item.slug}`,
-        lastModified: new Date(),
-        changeFrequency: item.slug.startsWith("work/") ? "monthly" : "weekly",
-        priority: item.slug === "home" ? 1 : 0.8,
+    const stories = response.stories || [];
+
+    const entries: MetadataRoute.Sitemap = stories
+      .filter((story: any) => story.first_published_at !== null) // Only published
+      .filter((story: any) => !story.is_startpage) // No folders
+      .filter((story: any) => !EXCLUDED_SLUGS.includes(story.slug))
+      .filter((story: any) => !story.slug.startsWith("console/")) // Exclude console pages
+      .filter((story: any) => !story.content?.external_only) // Exclude external-only stories
+      .map((story: any) => ({
+        url: `${baseUrl}/${story.slug}`,
+        lastModified: new Date(story.published_at || story.first_published_at),
+        changeFrequency: story.slug.startsWith("work/") ? "monthly" : "weekly",
+        priority: story.slug === "home" ? 1 : 0.8,
       }));
 
     // Add home page

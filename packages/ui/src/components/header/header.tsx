@@ -141,7 +141,7 @@ export const Header = ({
             {/* Mobile ASCII Logo */}
             <Box
               css={{
-                display: { base: "block", lg: "none" },
+                display: { base: "block", md: "none" },
                 lineHeight: "snug",
                 fontSize: "xs",
                 maxW: "64",

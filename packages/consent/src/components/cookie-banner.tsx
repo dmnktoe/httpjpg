@@ -95,7 +95,7 @@ export function CookieBanner({
         bottom: 0,
         left: 0,
         right: 0,
-        zIndex: 9999,
+        zIndex: 99999,
         backgroundColor: "white",
         color: "black",
         padding: "24px 16px",

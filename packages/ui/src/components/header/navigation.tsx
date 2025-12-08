@@ -18,7 +18,7 @@ export const Navigation = ({
       css={{
         position: "relative",
         w: "full",
-        display: { base: "none", lg: "flex" },
+        display: { base: "none", md: "flex" },
       }}
     >
       <Box
@@ -32,8 +32,8 @@ export const Navigation = ({
         {/* Left Column - Main ASCII Navigation */}
         <Box
           css={{
-            display: { base: "none", lg: "block" },
-            w: { lg: "33.333333%" },
+            display: { base: "none", md: "block" },
+            w: { md: "100%", lg: "33.333333%" },
           }}
         >
           <Box css={{ maxW: "24rem", lineHeight: "snug" }}>
@@ -73,7 +73,13 @@ export const Navigation = ({
         </Box>
 
         {/* Middle Column - Recent Personal Work */}
-        <Box css={{ w: { lg: "33.333333%" }, lineHeight: "snug" }}>
+        <Box
+          css={{
+            display: { base: "none", lg: "block" },
+            w: { lg: "33.333333%" },
+            lineHeight: "snug",
+          }}
+        >
           <Box as="span" css={{ fontWeight: "bold" }}>
             ⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S
           </Box>
@@ -121,7 +127,13 @@ export const Navigation = ({
         </Box>
 
         {/* Right Column - Recent Client Work */}
-        <Box css={{ w: { lg: "33.333333%" }, lineHeight: "snug" }}>
+        <Box
+          css={{
+            display: { base: "none", lg: "block" },
+            w: { lg: "33.333333%" },
+            lineHeight: "snug",
+          }}
+        >
           <Box as="span" css={{ fontWeight: "bold" }}>
             ⇝ᵣₑcꫀₙₜ 𝒞𝓁LI€NT
           </Box>

@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
     "@httpjpg/storyblok-utils",
   ],
 
+  // Expose Git SHA as public env var for version display
+  env: {
+    NEXT_PUBLIC_APP_VERSION: process.env.VERCEL_GIT_COMMIT_SHA || "dev",
+  },
+
   // Image optimization for Storyblok assets
   images: {
     formats: ["image/avif", "image/webp"],

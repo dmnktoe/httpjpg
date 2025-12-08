@@ -17,10 +17,13 @@ export interface FooterProps {
    */
   backgroundImage?: string;
   /**
-   * Show default links (Legal, Privacy)
-   * @default true
+   * Footer links from CMS
    */
-  showDefaultLinks?: boolean;
+  footerLinks?: Array<{
+    name: string;
+    href: string;
+    isExternal?: boolean;
+  }>;
   /**
    * Copyright text to display
    */
@@ -53,7 +56,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
     {
       children,
       backgroundImage,
-      showDefaultLinks = true,
+      footerLinks,
       copyrightText,
       onCookieSettingsClick,
       css: cssProp,
@@ -86,7 +89,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
           {children ? (
             children
           ) : (
-            <VStack gap="1" align="center">
+            <VStack gap="0" align="center">
               {/* Links Row */}
               <Box
                 css={{
@@ -97,18 +100,27 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                   justifyContent: "center",
                 }}
               >
-                {showDefaultLinks && (
-                  <>
-                    <Link href="/legal">Legal</Link>
-                    <Box as="span" css={{ opacity: 0.3 }}>
-                      ·
-                    </Box>
-                    <Link href="/privacy">Privacy</Link>
-                  </>
-                )}
+                {footerLinks &&
+                  footerLinks.length > 0 &&
+                  footerLinks.map((link, index) => (
+                    <>
+                      {index > 0 && (
+                        <Box key={`sep-${index}`} as="span">
+                          ·
+                        </Box>
+                      )}
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        isExternal={link.isExternal}
+                      >
+                        {link.name}
+                      </Link>
+                    </>
+                  ))}
                 {onCookieSettingsClick && (
                   <>
-                    {showDefaultLinks && (
+                    {footerLinks && footerLinks.length > 0 && (
                       <Box as="span" css={{ opacity: 0.3 }}>
                         ·
                       </Box>

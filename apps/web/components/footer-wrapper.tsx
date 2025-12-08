@@ -4,13 +4,17 @@ import { Footer } from "@httpjpg/ui";
 
 interface FooterWrapperProps {
   backgroundImage?: string;
-  showDefaultLinks?: boolean;
+  footerLinks?: Array<{
+    name: string;
+    href: string;
+    isExternal?: boolean;
+  }>;
   copyrightText?: string;
 }
 
 export function FooterWrapper({
   backgroundImage,
-  showDefaultLinks,
+  footerLinks,
   copyrightText,
 }: FooterWrapperProps) {
   const handleCookieSettingsClick = () => {
@@ -20,7 +24,7 @@ export function FooterWrapper({
   return (
     <Footer
       backgroundImage={backgroundImage}
-      showDefaultLinks={showDefaultLinks}
+      footerLinks={footerLinks}
       copyrightText={copyrightText}
       onCookieSettingsClick={handleCookieSettingsClick}
     />

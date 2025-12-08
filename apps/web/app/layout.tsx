@@ -19,6 +19,7 @@ import {
   getFooterConfig,
   getNavigation,
   getRecentWork,
+  getWidgetConfig,
 } from "../lib/get-config";
 import { StoryblokProvider } from "./storyblok-provider";
 import "./globals.css";
@@ -58,6 +59,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: PropsWithChildren) {
   const navigation = await getNavigation();
   const footerConfig = await getFooterConfig();
+  const widgetConfig = await getWidgetConfig();
   const { personalWork, clientWork } = await getRecentWork();
 
   return (
@@ -72,8 +74,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             {/* Global UI Elements (not affected by page containers) */}
             <CustomCursorWrapper />
             <ImagePreview />
-            <NowPlayingWidget />
-            <PSNCard />
+            {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
+            {widgetConfig.psnEnabled && (
+              <PSNCard username={widgetConfig.psnUsername} />
+            )}
             <PreviewNotification />
 
             {/* Sticky Header - always full width, pushes content down naturally */}
@@ -100,7 +104,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             {/* Footer - always full width */}
             <FooterWrapper
               backgroundImage={footerConfig.backgroundImage}
-              showDefaultLinks={footerConfig.showDefaultLinks}
+              footerLinks={footerConfig.footerLinks}
               copyrightText={footerConfig.copyrightText}
             />
           </StoryblokProvider>

@@ -14,6 +14,7 @@
     "sync:datasources": "tsx scripts/sync-datasources.ts",
     "sync:components": "tsx scripts/sync-components.ts",
     "sync:all": "pnpm sync:groups && pnpm sync:datasources && pnpm sync:components",
+    "cleanup:groups": "tsx scripts/cleanup-duplicate-groups.ts",
     "lint": "biome check .",
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit"

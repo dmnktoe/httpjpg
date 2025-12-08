@@ -94,6 +94,11 @@ const componentGroups: ComponentGroup[] = [
     parent_id: null,
     parent_uuid: null,
   },
+  {
+    name: "Settings",
+    parent_id: null,
+    parent_uuid: null,
+  },
 ];
 
 /**

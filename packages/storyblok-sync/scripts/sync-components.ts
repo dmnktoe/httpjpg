@@ -1077,6 +1077,108 @@ async function getSbPageComponent(): Promise<StoryblokComponent> {
   };
 }
 
+async function getSbFooterConfigComponent(): Promise<StoryblokComponent> {
+  const settingsGroupUuid = await getComponentGroupUuid("Settings");
+
+  return {
+    name: "footer_config",
+    display_name: "Footer Config",
+    is_root: false,
+    is_nestable: true,
+    component_group_uuid: settingsGroupUuid,
+    icon: "block-layout-footer",
+    color: "#8b5cf6",
+    schema: {
+      copyright_text: {
+        type: "text",
+        display_name: "Copyright Text",
+        description: "Footer copyright text",
+        pos: 0,
+      },
+      footer_links: {
+        type: "bloks",
+        display_name: "Footer Links",
+        description: "Links displayed in footer (like Legal, Privacy, etc.)",
+        restrict_components: true,
+        component_whitelist: ["menu_link"],
+        pos: 1,
+      },
+      background_image: {
+        type: "asset",
+        display_name: "Background Image",
+        description: "Footer background texture",
+        filetypes: ["images"],
+        pos: 2,
+      },
+    },
+  };
+}
+
+async function getSbConfigComponent(): Promise<StoryblokComponent> {
+  const settingsGroupUuid = await getComponentGroupUuid("Settings");
+
+  return {
+    name: "config",
+    display_name: "Config",
+    is_root: true,
+    is_nestable: false,
+    component_group_uuid: settingsGroupUuid,
+    icon: "block-settings-2",
+    color: "#8b5cf6",
+    schema: {
+      header_menu: {
+        type: "bloks",
+        display_name: "Header Menu",
+        description: "Navigation items for the header",
+        restrict_components: true,
+        component_whitelist: ["menu_link"],
+        pos: 0,
+      },
+      footer_config: {
+        type: "bloks",
+        display_name: "Footer Configuration",
+        description: "Footer settings",
+        restrict_components: true,
+        component_whitelist: ["footer_config"],
+        maximum: 1,
+        pos: 1,
+      },
+      seo_title: {
+        type: "text",
+        display_name: "SEO Title",
+        description: "Default meta title",
+        pos: 2,
+      },
+      seo_description: {
+        type: "textarea",
+        display_name: "SEO Description",
+        description: "Default meta description",
+        pos: 3,
+      },
+      psn_username: {
+        type: "text",
+        display_name: "PSN Username",
+        description: "PlayStation Network username for PSN card widget",
+        pos: 4,
+      },
+      psn_enabled: {
+        type: "boolean",
+        display_name: "Enable PSN Card",
+        default_value: "false",
+        description: "Show PlayStation Network card widget",
+        pos: 5,
+      },
+      spotify_enabled: {
+        type: "boolean",
+        display_name: "Enable Now Playing",
+        default_value: "true",
+        description: "Show Spotify Now Playing widget",
+        pos: 6,
+      },
+    },
+  };
+}
+
 /**
  * Sleep helper to avoid rate limits
  */
@@ -1106,6 +1208,8 @@ async function syncComponents(): Promise<void> {
     getSbWorkListComponent,
     getSbPageComponent,
     getSbPageWorkComponent,
+    getSbFooterConfigComponent,
+    getSbConfigComponent,
   ];
 
   for (const getComponent of componentGetters) {

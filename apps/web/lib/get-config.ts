@@ -223,7 +223,7 @@ export async function getRecentWork(): Promise<{
  */
 export async function getFooterConfig(): Promise<{
   copyrightText?: string;
-  showDefaultLinks?: boolean;
+  footerLinks?: Array<{ name: string; href: string; isExternal?: boolean }>;
   socialLinks?: Array<{ platform: string; url: string }>;
   backgroundImage?: string;
 }> {
@@ -232,18 +232,62 @@ export async function getFooterConfig(): Promise<{
 
   if (!footerConfig) {
     return {
-      showDefaultLinks: false,
       backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
     };
   }
 
+  // Map footer links similar to header menu
+  const footerLinks = footerConfig.footer_links
+    ?.filter((item): item is MenuLink => {
+      const displayName = (item as any).label || (item as any).name;
+      return Boolean(displayName && item?.link);
+    })
+    .map((item) => {
+      const displayName = (item as any).label || (item as any).name;
+      const href =
+        item.link.linktype === "story"
+          ? `/${item.link.cached_url}`
+          : item.link.url || "/";
+
+      const isExternalLink =
+        item.is_external !== undefined
+          ? item.is_external
+          : href.startsWith("http://") ||
+            href.startsWith("https://") ||
+            href.startsWith("mailto:") ||
+            href.startsWith("tel:");
+
+      return {
+        name: displayName,
+        href,
+        isExternal: isExternalLink,
+      };
+    });
+
   return {
     copyrightText: footerConfig.copyright_text,
-    showDefaultLinks: footerConfig.show_default_links ?? false,
+    footerLinks,
     socialLinks: footerConfig.social_links?.map((link) => ({
       platform: link.platform,
       url: link.url,
     })),
     backgroundImage: footerConfig.background_image?.filename,
+  };
+}
+
+/**
+ * Get widget configuration from config
+ */
+export async function getWidgetConfig(): Promise<{
+  psnUsername?: string;
+  psnEnabled?: boolean;
+  spotifyEnabled?: boolean;
+}> {
+  const config = await getConfig();
+
+  return {
+    psnUsername: config?.psn_username,
+    psnEnabled: config?.psn_enabled ?? false,
+    spotifyEnabled: config?.spotify_enabled ?? true,
   };
 }

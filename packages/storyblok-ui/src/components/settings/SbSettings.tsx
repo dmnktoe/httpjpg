@@ -38,7 +38,7 @@ export interface SocialLink extends SbBlokData {
 export interface FooterConfig extends SbBlokData {
   component: "footer_config";
   copyright_text?: string;
-  show_default_links?: boolean;
+  footer_links?: MenuLink[];
   social_links?: SocialLink[];
   background_image?: {
     filename: string;
@@ -52,14 +52,16 @@ export interface FooterConfig extends SbBlokData {
  */
 export interface SbConfigStory extends SbBlokData {
   component: "config";
-  site_name?: string;
   header_menu?: MenuLink[];
   footer_config?: FooterConfig[];
   seo_title?: string;
   seo_description?: string;
-}
 
-/**
+  // Widget Settings
+  psn_username?: string;
+  psn_enabled?: boolean;
+  spotify_enabled?: boolean;
+} /**
  * Config Component (not rendered, just for typing)
  * This component exists only to provide TypeScript types for the config story
  */

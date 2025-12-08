@@ -45,6 +45,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
+          # Fetch full history for release-please to access all commits and tags
           fetch-depth: 0
 
       - name: Setup Node.js

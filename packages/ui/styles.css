@@ -245,18 +245,6 @@
     --aspect-ratios-ultrawide: 18 / 5;
     --aspect-ratios-golden: 1.618 / 1;
     --borders-none: none;
-    --easings-default: cubic-bezier(0.4, 0, 0.2, 1);
-    --easings-linear: linear;
-    --easings-in: cubic-bezier(0.4, 0, 1, 1);
-    --easings-out: cubic-bezier(0, 0, 0.2, 1);
-    --easings-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-    --durations-fastest: 50ms;
-    --durations-faster: 100ms;
-    --durations-fast: 150ms;
-    --durations-normal: 200ms;
-    --durations-slow: 300ms;
-    --durations-slower: 400ms;
-    --durations-slowest: 500ms;
     --blurs-sm: 4px;
     --blurs-base: 8px;
     --blurs-md: 12px;
@@ -264,62 +252,6 @@
     --blurs-xl: 24px;
     --blurs-2xl: 40px;
     --blurs-3xl: 64px;
-    --sizes-0: 0rem;
-    --sizes-1: 0.25rem;
-    --sizes-2: 0.5rem;
-    --sizes-3: 0.75rem;
-    --sizes-4: 1rem;
-    --sizes-5: 1.25rem;
-    --sizes-6: 1.5rem;
-    --sizes-7: 1.75rem;
-    --sizes-8: 2rem;
-    --sizes-9: 2.25rem;
-    --sizes-10: 2.5rem;
-    --sizes-11: 2.75rem;
-    --sizes-12: 3rem;
-    --sizes-14: 3.5rem;
-    --sizes-16: 4rem;
-    --sizes-20: 5rem;
-    --sizes-24: 6rem;
-    --sizes-28: 7rem;
-    --sizes-32: 8rem;
-    --sizes-36: 9rem;
-    --sizes-40: 10rem;
-    --sizes-44: 11rem;
-    --sizes-48: 12rem;
-    --sizes-52: 13rem;
-    --sizes-56: 14rem;
-    --sizes-60: 15rem;
-    --sizes-64: 16rem;
-    --sizes-72: 18rem;
-    --sizes-80: 20rem;
-    --sizes-96: 24rem;
-    --sizes-0\.5: 0.125rem;
-    --sizes-1\.5: 0.375rem;
-    --sizes-2\.5: 0.625rem;
-    --sizes-3\.5: 0.875rem;
-    --sizes-xs: 20rem;
-    --sizes-sm: 24rem;
-    --sizes-md: 28rem;
-    --sizes-lg: 32rem;
-    --sizes-xl: 36rem;
-    --sizes-2xl: 42rem;
-    --sizes-3xl: 48rem;
-    --sizes-4xl: 56rem;
-    --sizes-5xl: 64rem;
-    --sizes-6xl: 72rem;
-    --sizes-7xl: 80rem;
-    --sizes-8xl: 90rem;
-    --sizes-prose: 65ch;
-    --sizes-full: 100%;
-    --sizes-min: min-content;
-    --sizes-max: max-content;
-    --sizes-fit: fit-content;
-    --sizes-breakpoint-sm: 640px;
-    --sizes-breakpoint-md: 768px;
-    --sizes-breakpoint-lg: 1024px;
-    --sizes-breakpoint-xl: 1280px;
-    --sizes-breakpoint-2xl: 1536px;
     --animations-spin: spin 1s linear infinite;
     --animations-ping: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
     --animations-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -720,6 +652,105 @@
     --shadows-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     --shadows-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
     --shadows-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+    --opacity-0: 0;
+    --opacity-5: 0.05;
+    --opacity-10: 0.1;
+    --opacity-20: 0.2;
+    --opacity-25: 0.25;
+    --opacity-30: 0.3;
+    --opacity-40: 0.4;
+    --opacity-50: 0.5;
+    --opacity-60: 0.6;
+    --opacity-70: 0.7;
+    --opacity-75: 0.75;
+    --opacity-80: 0.8;
+    --opacity-90: 0.9;
+    --opacity-95: 0.95;
+    --opacity-100: 1;
+    --sizes-0: 0rem;
+    --sizes-1: 0.25rem;
+    --sizes-2: 0.5rem;
+    --sizes-3: 0.75rem;
+    --sizes-4: 1rem;
+    --sizes-5: 1.25rem;
+    --sizes-6: 1.5rem;
+    --sizes-7: 1.75rem;
+    --sizes-8: 2rem;
+    --sizes-9: 2.25rem;
+    --sizes-10: 2.5rem;
+    --sizes-11: 2.75rem;
+    --sizes-12: 3rem;
+    --sizes-14: 3.5rem;
+    --sizes-16: 4rem;
+    --sizes-20: 5rem;
+    --sizes-24: 6rem;
+    --sizes-28: 7rem;
+    --sizes-32: 8rem;
+    --sizes-36: 9rem;
+    --sizes-40: 10rem;
+    --sizes-44: 11rem;
+    --sizes-48: 12rem;
+    --sizes-52: 13rem;
+    --sizes-56: 14rem;
+    --sizes-60: 15rem;
+    --sizes-64: 16rem;
+    --sizes-72: 18rem;
+    --sizes-80: 20rem;
+    --sizes-96: 24rem;
+    --sizes-0\.5: 0.125rem;
+    --sizes-1\.5: 0.375rem;
+    --sizes-2\.5: 0.625rem;
+    --sizes-3\.5: 0.875rem;
+    --sizes-xs: 20rem;
+    --sizes-sm: 24rem;
+    --sizes-md: 28rem;
+    --sizes-lg: 32rem;
+    --sizes-xl: 36rem;
+    --sizes-2xl: 42rem;
+    --sizes-3xl: 48rem;
+    --sizes-4xl: 56rem;
+    --sizes-5xl: 64rem;
+    --sizes-6xl: 72rem;
+    --sizes-7xl: 80rem;
+    --sizes-8xl: 90rem;
+    --sizes-prose: 65ch;
+    --sizes-full: 100%;
+    --sizes-min: min-content;
+    --sizes-max: max-content;
+    --sizes-fit: fit-content;
+    --sizes-icon-xs: 12px;
+    --sizes-icon-sm: 16px;
+    --sizes-icon-md: 20px;
+    --sizes-icon-lg: 24px;
+    --sizes-icon-xl: 32px;
+    --sizes-indicator-xs: 6px;
+    --sizes-indicator-sm: 8px;
+    --sizes-indicator-md: 12px;
+    --sizes-indicator-lg: 16px;
+    --sizes-widget-sm: 200px;
+    --sizes-widget-md: 300px;
+    --sizes-widget-lg: 400px;
+    --sizes-breakpoint-sm: 640px;
+    --sizes-breakpoint-md: 768px;
+    --sizes-breakpoint-lg: 1024px;
+    --sizes-breakpoint-xl: 1280px;
+    --sizes-breakpoint-2xl: 1536px;
+    --durations-fastest: 50ms;
+    --durations-faster: 100ms;
+    --durations-slowest: 500ms;
+    --durations-fast: 0.1s;
+    --durations-normal: 0.2s;
+    --durations-slow: 0.3s;
+    --durations-slower: 0.5s;
+    --easings-default: cubic-bezier(0.4, 0, 0.2, 1);
+    --easings-in: cubic-bezier(0.4, 0, 1, 1);
+    --easings-out: cubic-bezier(0, 0, 0.2, 1);
+    --easings-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --easings-linear: linear;
+    --easings-ease: ease;
+    --easings-ease-in: ease-in;
+    --easings-ease-out: ease-out;
+    --easings-ease-in-out: ease-in-out;
     --breakpoints-sm: 640px;
     --breakpoints-md: 768px;
     --breakpoints-lg: 1024px;
@@ -736,7 +767,7 @@
   @keyframes ping {
     75%,100% {
       transform: scale(2);
-      opacity: 0;
+      opacity: var(--opacity-0);
 }
 }
 
@@ -1430,6 +1461,14 @@
     gap: var(--spacing-3);
 }
 
+  .op_80 {
+    opacity: var(--opacity-80);
+}
+
+  .op_50 {
+    opacity: var(--opacity-50);
+}
+
   .min-h_60vh {
     min-height: 60vh;
 }
@@ -1444,6 +1483,10 @@
 
   .ls_wider {
     letter-spacing: var(--letter-spacings-wider);
+}
+
+  .op_60 {
+    opacity: var(--opacity-60);
 }
 
   .d_-webkit-box {
@@ -1462,6 +1505,10 @@
 
   .tov_ellipsis {
     text-overflow: ellipsis;
+}
+
+  .op_70 {
+    opacity: var(--opacity-70);
 }
 
   .c_inherit {
@@ -1544,6 +1591,10 @@
     border-radius: 50%;
 }
 
+  .op_90 {
+    opacity: var(--opacity-90);
+}
+
   .d_inline-flex {
     display: inline-flex;
 }
@@ -1552,20 +1603,20 @@
     padding-inline: var(--spacing-3);
 }
 
-  .bdr_9999px {
-    border-radius: 9999px;
+  .bdr_full {
+    border-radius: var(--radii-full);
 }
 
   .isolation_isolate {
     isolation: isolate;
 }
 
-  .w_6px {
-    width: 6px;
+  .w_indicator\.xs {
+    width: var(--sizes-indicator-xs);
 }
 
-  .h_6px {
-    height: 6px;
+  .h_indicator\.xs {
+    height: var(--sizes-indicator-xs);
 }
 
   .ta_left {
@@ -1592,8 +1643,8 @@
     background: var(--colors-neutral-600);
 }
 
-  .op_0\.4 {
-    opacity: 0.4;
+  .op_40 {
+    opacity: var(--opacity-40);
 }
 
   .white-space_pre-wrap {
@@ -1606,6 +1657,10 @@
 
   .bx-s_border-box {
     box-sizing: border-box;
+}
+
+  .bdr_9999px {
+    border-radius: 9999px;
 }
 
   .ov_visible {
@@ -1765,6 +1820,10 @@
     transition: text-decoration-style 150ms ease-in-out;
 }
 
+  .op_0\.4 {
+    opacity: 0.4;
+}
+
   .ls_0\.05em {
     letter-spacing: 0.05em;
 }
@@ -1822,7 +1881,7 @@
 }
 
   .op_0 {
-    opacity: 0;
+    opacity: var(--opacity-0);
 }
 
   .max-h_full {
@@ -2788,6 +2847,16 @@
 
   .fs_md {
     font-size: var(--font-sizes-md);
+}
+
+  .trs-prop_all {
+    --transition-prop: all;
+    transition-property: all;
+}
+
+  .trs-dur_normal {
+    --transition-duration: var(--durations-normal);
+    transition-duration: var(--durations-normal);
 }
 
   .flex-sh_0 {
@@ -3990,16 +4059,19 @@
     object-fit: cover;
 }
 
-  .before\:bg_rgba\(234\,_179\,_8\,_0\.9\)::before {
-    background: rgba(234, 179, 8, 0.9);
+  .before\:bg_warning\.500\/90::before {
+    --mix-background: color-mix(in srgb, var(--colors-warning-500) 90%, transparent);
+    background: var(--mix-background, var(--colors-warning-500));
 }
 
-  .before\:bg_rgba\(239\,_68\,_68\,_0\.9\)::before {
-    background: rgba(239, 68, 68, 0.9);
+  .before\:bg_danger\.500\/90::before {
+    --mix-background: color-mix(in srgb, var(--colors-danger-500) 90%, transparent);
+    background: var(--mix-background, var(--colors-danger-500));
 }
 
-  .before\:bg_rgba\(34\,_197\,_94\,_0\.9\)::before {
-    background: rgba(34, 197, 94, 0.9);
+  .before\:bg_success\.500\/90::before {
+    --mix-background: color-mix(in srgb, var(--colors-success-500) 90%, transparent);
+    background: var(--mix-background, var(--colors-success-500));
 }
 
   .before\:pos_absolute::before {
@@ -4311,8 +4383,8 @@
     color: var(--colors-white);
 }
 
-  .hover\:op_1:is(:hover, [data-hover]) {
-    opacity: 1;
+  .hover\:op_100:is(:hover, [data-hover]) {
+    opacity: var(--opacity-100);
 }
 
   .hover\:c_purple\.500:is(:hover, [data-hover]) {
@@ -4329,6 +4401,10 @@
 
   .hover\:op_0\.5:is(:hover, [data-hover]) {
     opacity: 0.5;
+}
+
+  .hover\:op_1:is(:hover, [data-hover]) {
+    opacity: 1;
 }
 
   .hover\:op_0\.8:is(:hover, [data-hover]) {

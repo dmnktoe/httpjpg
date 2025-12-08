@@ -84,7 +84,7 @@ export default function ConfigPage() {
             <Box css={{ fontSize: "lg", fontWeight: "bold", mb: 2 }}>
               ⚠️ Error Loading Configuration
             </Box>
-            <Box css={{ fontSize: "sm", opacity: 0.7 }}>{error}</Box>
+            <Box css={{ fontSize: "sm", opacity: 70 }}>{error}</Box>
           </Box>
         )}
 
@@ -122,7 +122,7 @@ export default function ConfigPage() {
                       <Box
                         css={{
                           fontSize: "xs",
-                          opacity: 0.5,
+                          opacity: 50,
                           mb: 1,
                           textTransform: "uppercase",
                           letterSpacing: "wider",
@@ -144,7 +144,7 @@ export default function ConfigPage() {
                       <Box
                         css={{
                           fontSize: "xs",
-                          opacity: 0.5,
+                          opacity: 50,
                           mb: 1,
                           textTransform: "uppercase",
                           letterSpacing: "wider",
@@ -166,7 +166,7 @@ export default function ConfigPage() {
                       <Box
                         css={{
                           fontSize: "xs",
-                          opacity: 0.5,
+                          opacity: 50,
                           mb: 1,
                           textTransform: "uppercase",
                           letterSpacing: "wider",
@@ -188,7 +188,7 @@ export default function ConfigPage() {
                       <Box
                         css={{
                           fontSize: "xs",
-                          opacity: 0.5,
+                          opacity: 50,
                           mb: 1,
                           textTransform: "uppercase",
                           letterSpacing: "wider",

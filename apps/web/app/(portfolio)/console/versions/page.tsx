@@ -37,7 +37,8 @@ function PackageItem({
         gap: 2,
         p: 3,
         background: isActive || isHovered ? "neutral.100" : "white",
-        transition: "all 0.2s",
+        transitionProperty: "all",
+        transitionDuration: "normal",
         cursor: "pointer",
         textAlign: "left",
         color: "black",
@@ -61,7 +62,7 @@ function PackageItem({
           <Box
             css={{
               fontSize: "2xs",
-              opacity: 0.5,
+              opacity: 50,
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -127,7 +128,7 @@ function ChangelogViewer({ pkg }: { pkg: PackageInfo | null }) {
           alignItems: "center",
           justifyContent: "center",
           height: "100%",
-          opacity: 0.4,
+          opacity: 40,
           fontFamily: "mono",
           fontSize: "sm",
         }}
@@ -144,7 +145,7 @@ function ChangelogViewer({ pkg }: { pkg: PackageInfo | null }) {
         fontSize: "sm",
         lineHeight: "relaxed",
         whiteSpace: "pre-wrap",
-        opacity: 0.9,
+        opacity: 90,
         "& h1": {
           fontSize: "xl",
           fontWeight: "bold",
@@ -249,7 +250,7 @@ export default function VersionsPage() {
                     fontSize: "xs",
                     fontWeight: "bold",
                     mb: 2,
-                    opacity: 0.5,
+                    opacity: 50,
                     textTransform: "uppercase",
                     letterSpacing: "wider",
                     display: "flex",
@@ -263,8 +264,8 @@ export default function VersionsPage() {
                     isExternal
                     css={{
                       fontSize: "xs",
-                      opacity: 0.5,
-                      _hover: { opacity: 1 },
+                      opacity: 50,
+                      _hover: { opacity: 100 },
                     }}
                   >
                     GitHub
@@ -288,7 +289,7 @@ export default function VersionsPage() {
                     fontSize: "xs",
                     fontWeight: "bold",
                     mb: 2,
-                    opacity: 0.5,
+                    opacity: 50,
                     textTransform: "uppercase",
                     letterSpacing: "wider",
                     display: "flex",
@@ -302,8 +303,8 @@ export default function VersionsPage() {
                     isExternal
                     css={{
                       fontSize: "xs",
-                      opacity: 0.5,
-                      _hover: { opacity: 1 },
+                      opacity: 50,
+                      _hover: { opacity: 100 },
                     }}
                   >
                     GitHub
@@ -399,7 +400,7 @@ export default function VersionsPage() {
                       </Box>
                     </Box>
                     {selectedPackage.description && (
-                      <Box css={{ fontSize: "sm", opacity: 0.6 }}>
+                      <Box css={{ fontSize: "sm", opacity: 60 }}>
                         {selectedPackage.description}
                       </Box>
                     )}

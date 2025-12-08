@@ -38,7 +38,7 @@ export const PSNCard = ({ username = "bullensohn6" }: PSNCardProps) => {
         top: 0,
         left: 0,
         zIndex: 40,
-        width: "300px",
+        width: "var(--sizes-widget-md)",
       }}
     >
       <Image

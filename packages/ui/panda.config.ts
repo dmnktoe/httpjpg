@@ -1,8 +1,11 @@
 import {
   borderRadius,
   colors,
+  opacity,
   shadows,
+  sizes,
   spacing,
+  transitions,
   typography,
 } from "@httpjpg/tokens";
 import { defineConfig } from "@pandacss/dev";
@@ -185,6 +188,10 @@ export default defineConfig({
         spacing: toPandaTokens(spacing),
         radii: toPandaTokens(borderRadius),
         shadows: toPandaTokens(shadows),
+        opacity: toPandaTokens(opacity),
+        sizes: toPandaTokens(sizes),
+        durations: toPandaTokens(transitions.duration),
+        easings: toPandaTokens(transitions.easing),
       },
       breakpoints: {
         sm: "640px",

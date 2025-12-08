@@ -97,7 +97,7 @@ export default function StatusPage() {
                     : "Degraded Performance"}
               </Box>
             </Box>
-            <Box css={{ fontSize: "sm", opacity: 0.9 }}>
+            <Box css={{ fontSize: "sm", opacity: 90 }}>
               {anyDown
                 ? "We're experiencing issues with some services. Our team is investigating."
                 : allOperational
@@ -154,7 +154,7 @@ export default function StatusPage() {
                 <Box
                   css={{
                     fontSize: "xs",
-                    opacity: 0.5,
+                    opacity: 50,
                     textTransform: "uppercase",
                     letterSpacing: "wider",
                   }}
@@ -170,7 +170,7 @@ export default function StatusPage() {
                   gap: 2,
                   px: 3,
                   py: 1,
-                  borderRadius: "9999px",
+                  borderRadius: "full",
                   color: "white",
                   fontSize: "xs",
                   fontWeight: "bold",
@@ -184,19 +184,19 @@ export default function StatusPage() {
                     zIndex: -1,
                     background:
                       service.status === "operational"
-                        ? "rgba(34, 197, 94, 0.9)"
+                        ? "success.500/90"
                         : service.status === "degraded"
-                          ? "rgba(234, 179, 8, 0.9)"
-                          : "rgba(239, 68, 68, 0.9)",
+                          ? "warning.500/90"
+                          : "danger.500/90",
                     filter: "blur(8px)",
                   },
                 }}
               >
                 <Box
                   css={{
-                    width: "6px",
-                    height: "6px",
-                    borderRadius: "50%",
+                    width: "indicator.xs",
+                    height: "indicator.xs",
+                    borderRadius: "full",
                     background: "white",
                   }}
                 />

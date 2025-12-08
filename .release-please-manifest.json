@@ -12,7 +12,7 @@
   "packages/storyblok-richtext": "1.0.0",
   "packages/storyblok-sync": "1.0.0",
   "packages/storyblok-ui": "1.0.0",
-  "packages/storyblok-utils": "1.0.0",
+  "packages/storyblok-utils": "1.1.0",
   "packages/tokens": "1.0.0",
   "packages/typescript": "0.0.0",
   "packages/ui": "1.0.0"

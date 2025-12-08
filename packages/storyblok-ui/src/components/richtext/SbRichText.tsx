@@ -36,10 +36,6 @@ export const SbRichText = memo(function SbRichText({ blok }: SbRichTextProps) {
   const mappedMaxWidth = mapProseMaxWidthToToken(maxWidth);
   const editableProps = useStoryblokEditable(blok);
 
-  console.log("[SbRichText] Full blok:", blok);
-  console.log("[SbRichText] maxWidth raw:", maxWidth);
-  console.log("[SbRichText] maxWidth mapped:", mappedMaxWidth);
-
   if (!content) {
     return null;
   }

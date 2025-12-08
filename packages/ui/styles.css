@@ -1431,10 +1431,6 @@
     text-overflow: ellipsis;
 }
 
-  .bd-t_1px_solid {
-    border-top: 1px solid;
-}
-
   .c_inherit {
     color: inherit;
 }
@@ -1473,6 +1469,10 @@
 
   .py_6 {
     padding-block: var(--spacing-6);
+}
+
+  .bd-t_1px_solid {
+    border-top: 1px solid;
 }
 
   .op_0\.4 {
@@ -2761,16 +2761,12 @@
     margin-top: var(--spacing-3);
 }
 
-  .pt_3 {
-    padding-top: var(--spacing-3);
+  .fs_0\.75rem {
+    font-size: 0.75rem;
 }
 
   .bd-c_black {
     border-color: var(--colors-black);
-}
-
-  .fs_0\.75rem {
-    font-size: 0.75rem;
 }
 
   .mb_1 {
@@ -3451,6 +3447,10 @@
 
   .pt_2 {
     padding-top: var(--spacing-2);
+}
+
+  .pt_3 {
+    padding-top: var(--spacing-3);
 }
 
   .pt_4 {

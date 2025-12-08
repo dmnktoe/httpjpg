@@ -19,7 +19,7 @@ importers:
         version: 2.29.8(@types/node@22.19.1)
       '@commitlint/cli':
         specifier: ^20.1.0
-        version: 20.2.0(@types/node@22.19.1)(typescript@5.9.2)
+        version: 20.2.0(@types/node@22.19.1)(typescript@5.9.3)
       '@commitlint/config-conventional':
         specifier: ^20.0.0
         version: 20.2.0
@@ -58,13 +58,13 @@ importers:
         version: 16.2.7
       ts-jest:
         specifier: ^29.4.6
-        version: 29.4.6(@babel/core@7.28.5)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.28.5))(esbuild@0.24.2)(jest-util@30.2.0)(jest@30.2.0(@types/node@22.19.1)(esbuild-register@3.6.0(esbuild@0.24.2)))(typescript@5.9.2)
+        version: 29.4.6(@babel/core@7.28.5)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.28.5))(esbuild@0.24.2)(jest-util@30.2.0)(jest@30.2.0(@types/node@22.19.1)(esbuild-register@3.6.0(esbuild@0.24.2)))(typescript@5.9.3)
       turbo:
         specifier: ^2.6.0
         version: 2.6.3
       typescript:
-        specifier: 5.9.2
-        version: 5.9.2
+        specifier: 5.9.3
+        version: 5.9.3
 
   apps/docs:
     dependencies:
@@ -387,8 +387,8 @@ importers:
         specifier: ^22.10.2
         version: 22.19.1
       typescript:
-        specifier: ~5.7.2
-        version: 5.7.3
+        specifier: ~5.9.0
+        version: 5.9.3
 
   packages/storyblok-api:
     dependencies:
@@ -521,8 +521,8 @@ importers:
         specifier: ^4.19.2
         version: 4.21.0
       typescript:
-        specifier: 5.9.2
-        version: 5.9.2
+        specifier: 5.9.3
+        version: 5.9.3
 
   packages/typescript:
     devDependencies:
@@ -553,7 +553,7 @@ importers:
         version: link:../typescript
       '@pandacss/dev':
         specifier: ^0.45.0
-        version: 0.45.2(jsdom@26.1.0)(typescript@5.9.2)
+        version: 0.45.2(jsdom@26.1.0)(typescript@5.9.3)
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.7
@@ -564,8 +564,8 @@ importers:
         specifier: ^19.0.0
         version: 19.2.1
       typescript:
-        specifier: 5.9.2
-        version: 5.9.2
+        specifier: 5.9.3
+        version: 5.9.3
 
 packages:
 
@@ -6723,16 +6723,6 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  typescript@5.7.3:
-    resolution: {integrity: sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-
-  typescript@5.9.2:
-    resolution: {integrity: sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-
   typescript@5.9.3:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
@@ -7552,11 +7542,11 @@ snapshots:
       picocolors: 1.1.1
       sisteransi: 1.0.5
 
-  '@commitlint/cli@20.2.0(@types/node@22.19.1)(typescript@5.9.2)':
+  '@commitlint/cli@20.2.0(@types/node@22.19.1)(typescript@5.9.3)':
     dependencies:
       '@commitlint/format': 20.2.0
       '@commitlint/lint': 20.2.0
-      '@commitlint/load': 20.2.0(@types/node@22.19.1)(typescript@5.9.2)
+      '@commitlint/load': 20.2.0(@types/node@22.19.1)(typescript@5.9.3)
       '@commitlint/read': 20.2.0
       '@commitlint/types': 20.2.0
       tinyexec: 1.0.2
@@ -7603,15 +7593,15 @@ snapshots:
       '@commitlint/rules': 20.2.0
       '@commitlint/types': 20.2.0
 
-  '@commitlint/load@20.2.0(@types/node@22.19.1)(typescript@5.9.2)':
+  '@commitlint/load@20.2.0(@types/node@22.19.1)(typescript@5.9.3)':
     dependencies:
       '@commitlint/config-validator': 20.2.0
       '@commitlint/execute-rule': 20.0.0
       '@commitlint/resolve-extends': 20.2.0
       '@commitlint/types': 20.2.0
       chalk: 5.6.2
-      cosmiconfig: 9.0.0(typescript@5.9.2)
-      cosmiconfig-typescript-loader: 6.2.0(@types/node@22.19.1)(cosmiconfig@9.0.0(typescript@5.9.2))(typescript@5.9.2)
+      cosmiconfig: 9.0.0(typescript@5.9.3)
+      cosmiconfig-typescript-loader: 6.2.0(@types/node@22.19.1)(cosmiconfig@9.0.0(typescript@5.9.3))(typescript@5.9.3)
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       lodash.uniq: 4.5.0
@@ -8723,13 +8713,13 @@ snapshots:
       postcss-selector-parser: 6.1.1
       ts-pattern: 5.0.8
 
-  '@pandacss/dev@0.45.2(jsdom@26.1.0)(typescript@5.9.2)':
+  '@pandacss/dev@0.45.2(jsdom@26.1.0)(typescript@5.9.3)':
     dependencies:
       '@clack/prompts': 0.7.0
       '@pandacss/config': 0.45.2
       '@pandacss/logger': 0.45.2
-      '@pandacss/node': 0.45.2(jsdom@26.1.0)(typescript@5.9.2)
-      '@pandacss/postcss': 0.45.2(jsdom@26.1.0)(typescript@5.9.2)
+      '@pandacss/node': 0.45.2(jsdom@26.1.0)(typescript@5.9.3)
+      '@pandacss/postcss': 0.45.2(jsdom@26.1.0)(typescript@5.9.3)
       '@pandacss/preset-panda': 0.45.2
       '@pandacss/shared': 0.45.2
       '@pandacss/token-dictionary': 0.45.2
@@ -8739,10 +8729,10 @@ snapshots:
       - jsdom
       - typescript
 
-  '@pandacss/extractor@0.45.2(jsdom@26.1.0)(typescript@5.9.2)':
+  '@pandacss/extractor@0.45.2(jsdom@26.1.0)(typescript@5.9.3)':
     dependencies:
       '@pandacss/shared': 0.45.2
-      ts-evaluator: 1.2.0(jsdom@26.1.0)(typescript@5.9.2)
+      ts-evaluator: 1.2.0(jsdom@26.1.0)(typescript@5.9.3)
       ts-morph: 21.0.1
     transitivePeerDependencies:
       - jsdom
@@ -8769,14 +8759,14 @@ snapshots:
       '@pandacss/types': 0.45.2
       kleur: 4.1.5
 
-  '@pandacss/node@0.45.2(jsdom@26.1.0)(typescript@5.9.2)':
+  '@pandacss/node@0.45.2(jsdom@26.1.0)(typescript@5.9.3)':
     dependencies:
       '@pandacss/config': 0.45.2
       '@pandacss/core': 0.45.2
-      '@pandacss/extractor': 0.45.2(jsdom@26.1.0)(typescript@5.9.2)
+      '@pandacss/extractor': 0.45.2(jsdom@26.1.0)(typescript@5.9.3)
       '@pandacss/generator': 0.45.2
       '@pandacss/logger': 0.45.2
-      '@pandacss/parser': 0.45.2(jsdom@26.1.0)(typescript@5.9.2)
+      '@pandacss/parser': 0.45.2(jsdom@26.1.0)(typescript@5.9.3)
       '@pandacss/shared': 0.45.2
       '@pandacss/token-dictionary': 0.45.2
       '@pandacss/types': 0.45.2
@@ -8799,16 +8789,16 @@ snapshots:
       prettier: 3.2.5
       ts-morph: 21.0.1
       ts-pattern: 5.0.8
-      tsconfck: 3.0.2(typescript@5.9.2)
+      tsconfck: 3.0.2(typescript@5.9.3)
     transitivePeerDependencies:
       - jsdom
       - typescript
 
-  '@pandacss/parser@0.45.2(jsdom@26.1.0)(typescript@5.9.2)':
+  '@pandacss/parser@0.45.2(jsdom@26.1.0)(typescript@5.9.3)':
     dependencies:
       '@pandacss/config': 0.45.2
       '@pandacss/core': 0.45.2
-      '@pandacss/extractor': 0.45.2(jsdom@26.1.0)(typescript@5.9.2)
+      '@pandacss/extractor': 0.45.2(jsdom@26.1.0)(typescript@5.9.3)
       '@pandacss/logger': 0.45.2
       '@pandacss/shared': 0.45.2
       '@pandacss/types': 0.45.2
@@ -8820,9 +8810,9 @@ snapshots:
       - jsdom
       - typescript
 
-  '@pandacss/postcss@0.45.2(jsdom@26.1.0)(typescript@5.9.2)':
+  '@pandacss/postcss@0.45.2(jsdom@26.1.0)(typescript@5.9.3)':
     dependencies:
-      '@pandacss/node': 0.45.2(jsdom@26.1.0)(typescript@5.9.2)
+      '@pandacss/node': 0.45.2(jsdom@26.1.0)(typescript@5.9.3)
       postcss: 8.4.41
     transitivePeerDependencies:
       - jsdom
@@ -10724,21 +10714,21 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
-  cosmiconfig-typescript-loader@6.2.0(@types/node@22.19.1)(cosmiconfig@9.0.0(typescript@5.9.2))(typescript@5.9.2):
+  cosmiconfig-typescript-loader@6.2.0(@types/node@22.19.1)(cosmiconfig@9.0.0(typescript@5.9.3))(typescript@5.9.3):
     dependencies:
       '@types/node': 22.19.1
-      cosmiconfig: 9.0.0(typescript@5.9.2)
+      cosmiconfig: 9.0.0(typescript@5.9.3)
       jiti: 2.6.1
-      typescript: 5.9.2
+      typescript: 5.9.3
 
-  cosmiconfig@9.0.0(typescript@5.9.2):
+  cosmiconfig@9.0.0(typescript@5.9.3):
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.1
       js-yaml: 4.1.1
       parse-json: 5.2.0
     optionalDependencies:
-      typescript: 5.9.2
+      typescript: 5.9.3
 
   cross-spawn@7.0.6:
     dependencies:
@@ -13906,16 +13896,16 @@ snapshots:
 
   ts-dedent@2.2.0: {}
 
-  ts-evaluator@1.2.0(jsdom@26.1.0)(typescript@5.9.2):
+  ts-evaluator@1.2.0(jsdom@26.1.0)(typescript@5.9.3):
     dependencies:
       ansi-colors: 4.1.3
       crosspath: 2.0.0
       object-path: 0.11.8
-      typescript: 5.9.2
+      typescript: 5.9.3
     optionalDependencies:
       jsdom: 26.1.0
 
-  ts-jest@29.4.6(@babel/core@7.28.5)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.28.5))(esbuild@0.24.2)(jest-util@30.2.0)(jest@30.2.0(@types/node@22.19.1)(esbuild-register@3.6.0(esbuild@0.24.2)))(typescript@5.9.2):
+  ts-jest@29.4.6(@babel/core@7.28.5)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.28.5))(esbuild@0.24.2)(jest-util@30.2.0)(jest@30.2.0(@types/node@22.19.1)(esbuild-register@3.6.0(esbuild@0.24.2)))(typescript@5.9.3):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
@@ -13926,7 +13916,7 @@ snapshots:
       make-error: 1.3.6
       semver: 7.7.3
       type-fest: 4.41.0
-      typescript: 5.9.2
+      typescript: 5.9.3
       yargs-parser: 21.1.1
     optionalDependencies:
       '@babel/core': 7.28.5
@@ -13943,9 +13933,9 @@ snapshots:
 
   ts-pattern@5.0.8: {}
 
-  tsconfck@3.0.2(typescript@5.9.2):
+  tsconfck@3.0.2(typescript@5.9.3):
     optionalDependencies:
-      typescript: 5.9.2
+      typescript: 5.9.3
 
   tsconfig-paths@4.2.0:
     dependencies:
@@ -14002,10 +13992,6 @@ snapshots:
       uuid: 10.0.0
 
   typescript@5.3.3: {}
-
-  typescript@5.7.3: {}
-
-  typescript@5.9.2: {}
 
   typescript@5.9.3: {}
 

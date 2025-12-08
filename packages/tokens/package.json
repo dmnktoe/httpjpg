@@ -48,6 +48,6 @@
     "@httpjpg/tsconfig": "workspace:*",
     "@biomejs/biome": "2.3.4",
     "tsx": "^4.19.2",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   }
 }

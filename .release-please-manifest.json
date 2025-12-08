@@ -3,7 +3,7 @@
   "apps/storybook": "1.0.0",
   "apps/web": "1.0.0",
   "packages/analytics": "1.0.0",
-  "packages/consent": "1.0.0",
+  "packages/consent": "1.1.0",
   "packages/env": "1.0.0",
   "packages/now-playing": "1.0.0",
   "packages/observability": "1.0.0",

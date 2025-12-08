@@ -44,6 +44,7 @@ const unorderedListRecipe = cva({
     padding: 0,
 
     /* List styling */
+    listStylePosition: "outside",
     paddingLeft: "6", // 24px
     marginTop: "4", // 16px
     marginBottom: "4", // 16px
@@ -112,7 +113,7 @@ const unorderedListRecipe = cva({
   defaultVariants: {
     size: "sm",
     listStyle: "disc",
-    spacing: "2",
+    spacing: "1",
   },
 });
 

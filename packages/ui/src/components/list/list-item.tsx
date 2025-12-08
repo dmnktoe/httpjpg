@@ -37,12 +37,8 @@ const listItemRecipe = cva({
     lineHeight: 1.75,
 
     /* Prevent nested paragraphs from adding extra margin */
-    "& > p": {
-      marginBottom: "0 !important",
-    },
-
-    "& > p:not(:last-child)": {
-      marginBottom: "2 !important",
+    "& p": {
+      marginBottom: "0",
     },
   },
   variants: {

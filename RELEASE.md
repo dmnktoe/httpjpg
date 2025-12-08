@@ -14,7 +14,6 @@ Release-please automates the entire release process based on [Conventional Commi
 3. **Merge to Release**: When you merge the release PR, release-please:
    - Creates GitHub releases with release notes
    - Tags the releases
-   - Triggers the publish workflow to publish packages to npm
 
 ## Commit Format
 
@@ -83,14 +82,7 @@ In rare cases where you need to manually trigger a release:
 - `release-please-config.json` - Configuration for release-please
 - `.github/workflows/release.yml` - GitHub Actions workflow for releases
 
-## Package Publishing
 
-When a release is created, packages are automatically:
-
-1. Built using `pnpm run build --filter='./packages/*'`
-2. Published to npm registry using `pnpm publish -r`
-
-Note: Publishing requires the `NPM_TOKEN` secret to be configured in GitHub repository settings.
 
 ## Troubleshooting
 
@@ -100,11 +92,7 @@ Note: Publishing requires the `NPM_TOKEN` secret to be configured in GitHub repo
 - Check that commits contain changes that warrant a version bump (feat, fix, perf, or breaking changes)
 - Review the release workflow logs in GitHub Actions
 
-### Publishing Failed
 
-- Verify `NPM_TOKEN` secret is correctly configured
-- Check that package names in npm registry match those in package.json files
-- Review the publish job logs for specific errors
 
 ## More Information
 

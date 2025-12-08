@@ -26,6 +26,7 @@ export interface SbButtonProps {
 /**
  * Storyblok Button Component
  * Renders a button with configurable styling via Storyblok CMS
+ * Supports optional link wrapping for navigation and external URLs
  */
 export const SbButton = memo(function SbButton({
   blok,

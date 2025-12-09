@@ -88,26 +88,34 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
   // and avoid setting base colSpan/rowSpan when we have positioning
   const hasPositioning = colStart || colEnd || rowStart || rowEnd;
 
-  const itemStyles: SystemStyleObject = {
-    ...(colSpanMd && {
-      md: {
+  // Properly merge responsive styles to avoid property conflicts
+  const itemStyles: SystemStyleObject = {};
+
+  // Build tablet (md) responsive styles
+  if (colSpanMd || rowSpanMd) {
+    itemStyles.md = {
+      ...(colSpanMd && {
         gridColumn:
           colSpanMd === "full" ? "1 / -1" : `span ${parseColSpan(colSpanMd)}`,
-      },
-    }),
-    ...(rowSpanMd && {
-      md: { gridRow: `span ${parseRowSpan(rowSpanMd)}` },
-    }),
-    ...(colSpanLg && {
-      lg: {
+      }),
+      ...(rowSpanMd && {
+        gridRow: `span ${parseRowSpan(rowSpanMd)}`,
+      }),
+    };
+  }
+
+  // Build desktop (lg) responsive styles
+  if (colSpanLg || rowSpanLg) {
+    itemStyles.lg = {
+      ...(colSpanLg && {
         gridColumn:
           colSpanLg === "full" ? "1 / -1" : `span ${parseColSpan(colSpanLg)}`,
-      },
-    }),
-    ...(rowSpanLg && {
-      lg: { gridRow: `span ${parseRowSpan(rowSpanLg)}` },
-    }),
-  };
+      }),
+      ...(rowSpanLg && {
+        gridRow: `span ${parseRowSpan(rowSpanLg)}`,
+      }),
+    };
+  }
 
   return (
     <GridItem

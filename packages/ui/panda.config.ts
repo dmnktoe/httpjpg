@@ -429,10 +429,12 @@ export default defineConfig({
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
 
-            /* Link decoration - can be overridden via css prop */
+            /* Link decoration - no underline by default, wavy on hover */
             textDecoration: "none",
             _hover: {
               textDecoration: "underline",
+              textDecorationStyle: "wavy",
+              textUnderlineOffset: "2px",
             },
 
             /* Transitions */

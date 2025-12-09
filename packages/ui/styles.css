@@ -894,6 +894,7 @@
       padding-block: 2px;
       padding-inline: 2px;
       overflow: hidden;
+      text-decoration: none;
       transition: all 150ms ease-in-out;
       outline: var(--borders-none);
       display: block;
@@ -909,6 +910,12 @@
       outline: 2px solid;
       outline-color: var(--colors-blue-500);
       outline-offset: 2px;
+}
+
+    .navLink:is(:hover, [data-hover]) {
+      text-decoration: underline;
+      text-decoration-style: wavy;
+      text-underline-offset: 2px;
 }
 }
 

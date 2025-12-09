@@ -21,6 +21,8 @@ export interface SbImageProps {
     isLoadingEager?: boolean;
     spacingTop?: string;
     spacingBottom?: string;
+    copyright?: string;
+    copyrightPosition?: "inline" | "below" | "overlay" | "vertical-right";
   };
 }
 
@@ -38,6 +40,8 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     isLoadingEager = false,
     spacingTop,
     spacingBottom,
+    copyright,
+    copyrightPosition = "inline",
   } = blok;
 
   const editableProps = useStoryblokEditable(blok);
@@ -46,13 +50,16 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     return null;
   }
 
-  // Process image with Storyblok image service
+  // Process image with Storyblok image service (or return external URL as-is)
   const processedSrc = getProcessedImage(
     image.filename,
     aspectRatio ? `${aspectRatio.replace("/", "x")}/1200x0` : "",
     image.focus || "",
     "",
   );
+
+  // Use copyright from custom field first, fallback to image copyright
+  const finalCopyright = copyright || image.copyright || "";
 
   return (
     <SbMediaWrapper
@@ -63,6 +70,8 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
       <Image
         src={processedSrc || image.filename}
         alt={alt || image.alt || image.title || ""}
+        copyright={finalCopyright}
+        copyrightPosition={copyrightPosition}
         css={{
           width: "100%",
           height: isFullHeight ? "100vh" : "auto",

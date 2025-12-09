@@ -201,6 +201,38 @@ export default defineConfig({
     "p, h1, h2, h3, h4, h5, h6": {
       overflowWrap: "break-word", // Prevent text overflow
     },
+    // Explicit heading sizes to ensure proper hierarchy
+    // even with sm body font size
+    h1: {
+      fontSize: "2rem", // 32px - large headings
+      fontWeight: "bold",
+      lineHeight: "1.25",
+    },
+    h2: {
+      fontSize: "1.5rem", // 24px
+      fontWeight: "bold",
+      lineHeight: "1.25",
+    },
+    h3: {
+      fontSize: "1.25rem", // 20px
+      fontWeight: "semibold",
+      lineHeight: "1.375",
+    },
+    h4: {
+      fontSize: "1.125rem", // 18px
+      fontWeight: "semibold",
+      lineHeight: "1.5",
+    },
+    h5: {
+      fontSize: "1rem", // 16px
+      fontWeight: "medium",
+      lineHeight: "1.5",
+    },
+    h6: {
+      fontSize: "0.875rem", // 14px
+      fontWeight: "medium",
+      lineHeight: "1.5",
+    },
   },
 
   // Theme configuration with design tokens

@@ -55,15 +55,16 @@ function PreviewNotificationContent() {
         as="a"
         href="/api/exit-draft"
         css={{
-          backgroundColor: "black",
+          bg: "black",
           color: "white",
           px: 3,
           py: 1.5,
           borderRadius: "sm",
           textDecoration: "none",
           fontSize: "sm",
+          fontWeight: "medium",
           _hover: {
-            opacity: 0.9,
+            opacity: 90,
           },
         }}
       >

@@ -1,3 +1,14 @@
+/**
+ * Panda CSS Configuration
+ * @version 1.7.0
+ *
+ * This configuration follows Panda CSS v1.7.0 best practices:
+ * - Type-safe design tokens from centralized package
+ * - Optimized build output with tree-shaking
+ * - Enhanced developer experience with better type inference
+ * - Production-ready with minification and hashing
+ */
+
 import {
   borderRadius,
   colors,
@@ -51,10 +62,18 @@ export default defineConfig({
     "./src/**/*.{ts,tsx,js,jsx}",
     "../../apps/storybook/stories/**/*.{ts,tsx}",
     "../../apps/web/app/**/*.{ts,tsx}",
+    "../../apps/web/components/**/*.{ts,tsx}",
   ],
 
   // Files to exclude from scanning
-  exclude: [],
+  // v1.7.0: Enhanced exclude patterns for better performance
+  exclude: [
+    "./node_modules/**",
+    "./styled-system/**",
+    "./.next/**",
+    "./dist/**",
+    "./.turbo/**",
+  ],
 
   // Static CSS generation for dynamic props
   // Use sparingly - only for truly dynamic values (e.g., Storybook controls)
@@ -211,34 +230,57 @@ export default defineConfig({
   jsxFramework: "react",
 
   // Production optimizations
+  // v1.7.0: Enhanced optimization with better tree-shaking
   minify: process.env.NODE_ENV === "production", // Minify CSS only in production
   hash: process.env.NODE_ENV === "production", // Hash class names only in production for better debugging in dev
+  optimize: true, // Enable all optimizations
 
   // Logging level for build-time debugging
+  // v1.7.0: More granular logging options
   logLevel: process.env.NODE_ENV === "development" ? "debug" : "info",
 
   // Strict mode for better type safety
-  // Catches common mistakes at build time
+  // v1.7.0: Recommended to enable in development for better DX
   strictTokens: false, // Set to true to enforce only design token values
   strictPropertyValues: false, // Set to true to only allow token values for properties
+
+  // v1.7.0: Shorthands configuration
+  // Enable/disable CSS property shorthands for better type safety
+  shorthands: true,
+
+  // v1.7.0: Enhanced type generation
+  emitPackage: false, // Set to true if you want to publish the styled-system as a package
 
   // Utilities configuration
   // Extend with custom utility functions if needed
   utilities: {
     extend: {
-      // Example: Custom utilities can be added here
-      // truncate: {
-      //   className: "truncate",
-      //   values: { type: "boolean" },
-      //   transform(value) {
-      //     if (!value) return {};
-      //     return {
-      //       overflow: "hidden",
-      //       textOverflow: "ellipsis",
-      //       whiteSpace: "nowrap",
-      //     };
-      //   },
-      // },
+      // Custom utility for text truncation
+      truncate: {
+        className: "truncate",
+        values: { type: "boolean" },
+        transform(value) {
+          if (!value) return {};
+          return {
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          };
+        },
+      },
+      // Custom utility for line clamping
+      lineClamp: {
+        className: "line-clamp",
+        values: { type: "number" },
+        transform(value) {
+          return {
+            display: "-webkit-box",
+            WebkitLineClamp: String(value),
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          };
+        },
+      },
     },
   },
 
@@ -249,5 +291,13 @@ export default defineConfig({
       // Custom patterns can be added here
       // Example: A custom "stack" pattern with consistent spacing
     },
+  },
+
+  // v1.7.0: Import Map for better module resolution
+  importMap: {
+    css: "@httpjpg/ui/css",
+    recipes: "@httpjpg/ui/recipes",
+    patterns: "@httpjpg/ui/patterns",
+    jsx: "@httpjpg/ui/jsx",
   },
 });

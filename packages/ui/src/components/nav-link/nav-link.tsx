@@ -38,17 +38,24 @@ export const NavLink = ({
   showExternalIcon = false,
   ...linkProps
 }: NavLinkProps) => {
-  const navLinkStyles = css(navLink.raw({ variant }), cssProp);
+  // Apply the recipe className directly for proper pseudo-element rendering
+  const recipeClassName = navLink({ variant });
+  
+  // Apply any custom CSS on top
+  const customStyles = cssProp ? css(cssProp) : undefined;
+  
+  // Merge classNames: recipe -> custom -> user className
+  const mergedClassName = cx(
+    recipeClassName,
+    customStyles,
+    className
+  );
 
   return (
     <Link
       {...linkProps}
       showExternalIcon={showExternalIcon}
-      className={className ? cx(navLinkStyles, className) : navLinkStyles}
-      css={{
-        textDecoration: "none",
-        _hover: { textDecoration: "underline" },
-      }}
+      className={mergedClassName}
     >
       {children}
     </Link>

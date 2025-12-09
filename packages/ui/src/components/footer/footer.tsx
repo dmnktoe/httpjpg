@@ -162,6 +162,10 @@ export interface FooterProps {
    * Additional Panda CSS styles
    */
   css?: SystemStyleObject;
+  /**
+   * Enable dark mode for footer
+   */
+  isDark?: boolean;
 }
 
 /**
@@ -186,6 +190,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       copyrightText,
       onCookieSettingsClick,
       css: cssProp,
+      isDark = false,
       ...props
     },
     ref,
@@ -207,6 +212,8 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
           py: 64,
           textAlign: "center",
           w: "full",
+          bg: isDark ? "black" : "white",
+          color: isDark ? "white" : "black",
           ...cssProp,
         }}
         {...props}

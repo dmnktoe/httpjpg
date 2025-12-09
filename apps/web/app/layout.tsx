@@ -2,17 +2,19 @@ import { config } from "@httpjpg/config";
 import { env } from "@httpjpg/env";
 import "@httpjpg/tokens/dist/tokens.css";
 import "@httpjpg/ui/styles.css";
-import { Box, Header, ImagePreview, LazyMotionProvider } from "@httpjpg/ui";
+import { Box, ImagePreview, LazyMotionProvider } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import { ConsentProvider } from "../components/providers/consent-provider";
 import { ObservabilityProvider } from "../components/providers/observability-provider";
 import { StoryblokProvider } from "../components/providers/storyblok-provider";
+import { ThemeProvider } from "../components/providers/theme-provider";
 import { CustomCursorWrapper } from "../components/ui/custom-cursor-wrapper";
-import { FooterWrapper } from "../components/ui/footer-wrapper";
 import { PreviewNotification } from "../components/ui/preview-notification";
 import { ScrollToTop } from "../components/ui/scroll-to-top";
+import { ThemedFooter } from "../components/ui/themed-footer";
+import { ThemedHeader } from "../components/ui/themed-header";
 import { NowPlayingWidget } from "../components/widgets/now-playing-widget";
 import { PSNCard } from "../components/widgets/psn-card";
 import { WebVitalsReporter } from "../components/widgets/web-vitals-reporter";
@@ -70,44 +72,46 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <WebVitalsReporter />
         <ScrollToTop />
         <LazyMotionProvider>
-          <StoryblokProvider>
-            {/* Global UI Elements (not affected by page containers) */}
-            <CustomCursorWrapper />
-            <ImagePreview />
-            {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
-            {widgetConfig.psnEnabled && (
-              <PSNCard username={widgetConfig.psnUsername} />
-            )}
-            <PreviewNotification />
+          <ThemeProvider>
+            <StoryblokProvider>
+              {/* Global UI Elements (not affected by page containers) */}
+              <CustomCursorWrapper />
+              <ImagePreview />
+              {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
+              {widgetConfig.psnEnabled && (
+                <PSNCard username={widgetConfig.psnUsername} />
+              )}
+              <PreviewNotification />
 
-            {/* Sticky Header - always full width, pushes content down naturally */}
-            <Header
-              nav={navigation}
-              personalWork={personalWork}
-              clientWork={clientWork}
-            />
+              {/* Sticky Header - always full width, pushes content down naturally */}
+              <ThemedHeader
+                nav={navigation}
+                personalWork={personalWork}
+                clientWork={clientWork}
+              />
 
-            {/* Main Content Area - NO container wrapper here
-                Pages must use Container/Section components themselves
-                This allows for full-width sections and controlled breakouts */}
-            <Box
-              as="main"
-              css={{
-                bg: "white",
-                w: "full",
-                minH: "100vh",
-              }}
-            >
-              {children}
-            </Box>
+              {/* Main Content Area - NO container wrapper here
+                  Pages must use Container/Section components themselves
+                  This allows for full-width sections and controlled breakouts */}
+              <Box
+                as="main"
+                css={{
+                  bg: "white",
+                  w: "full",
+                  minH: "100vh",
+                }}
+              >
+                {children}
+              </Box>
 
-            {/* Footer - always full width */}
-            <FooterWrapper
-              backgroundImage={footerConfig.backgroundImage}
-              footerLinks={footerConfig.footerLinks}
-              copyrightText={footerConfig.copyrightText}
-            />
-          </StoryblokProvider>
+              {/* Footer - always full width */}
+              <ThemedFooter
+                backgroundImage={footerConfig.backgroundImage}
+                footerLinks={footerConfig.footerLinks}
+                copyrightText={footerConfig.copyrightText}
+              />
+            </StoryblokProvider>
+          </ThemeProvider>
         </LazyMotionProvider>
 
         {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (

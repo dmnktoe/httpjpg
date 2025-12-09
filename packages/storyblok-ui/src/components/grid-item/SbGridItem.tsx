@@ -46,8 +46,10 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
 
   const editableProps = useStoryblokEditable(blok);
 
-  // Parse numeric values from strings
-  const parseSpan = (value?: string): number | "full" | undefined => {
+  // Parse column span (supports "full" value)
+  const parseColSpan = (
+    value?: string,
+  ): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | "full" | undefined => {
     if (!value) {
       return undefined;
     }
@@ -55,7 +57,19 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
       return "full";
     }
     const num = Number.parseInt(value, 10);
-    return Number.isNaN(num) ? undefined : num;
+    if (Number.isNaN(num) || num < 1 || num > 12) {
+      return undefined;
+    }
+    return num as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+  };
+
+  // Parse row span (numeric only, no "full")
+  const parseRowSpan = (value?: string): number | undefined => {
+    if (!value) {
+      return undefined;
+    }
+    const num = Number.parseInt(value, 10);
+    return Number.isNaN(num) || num < 1 ? undefined : num;
   };
 
   const parsePosition = (value?: string): number | undefined => {
@@ -66,23 +80,40 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
     return Number.isNaN(num) ? undefined : num;
   };
 
-  // Base styles with responsive spans
+  // Parse base span values
+  const baseColSpan = parseColSpan(colSpan);
+  const baseRowSpan = parseRowSpan(rowSpan);
+
+  // Build responsive styles only when we have responsive values
+  // and avoid setting base colSpan/rowSpan when we have positioning
+  const hasPositioning = colStart || colEnd || rowStart || rowEnd;
+
   const itemStyles: SystemStyleObject = {
-    md: {
-      ...(colSpanMd && { gridColumn: `span ${parseSpan(colSpanMd)}` }),
-      ...(rowSpanMd && { gridRow: `span ${parseSpan(rowSpanMd)}` }),
-    },
-    lg: {
-      ...(colSpanLg && { gridColumn: `span ${parseSpan(colSpanLg)}` }),
-      ...(rowSpanLg && { gridRow: `span ${parseSpan(rowSpanLg)}` }),
-    },
+    ...(colSpanMd && {
+      md: {
+        gridColumn:
+          colSpanMd === "full" ? "1 / -1" : `span ${parseColSpan(colSpanMd)}`,
+      },
+    }),
+    ...(rowSpanMd && {
+      md: { gridRow: `span ${parseRowSpan(rowSpanMd)}` },
+    }),
+    ...(colSpanLg && {
+      lg: {
+        gridColumn:
+          colSpanLg === "full" ? "1 / -1" : `span ${parseColSpan(colSpanLg)}`,
+      },
+    }),
+    ...(rowSpanLg && {
+      lg: { gridRow: `span ${parseRowSpan(rowSpanLg)}` },
+    }),
   };
 
   return (
     <GridItem
       {...editableProps}
-      colSpan={parseSpan(colSpan) as any}
-      rowSpan={parseSpan(rowSpan) as any}
+      colSpan={hasPositioning ? undefined : baseColSpan}
+      rowSpan={hasPositioning ? undefined : baseRowSpan}
       colStart={parsePosition(colStart)}
       colEnd={parsePosition(colEnd)}
       rowStart={parsePosition(rowStart)}

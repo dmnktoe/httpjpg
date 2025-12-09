@@ -64,12 +64,15 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
     return null;
   }
 
+  // Use specific row/column gaps if provided, otherwise use uniform gap
+  const effectiveRowGap = rowGap || gap;
+  const effectiveColumnGap = columnGap || gap;
+
   const gridStyles: SystemStyleObject = {
     display: "grid",
     gridTemplateColumns: mapGridColumnsToToken(columns),
-    gap: rowGap || columnGap ? undefined : mapSpacingToToken(gap),
-    rowGap: mapSpacingToToken(rowGap || gap),
-    columnGap: mapSpacingToToken(columnGap || gap),
+    rowGap: mapSpacingToToken(effectiveRowGap),
+    columnGap: mapSpacingToToken(effectiveColumnGap),
     alignItems: alignItems || undefined,
     justifyItems: justifyItems || undefined,
     justifyContent: justifyContent || undefined,

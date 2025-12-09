@@ -17,14 +17,12 @@ export function getProcessedImage(
     return "";
   }
 
-  // Check if this is an external URL (not from Storyblok)
-  // External URLs should not be processed through Storyblok image service
-  const isExternalUrl =
-    imageSrc.startsWith("http://") || imageSrc.startsWith("https://");
+  // Check if this is a Storyblok URL first
+  // Only Storyblok URLs should be processed through the image service
   const isStoryblokUrl = imageSrc.includes("a.storyblok.com");
 
-  // If it's an external non-Storyblok URL, return as-is
-  if (isExternalUrl && !isStoryblokUrl) {
+  // If it's not a Storyblok URL, return as-is (external URL)
+  if (!isStoryblokUrl) {
     return imageSrc;
   }
 

@@ -173,32 +173,33 @@ export function mapWidthToToken(
  *
  * @example
  * ```ts
- * mapGridColumnsToToken("2 Columns") // "2"
- * mapGridColumnsToToken("Auto Fit") // "auto-fit"
+ * mapGridColumnsToToken("2 Columns") // "repeat(2, 1fr)"
+ * mapGridColumnsToToken("Auto Fit") // "repeat(auto-fit, minmax(200px, 1fr))"
+ * mapGridColumnsToToken("12") // "repeat(12, 1fr)"
  * ```
  */
 export function mapGridColumnsToToken(value?: string | null): string {
   if (!value) {
-    return "1";
+    return "repeat(1, 1fr)";
   }
 
   // Direct numeric value
   if (/^\d+$/.test(value)) {
-    return value;
+    return `repeat(${value}, 1fr)`;
   }
 
   // Auto-fit pattern
   if (value.toLowerCase().includes("auto")) {
-    return "auto-fit";
+    return "repeat(auto-fit, minmax(200px, 1fr))";
   }
 
-  // Extract number from labeled value (e.g., "2 Columns" → "2")
+  // Extract number from labeled value (e.g., "2 Columns" → "repeat(2, 1fr)")
   const match = value.match(/(\d+)/);
   if (match) {
-    return match[1];
+    return `repeat(${match[1]}, 1fr)`;
   }
 
-  return "1";
+  return "repeat(1, 1fr)";
 }
 
 /**

@@ -59,8 +59,10 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
   if (aspectRatio) {
     const parts = aspectRatio.split("/");
     if (parts.length === 2) {
-      const [widthRatio, heightRatio] = parts.map(Number);
-      // Validate that both ratios are valid numbers and widthRatio is not zero
+      const [widthRatio, heightRatio] = parts.map((part) =>
+        Number(part.trim()),
+      );
+      // Validate that both ratios are valid positive finite numbers
       if (
         widthRatio > 0 &&
         heightRatio > 0 &&

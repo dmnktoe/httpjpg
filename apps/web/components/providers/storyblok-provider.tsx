@@ -10,6 +10,7 @@ import {
   SbConfig,
   SbContainer,
   SbGrid,
+  SbGridItem,
   SbHeadline,
   SbImage,
   SbMissing,
@@ -40,6 +41,7 @@ const components = {
   // Layout components
   container: SbContainer,
   grid: SbGrid,
+  grid_item: SbGridItem,
   section: SbSection,
 
   // Content components

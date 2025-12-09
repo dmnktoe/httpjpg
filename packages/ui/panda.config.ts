@@ -20,6 +20,7 @@ import {
   typography,
 } from "@httpjpg/tokens";
 import { defineConfig } from "@pandacss/dev";
+import { hexToRgba, linearGradient } from "./src/lib/color-utils";
 
 // Generate spacing values from tokens for static CSS generation
 const spacingValues = Object.keys(spacing).map(Number);
@@ -123,18 +124,27 @@ export default defineConfig({
           // Container component max-width values
           maxWidth: ["640px", "768px", "1024px", "1280px", "1536px", "100%"],
 
+          // Border radius values (all token values for spec page)
+          borderRadius: Object.keys(borderRadius),
+
           // Button component blur effects (v1.7.0 requires explicit staticCss for cva recipes)
           filter: ["blur(5px)", "blur(8px)", "grayscale(0.5)"],
 
           // Button component backgrounds (v1.7.0 requires explicit staticCss for cva recipes)
           background: [
-            "rgba(102, 126, 234, 0.9)",
-            "rgba(123, 147, 245, 0.95)",
-            "linear-gradient(135deg, rgba(255, 140, 107, 0.9), rgba(245, 87, 108, 0.9))",
-            "linear-gradient(135deg, rgba(255, 160, 127, 0.95), rgba(247, 109, 127, 0.95))",
-            "rgba(102, 126, 234, 0.4)",
-            "rgba(123, 147, 245, 0.5)",
-            "rgba(100, 100, 100, 0.3)",
+            hexToRgba(colors.primary[500], 0.9),
+            hexToRgba(colors.primary[600], 0.95),
+            linearGradient("135deg", [
+              { hex: colors.accent[400], alpha: 0.9, position: "0%" },
+              { hex: colors.accent[600], alpha: 0.9, position: "100%" },
+            ]),
+            linearGradient("135deg", [
+              { hex: colors.accent[400], alpha: 0.95, position: "0%" },
+              { hex: colors.accent[600], alpha: 0.95, position: "100%" },
+            ]),
+            hexToRgba(colors.primary[500], 0.4),
+            hexToRgba(colors.primary[600], 0.5),
+            hexToRgba(colors.neutral[500], 0.3),
           ],
 
           // Headline component fluid typography with clamp()
@@ -285,73 +295,71 @@ export default defineConfig({
               primary: {
                 color: "white",
                 _before: {
-                  background: "rgba(102, 126, 234, 0.9)",
+                  background: hexToRgba(colors.primary[500], 0.9),
                   filter: "blur(5px)",
                   inset: "-3px",
-                  boxShadow:
-                    "0 0 20px 0 rgba(102, 126, 234, 0.3), 0 0 40px 0 rgba(102, 126, 234, 0.15)",
+                  boxShadow: `0 0 20px 0 ${hexToRgba(colors.primary[500], 0.3)}, 0 0 40px 0 ${hexToRgba(colors.primary[500], 0.15)}`,
                 },
                 _hover: {
                   _before: {
-                    background: "rgba(123, 147, 245, 0.95)",
+                    background: hexToRgba(colors.primary[600], 0.95),
                     filter: "blur(5px)",
-                    boxShadow:
-                      "0 0 25px 0 rgba(123, 147, 245, 0.4), 0 0 45px 0 rgba(123, 147, 245, 0.2)",
+                    boxShadow: `0 0 25px 0 ${hexToRgba(colors.primary[600], 0.4)}, 0 0 45px 0 ${hexToRgba(colors.primary[600], 0.2)}`,
                   },
                 },
               },
               secondary: {
                 color: "white",
                 _before: {
-                  background:
-                    "linear-gradient(135deg, rgba(255, 140, 107, 0.9), rgba(245, 87, 108, 0.9))",
+                  background: linearGradient("135deg", [
+                    { hex: colors.accent[400], alpha: 0.9 },
+                    { hex: colors.accent[600], alpha: 0.9 },
+                  ]),
                   filter: "blur(5px)",
                   inset: "-3px",
-                  boxShadow:
-                    "0 0 20px 0 rgba(255, 140, 107, 0.3), 0 0 40px 0 rgba(245, 87, 108, 0.15)",
+                  boxShadow: `0 0 20px 0 ${hexToRgba(colors.accent[400], 0.3)}, 0 0 40px 0 ${hexToRgba(colors.accent[600], 0.15)}`,
                 },
                 _hover: {
                   _before: {
-                    background:
-                      "linear-gradient(135deg, rgba(255, 160, 127, 0.95), rgba(247, 109, 127, 0.95))",
+                    background: linearGradient("135deg", [
+                      { hex: colors.accent[400], alpha: 0.95 },
+                      { hex: colors.accent[600], alpha: 0.95 },
+                    ]),
                     filter: "blur(5px)",
-                    boxShadow:
-                      "0 0 25px 0 rgba(255, 160, 127, 0.4), 0 0 45px 0 rgba(247, 109, 127, 0.2)",
+                    boxShadow: `0 0 25px 0 ${hexToRgba(colors.accent[400], 0.4)}, 0 0 45px 0 ${hexToRgba(colors.accent[600], 0.2)}`,
                   },
                 },
               },
               outline: {
                 color: "white",
                 _before: {
-                  background: "rgba(102, 126, 234, 0.4)",
+                  background: hexToRgba(colors.primary[500], 0.4),
                   filter: "blur(5px)",
                   inset: "-3px",
-                  boxShadow:
-                    "0 0 20px 0 rgba(102, 126, 234, 0.2), 0 0 40px 0 rgba(102, 126, 234, 0.1)",
+                  boxShadow: `0 0 20px 0 ${hexToRgba(colors.primary[500], 0.2)}, 0 0 40px 0 ${hexToRgba(colors.primary[500], 0.1)}`,
                 },
                 _hover: {
                   _before: {
-                    background: "rgba(123, 147, 245, 0.5)",
+                    background: hexToRgba(colors.primary[600], 0.5),
                     filter: "blur(5px)",
-                    boxShadow:
-                      "0 0 25px 0 rgba(123, 147, 245, 0.3), 0 0 45px 0 rgba(123, 147, 245, 0.15)",
+                    boxShadow: `0 0 25px 0 ${hexToRgba(colors.primary[600], 0.3)}, 0 0 45px 0 ${hexToRgba(colors.primary[600], 0.15)}`,
                   },
                 },
               },
               disabled: {
-                color: "rgba(150, 150, 150, 0.7)",
+                color: hexToRgba(colors.neutral[400], 0.7),
                 cursor: "not-allowed",
                 _before: {
-                  background: "rgba(100, 100, 100, 0.3)",
+                  background: hexToRgba(colors.neutral[500], 0.3),
                   filter: "blur(5px)",
                   inset: "-3px",
-                  boxShadow: "0 0 15px 0 rgba(100, 100, 100, 0.2)",
+                  boxShadow: `0 0 15px 0 ${hexToRgba(colors.neutral[500], 0.2)}`,
                 },
                 _hover: {
                   _before: {
-                    background: "rgba(100, 100, 100, 0.3)",
+                    background: hexToRgba(colors.neutral[500], 0.3),
                     filter: "blur(5px)",
-                    boxShadow: "0 0 15px 0 rgba(100, 100, 100, 0.2)",
+                    boxShadow: `0 0 15px 0 ${hexToRgba(colors.neutral[500], 0.2)}`,
                   },
                 },
               },

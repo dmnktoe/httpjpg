@@ -21,17 +21,17 @@ export const colors = {
   },
   // Vibrant accent colors
   primary: {
-    50: "#EEF2FF",
-    100: "#E0E7FF",
-    200: "#C7D2FE",
-    300: "#A5B4FC",
-    400: "#818CF8",
-    500: "#667EEA", // Main primary color - vibrant blue
-    600: "#5568D3",
-    700: "#4C51BF",
-    800: "#434190",
-    900: "#3C366B",
-    950: "#2D2A4A",
+    50: "#EFF6FF",
+    100: "#DBEAFE",
+    200: "#BFDBFE",
+    300: "#93C5FD",
+    400: "#60A5FA",
+    500: "#3B82F6", // Main primary color - electric blue
+    600: "#2563EB",
+    700: "#1D4ED8",
+    800: "#1E40AF",
+    900: "#1E3A8A",
+    950: "#172554",
   },
   secondary: {
     50: "#FFF1F2",

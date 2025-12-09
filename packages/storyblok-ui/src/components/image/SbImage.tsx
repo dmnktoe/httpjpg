@@ -51,9 +51,18 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
   }
 
   // Process image with Storyblok image service (or return external URL as-is)
+  // Calculate dimensions based on aspect ratio
+  let cropDimensions = "";
+  if (aspectRatio) {
+    const [widthRatio, heightRatio] = aspectRatio.split("/").map(Number);
+    const baseWidth = 1200;
+    const calculatedHeight = Math.round((baseWidth * heightRatio) / widthRatio);
+    cropDimensions = `${baseWidth}x${calculatedHeight}`;
+  }
+
   const processedSrc = getProcessedImage(
     image.filename,
-    aspectRatio ? `${aspectRatio.replace("/", "x")}/1200x0` : "",
+    cropDimensions,
     image.focus || "",
     "",
   );

@@ -120,6 +120,9 @@ export default defineConfig({
 
           // Container component max-width values
           maxWidth: ["640px", "768px", "1024px", "1280px", "1536px", "100%"],
+
+          // Button component blur effects (v1.7.0 requires explicit staticCss for cva recipes)
+          filter: ["blur(5px)", "blur(8px)", "grayscale(0.5)"],
         },
       },
     ],

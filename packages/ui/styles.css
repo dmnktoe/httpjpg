@@ -2643,6 +2643,18 @@
     grid-template-columns: repeat(11, 1fr);
 }
 
+  .filter_blur\(5px\) {
+    filter: blur(5px);
+}
+
+  .filter_blur\(8px\) {
+    filter: blur(8px);
+}
+
+  .filter_grayscale\(0\.5\) {
+    filter: grayscale(0.5);
+}
+
   .w_600px {
     width: 600px;
 }

@@ -29,8 +29,8 @@ export function ConsoleHeader({ tag, title, description }: ConsoleHeaderProps) {
           href="/console"
           css={{
             fontSize: "sm",
-            opacity: 0.6,
-            _hover: { opacity: 1 },
+            opacity: 60,
+            _hover: { opacity: 100 },
           }}
         >
           ← Console
@@ -38,9 +38,9 @@ export function ConsoleHeader({ tag, title, description }: ConsoleHeaderProps) {
       </Box>
       <Box
         css={{
-          fontSize: "0.65rem",
-          letterSpacing: "0.1em",
-          opacity: 0.6,
+          fontSize: "sm",
+          letterSpacing: "wider",
+          opacity: 60,
           mb: 2,
         }}
       >
@@ -55,7 +55,7 @@ export function ConsoleHeader({ tag, title, description }: ConsoleHeaderProps) {
       >
         {title}
       </Headline>
-      <Paragraph css={{ maxW: "2xl", opacity: 0.7 }}>{description}</Paragraph>
+      <Paragraph css={{ maxW: "2xl", opacity: 70 }}>{description}</Paragraph>
     </Container>
   );
 }

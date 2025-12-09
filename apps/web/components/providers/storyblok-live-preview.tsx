@@ -94,9 +94,7 @@ function StoryblokLivePreviewInner({
 
       // Ping editor
       sbBridge.pingEditor(() => {
-        if (process.env.NODE_ENV === "development") {
-          console.log("[Storyblok] Visual Editor connected");
-        }
+        // Visual Editor connected
       });
 
       return true;

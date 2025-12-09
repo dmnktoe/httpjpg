@@ -96,7 +96,7 @@ export const Navigation = ({
                   css={{
                     backgroundColor: work.isDraft ? "yellow" : "transparent",
                     color: work.isDraft ? "black" : "inherit",
-                    padding: work.isDraft ? "0 4px" : "0",
+                    ...(work.isDraft && { padding: "0 4px" }),
                   }}
                 >
                   {work.isDraft && "[DRAFT] "}
@@ -153,7 +153,7 @@ export const Navigation = ({
                   css={{
                     backgroundColor: work.isDraft ? "yellow" : "transparent",
                     color: work.isDraft ? "black" : "inherit",
-                    padding: work.isDraft ? "0 4px" : "0",
+                    ...(work.isDraft && { padding: "0 4px" }),
                   }}
                 >
                   {work.isDraft && "[DRAFT] "}

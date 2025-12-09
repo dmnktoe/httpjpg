@@ -15,8 +15,8 @@ export function StatCard({ label, value }: StatCardProps) {
     >
       <Box
         css={{
-          fontSize: "xs",
-          opacity: 0.5,
+          fontSize: "sm",
+          opacity: 50,
           mb: 2,
           textTransform: "uppercase",
           letterSpacing: "wider",
@@ -26,7 +26,7 @@ export function StatCard({ label, value }: StatCardProps) {
       </Box>
       <Box
         css={{
-          fontSize: "3xl",
+          fontSize: "xl",
           fontWeight: "bold",
           fontFamily: "mono",
         }}

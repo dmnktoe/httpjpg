@@ -92,8 +92,6 @@ export async function middleware(request: NextRequest) {
     // Disable caching for Visual Editor
     response.headers.set("Cache-Control", "no-store, must-revalidate");
     response.headers.set("Pragma", "no-cache");
-
-    console.log("[Middleware] Storyblok Visual Editor request validated");
   }
 
   return response;

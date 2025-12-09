@@ -283,7 +283,7 @@ export default function ConsolePage() {
         <Headline level={1} css={{ mb: 2 }}>
           Developer Console
         </Headline>
-        <Paragraph css={{ opacity: 0.6, maxW: "2xl" }}>
+        <Paragraph css={{ opacity: 60, maxW: "2xl" }}>
           Central hub for monitoring, managing, and exploring the httpjpg
           monorepo. Access package versions, system status, documentation, and
           component library.
@@ -351,9 +351,9 @@ export default function ConsolePage() {
                   {/* Header mit Icon und Tag */}
                   <Box
                     css={{
-                      fontSize: "0.65rem",
-                      letterSpacing: "0.1em",
-                      opacity: 0.6,
+                      fontSize: "sm",
+                      letterSpacing: "wider",
+                      opacity: 60,
                       mb: 2,
                     }}
                   >
@@ -375,7 +375,7 @@ export default function ConsolePage() {
                   <Box
                     css={{
                       fontSize: "sm",
-                      opacity: 0.8,
+                      opacity: 80,
                       lineHeight: 1.6,
                       mb: 3,
                       display: "-webkit-box",
@@ -396,13 +396,13 @@ export default function ConsolePage() {
                   {/* Stats */}
                   {card.stats && card.stats.length > 0 && (
                     <Box css={{ mt: 3 }}>
-                      <Box css={{ fontSize: "0.75rem", opacity: 0.7, mb: 2 }}>
+                      <Box css={{ fontSize: "sm", opacity: 70, mb: 2 }}>
                         ・゜゜・。。・゜゜・。
                       </Box>
                       <Box
                         css={{
-                          fontSize: "0.75rem",
-                          opacity: 0.6,
+                          fontSize: "sm",
+                          opacity: 60,
                           mb: 2,
                         }}
                       >
@@ -412,8 +412,8 @@ export default function ConsolePage() {
                         css={{
                           display: "flex",
                           gap: 2,
-                          fontSize: "0.75rem",
-                          opacity: 0.7,
+                          fontSize: "sm",
+                          opacity: 70,
                           flexWrap: "wrap",
                         }}
                       >
@@ -435,9 +435,9 @@ export default function ConsolePage() {
         <Box css={{ mt: 12 }}>
           <Box
             css={{
-              fontSize: "0.65rem",
-              letterSpacing: "0.1em",
-              opacity: 0.6,
+              fontSize: "sm",
+              letterSpacing: "wider",
+              opacity: 60,
               mb: 2,
             }}
           >

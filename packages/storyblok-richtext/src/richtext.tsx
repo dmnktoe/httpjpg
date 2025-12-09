@@ -131,8 +131,7 @@ function NodeParagraph(
   _props: any,
   context?: { maxWidth?: string | boolean },
 ) {
-  const maxWidth = context?.maxWidth ?? "readable";
-
+  const maxWidth = context?.maxWidth ?? true;
   return (
     <Paragraph maxWidth={maxWidth} spacing>
       {children}
@@ -244,8 +243,7 @@ function NodeCodeblock(children: ReactNode) {
 /**
  * Default resolver for embedded Storyblok components
  */
-function DefaultBlokResolver(name: string, props: any) {
-  console.warn(`Missing resolver for component: ${name}`, props);
+function DefaultBlokResolver(_name: string, _props: any) {
   return null;
 }
 

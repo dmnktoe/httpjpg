@@ -1,5 +1,6 @@
 "use client";
 
+import { Box } from "@httpjpg/ui";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
@@ -28,40 +29,48 @@ function PreviewNotificationContent() {
   }
 
   return (
-    <div
-      style={{
+    <Box
+      css={{
         position: "fixed",
         bottom: 0,
         left: 0,
         right: 0,
         zIndex: 9999,
-        backgroundColor: "#fbbf24",
-        color: "#000",
-        padding: "12px 16px",
+        backgroundColor: "yellow.400",
+        color: "black",
+        padding: 3,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        gap: "16px",
-        fontSize: "14px",
-        fontWeight: 500,
-        boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)",
+        gap: 4,
+        fontSize: "md",
+        fontWeight: "medium",
+        boxShadow: "md",
       }}
     >
-      <span>🔍 Preview Mode aktiv – Du siehst unveröffentlichte Inhalte</span>
-      <a
+      <Box as="span">
+        🔍 Preview Mode aktiv – Du siehst unveröffentlichte Inhalte
+      </Box>
+      <Box
+        as="a"
         href="/api/exit-draft"
-        style={{
-          backgroundColor: "#000",
-          color: "#fff",
-          padding: "6px 12px",
-          borderRadius: "4px",
+        css={{
+          bg: "black",
+          color: "white",
+          px: 3,
+          py: 1.5,
+          borderRadius: "sm",
           textDecoration: "none",
-          fontSize: "13px",
+          fontSize: "sm",
+          fontWeight: "medium",
+          _hover: {
+            opacity: 90,
+          },
         }}
       >
         Beenden
-      </a>
-    </div>
+      </Box>
+    </Box>
   );
 }
 

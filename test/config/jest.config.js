@@ -1,7 +1,7 @@
 // Set SKIP_ENV_VALIDATION before any imports
 process.env.SKIP_ENV_VALIDATION = "true";
 
-const path = require("path");
+const path = require("node:path");
 const nextJest = require("next/jest");
 
 // Resolve to workspace root

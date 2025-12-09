@@ -36,8 +36,9 @@ function PackageItem({
         justifyContent: "space-between",
         gap: 2,
         p: 3,
-        background: isActive || isHovered ? "#F5F5F5" : "white",
-        transition: "all 0.2s",
+        background: isActive || isHovered ? "neutral.100" : "white",
+        transitionProperty: "all",
+        transitionDuration: "normal",
         cursor: "pointer",
         textAlign: "left",
         color: "black",
@@ -47,7 +48,7 @@ function PackageItem({
         <Box
           css={{
             fontFamily: "mono",
-            fontSize: "xs",
+            fontSize: "sm",
             fontWeight: "bold",
             mb: 1,
             overflow: "hidden",
@@ -60,8 +61,8 @@ function PackageItem({
         {pkg.description && (
           <Box
             css={{
-              fontSize: "2xs",
-              opacity: 0.5,
+              fontSize: "sm",
+              opacity: 50,
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -81,34 +82,34 @@ function PackageItem({
       >
         <Box
           css={{
-            px: "6px",
+            px: 1.5,
             h: "20px",
             display: "flex",
             alignItems: "center",
-            background: "#555",
+            background: "neutral.600",
             fontFamily: "mono",
-            fontSize: "11px",
-            fontWeight: "600",
+            fontSize: "sm",
+            fontWeight: "semibold",
             color: "white",
-            borderTopLeftRadius: "3px",
-            borderBottomLeftRadius: "3px",
+            borderTopLeftRadius: "sm",
+            borderBottomLeftRadius: "sm",
           }}
         >
           v
         </Box>
         <Box
           css={{
-            px: "6px",
+            px: 1.5,
             h: "20px",
             display: "flex",
             alignItems: "center",
-            background: "#4c1",
+            background: "success.500",
             fontFamily: "mono",
-            fontSize: "11px",
-            fontWeight: "600",
+            fontSize: "sm",
+            fontWeight: "semibold",
             color: "white",
-            borderTopRightRadius: "3px",
-            borderBottomRightRadius: "3px",
+            borderTopRightRadius: "sm",
+            borderBottomRightRadius: "sm",
           }}
         >
           {pkg.version}
@@ -127,7 +128,7 @@ function ChangelogViewer({ pkg }: { pkg: PackageInfo | null }) {
           alignItems: "center",
           justifyContent: "center",
           height: "100%",
-          opacity: 0.4,
+          opacity: 40,
           fontFamily: "mono",
           fontSize: "sm",
         }}
@@ -144,7 +145,7 @@ function ChangelogViewer({ pkg }: { pkg: PackageInfo | null }) {
         fontSize: "sm",
         lineHeight: "relaxed",
         whiteSpace: "pre-wrap",
-        opacity: 0.9,
+        opacity: 90,
         "& h1": {
           fontSize: "xl",
           fontWeight: "bold",
@@ -246,10 +247,10 @@ export default function VersionsPage() {
               <Box css={{ mb: 6 }}>
                 <Box
                   css={{
-                    fontSize: "xs",
+                    fontSize: "sm",
                     fontWeight: "bold",
                     mb: 2,
-                    opacity: 0.5,
+                    opacity: 50,
                     textTransform: "uppercase",
                     letterSpacing: "wider",
                     display: "flex",
@@ -262,9 +263,9 @@ export default function VersionsPage() {
                     href="https://github.com/dmnktoe/httpjpg/tree/main/apps"
                     isExternal
                     css={{
-                      fontSize: "xs",
-                      opacity: 0.5,
-                      _hover: { opacity: 1 },
+                      fontSize: "sm",
+                      opacity: 50,
+                      _hover: { opacity: 100 },
                     }}
                   >
                     GitHub
@@ -285,10 +286,10 @@ export default function VersionsPage() {
               <Box>
                 <Box
                   css={{
-                    fontSize: "xs",
+                    fontSize: "sm",
                     fontWeight: "bold",
                     mb: 2,
-                    opacity: 0.5,
+                    opacity: 50,
                     textTransform: "uppercase",
                     letterSpacing: "wider",
                     display: "flex",
@@ -301,9 +302,9 @@ export default function VersionsPage() {
                     href="https://github.com/dmnktoe/httpjpg/tree/main/packages"
                     isExternal
                     css={{
-                      fontSize: "xs",
-                      opacity: 0.5,
-                      _hover: { opacity: 1 },
+                      fontSize: "sm",
+                      opacity: 50,
+                      _hover: { opacity: 100 },
                     }}
                   >
                     GitHub
@@ -365,41 +366,41 @@ export default function VersionsPage() {
                     >
                       <Box
                         css={{
-                          px: "1.5",
+                          px: 1.5,
                           height: "20px",
                           display: "flex",
                           alignItems: "center",
-                          bg: "#555",
+                          bg: "neutral.600",
                           fontFamily: "mono",
-                          fontSize: "11px",
-                          fontWeight: "600",
+                          fontSize: "sm",
+                          fontWeight: "semibold",
                           color: "white",
-                          borderTopLeftRadius: "3px",
-                          borderBottomLeftRadius: "3px",
+                          borderTopLeftRadius: "sm",
+                          borderBottomLeftRadius: "sm",
                         }}
                       >
                         v
                       </Box>
                       <Box
                         css={{
-                          px: "1.5",
+                          px: 1.5,
                           height: "20px",
                           display: "flex",
                           alignItems: "center",
-                          bg: "#4c1",
+                          bg: "success.500",
                           fontFamily: "mono",
-                          fontSize: "11px",
-                          fontWeight: "600",
+                          fontSize: "sm",
+                          fontWeight: "semibold",
                           color: "white",
-                          borderTopRightRadius: "3px",
-                          borderBottomRightRadius: "3px",
+                          borderTopRightRadius: "sm",
+                          borderBottomRightRadius: "sm",
                         }}
                       >
                         v{selectedPackage.version}
                       </Box>
                     </Box>
                     {selectedPackage.description && (
-                      <Box css={{ fontSize: "sm", opacity: 0.6 }}>
+                      <Box css={{ fontSize: "sm", opacity: 60 }}>
                         {selectedPackage.description}
                       </Box>
                     )}

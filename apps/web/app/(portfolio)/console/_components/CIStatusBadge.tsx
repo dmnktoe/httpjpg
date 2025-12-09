@@ -27,10 +27,10 @@ export function CIStatusBadge() {
       <Box
         css={{
           display: "inline-block",
-          fontSize: "0.75rem",
-          fontFamily: "monospace",
+          fontSize: "sm",
+          fontFamily: "mono",
           background: "white",
-          color: "#6b7280",
+          color: "neutral.500",
         }}
       >
         ░░ CI...
@@ -51,17 +51,17 @@ export function CIStatusBadge() {
 
   const statusColor =
     status.status === "success"
-      ? "#22c55e"
+      ? "success.500"
       : status.status === "failure"
-        ? "#ef4444"
-        : "#eab308";
+        ? "danger.500"
+        : "warning.500";
 
   return (
     <Box
       css={{
         display: "inline-block",
-        fontSize: "0.75rem",
-        fontFamily: "monospace",
+        fontSize: "sm",
+        fontFamily: "mono",
         background: "white",
         color: statusColor,
       }}

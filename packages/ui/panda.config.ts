@@ -1,8 +1,22 @@
+/**
+ * Panda CSS Configuration
+ * @version 1.7.0
+ *
+ * This configuration follows Panda CSS v1.7.0 best practices:
+ * - Type-safe design tokens from centralized package
+ * - Optimized build output with tree-shaking
+ * - Enhanced developer experience with better type inference
+ * - Production-ready with minification and hashing
+ */
+
 import {
   borderRadius,
   colors,
+  opacity,
   shadows,
+  sizes,
   spacing,
+  transitions,
   typography,
 } from "@httpjpg/tokens";
 import { defineConfig } from "@pandacss/dev";
@@ -48,12 +62,20 @@ export default defineConfig({
     "./src/**/*.{ts,tsx,js,jsx}",
     "../../apps/storybook/stories/**/*.{ts,tsx}",
     "../../apps/web/app/**/*.{ts,tsx}",
+    "../../apps/web/components/**/*.{ts,tsx}",
     "../../packages/storyblok-richtext/src/**/*.{ts,tsx}",
     "../../packages/storyblok-ui/src/**/*.{ts,tsx}",
   ],
 
   // Files to exclude from scanning
-  exclude: [],
+  // v1.7.0: Enhanced exclude patterns for better performance
+  exclude: [
+    "./node_modules/**",
+    "./styled-system/**",
+    "./.next/**",
+    "./dist/**",
+    "./.turbo/**",
+  ],
 
   // Static CSS generation for dynamic props
   // Use sparingly - only for truly dynamic values (e.g., Storybook controls)
@@ -100,6 +122,20 @@ export default defineConfig({
 
           // Container component max-width values
           maxWidth: ["640px", "768px", "1024px", "1280px", "1536px", "100%"],
+
+          // Button component blur effects (v1.7.0 requires explicit staticCss for cva recipes)
+          filter: ["blur(5px)", "blur(8px)", "grayscale(0.5)"],
+
+          // Button component backgrounds (v1.7.0 requires explicit staticCss for cva recipes)
+          background: [
+            "rgba(102, 126, 234, 0.9)",
+            "rgba(123, 147, 245, 0.95)",
+            "linear-gradient(135deg, rgba(255, 140, 107, 0.9), rgba(245, 87, 108, 0.9))",
+            "linear-gradient(135deg, rgba(255, 160, 127, 0.95), rgba(247, 109, 127, 0.95))",
+            "rgba(102, 126, 234, 0.4)",
+            "rgba(123, 147, 245, 0.5)",
+            "rgba(100, 100, 100, 0.3)",
+          ],
         },
       },
     ],
@@ -167,6 +203,38 @@ export default defineConfig({
     "p, h1, h2, h3, h4, h5, h6": {
       overflowWrap: "break-word", // Prevent text overflow
     },
+    // Explicit heading sizes to ensure proper hierarchy
+    // even with sm body font size
+    h1: {
+      fontSize: "2rem", // 32px - large headings
+      fontWeight: "bold",
+      lineHeight: "1.25",
+    },
+    h2: {
+      fontSize: "1.5rem", // 24px
+      fontWeight: "bold",
+      lineHeight: "1.25",
+    },
+    h3: {
+      fontSize: "1.25rem", // 20px
+      fontWeight: "semibold",
+      lineHeight: "1.375",
+    },
+    h4: {
+      fontSize: "1.125rem", // 18px
+      fontWeight: "semibold",
+      lineHeight: "1.5",
+    },
+    h5: {
+      fontSize: "1rem", // 16px
+      fontWeight: "medium",
+      lineHeight: "1.5",
+    },
+    h6: {
+      fontSize: "0.875rem", // 14px
+      fontWeight: "medium",
+      lineHeight: "1.5",
+    },
   },
 
   // Theme configuration with design tokens
@@ -187,6 +255,10 @@ export default defineConfig({
         spacing: toPandaTokens(spacing),
         radii: toPandaTokens(borderRadius),
         shadows: toPandaTokens(shadows),
+        opacity: toPandaTokens(opacity),
+        sizes: toPandaTokens(sizes),
+        durations: toPandaTokens(transitions.duration),
+        easings: toPandaTokens(transitions.easing),
       },
       breakpoints: {
         sm: "640px",
@@ -194,6 +266,212 @@ export default defineConfig({
         lg: "1024px",
         xl: "1280px",
         "2xl": "1536px",
+      },
+      recipes: {
+        button: {
+          className: "button",
+          description: "Button component with glassmorphism effects",
+          base: {
+            all: "unset",
+            boxSizing: "border-box",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            borderRadius: "9999px",
+            fontFamily: "sans",
+            whiteSpace: "nowrap",
+            position: "relative",
+            overflow: "visible",
+            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            isolation: "isolate",
+            _before: {
+              content: '""',
+              position: "absolute",
+              inset: 0,
+              borderRadius: "inherit",
+              zIndex: -1,
+            },
+            _focusVisible: {
+              outline: "2px solid #3b82f6",
+              outlineOffset: "2",
+            },
+            _disabled: {
+              cursor: "not-allowed",
+              opacity: 0.5,
+              filter: "grayscale(0.5)",
+            },
+            _active: {
+              transform: "scale(0.97) translateY(1px)",
+            },
+          },
+          variants: {
+            variant: {
+              primary: {
+                color: "white",
+                _before: {
+                  background: "rgba(102, 126, 234, 0.9)",
+                  filter: "blur(5px)",
+                  inset: "-3px",
+                  boxShadow:
+                    "0 0 20px 0 rgba(102, 126, 234, 0.3), 0 0 40px 0 rgba(102, 126, 234, 0.15)",
+                },
+                _hover: {
+                  _before: {
+                    background: "rgba(123, 147, 245, 0.95)",
+                    filter: "blur(5px)",
+                    boxShadow:
+                      "0 0 25px 0 rgba(123, 147, 245, 0.4), 0 0 45px 0 rgba(123, 147, 245, 0.2)",
+                  },
+                },
+              },
+              secondary: {
+                color: "white",
+                _before: {
+                  background:
+                    "linear-gradient(135deg, rgba(255, 140, 107, 0.9), rgba(245, 87, 108, 0.9))",
+                  filter: "blur(5px)",
+                  inset: "-3px",
+                  boxShadow:
+                    "0 0 20px 0 rgba(255, 140, 107, 0.3), 0 0 40px 0 rgba(245, 87, 108, 0.15)",
+                },
+                _hover: {
+                  _before: {
+                    background:
+                      "linear-gradient(135deg, rgba(255, 160, 127, 0.95), rgba(247, 109, 127, 0.95))",
+                    filter: "blur(5px)",
+                    boxShadow:
+                      "0 0 25px 0 rgba(255, 160, 127, 0.4), 0 0 45px 0 rgba(247, 109, 127, 0.2)",
+                  },
+                },
+              },
+              outline: {
+                color: "white",
+                _before: {
+                  background: "rgba(102, 126, 234, 0.4)",
+                  filter: "blur(5px)",
+                  inset: "-3px",
+                  boxShadow:
+                    "0 0 20px 0 rgba(102, 126, 234, 0.2), 0 0 40px 0 rgba(102, 126, 234, 0.1)",
+                },
+                _hover: {
+                  _before: {
+                    background: "rgba(123, 147, 245, 0.5)",
+                    filter: "blur(5px)",
+                    boxShadow:
+                      "0 0 25px 0 rgba(123, 147, 245, 0.3), 0 0 45px 0 rgba(123, 147, 245, 0.15)",
+                  },
+                },
+              },
+              disabled: {
+                color: "rgba(150, 150, 150, 0.7)",
+                cursor: "not-allowed",
+                _before: {
+                  background: "rgba(100, 100, 100, 0.3)",
+                  filter: "blur(5px)",
+                  inset: "-3px",
+                  boxShadow: "0 0 15px 0 rgba(100, 100, 100, 0.2)",
+                },
+                _hover: {
+                  _before: {
+                    background: "rgba(100, 100, 100, 0.3)",
+                    filter: "blur(5px)",
+                    boxShadow: "0 0 15px 0 rgba(100, 100, 100, 0.2)",
+                  },
+                },
+              },
+            },
+            size: {
+              sm: {
+                fontSize: "sm",
+                paddingX: "4",
+                paddingY: "2",
+                minHeight: "9",
+                lineHeight: 1.5,
+              },
+              md: {
+                fontSize: "md",
+                paddingX: "7",
+                paddingY: "3",
+                minHeight: "11",
+                lineHeight: 1.5,
+              },
+              lg: {
+                fontSize: "lg",
+                paddingX: "9",
+                paddingY: "4",
+                minHeight: "14",
+                lineHeight: 1.5,
+              },
+            },
+          },
+          defaultVariants: {
+            variant: "primary",
+            size: "md",
+          },
+        },
+        navLink: {
+          className: "navLink",
+          description:
+            "Navigation link component with decorative emoji prefixes",
+          base: {
+            /* Reset & Base */
+            display: "block",
+            color: "inherit",
+            fontFamily: "sans",
+            fontSize: "inherit",
+            lineHeight: "inherit",
+
+            /* Spacing */
+            py: "2px",
+            px: "2px",
+
+            /* Overflow handling */
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+
+            /* Link decoration - no underline by default, wavy on hover */
+            textDecoration: "none",
+            _hover: {
+              textDecoration: "underline",
+              textDecorationStyle: "wavy",
+              textUnderlineOffset: "2px",
+            },
+
+            /* Transitions */
+            transition: "all 150ms ease-in-out",
+
+            /* Focus states */
+            outline: "none",
+            _focusVisible: {
+              outline: "2px solid",
+              outlineColor: "blue.500",
+              outlineOffset: "2px",
+            },
+          },
+          variants: {
+            variant: {
+              personal: {
+                /* Personal/Things work styling */
+                _before: {
+                  content: "'🎀 ୧ꔛꗃ˖ '",
+                  marginRight: "0.5em",
+                },
+              },
+              client: {
+                /* Client work styling */
+                _before: {
+                  content: "'(^‿^)-𝒷))) '",
+                  marginRight: "0.5em",
+                },
+              },
+            },
+          },
+          defaultVariants: {
+            variant: "personal",
+          },
+        },
       },
     },
   },
@@ -206,34 +484,57 @@ export default defineConfig({
   jsxFramework: "react",
 
   // Production optimizations
+  // v1.7.0: Enhanced optimization with better tree-shaking
   minify: process.env.NODE_ENV === "production", // Minify CSS only in production
   hash: process.env.NODE_ENV === "production", // Hash class names only in production for better debugging in dev
+  optimize: true, // Enable all optimizations
 
   // Logging level for build-time debugging
+  // v1.7.0: More granular logging options
   logLevel: process.env.NODE_ENV === "development" ? "debug" : "info",
 
   // Strict mode for better type safety
-  // Catches common mistakes at build time
+  // v1.7.0: Recommended to enable in development for better DX
   strictTokens: false, // Set to true to enforce only design token values
   strictPropertyValues: false, // Set to true to only allow token values for properties
+
+  // v1.7.0: Shorthands configuration
+  // Enable/disable CSS property shorthands for better type safety
+  shorthands: true,
+
+  // v1.7.0: Enhanced type generation
+  emitPackage: false, // Set to true if you want to publish the styled-system as a package
 
   // Utilities configuration
   // Extend with custom utility functions if needed
   utilities: {
     extend: {
-      // Example: Custom utilities can be added here
-      // truncate: {
-      //   className: "truncate",
-      //   values: { type: "boolean" },
-      //   transform(value) {
-      //     if (!value) return {};
-      //     return {
-      //       overflow: "hidden",
-      //       textOverflow: "ellipsis",
-      //       whiteSpace: "nowrap",
-      //     };
-      //   },
-      // },
+      // Custom utility for text truncation
+      truncate: {
+        className: "truncate",
+        values: { type: "boolean" },
+        transform(value) {
+          if (!value) return {};
+          return {
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          };
+        },
+      },
+      // Custom utility for line clamping
+      lineClamp: {
+        className: "line-clamp",
+        values: { type: "number" },
+        transform(value) {
+          return {
+            display: "-webkit-box",
+            WebkitLineClamp: String(value),
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          };
+        },
+      },
     },
   },
 
@@ -244,5 +545,24 @@ export default defineConfig({
       // Custom patterns can be added here
       // Example: A custom "stack" pattern with consistent spacing
     },
+  },
+
+  // v1.7.0: Import Map for better module resolution
+  importMap: {
+    css: "@httpjpg/ui/css",
+    recipes: "@httpjpg/ui/recipes",
+    patterns: "@httpjpg/ui/patterns",
+    jsx: "@httpjpg/ui/jsx",
+  },
+
+  // v1.7.0: Panda Studio configuration
+  // Visual development tool for exploring and testing design tokens
+  studio: {
+    // Enable Panda Studio for visual token exploration
+    enabled: true,
+    // Port for the studio dev server (default: 6006)
+    port: 6006,
+    // Path to serve the studio from
+    outdir: ".panda-studio",
   },
 });

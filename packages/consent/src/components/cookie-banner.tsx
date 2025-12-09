@@ -249,27 +249,67 @@ export function CookieBanner({
             alignItems: "center",
           }}
         >
-          <Button variant="primary" size="md" onClick={handleAcceptAll}>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={handleAcceptAll}
+            css={{
+              md: {
+                fontSize: "md",
+                paddingX: "7",
+                paddingY: "3",
+                minHeight: "11",
+              },
+            }}
+          >
             ✓ Accept All
           </Button>
 
-          <Button variant="outline" size="md" onClick={handleRejectAll}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRejectAll}
+            css={{
+              md: {
+                fontSize: "md",
+                paddingX: "7",
+                paddingY: "3",
+                minHeight: "11",
+              },
+            }}
+          >
             ✗ Reject All
           </Button>
 
           {showDetails ? (
             <Button
               variant="secondary"
-              size="md"
+              size="sm"
               onClick={handleSavePreferences}
+              css={{
+                md: {
+                  fontSize: "md",
+                  paddingX: "7",
+                  paddingY: "3",
+                  minHeight: "11",
+                },
+              }}
             >
               ⚙ Save Preferences
             </Button>
           ) : (
             <Button
               variant="outline"
-              size="md"
+              size="sm"
               onClick={() => setShowDetails(true)}
+              css={{
+                md: {
+                  fontSize: "md",
+                  paddingX: "7",
+                  paddingY: "3",
+                  minHeight: "11",
+                },
+              }}
             >
               ⚙ Customize
             </Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Image } from "@httpjpg/ui";
+import { Box, Image } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 
 export interface PSNCardProps {
@@ -12,6 +12,7 @@ export interface PSNCardProps {
 
 /**
  * A fixed PSN profile card widget
+ * Only visible on desktop (lg breakpoint and above)
  *
  * @example
  * ```tsx
@@ -32,13 +33,17 @@ export const PSNCard = ({ username = "bullensohn6" }: PSNCardProps) => {
   const cardUrl = `https://card.psnprofiles.com/1/${username}.png`;
 
   return (
-    <div
-      style={{
+    <Box
+      css={{
         position: "fixed",
         top: 0,
         left: 0,
         zIndex: 40,
-        width: "var(--sizes-widget-md)",
+        width: "300px",
+        display: "none",
+        lg: {
+          display: "block",
+        },
       }}
     >
       <Image
@@ -51,6 +56,6 @@ export const PSNCard = ({ username = "bullensohn6" }: PSNCardProps) => {
         }}
         draggable={false}
       />
-    </div>
+    </Box>
   );
 };

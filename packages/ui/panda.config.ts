@@ -123,6 +123,17 @@ export default defineConfig({
 
           // Button component blur effects (v1.7.0 requires explicit staticCss for cva recipes)
           filter: ["blur(5px)", "blur(8px)", "grayscale(0.5)"],
+
+          // Button component backgrounds (v1.7.0 requires explicit staticCss for cva recipes)
+          background: [
+            "rgba(102, 126, 234, 0.9)",
+            "rgba(123, 147, 245, 0.95)",
+            "linear-gradient(135deg, rgba(255, 140, 107, 0.9), rgba(245, 87, 108, 0.9))",
+            "linear-gradient(135deg, rgba(255, 160, 127, 0.95), rgba(247, 109, 127, 0.95))",
+            "rgba(102, 126, 234, 0.4)",
+            "rgba(123, 147, 245, 0.5)",
+            "rgba(100, 100, 100, 0.3)",
+          ],
         },
       },
     ],

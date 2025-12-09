@@ -1,3 +1,7 @@
+// Storyblok CDN domain patterns for URL detection
+const STORYBLOK_CDN_HTTPS = "https://a.storyblok.com/";
+const STORYBLOK_CDN_PROTOCOL_RELATIVE = "//a.storyblok.com/";
+
 /**
  * Process Storyblok image URL with transformations
  * @param imageSrc - The Storyblok URL of the image (or external URL)
@@ -21,8 +25,8 @@ export function getProcessedImage(
   // Only Storyblok URLs should be processed through the image service
   // Use startsWith for robust domain detection to avoid false positives
   const isStoryblokUrl =
-    imageSrc.startsWith("https://a.storyblok.com/") ||
-    imageSrc.startsWith("//a.storyblok.com/");
+    imageSrc.startsWith(STORYBLOK_CDN_HTTPS) ||
+    imageSrc.startsWith(STORYBLOK_CDN_PROTOCOL_RELATIVE);
 
   // If it's not a Storyblok URL, return as-is (external URL)
   if (!isStoryblokUrl) {

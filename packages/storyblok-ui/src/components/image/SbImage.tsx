@@ -26,6 +26,9 @@ export interface SbImageProps {
   };
 }
 
+// Default image width for Storyblok image service when aspect ratio is specified
+const DEFAULT_IMAGE_WIDTH = 1200;
+
 /**
  * Storyblok Image Component
  * Optimized image with Storyblok image service
@@ -55,9 +58,10 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
   let cropDimensions = "";
   if (aspectRatio) {
     const [widthRatio, heightRatio] = aspectRatio.split("/").map(Number);
-    const baseWidth = 1200;
-    const calculatedHeight = Math.round((baseWidth * heightRatio) / widthRatio);
-    cropDimensions = `${baseWidth}x${calculatedHeight}`;
+    const calculatedHeight = Math.round(
+      (DEFAULT_IMAGE_WIDTH * heightRatio) / widthRatio,
+    );
+    cropDimensions = `${DEFAULT_IMAGE_WIDTH}x${calculatedHeight}`;
   }
 
   const processedSrc = getProcessedImage(

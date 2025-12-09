@@ -1,5 +1,6 @@
 # Panda CSS generated files
 styled-system/
+.panda-studio/
 
 # Build output
 dist/

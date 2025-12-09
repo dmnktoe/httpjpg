@@ -303,4 +303,15 @@ export default defineConfig({
     patterns: "@httpjpg/ui/patterns",
     jsx: "@httpjpg/ui/jsx",
   },
+
+  // v1.7.0: Panda Studio configuration
+  // Visual development tool for exploring and testing design tokens
+  studio: {
+    // Enable Panda Studio for visual token exploration
+    enabled: true,
+    // Port for the studio dev server (default: 6006)
+    port: 6006,
+    // Path to serve the studio from
+    outdir: ".panda-studio",
+  },
 });

@@ -44,10 +44,11 @@
     "prepare": "panda codegen && panda cssgen --outfile styles.css",
     "dev": "panda codegen --watch",
     "build": "panda codegen && panda cssgen --outfile styles.css",
+    "studio": "panda studio",
     "type-check": "tsc --noEmit",
     "lint": "biome lint .",
     "lint:fix": "biome lint . --fix",
-    "clean": "rm -rf styled-system styles.css"
+    "clean": "rm -rf styled-system styles.css .panda-studio"
   },
   "dependencies": {
     "@httpjpg/now-playing": "workspace:*",

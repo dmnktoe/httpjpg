@@ -889,6 +889,27 @@
     .button:is(:active, [data-active]) {
       transform: scale(0.97) translateY(1px);
 }
+
+    .navLink {
+      padding-block: 2px;
+      padding-inline: 2px;
+      overflow: hidden;
+      transition: all 150ms ease-in-out;
+      outline: var(--borders-none);
+      display: block;
+      color: inherit;
+      font-family: var(--fonts-sans);
+      font-size: inherit;
+      line-height: inherit;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+}
+
+    .navLink:is(:focus-visible, [data-focus-visible]) {
+      outline: 2px solid;
+      outline-color: var(--colors-blue-500);
+      outline-offset: 2px;
+}
 }
 
   .button--variant_primary {
@@ -982,6 +1003,16 @@
     background: rgba(100, 100, 100, 0.3);
     filter: blur(5px);
     box-shadow: 0 0 15px 0 rgba(100, 100, 100, 0.2);
+}
+
+  .navLink--variant_personal::before {
+    content: '🎀 ୧ꔛꗃ˖ ';
+    margin-right: 0.5em;
+}
+
+  .navLink--variant_client::before {
+    content: '(^‿^)-𝒷))) ';
+    margin-right: 0.5em;
 }
 }
 

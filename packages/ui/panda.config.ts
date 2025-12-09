@@ -408,6 +408,60 @@ export default defineConfig({
             size: "md",
           },
         },
+        navLink: {
+          className: "navLink",
+          description:
+            "Navigation link component with decorative emoji prefixes",
+          base: {
+            /* Reset & Base */
+            display: "block",
+            color: "inherit",
+            fontFamily: "sans",
+            fontSize: "inherit",
+            lineHeight: "inherit",
+
+            /* Spacing */
+            py: "2px",
+            px: "2px",
+
+            /* Overflow handling */
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+
+            /* Transitions */
+            transition: "all 150ms ease-in-out",
+
+            /* Focus states */
+            outline: "none",
+            _focusVisible: {
+              outline: "2px solid",
+              outlineColor: "blue.500",
+              outlineOffset: "2px",
+            },
+          },
+          variants: {
+            variant: {
+              personal: {
+                /* Personal/Things work styling */
+                _before: {
+                  content: "'🎀 ୧ꔛꗃ˖ '",
+                  marginRight: "0.5em",
+                },
+              },
+              client: {
+                /* Client work styling */
+                _before: {
+                  content: "'(^‿^)-𝒷))) '",
+                  marginRight: "0.5em",
+                },
+              },
+            },
+          },
+          defaultVariants: {
+            variant: "personal",
+          },
+        },
       },
     },
   },

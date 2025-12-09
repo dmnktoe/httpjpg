@@ -1,7 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { css, cva, cx } from "styled-system/css";
+import { css, cx } from "styled-system/css";
+import { navLink } from "styled-system/recipes";
 import type { SystemStyleObject } from "styled-system/types";
 import { Link, type LinkProps } from "../link/link";
 
@@ -21,62 +22,13 @@ export interface NavLinkProps extends Omit<LinkProps, "css"> {
   css?: SystemStyleObject;
 }
 
-const navLinkRecipe = cva({
-  base: {
-    /* Reset & Base */
-    display: "block",
-    color: "inherit",
-    fontFamily: "sans",
-    fontSize: "inherit",
-    lineHeight: "inherit",
-
-    /* Spacing */
-    py: "2px",
-    px: "2px",
-
-    /* Overflow handling */
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-
-    /* Transitions */
-    transition: "all 150ms ease-in-out",
-
-    /* Focus states */
-    outline: "none",
-    _focusVisible: {
-      outline: "2px solid",
-      outlineColor: "blue.500",
-      outlineOffset: "2px",
-    },
-  },
-  variants: {
-    variant: {
-      personal: {
-        /* Personal/Things work styling */
-        _before: {
-          content: "'🎀 ୧ꔛꗃ˖ '",
-          marginRight: "0.5em",
-        },
-      },
-      client: {
-        /* Client work styling */
-        _before: {
-          content: "'(^‿^)-𝒷))) '",
-          marginRight: "0.5em",
-        },
-      },
-    },
-  },
-  defaultVariants: {
-    variant: "personal",
-  },
-});
-
 /**
  * Navigation Link Component
- * Specialized link for navigation with decorative prefixes and hover underline
+ * Specialized link for navigation with decorative emoji prefixes and hover underline
  * Based on the general-purpose Link component
+ *
+ * Note: Recipe is defined in panda.config.ts theme.recipes for proper
+ * pseudo-element extraction in Panda CSS v1.7.0+
  */
 export const NavLink = ({
   variant = "personal",
@@ -86,7 +38,7 @@ export const NavLink = ({
   showExternalIcon = false,
   ...linkProps
 }: NavLinkProps) => {
-  const navLinkStyles = css(navLinkRecipe.raw({ variant }), cssProp);
+  const navLinkStyles = css(navLink.raw({ variant }), cssProp);
 
   return (
     <Link

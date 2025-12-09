@@ -29,6 +29,7 @@ export interface NavLinkProps extends Omit<LinkProps, "css"> {
  *
  * Note: Recipe is defined in panda.config.ts theme.recipes for proper
  * pseudo-element extraction in Panda CSS v1.7.0+
+ * Custom CSS props are merged on top of the recipe base styles
  */
 export const NavLink = ({
   variant = "personal",
@@ -41,10 +42,12 @@ export const NavLink = ({
   // Apply the recipe className directly for proper pseudo-element rendering
   const recipeClassName = navLink({ variant });
   
-  // Apply any custom CSS on top
+  // Apply any custom CSS on top of recipe styles
+  // This allows overriding recipe base styles while preserving pseudo-elements
   const customStyles = cssProp ? css(cssProp) : undefined;
   
   // Merge classNames: recipe -> custom -> user className
+  // Later classNames override earlier ones for conflicting properties
   const mergedClassName = cx(
     recipeClassName,
     customStyles,

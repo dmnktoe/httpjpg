@@ -429,6 +429,12 @@ export default defineConfig({
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
 
+            /* Link decoration - can be overridden via css prop */
+            textDecoration: "none",
+            _hover: {
+              textDecoration: "underline",
+            },
+
             /* Transitions */
             transition: "all 150ms ease-in-out",
 

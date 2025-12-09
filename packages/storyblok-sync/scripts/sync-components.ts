@@ -1256,12 +1256,19 @@ async function getSbConfigComponent(): Promise<StoryblokComponent> {
         description: "Show PlayStation Network card widget",
         pos: 5,
       },
+      discord_user_id: {
+        type: "text",
+        display_name: "Discord User ID",
+        description:
+          "Discord User ID for live status (get from Discord Developer Mode)",
+        pos: 6,
+      },
       spotify_enabled: {
         type: "boolean",
         display_name: "Enable Now Playing",
         default_value: "true",
         description: "Show Spotify Now Playing widget",
-        pos: 6,
+        pos: 7,
       },
     },
   };

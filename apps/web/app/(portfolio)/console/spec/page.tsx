@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  borderRadius,
+  colors,
+  opacity,
+  shadows,
+  sizes,
+  spacing,
+  typography,
+} from "@httpjpg/tokens";
 import { Box, Container, Headline } from "@httpjpg/ui";
 import { ConsoleHeader } from "../_components";
 
@@ -8,36 +17,38 @@ import { ConsoleHeader } from "../_components";
  * Showcases all design tokens from the @httpjpg/tokens package
  */
 export default function SpecPage() {
-  const fontSizes = ["sm", "md", "base", "lg", "xl"];
-  const colors = {
-    primary: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950],
-    accent: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950],
-    neutral: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950],
-    success: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950],
-    warning: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950],
-    danger: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950],
-    yellow: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950],
-  };
-  const spacing = [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24];
-  const opacity = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  const borderRadii = [
-    "none",
-    "sm",
-    "base",
-    "md",
-    "lg",
-    "xl",
-    "2xl",
-    "3xl",
-    "full",
-  ];
+  // Extract font sizes from typography tokens
+  const fontSizes = Object.keys(typography.fontSize);
+
+  // Extract color palettes with their shades
+  const colorPalettes = Object.entries(colors).reduce(
+    (acc, [key, value]) => {
+      if (typeof value === "object" && !Array.isArray(value)) {
+        acc[key] = Object.keys(value).map((shade) => Number(shade));
+      }
+      return acc;
+    },
+    {} as Record<string, number[]>,
+  );
+
+  // Extract spacing values
+  const spacingValues = Object.keys(spacing).map(Number);
+
+  // Extract opacity values
+  const opacityValues = Object.keys(opacity).map(Number);
+
+  // Extract border radius values
+  const borderRadii = Object.keys(borderRadius);
+
+  // Extract shadow values
+  const shadowValues = Object.keys(shadows);
 
   return (
     <>
       <ConsoleHeader
-        tag="DESIGN SYSTEM"
-        title="Design Tokens Specification"
-        description="Complete reference of all design tokens used in the httpjpg design system"
+        tag="🎯"
+        title="🎯 Design Tokens Specification"
+        description="Complete reference of all design tokens and design system"
       />
 
       <Container
@@ -142,7 +153,7 @@ export default function SpecPage() {
             Colors
           </Headline>
 
-          {Object.entries(colors).map(([colorName, shades]) => (
+          {Object.entries(colorPalettes).map(([colorName, shades]) => (
             <Box key={colorName} css={{ mb: 6 }}>
               <Box
                 css={{
@@ -158,41 +169,73 @@ export default function SpecPage() {
               <Box
                 css={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
-                  gap: 2,
+                  gridTemplateColumns: "repeat(auto-fit, minmax(90px, 1fr))",
+                  gap: 3,
                 }}
               >
-                {shades.map((shade) => (
-                  <Box
-                    key={shade}
-                    css={{
-                      position: "relative",
-                      aspectRatio: "1",
-                      background: `${colorName}.${shade}` as any,
-                      border: "1px solid",
-                      borderColor: "neutral.200",
-                    }}
-                  >
+                {shades.map((shade: number) => {
+                  const colorValue = (colors as any)[colorName]?.[shade];
+                  const isLight = shade < 500;
+
+                  return (
                     <Box
+                      key={shade}
                       css={{
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        p: 2,
-                        fontSize: "sm",
-                        fontFamily: "mono",
-                        color: shade >= 500 ? "white" : "black",
-                        background:
-                          shade >= 500
-                            ? "rgba(0, 0, 0, 0.3)"
-                            : "rgba(255, 255, 255, 0.8)",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
                       }}
                     >
-                      {shade}
+                      <Box
+                        css={{
+                          position: "relative",
+                          height: 16,
+                          overflow: "hidden",
+                          fontFamily: "mono",
+                          fontSize: "2xs",
+                          lineHeight: "1",
+                          letterSpacing: "-0.05em",
+                        }}
+                        style={{ background: colorValue || "#000" }}
+                      >
+                        <Box
+                          css={{
+                            position: "absolute",
+                            inset: 0,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: isLight ? "black" : "white",
+                            opacity: 30,
+                          }}
+                        >
+                          {isLight ? "░░░░░░░░░░" : "▓▓▓▓▓▓▓▓▓▓"}
+                        </Box>
+                      </Box>
+                      <Box
+                        css={{
+                          fontSize: "xs",
+                          fontFamily: "mono",
+                          textAlign: "center",
+                          opacity: 70,
+                        }}
+                      >
+                        [{shade}]
+                      </Box>
+                      <Box
+                        css={{
+                          fontSize: "2xs",
+                          fontFamily: "mono",
+                          textAlign: "center",
+                          opacity: 50,
+                          wordBreak: "break-all",
+                        }}
+                      >
+                        {colorValue}
+                      </Box>
                     </Box>
-                  </Box>
-                ))}
+                  );
+                })}
               </Box>
             </Box>
           ))}
@@ -205,7 +248,7 @@ export default function SpecPage() {
           </Headline>
 
           <Box css={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {spacing.map((space) => (
+            {spacingValues.map((space) => (
               <Box
                 key={space}
                 css={{
@@ -227,8 +270,10 @@ export default function SpecPage() {
                 <Box
                   css={{
                     height: 8,
-                    width: space,
                     background: "primary.500",
+                  }}
+                  style={{
+                    width: spacing[space as keyof typeof spacing],
                   }}
                 />
               </Box>
@@ -249,14 +294,16 @@ export default function SpecPage() {
               gap: 3,
             }}
           >
-            {opacity.map((op) => (
+            {opacityValues.map((op) => (
               <Box
                 key={op}
                 css={{
                   p: 4,
                   background: "black",
-                  opacity: op,
                   textAlign: "center",
+                }}
+                style={{
+                  opacity: opacity[op as keyof typeof opacity],
                 }}
               >
                 <Box
@@ -314,37 +361,35 @@ export default function SpecPage() {
               gap: 6,
             }}
           >
-            {["none", "sm", "base", "md", "lg", "xl", "2xl", "inner"].map(
-              (shadow) => (
-                <Box key={shadow} css={{ textAlign: "center" }}>
+            {shadowValues.map((shadow) => (
+              <Box key={shadow} css={{ textAlign: "center" }}>
+                <Box
+                  css={{
+                    width: "full",
+                    height: 24,
+                    background: "white",
+                    mb: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  style={{
+                    boxShadow: shadows[shadow as keyof typeof shadows],
+                  }}
+                >
                   <Box
                     css={{
-                      width: "full",
-                      height: 24,
-                      background: "white",
-                      boxShadow: shadow as any,
-                      mb: 2,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
+                      width: 16,
+                      height: 16,
+                      background: "primary.500",
                     }}
-                  >
-                    <Box
-                      css={{
-                        width: 16,
-                        height: 16,
-                        background: "primary.500",
-                      }}
-                    />
-                  </Box>
-                  <Box
-                    css={{ fontSize: "sm", fontFamily: "mono", opacity: 60 }}
-                  >
-                    {shadow}
-                  </Box>
+                  />
                 </Box>
-              ),
-            )}
+                <Box css={{ fontSize: "sm", fontFamily: "mono", opacity: 60 }}>
+                  {shadow}
+                </Box>
+              </Box>
+            ))}
           </Box>
         </Box>
 
@@ -370,10 +415,12 @@ export default function SpecPage() {
                 <Box key={size} css={{ textAlign: "center" }}>
                   <Box
                     css={{
-                      width: `icon.${size}` as any,
-                      height: `icon.${size}` as any,
                       background: "primary.500",
                       mb: 2,
+                    }}
+                    style={{
+                      width: sizes.icon[size as keyof typeof sizes.icon],
+                      height: sizes.icon[size as keyof typeof sizes.icon],
                     }}
                   />
                   <Box
@@ -402,11 +449,15 @@ export default function SpecPage() {
                 <Box key={size} css={{ textAlign: "center" }}>
                   <Box
                     css={{
-                      width: `indicator.${size}` as any,
-                      height: `indicator.${size}` as any,
                       background: "success.500",
                       borderRadius: "full",
                       mb: 2,
+                    }}
+                    style={{
+                      width:
+                        sizes.indicator[size as keyof typeof sizes.indicator],
+                      height:
+                        sizes.indicator[size as keyof typeof sizes.indicator],
                     }}
                   />
                   <Box

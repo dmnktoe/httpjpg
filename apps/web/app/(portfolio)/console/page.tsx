@@ -75,14 +75,25 @@ const quickLinks: QuickLink[] = [
 
 const initialCards: ConsoleCard[] = [
   {
+    title: "Design Tokens Spec",
+    description: "Complete reference of all design tokens and design system",
+    icon: "🎯",
+    href: "/console/spec",
+    stats: [
+      { label: "Colors", value: "Loading..." },
+      { label: "Typography", value: "Loading..." },
+      { label: "Tokens", value: "Loading..." },
+    ],
+  },
+  {
     title: "Package Versions",
     description: "Monorepo packages with versions and changelogs",
     icon: "📦",
     href: "/console/versions",
     stats: [
-      { label: "Apps", value: "3" },
-      { label: "Packages", value: "13" },
-      { label: "Version", value: "v1.0.0" },
+      { label: "Apps", value: "Loading..." },
+      { label: "Packages", value: "Loading..." },
+      { label: "Version", value: "Loading..." },
     ],
   },
   {
@@ -97,6 +108,28 @@ const initialCards: ConsoleCard[] = [
     ],
   },
   {
+    title: "Sentry Errors",
+    description: "Application error tracking and performance monitoring",
+    icon: "🐛",
+    href: "/console/sentry",
+    stats: [
+      { label: "Errors (24h)", value: "Loading..." },
+      { label: "Issues", value: "Loading..." },
+      { label: "Users Affected", value: "Loading..." },
+    ],
+  },
+  {
+    title: "Datadog RUM",
+    description: "Real user monitoring and browser performance",
+    icon: "📊",
+    href: "/console/datadog",
+    stats: [
+      { label: "Page Views", value: "Loading..." },
+      { label: "Avg Load Time", value: "Loading..." },
+      { label: "Error Rate", value: "Loading..." },
+    ],
+  },
+  {
     title: "CMS Configuration",
     description: "Storyblok CMS settings and configuration",
     icon: "⚙️",
@@ -105,6 +138,17 @@ const initialCards: ConsoleCard[] = [
       { label: "Stories", value: "Loading..." },
       { label: "Space", value: "Loading..." },
       { label: "API", value: "Loading..." },
+    ],
+  },
+  {
+    title: "Discord Status",
+    description: "Real-time Discord presence and activities",
+    icon: "💬",
+    href: "#discord",
+    stats: [
+      { label: "Status", value: "Loading..." },
+      { label: "Activity", value: "Loading..." },
+      { label: "Username", value: "Loading..." },
     ],
   },
   {
@@ -137,6 +181,48 @@ export default function ConsolePage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        // Fetch token stats
+        const tokenResponse = await fetch("/api/token-stats");
+        if (tokenResponse.ok) {
+          const tokenData = await tokenResponse.json();
+          setConsoleCards((prev) =>
+            prev.map((card) => {
+              if (card.title === "Design Tokens Spec") {
+                return {
+                  ...card,
+                  stats: [
+                    { label: "Colors", value: tokenData.colors },
+                    { label: "Typography", value: tokenData.typography },
+                    { label: "Tokens", value: tokenData.tokens },
+                  ],
+                };
+              }
+              return card;
+            }),
+          );
+        }
+
+        // Fetch package stats
+        const packageResponse = await fetch("/api/package-stats");
+        if (packageResponse.ok) {
+          const packageData = await packageResponse.json();
+          setConsoleCards((prev) =>
+            prev.map((card) => {
+              if (card.title === "Package Versions") {
+                return {
+                  ...card,
+                  stats: [
+                    { label: "Apps", value: packageData.apps },
+                    { label: "Packages", value: packageData.packages },
+                    { label: "Version", value: packageData.version },
+                  ],
+                };
+              }
+              return card;
+            }),
+          );
+        }
+
         // Fetch docs stats
         const docsResponse = await fetch("/api/docs-stats");
         if (docsResponse.ok) {
@@ -258,8 +344,116 @@ export default function ConsolePage() {
       }
     };
 
+    const fetchMonitoringStats = async () => {
+      try {
+        // Fetch Sentry stats
+        const sentryResponse = await fetch("/api/sentry");
+        if (sentryResponse.ok) {
+          const sentryData = await sentryResponse.json();
+          setConsoleCards((cards) =>
+            cards.map((card) => {
+              if (card.title === "Sentry Errors") {
+                return {
+                  ...card,
+                  stats: [
+                    {
+                      label: "Errors (24h)",
+                      value: String(sentryData.errors24h || 0),
+                    },
+                    {
+                      label: "Issues",
+                      value: String(sentryData.totalIssues || 0),
+                    },
+                    {
+                      label: "Users Affected",
+                      value: String(sentryData.usersAffected || 0),
+                    },
+                  ],
+                };
+              }
+              return card;
+            }),
+          );
+        } else {
+          console.error("Sentry API error:", await sentryResponse.text());
+        }
+
+        // Fetch Datadog stats
+        const datadogResponse = await fetch("/api/datadog");
+        if (datadogResponse.ok) {
+          const datadogData = await datadogResponse.json();
+          setConsoleCards((cards) =>
+            cards.map((card) => {
+              if (card.title === "Datadog RUM") {
+                return {
+                  ...card,
+                  stats: [
+                    {
+                      label: "Page Views",
+                      value: String(datadogData.requests || 0),
+                    },
+                    {
+                      label: "Avg Load Time",
+                      value: `${datadogData.latency || 0}ms`,
+                    },
+                    {
+                      label: "Error Rate",
+                      value: `${datadogData.errors?.toFixed(1) || 0}%`,
+                    },
+                  ],
+                };
+              }
+              return card;
+            }),
+          );
+        } else {
+          console.error("Datadog API error:", await datadogResponse.text());
+        }
+      } catch (error) {
+        console.error("Failed to fetch monitoring stats:", error);
+      }
+    };
+
+    const fetchDashboardStats = async () => {
+      try {
+        // Fetch Discord stats
+        const discordResponse = await fetch("/api/discord");
+        if (discordResponse.ok) {
+          const discordData = await discordResponse.json();
+          setConsoleCards((cards) =>
+            cards.map((card) => {
+              if (card.title === "Discord Status") {
+                return {
+                  ...card,
+                  stats: [
+                    {
+                      label: "Status",
+                      value: discordData.status || "offline",
+                    },
+                    {
+                      label: "Activity",
+                      value: discordData.activity || "None",
+                    },
+                    {
+                      label: "Username",
+                      value: discordData.username || "yl33ly",
+                    },
+                  ],
+                };
+              }
+              return card;
+            }),
+          );
+        }
+      } catch (error) {
+        console.error("Failed to fetch dashboard stats:", error);
+      }
+    };
+
     fetchStats();
     fetchStatusStats();
+    fetchMonitoringStats();
+    fetchDashboardStats();
   }, []);
 
   return (
@@ -417,11 +611,26 @@ export default function ConsolePage() {
                           flexWrap: "wrap",
                         }}
                       >
-                        {card.stats.map((stat) => (
-                          <Box key={stat.label}>
-                            {stat.label} ･ {stat.value}
-                          </Box>
-                        ))}
+                        {card.stats.map((stat) => {
+                          const isDiscordOnline =
+                            card.title === "Discord Status" &&
+                            stat.label === "Status" &&
+                            stat.value === "online";
+                          return (
+                            <Box
+                              key={stat.label}
+                              css={{
+                                color: isDiscordOnline
+                                  ? "success.600"
+                                  : "inherit",
+                                fontWeight: isDiscordOnline ? 600 : "inherit",
+                              }}
+                            >
+                              {stat.label} ･ {isDiscordOnline && "🟢 "}
+                              {stat.value}
+                            </Box>
+                          );
+                        })}
                       </Box>
                     </Box>
                   )}

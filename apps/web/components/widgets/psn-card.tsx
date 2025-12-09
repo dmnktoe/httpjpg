@@ -16,17 +16,17 @@ export interface PSNCardProps {
  *
  * @example
  * ```tsx
- * <PSNCard username="bullensohn6" />
+ * <PSNCard username="your-psn-username" />
  * ```
  */
-export const PSNCard = ({ username = "bullensohn6" }: PSNCardProps) => {
+export const PSNCard = ({ username }: PSNCardProps) => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
+  if (!mounted || !username) {
     return null;
   }
 

@@ -44,7 +44,7 @@ export function ConsoleHeader({ tag, title, description }: ConsoleHeaderProps) {
           mb: 2,
         }}
       >
-        {tag}
+        ⇝ᵣₑcꫀₙₜ / {tag}
       </Box>
       <Headline
         level={1}
@@ -53,9 +53,11 @@ export function ConsoleHeader({ tag, title, description }: ConsoleHeaderProps) {
           textTransform: "uppercase",
         }}
       >
-        {title}
+        {title} ･ﾟ⋆
       </Headline>
-      <Paragraph css={{ maxW: "2xl", opacity: 70 }}>{description}</Paragraph>
+      <Paragraph css={{ maxW: "2xl", opacity: 70 }}>
+        ⋆.˚ ᡣ𐭩 .𖥔˚ {description} ⋆.˚✮
+      </Paragraph>
     </Container>
   );
 }

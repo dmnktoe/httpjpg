@@ -21,12 +21,25 @@ export const colors = {
   },
   // Vibrant accent colors
   primary: {
+    50: "#EEF2FF",
+    100: "#E0E7FF",
+    200: "#C7D2FE",
+    300: "#A5B4FC",
+    400: "#818CF8",
+    500: "#667EEA", // Main primary color - vibrant blue
+    600: "#5568D3",
+    700: "#4C51BF",
+    800: "#434190",
+    900: "#3C366B",
+    950: "#2D2A4A",
+  },
+  secondary: {
     50: "#FFF1F2",
     100: "#FFE4E6",
     200: "#FECDD3",
     300: "#FDA4AF",
     400: "#FB7185",
-    500: "#F43F5E", // Main primary color - vibrant rose/pink
+    500: "#F43F5E", // Secondary color - vibrant rose/pink
     600: "#E11D48",
     700: "#BE123C",
     800: "#9F1239",
@@ -34,17 +47,17 @@ export const colors = {
     950: "#4C0519",
   },
   accent: {
-    50: "#FFF7ED",
-    100: "#FFEDD5",
-    200: "#FED7AA",
-    300: "#FDBA74",
-    400: "#FB923C",
-    500: "#F97316", // Vibrant orange
-    600: "#EA580C",
-    700: "#C2410C",
-    800: "#9A3412",
-    900: "#7C2D12",
-    950: "#431407",
+    50: "#FFF5F0",
+    100: "#FFE8DC",
+    200: "#FFCDB8",
+    300: "#FFAA88",
+    400: "#FF8C6B",
+    500: "#FF6B47", // Peachy orange
+    600: "#F5576C",
+    700: "#E64A5D",
+    800: "#D43F50",
+    900: "#B8344A",
+    950: "#8E2A3C",
   },
   // Semantic status colors
   success: {
@@ -61,17 +74,17 @@ export const colors = {
     950: "#052E16",
   },
   warning: {
-    50: "#FEFCE8",
-    100: "#FEF9C3",
-    200: "#FEF08A",
-    300: "#FDE047",
-    400: "#FACC15",
-    500: "#EAB308", // Warning yellow
-    600: "#CA8A04",
-    700: "#A16207",
-    800: "#854D0E",
-    900: "#713F12",
-    950: "#422006",
+    50: "#FFFBEB",
+    100: "#FEF3C7",
+    200: "#FDE68A",
+    300: "#FCD34D",
+    400: "#FBBF24",
+    500: "#F59E0B", // Warning amber/yellow
+    600: "#D97706",
+    700: "#B45309",
+    800: "#92400E",
+    900: "#78350F",
+    950: "#451A03",
   },
   danger: {
     50: "#FEF2F2",
@@ -85,19 +98,6 @@ export const colors = {
     800: "#991B1B",
     900: "#7F1D1D",
     950: "#450A0A",
-  },
-  yellow: {
-    50: "#FEFCE8",
-    100: "#FEF9C3",
-    200: "#FEF08A",
-    300: "#FDE047",
-    400: "#FBBF24", // Bright yellow for preview banner
-    500: "#EAB308",
-    600: "#CA8A04",
-    700: "#A16207",
-    800: "#854D0E",
-    900: "#713F12",
-    950: "#422006",
   },
 } as const;
 

@@ -57,11 +57,22 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
   // Calculate dimensions based on aspect ratio
   let cropDimensions = "";
   if (aspectRatio) {
-    const [widthRatio, heightRatio] = aspectRatio.split("/").map(Number);
-    const calculatedHeight = Math.round(
-      (DEFAULT_IMAGE_WIDTH * heightRatio) / widthRatio,
-    );
-    cropDimensions = `${DEFAULT_IMAGE_WIDTH}x${calculatedHeight}`;
+    const parts = aspectRatio.split("/");
+    if (parts.length === 2) {
+      const [widthRatio, heightRatio] = parts.map(Number);
+      // Validate that both ratios are valid numbers and widthRatio is not zero
+      if (
+        widthRatio > 0 &&
+        heightRatio > 0 &&
+        Number.isFinite(widthRatio) &&
+        Number.isFinite(heightRatio)
+      ) {
+        const calculatedHeight = Math.round(
+          (DEFAULT_IMAGE_WIDTH * heightRatio) / widthRatio,
+        );
+        cropDimensions = `${DEFAULT_IMAGE_WIDTH}x${calculatedHeight}`;
+      }
+    }
   }
 
   const processedSrc = getProcessedImage(

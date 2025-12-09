@@ -24,8 +24,8 @@
   "dependencies": {
     "@httpjpg/env": "workspace:*",
     "@sentry/nextjs": "^8.55.0",
-    "@datadog/browser-rum": "^5.35.1",
-    "@datadog/browser-logs": "^5.35.1"
+    "@datadog/browser-rum": "^6.0.0",
+    "@datadog/browser-logs": "^6.0.0"
   },
   "devDependencies": {
     "@httpjpg/tsconfig": "workspace:*",

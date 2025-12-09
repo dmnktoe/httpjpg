@@ -621,6 +621,94 @@ async function getSbRichTextComponent(): Promise<StoryblokComponent> {
   };
 }
 
+async function getSbButtonComponent(): Promise<StoryblokComponent> {
+  const contentGroupUuid = await getComponentGroupUuid("Content");
+
+  return {
+    name: "button",
+    display_name: "Button",
+    is_root: false,
+    is_nestable: true,
+    component_group_uuid: contentGroupUuid,
+    icon: "block-button",
+    color: "#667eea",
+    schema: {
+      text: {
+        type: "text",
+        display_name: "Button Text",
+        required: true,
+        translatable: true,
+      },
+      variant: {
+        type: "option",
+        display_name: "Button Style",
+        default_value: "primary",
+        options: [
+          { name: "Primary (Blue)", value: "primary" },
+          { name: "Secondary (Gradient)", value: "secondary" },
+          { name: "Outline", value: "outline" },
+          { name: "Disabled", value: "disabled" },
+        ],
+      },
+      size: {
+        type: "option",
+        display_name: "Button Size",
+        default_value: "md",
+        options: [
+          { name: "Small", value: "sm" },
+          { name: "Medium", value: "md" },
+          { name: "Large", value: "lg" },
+        ],
+      },
+      type: {
+        type: "option",
+        display_name: "Button Type",
+        default_value: "button",
+        options: [
+          { name: "Button", value: "button" },
+          { name: "Submit", value: "submit" },
+          { name: "Reset", value: "reset" },
+        ],
+      },
+      disabled: {
+        type: "boolean",
+        display_name: "Disabled",
+        default_value: false,
+      },
+      link: {
+        type: "multilink",
+        display_name: "Link",
+        description:
+          "Optional link destination (internal page, external URL, email, or asset)",
+      },
+      marginTop: {
+        type: "option",
+        display_name: "Margin Top",
+        source: "internal",
+        datasource_slug: "spacing-options",
+      },
+      marginBottom: {
+        type: "option",
+        display_name: "Margin Bottom",
+        source: "internal",
+        datasource_slug: "spacing-options",
+      },
+      marginLeft: {
+        type: "option",
+        display_name: "Margin Left",
+        source: "internal",
+        datasource_slug: "spacing-options",
+      },
+      marginRight: {
+        type: "option",
+        display_name: "Margin Right",
+        source: "internal",
+        datasource_slug: "spacing-options",
+      },
+    },
+  };
+}
+
 async function getSbImageComponent(): Promise<StoryblokComponent> {
   const mediaGroupUuid = await getComponentGroupUuid("Media");
 
@@ -1201,6 +1289,7 @@ async function syncComponents(): Promise<void> {
     getSbHeadlineComponent,
     getSbParagraphComponent,
     getSbRichTextComponent,
+    getSbButtonComponent,
     getSbImageComponent,
     getSbVideoComponent,
     getSbSlideshowComponent,

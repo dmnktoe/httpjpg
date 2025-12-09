@@ -63,6 +63,8 @@ export default defineConfig({
     "../../apps/storybook/stories/**/*.{ts,tsx}",
     "../../apps/web/app/**/*.{ts,tsx}",
     "../../apps/web/components/**/*.{ts,tsx}",
+    "../../packages/storyblok-richtext/src/**/*.{ts,tsx}",
+    "../../packages/storyblok-ui/src/**/*.{ts,tsx}",
   ],
 
   // Files to exclude from scanning

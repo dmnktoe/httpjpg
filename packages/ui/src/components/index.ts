@@ -26,6 +26,7 @@ export * from "./image";
 export * from "./image-preview";
 export * from "./lazy-motion-provider";
 export * from "./link";
+export * from "./list";
 export * from "./loading";
 export * from "./marquee";
 export * from "./mouse-trail";

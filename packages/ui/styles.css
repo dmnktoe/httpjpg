@@ -1379,6 +1379,40 @@
 
   .gap_16px {
     gap: 16px;
+  .li-s_disc {
+    list-style: disc;
+}
+
+  .li-s_circle {
+    list-style: circle;
+}
+
+  .li-s_square {
+    list-style: square;
+}
+
+  .li-s_none {
+    list-style: none;
+}
+
+  .li-s_decimal {
+    list-style: decimal;
+}
+
+  .li-s_lower-alpha {
+    list-style: lower-alpha;
+}
+
+  .li-s_upper-roman {
+    list-style: upper-roman;
+}
+
+  .li-s_lower-roman {
+    list-style: lower-roman;
+}
+
+  .bg_black {
+    background: var(--colors-black);
 }
 
   .px_24px {
@@ -1691,6 +1725,80 @@
 
   .gap_4px {
     gap: 4px;
+  .px_1 {
+    padding-inline: var(--spacing-1);
+}
+
+  .py_0\.5 {
+    padding-block: var(--spacing-0\.5);
+}
+
+  .bdr_sm {
+    border-radius: var(--radii-sm);
+}
+
+  .my_6 {
+    margin-block: var(--spacing-6);
+}
+
+  .bd-l_4px_solid {
+    border-left: 4px solid;
+}
+
+  .py_2 {
+    padding-block: var(--spacing-2);
+}
+
+  .ov_auto {
+    overflow: auto;
+}
+
+  .max-w_readable {
+    max-width: readable;
+}
+
+  .h_100vh {
+    height: 100vh;
+}
+
+  .h_auto {
+    height: auto;
+}
+
+  .bd_2px_dashed {
+    border: 2px dashed;
+}
+
+  .bg_red\.50 {
+    background: var(--colors-red-50);
+}
+
+  .my_4 {
+    margin-block: var(--spacing-4);
+}
+
+  .c_red\.700 {
+    color: var(--colors-red-700);
+}
+
+  .c_red\.600 {
+    color: var(--colors-red-600);
+}
+
+  .bg_red\.100 {
+    background: var(--colors-red-100);
+}
+
+  .c_red\.500 {
+    color: var(--colors-red-500);
+}
+
+  .anim_none {
+    animation: none;
+}
+
+  .inset_0 {
+    inset: var(--spacing-0);
 }
 
   .trs_opacity_0\.2s {
@@ -1719,6 +1827,8 @@
 
   .gap_7 {
     gap: var(--spacing-7);
+  .min-h_9 {
+    min-height: var(--sizes-9);
 }
 
   .gap_9 {
@@ -2047,6 +2157,16 @@
 
   .bd-e-w_var\(--thickness\) {
     border-inline-end-width: var(--thickness);
+  .max-w_100ch {
+    max-width: 100ch;
+}
+
+  .max-w_80ch {
+    max-width: 80ch;
+}
+
+  .max-w_45ch {
+    max-width: 45ch;
 }
 
   .fs_2rem {
@@ -2326,12 +2446,8 @@
     grid-template-columns: 1px;
 }
 
-  .c_black {
-    color: var(--colors-black);
-}
-
-  .c_muted {
-    color: muted;
+  .z_20 {
+    z-index: 20;
 }
 
   .c_dimmed {
@@ -3437,10 +3553,6 @@
     margin-top: var(--spacing-0);
 }
 
-  .mt_1 {
-    margin-top: var(--spacing-1);
-}
-
   .mt_5 {
     margin-top: var(--spacing-5);
 }
@@ -4023,10 +4135,6 @@
 
   .pl_5 {
     padding-left: var(--spacing-5);
-}
-
-  .pl_6 {
-    padding-left: var(--spacing-6);
 }
 
   .pl_7 {

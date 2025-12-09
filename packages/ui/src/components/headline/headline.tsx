@@ -21,6 +21,16 @@ export interface HeadlineProps
    */
   as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
   /**
+   * Top margin spacing token
+   * @default undefined
+   */
+  marginTop?: string;
+  /**
+   * Bottom margin spacing token
+   * @default undefined
+   */
+  marginBottom?: string;
+  /**
    * Custom styles using Panda CSS SystemStyleObject
    */
   css?: SystemStyleObject;
@@ -108,6 +118,8 @@ export function Headline({
   level = 1,
   children,
   as,
+  marginTop,
+  marginBottom,
   className,
   css: cssProp,
   ...props
@@ -117,6 +129,11 @@ export function Headline({
 
   const styles = cx(
     headlineRecipe({ level }),
+    (marginTop || marginBottom) &&
+      css({
+        ...(marginTop && { mt: marginTop }),
+        ...(marginBottom && { mb: marginBottom }),
+      }),
     cssProp && css(cssProp),
     className,
   );

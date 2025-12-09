@@ -25,14 +25,12 @@ body {
 }
 
 /* Reset for specific elements that need margin/padding removed */
-h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote, dl, dd {
+h1, h2, h3, h4, h5, h6, figure, blockquote, dl, dd {
 	margin: 0;
 	padding: 0;
 }
 
-ul, ol {
-	list-style: none;
-}
+/* Do NOT reset p/ul/ol margin/padding or list-style - let components control this */
 
 /* Focus styles */
 :focus-visible {
@@ -46,6 +44,6 @@ main {
 }
 
 p {
-	line-height: 1.8;
+	line-height: 1.5;
 	color: #000000;
 }

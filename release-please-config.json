@@ -1,0 +1,184 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "include-component-in-tag": true,
+  "include-v-in-tag": false,
+  "separate-pull-requests": true,
+  "group-pull-request-title-pattern": "chore: release ${version}",
+  "release-search-depth": 200,
+  "pull-request-title-pattern": "chore${scope}: release${component} ${version}",
+  "pull-request-header": "🎉 Release PR",
+  "changelog-host": "https://github.com",
+  "changelog-path": "CHANGELOG.md",
+  "extra-files": [
+    {
+      "type": "json",
+      "path": "package.json",
+      "jsonpath": "$.version"
+    }
+  ],
+  "packages": {
+    "apps/docs": {
+      "release-type": "node",
+      "package-name": "@httpjpg/docs",
+      "changelog-path": "CHANGELOG.md",
+      "draft": false,
+      "prerelease": false
+    },
+    "apps/storybook": {
+      "release-type": "node",
+      "package-name": "@httpjpg/storybook",
+      "changelog-path": "CHANGELOG.md",
+      "draft": false,
+      "prerelease": false
+    },
+    "apps/web": {
+      "release-type": "node",
+      "package-name": "@httpjpg/web",
+      "changelog-path": "CHANGELOG.md",
+      "draft": false,
+      "prerelease": false,
+      "release-as": "1.0.0"
+    },
+    "packages/analytics": {
+      "release-type": "node",
+      "package-name": "@httpjpg/analytics",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/consent": {
+      "release-type": "node",
+      "package-name": "@httpjpg/consent",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/env": {
+      "release-type": "node",
+      "package-name": "@httpjpg/env",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/now-playing": {
+      "release-type": "node",
+      "package-name": "@httpjpg/now-playing",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/observability": {
+      "release-type": "node",
+      "package-name": "@httpjpg/observability",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/security": {
+      "release-type": "node",
+      "package-name": "@httpjpg/security",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/storyblok-api": {
+      "release-type": "node",
+      "package-name": "@httpjpg/storyblok-api",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/storyblok-richtext": {
+      "release-type": "node",
+      "package-name": "@httpjpg/storyblok-richtext",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/storyblok-sync": {
+      "release-type": "node",
+      "package-name": "@httpjpg/storyblok-sync",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/storyblok-ui": {
+      "release-type": "node",
+      "package-name": "@httpjpg/storyblok-ui",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "package.json",
+          "jsonpath": "$.peerDependencies['@httpjpg/ui']"
+        }
+      ]
+    },
+    "packages/storyblok-utils": {
+      "release-type": "node",
+      "package-name": "@httpjpg/storyblok-utils",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/tokens": {
+      "release-type": "node",
+      "package-name": "@httpjpg/tokens",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/typescript": {
+      "release-type": "node",
+      "package-name": "@httpjpg/tsconfig",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "packages/ui": {
+      "release-type": "node",
+      "package-name": "@httpjpg/ui",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": ["src/version.ts"]
+    }
+  },
+  "release-type": "node",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "versioning": "default",
+  "changelog-type": "default",
+  "changelog-sections": [
+    {
+      "type": "feat",
+      "section": "✨ Features",
+      "hidden": false
+    },
+    {
+      "type": "fix",
+      "section": "🐛 Bug Fixes",
+      "hidden": false
+    },
+    {
+      "type": "perf",
+      "section": "⚡ Performance Improvements",
+      "hidden": false
+    },
+    {
+      "type": "revert",
+      "section": "⏪ Reverts",
+      "hidden": false
+    },
+    {
+      "type": "docs",
+      "section": "📚 Documentation",
+      "hidden": false
+    },
+    {
+      "type": "style",
+      "section": "💄 Styles",
+      "hidden": true
+    },
+    {
+      "type": "chore",
+      "section": "🔧 Miscellaneous Chores",
+      "hidden": true
+    },
+    {
+      "type": "refactor",
+      "section": "♻️ Code Refactoring",
+      "hidden": true
+    },
+    {
+      "type": "test",
+      "section": "✅ Tests",
+      "hidden": true
+    },
+    {
+      "type": "build",
+      "section": "📦 Build System",
+      "hidden": true
+    },
+    {
+      "type": "ci",
+      "section": "👷 Continuous Integration",
+      "hidden": true
+    }
+  ],
+  "plugins": []
+}

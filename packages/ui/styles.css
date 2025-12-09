@@ -209,46 +209,6 @@
     overflow-wrap: break-word;
 }
 
-  h1 {
-    font-size: 2rem;
-}
-
-  h1,h2 {
-    font-weight: var(--font-weights-bold);
-    line-height: 1.25;
-}
-
-  h2 {
-    font-size: 1.5rem;
-}
-
-  h3 {
-    font-size: 1.25rem;
-    line-height: 1.375;
-}
-
-  h3,h4 {
-    font-weight: var(--font-weights-semibold);
-}
-
-  h4 {
-    font-size: 1.125rem;
-    line-height: 1.5;
-}
-
-  h5 {
-    font-size: 1rem;
-}
-
-  h5,h6 {
-    font-weight: var(--font-weights-medium);
-    line-height: 1.5;
-}
-
-  h6 {
-    font-size: 0.875rem;
-}
-
   *,::before,::after,::backdrop {
     --blur: /*-*/ /*-*/;
     --brightness: /*-*/ /*-*/;
@@ -2992,6 +2952,18 @@
 
   .filter_grayscale\(0\.5\) {
     filter: grayscale(0.5);
+}
+
+  .fs_clamp\(2\.25rem\,_5vw_\+_1rem\,_3\.75rem\) {
+    font-size: clamp(2.25rem, 5vw + 1rem, 3.75rem);
+}
+
+  .fs_clamp\(1\.875rem\,_4vw_\+_1rem\,_3rem\) {
+    font-size: clamp(1.875rem, 4vw + 1rem, 3rem);
+}
+
+  .fs_clamp\(1\.5rem\,_3vw_\+_0\.5rem\,_2\.25rem\) {
+    font-size: clamp(1.5rem, 3vw + 0.5rem, 2.25rem);
 }
 
   .w_600px {

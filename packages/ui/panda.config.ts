@@ -136,6 +136,13 @@ export default defineConfig({
             "rgba(123, 147, 245, 0.5)",
             "rgba(100, 100, 100, 0.3)",
           ],
+
+          // Headline component fluid typography with clamp()
+          fontSize: [
+            "clamp(2.25rem, 5vw + 1rem, 3.75rem)", // Level 1
+            "clamp(1.875rem, 4vw + 1rem, 3rem)", // Level 2
+            "clamp(1.5rem, 3vw + 0.5rem, 2.25rem)", // Level 3
+          ],
         },
       },
     ],
@@ -202,38 +209,6 @@ export default defineConfig({
     // Typography improvements
     "p, h1, h2, h3, h4, h5, h6": {
       overflowWrap: "break-word", // Prevent text overflow
-    },
-    // Explicit heading sizes to ensure proper hierarchy
-    // even with sm body font size
-    h1: {
-      fontSize: "2rem", // 32px - large headings
-      fontWeight: "bold",
-      lineHeight: "1.25",
-    },
-    h2: {
-      fontSize: "1.5rem", // 24px
-      fontWeight: "bold",
-      lineHeight: "1.25",
-    },
-    h3: {
-      fontSize: "1.25rem", // 20px
-      fontWeight: "semibold",
-      lineHeight: "1.375",
-    },
-    h4: {
-      fontSize: "1.125rem", // 18px
-      fontWeight: "semibold",
-      lineHeight: "1.5",
-    },
-    h5: {
-      fontSize: "1rem", // 16px
-      fontWeight: "medium",
-      lineHeight: "1.5",
-    },
-    h6: {
-      fontSize: "0.875rem", // 14px
-      fontWeight: "medium",
-      lineHeight: "1.5",
     },
   },
 

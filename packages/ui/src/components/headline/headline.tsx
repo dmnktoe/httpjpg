@@ -5,7 +5,7 @@ import { css, cva, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
 export interface HeadlineProps
-  extends Omit<HTMLAttributes<HTMLHeadingElement>, "css"> {
+  extends Omit<HTMLAttributes<HTMLHeadingElement>, "css" | "style"> {
   /**
    * Semantic heading level (affects sizing)
    * @default 1
@@ -34,7 +34,18 @@ export interface HeadlineProps
    * Custom styles using Panda CSS SystemStyleObject
    */
   css?: SystemStyleObject;
+  /**
+   * Inline styles (fontSize is automatically set via clamp())
+   */
+  style?: React.CSSProperties;
 }
+
+// Fluid typography with clamp() - must match staticCss values exactly
+const HEADLINE_FONT_SIZES = {
+  1: "clamp(2.25rem, 5vw + 1rem, 3.75rem)" as const,
+  2: "clamp(1.875rem, 4vw + 1rem, 3rem)" as const,
+  3: "clamp(1.5rem, 3vw + 0.5rem, 2.25rem)" as const,
+};
 
 const headlineRecipe = cva({
   base: {
@@ -46,6 +57,7 @@ const headlineRecipe = cva({
     fontFamily: "headline",
     fontWeight: "bold", // token: typography.fontWeight.bold (700)
     letterSpacing: "tight", // token: typography.letterSpacing.tight (-0.025em)
+    lineHeight: 1, // Tight line-height for all headlines
 
     /* Prevent text wrapping issues */
     textWrap: "balance",
@@ -54,35 +66,20 @@ const headlineRecipe = cva({
     level: {
       1: {
         /* Level 1: Hero/Page Title */
-        fontSize: "clamp(2.25rem, 5vw + 1rem, 3.75rem)",
-        lineHeight: "tight", // token: typography.lineHeight.tight (1.25 ~ 1.1)
+        fontSize: HEADLINE_FONT_SIZES[1],
         fontWeight: "black", // token: typography.fontWeight.black (900)
         letterSpacing: "tighter", // token: typography.letterSpacing.tighter (-0.05em ~ -0.035em)
-
-        md: {
-          lineHeight: "none", // token: typography.lineHeight.none (1)
-        },
       },
       2: {
         /* Level 2: Section Title */
-        fontSize: "clamp(1.875rem, 4vw + 1rem, 3rem)",
-        lineHeight: "tight", // token: typography.lineHeight.tight (1.25 ~ 1.2)
+        fontSize: HEADLINE_FONT_SIZES[2],
         fontWeight: "extrabold", // token: typography.fontWeight.extrabold (800)
         letterSpacing: "tighter", // token: typography.letterSpacing.tighter (-0.05em ~ -0.03em)
-
-        md: {
-          lineHeight: "tight", // token: typography.lineHeight.tight (1.25 ~ 1.1)
-        },
       },
       3: {
         /* Level 3: Subsection Title */
-        fontSize: "clamp(1.5rem, 3vw + 0.5rem, 2.25rem)",
-        lineHeight: "snug", // token: typography.lineHeight.snug (1.375 ~ 1.3)
+        fontSize: HEADLINE_FONT_SIZES[3],
         fontWeight: "bold", // token: typography.fontWeight.bold (700)
-
-        md: {
-          lineHeight: "tight", // token: typography.lineHeight.tight (1.25 ~ 1.2)
-        },
       },
     },
   },
@@ -122,6 +119,7 @@ export function Headline({
   marginBottom,
   className,
   css: cssProp,
+  style,
   ...props
 }: HeadlineProps) {
   const element = as ?? getDefaultElement(level);
@@ -139,7 +137,7 @@ export function Headline({
   );
 
   return (
-    <Element className={styles} {...props}>
+    <Element className={styles} style={style} {...props}>
       {children}
     </Element>
   );

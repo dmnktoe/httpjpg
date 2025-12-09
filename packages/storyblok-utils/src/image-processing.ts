@@ -19,7 +19,10 @@ export function getProcessedImage(
 
   // Check if this is a Storyblok URL first
   // Only Storyblok URLs should be processed through the image service
-  const isStoryblokUrl = imageSrc.includes("a.storyblok.com");
+  // Use startsWith for robust domain detection to avoid false positives
+  const isStoryblokUrl =
+    imageSrc.startsWith("https://a.storyblok.com/") ||
+    imageSrc.startsWith("//a.storyblok.com/");
 
   // If it's not a Storyblok URL, return as-is (external URL)
   if (!isStoryblokUrl) {

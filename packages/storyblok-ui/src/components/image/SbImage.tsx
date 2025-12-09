@@ -68,7 +68,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
       editable={editableProps}
     >
       <Image
-        src={processedSrc || image.filename}
+        src={processedSrc}
         alt={alt || image.alt || image.title || ""}
         copyright={finalCopyright}
         copyrightPosition={copyrightPosition}

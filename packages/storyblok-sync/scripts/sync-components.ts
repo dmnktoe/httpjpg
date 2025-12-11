@@ -1270,6 +1270,18 @@ async function getSbConfigComponent(): Promise<StoryblokComponent> {
         description: "Show Spotify Now Playing widget",
         pos: 7,
       },
+      author_name: {
+        type: "text",
+        display_name: "Author Name",
+        description: "Site author/owner name for Schema.org structured data",
+        pos: 8,
+      },
+      author_url: {
+        type: "text",
+        display_name: "Author URL",
+        description: "Author website URL for Schema.org structured data",
+        pos: 9,
+      },
     },
   };
 }

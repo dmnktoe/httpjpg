@@ -62,6 +62,10 @@ export interface SbConfigStory extends SbBlokData {
   psn_enabled?: boolean;
   spotify_enabled?: boolean;
   discord_user_id?: string;
+
+  // Author/Owner Settings
+  author_name?: string;
+  author_url?: string;
 } /**
  * Config Component (not rendered, just for typing)
  * This component exists only to provide TypeScript types for the config story

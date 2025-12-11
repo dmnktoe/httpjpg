@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { unstable_cache } from "next/cache";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
+import { getConfig } from "../../../lib/get-config";
+import { generateCreativeWorkSchema, JsonLd } from "../../../lib/schema-org";
 
 interface PageProps {
   params: Promise<{
@@ -90,10 +92,10 @@ export async function generateMetadata({
 
   return {
     title: pageTitle,
-    description: description || `Portfolio work: ${pageTitle}`,
+    description,
     openGraph: {
       title: fullTitle,
-      description: description || `Portfolio work: ${pageTitle}`,
+      description,
       type: "website",
       url: `/${slug?.join("/") || ""}`,
       images: ogImage
@@ -110,7 +112,7 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
-      description: description || `Portfolio work: ${pageTitle}`,
+      description,
       images: ogImage ? [ogImage] : undefined,
     },
   };
@@ -177,8 +179,51 @@ export default async function DynamicPage({
       return <StoryblokLivePreview story={story} />;
     }
 
+    // Check if this is a work page (component type is "work")
+    const isWorkPage = story.content?.component === "work";
+
+    // Generate Schema.org JSON-LD for work pages
+    let schemaMarkup = null;
+    if (isWorkPage) {
+      // Get author info from config
+      const config = await getConfig();
+      const author = config?.author_name
+        ? {
+            "@type": "Person" as const,
+            name: config.author_name,
+            url: config.author_url,
+          }
+        : undefined;
+
+      const pageTitle = story.content?.title || story.name;
+      const description = story.content?.description
+        ? typeof story.content.description === "string"
+          ? story.content.description
+          : extractPlainTextFromRichText(story.content.description)
+        : undefined;
+
+      const images = story.content?.images?.map(
+        (img: any) => `${img.filename}/m/1200x630/smart`,
+      );
+
+      schemaMarkup = generateCreativeWorkSchema({
+        name: pageTitle,
+        description,
+        image: images?.[0] || images,
+        url: `https://httpjpg.com/${fullSlug}`,
+        datePublished: story.first_published_at,
+        dateModified: story.published_at,
+        author,
+      });
+    }
+
     // Static render for production
-    return <DynamicRender data={story.content} />;
+    return (
+      <>
+        {schemaMarkup && <JsonLd data={schemaMarkup} />}
+        <DynamicRender data={story.content} />
+      </>
+    );
   } catch (error) {
     console.error(`[DynamicPage] Error loading story "${fullSlug}":`, {
       error: error instanceof Error ? error.message : String(error),

@@ -25,13 +25,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .filter((story: any) => story.first_published_at !== null) // Only published
       .filter((story: any) => !story.is_startpage) // No folders
       .filter((story: any) => !EXCLUDED_SLUGS.includes(story.slug))
-      .filter((story: any) => !story.slug.startsWith("console/")) // Exclude console pages
+      .filter((story: any) => !story.full_slug.startsWith("console/")) // Exclude console pages
       .filter((story: any) => !story.content?.external_only) // Exclude external-only stories
       .map((story: any) => ({
-        url: `${baseUrl}/${story.slug}`,
+        url: `${baseUrl}/${story.full_slug}`,
         lastModified: new Date(story.published_at || story.first_published_at),
-        changeFrequency: story.slug.startsWith("work/") ? "monthly" : "weekly",
-        priority: story.slug === "home" ? 1 : 0.8,
+        changeFrequency: story.full_slug.startsWith("work/")
+          ? "monthly"
+          : "weekly",
+        priority: story.full_slug === "home" ? 1 : 0.8,
       }));
 
     // Add home page

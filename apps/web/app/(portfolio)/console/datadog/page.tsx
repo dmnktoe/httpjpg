@@ -84,7 +84,7 @@ export default function DatadogPage() {
             <Headline level={3} css={{ mb: 4, color: "red.900" }}>
               Error Loading Data
             </Headline>
-            <Paragraph css={{ color: "red.700" }}>{error}</Paragraph>
+            <Paragraph css={{ color: "danger.700" }}>{error}</Paragraph>
             <Paragraph size="sm" css={{ mt: 4, opacity: 60 }}>
               Make sure DATADOG_API_KEY and DATADOG_APP_KEY are configured in
               .env
@@ -129,10 +129,10 @@ export default function DatadogPage() {
                       width: `${stats.cpu}%`,
                       bg:
                         stats.cpu > 80
-                          ? "red.500"
+                          ? "danger.500"
                           : stats.cpu > 60
-                            ? "yellow.500"
-                            : "green.500",
+                            ? "warning.500"
+                            : "success.500",
                     }}
                   />
                 </Box>
@@ -164,10 +164,10 @@ export default function DatadogPage() {
                       width: `${stats.memory}%`,
                       bg:
                         stats.memory > 80
-                          ? "red.500"
+                          ? "danger.500"
                           : stats.memory > 60
-                            ? "yellow.500"
-                            : "green.500",
+                            ? "warning.500"
+                            : "success.500",
                     }}
                   />
                 </Box>

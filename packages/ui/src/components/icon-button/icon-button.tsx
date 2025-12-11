@@ -152,7 +152,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         outline: "none",
         _focusVisible: {
           outline: "2px solid",
-          outlineColor: "blue.500",
+          outlineColor: "primary.500",
           outlineOffset: "2px",
         },
         _disabled: {

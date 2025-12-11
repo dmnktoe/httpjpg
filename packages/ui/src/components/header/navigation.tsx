@@ -94,7 +94,9 @@ export const Navigation = ({
                   isExternal={work.isExternal}
                   data-preview-image={work.imageUrl}
                   css={{
-                    backgroundColor: work.isDraft ? "yellow" : "transparent",
+                    backgroundColor: work.isDraft
+                      ? "warning.200"
+                      : "transparent",
                     color: work.isDraft ? "black" : "inherit",
                     ...(work.isDraft && { padding: "0 4px" }),
                   }}
@@ -151,7 +153,9 @@ export const Navigation = ({
                   showExternalIcon={work.isExternal}
                   data-preview-image={work.imageUrl}
                   css={{
-                    backgroundColor: work.isDraft ? "yellow" : "transparent",
+                    backgroundColor: work.isDraft
+                      ? "warning.200"
+                      : "transparent",
                     color: work.isDraft ? "black" : "inherit",
                     ...(work.isDraft && { padding: "0 4px" }),
                   }}

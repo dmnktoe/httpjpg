@@ -83,7 +83,7 @@ export default function SentryPage() {
             <Headline level={3} css={{ mb: 4, color: "red.900" }}>
               Error Loading Data
             </Headline>
-            <Paragraph css={{ color: "red.700" }}>{error}</Paragraph>
+            <Paragraph css={{ color: "danger.700" }}>{error}</Paragraph>
             <Paragraph size="sm" css={{ mt: 4, opacity: 60 }}>
               Make sure SENTRY_AUTH_TOKEN and SENTRY_ORG are configured in .env
             </Paragraph>
@@ -163,7 +163,7 @@ export default function SentryPage() {
                       borderRadius: "md",
                       borderLeft: "4px solid",
                       borderLeftColor:
-                        issue.level === "error" ? "red.500" : "yellow.500",
+                        issue.level === "error" ? "danger.500" : "warning.500",
                     }}
                   >
                     <Box
@@ -183,9 +183,13 @@ export default function SentryPage() {
                           px: 2,
                           py: 1,
                           bg:
-                            issue.level === "error" ? "red.100" : "yellow.100",
+                            issue.level === "error"
+                              ? "danger.100"
+                              : "warning.100",
                           color:
-                            issue.level === "error" ? "red.900" : "yellow.900",
+                            issue.level === "error"
+                              ? "danger.900"
+                              : "warning.900",
                           borderRadius: "sm",
                           textTransform: "uppercase",
                           fontWeight: "bold",
@@ -217,11 +221,11 @@ export default function SentryPage() {
                     css={{
                       p: 8,
                       textAlign: "center",
-                      bg: "green.50",
+                      bg: "success.50",
                       borderRadius: "md",
                     }}
                   >
-                    <Paragraph css={{ color: "green.900" }}>
+                    <Paragraph css={{ color: "success.900" }}>
                       🎉 No active issues - all systems operational!
                     </Paragraph>
                   </Box>

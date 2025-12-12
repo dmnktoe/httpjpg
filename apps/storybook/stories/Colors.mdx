@@ -30,19 +30,10 @@ Complete gray scale for backgrounds, borders, and text. Perfect for brutalist la
   <ColorItem
     title="neutral"
     subtitle="Gray scale from light to dark"
-    colors={{
-      50: colors.neutral[50],
-      100: colors.neutral[100],
-      200: colors.neutral[200],
-      300: colors.neutral[300],
-      400: colors.neutral[400],
-      500: colors.neutral[500],
-      600: colors.neutral[600],
-      700: colors.neutral[700],
-      800: colors.neutral[800],
-      900: colors.neutral[900],
-      950: colors.neutral[950],
-    }}
+    colors={Object.keys(colors.neutral).reduce((acc, key) => {
+      acc[key] = colors.neutral[key];
+      return acc;
+    }, {})}
   />
 </ColorPalette>
 
@@ -60,25 +51,16 @@ import { Box, Paragraph } from '@httpjpg/ui';
 
 ## Primary Colors
 
-Vibrant rose/pink tones for primary actions and brand moments.
+Electric blue tones for primary actions and brand moments.
 
 <ColorPalette>
   <ColorItem
     title="primary"
-    subtitle="Rose/pink for primary actions"
-    colors={{
-      50: colors.primary[50],
-      100: colors.primary[100],
-      200: colors.primary[200],
-      300: colors.primary[300],
-      400: colors.primary[400],
-      500: colors.primary[500],
-      600: colors.primary[600],
-      700: colors.primary[700],
-      800: colors.primary[800],
-      900: colors.primary[900],
-      950: colors.primary[950],
-    }}
+    subtitle="Electric blue for primary actions"
+    colors={Object.keys(colors.primary).reduce((acc, key) => {
+      acc[key] = colors.primary[key];
+      return acc;
+    }, {})}
   />
 </ColorPalette>
 
@@ -92,27 +74,43 @@ import { Button } from '@httpjpg/ui';
 </Button>
 ```
 
+## Secondary Colors
+
+Vibrant rose/pink tones for secondary actions and highlights.
+
+<ColorPalette>
+  <ColorItem
+    title="secondary"
+    subtitle="Rose/pink for secondary actions"
+    colors={Object.keys(colors.secondary).reduce((acc, key) => {
+      acc[key] = colors.secondary[key];
+      return acc;
+    }, {})}
+  />
+</ColorPalette>
+
+### Usage
+
+```tsx
+import { Button } from '@httpjpg/ui';
+
+<Button css={{ bg: 'secondary.500', color: 'white' }}>
+  Secondary Action
+</Button>
+```
+
 ## Accent Colors
 
-Vibrant orange tones for accents, highlights, and creative energy.
+Vibrant peachy orange tones for accents, highlights, and creative energy.
 
 <ColorPalette>
   <ColorItem
     title="accent"
-    subtitle="Orange for highlights and accents"
-    colors={{
-      50: colors.accent[50],
-      100: colors.accent[100],
-      200: colors.accent[200],
-      300: colors.accent[300],
-      400: colors.accent[400],
-      500: colors.accent[500],
-      600: colors.accent[600],
-      700: colors.accent[700],
-      800: colors.accent[800],
-      900: colors.accent[900],
-      950: colors.accent[950],
-    }}
+    subtitle="Peachy orange for highlights and accents"
+    colors={Object.keys(colors.accent).reduce((acc, key) => {
+      acc[key] = colors.accent[key];
+      return acc;
+    }, {})}
   />
 </ColorPalette>
 
@@ -126,6 +124,47 @@ import { Box } from '@httpjpg/ui';
 </Box>
 ```
 
+## Semantic Status Colors
+
+### Success
+
+<ColorPalette>
+  <ColorItem
+    title="success"
+    subtitle="Green for success states"
+    colors={Object.keys(colors.success).reduce((acc, key) => {
+      acc[key] = colors.success[key];
+      return acc;
+    }, {})}
+  />
+</ColorPalette>
+
+### Warning
+
+<ColorPalette>
+  <ColorItem
+    title="warning"
+    subtitle="Amber/yellow for warnings"
+    colors={Object.keys(colors.warning).reduce((acc, key) => {
+      acc[key] = colors.warning[key];
+      return acc;
+    }, {})}
+  />
+</ColorPalette>
+
+### Danger
+
+<ColorPalette>
+  <ColorItem
+    title="danger"
+    subtitle="Red for errors and destructive actions"
+    colors={Object.keys(colors.danger).reduce((acc, key) => {
+      acc[key] = colors.danger[key];
+      return acc;
+    }, {})}
+  />
+</ColorPalette>
+
 ## Color Semantics
 
 ### Text Colors
@@ -135,8 +174,9 @@ import { Box } from '@httpjpg/ui';
 - `neutral.500` - Secondary text
 - `neutral.400` - Disabled text
 - `white` - Inverted text
-- `primary.500` - Links, primary actions
-- `accent.500` - Highlights, emphasis
+- `primary.500` - Primary links and actions
+- `secondary.500` - Secondary emphasis
+- `accent.500` - Highlights, creative emphasis
 
 ### Background Colors
 
@@ -145,6 +185,7 @@ import { Box } from '@httpjpg/ui';
 - `neutral.100` - Section background
 - `black` - Dramatic sections
 - `primary.50` - Subtle brand background
+- `secondary.50` - Subtle secondary background
 - `accent.50` - Subtle accent background
 
 ### Border Colors
@@ -154,4 +195,5 @@ import { Box } from '@httpjpg/ui';
 - `neutral.400` - Active borders
 - `black` - Strong borders
 - `primary.500` - Brand borders
+- `secondary.500` - Secondary borders
 - `accent.500` - Accent borders

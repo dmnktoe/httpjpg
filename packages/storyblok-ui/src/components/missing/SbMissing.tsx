@@ -39,8 +39,8 @@ export const SbMissing = memo(function SbMissing({ blok }: SbMissingProps) {
     <Box
       css={{
         border: "2px dashed",
-        borderColor: "red.500",
-        bg: "red.50",
+        borderColor: "danger.500",
+        bg: "danger.50",
         p: "4",
         my: "4",
         borderRadius: "md",
@@ -51,25 +51,25 @@ export const SbMissing = memo(function SbMissing({ blok }: SbMissingProps) {
       <Box
         css={{
           fontWeight: "bold",
-          color: "red.700",
+          color: "danger.700",
           mb: "2",
         }}
       >
         ⚠️ Missing Storyblok Component
       </Box>
 
-      <Box css={{ color: "red.600", mb: "2" }}>
+      <Box css={{ color: "danger.600", mb: "2" }}>
         Component{" "}
         <Box
           as="code"
-          css={{ bg: "red.100", px: "1", py: "0.5", borderRadius: "sm" }}
+          css={{ bg: "danger.100", px: "1", py: "0.5", borderRadius: "sm" }}
         >
           "{componentName}"
         </Box>{" "}
         is not registered.
       </Box>
 
-      <Box css={{ fontSize: "xs", color: "red.500", mt: "3" }}>
+      <Box css={{ fontSize: "xs", color: "danger.500", mt: "3" }}>
         To fix this:
         <Box as="ol" css={{ pl: "4", mt: "1" }}>
           <li>
@@ -87,7 +87,9 @@ export const SbMissing = memo(function SbMissing({ blok }: SbMissingProps) {
 
       {/* Show blok data for debugging */}
       <details style={{ marginTop: "12px" }}>
-        <summary style={{ cursor: "pointer", color: "var(--colors-red-600)" }}>
+        <summary
+          style={{ cursor: "pointer", color: "var(--colors-danger-600)" }}
+        >
           Show component data
         </summary>
         <Box
@@ -95,7 +97,7 @@ export const SbMissing = memo(function SbMissing({ blok }: SbMissingProps) {
           css={{
             mt: "2",
             p: "2",
-            bg: "red.100",
+            bg: "danger.100",
             borderRadius: "sm",
             overflow: "auto",
             fontSize: "xs",

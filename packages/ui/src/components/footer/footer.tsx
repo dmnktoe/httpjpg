@@ -274,12 +274,12 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                     <Link
                       href="/console"
                       css={{
-                        color: "purple.600",
+                        color: "secondary.600",
                         fontWeight: "600",
                         textShadow: "0 0 10px rgba(168, 85, 247, 0.4)",
                         transition: "all 0.3s ease-in-out",
                         _hover: {
-                          color: "purple.500",
+                          color: "secondary.500",
                           textShadow: "0 0 20px rgba(168, 85, 247, 0.8)",
                           transform: "scale(1.05)",
                         },

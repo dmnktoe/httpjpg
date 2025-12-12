@@ -879,7 +879,7 @@
 
     .navLink:is(:focus-visible, [data-focus-visible]) {
       outline: 2px solid;
-      outline-color: var(--colors-blue-500);
+      outline-color: var(--colors-primary-500);
       outline-offset: 2px;
 }
 
@@ -943,9 +943,9 @@
 }
 
   .button--variant_secondary:is(:hover, [data-hover])::before {
-    background: linear-gradient(135deg, rgba(255, 160, 127, 0.95), rgba(247, 109, 127, 0.95));
+    background: linear-gradient(135deg, rgba(255, 140, 107, 0.95), rgba(245, 87, 108, 0.95));
     filter: blur(5px);
-    box-shadow: 0 0 25px 0 rgba(255, 160, 127, 0.4), 0 0 45px 0 rgba(247, 109, 127, 0.2);
+    box-shadow: 0 0 25px 0 rgba(255, 140, 107, 0.4), 0 0 45px 0 rgba(245, 87, 108, 0.2);
 }
 
   .button--variant_outline {
@@ -966,21 +966,21 @@
 }
 
   .button--variant_disabled {
-    color: rgba(150, 150, 150, 0.7);
+    color: rgba(163, 163, 163, 0.7);
     cursor: not-allowed;
 }
 
   .button--variant_disabled::before {
-    background: rgba(100, 100, 100, 0.3);
+    background: rgba(115, 115, 115, 0.3);
     inset: -3px;
     filter: blur(5px);
-    box-shadow: 0 0 15px 0 rgba(100, 100, 100, 0.2);
+    box-shadow: 0 0 15px 0 rgba(115, 115, 115, 0.2);
 }
 
   .button--variant_disabled:is(:hover, [data-hover])::before {
-    background: rgba(100, 100, 100, 0.3);
+    background: rgba(115, 115, 115, 0.3);
     filter: blur(5px);
-    box-shadow: 0 0 15px 0 rgba(100, 100, 100, 0.2);
+    box-shadow: 0 0 15px 0 rgba(115, 115, 115, 0.2);
 }
 
   .navLink--variant_personal::before {
@@ -1220,32 +1220,28 @@
     background: var(--colors-red-50);
 }
 
-  .bg_yellow\.500 {
-    background: var(--colors-yellow-500);
-}
-
-  .bg_red\.100 {
-    background: var(--colors-red-100);
-}
-
-  .bg_yellow\.100 {
-    background: var(--colors-yellow-100);
-}
-
-  .bg_green\.50 {
-    background: var(--colors-green-50);
-}
-
-  .inset_0 {
-    inset: var(--spacing-0);
-}
-
   .bg_warning\.500 {
     background: var(--colors-warning-500);
 }
 
   .bg_danger\.500 {
     background: var(--colors-danger-500);
+}
+
+  .bg_danger\.100 {
+    background: var(--colors-danger-100);
+}
+
+  .bg_warning\.100 {
+    background: var(--colors-warning-100);
+}
+
+  .bg_success\.50 {
+    background: var(--colors-success-50);
+}
+
+  .inset_0 {
+    inset: var(--spacing-0);
 }
 
   .bg_neutral\.600 {
@@ -1324,12 +1320,12 @@
     background: rgba(37, 99, 235, 0.95);
 }
 
-  .bg_linear-gradient\(135deg\,_rgba\(255\,_140\,_107\,_0\.9\)\,_rgba\(245\,_87\,_108\,_0\.9\)\) {
-    background: linear-gradient(135deg, rgba(255, 140, 107, 0.9), rgba(245, 87, 108, 0.9));
+  .bg_linear-gradient\(135deg\,_rgba\(255\,_140\,_107\,_0\.9\)_0\%\,_rgba\(245\,_87\,_108\,_0\.9\)_100\%\) {
+    background: linear-gradient(135deg, rgba(255, 140, 107, 0.9) 0%, rgba(245, 87, 108, 0.9) 100%);
 }
 
-  .bg_linear-gradient\(135deg\,_rgba\(255\,_160\,_127\,_0\.95\)\,_rgba\(247\,_109\,_127\,_0\.95\)\) {
-    background: linear-gradient(135deg, rgba(255, 160, 127, 0.95), rgba(247, 109, 127, 0.95));
+  .bg_linear-gradient\(135deg\,_rgba\(255\,_140\,_107\,_0\.95\)_0\%\,_rgba\(245\,_87\,_108\,_0\.95\)_100\%\) {
+    background: linear-gradient(135deg, rgba(255, 140, 107, 0.95) 0%, rgba(245, 87, 108, 0.95) 100%);
 }
 
   .bg_rgba\(59\,_130\,_246\,_0\.4\) {
@@ -1340,8 +1336,8 @@
     background: rgba(37, 99, 235, 0.5);
 }
 
-  .bg_rgba\(100\,_100\,_100\,_0\.3\) {
-    background: rgba(100, 100, 100, 0.3);
+  .bg_rgba\(115\,_115\,_115\,_0\.3\) {
+    background: rgba(115, 115, 115, 0.3);
 }
 
   .gap_32px {
@@ -1668,8 +1664,8 @@
     border-color: var(--colors-neutral-400);
 }
 
-  .bd-c_red\.500 {
-    border-color: var(--colors-red-500);
+  .bd-c_danger\.500 {
+    border-color: var(--colors-danger-500);
 }
 
   .my_4 {
@@ -2022,6 +2018,26 @@
 
   .px_96 {
     padding-inline: var(--spacing-96);
+}
+
+  .bdr_none {
+    border-radius: var(--radii-none);
+}
+
+  .bdr_base {
+    border-radius: var(--radii-base);
+}
+
+  .bdr_xl {
+    border-radius: var(--radii-xl);
+}
+
+  .bdr_2xl {
+    border-radius: var(--radii-2xl);
+}
+
+  .bdr_3xl {
+    border-radius: var(--radii-3xl);
 }
 
   .ta_center {
@@ -2501,8 +2517,8 @@
     text-transform: capitalize;
 }
 
-  .c_red\.700 {
-    color: var(--colors-red-700);
+  .c_danger\.700 {
+    color: var(--colors-danger-700);
 }
 
   .c_red\.900 {
@@ -2513,12 +2529,16 @@
     align-items: start;
 }
 
-  .c_yellow\.900 {
-    color: var(--colors-yellow-900);
+  .c_danger\.900 {
+    color: var(--colors-danger-900);
 }
 
-  .c_green\.900 {
-    color: var(--colors-green-900);
+  .c_warning\.900 {
+    color: var(--colors-warning-900);
+}
+
+  .c_success\.900 {
+    color: var(--colors-success-900);
 }
 
   .fs_md {
@@ -2619,8 +2639,8 @@
     z-index: 9999;
 }
 
-  .bg-c_yellow\.400 {
-    background-color: var(--colors-yellow-400);
+  .bg-c_warning\.400 {
+    background-color: var(--colors-warning-400);
 }
 
   .fw_medium {
@@ -2643,12 +2663,8 @@
     line-height: 1.5;
 }
 
-  .c_red\.600 {
-    color: var(--colors-red-600);
-}
-
-  .c_red\.500 {
-    color: var(--colors-red-500);
+  .c_danger\.600 {
+    color: var(--colors-danger-600);
 }
 
   .anim-dly_0 {
@@ -2730,6 +2746,10 @@
 
   .ls_0\.05em {
     letter-spacing: 0.05em;
+}
+
+  .c_secondary\.600 {
+    color: var(--colors-secondary-600);
 }
 
   .tsh_0_0_10px_rgba\(168\,_85\,_247\,_0\.4\) {
@@ -2824,8 +2844,8 @@
     text-align: justify;
 }
 
-  .bg-c_yellow {
-    background-color: yellow;
+  .bg-c_warning\.200 {
+    background-color: var(--colors-warning-200);
 }
 
   .bg-c_transparent {
@@ -3316,12 +3336,12 @@
     height: var(--sizes-2);
 }
 
-  .bd-l-c_red\.500 {
-    border-left-color: var(--colors-red-500);
+  .bd-l-c_danger\.500 {
+    border-left-color: var(--colors-danger-500);
 }
 
-  .bd-l-c_yellow\.500 {
-    border-left-color: var(--colors-yellow-500);
+  .bd-l-c_warning\.500 {
+    border-left-color: var(--colors-warning-500);
 }
 
   .min-w_20 {
@@ -4696,10 +4716,6 @@
     outline-offset: 2px;
 }
 
-  .focusVisible\:ring-c_blue\.500:is(:focus-visible, [data-focus-visible]) {
-    outline-color: var(--colors-blue-500);
-}
-
   .hover\:bg_neutral\.50:is(:hover, [data-hover]) {
     background: var(--colors-neutral-50);
 }
@@ -4740,8 +4756,8 @@
     text-decoration-style: wavy;
 }
 
-  .hover\:c_purple\.500:is(:hover, [data-hover]) {
-    color: var(--colors-purple-500);
+  .hover\:c_secondary\.500:is(:hover, [data-hover]) {
+    color: var(--colors-secondary-500);
 }
 
   .hover\:tsh_0_0_20px_rgba\(168\,_85\,_247\,_0\.8\):is(:hover, [data-hover]) {

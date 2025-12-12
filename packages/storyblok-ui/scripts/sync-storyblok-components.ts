@@ -636,6 +636,22 @@ function getSbImageComponent(): StoryblokComponent {
         display_name: "Eager Loading",
         default_value: "false",
       },
+      copyright: {
+        type: "text",
+        display_name: "Copyright",
+        translatable: true,
+      },
+      copyrightPosition: {
+        type: "option",
+        display_name: "Copyright Position",
+        default_value: "inline",
+        options: [
+          { name: "Inline (vertical right)", value: "inline" },
+          { name: "Below", value: "below" },
+          { name: "Overlay (gradient)", value: "overlay" },
+          { name: "Vertical Right", value: "vertical-right" },
+        ],
+      },
     },
   };
 }

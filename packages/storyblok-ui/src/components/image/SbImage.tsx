@@ -21,8 +21,13 @@ export interface SbImageProps {
     isLoadingEager?: boolean;
     spacingTop?: string;
     spacingBottom?: string;
+    copyright?: string;
+    copyrightPosition?: "inline" | "below" | "overlay" | "vertical-right";
   };
 }
+
+// Default image width for Storyblok image service when aspect ratio is specified
+const DEFAULT_IMAGE_WIDTH = 1200;
 
 /**
  * Storyblok Image Component
@@ -38,6 +43,8 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     isLoadingEager = false,
     spacingTop,
     spacingBottom,
+    copyright,
+    copyrightPosition = "inline",
   } = blok;
 
   const editableProps = useStoryblokEditable(blok);
@@ -46,13 +53,39 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     return null;
   }
 
-  // Process image with Storyblok image service
+  // Process image with Storyblok image service (or return external URL as-is)
+  // Calculate dimensions based on aspect ratio
+  let cropDimensions = "";
+  if (aspectRatio) {
+    const parts = aspectRatio.split("/");
+    if (parts.length === 2) {
+      const [widthRatio, heightRatio] = parts.map((part) =>
+        Number(part.trim()),
+      );
+      // Validate that both ratios are valid positive finite numbers
+      if (
+        widthRatio > 0 &&
+        heightRatio > 0 &&
+        Number.isFinite(widthRatio) &&
+        Number.isFinite(heightRatio)
+      ) {
+        const calculatedHeight = Math.round(
+          (DEFAULT_IMAGE_WIDTH * heightRatio) / widthRatio,
+        );
+        cropDimensions = `${DEFAULT_IMAGE_WIDTH}x${calculatedHeight}`;
+      }
+    }
+  }
+
   const processedSrc = getProcessedImage(
     image.filename,
-    aspectRatio ? `${aspectRatio.replace("/", "x")}/1200x0` : "",
+    cropDimensions,
     image.focus || "",
     "",
   );
+
+  // Use copyright from custom field first, fallback to image copyright
+  const finalCopyright = copyright || image.copyright || "";
 
   return (
     <SbMediaWrapper
@@ -61,8 +94,10 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
       editable={editableProps}
     >
       <Image
-        src={processedSrc || image.filename}
+        src={processedSrc}
         alt={alt || image.alt || image.title || ""}
+        copyright={finalCopyright}
+        copyrightPosition={copyrightPosition}
         css={{
           width: "100%",
           height: isFullHeight ? "100vh" : "auto",

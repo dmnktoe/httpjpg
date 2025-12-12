@@ -839,16 +839,6 @@ function getSbMusicPlayerComponent(): StoryblokComponent {
         display_name: "Album Artwork",
         filetypes: ["images"],
       },
-      variant: {
-        type: "option",
-        display_name: "Visual Variant",
-        default_value: "default",
-        options: [
-          { name: "Default", value: "default" },
-          { name: "Minimal", value: "minimal" },
-          { name: "Card", value: "card" },
-        ],
-      },
       showArtwork: {
         type: "boolean",
         display_name: "Show Artwork",

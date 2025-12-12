@@ -14,11 +14,6 @@ import { VStack } from "../stack";
 export type MusicSource = "spotify" | "soundcloud" | "mp3" | "custom";
 
 /**
- * Music player variant styles
- */
-export type MusicPlayerVariant = "default" | "minimal" | "card";
-
-/**
  * Music player props
  */
 export interface MusicPlayerProps {
@@ -46,11 +41,6 @@ export interface MusicPlayerProps {
    * Album artwork URL (for MP3 or custom display)
    */
   artwork?: string;
-  /**
-   * Visual variant
-   * @default "default"
-   */
-  variant?: MusicPlayerVariant;
   /**
    * Show artwork
    * @default true
@@ -426,13 +416,13 @@ MP3Player.displayName = "MP3Player";
 /**
  * MusicPlayer - ASCII-styled music widget for portfolio
  *
- * A stylish, minimalistic, but cute kuwaii ASCII-style music player that supports
+ * A stylish, minimalistic, but cute kawaii ASCII-style music player that supports
  * Spotify embeds, SoundCloud embeds, and custom MP3 files. Perfect for artistic
  * portfolios with brutalist/ASCII design aesthetic.
  *
  * **Features:**
  * - 🎵 Multi-source support (Spotify, SoundCloud, MP3)
- * - 🎨 ASCII/kuwaii decorations matching portfolio style
+ * - 🎨 ASCII/kawaii decorations matching portfolio style
  * - 🎛️ Custom HTML5 audio player with controls
  * - 📱 Responsive and accessible
  * - ✨ Multiple visual variants

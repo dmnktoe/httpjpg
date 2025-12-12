@@ -13,7 +13,6 @@ export interface SbMusicPlayerProps {
     title?: string;
     artist?: string;
     artwork?: string;
-    variant?: "default" | "minimal" | "card";
     showArtwork?: boolean;
     showInfo?: boolean;
     autoPlay?: boolean;
@@ -35,7 +34,7 @@ export interface SbMusicPlayerProps {
  *
  * Features:
  * - Multi-source support (Spotify, SoundCloud, MP3)
- * - ASCII/kuwaii decorations matching portfolio style
+ * - ASCII/kawaii decorations matching portfolio style
  * - Custom HTML5 audio player with controls for MP3s
  * - Configurable via Storyblok CMS
  *
@@ -54,7 +53,6 @@ export const SbMusicPlayer = memo(function SbMusicPlayer({
     title,
     artist,
     artwork,
-    variant = "default",
     showArtwork = true,
     showInfo = true,
     autoPlay = false,
@@ -82,7 +80,6 @@ export const SbMusicPlayer = memo(function SbMusicPlayer({
         title={title}
         artist={artist}
         artwork={artwork}
-        variant={variant}
         showArtwork={showArtwork}
         showInfo={showInfo}
         autoPlay={autoPlay}

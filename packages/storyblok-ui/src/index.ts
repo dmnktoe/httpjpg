@@ -41,6 +41,10 @@ export {
   type SbMissingProps,
 } from "./components/missing";
 export {
+  SbMusicPlayer,
+  type SbMusicPlayerProps,
+} from "./components/music-player";
+export {
   SbPage,
   type SbPageProps,
 } from "./components/page";

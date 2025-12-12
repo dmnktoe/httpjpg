@@ -17,6 +17,8 @@ export interface SbPageWorkProps {
     title?: string;
     description?: any;
     images?: StoryblokImage[];
+    date?: string;
+    date_end?: string;
     link?: {
       url?: string;
       cached_url?: string;

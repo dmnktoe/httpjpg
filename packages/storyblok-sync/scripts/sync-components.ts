@@ -1120,6 +1120,16 @@ async function getSbPageWorkComponent(): Promise<StoryblokComponent> {
         description: "First image will be used as preview in navigation",
         filetypes: ["images"],
       },
+      date: {
+        type: "datetime",
+        display_name: "Date",
+        description: "Project/exhibition date or start date",
+      },
+      date_end: {
+        type: "datetime",
+        display_name: "End Date",
+        description: "Optional end date for exhibitions/events with timespan",
+      },
       link: {
         type: "multilink",
         display_name: "Link",
@@ -1129,7 +1139,7 @@ async function getSbPageWorkComponent(): Promise<StoryblokComponent> {
         type: "boolean",
         display_name: "External Only",
         description: "Hide body content and show only external link",
-        default_value: false,
+        default_value: "false",
       },
     },
   };

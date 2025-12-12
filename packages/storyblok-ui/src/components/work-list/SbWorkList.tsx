@@ -33,6 +33,7 @@ export interface SbWorkListProps {
               focus?: string;
             }>;
             date?: string;
+            date_end?: string;
           };
         }
     >; // Array of story UUIDs or resolved stories
@@ -66,11 +67,13 @@ export const SbWorkList = memo(function SbWorkList({
 
   // Transform Storyblok work data to WorkList format
   const workItems = workStories.map((item) => {
-    // Try to use custom date field first, then published_at, then first_published_at as fallback
+    // Use date_end if exists (for events/exhibitions with timespan),
+    // otherwise use date field, fallback to first_published_at
     const dateString =
+      item.content?.date_end ||
       item.content?.date ||
-      item.published_at ||
       item.first_published_at ||
+      item.published_at ||
       item.created_at;
 
     // Render rich text description if available

@@ -89,7 +89,7 @@ function formatWorkCardDate(date: string | Date): {
  * WorkCard Date component
  */
 function WorkCardDate({ date }: { date: string | Date }) {
-  const { day, year, monthSymbol } = formatWorkCardDate(date);
+  const { day, month, year, monthSymbol } = formatWorkCardDate(date);
 
   return (
     <HStack
@@ -114,7 +114,7 @@ function WorkCardDate({ date }: { date: string | Date }) {
             top: "1px",
           }}
         >
-          {monthSymbol}
+          {monthSymbol} {month}
         </Box>
         {year}
       </Box>

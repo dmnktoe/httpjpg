@@ -172,7 +172,7 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
       muted = false,
       aspectRatio = "16/9",
       copyright,
-      copyrightPosition = "inline",
+      copyrightPosition = "inline-white",
       wrapperStyle,
       wrapperClassName,
       className,
@@ -219,9 +219,9 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
               })}
             />
 
-            {/* Copyright inline (vertical on right side) */}
-            {copyright && copyrightPosition === "inline" && (
-              <CopyrightLabel text={copyright} position="inline" />
+            {/* Copyright inline white (vertical on right side) */}
+            {copyright && copyrightPosition === "inline-white" && (
+              <CopyrightLabel text={copyright} position="inline-white" />
             )}
 
             {/* Copyright overlay (bottom gradient) */}
@@ -229,9 +229,9 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
               <CopyrightLabel text={copyright} position="overlay" />
             )}
 
-            {/* Copyright vertical right */}
-            {copyright && copyrightPosition === "vertical-right" && (
-              <CopyrightLabel text={copyright} position="vertical-right" />
+            {/* Copyright inline black */}
+            {copyright && copyrightPosition === "inline-black" && (
+              <CopyrightLabel text={copyright} position="inline-black" />
             )}
           </Box>
 
@@ -278,9 +278,9 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
               })}
             />
 
-            {/* Copyright inline (vertical on right side) */}
-            {copyright && copyrightPosition === "inline" && (
-              <CopyrightLabel text={copyright} position="inline" />
+            {/* Copyright inline white (vertical on right side) */}
+            {copyright && copyrightPosition === "inline-white" && (
+              <CopyrightLabel text={copyright} position="inline-white" />
             )}
 
             {/* Copyright overlay (bottom gradient) */}
@@ -288,9 +288,9 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
               <CopyrightLabel text={copyright} position="overlay" />
             )}
 
-            {/* Copyright vertical right */}
-            {copyright && copyrightPosition === "vertical-right" && (
-              <CopyrightLabel text={copyright} position="vertical-right" />
+            {/* Copyright inline black */}
+            {copyright && copyrightPosition === "inline-black" && (
+              <CopyrightLabel text={copyright} position="inline-black" />
             )}
           </Box>
 
@@ -345,9 +345,9 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
           {/* Custom controls */}
           <VideoControls videoRef={videoRef} show={controls} />
 
-          {/* Copyright inline (vertical on right side) */}
-          {copyright && copyrightPosition === "inline" && (
-            <CopyrightLabel text={copyright} position="inline" />
+          {/* Copyright inline white (vertical on right side) */}
+          {copyright && copyrightPosition === "inline-white" && (
+            <CopyrightLabel text={copyright} position="inline-white" />
           )}
 
           {/* Copyright overlay (bottom gradient) */}
@@ -355,9 +355,9 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
             <CopyrightLabel text={copyright} position="overlay" />
           )}
 
-          {/* Copyright vertical right */}
-          {copyright && copyrightPosition === "vertical-right" && (
-            <CopyrightLabel text={copyright} position="vertical-right" />
+          {/* Copyright inline black */}
+          {copyright && copyrightPosition === "inline-black" && (
+            <CopyrightLabel text={copyright} position="inline-black" />
           )}
         </Box>
 

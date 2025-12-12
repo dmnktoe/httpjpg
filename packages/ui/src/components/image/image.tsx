@@ -26,7 +26,7 @@ export interface ImageProps
   copyright?: string;
   /**
    * Copyright position
-   * @default "inline"
+   * @default "inline-white"
    */
   copyrightPosition?: CopyrightPosition;
   /**
@@ -88,7 +88,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       src,
       alt,
       copyright,
-      copyrightPosition = "inline",
+      copyrightPosition = "inline-white",
       blurOnLoad = false,
       blurDataURL,
       objectFit = "cover",
@@ -125,9 +125,9 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
     const showBlur = blurOnLoad && !isLoaded && blurDataURL;
     const showCopyrightInside =
       copyright &&
-      (copyrightPosition === "inline" ||
-        copyrightPosition === "overlay" ||
-        copyrightPosition === "vertical-right");
+      (copyrightPosition === "inline-white" ||
+        copyrightPosition === "inline-black" ||
+        copyrightPosition === "overlay");
 
     return (
       <>
@@ -186,9 +186,9 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
             {...props}
           />
 
-          {/* Copyright inline (vertical on right side) */}
-          {showCopyrightInside && copyrightPosition === "inline" && (
-            <CopyrightLabel text={copyright} position="inline" />
+          {/* Copyright inline white (vertical on right side) */}
+          {showCopyrightInside && copyrightPosition === "inline-white" && (
+            <CopyrightLabel text={copyright} position="inline-white" />
           )}
 
           {/* Copyright overlay (bottom gradient) */}
@@ -196,9 +196,9 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
             <CopyrightLabel text={copyright} position="overlay" />
           )}
 
-          {/* Copyright vertical right */}
-          {showCopyrightInside && copyrightPosition === "vertical-right" && (
-            <CopyrightLabel text={copyright} position="vertical-right" />
+          {/* Copyright inline black */}
+          {showCopyrightInside && copyrightPosition === "inline-black" && (
+            <CopyrightLabel text={copyright} position="inline-black" />
           )}
         </Box>
 

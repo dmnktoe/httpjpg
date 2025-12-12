@@ -22,7 +22,7 @@ export interface SbImageProps {
     spacingTop?: string;
     spacingBottom?: string;
     copyright?: string;
-    copyrightPosition?: "inline" | "below" | "overlay" | "vertical-right";
+    copyrightPosition?: "inline-white" | "inline-black" | "below" | "overlay";
   };
 }
 
@@ -44,7 +44,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     spacingTop,
     spacingBottom,
     copyright,
-    copyrightPosition = "inline",
+    copyrightPosition = "inline-white",
   } = blok;
 
   const editableProps = useStoryblokEditable(blok);

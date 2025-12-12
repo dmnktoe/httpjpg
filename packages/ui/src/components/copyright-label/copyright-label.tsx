@@ -6,8 +6,8 @@ import { Box } from "../box/box";
 export type CopyrightPosition =
   | "below"
   | "overlay"
-  | "vertical-right"
-  | "inline";
+  | "inline-black"
+  | "inline-white";
 
 export interface CopyrightLabelProps {
   /**
@@ -39,11 +39,11 @@ export interface CopyrightLabelProps {
  * // Overlay at bottom
  * <CopyrightLabel text="Jane Smith" position="overlay" />
  *
- * // Inline vertical on right (for images)
- * <CopyrightLabel text="Photographer" position="inline" />
+ * // Inline white (for dark images/slideshows)
+ * <CopyrightLabel text="Photographer" position="inline-white" />
  *
- * // Vertical text on right side (for slideshows)
- * <CopyrightLabel text="Photographer Name" position="vertical-right" />
+ * // Inline black (for bright images)
+ * <CopyrightLabel text="Photographer Name" position="inline-black" />
  * ```
  */
 export function CopyrightLabel({
@@ -82,8 +82,8 @@ export function CopyrightLabel({
     );
   }
 
-  // Vertical right position (e.g., for slideshow)
-  if (position === "vertical-right") {
+  // Inline black position (vertical on right side, for bright images)
+  if (position === "inline-black") {
     return (
       <Box
         css={{
@@ -95,7 +95,7 @@ export function CopyrightLabel({
           fontFamily: "sans",
           fontSize: "sm",
           opacity: 0.7,
-          color: "white",
+          color: "black",
           writingMode: "vertical-rl",
           transform: "rotate(180deg)",
           whiteSpace: "nowrap",
@@ -109,8 +109,8 @@ export function CopyrightLabel({
     );
   }
 
-  // Inline position (vertical on right side, e.g., for images)
-  if (position === "inline") {
+  // Inline white position (vertical on right side, for dark images)
+  if (position === "inline-white") {
     return (
       <Box
         css={{
@@ -125,8 +125,10 @@ export function CopyrightLabel({
           color: "white",
           writingMode: "vertical-rl",
           transform: "rotate(180deg)",
+          whiteSpace: "nowrap",
           boxSizing: "border-box",
           zIndex: 10,
+          pointerEvents: "none",
           ...cssProp,
         }}
       >

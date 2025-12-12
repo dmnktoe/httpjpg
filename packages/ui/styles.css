@@ -2836,16 +2836,16 @@
     transform: scale(1.1);
 }
 
-  .pos_inline {
-    position: inline;
+  .pos_inline-white {
+    position: inline-white;
 }
 
   .pos_overlay {
     position: overlay;
 }
 
-  .pos_vertical-right {
-    position: vertical-right;
+  .pos_inline-black {
+    position: inline-black;
 }
 
   .pos_below {

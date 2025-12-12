@@ -280,15 +280,15 @@ export const WithCopyright: Story = {
     images: [
       {
         url: "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/2000x1125/smart/filters:quality(75)",
-        alt: "Klosterkirche - vertical-right (white, rotated)",
+        alt: "Klosterkirche - inline-black (black text)",
         copyright: "Studio XYZ 2024",
-        copyrightPosition: "vertical-right",
+        copyrightPosition: "inline-black",
       },
       {
         url: "https://a.storyblok.com/f/281211/1500x2000/e04c56fe25/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0225.jpg/m/2000x1125/smart/filters:quality(75)",
-        alt: "Klosterkirche - inline (black, rotated, no ©)",
+        alt: "Klosterkirche - inline-white (white text)",
         copyright: "John Photographer",
-        copyrightPosition: "inline",
+        copyrightPosition: "inline-white",
       },
       {
         url: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",

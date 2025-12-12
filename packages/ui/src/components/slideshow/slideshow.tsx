@@ -287,7 +287,7 @@ export function Slideshow({
                     {image.copyright && (
                       <CopyrightLabel
                         text={image.copyright}
-                        position={image.copyrightPosition || "vertical-right"}
+                        position={image.copyrightPosition || "inline-black"}
                       />
                     )}
                   </>
@@ -299,7 +299,7 @@ export function Slideshow({
                     objectFit="cover"
                     copyright={image.copyright}
                     copyrightPosition={
-                      image.copyrightPosition || "vertical-right"
+                      image.copyrightPosition || "inline-white"
                     }
                   />
                 )}

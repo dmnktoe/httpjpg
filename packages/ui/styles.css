@@ -3448,6 +3448,14 @@
     margin-top: var(--spacing-1);
 }
 
+  .pl_0 {
+    padding-left: var(--spacing-0);
+}
+
+  .pr_0 {
+    padding-right: var(--spacing-0);
+}
+
   .min-h_auto {
     min-height: auto;
 }
@@ -3554,14 +3562,6 @@
 
   .max-w_45ch {
     max-width: 45ch;
-}
-
-  .pl_0 {
-    padding-left: var(--spacing-0);
-}
-
-  .pr_0 {
-    padding-right: var(--spacing-0);
 }
 
   .top_16px {

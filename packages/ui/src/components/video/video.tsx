@@ -5,6 +5,7 @@ import { forwardRef, useRef } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
+import { CopyrightLabel, type CopyrightPosition } from "../copyright-label";
 import { VideoControls } from "./video-controls";
 
 /**
@@ -64,9 +65,9 @@ export interface VideoProps
   copyright?: string;
   /**
    * Copyright position
-   * @default "below"
+   * @default "inline"
    */
-  copyrightPosition?: "below" | "overlay";
+  copyrightPosition?: CopyrightPosition;
   /**
    * Custom styles for the wrapper
    */
@@ -171,7 +172,7 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
       muted = false,
       aspectRatio = "16/9",
       copyright,
-      copyrightPosition = "below",
+      copyrightPosition = "inline",
       wrapperStyle,
       wrapperClassName,
       className,
@@ -182,7 +183,6 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
     ref,
   ) => {
     const videoRef = useRef<HTMLVideoElement>(null);
-    const showCopyrightOverlay = copyright && copyrightPosition === "overlay";
 
     // Render YouTube embed
     if (source === "youtube") {
@@ -219,41 +219,25 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
               })}
             />
 
-            {showCopyrightOverlay && (
-              <Box
-                css={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  background:
-                    "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
-                  p: "1rem",
-                  fontFamily: "mono",
-                  fontSize: "sm",
-                  opacity: 0.7,
-                  color: "white",
-                  boxSizing: "border-box",
-                  pointerEvents: "none",
-                }}
-              >
-                {copyright}
-              </Box>
+            {/* Copyright inline (vertical on right side) */}
+            {copyright && copyrightPosition === "inline" && (
+              <CopyrightLabel text={copyright} position="inline" />
+            )}
+
+            {/* Copyright overlay (bottom gradient) */}
+            {copyright && copyrightPosition === "overlay" && (
+              <CopyrightLabel text={copyright} position="overlay" />
+            )}
+
+            {/* Copyright vertical right */}
+            {copyright && copyrightPosition === "vertical-right" && (
+              <CopyrightLabel text={copyright} position="vertical-right" />
             )}
           </Box>
 
+          {/* Copyright below video */}
           {copyright && copyrightPosition === "below" && (
-            <Box
-              css={{
-                fontFamily: "mono",
-                fontSize: "sm",
-                opacity: 0.7,
-                p: "0.5rem 0",
-                color: "currentColor",
-              }}
-            >
-              {copyright}
-            </Box>
+            <CopyrightLabel text={copyright} position="below" />
           )}
         </>
       );
@@ -294,41 +278,25 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
               })}
             />
 
-            {showCopyrightOverlay && (
-              <Box
-                css={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  background:
-                    "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
-                  p: "1rem",
-                  fontFamily: "mono",
-                  fontSize: "sm",
-                  opacity: 0.7,
-                  color: "white",
-                  boxSizing: "border-box",
-                  pointerEvents: "none",
-                }}
-              >
-                {copyright}
-              </Box>
+            {/* Copyright inline (vertical on right side) */}
+            {copyright && copyrightPosition === "inline" && (
+              <CopyrightLabel text={copyright} position="inline" />
+            )}
+
+            {/* Copyright overlay (bottom gradient) */}
+            {copyright && copyrightPosition === "overlay" && (
+              <CopyrightLabel text={copyright} position="overlay" />
+            )}
+
+            {/* Copyright vertical right */}
+            {copyright && copyrightPosition === "vertical-right" && (
+              <CopyrightLabel text={copyright} position="vertical-right" />
             )}
           </Box>
 
+          {/* Copyright below video */}
           {copyright && copyrightPosition === "below" && (
-            <Box
-              css={{
-                fontFamily: "mono",
-                fontSize: "sm",
-                opacity: 0.7,
-                p: "0.5rem 0",
-                color: "currentColor",
-              }}
-            >
-              {copyright}
-            </Box>
+            <CopyrightLabel text={copyright} position="below" />
           )}
         </>
       );
@@ -377,41 +345,25 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
           {/* Custom controls */}
           <VideoControls videoRef={videoRef} show={controls} />
 
-          {showCopyrightOverlay && (
-            <Box
-              css={{
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                background:
-                  "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
-                p: "1rem",
-                fontFamily: "mono",
-                fontSize: "sm",
-                opacity: 0.7,
-                color: "white",
-                boxSizing: "border-box",
-                pointerEvents: "none",
-              }}
-            >
-              {copyright}
-            </Box>
+          {/* Copyright inline (vertical on right side) */}
+          {copyright && copyrightPosition === "inline" && (
+            <CopyrightLabel text={copyright} position="inline" />
+          )}
+
+          {/* Copyright overlay (bottom gradient) */}
+          {copyright && copyrightPosition === "overlay" && (
+            <CopyrightLabel text={copyright} position="overlay" />
+          )}
+
+          {/* Copyright vertical right */}
+          {copyright && copyrightPosition === "vertical-right" && (
+            <CopyrightLabel text={copyright} position="vertical-right" />
           )}
         </Box>
 
+        {/* Copyright below video */}
         {copyright && copyrightPosition === "below" && (
-          <Box
-            css={{
-              fontFamily: "mono",
-              fontSize: "sm",
-              opacity: 0.7,
-              p: "0.5rem 0",
-              color: "currentColor",
-            }}
-          >
-            {copyright}
-          </Box>
+          <CopyrightLabel text={copyright} position="below" />
         )}
       </>
     );

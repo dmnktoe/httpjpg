@@ -27,6 +27,28 @@ export const SbCaption = memo(function SbCaption({
   color,
   marginTop,
 }: SbCaptionProps) {
+  // Don't render if no caption data or empty content
+  if (!data || !data.content || data.content.length === 0) {
+    return null;
+  }
+
+  // Recursively check if any node has actual text content
+  const hasTextContent = (nodes: any[]): boolean => {
+    return nodes.some((node) => {
+      if (node.type === "text" && node.text && node.text.trim() !== "") {
+        return true;
+      }
+      if (node.content && Array.isArray(node.content)) {
+        return hasTextContent(node.content);
+      }
+      return false;
+    });
+  };
+
+  if (!hasTextContent(data.content)) {
+    return null;
+  }
+
   return (
     <Box
       css={{

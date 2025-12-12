@@ -101,7 +101,7 @@ export const Section = forwardRef<HTMLElement, SectionProps>(
       pl = "0",
       pr = "0",
       fullWidth = true,
-      useContainer = true,
+      useContainer = false,
       containerSize = "2xl",
       css: cssProp,
       ...props

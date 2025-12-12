@@ -870,9 +870,12 @@ async function getSbVideoComponent(): Promise<StoryblokComponent> {
       copyrightPosition: {
         type: "option",
         display_name: "Copyright Position",
+        default_value: "inline",
         options: [
-          { name: "Bottom Left", value: "bottom-left" },
-          { name: "Bottom Right", value: "bottom-right" },
+          { name: "Inline (Vertical Right)", value: "inline" },
+          { name: "Overlay (Bottom Gradient)", value: "overlay" },
+          { name: "Vertical Right", value: "vertical-right" },
+          { name: "Below Video", value: "below" },
         ],
       },
     },

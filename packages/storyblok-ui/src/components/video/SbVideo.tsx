@@ -96,7 +96,9 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
         }}
       />
 
-      {caption && <SbCaption data={caption} />}
+      {caption?.content && caption.content.length > 0 && (
+        <SbCaption data={caption} />
+      )}
     </SbMediaWrapper>
   );
 });

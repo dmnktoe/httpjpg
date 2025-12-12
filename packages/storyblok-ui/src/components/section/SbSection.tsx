@@ -123,8 +123,8 @@ export const SbSection = memo(function SbSection({ blok }: SbSectionProps) {
       useContainer={width === "container"}
       pt={responsivePt}
       pb={responsivePb}
-      pl={responsivePl}
-      pr={responsivePr}
+      pl={paddingLeft || paddingLeftMd || paddingLeftLg ? responsivePl : "0"}
+      pr={paddingRight || paddingRightMd || paddingRightLg ? responsivePr : "0"}
       style={{
         backgroundColor: mapColorToToken(bgColor) || undefined,
       }}

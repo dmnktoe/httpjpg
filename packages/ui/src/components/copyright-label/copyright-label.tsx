@@ -73,6 +73,7 @@ export function CopyrightLabel({
           color: "white",
           boxSizing: "border-box",
           pointerEvents: "none",
+          zIndex: 10,
           ...cssProp,
         }}
       >
@@ -124,6 +125,7 @@ export function CopyrightLabel({
           writingMode: "vertical-rl",
           transform: "rotate(180deg)",
           boxSizing: "border-box",
+          zIndex: 10,
           ...cssProp,
         }}
       >

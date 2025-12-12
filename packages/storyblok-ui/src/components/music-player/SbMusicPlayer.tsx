@@ -1,6 +1,6 @@
 "use client";
 
-import { MusicPlayer, type MusicPlayerProps as BaseMusicPlayerProps } from "@httpjpg/ui";
+import { MusicPlayer } from "@httpjpg/ui";
 import { memo } from "react";
 import { mapSpacingToToken } from "../../lib/spacing-utils";
 import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
@@ -29,23 +29,25 @@ export interface SbMusicPlayerProps {
 
 /**
  * Storyblok Music Player Component
- * 
+ *
  * ASCII-styled music widget for Storyblok CMS integration.
  * Supports Spotify embeds, SoundCloud embeds, and custom MP3 files.
- * 
+ *
  * Features:
  * - Multi-source support (Spotify, SoundCloud, MP3)
  * - ASCII/kuwaii decorations matching portfolio style
  * - Custom HTML5 audio player with controls for MP3s
  * - Configurable via Storyblok CMS
- * 
+ *
  * @example
  * In Storyblok, add a "music_player" component with:
  * - source: "spotify"
  * - src: "spotify:track:3n3Ppam7vgaVa1iaRUc9Lp"
  * - decoration: "♪ ♫ ♪"
  */
-export const SbMusicPlayer = memo(function SbMusicPlayer({ blok }: SbMusicPlayerProps) {
+export const SbMusicPlayer = memo(function SbMusicPlayer({
+  blok,
+}: SbMusicPlayerProps) {
   const {
     source = "mp3",
     src,

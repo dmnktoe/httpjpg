@@ -6,7 +6,6 @@ import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 import { Divider } from "../divider/divider";
-import { Icon } from "../icon/icon";
 import { VStack } from "../stack";
 
 /**
@@ -148,7 +147,9 @@ const MP3Player = forwardRef<
 
     useEffect(() => {
       const audio = audioRef.current;
-      if (!audio) return;
+      if (!audio) {
+        return;
+      }
 
       const updateTime = () => setCurrentTime(audio.currentTime);
       const updateDuration = () => setDuration(audio.duration);
@@ -167,7 +168,9 @@ const MP3Player = forwardRef<
 
     const togglePlay = () => {
       const audio = audioRef.current;
-      if (!audio) return;
+      if (!audio) {
+        return;
+      }
 
       if (isPlaying) {
         audio.pause();
@@ -179,7 +182,9 @@ const MP3Player = forwardRef<
 
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
       const audio = audioRef.current;
-      if (!audio) return;
+      if (!audio) {
+        return;
+      }
 
       const time = Number.parseFloat(e.target.value);
       audio.currentTime = time;
@@ -188,7 +193,9 @@ const MP3Player = forwardRef<
 
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const audio = audioRef.current;
-      if (!audio) return;
+      if (!audio) {
+        return;
+      }
 
       const vol = Number.parseFloat(e.target.value);
       audio.volume = vol;
@@ -203,6 +210,7 @@ const MP3Player = forwardRef<
 
     return (
       <Box ref={forwardedRef}>
+        {/* biome-ignore lint/a11y/useMediaCaption: Music players don't require captions like video */}
         <audio ref={audioRef} src={src} autoPlay={autoPlay} />
 
         <VStack gap="4">
@@ -468,7 +476,6 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
       title,
       artist,
       artwork,
-      variant = "default",
       showArtwork = true,
       showInfo = true,
       autoPlay = false,

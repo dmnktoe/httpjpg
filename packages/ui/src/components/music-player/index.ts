@@ -1,1 +1,6 @@
-export { MusicPlayer, type MusicPlayerProps, type MusicSource, type MusicPlayerVariant } from "./music-player";
+export {
+  MusicPlayer,
+  type MusicPlayerProps,
+  type MusicPlayerVariant,
+  type MusicSource,
+} from "./music-player";

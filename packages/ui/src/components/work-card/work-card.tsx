@@ -193,7 +193,7 @@ function WorkCardMeta({
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
             display: "block",
-            color: "blue",
+            color: "primary.500",
             textDecoration: "none",
             _hover: {
               textDecoration: "underline",

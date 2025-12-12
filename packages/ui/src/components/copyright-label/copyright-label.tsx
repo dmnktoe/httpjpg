@@ -66,9 +66,9 @@ export function CopyrightLabel({
           right: 0,
           background:
             "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
-          p: "1rem",
-          fontFamily: "mono",
-          fontSize: "0.75rem",
+          p: 4,
+          fontFamily: "sans",
+          fontSize: "sm",
           opacity: 0.7,
           color: "white",
           boxSizing: "border-box",
@@ -88,11 +88,12 @@ export function CopyrightLabel({
       <Box
         css={{
           position: "absolute",
-          right: "0.5rem",
-          bottom: "0.5rem",
-          p: "0.5rem 0.25rem",
-          fontFamily: "mono",
-          fontSize: "0.75rem",
+          right: 2,
+          bottom: 2,
+          px: 1,
+          py: 2,
+          fontFamily: "sans",
+          fontSize: "sm",
           opacity: 0.7,
           color: "white",
           writingMode: "vertical-rl",
@@ -100,7 +101,6 @@ export function CopyrightLabel({
           whiteSpace: "nowrap",
           zIndex: 10,
           pointerEvents: "none",
-          textShadow: "0 1px 3px rgba(0, 0, 0, 0.5)",
           ...cssProp,
         }}
       >
@@ -115,13 +115,14 @@ export function CopyrightLabel({
       <Box
         css={{
           position: "absolute",
-          bottom: "0.5rem",
-          right: "0.5rem",
-          p: "0.5rem 0.25rem",
-          fontFamily: "mono",
-          fontSize: "0.75rem",
+          bottom: 2,
+          right: 2,
+          px: 1,
+          py: 2,
+          fontFamily: "sans",
+          fontSize: "sm",
           opacity: 0.7,
-          color: "black",
+          color: "white",
           writingMode: "vertical-rl",
           transform: "rotate(180deg)",
           boxSizing: "border-box",
@@ -138,10 +139,10 @@ export function CopyrightLabel({
   return (
     <Box
       css={{
-        fontFamily: "mono",
-        fontSize: "0.75rem",
+        fontFamily: "sans",
+        fontSize: "sm",
         opacity: 0.7,
-        p: "0.5rem 0",
+        py: 2,
         color: "currentColor",
         ...cssProp,
       }}

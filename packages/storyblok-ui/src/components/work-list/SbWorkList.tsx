@@ -29,6 +29,8 @@ export interface SbWorkListProps {
               filename: string;
               alt?: string;
               title?: string;
+              copyright?: string;
+              focus?: string;
             }>;
             date?: string;
           };
@@ -84,6 +86,8 @@ export const SbWorkList = memo(function SbWorkList({
       images: (item.content?.images || []).map((img) => ({
         url: img.filename || "",
         alt: img.alt || item.content?.title || item.name,
+        copyright: img.copyright,
+        focus: img.focus,
       })),
       date: dateString,
       baseUrl,

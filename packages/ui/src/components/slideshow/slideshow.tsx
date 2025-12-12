@@ -278,23 +278,29 @@ export function Slideshow({
                 }}
               >
                 {image.videoUrl ? (
-                  <SlideshowVideoSlide
-                    videoUrl={image.videoUrl}
-                    videoPoster={image.videoPoster}
-                    aspectRatio={aspectRatio}
-                  />
+                  <>
+                    <SlideshowVideoSlide
+                      videoUrl={image.videoUrl}
+                      videoPoster={image.videoPoster}
+                      aspectRatio={aspectRatio}
+                    />
+                    {image.copyright && (
+                      <CopyrightLabel
+                        text={image.copyright}
+                        position={image.copyrightPosition || "vertical-right"}
+                      />
+                    )}
+                  </>
                 ) : (
                   <Image
                     src={image.url}
                     alt={image.alt}
                     aspectRatio={aspectRatio}
                     objectFit="cover"
-                  />
-                )}
-                {image.copyright && (
-                  <CopyrightLabel
-                    text={image.copyright}
-                    position={image.copyrightPosition || "vertical-right"}
+                    copyright={image.copyright}
+                    copyrightPosition={
+                      image.copyrightPosition || "vertical-right"
+                    }
                   />
                 )}
               </Box>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Box } from "../box/box";
+import { Divider } from "../divider/divider";
 import { Link } from "../link/link";
 import { NavLink } from "../nav-link/nav-link";
 import type { HeaderProps } from "./header";
@@ -67,17 +68,8 @@ export const MobileMenuContent = ({
             bg: "white",
             color: "black",
             m: { md: "6" },
-            border: "2px solid black",
             borderRadius: 0,
             position: "relative",
-            _before: {
-              content: '""',
-              position: "absolute",
-              inset: "-6px",
-              border: "1px dashed black",
-              opacity: 0.3,
-              pointerEvents: "none",
-            },
           }}
         >
           <Box
@@ -115,19 +107,24 @@ export const MobileMenuContent = ({
               </Link>
             ))}
 
+            <Divider
+              variant="ascii"
+              pattern="⋆｡°✩ ･ ✦ ･ ✧ ･ ✦ ･ ✩°｡⋆"
+              color="neutral.200"
+              spacing="3"
+            />
+
             <Box
               css={{
-                my: "3",
+                fontFamily: "headline",
+                mb: "2",
+                fontWeight: "bold",
                 fontSize: "sm",
-                opacity: 0.6,
-                fontFamily: "mono",
+                letterSpacing: "wider",
+                textTransform: "lowercase",
               }}
             >
-              ╶─────────────────────╴
-            </Box>
-
-            <Box css={{ mb: "2", fontWeight: "bold", fontSize: "sm" }}>
-              🎀 ୧ꔛꗃ˖ PERSONAL WORK
+              Personal Work
             </Box>
 
             {personalWork.length > 0 ? (
@@ -152,19 +149,24 @@ export const MobileMenuContent = ({
               </Box>
             )}
 
+            <Divider
+              variant="ascii"
+              pattern="⋆｡°✩ ･ ✦ ･ ✧ ･ ✦ ･ ✩°｡⋆"
+              color="neutral.200"
+              spacing="3"
+            />
+
             <Box
               css={{
-                my: "3",
+                fontFamily: "headline",
+                mb: "2",
+                fontWeight: "bold",
                 fontSize: "sm",
-                opacity: 0.6,
-                fontFamily: "mono",
+                letterSpacing: "wider",
+                textTransform: "lowercase",
               }}
             >
-              ╶─────────────────────╴
-            </Box>
-
-            <Box css={{ mb: "2", fontWeight: "bold", fontSize: "sm" }}>
-              (^‿^)-𝒷))) CLIENT WORK
+              Client Work
             </Box>
 
             {clientWork.length > 0 ? (

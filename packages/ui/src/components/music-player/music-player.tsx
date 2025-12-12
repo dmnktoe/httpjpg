@@ -14,6 +14,11 @@ import { VStack } from "../stack";
 export type MusicSource = "spotify" | "soundcloud" | "mp3" | "custom";
 
 /**
+ * Spotify embed size
+ */
+export type SpotifySize = "compact" | "normal";
+
+/**
  * Music player props
  */
 export interface MusicPlayerProps {
@@ -42,6 +47,11 @@ export interface MusicPlayerProps {
    */
   artwork?: string;
   /**
+   * Spotify embed size
+   * @default "normal"
+   */
+  spotifySize?: SpotifySize;
+  /**
    * Show artwork
    * @default true
    */
@@ -58,7 +68,7 @@ export interface MusicPlayerProps {
   autoPlay?: boolean;
   /**
    * Custom ASCII decoration pattern
-   * @default "♪ ♫ ♪ ♫ ♪ ♫ ♪"
+   * @default "･ﾟ⋆ ♪ ♫ ･ﾟ⋆"
    */
   decoration?: string;
   /**
@@ -203,25 +213,25 @@ const MP3Player = forwardRef<
         {/* biome-ignore lint/a11y/useMediaCaption: Music players don't require captions like video */}
         <audio ref={audioRef} src={src} autoPlay={autoPlay} />
 
-        <VStack gap="4">
+        <VStack gap="3">
           {/* Artwork and Info */}
           {(showArtwork || showInfo) && (
             <Box
               css={{
                 display: "flex",
-                gap: 4,
+                gap: 3,
                 alignItems: "center",
               }}
             >
               {showArtwork && artwork && (
                 <Box
                   css={{
-                    w: 20,
-                    h: 20,
+                    w: 16,
+                    h: 16,
                     flexShrink: 0,
-                    borderRadius: "md",
+                    borderRadius: "sm",
                     overflow: "hidden",
-                    background: "neutral.200",
+                    background: "neutral.100",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -243,10 +253,11 @@ const MP3Player = forwardRef<
                   {title && (
                     <Box
                       css={{
-                        fontSize: "md",
+                        fontSize: "sm",
                         fontWeight: "semibold",
                         fontFamily: "mono",
                         truncate: true,
+                        letterSpacing: "wide",
                       }}
                     >
                       {title}
@@ -255,10 +266,11 @@ const MP3Player = forwardRef<
                   {artist && (
                     <Box
                       css={{
-                        fontSize: "sm",
+                        fontSize: "xs",
                         opacity: 60,
                         fontFamily: "mono",
                         truncate: true,
+                        mt: 0.5,
                       }}
                     >
                       {artist}
@@ -274,7 +286,7 @@ const MP3Player = forwardRef<
             css={{
               display: "flex",
               flexDirection: "column",
-              gap: 3,
+              gap: 2,
             }}
           >
             {/* Play/Pause and Time */}
@@ -282,7 +294,7 @@ const MP3Player = forwardRef<
               css={{
                 display: "flex",
                 alignItems: "center",
-                gap: 3,
+                gap: 2,
               }}
             >
               <button
@@ -290,21 +302,26 @@ const MP3Player = forwardRef<
                 onClick={togglePlay}
                 className={css({
                   cursor: "pointer",
-                  background: "transparent",
+                  background: "neutral.900",
+                  color: "white",
                   border: "none",
-                  fontSize: "2xl",
-                  p: 0,
+                  fontSize: "sm",
+                  px: 2,
+                  py: 1,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  transition: "transform 0.2s",
+                  borderRadius: "sm",
+                  fontFamily: "mono",
+                  minW: "60px",
+                  transition: "all 0.2s",
                   _hover: {
-                    transform: "scale(1.1)",
+                    background: "neutral.800",
                   },
                 })}
                 aria-label={isPlaying ? "Pause" : "Play"}
               >
-                {isPlaying ? "∥" : "▸"}
+                {isPlaying ? "∥ PAUSE" : "▸ PLAY"}
               </button>
 
               <Box css={{ flex: 1, minW: 0 }}>
@@ -316,7 +333,7 @@ const MP3Player = forwardRef<
                   onChange={handleSeek}
                   className={css({
                     w: "full",
-                    h: "6px",
+                    h: "4px",
                     cursor: "pointer",
                     appearance: "none",
                     background: "neutral.200",
@@ -327,15 +344,15 @@ const MP3Player = forwardRef<
                     },
                     "&::-webkit-slider-thumb": {
                       appearance: "none",
-                      w: "14px",
-                      h: "14px",
+                      w: "12px",
+                      h: "12px",
                       borderRadius: "full",
                       background: "neutral.900",
                       cursor: "pointer",
                     },
                     "&::-moz-range-thumb": {
-                      w: "14px",
-                      h: "14px",
+                      w: "12px",
+                      h: "12px",
                       borderRadius: "full",
                       background: "neutral.900",
                       border: "none",
@@ -347,10 +364,11 @@ const MP3Player = forwardRef<
 
               <Box
                 css={{
-                  fontSize: "xs",
+                  fontSize: "2xs",
                   fontFamily: "mono",
-                  minW: "80px",
+                  minW: "70px",
                   textAlign: "right",
+                  opacity: 60,
                 }}
               >
                 {formatTime(currentTime)} / {formatTime(duration)}
@@ -365,7 +383,7 @@ const MP3Player = forwardRef<
                 gap: 2,
               }}
             >
-              <Box css={{ fontSize: "md" }}>🔊</Box>
+              <Box css={{ fontSize: "xs", opacity: 60 }}>VOL</Box>
               <input
                 type="range"
                 min="0"
@@ -375,7 +393,7 @@ const MP3Player = forwardRef<
                 onChange={handleVolumeChange}
                 className={css({
                   flex: 1,
-                  h: "4px",
+                  h: "3px",
                   cursor: "pointer",
                   appearance: "none",
                   background: "neutral.200",
@@ -386,15 +404,15 @@ const MP3Player = forwardRef<
                   },
                   "&::-webkit-slider-thumb": {
                     appearance: "none",
-                    w: "12px",
-                    h: "12px",
+                    w: "10px",
+                    h: "10px",
                     borderRadius: "full",
                     background: "neutral.900",
                     cursor: "pointer",
                   },
                   "&::-moz-range-thumb": {
-                    w: "12px",
-                    h: "12px",
+                    w: "10px",
+                    h: "10px",
                     borderRadius: "full",
                     background: "neutral.900",
                     border: "none",
@@ -403,6 +421,9 @@ const MP3Player = forwardRef<
                 })}
                 aria-label="Volume"
               />
+              <Box css={{ fontSize: "xs", opacity: 60, minW: "30px", textAlign: "right" }}>
+                {Math.round(volume * 100)}%
+              </Box>
             </Box>
           </Box>
         </VStack>
@@ -466,10 +487,11 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
       title,
       artist,
       artwork,
+      spotifySize = "normal",
       showArtwork = true,
       showInfo = true,
       autoPlay = false,
-      decoration = "♪ ♫ ♪ ♫ ♪ ♫ ♪",
+      decoration = "･ﾟ⋆ ♪ ♫ ･ﾟ⋆",
       headerContent,
       footerContent,
       css: cssProp,
@@ -494,26 +516,29 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
     }, [source, src]);
 
     const containerStyles = css.raw({
-      p: 6,
-      background: "neutral.50",
-      border: "2px solid",
-      borderColor: "neutral.900",
+      p: 4,
+      background: "transparent",
       position: "relative",
+      _hover: {
+        background: "neutral.50",
+      },
     });
 
     const renderEmbed = () => {
       if (source === "spotify" && embedUrl) {
+        // Spotify has two sizes: compact (152px) and normal (352px)
+        const height = spotifySize === "compact" ? "152" : "352";
         return (
           <iframe
             src={embedUrl}
             width="100%"
-            height="352"
+            height={height}
             frameBorder="0"
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
             loading="lazy"
             title={title || "Spotify Player"}
             className={css({
-              borderRadius: "md",
+              borderRadius: "sm",
               border: "none",
             })}
           />
@@ -531,7 +556,7 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
             src={embedUrl}
             title={title || "SoundCloud Player"}
             className={css({
-              borderRadius: "md",
+              borderRadius: "sm",
             })}
           />
         );
@@ -560,34 +585,66 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
         className={cx(css(containerStyles), className)}
         css={cssProp}
       >
-        <VStack gap="4">
+        <VStack gap="3">
           {/* ASCII Decoration Header */}
           {decoration && (
-            <Divider
-              variant="ascii"
-              pattern={decoration}
-              color="neutral.600"
-              spacing="0"
-            />
+            <Box
+              css={{
+                fontSize: "xs",
+                opacity: 60,
+                textAlign: "center",
+                fontFamily: "mono",
+                letterSpacing: "wider",
+              }}
+            >
+              {decoration}
+            </Box>
           )}
 
           {/* Custom Header Content */}
-          {headerContent && <Box>{headerContent}</Box>}
+          {headerContent && (
+            <Box
+              css={{
+                fontSize: "sm",
+                opacity: 70,
+                textAlign: "center",
+                fontFamily: "mono",
+              }}
+            >
+              {headerContent}
+            </Box>
+          )}
 
           {/* Player */}
           {renderEmbed()}
 
           {/* Custom Footer Content */}
-          {footerContent && <Box>{footerContent}</Box>}
+          {footerContent && (
+            <Box
+              css={{
+                fontSize: "sm",
+                opacity: 70,
+                textAlign: "center",
+                fontFamily: "mono",
+              }}
+            >
+              {footerContent}
+            </Box>
+          )}
 
           {/* ASCII Decoration Footer */}
           {decoration && (
-            <Divider
-              variant="ascii"
-              pattern={decoration}
-              color="neutral.600"
-              spacing="0"
-            />
+            <Box
+              css={{
+                fontSize: "xs",
+                opacity: 60,
+                textAlign: "center",
+                fontFamily: "mono",
+                letterSpacing: "wider",
+              }}
+            >
+              {decoration}
+            </Box>
           )}
         </VStack>
       </Box>

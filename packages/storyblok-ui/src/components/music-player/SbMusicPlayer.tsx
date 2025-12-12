@@ -13,6 +13,7 @@ export interface SbMusicPlayerProps {
     title?: string;
     artist?: string;
     artwork?: string;
+    spotifySize?: "compact" | "normal";
     showArtwork?: boolean;
     showInfo?: boolean;
     autoPlay?: boolean;
@@ -53,10 +54,11 @@ export const SbMusicPlayer = memo(function SbMusicPlayer({
     title,
     artist,
     artwork,
+    spotifySize = "normal",
     showArtwork = true,
     showInfo = true,
     autoPlay = false,
-    decoration = "♪ ♫ ♪ ♫ ♪ ♫ ♪",
+    decoration = "･ﾟ⋆ ♪ ♫ ･ﾟ⋆",
     headerText,
     footerText,
     marginTop,
@@ -80,6 +82,7 @@ export const SbMusicPlayer = memo(function SbMusicPlayer({
         title={title}
         artist={artist}
         artwork={artwork}
+        spotifySize={spotifySize}
         showArtwork={showArtwork}
         showInfo={showInfo}
         autoPlay={autoPlay}

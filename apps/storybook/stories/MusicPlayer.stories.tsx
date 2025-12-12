@@ -26,6 +26,11 @@ const meta: Meta<typeof MusicPlayer> = {
       control: "text",
       description: "Artist name (for MP3 display)",
     },
+    spotifySize: {
+      control: "select",
+      options: ["compact", "normal"],
+      description: "Spotify embed size",
+    },
     showArtwork: {
       control: "boolean",
       description: "Show album artwork",
@@ -49,16 +54,31 @@ export default meta;
 type Story = StoryObj<typeof MusicPlayer>;
 
 /**
- * Spotify track embed
+ * Spotify track embed (compact size)
  *
  * Embeds a Spotify track player with ASCII decorations.
- * The Spotify player includes album artwork, track controls, and more.
+ * The compact player is smaller and perfect for minimal layouts.
  */
 export const SpotifyTrack: Story = {
   args: {
     source: "spotify",
-    src: "spotify:track:3n3Ppam7vgaVa1iaRUc9Lp",
-    decoration: "♪ ♫ ♪ ♫ ♪ ♫ ♪",
+    src: "spotify:track:4VAwmUsWjEgK6yAkv2epvG",
+    spotifySize: "compact",
+    decoration: "･ﾟ⋆ ♪ ♫ ･ﾟ⋆",
+  },
+};
+
+/**
+ * Spotify track embed (normal size)
+ *
+ * Embeds a Spotify track player with full size display.
+ */
+export const SpotifyTrackFull: Story = {
+  args: {
+    source: "spotify",
+    src: "spotify:track:4VAwmUsWjEgK6yAkv2epvG",
+    spotifySize: "normal",
+    decoration: "⋆.˚ ᡣ𐭩 .𖥔˚ MUSIC ⋆.˚✮",
   },
 };
 
@@ -71,7 +91,8 @@ export const SpotifyAlbum: Story = {
   args: {
     source: "spotify",
     src: "spotify:album:1DFixLWuPkv3KT3TnV35m3",
-    decoration: "♪ ♫ ♪ ♫ ♪ ♫ ♪",
+    spotifySize: "normal",
+    decoration: "✧･ﾟ: *✧･ﾟ:* ALBUM *:･ﾟ✧*:･ﾟ✧",
   },
 };
 
@@ -83,8 +104,8 @@ export const SpotifyAlbum: Story = {
 export const SoundCloudTrack: Story = {
   args: {
     source: "soundcloud",
-    src: "https://soundcloud.com/discoversoundcloud/this-is-soundcloud",
-    decoration: "♪ ♫ ♪ ♫ ♪ ♫ ♪",
+    src: "https://soundcloud.com/te3shay/u-got-swag-forget-the-rest",
+    decoration: "･ﾟ⋆ ♪ ♫ ･ﾟ⋆",
   },
 };
 
@@ -104,14 +125,15 @@ export const MP3Player: Story = {
     showArtwork: true,
     showInfo: true,
     autoPlay: false,
-    decoration: "♪ ♫ ♪ ♫ ♪ ♫ ♪",
+    decoration: "･ﾟ⋆ ♪ ♫ ･ﾟ⋆",
   },
 };
 
 /**
  * Minimal MP3 player
  *
- * MP3 player without artwork, showing only controls and info.
+ * MP3 player without artwork, showing only controls and minimal info.
+ * Perfect for clean, text-focused layouts.
  */
 export const MinimalMP3: Story = {
   args: {
@@ -122,14 +144,30 @@ export const MinimalMP3: Story = {
     showArtwork: false,
     showInfo: true,
     autoPlay: false,
-    decoration: "♪ ♫ ♪ ♫ ♪ ♫ ♪",
+    decoration: "・゜゜・。。・゜゜・。",
+  },
+};
+
+/**
+ * MP3 player without track info
+ *
+ * Ultra minimal player showing only controls.
+ */
+export const ControlsOnly: Story = {
+  args: {
+    source: "mp3",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    showArtwork: false,
+    showInfo: false,
+    autoPlay: false,
+    decoration: "⋄ ⋄ ⋄",
   },
 };
 
 /**
  * MP3 player with custom decoration
  *
- * Uses custom ASCII/kuwaii decorations for a unique look.
+ * Uses custom ASCII/kawaii decorations for a unique look.
  */
 export const CustomDecoration: Story = {
   args: {
@@ -141,7 +179,7 @@ export const CustomDecoration: Story = {
     showArtwork: true,
     showInfo: true,
     autoPlay: false,
-    decoration: "⋆｡°✩ ✮ ✩°｡⋆",
+    decoration: "⋆.˚ ✮ ᡣ𐭩 .𖥔˚ VIBES ⋆.˚✮✮˚.⋆",
   },
 };
 
@@ -160,34 +198,13 @@ export const WithHeaderFooter: Story = {
     showArtwork: true,
     showInfo: true,
     autoPlay: false,
-    decoration: "♪ ♫ ♪ ♫ ♪ ♫ ♪",
+    decoration: "･ﾟ⋆ ♪ ♫ ･ﾟ⋆",
   },
   render: (args) => (
     <MusicPlayer
       {...args}
-      headerContent={
-        <div
-          style={{
-            textAlign: "center",
-            fontFamily: "monospace",
-            fontSize: "14px",
-          }}
-        >
-          🎵 Now Playing 🎵
-        </div>
-      }
-      footerContent={
-        <div
-          style={{
-            textAlign: "center",
-            fontFamily: "monospace",
-            fontSize: "12px",
-            opacity: 0.6,
-          }}
-        >
-          Released 2025
-        </div>
-      }
+      headerContent={<div>🎵 NOW PLAYING ･ﾟ⋆</div>}
+      footerContent={<div>Released 2025</div>}
     />
   ),
 };

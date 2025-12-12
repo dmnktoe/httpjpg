@@ -839,6 +839,15 @@ function getSbMusicPlayerComponent(): StoryblokComponent {
         display_name: "Album Artwork",
         filetypes: ["images"],
       },
+      spotifySize: {
+        type: "option",
+        display_name: "Spotify Size",
+        default_value: "normal",
+        options: [
+          { name: "Compact (152px)", value: "compact" },
+          { name: "Normal (352px)", value: "normal" },
+        ],
+      },
       showArtwork: {
         type: "boolean",
         display_name: "Show Artwork",
@@ -857,7 +866,7 @@ function getSbMusicPlayerComponent(): StoryblokComponent {
       decoration: {
         type: "text",
         display_name: "ASCII Decoration",
-        default_value: "♪ ♫ ♪ ♫ ♪ ♫ ♪",
+        default_value: "･ﾟ⋆ ♪ ♫ ･ﾟ⋆",
       },
       headerText: {
         type: "text",

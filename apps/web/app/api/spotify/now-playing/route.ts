@@ -13,12 +13,17 @@
 
 import { env } from "@httpjpg/env";
 import { getAccessToken, getCurrentlyPlaying } from "@httpjpg/now-playing";
-import { NextResponse } from "next/server";
+import { applyArcjetProtection } from "@httpjpg/security";
+import { type NextRequest, NextResponse } from "next/server";
 
 export const runtime = "edge";
 export const revalidate = 0; // Don't cache
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Apply Arcjet protection
+  const protection = await applyArcjetProtection(request, "api");
+  if (protection) return protection;
+
   try {
     // Get fresh access token
     const accessToken = await getAccessToken(

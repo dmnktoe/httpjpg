@@ -1,3 +1,4 @@
+import { config } from "@httpjpg/config";
 import { CACHE_TAGS, getStoryblokApi } from "@httpjpg/storyblok-api";
 import { DynamicRender, STORYBLOK_RELATIONS } from "@httpjpg/storyblok-utils";
 import type { Metadata } from "next";
@@ -259,8 +260,13 @@ export default async function DynamicPage({
 
 /**
  * Generate static params for all Storyblok stories at build time
+ * Only used when phpLikeNavigation is disabled (ISR mode)
  */
 export async function generateStaticParams() {
+  if (config.features.phpLikeNavigation) {
+    return []; // Skip static generation in PHP-like mode
+  }
+
   try {
     const { getAllSlugs } = getStoryblokApi();
 
@@ -279,8 +285,11 @@ export async function generateStaticParams() {
   }
 }
 
-// Enable ISR with revalidation
-export const revalidate = 3600; // Revalidate every hour
-
-// Enable dynamic params for stories created after build
-export const dynamicParams = true;
+// Route Segment Config: Conditional based on feature flag
+// PHP-like mode: Force SSR with no caching
+// Modern mode: ISR with 1 hour revalidation
+export const dynamic = config.features.phpLikeNavigation
+  ? "force-dynamic"
+  : "auto";
+export const revalidate = config.features.phpLikeNavigation ? 0 : 3600;
+export const dynamicParams = !config.features.phpLikeNavigation;

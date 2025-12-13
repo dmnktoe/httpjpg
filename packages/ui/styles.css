@@ -817,6 +817,16 @@
       animation-timing-function: cubic-bezier(0,0,0.2,1);
 }
 }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+}
+
+    100% {
+      background-position: 200% 0;
+}
+}
 }
 
 @layer recipes{
@@ -1296,6 +1306,18 @@
     background: rgba(255, 255, 255, 0.3);
 }
 
+  .bg_linear-gradient\(135deg\,_\#f5f5f5_0\%\,_\#e0e0e0_100\%\) {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+}
+
+  .bg_linear-gradient\(90deg\,_\#f0f0f0_0\%\,_\#e0e0e0_50\%\,_\#f0f0f0_100\%\) {
+    background: linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+}
+
+  .anim_shimmer_1\.5s_ease-in-out_infinite {
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
   .anim_sharpen {
     animation: sharpen;
 }
@@ -1742,6 +1764,10 @@
 
   .trs_opacity_0\.3s_ease {
     transition: opacity 0.3s ease;
+}
+
+  .trs_opacity_0\.5s_ease-in-out {
+    transition: opacity 0.5s ease-in-out;
 }
 
   .mx_1 {
@@ -2895,6 +2921,14 @@
   .ap_none {
     appearance: none;
     -webkit-appearance: none;
+}
+
+  .bg-s_200\%_100\% {
+    background-size: 200% 100%;
+}
+
+  .z_1 {
+    z-index: 1;
 }
 
   .obj-f_contain {
@@ -4662,6 +4696,18 @@
 
   .\[\&\:\:-moz-range-thumb\]\:h_10px::-moz-range-thumb {
     height: 10px;
+}
+
+  .\[\&_p\]\:mt_0 p {
+    margin-top: var(--spacing-0);
+}
+
+  .\[\&_p\]\:mb_0\.75em p {
+    margin-bottom: 0.75em;
+}
+
+  .\[\&_p\:last-child\]\:mb_0 p:last-child {
+    margin-bottom: var(--spacing-0);
 }
 
   .focusVisible\:ring_2px_solid:is(:focus-visible, [data-focus-visible]) {

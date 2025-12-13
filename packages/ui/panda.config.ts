@@ -225,6 +225,12 @@ export default defineConfig({
   // Theme configuration with design tokens
   theme: {
     extend: {
+      keyframes: {
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+      },
       tokens: {
         colors: toPandaTokens(colors),
         fonts: {

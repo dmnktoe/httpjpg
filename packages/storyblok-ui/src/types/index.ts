@@ -99,6 +99,8 @@ export interface StoryblokImage {
   filename: string;
   copyright?: string;
   fieldtype?: "asset";
+  content_type?: string;
+  is_external_url?: boolean;
 }
 
 /**

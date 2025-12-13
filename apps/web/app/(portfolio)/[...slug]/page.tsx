@@ -63,6 +63,19 @@ export async function generateMetadata({
   const { isEnabled } = await draftMode();
 
   const fullSlug = slug ? slug.join("/") : "";
+
+  // Filter out browser/framework internal routes early
+  if (
+    fullSlug.startsWith("__nextjs") ||
+    fullSlug.startsWith("_next") ||
+    fullSlug.startsWith(".well-known") ||
+    fullSlug.includes("/.well-known/")
+  ) {
+    return {
+      title: "Not Found",
+    };
+  }
+
   const story = await fetchStoryWithCache(fullSlug, isEnabled);
 
   if (!story) {
@@ -158,11 +171,21 @@ export default async function DynamicPage({
   const search = await searchParams;
   const { isEnabled } = await draftMode();
 
+  const fullSlug = slug ? slug.join("/") : "";
+
+  // Filter out Next.js/browser internal routes early (before Storyblok fetch)
+  if (
+    fullSlug.startsWith("__nextjs") ||
+    fullSlug.startsWith("_next") ||
+    fullSlug.startsWith(".well-known") ||
+    fullSlug.includes("/.well-known/")
+  ) {
+    notFound();
+  }
+
   // Check if we're in Visual Editor mode (has _storyblok param or _draft param)
   const isVisualEditor = !!(search._storyblok || search._draft);
   const isDraft = isEnabled || isVisualEditor;
-
-  const fullSlug = slug ? slug.join("/") : "";
 
   try {
     const story = await fetchStoryWithCache(fullSlug, isDraft);

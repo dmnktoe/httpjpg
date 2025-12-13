@@ -160,7 +160,7 @@ function getVimeoId(url: string): string {
  * />
  * ```
  */
-export const video = forwardRef<HTMLDivElement, VideoProps>(
+export const Video = forwardRef<HTMLDivElement, VideoProps>(
   (
     {
       src,
@@ -315,7 +315,7 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
             position: "relative",
             w: "100%",
             overflow: "hidden",
-            background: "black",
+            background: "linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)",
             ...cssProp,
           }}
           style={{ aspectRatio: ratioValue, ...wrapperStyle }}
@@ -328,6 +328,7 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
             loop={loop}
             muted={muted}
             playsInline
+            preload="metadata"
             className={cx(
               css({
                 position: "absolute",
@@ -370,4 +371,4 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
   },
 );
 
-video.displayName = "video";
+Video.displayName = "Video";

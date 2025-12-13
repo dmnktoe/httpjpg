@@ -2,7 +2,7 @@
 
 import type { StoryblokRichTextProps } from "@httpjpg/storyblok-richtext";
 import type { VideoSource } from "@httpjpg/ui";
-import { video as VideoComponent } from "@httpjpg/ui";
+import { Video as VideoComponent } from "@httpjpg/ui";
 import { memo } from "react";
 import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 import type { StoryblokVideoAsset } from "../../types";

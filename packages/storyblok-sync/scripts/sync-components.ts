@@ -1135,7 +1135,8 @@ async function getSbPageWorkComponent(): Promise<StoryblokComponent> {
         type: "multiasset",
         display_name: "Featured Images",
         description: "First image will be used as preview in navigation",
-        filetypes: ["images"],
+        filetypes: ["images", "videos"],
+        allow_external_url: true,
       },
       date: {
         type: "datetime",

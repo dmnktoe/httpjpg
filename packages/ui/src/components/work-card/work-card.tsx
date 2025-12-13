@@ -232,6 +232,7 @@ function WorkCardContent({
       >
         {description && (
           <Paragraph
+            as="div"
             size="sm"
             css={
               {
@@ -240,6 +241,13 @@ function WorkCardContent({
                 display: "-webkit-box",
                 WebkitLineClamp: { base: 5, xl: "none" },
                 WebkitBoxOrient: "vertical",
+                "& p": {
+                  marginTop: 0,
+                  marginBottom: "0.75em",
+                },
+                "& p:last-child": {
+                  marginBottom: 0,
+                },
               } as any
             }
           >

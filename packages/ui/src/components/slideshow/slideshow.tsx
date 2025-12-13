@@ -27,7 +27,7 @@ import { CopyrightLabel, type CopyrightPosition } from "../copyright-label";
 import { IconButton } from "../icon-button";
 import { Image } from "../image/image";
 import { HStack } from "../stack/stack";
-import { video } from "../video/video";
+import { Video } from "../video/video";
 
 // Swiper effect configurations
 const SWIPER_FADE_EFFECT = {
@@ -80,7 +80,7 @@ function SlideshowVideoSlide({
   videoPoster,
   aspectRatio,
 }: SlideshowVideoSlideProps) {
-  const VideoComponent = video;
+  const VideoComponent = Video;
   return (
     <VideoComponent
       src={videoUrl}
@@ -269,7 +269,7 @@ export function Slideshow({
           creativeEffect={SWIPER_CREATIVE_EFFECT}
         >
           {images.map((image, index) => (
-            <SwiperSlide key={index}>
+            <SwiperSlide key={index} suppressHydrationWarning>
               <Box
                 css={{
                   position: "relative",

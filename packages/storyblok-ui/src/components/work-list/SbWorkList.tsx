@@ -31,6 +31,8 @@ export interface SbWorkListProps {
               title?: string;
               copyright?: string;
               focus?: string;
+              content_type?: string;
+              is_external_url?: boolean;
             }>;
             date?: string;
             date_end?: string;
@@ -86,12 +88,23 @@ export const SbWorkList = memo(function SbWorkList({
       slug: item.slug,
       title: item.content?.title || item.name,
       description,
-      images: (item.content?.images || []).map((img) => ({
-        url: img.filename || "",
-        alt: img.alt || item.content?.title || item.name,
-        copyright: img.copyright,
-        focus: img.focus,
-      })),
+      images: (item.content?.images || []).map((img) => {
+        // Check content_type first (for Storyblok assets)
+        const hasVideoContentType = img.content_type?.startsWith("video/");
+        // Fallback: Check file extension (for external URLs)
+        const hasVideoExtension = /\.(mp4|webm|ogg|mov|avi|mkv)(\?|$)/i.test(
+          img.filename || "",
+        );
+        const isVideo = hasVideoContentType || hasVideoExtension;
+
+        return {
+          url: isVideo ? "" : img.filename || "",
+          alt: img.alt || item.content?.title || item.name,
+          copyright: img.copyright,
+          focus: img.focus,
+          videoUrl: isVideo ? img.filename : undefined,
+        };
+      }),
       date: dateString,
       baseUrl,
     };

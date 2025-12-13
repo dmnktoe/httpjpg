@@ -1,9 +1,9 @@
-import { video } from "@httpjpg/ui";
+import { Video } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-const meta: Meta<typeof video> = {
+const meta: Meta<typeof Video> = {
   title: "Components/Video",
-  component: video,
+  component: Video,
   parameters: {
     layout: "padded",
   },
@@ -44,7 +44,7 @@ const meta: Meta<typeof video> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof video>;
+type Story = StoryObj<typeof Video>;
 
 /**
  * YouTube video embed

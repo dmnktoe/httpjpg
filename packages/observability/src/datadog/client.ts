@@ -100,8 +100,6 @@ export function initDatadogRum(): void {
 
     // Start session replay recording
     datadogRum.startSessionReplayRecording();
-
-    console.log("Datadog RUM initialized successfully");
   } catch (error) {
     console.error("Failed to initialize Datadog RUM:", error);
   }

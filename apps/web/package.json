@@ -29,7 +29,7 @@
     "@httpjpg/tokens": "workspace:*",
     "@httpjpg/ui": "workspace:*",
     "@next/third-parties": "^16.0.7",
-    "next": "^15.5.7",
+    "next": "^15.5.9",
     "react": "^19.2.1",
     "react-dom": "^19.2.1"
   },

@@ -673,7 +673,7 @@ async function getSbButtonComponent(): Promise<StoryblokComponent> {
       disabled: {
         type: "boolean",
         display_name: "Disabled",
-        default_value: false,
+        default_value: "false",
       },
       link: {
         type: "multilink",
@@ -1317,6 +1317,141 @@ async function getSbConfigComponent(): Promise<StoryblokComponent> {
   };
 }
 
+async function getSbMusicPlayerComponent(): Promise<StoryblokComponent> {
+  const mediaGroupUuid = await getComponentGroupUuid("Media");
+
+  return {
+    name: "music_player",
+    display_name: "Music Player",
+    is_root: false,
+    is_nestable: true,
+    component_group_uuid: mediaGroupUuid,
+    icon: "block-play",
+    color: "#38b2ac",
+    schema: {
+      source: {
+        type: "option",
+        display_name: "Source Type",
+        default_value: "spotify",
+        required: true,
+        options: [
+          { name: "Spotify", value: "spotify" },
+          { name: "SoundCloud", value: "soundcloud" },
+          { name: "MP3 File", value: "mp3" },
+          { name: "Custom", value: "custom" },
+        ],
+        pos: 0,
+      },
+      src: {
+        type: "text",
+        display_name: "Source URL",
+        description:
+          "Spotify URI (e.g., spotify:track:...), SoundCloud URL, or MP3 file URL",
+        required: true,
+        pos: 1,
+      },
+      title: {
+        type: "text",
+        display_name: "Track Title",
+        description: "Title for custom MP3 files",
+        translatable: true,
+        pos: 2,
+      },
+      artist: {
+        type: "text",
+        display_name: "Artist Name",
+        description: "Artist for custom MP3 files",
+        translatable: true,
+        pos: 3,
+      },
+      artwork: {
+        type: "text",
+        display_name: "Artwork URL",
+        description: "Album artwork for custom MP3 files",
+        pos: 4,
+      },
+      spotifySize: {
+        type: "option",
+        display_name: "Spotify Embed Size",
+        default_value: "normal",
+        options: [
+          { name: "Compact", value: "compact" },
+          { name: "Normal", value: "normal" },
+        ],
+        pos: 5,
+      },
+      showArtwork: {
+        type: "boolean",
+        display_name: "Show Artwork",
+        default_value: "true",
+        pos: 6,
+      },
+      showInfo: {
+        type: "boolean",
+        display_name: "Show Track Info",
+        default_value: "true",
+        pos: 7,
+      },
+      autoPlay: {
+        type: "boolean",
+        display_name: "Auto Play",
+        default_value: "false",
+        pos: 8,
+      },
+      decoration: {
+        type: "text",
+        display_name: "ASCII Decoration",
+        default_value: "･ﾟ⋆ ♪ ♫ ･ﾟ⋆",
+        description: "Kawaii/ASCII decoration text",
+        translatable: true,
+        pos: 9,
+      },
+      headerText: {
+        type: "text",
+        display_name: "Header Text",
+        description: "Optional header text above player",
+        translatable: true,
+        pos: 10,
+      },
+      footerText: {
+        type: "text",
+        display_name: "Footer Text",
+        description: "Optional footer text below player",
+        translatable: true,
+        pos: 11,
+      },
+      marginTop: {
+        type: "option",
+        display_name: "Margin Top",
+        source: "internal",
+        datasource_slug: "spacing-options",
+        pos: 12,
+      },
+      marginBottom: {
+        type: "option",
+        display_name: "Margin Bottom",
+        source: "internal",
+        datasource_slug: "spacing-options",
+        pos: 13,
+      },
+      marginLeft: {
+        type: "option",
+        display_name: "Margin Left",
+        source: "internal",
+        datasource_slug: "spacing-options",
+        pos: 14,
+      },
+      marginRight: {
+        type: "option",
+        display_name: "Margin Right",
+        source: "internal",
+        datasource_slug: "spacing-options",
+        pos: 15,
+      },
+    },
+  };
+}
+
 /**
  * Sleep helper to avoid rate limits
  */
@@ -1343,6 +1478,7 @@ async function syncComponents(): Promise<void> {
     getSbImageComponent,
     getSbVideoComponent,
     getSbSlideshowComponent,
+    getSbMusicPlayerComponent,
     getSbWorkCardComponent,
     getSbWorkListComponent,
     getSbPageComponent,
@@ -1376,6 +1512,7 @@ async function syncComponents(): Promise<void> {
   console.log("   - image (Responsive images)");
   console.log("   - video (Video player)");
   console.log("   - slideshow (Image carousel with effects)");
+  console.log("   - music_player (Spotify/SoundCloud/MP3 player)");
   console.log("\n   Portfolio:");
   console.log("   - work_card (Project showcase card)");
   console.log("   - work_list (Portfolio list)");

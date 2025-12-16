@@ -1298,10 +1298,6 @@
     padding: 0 4px;
 }
 
-  .bd_2px_solid {
-    border: 2px solid;
-}
-
   .bg_\#ffffff {
     background: #ffffff;
 }
@@ -1752,18 +1748,6 @@
 
   .trs_opacity_0\.3s_ease-in-out {
     transition: opacity 0.3s ease-in-out;
-}
-
-  .trs_transform_0\.2s {
-    transition: transform 0.2s;
-}
-
-  .bd-c_neutral\.900 {
-    border-color: var(--colors-neutral-900);
-}
-
-  .bd-c_neutral\.600 {
-    border-color: var(--colors-neutral-600);
 }
 
   .px_0 {
@@ -2920,6 +2904,10 @@
     white-space: nowrap;
 }
 
+  .ls_wide {
+    letter-spacing: var(--letter-spacings-wide);
+}
+
   .ta_right {
     text-align: right;
 }
@@ -2951,6 +2939,14 @@
 
   .flex-d_horizontal {
     flex-direction: horizontal;
+}
+
+  .bg-s_200\%_100\% {
+    background-size: 200% 100%;
+}
+
+  .z_1 {
+    z-index: 1;
 }
 
   .obj-f_contain {
@@ -3488,6 +3484,14 @@
     margin-top: var(--spacing-1);
 }
 
+  .h_152px {
+    height: 152px;
+}
+
+  .h_166px {
+    height: 166px;
+}
+
   .pl_0 {
     padding-left: var(--spacing-0);
 }
@@ -3568,20 +3572,28 @@
     width: 80px;
 }
 
-  .w_20 {
-    width: var(--sizes-20);
+  .mt_0\.5 {
+    margin-top: var(--spacing-0\.5);
 }
 
-  .min-w_80px {
-    min-width: 80px;
+  .min-w_70px {
+    min-width: 70px;
 }
 
-  .h_6px {
-    height: 6px;
+  .min-w_30px {
+    min-width: 30px;
+}
+
+  .min-w_60px {
+    min-width: 60px;
 }
 
   .h_4px {
     height: 4px;
+}
+
+  .h_3px {
+    height: 3px;
 }
 
   .pb_100px {
@@ -4712,22 +4724,6 @@
     margin-bottom: var(--spacing-2);
 }
 
-  .\[\&\:\:-webkit-slider-thumb\]\:w_14px::-webkit-slider-thumb {
-    width: 14px;
-}
-
-  .\[\&\:\:-webkit-slider-thumb\]\:h_14px::-webkit-slider-thumb {
-    height: 14px;
-}
-
-  .\[\&\:\:-moz-range-thumb\]\:w_14px::-moz-range-thumb {
-    width: 14px;
-}
-
-  .\[\&\:\:-moz-range-thumb\]\:h_14px::-moz-range-thumb {
-    height: 14px;
-}
-
   .\[\&\:\:-webkit-slider-thumb\]\:w_12px::-webkit-slider-thumb {
     width: 12px;
 }
@@ -4792,6 +4788,10 @@
     background: var(--colors-black);
 }
 
+  .hover\:bg_neutral\.800:is(:hover, [data-hover]) {
+    background: var(--colors-neutral-800);
+}
+
   .hover\:bg_neutral\.300:is(:hover, [data-hover]) {
     background: var(--colors-neutral-300);
 }
@@ -4842,10 +4842,6 @@
 
   .hover\:op_0\.5:is(:hover, [data-hover]) {
     opacity: 0.5;
-}
-
-  .hover\:trf_scale\(1\.1\):is(:hover, [data-hover]) {
-    transform: scale(1.1);
 }
 
   .hover\:op_1:is(:hover, [data-hover]) {

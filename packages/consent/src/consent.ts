@@ -1,10 +1,13 @@
-import type { ConsentState } from "./types";
-import { CONSENT_COOKIE_EXPIRY, CONSENT_COOKIE_NAME } from "./types";
+import type { ConsentState, ExternalVendor } from "./types";
+import {
+  CONSENT_COOKIE_EXPIRY,
+  CONSENT_COOKIE_NAME,
+  EXTERNAL_VENDORS,
+} from "./types";
 
 /**
  * Get consent from cookies
  */
-// biome-ignore lint/style/useBlockStatements: Early returns improve readability
 export function getConsent(): ConsentState | null {
   if (typeof document === "undefined") {
     return null;
@@ -29,7 +32,6 @@ export function getConsent(): ConsentState | null {
 /**
  * Set consent in cookies
  */
-// biome-ignore lint/style/useBlockStatements: Early returns improve readability
 export function setConsent(consent: ConsentState): void {
   if (typeof document === "undefined") {
     return;
@@ -39,21 +41,25 @@ export function setConsent(consent: ConsentState): void {
   expires.setDate(expires.getDate() + CONSENT_COOKIE_EXPIRY);
 
   const cookieValue = `${CONSENT_COOKIE_NAME}=${encodeURIComponent(JSON.stringify(consent))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-  // Using document.cookie is the standard way to set cookies in browsers
-  document.cookie = cookieValue; // biome-ignore lint/suspicious/noDocumentCookie: Standard cookie API
+  // biome-ignore lint/suspicious/noDocumentCookie: Using standard browser cookie API
+  document.cookie = cookieValue;
+
+  // Dispatch custom event to notify components of consent change
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("consentChange", { detail: consent }));
+  }
 }
 
 /**
  * Clear consent cookie
  */
-// biome-ignore lint/style/useBlockStatements: Early returns improve readability
 export function clearConsent(): void {
   if (typeof document === "undefined") {
     return;
   }
 
-  // Using document.cookie is the standard way to delete cookies in browsers
-  document.cookie = `${CONSENT_COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`; // biome-ignore lint/suspicious/noDocumentCookie: Standard cookie API
+  // biome-ignore lint/suspicious/noDocumentCookie: Using standard browser cookie API
+  document.cookie = `${CONSENT_COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
 
 /**
@@ -61,4 +67,37 @@ export function clearConsent(): void {
  */
 export function hasConsent(): boolean {
   return getConsent() !== null;
+}
+
+/**
+ * Check if user has given consent for a specific vendor
+ *
+ * @param vendor - The external vendor to check consent for
+ * @returns true if consent is given for the vendor's category
+ *
+ * @example
+ * ```tsx
+ * if (hasVendorConsent('youtube')) {
+ *   // Load YouTube embed
+ * }
+ * ```
+ */
+export function hasVendorConsent(vendor: ExternalVendor): boolean {
+  const consent = getConsent();
+  if (!consent) {
+    return false;
+  }
+
+  const vendorInfo = EXTERNAL_VENDORS[vendor];
+  return consent[vendorInfo.category] === true;
+}
+
+/**
+ * Check if media consent is given (YouTube, Vimeo, Spotify, SoundCloud)
+ *
+ * @returns true if media consent is given
+ */
+export function hasMediaConsent(): boolean {
+  const consent = getConsent();
+  return consent?.media === true;
 }

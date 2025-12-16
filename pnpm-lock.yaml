@@ -487,6 +487,9 @@ importers:
 
   packages/storyblok-ui:
     dependencies:
+      '@httpjpg/consent':
+        specifier: workspace:*
+        version: link:../consent
       '@httpjpg/storyblok-richtext':
         specifier: workspace:*
         version: link:../storyblok-richtext

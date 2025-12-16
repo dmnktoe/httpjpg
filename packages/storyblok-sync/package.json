@@ -17,7 +17,7 @@
     "cleanup:groups": "tsx scripts/cleanup-duplicate-groups.ts",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "typecheck": "tsc --noEmit"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@httpjpg/env": "workspace:*",

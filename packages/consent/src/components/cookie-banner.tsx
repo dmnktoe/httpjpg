@@ -3,8 +3,8 @@
 import { Box, Button } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 import { getConsent, hasConsent, setConsent } from "../consent";
-import type { ConsentState } from "../types";
-import { DEFAULT_CONSENT_STATE } from "../types";
+import type { ConsentCategory, ConsentState } from "../types";
+import { DEFAULT_CONSENT_STATE, EXTERNAL_VENDORS } from "../types";
 
 interface CookieBannerProps {
   onAcceptAll?: (consent: ConsentState) => void;
@@ -19,6 +19,9 @@ export function CookieBanner({
 }: CookieBannerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<
+    Set<ConsentCategory>
+  >(new Set());
   const [consent, setConsentState] = useState<ConsentState>(
     DEFAULT_CONSENT_STATE,
   );
@@ -54,6 +57,7 @@ export function CookieBanner({
       analytics: true,
       monitoring: true,
       preferences: true,
+      media: true,
     };
     setConsent(fullConsent);
     setIsVisible(false);
@@ -84,6 +88,24 @@ export function CookieBanner({
     }));
   };
 
+  const toggleCategoryExpansion = (category: ConsentCategory) => {
+    setExpandedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(category)) {
+        next.delete(category);
+      } else {
+        next.add(category);
+      }
+      return next;
+    });
+  };
+
+  const getCategoryVendors = (category: ConsentCategory) => {
+    return Object.entries(EXTERNAL_VENDORS)
+      .filter(([_, vendor]) => vendor.category === category)
+      .map(([key, vendor]) => ({ key, ...vendor }));
+  };
+
   if (!isVisible) {
     return null;
   }
@@ -102,6 +124,9 @@ export function CookieBanner({
         fontFamily: "system-ui, -apple-system, sans-serif",
         fontSize: "13px",
         boxShadow: "0 -4px 20px rgba(0,0,0,0.1)",
+        maxHeight: "90vh",
+        overflowY: "auto",
+        overflowX: "hidden",
       }}
     >
       <div style={{ maxWidth: "1400px", margin: "0 auto", lineHeight: "1.4" }}>
@@ -136,36 +161,101 @@ export function CookieBanner({
               fontSize: "12px",
             }}
           >
-            {/* Analytics */}
+            {/* Preferences */}
             <div style={{ marginBottom: "16px" }}>
               <label
                 style={{
                   display: "flex",
                   alignItems: "flex-start",
-                  cursor: "pointer",
+                  cursor: "not-allowed",
+                  opacity: 0.5,
                 }}
               >
                 <input
                   type="checkbox"
-                  checked={consent.analytics}
-                  onChange={() => toggleCategory("analytics")}
+                  checked={consent.preferences}
+                  disabled
                   style={{
                     marginTop: "2px",
                     marginRight: "12px",
-                    cursor: "pointer",
                     width: "16px",
                     height: "16px",
                   }}
                 />
-                <div>
-                  <span style={{ fontWeight: "bold" }}>
-                    {consent.analytics ? "✓" : "☐"} ᴀɴᴀʟʏᴛɪᴄꜱ (Google Analytics)
-                  </span>
-                  <br />
+                <div style={{ flex: 1 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span style={{ fontWeight: "bold" }}>
+                      ✓ ᴘʀᴇꜰᴇʀᴇɴᴄᴇꜱ (Required)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => toggleCategoryExpansion("preferences")}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "12px",
+                        padding: "0 4px",
+                        opacity: 0.7,
+                      }}
+                    >
+                      {expandedCategories.has("preferences") ? "▼" : "▶"}
+                    </button>
+                  </div>
                   <span style={{ fontSize: "11px", opacity: 0.7 }}>
-                    Helps us understand how visitors interact with our website.
-                    📊
+                    Remembers your settings and preferences. Required for site
+                    functionality. ⚙️
                   </span>
+
+                  {/* Vendor List */}
+                  {expandedCategories.has("preferences") && (
+                    <div
+                      style={{
+                        marginTop: "8px",
+                        paddingLeft: "8px",
+                        borderLeft: "2px solid #ddd",
+                      }}
+                    >
+                      {getCategoryVendors("preferences").length > 0 ? (
+                        getCategoryVendors("preferences").map((vendor) => (
+                          <div
+                            key={vendor.key}
+                            style={{ marginBottom: "6px", fontSize: "11px" }}
+                          >
+                            <div style={{ fontWeight: "500" }}>
+                              → {vendor.name}
+                            </div>
+                            <div style={{ opacity: 0.7, marginLeft: "8px" }}>
+                              {vendor.description}
+                              {vendor.privacyPolicy && (
+                                <>
+                                  {" "}
+                                  <a
+                                    href={vendor.privacyPolicy}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ textDecoration: "underline" }}
+                                  >
+                                    Privacy Policy ↗
+                                  </a>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ opacity: 0.6, fontSize: "11px" }}>
+                          No external vendors in this category
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </label>
             </div>
@@ -191,49 +281,257 @@ export function CookieBanner({
                     height: "16px",
                   }}
                 />
-                <div>
-                  <span style={{ fontWeight: "bold" }}>
-                    ✓ ᴍᴏɴɪᴛᴏʀɪɴɢ (Required)
-                  </span>
-                  <br />
+                <div style={{ flex: 1 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span style={{ fontWeight: "bold" }}>
+                      ✓ ᴍᴏɴɪᴛᴏʀɪɴɢ (Required)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => toggleCategoryExpansion("monitoring")}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "12px",
+                        padding: "0 4px",
+                        opacity: 0.7,
+                      }}
+                    >
+                      {expandedCategories.has("monitoring") ? "▼" : "▶"}
+                    </button>
+                  </div>
                   <span style={{ fontSize: "11px", opacity: 0.7 }}>
-                    Error tracking & performance monitoring (Sentry, Datadog).
-                    Required for site functionality. 🐛
+                    Error tracking & performance monitoring. Required for site
+                    functionality. 🐛
                   </span>
+
+                  {/* Vendor List */}
+                  {expandedCategories.has("monitoring") && (
+                    <div
+                      style={{
+                        marginTop: "8px",
+                        paddingLeft: "8px",
+                        borderLeft: "2px solid #ddd",
+                      }}
+                    >
+                      {getCategoryVendors("monitoring").map((vendor) => (
+                        <div
+                          key={vendor.key}
+                          style={{ marginBottom: "6px", fontSize: "11px" }}
+                        >
+                          <div style={{ fontWeight: "500" }}>
+                            → {vendor.name}
+                          </div>
+                          <div style={{ opacity: 0.7, marginLeft: "8px" }}>
+                            {vendor.description}
+                            {vendor.privacyPolicy && (
+                              <>
+                                {" "}
+                                <a
+                                  href={vendor.privacyPolicy}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: "underline" }}
+                                >
+                                  Privacy Policy ↗
+                                </a>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </label>
             </div>
 
-            {/* Preferences */}
+            {/* Analytics */}
+            <div style={{ marginBottom: "16px" }}>
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={consent.analytics}
+                  onChange={() => toggleCategory("analytics")}
+                  style={{
+                    marginTop: "2px",
+                    marginRight: "12px",
+                    cursor: "pointer",
+                    width: "16px",
+                    height: "16px",
+                  }}
+                />
+                <div style={{ flex: 1 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span style={{ fontWeight: "bold" }}>
+                      {consent.analytics ? "✓" : "☐"} ᴀɴᴀʟʏᴛɪᴄꜱ
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => toggleCategoryExpansion("analytics")}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "12px",
+                        padding: "0 4px",
+                      }}
+                    >
+                      {expandedCategories.has("analytics") ? "▼" : "▶"}
+                    </button>
+                  </div>
+                  <span style={{ fontSize: "11px", opacity: 0.7 }}>
+                    Helps us understand how visitors interact with our website.
+                    📊
+                  </span>
+
+                  {/* Vendor List */}
+                  {expandedCategories.has("analytics") && (
+                    <div
+                      style={{
+                        marginTop: "8px",
+                        paddingLeft: "8px",
+                        borderLeft: "2px solid #ddd",
+                      }}
+                    >
+                      {getCategoryVendors("analytics").map((vendor) => (
+                        <div
+                          key={vendor.key}
+                          style={{ marginBottom: "6px", fontSize: "11px" }}
+                        >
+                          <div style={{ fontWeight: "500" }}>
+                            → {vendor.name}
+                          </div>
+                          <div style={{ opacity: 0.7, marginLeft: "8px" }}>
+                            {vendor.description}
+                            {vendor.privacyPolicy && (
+                              <>
+                                {" "}
+                                <a
+                                  href={vendor.privacyPolicy}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: "underline" }}
+                                >
+                                  Privacy Policy ↗
+                                </a>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </label>
+            </div>
+
+            {/* Media & External Services */}
             <div>
               <label
                 style={{
                   display: "flex",
                   alignItems: "flex-start",
-                  cursor: "not-allowed",
-                  opacity: 0.5,
+                  cursor: "pointer",
                 }}
               >
                 <input
                   type="checkbox"
-                  checked={consent.preferences}
-                  disabled
+                  checked={consent.media}
+                  onChange={() => toggleCategory("media")}
                   style={{
                     marginTop: "2px",
                     marginRight: "12px",
+                    cursor: "pointer",
                     width: "16px",
                     height: "16px",
                   }}
                 />
-                <div>
-                  <span style={{ fontWeight: "bold" }}>
-                    ✓ ᴘʀᴇꜰᴇʀᴇɴᴄᴇꜱ (Required)
-                  </span>
-                  <br />
+                <div style={{ flex: 1 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span style={{ fontWeight: "bold" }}>
+                      {consent.media ? "✓" : "☐"} ᴍᴇᴅɪᴀ & ᴇxᴛᴇʀɴᴀʟ ꜱᴇʀᴠɪᴄᴇꜱ
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => toggleCategoryExpansion("media")}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "12px",
+                        padding: "0 4px",
+                      }}
+                    >
+                      {expandedCategories.has("media") ? "▼" : "▶"}
+                    </button>
+                  </div>
                   <span style={{ fontSize: "11px", opacity: 0.7 }}>
-                    Remembers your settings and preferences. Required for site
-                    functionality. ⚙️
+                    Load external content from video and audio platforms. 🎬🎵
                   </span>
+
+                  {/* Vendor List */}
+                  {expandedCategories.has("media") && (
+                    <div
+                      style={{
+                        marginTop: "8px",
+                        paddingLeft: "8px",
+                        borderLeft: "2px solid #ddd",
+                      }}
+                    >
+                      {getCategoryVendors("media").map((vendor) => (
+                        <div
+                          key={vendor.key}
+                          style={{ marginBottom: "6px", fontSize: "11px" }}
+                        >
+                          <div style={{ fontWeight: "500" }}>
+                            → {vendor.name}
+                          </div>
+                          <div style={{ opacity: 0.7, marginLeft: "8px" }}>
+                            {vendor.description}
+                            {vendor.privacyPolicy && (
+                              <>
+                                {" "}
+                                <a
+                                  href={vendor.privacyPolicy}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: "underline" }}
+                                >
+                                  Privacy Policy ↗
+                                </a>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </label>
             </div>

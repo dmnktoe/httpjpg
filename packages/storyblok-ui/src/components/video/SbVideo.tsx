@@ -1,9 +1,10 @@
 "use client";
 
+import { ConsentPlaceholder, hasVendorConsent } from "@httpjpg/consent";
 import type { StoryblokRichTextProps } from "@httpjpg/storyblok-richtext";
 import type { VideoSource } from "@httpjpg/ui";
 import { Video as VideoComponent } from "@httpjpg/ui";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 import type { StoryblokVideoAsset } from "../../types";
 import { SbCaption } from "../caption";
@@ -69,8 +70,60 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
 
   const editableProps = useStoryblokEditable(blok);
 
+  // Track consent state and re-render on changes
+  const [hasConsent, setHasConsent] = useState(() => {
+    if (source === "youtube") {
+      return hasVendorConsent("youtube");
+    }
+    if (source === "vimeo") {
+      return hasVendorConsent("vimeo");
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    const handleConsentChange = () => {
+      if (source === "youtube") {
+        setHasConsent(hasVendorConsent("youtube"));
+      } else if (source === "vimeo") {
+        setHasConsent(hasVendorConsent("vimeo"));
+      }
+    };
+
+    window.addEventListener("consentChange", handleConsentChange);
+    return () =>
+      window.removeEventListener("consentChange", handleConsentChange);
+  }, [source]);
+
   if (!videoSrc) {
     return null;
+  }
+
+  // Check consent for external video providers
+  if (source === "youtube" && !hasConsent) {
+    return (
+      <SbMediaWrapper
+        spacingTop={spacingTop}
+        spacingBottom={spacingBottom}
+        width={width}
+        editable={editableProps}
+      >
+        <ConsentPlaceholder vendor="YouTube" height="400px" />
+      </SbMediaWrapper>
+    );
+  }
+
+  if (source === "vimeo" && !hasConsent) {
+    return (
+      <SbMediaWrapper
+        spacingTop={spacingTop}
+        spacingBottom={spacingBottom}
+        width={width}
+        editable={editableProps}
+      >
+        <ConsentPlaceholder vendor="Vimeo" height="400px" />
+      </SbMediaWrapper>
+    );
   }
 
   return (

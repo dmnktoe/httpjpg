@@ -1,7 +1,8 @@
 "use client";
 
+import { ConsentPlaceholder, hasVendorConsent } from "@httpjpg/consent";
 import { MusicPlayer } from "@httpjpg/ui";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { mapSpacingToToken } from "../../lib/spacing-utils";
 import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 
@@ -69,9 +70,51 @@ export const SbMusicPlayer = memo(function SbMusicPlayer({
 
   const editableProps = useStoryblokEditable(blok);
 
+  // Track consent state and re-render on changes
+  const [hasConsent, setHasConsent] = useState(() => {
+    if (source === "spotify") {
+      return hasVendorConsent("spotify");
+    }
+    if (source === "soundcloud") {
+      return hasVendorConsent("soundcloud");
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    const handleConsentChange = () => {
+      if (source === "spotify") {
+        setHasConsent(hasVendorConsent("spotify"));
+      } else if (source === "soundcloud") {
+        setHasConsent(hasVendorConsent("soundcloud"));
+      }
+    };
+
+    window.addEventListener("consentChange", handleConsentChange);
+    return () =>
+      window.removeEventListener("consentChange", handleConsentChange);
+  }, [source]);
+
   // Return null if src is missing (required field)
   if (!src) {
     return null;
+  }
+
+  // Check consent for external vendors
+  if (source === "spotify" && !hasConsent) {
+    return (
+      <div {...editableProps}>
+        <ConsentPlaceholder vendor="Spotify" height="152px" />
+      </div>
+    );
+  }
+
+  if (source === "soundcloud" && !hasConsent) {
+    return (
+      <div {...editableProps}>
+        <ConsentPlaceholder vendor="SoundCloud" height="166px" />
+      </div>
+    );
   }
 
   return (

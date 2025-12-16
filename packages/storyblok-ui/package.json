@@ -13,9 +13,10 @@
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
-    "typecheck": "tsc --noEmit"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@httpjpg/consent": "workspace:*",
     "@httpjpg/storyblok-richtext": "workspace:*",
     "@httpjpg/storyblok-utils": "workspace:*",
     "@httpjpg/ui": "workspace:*",

@@ -106,7 +106,7 @@ export const Navigation = ({
                 </NavLink>
               ))}
               <Link
-                href="/feed"
+                href="/feed-xml"
                 css={{
                   display: "block",
                   textDecoration: "none",

@@ -20,7 +20,7 @@
     "storyblok-rich-text-react-renderer": "^2.9.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.8",
+    "@biomejs/biome": "2.3.9",
     "@httpjpg/tsconfig": "workspace:*",
     "@types/react": "^19.2.7",
     "typescript": "~5.9.3"

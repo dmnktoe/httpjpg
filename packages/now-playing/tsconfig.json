@@ -2,7 +2,11 @@
   "extends": "@httpjpg/tsconfig/react-library.json",
   "compilerOptions": {
     "outDir": "dist",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "styled-system/*": ["../ui/styled-system/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

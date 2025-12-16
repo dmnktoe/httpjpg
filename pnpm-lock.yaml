@@ -256,6 +256,9 @@ importers:
 
   config:
     devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.8
+        version: 2.3.8
       '@httpjpg/tsconfig':
         specifier: workspace:*
         version: link:../packages/typescript
@@ -266,6 +269,9 @@ importers:
         specifier: workspace:*
         version: link:../env
     devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.8
+        version: 2.3.8
       '@httpjpg/tsconfig':
         specifier: workspace:*
         version: link:../typescript
@@ -282,6 +288,9 @@ importers:
         specifier: ^19.2.1
         version: 19.2.1
     devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.8
+        version: 2.3.8
       '@httpjpg/tsconfig':
         specifier: workspace:*
         version: link:../typescript
@@ -307,6 +316,9 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
     devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.8
+        version: 2.3.8
       '@httpjpg/tsconfig':
         specifier: workspace:*
         version: link:../typescript
@@ -332,6 +344,9 @@ importers:
         specifier: ^4.5.0
         version: 4.5.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
     devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.8
+        version: 2.3.8
       '@httpjpg/tsconfig':
         specifier: workspace:*
         version: link:../typescript
@@ -363,6 +378,9 @@ importers:
         specifier: ^8.55.0
         version: 8.55.0(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(next@16.0.7(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react@19.2.1)(webpack@5.103.0(esbuild@0.24.2))
     devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.8
+        version: 2.3.8
       '@httpjpg/tsconfig':
         specifier: workspace:*
         version: link:../typescript
@@ -382,6 +400,9 @@ importers:
         specifier: workspace:*
         version: link:../env
     devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.8
+        version: 2.3.8
       '@httpjpg/tsconfig':
         specifier: workspace:*
         version: link:../typescript
@@ -401,6 +422,9 @@ importers:
         specifier: ^6.11.0
         version: 6.11.0
     devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.8
+        version: 2.3.8
       '@httpjpg/tsconfig':
         specifier: workspace:*
         version: link:../typescript
@@ -426,6 +450,9 @@ importers:
         specifier: ^2.9.2
         version: 2.9.2(react@19.2.1)
     devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.8
+        version: 2.3.8
       '@httpjpg/tsconfig':
         specifier: workspace:*
         version: link:../typescript
@@ -445,6 +472,9 @@ importers:
         specifier: ^17.2.3
         version: 17.2.3
     devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.8
+        version: 2.3.8
       '@httpjpg/tsconfig':
         specifier: workspace:*
         version: link:../typescript
@@ -470,6 +500,9 @@ importers:
         specifier: ^5.4.20
         version: 5.4.20(next@16.0.7(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
     devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.8
+        version: 2.3.8
       '@httpjpg/tsconfig':
         specifier: workspace:*
         version: link:../typescript
@@ -501,6 +534,9 @@ importers:
         specifier: ^19.2.1
         version: 19.2.1
     devDependencies:
+      '@biomejs/biome':
+        specifier: 2.3.8
+        version: 2.3.8
       '@httpjpg/tsconfig':
         specifier: workspace:*
         version: link:../typescript

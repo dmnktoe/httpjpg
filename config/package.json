@@ -22,9 +22,12 @@
     "README.md"
   ],
   "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.3.8",
     "@httpjpg/tsconfig": "workspace:*"
   },
   "keywords": [

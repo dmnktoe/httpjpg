@@ -30,6 +30,7 @@ export * from "./list";
 export * from "./loading";
 export * from "./marquee";
 export * from "./mouse-trail";
+export * from "./music-player";
 export * from "./nav-link";
 export * from "./page";
 export * from "./paragraph";

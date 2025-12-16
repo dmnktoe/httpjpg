@@ -801,6 +801,111 @@ function getSbSlideshowComponent(): StoryblokComponent {
   };
 }
 
+function getSbMusicPlayerComponent(): StoryblokComponent {
+  return {
+    name: "music_player",
+    display_name: "Music Player",
+    is_root: false,
+    is_nestable: true,
+    schema: {
+      source: {
+        type: "option",
+        display_name: "Music Source",
+        default_value: "mp3",
+        options: [
+          { name: "MP3 File", value: "mp3" },
+          { name: "Spotify", value: "spotify" },
+          { name: "SoundCloud", value: "soundcloud" },
+          { name: "Custom", value: "custom" },
+        ],
+      },
+      src: {
+        type: "text",
+        display_name: "Source URL/ID",
+        required: true,
+      },
+      title: {
+        type: "text",
+        display_name: "Track Title",
+        translatable: true,
+      },
+      artist: {
+        type: "text",
+        display_name: "Artist Name",
+        translatable: true,
+      },
+      artwork: {
+        type: "asset",
+        display_name: "Album Artwork",
+        filetypes: ["images"],
+      },
+      spotifySize: {
+        type: "option",
+        display_name: "Spotify Size",
+        default_value: "normal",
+        options: [
+          { name: "Compact (152px)", value: "compact" },
+          { name: "Normal (352px)", value: "normal" },
+        ],
+      },
+      showArtwork: {
+        type: "boolean",
+        display_name: "Show Artwork",
+        default_value: "true",
+      },
+      showInfo: {
+        type: "boolean",
+        display_name: "Show Track Info",
+        default_value: "true",
+      },
+      autoPlay: {
+        type: "boolean",
+        display_name: "Auto Play",
+        default_value: "false",
+      },
+      decoration: {
+        type: "text",
+        display_name: "ASCII Decoration",
+        default_value: "･ﾟ⋆ ♪ ♫ ･ﾟ⋆",
+      },
+      headerText: {
+        type: "text",
+        display_name: "Header Text",
+        translatable: true,
+      },
+      footerText: {
+        type: "text",
+        display_name: "Footer Text",
+        translatable: true,
+      },
+      marginTop: {
+        type: "option",
+        display_name: "Margin Top",
+        source: "internal",
+        datasource_slug: "spacing-options",
+      },
+      marginBottom: {
+        type: "option",
+        display_name: "Margin Bottom",
+        source: "internal",
+        datasource_slug: "spacing-options",
+      },
+      marginLeft: {
+        type: "option",
+        display_name: "Margin Left",
+        source: "internal",
+        datasource_slug: "spacing-options",
+      },
+      marginRight: {
+        type: "option",
+        display_name: "Margin Right",
+        source: "internal",
+        datasource_slug: "spacing-options",
+      },
+    },
+  };
+}
+
 /**
  * Main sync function
  */
@@ -818,6 +923,7 @@ async function syncComponents(): Promise<void> {
     getSbImageComponent(),
     getSbVideoComponent(),
     getSbSlideshowComponent(),
+    getSbMusicPlayerComponent(),
   ];
 
   for (const component of components) {
@@ -841,6 +947,7 @@ async function syncComponents(): Promise<void> {
   console.log("   - image (Responsive images)");
   console.log("   - video (Video player)");
   console.log("   - slideshow (Image carousel)");
+  console.log("   - music_player (Music player with Spotify/SoundCloud/MP3)");
   console.log("\nNext steps:");
   console.log("1. Open Storyblok Visual Editor");
   console.log("2. Components are now available in the editor");

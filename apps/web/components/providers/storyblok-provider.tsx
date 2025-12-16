@@ -13,6 +13,7 @@ import {
   SbHeadline,
   SbImage,
   SbMissing,
+  SbMusicPlayer,
   SbPage,
   SbPageWork,
   SbParagraph,
@@ -46,6 +47,7 @@ const components = {
   button: SbButton,
   headline: SbHeadline,
   image: SbImage,
+  music_player: SbMusicPlayer,
   paragraph: SbParagraph,
   richtext: SbRichText,
   text: SbParagraph, // Legacy: map "text" to "paragraph"

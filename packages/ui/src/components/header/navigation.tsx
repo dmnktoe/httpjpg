@@ -98,7 +98,7 @@ export const Navigation = ({
                       ? "warning.200"
                       : "transparent",
                     color: work.isDraft ? "black" : "inherit",
-                    ...(work.isDraft && { padding: "0 4px" }),
+                    ...(work.isDraft && { padding: "2px 4px" }),
                   }}
                 >
                   {work.isDraft && "[DRAFT] "}

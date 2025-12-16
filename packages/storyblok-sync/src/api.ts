@@ -48,7 +48,7 @@ export async function storyblokRequest<T>(
   const response = await fetch(url, {
     method,
     headers: {
-      Authorization: token!,
+      Authorization: token || "",
       "Content-Type": "application/json",
     },
     body: body ? JSON.stringify(body) : undefined,

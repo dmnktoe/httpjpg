@@ -89,6 +89,7 @@ export const DiscordStatus = () => {
               data-preview-image={activityIcon}
               data-preview-ratio="1:1"
             >
+              {/* biome-ignore lint/performance/noImgElement: External Discord API image URL */}
               <img
                 src={activityIcon}
                 alt=""

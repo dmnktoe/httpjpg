@@ -5,7 +5,6 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
-import { Divider } from "../divider/divider";
 import { VStack } from "../stack";
 
 /**
@@ -421,7 +420,14 @@ const MP3Player = forwardRef<
                 })}
                 aria-label="Volume"
               />
-              <Box css={{ fontSize: "xs", opacity: 60, minW: "30px", textAlign: "right" }}>
+              <Box
+                css={{
+                  fontSize: "xs",
+                  opacity: 60,
+                  minW: "30px",
+                  textAlign: "right",
+                }}
+              >
                 {Math.round(volume * 100)}%
               </Box>
             </Box>

@@ -58,6 +58,8 @@ export const env = createEnv({
       .optional()
       .transform((val) => val === "1" || val === "true")
       .default("false"),
+    DATADOG_API_KEY: z.string().optional(),
+    DATADOG_APP_KEY: z.string().optional(),
 
     // Spotify
     SPOTIFY_CLIENT_ID: z.string().min(1, "SPOTIFY_CLIENT_ID is required"),
@@ -76,6 +78,9 @@ export const env = createEnv({
 
     // GitHub
     GH_TOKEN: z.string().optional(),
+
+    // Discord
+    DISCORD_USER_ID: z.string().optional(),
 
     // Node.js
     NODE_ENV: z
@@ -109,6 +114,11 @@ export const env = createEnv({
     NEXT_PUBLIC_DATADOG_CLIENT_TOKEN: z.string().optional(),
     NEXT_PUBLIC_DATADOG_SITE: z.string().default("datadoghq.eu"),
     NEXT_PUBLIC_DATADOG_SERVICE_NAME: z.string().default("httpjpg"),
+    NEXT_PUBLIC_DATADOG_ENABLE_IN_DEV: z
+      .string()
+      .optional()
+      .transform((val) => val === "1" || val === "true")
+      .default("false"),
 
     // Vercel (automatically set by Vercel)
     NEXT_PUBLIC_VERCEL_ENV: z
@@ -136,6 +146,8 @@ export const env = createEnv({
     DATADOG_SITE: process.env.DATADOG_SITE,
     DATADOG_SERVICE_NAME: process.env.DATADOG_SERVICE_NAME,
     DATADOG_ENABLE_IN_DEV: process.env.DATADOG_ENABLE_IN_DEV,
+    DATADOG_API_KEY: process.env.DATADOG_API_KEY,
+    DATADOG_APP_KEY: process.env.DATADOG_APP_KEY,
 
     // Server - Spotify
     SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
@@ -150,6 +162,9 @@ export const env = createEnv({
 
     // Server - GitHub
     GH_TOKEN: process.env.GH_TOKEN,
+
+    // Server - Discord
+    DISCORD_USER_ID: process.env.DISCORD_USER_ID,
 
     // Server - Node.js
     NODE_ENV: process.env.NODE_ENV,
@@ -176,6 +191,8 @@ export const env = createEnv({
     NEXT_PUBLIC_DATADOG_SITE: process.env.NEXT_PUBLIC_DATADOG_SITE,
     NEXT_PUBLIC_DATADOG_SERVICE_NAME:
       process.env.NEXT_PUBLIC_DATADOG_SERVICE_NAME,
+    NEXT_PUBLIC_DATADOG_ENABLE_IN_DEV:
+      process.env.NEXT_PUBLIC_DATADOG_ENABLE_IN_DEV,
 
     // Client - Vercel
     NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,

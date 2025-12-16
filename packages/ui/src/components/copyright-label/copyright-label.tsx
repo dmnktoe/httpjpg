@@ -6,8 +6,8 @@ import { Box } from "../box/box";
 export type CopyrightPosition =
   | "below"
   | "overlay"
-  | "vertical-right"
-  | "inline";
+  | "inline-black"
+  | "inline-white";
 
 export interface CopyrightLabelProps {
   /**
@@ -39,11 +39,11 @@ export interface CopyrightLabelProps {
  * // Overlay at bottom
  * <CopyrightLabel text="Jane Smith" position="overlay" />
  *
- * // Inline vertical on right (for images)
- * <CopyrightLabel text="Photographer" position="inline" />
+ * // Inline white (for dark images/slideshows)
+ * <CopyrightLabel text="Photographer" position="inline-white" />
  *
- * // Vertical text on right side (for slideshows)
- * <CopyrightLabel text="Photographer Name" position="vertical-right" />
+ * // Inline black (for bright images)
+ * <CopyrightLabel text="Photographer Name" position="inline-black" />
  * ```
  */
 export function CopyrightLabel({
@@ -66,9 +66,9 @@ export function CopyrightLabel({
           right: 0,
           background:
             "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
-          p: "1rem",
-          fontFamily: "mono",
-          fontSize: "0.75rem",
+          p: 4,
+          fontFamily: "sans",
+          fontSize: "sm",
           opacity: 0.7,
           color: "white",
           boxSizing: "border-box",
@@ -82,25 +82,25 @@ export function CopyrightLabel({
     );
   }
 
-  // Vertical right position (e.g., for slideshow)
-  if (position === "vertical-right") {
+  // Inline black position (vertical on right side, for bright images)
+  if (position === "inline-black") {
     return (
       <Box
         css={{
           position: "absolute",
-          right: "0.5rem",
-          bottom: "0.5rem",
-          p: "0.5rem 0.25rem",
-          fontFamily: "mono",
-          fontSize: "0.75rem",
+          right: 2,
+          bottom: 2,
+          px: 1,
+          py: 2,
+          fontFamily: "sans",
+          fontSize: "sm",
           opacity: 0.7,
-          color: "white",
+          color: "black",
           writingMode: "vertical-rl",
           transform: "rotate(180deg)",
           whiteSpace: "nowrap",
           zIndex: 10,
           pointerEvents: "none",
-          textShadow: "0 1px 3px rgba(0, 0, 0, 0.5)",
           ...cssProp,
         }}
       >
@@ -109,23 +109,26 @@ export function CopyrightLabel({
     );
   }
 
-  // Inline position (vertical on right side, e.g., for images)
-  if (position === "inline") {
+  // Inline white position (vertical on right side, for dark images)
+  if (position === "inline-white") {
     return (
       <Box
         css={{
           position: "absolute",
-          bottom: "0.5rem",
-          right: "0.5rem",
-          p: "0.5rem 0.25rem",
-          fontFamily: "mono",
-          fontSize: "0.75rem",
+          bottom: 2,
+          right: 2,
+          px: 1,
+          py: 2,
+          fontFamily: "sans",
+          fontSize: "sm",
           opacity: 0.7,
-          color: "black",
+          color: "white",
           writingMode: "vertical-rl",
           transform: "rotate(180deg)",
+          whiteSpace: "nowrap",
           boxSizing: "border-box",
           zIndex: 10,
+          pointerEvents: "none",
           ...cssProp,
         }}
       >
@@ -138,10 +141,10 @@ export function CopyrightLabel({
   return (
     <Box
       css={{
-        fontFamily: "mono",
-        fontSize: "0.75rem",
+        fontFamily: "sans",
+        fontSize: "sm",
         opacity: 0.7,
-        p: "0.5rem 0",
+        py: 2,
         color: "currentColor",
         ...cssProp,
       }}

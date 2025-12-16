@@ -1,7 +1,7 @@
 "use client";
 
 import type { VideoHTMLAttributes } from "react";
-import { forwardRef, useRef } from "react";
+import { forwardRef, useRef, useState } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
@@ -160,7 +160,7 @@ function getVimeoId(url: string): string {
  * />
  * ```
  */
-export const video = forwardRef<HTMLDivElement, VideoProps>(
+export const Video = forwardRef<HTMLDivElement, VideoProps>(
   (
     {
       src,
@@ -172,7 +172,7 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
       muted = false,
       aspectRatio = "16/9",
       copyright,
-      copyrightPosition = "inline",
+      copyrightPosition = "inline-white",
       wrapperStyle,
       wrapperClassName,
       className,
@@ -183,6 +183,7 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
     ref,
   ) => {
     const videoRef = useRef<HTMLVideoElement>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Render YouTube embed
     if (source === "youtube") {
@@ -205,23 +206,43 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
             }}
             style={{ aspectRatio: ratioValue, ...wrapperStyle }}
           >
+            {/* Loading skeleton */}
+            <Box
+              className={css({
+                position: "absolute",
+                inset: 0,
+                w: "100%",
+                h: "100%",
+                bg: "linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%)",
+                backgroundSize: "200% 100%",
+                animation: "shimmer 1.5s ease-in-out infinite",
+                zIndex: 1,
+                opacity: isLoading ? 1 : 0,
+                transition: "opacity 0.5s ease-in-out",
+                pointerEvents: isLoading ? "auto" : "none",
+              })}
+            />
+
             <iframe
               src={embedUrl}
               title="YouTube video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
+              onLoad={() => setIsLoading(false)}
               className={css({
                 position: "absolute",
                 inset: 0,
                 w: "100%",
                 h: "100%",
                 border: "none",
+                opacity: isLoading ? 0 : 1,
+                transition: "opacity 0.5s ease-in-out",
               })}
             />
 
-            {/* Copyright inline (vertical on right side) */}
-            {copyright && copyrightPosition === "inline" && (
-              <CopyrightLabel text={copyright} position="inline" />
+            {/* Copyright inline white (vertical on right side) */}
+            {copyright && copyrightPosition === "inline-white" && (
+              <CopyrightLabel text={copyright} position="inline-white" />
             )}
 
             {/* Copyright overlay (bottom gradient) */}
@@ -229,9 +250,9 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
               <CopyrightLabel text={copyright} position="overlay" />
             )}
 
-            {/* Copyright vertical right */}
-            {copyright && copyrightPosition === "vertical-right" && (
-              <CopyrightLabel text={copyright} position="vertical-right" />
+            {/* Copyright inline black */}
+            {copyright && copyrightPosition === "inline-black" && (
+              <CopyrightLabel text={copyright} position="inline-black" />
             )}
           </Box>
 
@@ -264,23 +285,43 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
             }}
             style={{ aspectRatio: ratioValue, ...wrapperStyle }}
           >
+            {/* Loading skeleton */}
+            <Box
+              className={css({
+                position: "absolute",
+                inset: 0,
+                w: "100%",
+                h: "100%",
+                bg: "linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%)",
+                backgroundSize: "200% 100%",
+                animation: "shimmer 1.5s ease-in-out infinite",
+                zIndex: 1,
+                opacity: isLoading ? 1 : 0,
+                transition: "opacity 0.5s ease-in-out",
+                pointerEvents: isLoading ? "auto" : "none",
+              })}
+            />
+
             <iframe
               src={embedUrl}
               title="Vimeo video player"
               allow="autoplay; fullscreen; picture-in-picture"
               allowFullScreen
+              onLoad={() => setIsLoading(false)}
               className={css({
                 position: "absolute",
                 inset: 0,
                 w: "100%",
                 h: "100%",
                 border: "none",
+                opacity: isLoading ? 0 : 1,
+                transition: "opacity 0.5s ease-in-out",
               })}
             />
 
-            {/* Copyright inline (vertical on right side) */}
-            {copyright && copyrightPosition === "inline" && (
-              <CopyrightLabel text={copyright} position="inline" />
+            {/* Copyright inline white (vertical on right side) */}
+            {copyright && copyrightPosition === "inline-white" && (
+              <CopyrightLabel text={copyright} position="inline-white" />
             )}
 
             {/* Copyright overlay (bottom gradient) */}
@@ -288,9 +329,9 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
               <CopyrightLabel text={copyright} position="overlay" />
             )}
 
-            {/* Copyright vertical right */}
-            {copyright && copyrightPosition === "vertical-right" && (
-              <CopyrightLabel text={copyright} position="vertical-right" />
+            {/* Copyright inline black */}
+            {copyright && copyrightPosition === "inline-black" && (
+              <CopyrightLabel text={copyright} position="inline-black" />
             )}
           </Box>
 
@@ -315,11 +356,28 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
             position: "relative",
             w: "100%",
             overflow: "hidden",
-            background: "black",
+            background: "linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)",
             ...cssProp,
           }}
           style={{ aspectRatio: ratioValue, ...wrapperStyle }}
         >
+          {/* Loading skeleton */}
+          <Box
+            className={css({
+              position: "absolute",
+              inset: 0,
+              w: "100%",
+              h: "100%",
+              bg: "linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%)",
+              backgroundSize: "200% 100%",
+              animation: "shimmer 1.5s ease-in-out infinite",
+              zIndex: 1,
+              opacity: isLoading ? 1 : 0,
+              transition: "opacity 0.5s ease-in-out",
+              pointerEvents: isLoading ? "auto" : "none",
+            })}
+          />
+
           <video
             ref={videoRef}
             src={src}
@@ -328,6 +386,8 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
             loop={loop}
             muted={muted}
             playsInline
+            preload="metadata"
+            onLoadedData={() => setIsLoading(false)}
             className={cx(
               css({
                 position: "absolute",
@@ -335,6 +395,8 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
                 w: "100%",
                 h: "100%",
                 objectFit: "contain",
+                opacity: isLoading ? 0 : 1,
+                transition: "opacity 0.5s ease-in-out",
               }),
               className,
             )}
@@ -345,9 +407,9 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
           {/* Custom controls */}
           <VideoControls videoRef={videoRef} show={controls} />
 
-          {/* Copyright inline (vertical on right side) */}
-          {copyright && copyrightPosition === "inline" && (
-            <CopyrightLabel text={copyright} position="inline" />
+          {/* Copyright inline white (vertical on right side) */}
+          {copyright && copyrightPosition === "inline-white" && (
+            <CopyrightLabel text={copyright} position="inline-white" />
           )}
 
           {/* Copyright overlay (bottom gradient) */}
@@ -355,9 +417,9 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
             <CopyrightLabel text={copyright} position="overlay" />
           )}
 
-          {/* Copyright vertical right */}
-          {copyright && copyrightPosition === "vertical-right" && (
-            <CopyrightLabel text={copyright} position="vertical-right" />
+          {/* Copyright inline black */}
+          {copyright && copyrightPosition === "inline-black" && (
+            <CopyrightLabel text={copyright} position="inline-black" />
           )}
         </Box>
 
@@ -370,4 +432,4 @@ export const video = forwardRef<HTMLDivElement, VideoProps>(
   },
 );
 
-video.displayName = "video";
+Video.displayName = "Video";

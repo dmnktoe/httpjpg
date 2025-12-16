@@ -33,10 +33,10 @@ function NowPlayingWidgetComponent() {
   const content = (
     <button type="button" onClick={handleClick} style={{ all: "unset" }}>
       <NowPlaying
-        title={
-          isLoading ? "Loading..." : data?.title || "╱╱ Nothing playing ╱╱"
+        title={isLoading ? "Loading..." : data?.title || "╱╱ #welovemusic ╱╱"}
+        artist={
+          isLoading ? "..." : data?.artist || "⋄ ⋄ ⋄ (spotify(none)) ⋄ ⋄ ⋄"
         }
-        artist={isLoading ? "..." : data?.artist || "⋄ ⋄ ⋄"}
         artwork={
           data?.artwork ||
           "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23a3a3a3' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='40' text-anchor='middle' dy='.3em' fill='white'%3E♪%3C/text%3E%3C/svg%3E"

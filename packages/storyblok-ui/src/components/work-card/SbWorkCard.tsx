@@ -37,12 +37,23 @@ export const SbWorkCard = memo(function SbWorkCard({ blok }: SbWorkCardProps) {
       date={date}
       slug={slug}
       baseUrl={baseUrl}
-      images={images.map((img) => ({
-        url: img.filename,
-        alt: img.alt || img.title || title,
-        copyright: img.copyright,
-        focus: img.focus,
-      }))}
+      images={images.map((img) => {
+        // Check content_type first (for Storyblok assets)
+        const hasVideoContentType = img.content_type?.startsWith("video/");
+        // Fallback: Check file extension (for external URLs)
+        const hasVideoExtension = /\.(mp4|webm|ogg|mov|avi|mkv)(\?|$)/i.test(
+          img.filename || "",
+        );
+        const isVideo = hasVideoContentType || hasVideoExtension;
+
+        return {
+          url: isVideo ? "" : img.filename,
+          alt: img.alt || img.title || title,
+          copyright: img.copyright,
+          focus: img.focus,
+          videoUrl: isVideo ? img.filename : undefined,
+        };
+      })}
     />
   );
 });

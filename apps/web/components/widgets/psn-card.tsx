@@ -39,7 +39,7 @@ export const PSNCard = ({ username }: PSNCardProps) => {
         top: 0,
         left: 0,
         zIndex: 40,
-        width: "300px",
+        width: "250px",
         display: "none",
         lg: {
           display: "block",

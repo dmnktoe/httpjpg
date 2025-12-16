@@ -89,7 +89,7 @@ function formatWorkCardDate(date: string | Date): {
  * WorkCard Date component
  */
 function WorkCardDate({ date }: { date: string | Date }) {
-  const { day, year, monthSymbol } = formatWorkCardDate(date);
+  const { day, month, year, monthSymbol } = formatWorkCardDate(date);
 
   return (
     <HStack
@@ -114,7 +114,7 @@ function WorkCardDate({ date }: { date: string | Date }) {
             top: "1px",
           }}
         >
-          {monthSymbol}
+          {monthSymbol} {month}
         </Box>
         {year}
       </Box>
@@ -232,6 +232,7 @@ function WorkCardContent({
       >
         {description && (
           <Paragraph
+            as="div"
             size="sm"
             css={
               {
@@ -240,6 +241,13 @@ function WorkCardContent({
                 display: "-webkit-box",
                 WebkitLineClamp: { base: 5, xl: "none" },
                 WebkitBoxOrient: "vertical",
+                "& p": {
+                  marginTop: 0,
+                  marginBottom: "0.75em",
+                },
+                "& p:last-child": {
+                  marginBottom: 0,
+                },
               } as any
             }
           >

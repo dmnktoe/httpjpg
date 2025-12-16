@@ -26,7 +26,7 @@
     "test:coverage": "jest --config test/config/jest.config.js --coverage",
     "clean": "turbo run clean && rm -rf node_modules",
     "prepare": "husky",
-    "postinstall": "turbo run build --filter=@httpjpg/tokens"
+    "postinstall": "turbo run build --filter=@httpjpg/tokens --filter=@httpjpg/ui"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.8",

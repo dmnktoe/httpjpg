@@ -772,6 +772,23 @@ async function getSbImageComponent(): Promise<StoryblokComponent> {
         display_name: "Eager Loading",
         default_value: "false",
       },
+      copyright: {
+        type: "text",
+        display_name: "Copyright",
+        description: "Copyright notice (e.g., photographer name)",
+        translatable: true,
+      },
+      copyrightPosition: {
+        type: "option",
+        display_name: "Copyright Position",
+        default_value: "inline-white",
+        options: [
+          { name: "Inline White (for dark images)", value: "inline-white" },
+          { name: "Inline Black (for bright images)", value: "inline-black" },
+          { name: "Overlay (Bottom Gradient)", value: "overlay" },
+          { name: "Below Image", value: "below" },
+        ],
+      },
     },
   };
 }
@@ -870,11 +887,11 @@ async function getSbVideoComponent(): Promise<StoryblokComponent> {
       copyrightPosition: {
         type: "option",
         display_name: "Copyright Position",
-        default_value: "inline",
+        default_value: "inline-white",
         options: [
-          { name: "Inline (Vertical Right)", value: "inline" },
+          { name: "Inline White (for dark videos)", value: "inline-white" },
+          { name: "Inline Black (for bright videos)", value: "inline-black" },
           { name: "Overlay (Bottom Gradient)", value: "overlay" },
-          { name: "Vertical Right", value: "vertical-right" },
           { name: "Below Video", value: "below" },
         ],
       },
@@ -1118,7 +1135,18 @@ async function getSbPageWorkComponent(): Promise<StoryblokComponent> {
         type: "multiasset",
         display_name: "Featured Images",
         description: "First image will be used as preview in navigation",
-        filetypes: ["images"],
+        filetypes: ["images", "videos"],
+        allow_external_url: true,
+      },
+      date: {
+        type: "datetime",
+        display_name: "Date",
+        description: "Project/exhibition date or start date",
+      },
+      date_end: {
+        type: "datetime",
+        display_name: "End Date",
+        description: "Optional end date for exhibitions/events with timespan",
       },
       link: {
         type: "multilink",
@@ -1129,7 +1157,7 @@ async function getSbPageWorkComponent(): Promise<StoryblokComponent> {
         type: "boolean",
         display_name: "External Only",
         description: "Hide body content and show only external link",
-        default_value: false,
+        default_value: "false",
       },
     },
   };

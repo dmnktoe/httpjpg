@@ -9,13 +9,16 @@
   },
   "scripts": {
     "lint": "biome check src",
-    "lint:fix": "biome check --write src"
+    "lint:fix": "biome check --write src",
+    "format": "biome format --write src",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@httpjpg/env": "workspace:*",
     "storyblok-js-client": "^6.11.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.3.8",
     "@httpjpg/tsconfig": "workspace:*",
     "@types/node": "^24.0.0",
     "typescript": "~5.9.3"

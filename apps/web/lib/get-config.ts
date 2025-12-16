@@ -168,11 +168,38 @@ export async function getRecentWork(): Promise<{
         // Use external URL if external_only is set, otherwise use internal slug
         const href = isExternalOnly && externalUrl ? externalUrl : story.slug;
 
+        // Get preview image URL: find first non-video image or use first video's poster
+        let imageUrl: string | undefined;
+        const images = story.content?.images || [];
+
+        for (const img of images) {
+          // Check if this is a video
+          const hasVideoContentType = img.content_type?.startsWith("video/");
+          const hasVideoExtension = /\.(mp4|webm|ogg|mov|avi|mkv)(\?|$)/i.test(
+            img.filename || "",
+          );
+          const isVideo = hasVideoContentType || hasVideoExtension;
+
+          if (!isVideo && img.filename) {
+            // Found a regular image, use it
+            imageUrl = img.filename;
+            break;
+          }
+        }
+
+        // If no image found but first item is a video, we could fallback to a placeholder
+        // or just leave it undefined - the ImagePreview will handle missing images gracefully
+        if (!imageUrl && images.length > 0) {
+          // Could potentially use a video thumbnail service or poster here
+          // For now, leave undefined so preview won't show
+          imageUrl = undefined;
+        }
+
         return {
           id: story.uuid,
           slug: href,
           title: story.content?.title || story.name,
-          imageUrl: story.content?.images?.[0]?.filename,
+          imageUrl,
           isDraft,
           isExternal: isExternalOnly,
         };

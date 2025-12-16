@@ -23,11 +23,6 @@ export function initSentryClient() {
     return;
   }
 
-  console.log("Initializing Sentry Client...", {
-    dsn: SENTRY_DSN,
-    enabled: isEnabled,
-  });
-
   Sentry.init({
     dsn: SENTRY_DSN,
 

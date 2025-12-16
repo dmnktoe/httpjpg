@@ -4,8 +4,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 /**
  * Footer component stories
  *
- * Site footer with background texture support and ASCII art styling.
- * Perfect for brutalist design with centered content and optional links.
+ * Generic site footer with background texture support and flexible widget area.
+ * The footer is designed to be composable - pass custom content via children
+ * or use the default layout with links, widgets, and copyright text.
  */
 const meta = {
   title: "Navigation/Footer",
@@ -21,11 +22,27 @@ const meta = {
     },
     footerLinks: {
       control: "object",
-      description: "Custom footer links from CMS",
+      description: "Navigation links from CMS",
     },
     copyrightText: {
       control: "text",
       description: "Copyright text to display",
+    },
+    widgets: {
+      control: false,
+      description: "Widget area content (badges, status, etc.)",
+    },
+    showConsoleLink: {
+      control: "boolean",
+      description: "Show development console link",
+    },
+    showVersion: {
+      control: "boolean",
+      description: "Show version info",
+    },
+    version: {
+      control: "text",
+      description: "Version string to display",
     },
   },
 } satisfies Meta<typeof Footer>;
@@ -39,6 +56,62 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
+    footerLinks: [
+      { name: "Legal", href: "/legal", isExternal: false },
+      { name: "Privacy", href: "/privacy", isExternal: false },
+    ],
+    copyrightText: "༺yl33ly httpjpg icon.icon.iconn te3shay༻",
+    showVersion: true,
+    version: "v1.0.0",
+  },
+};
+
+/**
+ * Footer with widget area
+ */
+export const WithWidgets: Story = {
+  args: {
+    backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
+    footerLinks: [
+      { name: "Legal", href: "/legal", isExternal: false },
+      { name: "Privacy", href: "/privacy", isExternal: false },
+    ],
+    copyrightText: "© 2025 httpjpg",
+    widgets: (
+      <Box
+        css={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "4",
+        }}
+      >
+        {/* Mock Discord Status */}
+        <Box
+          css={{
+            fontSize: "xs",
+            fontFamily: "mono",
+            opacity: 0.8,
+          }}
+        >
+          discord: 🟢 <span style={{ color: "#22C55E" }}>online</span> · Playing
+          Spotify
+        </Box>
+
+        {/* Flag Counter */}
+        <Box as="span">
+          <a href="https://info.flagcounter.com/ncez">
+            <img
+              src="https://s01.flagcounter.com/count2/ncez/bg_FFFFFF/txt_000000/border_CCCCCC/columns_3/maxflags_9/viewers_0/labels_0/pageviews_1/flags_0/percent_0/"
+              alt="Flag Counter"
+              style={{ border: 0 }}
+            />
+          </a>
+        </Box>
+      </Box>
+    ),
+    showVersion: true,
+    version: "v1.0.0",
   },
 };
 

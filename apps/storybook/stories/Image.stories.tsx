@@ -31,10 +31,10 @@ const meta = {
     },
     copyrightPosition: {
       control: { type: "select" as const },
-      options: ["inline", "below", "overlay"] as const,
+      options: ["inline-white", "inline-black", "below", "overlay"] as const,
       description: "Copyright text position",
       table: {
-        defaultValue: { summary: "inline" },
+        defaultValue: { summary: "inline-white" },
       },
     },
     blurOnLoad: {
@@ -71,7 +71,7 @@ export const Basic: Story = {
     alt: "Video still 1",
     aspectRatio: "16/9",
     copyright: "",
-    copyrightPosition: "inline",
+    copyrightPosition: "inline-white",
     blurOnLoad: false,
     objectFit: "cover",
   },
@@ -85,7 +85,7 @@ export const InlineCopyright: Story = {
     src: OPTIMIZED_IMAGES.videoStill2,
     alt: "Video still 2",
     copyright: "2025 John Doe",
-    copyrightPosition: "inline",
+    copyrightPosition: "inline-white",
     aspectRatio: "4/3",
   },
 };
@@ -129,7 +129,7 @@ export const BlurUpLoading: Story = {
     blurDataURL:
       "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/AB//2Q==",
     copyright: "🎀 ୧ꔛꗃ˖ 2025 Studio Name ･ﾟ⋆",
-    copyrightPosition: "inline",
+    copyrightPosition: "inline-white",
     aspectRatio: "4/3",
   },
 };
@@ -177,7 +177,7 @@ export const Gallery: Story = {
           src={OPTIMIZED_IMAGES.videoStill1}
           alt="Video still 1"
           copyright="2025 John Architect"
-          copyrightPosition="inline"
+          copyrightPosition="inline-white"
           aspectRatio="16/9"
         />
       </Box>

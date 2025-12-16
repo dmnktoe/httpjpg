@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   Autoplay,
   EffectCards,
@@ -27,7 +27,7 @@ import { CopyrightLabel, type CopyrightPosition } from "../copyright-label";
 import { IconButton } from "../icon-button";
 import { Image } from "../image/image";
 import { HStack } from "../stack/stack";
-import { video } from "../video/video";
+import { Video } from "../video/video";
 
 // Swiper effect configurations
 const SWIPER_FADE_EFFECT = {
@@ -80,7 +80,7 @@ function SlideshowVideoSlide({
   videoPoster,
   aspectRatio,
 }: SlideshowVideoSlideProps) {
-  const VideoComponent = video;
+  const VideoComponent = Video;
   return (
     <VideoComponent
       src={videoUrl}
@@ -215,6 +215,7 @@ export function Slideshow({
   ...props
 }: SlideshowProps) {
   const swiperRef = useRef<SwiperType | null>(null);
+  const autoplayTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handlePrev = useCallback(() => {
     swiperRef.current?.slidePrev();
@@ -223,6 +224,61 @@ export function Slideshow({
   const handleNext = useCallback(() => {
     swiperRef.current?.slideNext();
   }, []);
+
+  // Manual autoplay implementation
+  const startManualAutoplay = useCallback(() => {
+    if (autoplayTimerRef.current) {
+      clearTimeout(autoplayTimerRef.current);
+    }
+
+    if (images.length > 1) {
+      autoplayTimerRef.current = setTimeout(() => {
+        swiperRef.current?.slideNext();
+        startManualAutoplay();
+      }, autoplayDelay);
+    }
+  }, [autoplayDelay, images.length]);
+
+  // Initialize Swiper
+  const handleSwiperInit = useCallback(
+    (swiper: SwiperType) => {
+      swiperRef.current = swiper;
+      // Start manual autoplay
+      startManualAutoplay();
+    },
+    [startManualAutoplay],
+  );
+
+  // Restart timer on slide change
+  const handleSlideChange = useCallback(() => {
+    startManualAutoplay();
+  }, [startManualAutoplay]);
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (autoplayTimerRef.current) {
+        clearTimeout(autoplayTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Handle visibility change - restart when tab becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && images.length > 1) {
+        startManualAutoplay();
+      } else if (autoplayTimerRef.current) {
+        clearTimeout(autoplayTimerRef.current);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [images.length, startManualAutoplay]);
 
   // Effect modules lookup table
   const EFFECT_MODULES: Record<SwiperEffect, typeof EffectFade | undefined> = {
@@ -253,13 +309,8 @@ export function Slideshow({
           effect={effect}
           speed={speed}
           spaceBetween={15}
-          onSwiper={(swiper) => {
-            swiperRef.current = swiper;
-          }}
-          autoplay={{
-            delay: autoplayDelay,
-            disableOnInteraction: false,
-          }}
+          onSwiper={handleSwiperInit}
+          onSlideChange={handleSlideChange}
           loop={images.length > 1}
           fadeEffect={SWIPER_FADE_EFFECT}
           cubeEffect={SWIPER_CUBE_EFFECT}
@@ -269,7 +320,7 @@ export function Slideshow({
           creativeEffect={SWIPER_CREATIVE_EFFECT}
         >
           {images.map((image, index) => (
-            <SwiperSlide key={index}>
+            <SwiperSlide key={index} suppressHydrationWarning>
               <Box
                 css={{
                   position: "relative",
@@ -278,23 +329,29 @@ export function Slideshow({
                 }}
               >
                 {image.videoUrl ? (
-                  <SlideshowVideoSlide
-                    videoUrl={image.videoUrl}
-                    videoPoster={image.videoPoster}
-                    aspectRatio={aspectRatio}
-                  />
+                  <>
+                    <SlideshowVideoSlide
+                      videoUrl={image.videoUrl}
+                      videoPoster={image.videoPoster}
+                      aspectRatio={aspectRatio}
+                    />
+                    {image.copyright && (
+                      <CopyrightLabel
+                        text={image.copyright}
+                        position={image.copyrightPosition || "inline-black"}
+                      />
+                    )}
+                  </>
                 ) : (
                   <Image
                     src={image.url}
                     alt={image.alt}
                     aspectRatio={aspectRatio}
                     objectFit="cover"
-                  />
-                )}
-                {image.copyright && (
-                  <CopyrightLabel
-                    text={image.copyright}
-                    position={image.copyrightPosition || "vertical-right"}
+                    copyright={image.copyright}
+                    copyrightPosition={
+                      image.copyrightPosition || "inline-white"
+                    }
                   />
                 )}
               </Box>

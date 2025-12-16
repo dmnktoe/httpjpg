@@ -9,7 +9,9 @@
   },
   "scripts": {
     "lint": "biome check src",
-    "lint:fix": "biome check --write src"
+    "lint:fix": "biome check --write src",
+    "format": "biome format --write src",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@httpjpg/env": "workspace:*",

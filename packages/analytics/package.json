@@ -23,7 +23,7 @@
     "@httpjpg/env": "workspace:*"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.8",
+    "@biomejs/biome": "2.3.9",
     "@httpjpg/tsconfig": "workspace:*",
     "typescript": "^5.7.3"
   }

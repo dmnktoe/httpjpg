@@ -124,12 +124,12 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
         {header}
 
         {works.map((work, index) => (
-          <VStack key={work.slug || index} gap={0}>
-            <WorkCard {...work} />
+          <>
+            <WorkCard key={work.slug || index} {...work} />
             {showDividers && index < works.length - 1 && (
               <Divider orientation="horizontal" {...dividerProps} />
             )}
-          </VStack>
+          </>
         ))}
 
         {footer}

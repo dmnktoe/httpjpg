@@ -35,7 +35,7 @@ function PreviewNotificationContent() {
         bottom: 0,
         left: 0,
         right: 0,
-        zIndex: 9999,
+        zIndex: "preview",
         backgroundColor: "warning.200",
         color: "black",
         padding: 3,

@@ -89,7 +89,6 @@ export const NowPlayingLoading = ({
           width: config.width,
           height: config.height,
           cursor: "grab",
-          zIndex: 9999,
           touchAction: "none",
           userSelect: "none",
           ...style,

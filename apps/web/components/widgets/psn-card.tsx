@@ -38,7 +38,7 @@ export const PSNCard = ({ username }: PSNCardProps) => {
         position: "fixed",
         top: 0,
         left: 0,
-        zIndex: 40,
+        zIndex: "widget",
         width: "250px",
         display: "none",
         lg: {

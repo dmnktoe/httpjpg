@@ -1,5 +1,6 @@
 "use client";
 
+import { zIndex } from "@httpjpg/tokens";
 import { Box, Button } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 import { getConsent, hasConsent, setConsent } from "../consent";
@@ -117,7 +118,7 @@ export function CookieBanner({
         bottom: 0,
         left: 0,
         right: 0,
-        zIndex: 99999,
+        zIndex: zIndex.cookieBanner,
         backgroundColor: "white",
         color: "black",
         padding: "24px 16px",

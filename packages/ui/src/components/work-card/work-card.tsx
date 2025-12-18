@@ -317,7 +317,9 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
         </Box>
 
         {/* Content */}
-        <Box css={{ zIndex: 10 }}>
+        <Box css={{ zIndex: 20 }}>
+          {" "}
+          {/* @httpjpg/tokens zIndex.docked */}
           <Box
             css={{
               display: "flex",

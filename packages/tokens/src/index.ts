@@ -22,6 +22,7 @@ export {
   remToPx,
   responsiveSpacing,
 } from "./utils";
+export { type ZIndexKey, type ZIndexValue, zIndex } from "./z-index";
 
 import { borderRadius } from "./border-radius";
 import { colors } from "./colors";
@@ -31,6 +32,7 @@ import { sizes } from "./sizes";
 import { spacing } from "./spacing";
 import { transitions } from "./transitions";
 import { typography } from "./typography";
+import { zIndex } from "./z-index";
 
 /**
  * Complete design tokens object
@@ -50,6 +52,7 @@ export const tokens = {
   opacity,
   transitions,
   sizes,
+  zIndex,
 } as const;
 
 export type Tokens = typeof tokens;

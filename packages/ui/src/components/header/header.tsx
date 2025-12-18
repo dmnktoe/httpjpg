@@ -94,7 +94,7 @@ export const Header = ({
         w: "full",
         bg: "transparent",
         color: "black",
-        zIndex: 50,
+        zIndex: "header",
         pointerEvents: "auto",
         py: 4,
         fontSize: "sm",

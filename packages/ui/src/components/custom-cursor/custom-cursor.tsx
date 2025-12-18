@@ -1,5 +1,6 @@
 "use client";
 
+import { zIndex } from "@httpjpg/tokens";
 import { useEffect, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
@@ -199,8 +200,9 @@ export function CustomCursor({
           top: 0,
           left: 0,
           pointerEvents: "none",
-          zIndex: 999999,
+          zIndex: zIndex.cursor,
           transform: `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0) translate(-50%, -50%)`,
+
           fontSize: isDragging ? `${size * 1.2}px` : `${size}px`,
           color,
           fontWeight: "bold",
@@ -224,8 +226,9 @@ export function CustomCursor({
             top: 0,
             left: 0,
             pointerEvents: "none",
-            zIndex: 999999,
+            zIndex: zIndex.cursor,
             transform: `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0) translate(-50%, calc(-100% - 30px))`,
+
             willChange: "transform",
             // Force hardware acceleration
             backfaceVisibility: "hidden",

@@ -18,6 +18,7 @@ import {
   spacing,
   transitions,
   typography,
+  zIndex,
 } from "@httpjpg/tokens";
 import { defineConfig } from "@pandacss/dev";
 import { hexToRgba, linearGradient } from "./src/lib/color-utils";
@@ -250,6 +251,7 @@ export default defineConfig({
         sizes: toPandaTokens(sizes),
         durations: toPandaTokens(transitions.duration),
         easings: toPandaTokens(transitions.easing),
+        zIndex: toPandaTokens(zIndex),
       },
       breakpoints: {
         sm: "640px",

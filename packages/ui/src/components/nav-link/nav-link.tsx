@@ -99,6 +99,8 @@ export const NavLink = ({
         href={href}
         className={mergedClassName}
         style={{
+          position: "relative",
+          zIndex: 1,
           cursor:
             'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><text x="0" y="15" font-size="16">↗</text></svg>\') 10 5, pointer',
         }}
@@ -124,7 +126,12 @@ export const NavLink = ({
 
   // Render internal links with Next.js Link
   return (
-    <NextLink href={href} className={mergedClassName} {...props}>
+    <NextLink
+      href={href}
+      className={mergedClassName}
+      style={{ position: "relative", zIndex: 1 }}
+      {...props}
+    >
       {children}
     </NextLink>
   );

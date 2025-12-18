@@ -127,7 +127,7 @@ export function MouseTrail({
         w: "100%",
         h: "100%",
         pointerEvents: "none",
-        zIndex: 9998,
+        zIndex: "mouseEffects",
         ...cssProp,
       }}
     >

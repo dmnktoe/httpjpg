@@ -20,7 +20,7 @@ export const MobileMenuButton = ({
         position: { base: "fixed", md: "relative" },
         right: { base: "2", md: "auto" },
         top: { base: "3", md: "auto" },
-        zIndex: 65,
+        zIndex: "mobileMenuButton",
         ml: "auto",
         display: { base: "block", lg: "none" },
       }}

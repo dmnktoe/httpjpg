@@ -30,7 +30,7 @@ export const MobileMenuContent = ({
       css={{
         position: "fixed",
         inset: 0,
-        zIndex: 50,
+        zIndex: "mobileMenu",
         display: { base: "flex", xl: "none" },
         maxH: "full",
         w: "full",
@@ -52,6 +52,7 @@ export const MobileMenuContent = ({
           display: "flex",
           h: "calc(100vh)",
           w: { base: "full", md: "96" },
+          maxW: "100vw",
           overflow: "hidden",
           transition: "all 200ms ease-in-out",
           transform: isOpen ? "translateX(0)" : "translateX(0.5rem)",
@@ -70,6 +71,8 @@ export const MobileMenuContent = ({
             m: { md: "6" },
             borderRadius: 0,
             position: "relative",
+            overflow: "hidden",
+            maxW: "full",
           }}
         >
           <Box
@@ -80,6 +83,10 @@ export const MobileMenuContent = ({
               flexDirection: "column",
               p: { base: "2", md: "6" },
               fontSize: { base: "lg", md: "xl" },
+              overflow: "hidden",
+              overflowY: "auto",
+              minW: 0,
+              maxW: "full",
             }}
           >
             <Box css={{ mb: "4", fontWeight: "bold", fontSize: "sm" }}>
@@ -101,6 +108,9 @@ export const MobileMenuContent = ({
                   textDecoration: "none",
                   color: "inherit",
                   _hover: { textDecoration: "underline" },
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {item.name}
@@ -112,6 +122,7 @@ export const MobileMenuContent = ({
               pattern="⋆｡°✩ ･ ✦ ･ ✧ ･ ✦ ･ ✩°｡⋆"
               color="neutral.200"
               spacing="3"
+              css={{ maxW: "full" }}
             />
 
             <Box
@@ -138,6 +149,9 @@ export const MobileMenuContent = ({
                   data-preview-image={work.imageUrl}
                   css={{
                     fontSize: { base: "sm", md: "md" },
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {work.title}
@@ -154,6 +168,7 @@ export const MobileMenuContent = ({
               pattern="⋆｡°✩ ･ ✦ ･ ✧ ･ ✦ ･ ✩°｡⋆"
               color="neutral.200"
               spacing="3"
+              css={{ maxW: "full" }}
             />
 
             <Box
@@ -180,6 +195,9 @@ export const MobileMenuContent = ({
                   data-preview-image={work.imageUrl}
                   css={{
                     fontSize: { base: "sm", md: "md" },
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {work.title}

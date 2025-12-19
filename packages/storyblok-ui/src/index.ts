@@ -20,6 +20,10 @@ export {
   type SbGridProps,
 } from "./components/grid";
 export {
+  SbGridItem,
+  type SbGridItemProps,
+} from "./components/grid-item";
+export {
   SbHeadline,
   type SbHeadlineProps,
 } from "./components/headline";

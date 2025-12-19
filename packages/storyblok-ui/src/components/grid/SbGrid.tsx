@@ -16,7 +16,14 @@ export interface SbGridProps {
     items?: SbBlokData[];
     columns?: string;
     columnsMd?: string;
+    columnsLg?: string;
     gap?: string;
+    rowGap?: string;
+    columnGap?: string;
+    alignItems?: string;
+    justifyItems?: string;
+    justifyContent?: string;
+    autoFlow?: string;
     boundingWidth?: "container" | "full";
     isList?: boolean;
     pt?: string;
@@ -28,14 +35,22 @@ export interface SbGridProps {
 
 /**
  * Storyblok Grid Component
- * Responsive grid layout with configurable columns and gap
+ * Enhanced responsive grid layout with editorial-style controls
+ * Supports flexible column configurations, gaps, alignment, and advanced layout options
  */
 export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
   const {
     items,
     columns,
     columnsMd,
+    columnsLg,
     gap,
+    rowGap,
+    columnGap,
+    alignItems,
+    justifyItems,
+    justifyContent,
+    autoFlow,
     isList = false,
     pt,
     pb,
@@ -49,17 +64,29 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
     return null;
   }
 
+  // Use specific row/column gaps if provided, otherwise use uniform gap
+  const effectiveRowGap = rowGap || gap;
+  const effectiveColumnGap = columnGap || gap;
+
   const gridStyles: SystemStyleObject = {
     display: "grid",
     gridTemplateColumns: mapGridColumnsToToken(columns),
-    md: columnsMd
-      ? { gridTemplateColumns: mapGridColumnsToToken(columnsMd) }
-      : undefined,
-    gap: mapSpacingToToken(gap),
+    rowGap: mapSpacingToToken(effectiveRowGap),
+    columnGap: mapSpacingToToken(effectiveColumnGap),
+    alignItems: alignItems || undefined,
+    justifyItems: justifyItems || undefined,
+    justifyContent: justifyContent || undefined,
+    gridAutoFlow: autoFlow || undefined,
     pt: mapSpacingToToken(pt),
     pb: mapSpacingToToken(pb),
     mt: mapSpacingToToken(mt),
     mb: mapSpacingToToken(mb),
+    md: columnsMd
+      ? { gridTemplateColumns: mapGridColumnsToToken(columnsMd) }
+      : undefined,
+    lg: columnsLg
+      ? { gridTemplateColumns: mapGridColumnsToToken(columnsLg) }
+      : undefined,
   };
 
   if (isList) {

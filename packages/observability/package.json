@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@httpjpg/env": "workspace:*",
-    "@sentry/nextjs": "^8.55.0",
+    "@sentry/nextjs": "^10.0.0",
     "@datadog/browser-rum": "^6.0.0",
     "@datadog/browser-logs": "^6.0.0"
   },

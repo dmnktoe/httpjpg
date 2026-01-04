@@ -112,11 +112,24 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
     },
     ref,
   ) => {
-    // Map columns to Panda token values (ensures static extraction)
-    const gridTemplateColumns =
-      columns === "auto"
-        ? ("repeat(auto-fit, minmax(200px, 1fr))" as const)
-        : (`repeat(${columns}, 1fr)` as const);
+    // Static mapping for grid columns - required for Panda CSS static analysis
+    const GRID_COLUMNS_MAP = {
+      1: "repeat(1, 1fr)" as const,
+      2: "repeat(2, 1fr)" as const,
+      3: "repeat(3, 1fr)" as const,
+      4: "repeat(4, 1fr)" as const,
+      5: "repeat(5, 1fr)" as const,
+      6: "repeat(6, 1fr)" as const,
+      7: "repeat(7, 1fr)" as const,
+      8: "repeat(8, 1fr)" as const,
+      9: "repeat(9, 1fr)" as const,
+      10: "repeat(10, 1fr)" as const,
+      11: "repeat(11, 1fr)" as const,
+      12: "repeat(12, 1fr)" as const,
+      auto: "repeat(auto-fit, minmax(200px, 1fr))" as const,
+    };
+
+    const gridTemplateColumns = GRID_COLUMNS_MAP[columns];
 
     const styles = css({
       display: "grid",

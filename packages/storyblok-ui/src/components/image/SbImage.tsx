@@ -17,6 +17,7 @@ export interface SbImageProps {
     caption?: StoryblokRichTextProps["data"];
     aspectRatio?: "16/9" | "4/3" | "1/1" | "3/4" | "9/16";
     width?: "full" | "container" | "narrow";
+    imageWidth?: string;
     isFullHeight?: boolean;
     isLoadingEager?: boolean;
     spacingTop?: string;
@@ -39,6 +40,8 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     alt,
     caption,
     aspectRatio,
+    width = "full",
+    imageWidth,
     isFullHeight = false,
     isLoadingEager = false,
     spacingTop,
@@ -51,6 +54,11 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
 
   if (!image?.filename) {
     return null;
+  }
+
+  // Debug: Check if imageWidth arrives from Storyblok
+  if (typeof window !== "undefined" && imageWidth) {
+    console.log("[SbImage] imageWidth:", imageWidth);
   }
 
   // Process image with Storyblok image service (or return external URL as-is)
@@ -87,10 +95,21 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
   // Use copyright from custom field first, fallback to image copyright
   const finalCopyright = copyright || image.copyright || "";
 
+  // Calculate width based on imageWidth value
+  const calculatedWidth =
+    imageWidth === "original" || imageWidth === "auto"
+      ? "auto"
+      : imageWidth
+        ? `${imageWidth}%`
+        : aspectRatio
+          ? "100%"
+          : "auto";
+
   return (
     <SbMediaWrapper
       spacingTop={spacingTop}
       spacingBottom={spacingBottom}
+      width={width}
       editable={editableProps}
     >
       <Image
@@ -98,10 +117,13 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
         alt={alt || image.alt || image.title || ""}
         copyright={finalCopyright}
         copyrightPosition={copyrightPosition}
+        style={{
+          width: calculatedWidth,
+        }}
         css={{
-          width: "100%",
+          maxWidth: "100%",
           height: isFullHeight ? "100vh" : "auto",
-          objectFit: "cover",
+          objectFit: aspectRatio ? "cover" : "none",
           aspectRatio: aspectRatio || undefined,
         }}
         loading={isLoadingEager ? "eager" : "lazy"}

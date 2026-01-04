@@ -4,7 +4,6 @@ import { type BlokItem, DynamicRender } from "@httpjpg/storyblok-utils";
 import { GridItem } from "@httpjpg/ui";
 import type { SbBlokData } from "@storyblok/react/rsc";
 import { memo } from "react";
-import type { SystemStyleObject } from "styled-system/types";
 import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 
 export interface SbGridItemProps {
@@ -85,52 +84,61 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
   const baseRowSpan = parseRowSpan(rowSpan);
 
   // Build responsive styles only when we have responsive values
-  // and avoid setting base colSpan/rowSpan when we have positioning
   const hasPositioning = colStart || colEnd || rowStart || rowEnd;
 
-  // Properly merge responsive styles to avoid property conflicts
-  const itemStyles: SystemStyleObject = {};
-
-  // Build tablet (md) responsive styles
-  if (colSpanMd || rowSpanMd) {
-    itemStyles.md = {
-      ...(colSpanMd && {
-        gridColumn:
-          colSpanMd === "full" ? "1 / -1" : `span ${parseColSpan(colSpanMd)}`,
-      }),
-      ...(rowSpanMd && {
-        gridRow: `span ${parseRowSpan(rowSpanMd)}`,
-      }),
-    };
-  }
-
-  // Build desktop (lg) responsive styles
-  if (colSpanLg || rowSpanLg) {
-    itemStyles.lg = {
-      ...(colSpanLg && {
-        gridColumn:
-          colSpanLg === "full" ? "1 / -1" : `span ${parseColSpan(colSpanLg)}`,
-      }),
-      ...(rowSpanLg && {
-        gridRow: `span ${parseRowSpan(rowSpanLg)}`,
-      }),
-    };
-  }
+  // Build inline styles for responsive grid positioning via style tag
+  const responsiveStyles =
+    colSpanMd || colSpanLg || rowSpanMd || rowSpanLg ? (
+      <style
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe - controlled values for responsive grid styles
+        dangerouslySetInnerHTML={{
+          __html: `
+        ${
+          colSpanMd || rowSpanMd
+            ? `
+          @media (min-width: 768px) {
+            [data-sb-grid-item="${blok._uid}"] {
+              ${colSpanMd ? `grid-column: ${colSpanMd === "full" ? "1 / -1" : `span ${parseColSpan(colSpanMd)}`};` : ""}
+              ${rowSpanMd ? `grid-row: span ${parseRowSpan(rowSpanMd)};` : ""}
+            }
+          }
+        `
+            : ""
+        }
+        ${
+          colSpanLg || rowSpanLg
+            ? `
+          @media (min-width: 1024px) {
+            [data-sb-grid-item="${blok._uid}"] {
+              ${colSpanLg ? `grid-column: ${colSpanLg === "full" ? "1 / -1" : `span ${parseColSpan(colSpanLg)}`};` : ""}
+              ${rowSpanLg ? `grid-row: span ${parseRowSpan(rowSpanLg)};` : ""}
+            }
+          }
+        `
+            : ""
+        }
+      `,
+        }}
+      />
+    ) : null;
 
   return (
-    <GridItem
-      {...editableProps}
-      colSpan={hasPositioning ? undefined : baseColSpan}
-      rowSpan={hasPositioning ? undefined : baseRowSpan}
-      colStart={parsePosition(colStart)}
-      colEnd={parsePosition(colEnd)}
-      rowStart={parsePosition(rowStart)}
-      rowEnd={parsePosition(rowEnd)}
-      css={itemStyles}
-    >
-      {content && content.length > 0 && (
-        <DynamicRender data={content as BlokItem[]} />
-      )}
-    </GridItem>
+    <>
+      {responsiveStyles}
+      <GridItem
+        {...editableProps}
+        colSpan={hasPositioning ? undefined : baseColSpan}
+        rowSpan={hasPositioning ? undefined : baseRowSpan}
+        colStart={parsePosition(colStart)}
+        colEnd={parsePosition(colEnd)}
+        rowStart={parsePosition(rowStart)}
+        rowEnd={parsePosition(rowEnd)}
+        data-sb-grid-item={blok._uid}
+      >
+        {content && content.length > 0 && (
+          <DynamicRender data={content as BlokItem[]} />
+        )}
+      </GridItem>
+    </>
   );
 });

@@ -377,11 +377,71 @@ async function getSbGridComponent(): Promise<StoryblokComponent> {
         source: "internal",
         datasource_slug: "grid-columns",
       },
+      columnsLg: {
+        type: "option",
+        display_name: "Columns (Desktop)",
+        source: "internal",
+        datasource_slug: "grid-columns",
+      },
       gap: {
         type: "option",
         display_name: "Gap",
         source: "internal",
         datasource_slug: "spacing-options",
+      },
+      rowGap: {
+        type: "option",
+        display_name: "Row Gap",
+        source: "internal",
+        datasource_slug: "spacing-options",
+      },
+      columnGap: {
+        type: "option",
+        display_name: "Column Gap",
+        source: "internal",
+        datasource_slug: "spacing-options",
+      },
+      alignItems: {
+        type: "option",
+        display_name: "Align Items",
+        options: [
+          { name: "Start", value: "start" },
+          { name: "Center", value: "center" },
+          { name: "End", value: "end" },
+          { name: "Stretch", value: "stretch" },
+        ],
+      },
+      justifyItems: {
+        type: "option",
+        display_name: "Justify Items",
+        options: [
+          { name: "Start", value: "start" },
+          { name: "Center", value: "center" },
+          { name: "End", value: "end" },
+          { name: "Stretch", value: "stretch" },
+        ],
+      },
+      justifyContent: {
+        type: "option",
+        display_name: "Justify Content",
+        options: [
+          { name: "Start", value: "start" },
+          { name: "Center", value: "center" },
+          { name: "End", value: "end" },
+          { name: "Space Between", value: "space-between" },
+          { name: "Space Around", value: "space-around" },
+          { name: "Space Evenly", value: "space-evenly" },
+        ],
+      },
+      autoFlow: {
+        type: "option",
+        display_name: "Auto Flow",
+        options: [
+          { name: "Row", value: "row" },
+          { name: "Column", value: "column" },
+          { name: "Row Dense", value: "row dense" },
+          { name: "Column Dense", value: "column dense" },
+        ],
       },
       boundingWidth: {
         type: "option",
@@ -420,6 +480,114 @@ async function getSbGridComponent(): Promise<StoryblokComponent> {
         display_name: "Margin Bottom",
         source: "internal",
         datasource_slug: "spacing-options",
+      },
+    },
+  };
+}
+
+async function getSbGridItemComponent(): Promise<StoryblokComponent> {
+  const layoutGroupUuid = await getComponentGroupUuid("Layout");
+
+  return {
+    name: "grid_item",
+    display_name: "Grid Item",
+    is_root: false,
+    is_nestable: true,
+    component_group_uuid: layoutGroupUuid,
+    icon: "block-square",
+    color: "#4a5568",
+    schema: {
+      content: {
+        type: "bloks",
+        display_name: "Content",
+        required: false,
+        restrict_components: true,
+        component_whitelist: [],
+      },
+      colSpan: {
+        type: "option",
+        display_name: "Column Span",
+        options: [
+          { name: "1", value: "1" },
+          { name: "2", value: "2" },
+          { name: "3", value: "3" },
+          { name: "4", value: "4" },
+          { name: "5", value: "5" },
+          { name: "6", value: "6" },
+          { name: "7", value: "7" },
+          { name: "8", value: "8" },
+          { name: "9", value: "9" },
+          { name: "10", value: "10" },
+          { name: "11", value: "11" },
+          { name: "12", value: "12" },
+          { name: "Full", value: "full" },
+        ],
+      },
+      colSpanMd: {
+        type: "option",
+        display_name: "Column Span (Tablet)",
+        options: [
+          { name: "1", value: "1" },
+          { name: "2", value: "2" },
+          { name: "3", value: "3" },
+          { name: "4", value: "4" },
+          { name: "5", value: "5" },
+          { name: "6", value: "6" },
+          { name: "7", value: "7" },
+          { name: "8", value: "8" },
+          { name: "9", value: "9" },
+          { name: "10", value: "10" },
+          { name: "11", value: "11" },
+          { name: "12", value: "12" },
+          { name: "Full", value: "full" },
+        ],
+      },
+      colSpanLg: {
+        type: "option",
+        display_name: "Column Span (Desktop)",
+        options: [
+          { name: "1", value: "1" },
+          { name: "2", value: "2" },
+          { name: "3", value: "3" },
+          { name: "4", value: "4" },
+          { name: "5", value: "5" },
+          { name: "6", value: "6" },
+          { name: "7", value: "7" },
+          { name: "8", value: "8" },
+          { name: "9", value: "9" },
+          { name: "10", value: "10" },
+          { name: "11", value: "11" },
+          { name: "12", value: "12" },
+          { name: "Full", value: "full" },
+        ],
+      },
+      rowSpan: {
+        type: "number",
+        display_name: "Row Span",
+      },
+      rowSpanMd: {
+        type: "number",
+        display_name: "Row Span (Tablet)",
+      },
+      rowSpanLg: {
+        type: "number",
+        display_name: "Row Span (Desktop)",
+      },
+      colStart: {
+        type: "number",
+        display_name: "Column Start",
+      },
+      colEnd: {
+        type: "number",
+        display_name: "Column End",
+      },
+      rowStart: {
+        type: "number",
+        display_name: "Row Start",
+      },
+      rowEnd: {
+        type: "number",
+        display_name: "Row End",
       },
     },
   };
@@ -749,6 +917,27 @@ async function getSbImageComponent(): Promise<StoryblokComponent> {
         source: "internal",
         datasource_slug: "width-options",
         default_value: "full",
+      },
+      imageWidth: {
+        type: "option",
+        display_name: "Image Width",
+        description: "Scale image to percentage of container",
+        options: [
+          { name: "Original Size", value: "original" },
+          { name: "Full (100%)", value: "100" },
+          { name: "90%", value: "90" },
+          { name: "80%", value: "80" },
+          { name: "75%", value: "75" },
+          { name: "70%", value: "70" },
+          { name: "60%", value: "60" },
+          { name: "50%", value: "50" },
+          { name: "40%", value: "40" },
+          { name: "33%", value: "33" },
+          { name: "25%", value: "25" },
+          { name: "20%", value: "20" },
+          { name: "10%", value: "10" },
+          { name: "5%", value: "5" },
+        ],
       },
       spacingTop: {
         type: "option",
@@ -1471,6 +1660,7 @@ async function syncComponents(): Promise<void> {
     getSbSectionComponent,
     getSbContainerComponent,
     getSbGridComponent,
+    getSbGridItemComponent,
     getSbHeadlineComponent,
     getSbParagraphComponent,
     getSbRichTextComponent,
@@ -1503,7 +1693,8 @@ async function syncComponents(): Promise<void> {
   console.log("   Layout:");
   console.log("   - section (Semantic section wrapper)");
   console.log("   - container (Content container)");
-  console.log("   - grid (Responsive grid layout)");
+  console.log("   - grid (Responsive grid layout with editorial controls)");
+  console.log("   - grid_item (Grid item with precise positioning)");
   console.log("\n   Content:");
   console.log("   - headline (H1-H3 headings)");
   console.log("   - paragraph (Plain body text)");

@@ -95,11 +95,14 @@ export default defineConfig({
             "space-evenly",
           ],
           alignItems: ["start", "center", "end", "stretch", "baseline"],
+          justifyItems: ["start", "center", "end", "stretch"],
           flexDirection: ["row", "column"],
           flexWrap: ["wrap", "nowrap"],
 
           // All spacing token values (auto-generated from design tokens)
           gap: spacingValues,
+          rowGap: spacingValues,
+          columnGap: spacingValues,
           marginTop: spacingValues,
           marginBottom: spacingValues,
           marginLeft: spacingValues,
@@ -116,6 +119,7 @@ export default defineConfig({
             ...gridColumns,
             "repeat(auto-fit, minmax(200px, 1fr))",
           ],
+          gridAutoFlow: ["row", "column", "row dense", "column dense"],
 
           // Divider component props
           borderTopStyle: ["solid", "dashed", "dotted"],

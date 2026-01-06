@@ -536,10 +536,7 @@ export default defineConfig({
   // Patterns configuration
   // Panda patterns are reusable layout primitives
   patterns: {
-    extend: {
-      // Custom patterns can be added here
-      // Example: A custom "stack" pattern with consistent spacing
-    },
+    extend: {},
   },
 
   // v1.7.0: Import Map for better module resolution

@@ -3,11 +3,31 @@
 import type { StoryblokRichTextProps } from "@httpjpg/storyblok-richtext";
 import { getProcessedImage } from "@httpjpg/storyblok-utils";
 import { Image } from "@httpjpg/ui";
+import { css } from "@httpjpg/ui/css";
 import { memo } from "react";
 import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 import type { StoryblokImage } from "../../types";
 import { SbCaption } from "../caption";
 import { SbMediaWrapper } from "../media-wrapper";
+
+// Predefine all responsive width classes so Panda generates them at build time
+const RESPONSIVE_WIDTH_CLASSES = {
+  "10%": css({ width: "100%", sm: { width: "10%" } }),
+  "20%": css({ width: "100%", sm: { width: "20%" } }),
+  "25%": css({ width: "100%", sm: { width: "25%" } }),
+  "30%": css({ width: "100%", sm: { width: "30%" } }),
+  "33.333333%": css({ width: "100%", sm: { width: "33.333333%" } }),
+  "40%": css({ width: "100%", sm: { width: "40%" } }),
+  "50%": css({ width: "100%", sm: { width: "50%" } }),
+  "60%": css({ width: "100%", sm: { width: "60%" } }),
+  "66.666667%": css({ width: "100%", sm: { width: "66.666667%" } }),
+  "70%": css({ width: "100%", sm: { width: "70%" } }),
+  "75%": css({ width: "100%", sm: { width: "75%" } }),
+  "80%": css({ width: "100%", sm: { width: "80%" } }),
+  "90%": css({ width: "100%", sm: { width: "90%" } }),
+  "100%": css({ width: "100%", sm: { width: "100%" } }),
+  auto: css({ width: "100%", sm: { width: "auto" } }),
+} as const;
 
 export interface SbImageProps {
   blok: {
@@ -54,11 +74,6 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
 
   if (!image?.filename) {
     return null;
-  }
-
-  // Debug: Check if imageWidth arrives from Storyblok
-  if (typeof window !== "undefined" && imageWidth) {
-    console.log("[SbImage] imageWidth:", imageWidth);
   }
 
   // Process image with Storyblok image service (or return external URL as-is)
@@ -112,22 +127,28 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
       width={width}
       editable={editableProps}
     >
-      <Image
-        src={processedSrc}
-        alt={alt || image.alt || image.title || ""}
-        copyright={finalCopyright}
-        copyrightPosition={copyrightPosition}
-        style={{
-          width: calculatedWidth,
-        }}
-        css={{
-          maxWidth: "100%",
-          height: isFullHeight ? "100vh" : "auto",
-          objectFit: aspectRatio ? "cover" : "none",
-          aspectRatio: aspectRatio || undefined,
-        }}
-        loading={isLoadingEager ? "eager" : "lazy"}
-      />
+      <div
+        className={
+          RESPONSIVE_WIDTH_CLASSES[
+            calculatedWidth as keyof typeof RESPONSIVE_WIDTH_CLASSES
+          ] || RESPONSIVE_WIDTH_CLASSES["100%"]
+        }
+      >
+        <Image
+          src={processedSrc}
+          alt={alt || image.alt || image.title || ""}
+          copyright={finalCopyright}
+          copyrightPosition={copyrightPosition}
+          css={{
+            width: "100%",
+            maxWidth: "100%",
+            height: isFullHeight ? "100vh" : "auto",
+            objectFit: aspectRatio ? "cover" : "none",
+            aspectRatio: aspectRatio || undefined,
+          }}
+          loading={isLoadingEager ? "eager" : "lazy"}
+        />
+      </div>
 
       {caption && <SbCaption data={caption} />}
     </SbMediaWrapper>

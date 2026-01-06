@@ -105,6 +105,7 @@ export async function getRecentWork(): Promise<{
     title: string;
     imageUrl?: string;
     isExternal?: boolean;
+    date?: string;
   }>;
   clientWork: Array<{
     id: string;
@@ -112,6 +113,7 @@ export async function getRecentWork(): Promise<{
     title: string;
     imageUrl?: string;
     isExternal?: boolean;
+    date?: string;
   }>;
 }> {
   const fetchWork = async () => {
@@ -121,7 +123,7 @@ export async function getRecentWork(): Promise<{
       const draftResponse = await draftApi.getStories({
         starts_with: "work/",
         per_page: 100,
-        sort_by: "first_published_at:desc",
+        sort_by: "content.date:desc",
         cv: Date.now(),
       });
 
@@ -202,6 +204,7 @@ export async function getRecentWork(): Promise<{
           imageUrl,
           isDraft,
           isExternal: isExternalOnly,
+          date: story.content?.date,
         };
       });
 

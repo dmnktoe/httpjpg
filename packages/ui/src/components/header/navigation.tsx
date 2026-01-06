@@ -86,25 +86,35 @@ export const Navigation = ({
           <br />
           {personalWork.length > 0 ? (
             <>
-              {personalWork.map((work) => (
-                <NavLink
-                  key={work.id}
-                  variant="personal"
-                  href={work.isExternal ? work.slug : `/work/${work.slug}`}
-                  isExternal={work.isExternal}
-                  data-preview-image={work.imageUrl}
-                  css={{
-                    backgroundColor: work.isDraft
-                      ? "warning.200"
-                      : "transparent",
-                    color: work.isDraft ? "black" : "inherit",
-                    ...(work.isDraft && { padding: "2px 4px" }),
-                  }}
-                >
-                  {work.isDraft && "[DRAFT] "}
-                  {work.title}
-                </NavLink>
-              ))}
+              {personalWork.map((work) => {
+                const year = work.date
+                  ? new Date(work.date).getFullYear().toString()
+                  : null;
+                return (
+                  <NavLink
+                    key={work.id}
+                    variant="personal"
+                    href={work.isExternal ? work.slug : `/work/${work.slug}`}
+                    isExternal={work.isExternal}
+                    data-preview-image={work.imageUrl}
+                    css={{
+                      backgroundColor: work.isDraft
+                        ? "warning.200"
+                        : "transparent",
+                      color: work.isDraft ? "black" : "inherit",
+                      ...(work.isDraft && { padding: "2px 4px" }),
+                    }}
+                  >
+                    {work.isDraft && "[DRAFT] "}
+                    {year && (
+                      <Box as="span" css={{ fontStyle: "italic" }}>
+                        {year}{" "}
+                      </Box>
+                    )}
+                    {work.title}
+                  </NavLink>
+                );
+              })}
               <Link
                 href="/feed-xml_html"
                 css={{
@@ -143,6 +153,9 @@ export const Navigation = ({
           {clientWork.length > 0 ? (
             clientWork.map((work) => {
               const href = work.isExternal ? work.slug : `/work/${work.slug}`;
+              const year = work.date
+                ? new Date(work.date).getFullYear().toString()
+                : null;
 
               return (
                 <NavLink
@@ -161,6 +174,11 @@ export const Navigation = ({
                   }}
                 >
                   {work.isDraft && "[DRAFT] "}
+                  {year && (
+                    <Box as="span" css={{ fontStyle: "italic" }}>
+                      {year}{" "}
+                    </Box>
+                  )}
                   {work.title}
                 </NavLink>
               );

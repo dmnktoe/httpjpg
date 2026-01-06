@@ -30,6 +30,10 @@ export interface WorkItem {
    * Is this an external link?
    */
   isExternal?: boolean;
+  /**
+   * Project start date (ISO string)
+   */
+  date?: string;
 }
 
 export interface HeaderProps {

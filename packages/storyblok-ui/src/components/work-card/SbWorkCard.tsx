@@ -11,6 +11,7 @@ export interface SbWorkCardProps {
     title: string;
     description?: string;
     date?: string;
+    date_end?: string;
     slug: string;
     images: StoryblokImage[];
     baseUrl?: string;
@@ -22,7 +23,15 @@ export interface SbWorkCardProps {
  * Portfolio work showcase card with slideshow
  */
 export const SbWorkCard = memo(function SbWorkCard({ blok }: SbWorkCardProps) {
-  const { title, description, date, slug, images, baseUrl = "/work" } = blok;
+  const {
+    title,
+    description,
+    date,
+    date_end,
+    slug,
+    images,
+    baseUrl = "/work",
+  } = blok;
   const editableProps = useStoryblokEditable(blok);
 
   if (!images || images.length === 0) {
@@ -35,6 +44,7 @@ export const SbWorkCard = memo(function SbWorkCard({ blok }: SbWorkCardProps) {
       title={title}
       description={description}
       date={date}
+      dateEnd={date_end}
       slug={slug}
       baseUrl={baseUrl}
       images={images.map((img) => {

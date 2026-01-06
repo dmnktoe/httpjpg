@@ -25,6 +25,10 @@ export interface WorkCardProps {
    */
   date?: string | Date;
   /**
+   * Project end date (ISO string or Date) - if set, displays as timespan
+   */
+  dateEnd?: string | Date;
+  /**
    * Project images for slideshow
    */
   images: SlideshowImage[];
@@ -88,8 +92,15 @@ function formatWorkCardDate(date: string | Date): {
 /**
  * WorkCard Date component
  */
-function WorkCardDate({ date }: { date: string | Date }) {
-  const { day, month, year, monthSymbol } = formatWorkCardDate(date);
+function WorkCardDate({
+  date,
+  dateEnd,
+}: {
+  date: string | Date;
+  dateEnd?: string | Date;
+}) {
+  const start = formatWorkCardDate(date);
+  const end = dateEnd ? formatWorkCardDate(dateEnd) : null;
 
   return (
     <HStack
@@ -103,7 +114,7 @@ function WorkCardDate({ date }: { date: string | Date }) {
     >
       <Box css={{ opacity: 0.5 }}>╱╱</Box>
       <Box css={{ letterSpacing: "wider" }}>
-        {day}.
+        {start.day}.
         <Box
           as="span"
           css={{
@@ -114,9 +125,30 @@ function WorkCardDate({ date }: { date: string | Date }) {
             top: "1px",
           }}
         >
-          {monthSymbol} {month}
+          {start.monthSymbol} {start.month}
         </Box>
-        {year}
+        {start.year}
+        {end && (
+          <>
+            <Box as="span" css={{ mx: "2", opacity: 0.5 }}>
+              →
+            </Box>
+            {end.day}.
+            <Box
+              as="span"
+              css={{
+                fontFamily: "system-ui",
+                fontSize: "md",
+                mx: "1",
+                position: "relative",
+                top: "1px",
+              }}
+            >
+              {end.monthSymbol} {end.month}
+            </Box>
+            {end.year}
+          </>
+        )}
       </Box>
       <Box css={{ opacity: 0.3, fontSize: "0.65rem" }}>⌘ρτ</Box>
     </HStack>
@@ -174,16 +206,18 @@ function WorkCardTitle({ title }: { title: string }) {
  */
 function WorkCardMeta({
   date,
+  dateEnd,
   slug,
   baseUrl,
 }: {
   date?: string | Date;
+  dateEnd?: string | Date;
   slug: string;
   baseUrl: string;
 }) {
   return (
     <Box>
-      {date && <WorkCardDate date={date} />}
+      {date && <WorkCardDate date={date} dateEnd={dateEnd} />}
       <Box>
         <Link
           href={`${baseUrl}/${slug}`}
@@ -213,11 +247,13 @@ function WorkCardMeta({
 function WorkCardContent({
   description,
   date,
+  dateEnd,
   slug,
   baseUrl,
 }: {
   description?: ReactNode;
   date?: string | Date;
+  dateEnd?: string | Date;
   slug: string;
   baseUrl: string;
 }) {
@@ -254,7 +290,12 @@ function WorkCardContent({
             {description}
           </Paragraph>
         )}
-        <WorkCardMeta date={date} slug={slug} baseUrl={baseUrl} />
+        <WorkCardMeta
+          date={date}
+          dateEnd={dateEnd}
+          slug={slug}
+          baseUrl={baseUrl}
+        />
       </VStack>
     </Box>
   );
@@ -283,6 +324,7 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
       title,
       description,
       date,
+      dateEnd,
       images,
       slug,
       baseUrl = "/work",
@@ -332,6 +374,7 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
             <WorkCardContent
               description={description}
               date={date}
+              dateEnd={dateEnd}
               slug={slug}
               baseUrl={baseUrl}
             />

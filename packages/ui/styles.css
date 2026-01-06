@@ -1778,6 +1778,10 @@
     margin-inline: var(--spacing-1);
 }
 
+  .mx_2 {
+    margin-inline: var(--spacing-2);
+}
+
   .gap_24 {
     gap: var(--spacing-24);
 }
@@ -5115,6 +5119,51 @@
   @media screen and (min-width: 40rem) {
     .sm\:grid-tc_repeat\(2\,_1fr\) {
       grid-template-columns: repeat(2, 1fr);
+}
+    .sm\:w_10\% {
+      width: 10%;
+}
+    .sm\:w_20\% {
+      width: 20%;
+}
+    .sm\:w_25\% {
+      width: 25%;
+}
+    .sm\:w_30\% {
+      width: 30%;
+}
+    .sm\:w_33\.333333\% {
+      width: 33.333333%;
+}
+    .sm\:w_40\% {
+      width: 40%;
+}
+    .sm\:w_50\% {
+      width: 50%;
+}
+    .sm\:w_60\% {
+      width: 60%;
+}
+    .sm\:w_66\.666667\% {
+      width: 66.666667%;
+}
+    .sm\:w_70\% {
+      width: 70%;
+}
+    .sm\:w_75\% {
+      width: 75%;
+}
+    .sm\:w_80\% {
+      width: 80%;
+}
+    .sm\:w_90\% {
+      width: 90%;
+}
+    .sm\:w_100\% {
+      width: 100%;
+}
+    .sm\:w_auto {
+      width: auto;
 }
 }
 

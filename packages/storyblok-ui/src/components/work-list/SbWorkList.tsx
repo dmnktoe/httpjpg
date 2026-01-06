@@ -69,11 +69,14 @@ export const SbWorkList = memo(function SbWorkList({
 
   // Transform Storyblok work data to WorkList format
   const workItems = workStories.map((item) => {
-    // Use date_end if exists (for events/exhibitions with timespan),
-    // otherwise use date field, fallback to first_published_at
+    // Get start and end dates
+    const startDate = item.content?.date;
+    const endDate = item.content?.date_end;
+
+    // For sorting/fallback: use end date if exists, otherwise start date, fallback to first_published_at
     const dateString =
-      item.content?.date_end ||
-      item.content?.date ||
+      endDate ||
+      startDate ||
       item.first_published_at ||
       item.published_at ||
       item.created_at;
@@ -105,7 +108,8 @@ export const SbWorkList = memo(function SbWorkList({
           videoUrl: isVideo ? img.filename : undefined,
         };
       }),
-      date: dateString,
+      date: startDate,
+      dateEnd: endDate,
       baseUrl,
     };
   });

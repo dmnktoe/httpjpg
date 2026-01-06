@@ -40,6 +40,7 @@ export interface SbImageProps {
     imageWidth?: string;
     isFullHeight?: boolean;
     isLoadingEager?: boolean;
+    blurOnLoad?: boolean;
     spacingTop?: string;
     spacingBottom?: string;
     copyright?: string;
@@ -64,6 +65,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     imageWidth,
     isFullHeight = false,
     isLoadingEager = false,
+    blurOnLoad = false,
     spacingTop,
     spacingBottom,
     copyright,
@@ -107,6 +109,16 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     "",
   );
 
+  // Generate blur placeholder if blurOnLoad is enabled
+  const blurDataURL = blurOnLoad
+    ? getProcessedImage(
+        image.filename,
+        "20x0", // Small width for blur placeholder
+        image.focus || "",
+        "",
+      )
+    : undefined;
+
   // Use copyright from custom field first, fallback to image copyright
   const finalCopyright = copyright || image.copyright || "";
 
@@ -139,6 +151,8 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
           alt={alt || image.alt || image.title || ""}
           copyright={finalCopyright}
           copyrightPosition={copyrightPosition}
+          blurOnLoad={blurOnLoad}
+          blurDataURL={blurDataURL}
           css={{
             width: "100%",
             maxWidth: "100%",

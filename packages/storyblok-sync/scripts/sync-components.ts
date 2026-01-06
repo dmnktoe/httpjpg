@@ -911,9 +911,10 @@ async function getSbImageComponent(): Promise<StoryblokComponent> {
         source: "internal",
         datasource_slug: "aspect-ratio-options",
       },
-      boundingWidth: {
+      width: {
         type: "option",
-        display_name: "Width",
+        display_name: "Container Width",
+        description: "Width of the outer container",
         source: "internal",
         datasource_slug: "width-options",
         default_value: "full",
@@ -939,6 +940,22 @@ async function getSbImageComponent(): Promise<StoryblokComponent> {
           { name: "5%", value: "5" },
         ],
       },
+      animationType: {
+        type: "option",
+        display_name: "Animation Type",
+        description: "Animation effect when image comes into view",
+        options: [
+          { name: "None", value: "none" },
+          { name: "Fade In", value: "fade-in" },
+          { name: "Slide Up", value: "slide-up" },
+          { name: "Slide Down", value: "slide-down" },
+          { name: "Slide Left", value: "slide-left" },
+          { name: "Slide Right", value: "slide-right" },
+          { name: "Zoom In", value: "zoom-in" },
+          { name: "Zoom Out", value: "zoom-out" },
+        ],
+        default_value: "none",
+      },
       spacingTop: {
         type: "option",
         display_name: "Spacing Top",
@@ -959,6 +976,12 @@ async function getSbImageComponent(): Promise<StoryblokComponent> {
       isLoadingEager: {
         type: "boolean",
         display_name: "Eager Loading",
+        default_value: "false",
+      },
+      blurOnLoad: {
+        type: "boolean",
+        display_name: "Blur On Load",
+        description: "Enable progressive blur-up loading effect",
         default_value: "false",
       },
       copyright: {

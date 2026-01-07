@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { Box } from "../box/box";
 import { Container } from "../container/container";
+import { Link } from "../link/link";
 import { MobileMenuButton } from "./mobile-menu-button";
 import { MobileMenuContent } from "./mobile-menu-content";
 import { Navigation } from "./navigation";
@@ -83,7 +84,6 @@ export const Header = ({
   personalWork = [],
   clientWork = [],
   children,
-  center = true,
 }: HeaderProps) => {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
 
@@ -105,7 +105,7 @@ export const Header = ({
         userSelect: "none",
       }}
     >
-      <Container size="2xl" px={{ base: 4, md: 6, lg: 8 }} center={center}>
+      <Container size="xl" px={{ base: 4, md: 6, lg: 8 }} center={false}>
         <Box
           css={{
             display: "flex",
@@ -128,7 +128,18 @@ export const Header = ({
               ⇝HE𝓁𝓁O
             </Box>
             <br />
-            <Box as="span">www.httpjpg.com</Box>
+            <Link
+              href="/"
+              css={{
+                textDecoration: "underline",
+                color: "inherit",
+                _hover: {
+                  opacity: 0.7,
+                },
+              }}
+            >
+              www.httpjpg.com
+            </Link>
             <br />
             <Box as="span" css={{ fontSize: "2xs", opacity: 0.7 }}>
               ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ꠹ρᧁ! 🎀

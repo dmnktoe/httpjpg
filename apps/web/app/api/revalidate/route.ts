@@ -1,3 +1,4 @@
+import { applyArcjetProtection } from "@httpjpg/security";
 import { CACHE_TAGS } from "@httpjpg/storyblok-api";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
@@ -26,6 +27,10 @@ interface StoryblokWebhookPayload {
  * webhook-secret: YOUR_REVALIDATE_SECRET
  */
 export async function POST(request: NextRequest) {
+  // Apply Arcjet protection for webhooks
+  const protection = await applyArcjetProtection(request, "webhook");
+  if (protection) return protection;
+
   try {
     // Verify secret from header or query param
     const headerSecret = request.headers.get("webhook-secret");

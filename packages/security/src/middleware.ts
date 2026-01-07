@@ -1,12 +1,13 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
 import { aj } from "./arcjet";
 
 /**
  * Arcjet middleware for Next.js
  * Protects all routes with shield, bot detection, and rate limiting
  */
-export async function withArcjet(request: NextRequest) {
+export async function withArcjet(request: any) {
+  // Dynamically import NextResponse to use the caller's Next.js version
+  const { NextResponse } = await import("next/server");
+
   const decision = await aj.protect(request);
 
   if (decision.isDenied()) {

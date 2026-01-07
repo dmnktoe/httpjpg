@@ -1,6 +1,4 @@
-import { aj, ajApi, ajWebhook } from "@httpjpg/security";
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import { aj, ajApi, ajWebhook } from "./arcjet";
 
 /**
  * Apply Arcjet protection to API routes and webhooks
@@ -20,9 +18,12 @@ import { NextResponse } from "next/server";
  * ```
  */
 export async function applyArcjetProtection(
-  request: NextRequest,
+  request: any, // Use any to avoid Next.js version conflicts
   type: "default" | "api" | "webhook" = "default",
-): Promise<NextResponse | null> {
+): Promise<any> {
+  // Dynamically import NextResponse to use the caller's Next.js version
+  const { NextResponse } = await import("next/server");
+
   // Select appropriate Arcjet instance
   let arcjetInstance = aj;
 

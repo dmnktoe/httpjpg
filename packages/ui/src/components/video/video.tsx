@@ -1,7 +1,7 @@
 "use client";
 
 import type { VideoHTMLAttributes } from "react";
-import { forwardRef, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
@@ -184,6 +184,15 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
   ) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    // Check if video is already loaded (e.g., from cache)
+    useEffect(() => {
+      const video = videoRef.current;
+      if (video?.readyState !== undefined && video.readyState >= 2) {
+        // HAVE_CURRENT_DATA or better
+        setIsLoading(false);
+      }
+    }, []);
 
     // Render YouTube embed
     if (source === "youtube") {

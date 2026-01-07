@@ -2850,6 +2850,10 @@
     text-transform: lowercase;
 }
 
+  .jc_flex-start {
+    justify-content: flex-start;
+}
+
   .ta_justify {
     text-align: justify;
 }
@@ -3826,6 +3830,10 @@
 
   .h_calc\(100vh\) {
     height: calc(100vh);
+}
+
+  .ov-y_auto {
+    overflow-y: auto;
 }
 
   .ml_2 {
@@ -5323,15 +5331,6 @@
 }
 }
 
-  @media (min-width: 1280px) {
-    .\[\@media_\(min-width\:_1280px\)\]\:w_5\.5vw {
-      width: 5.5vw;
-}
-    .\[\@media_\(min-width\:_1280px\)\]\:top_1\.62vw {
-      top: 1.62vw;
-}
-}
-
   @media screen and (min-width: 80rem) {
     .xl\:px_192px {
       padding-inline: 192px;
@@ -5360,22 +5359,28 @@
     .xl\:mt_-5vw {
       margin-top: -5vw;
 }
+    .xl\:w_5\.5vw {
+      width: 5.5vw;
+}
+    .xl\:top_1\.62vw {
+      top: 1.62vw;
+}
     .xl\:w_full {
       width: var(--sizes-full);
 }
 }
 
-  @media (min-width: 1536px) {
-    .\[\@media_\(min-width\:_1536px\)\]\:px_256px {
+  @media screen and (min-width: 96rem) {
+    .\32xl\:px_256px {
       padding-inline: 256px;
 }
-    .\[\@media_\(min-width\:_1536px\)\]\:px_192px {
+    .\32xl\:px_192px {
       padding-inline: 192px;
 }
-    .\[\@media_\(min-width\:_1536px\)\]\:ml_-24px {
+    .\32xl\:ml_-24px {
       margin-left: -24px;
 }
-    .\[\@media_\(min-width\:_1536px\)\]\:mr_24px {
+    .\32xl\:mr_24px {
       margin-right: 24px;
 }
 }

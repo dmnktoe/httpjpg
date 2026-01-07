@@ -62,6 +62,7 @@ export interface SbConfigStory extends SbBlokData {
   psn_enabled?: boolean;
   spotify_enabled?: boolean;
   discord_user_id?: string;
+  nostalgia_slideshow_enabled?: boolean;
 
   // Author/Owner Settings
   author_name?: string;

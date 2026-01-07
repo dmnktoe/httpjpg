@@ -2661,6 +2661,22 @@
     position: fixed;
 }
 
+  .z_1 {
+    z-index: 1;
+}
+
+  .pointer-events_none {
+    pointer-events: none;
+}
+
+  .d_none {
+    display: none;
+}
+
+  .asp_auto {
+    aspect-ratio: auto;
+}
+
   .z_9999 {
     z-index: 9999;
 }
@@ -2685,16 +2701,16 @@
     z-index: 40;
 }
 
-  .d_none {
-    display: none;
-}
-
   .lh_1\.5 {
     line-height: 1.5;
 }
 
   .obj-f_none {
     object-fit: none;
+}
+
+  .direction_left {
+    direction: left;
 }
 
   .c_danger\.600 {
@@ -2719,10 +2735,6 @@
 
   .fs_11px {
     font-size: 11px;
-}
-
-  .pointer-events_none {
-    pointer-events: none;
 }
 
   .writing-mode_vertical-rl {
@@ -2947,10 +2959,6 @@
 
   .bg-s_200\%_100\% {
     background-size: 200% 100%;
-}
-
-  .z_1 {
-    z-index: 1;
 }
 
   .obj-f_contain {
@@ -3704,6 +3712,22 @@
     border-bottom-right-radius: var(--radii-sm);
 }
 
+  .bottom_16px {
+    bottom: 16px;
+}
+
+  .left_16px {
+    left: 16px;
+}
+
+  .w_70px {
+    width: 70px;
+}
+
+  .h_auto {
+    height: auto;
+}
+
   .bottom_0 {
     bottom: var(--spacing-0);
 }
@@ -3730,10 +3754,6 @@
 
   .w_250px {
     width: 250px;
-}
-
-  .h_auto {
-    height: auto;
 }
 
   .max-w_true {
@@ -4831,6 +4851,14 @@
     list-style: disc;
 }
 
+  .\[\&_\.swiper\]\:bdr_8px .swiper {
+    border-radius: 8px;
+}
+
+  .\[\&_\.swiper\]\:ov_hidden .swiper {
+    overflow: hidden;
+}
+
   .\[\&\:\:-webkit-slider-thumb\]\:bdr_full::-webkit-slider-thumb {
     border-radius: var(--radii-full);
 }
@@ -4909,6 +4937,14 @@
 
   .\[\&_h3\]\:fw_bold h3 {
     font-weight: var(--font-weights-bold);
+}
+
+  .\[\&_img\]\:image-rendering_crisp-edges img {
+    image-rendering: crisp-edges;
+}
+
+  .\[\&_img\]\:obj-f_contain img {
+    object-fit: contain;
 }
 
   .disabled\:cursor_not-allowed:is(:disabled, [data-disabled]) {
@@ -4994,6 +5030,14 @@
 
   .\[\&_li\]\:mb_2 li {
     margin-bottom: var(--spacing-2);
+}
+
+  .\[\&_img\]\:w_100px img {
+    width: 100px;
+}
+
+  .\[\&_img\]\:h_auto img {
+    height: auto;
 }
 
   .\[\&\:\:-webkit-slider-thumb\]\:w_12px::-webkit-slider-thumb {

@@ -11,6 +11,7 @@ import { ObservabilityProvider } from "../components/providers/observability-pro
 import { StoryblokProvider } from "../components/providers/storyblok-provider";
 import { CustomCursorWrapper } from "../components/ui/custom-cursor-wrapper";
 import { FooterWrapper } from "../components/ui/footer-wrapper";
+import { NostalgiaSlideshow } from "../components/ui/nostalgia-slideshow";
 import { PreviewNotification } from "../components/ui/preview-notification";
 import { ScrollToTop } from "../components/ui/scroll-to-top";
 import { NowPlayingWidget } from "../components/widgets/now-playing-widget";
@@ -74,6 +75,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             {/* Global UI Elements (not affected by page containers) */}
             <CustomCursorWrapper />
             <ImagePreview />
+            {widgetConfig.nostalgiaEnabled && <NostalgiaSlideshow />}
             {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
             {widgetConfig.psnEnabled && (
               <PSNCard username={widgetConfig.psnUsername} />
@@ -85,6 +87,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               nav={navigation}
               personalWork={personalWork}
               clientWork={clientWork}
+              center={false}
             />
 
             {/* Main Content Area - NO container wrapper here

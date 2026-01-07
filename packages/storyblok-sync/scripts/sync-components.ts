@@ -177,31 +177,20 @@ async function getSbSectionComponent(): Promise<StoryblokComponent> {
         datasource_slug: "spacing-options",
         pos: 7,
       },
-      width: {
-        type: "option",
-        display_name: "Width",
-        description: "Container or full-width layout",
-        default_value: "container",
-        options: [
-          { name: "Container", value: "container" },
-          { name: "Full Width", value: "full" },
-        ],
-        pos: 8,
-      },
       paddingTopMd: {
         type: "option",
         display_name: "Padding Top (Tablet)",
         description: "Override padding for tablet screens",
         source: "internal",
         datasource_slug: "spacing-options",
-        pos: 9,
+        pos: 8,
       },
       paddingBottomMd: {
         type: "option",
         display_name: "Padding Bottom (Tablet)",
         source: "internal",
         datasource_slug: "spacing-options",
-        pos: 10,
+        pos: 9,
       },
       paddingLeftMd: {
         type: "option",
@@ -269,6 +258,12 @@ async function getSbContainerComponent(): Promise<StoryblokComponent> {
         default_value: "lg",
         source: "internal",
         datasource_slug: "width-options",
+      },
+      center: {
+        type: "boolean",
+        display_name: "Center Container",
+        description: "Center the container horizontally with auto margins",
+        default_value: "true",
       },
       px: {
         type: "option",
@@ -1513,17 +1508,25 @@ async function getSbConfigComponent(): Promise<StoryblokComponent> {
         description: "Show Spotify Now Playing widget",
         pos: 7,
       },
+      nostalgia_slideshow_enabled: {
+        type: "boolean",
+        display_name: "Enable Nostalgia Slideshow",
+        default_value: "true",
+        description:
+          "Show bottom-left nostalgia slideshow with retro gaming icons",
+        pos: 8,
+      },
       author_name: {
         type: "text",
         display_name: "Author Name",
         description: "Site author/owner name for Schema.org structured data",
-        pos: 8,
+        pos: 9,
       },
       author_url: {
         type: "text",
         display_name: "Author URL",
         description: "Author website URL for Schema.org structured data",
-        pos: 9,
+        pos: 10,
       },
     },
   };

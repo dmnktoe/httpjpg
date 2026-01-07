@@ -20,6 +20,7 @@ export interface SbContainerProps {
     mt?: string;
     mb?: string;
     my?: string;
+    center?: boolean | string;
     bgColor?: string;
     // Responsive overrides (optional)
     pxMd?: string;
@@ -39,6 +40,7 @@ export const SbContainer = memo(function SbContainer({
   const {
     body,
     width = "lg",
+    center,
     px,
     py,
     pt,
@@ -85,6 +87,7 @@ export const SbContainer = memo(function SbContainer({
     <Container
       {...editableProps}
       size={width}
+      center={!!center}
       px={responsivePx}
       py={responsivePy}
       style={{

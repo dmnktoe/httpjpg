@@ -19,7 +19,6 @@ export interface SbSectionProps {
     paddingRight?: string;
     marginTop?: string;
     marginBottom?: string;
-    width?: "container" | "full";
     // Responsive overrides (optional)
     paddingTopMd?: string;
     paddingBottomMd?: string;
@@ -46,7 +45,6 @@ export const SbSection = memo(function SbSection({ blok }: SbSectionProps) {
     paddingRight,
     marginTop,
     marginBottom,
-    width = "container",
     paddingTopMd,
     paddingBottomMd,
     paddingLeftMd,
@@ -120,7 +118,6 @@ export const SbSection = memo(function SbSection({ blok }: SbSectionProps) {
   return (
     <Section
       {...editableProps}
-      useContainer={width === "container"}
       pt={responsivePt}
       pb={responsivePb}
       pl={paddingLeft || paddingLeftMd || paddingLeftLg ? responsivePl : "0"}

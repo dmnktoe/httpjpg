@@ -312,6 +312,7 @@ export async function getWidgetConfig(): Promise<{
   psnUsername?: string;
   psnEnabled?: boolean;
   spotifyEnabled?: boolean;
+  nostalgiaEnabled?: boolean;
 }> {
   const config = await getConfig();
 
@@ -319,5 +320,6 @@ export async function getWidgetConfig(): Promise<{
     psnUsername: config?.psn_username,
     psnEnabled: config?.psn_enabled ?? false,
     spotifyEnabled: config?.spotify_enabled ?? true,
+    nostalgiaEnabled: config?.nostalgia_slideshow_enabled ?? true,
   };
 }

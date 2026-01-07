@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 
@@ -45,6 +46,26 @@ export interface MarqueeProps {
 }
 
 /**
+ * Simple hash function to generate stable IDs from props
+ */
+function hashProps(props: {
+  speed: number;
+  direction: string;
+  repeat: number;
+  iosStyle: boolean;
+  pauseDuration: number;
+}): string {
+  const str = JSON.stringify(props);
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(36);
+}
+
+/**
  * Marquee - Infinite scrolling text
  *
  * Brutalist marquee component for continuous scrolling text.
@@ -67,7 +88,13 @@ export function Marquee({
   pauseDuration = 2,
   css: cssProp,
 }: MarqueeProps) {
-  const animationName = `marquee-${Math.random().toString(36).substr(2, 9)}`;
+  // Generate stable animation name based on props
+  const animationName = useMemo(
+    () =>
+      `marquee-${hashProps({ speed, direction, repeat, iosStyle, pauseDuration })}`,
+    [speed, direction, repeat, iosStyle, pauseDuration],
+  );
+
   const animationDirection = direction === "left" ? "normal" : "reverse";
 
   // Calculate pause percentage for iOS-style animation

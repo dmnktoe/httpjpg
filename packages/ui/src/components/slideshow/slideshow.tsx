@@ -179,6 +179,11 @@ export interface SlideshowProps {
    */
   showNavigation?: boolean;
   /**
+   * Disable blur-on-load for images (improves performance when used with other animations)
+   * @default false
+   */
+  disableBlurOnLoad?: boolean;
+  /**
    * Additional Panda CSS styles
    */
   css?: SystemStyleObject;
@@ -211,6 +216,7 @@ export function Slideshow({
   autoplayDelay = 7000,
   speed = 300,
   showNavigation = true,
+  disableBlurOnLoad = false,
   css: cssProp,
   ...props
 }: SlideshowProps) {
@@ -352,6 +358,7 @@ export function Slideshow({
                     copyrightPosition={
                       image.copyrightPosition || "inline-white"
                     }
+                    blurOnLoad={!disableBlurOnLoad}
                   />
                 )}
               </Box>

@@ -164,7 +164,7 @@ function WorkCardTitle({ title }: { title: string }) {
       css={{
         w: { base: "full", xl: "1/2" },
         mt: { base: "-12px", md: "-24px", xl: "-5vw" },
-        "@media (min-width: 1536px)": {
+        "2xl": {
           ml: "-24px",
           mr: "24px",
         },
@@ -187,7 +187,7 @@ function WorkCardTitle({ title }: { title: string }) {
                 position: "relative",
                 top: "0.8vw",
                 transform: "rotate(90deg)",
-                "@media (min-width: 1280px)": {
+                xl: {
                   width: "5.5vw",
                   top: "1.62vw",
                 },
@@ -348,14 +348,16 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
         <Box
           css={{
             zIndex: 10,
-            px: { base: 0, xl: "192px" },
-            "@media (min-width: 1536px)": {
-              px: "256px",
-            },
+            px: { base: 0, xl: "192px", "2xl": "256px" },
             overflow: "visible",
           }}
         >
-          <Slideshow speed={0} animation="sharpen" images={images} />
+          <Slideshow
+            speed={0}
+            animation="sharpen"
+            images={images}
+            disableBlurOnLoad={true}
+          />
         </Box>
 
         {/* Content */}
@@ -365,7 +367,7 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
               display: "flex",
               flexDirection: { base: "column", xl: "row" },
               gap: "2",
-              "@media (min-width: 1536px)": {
+              "2xl": {
                 px: "192px",
               },
             }}

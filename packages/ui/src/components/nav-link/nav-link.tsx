@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@httpjpg/config";
 import NextLink from "next/link";
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 import { css, cx } from "styled-system/css";
@@ -31,6 +32,12 @@ export interface NavLinkProps
    * @default true for external links
    */
   showExternalIcon?: boolean;
+  /**
+   * Enable Next.js prefetching and client-side navigation
+   * When false, uses native <a> tag with full page reload
+   * @default config.features.phpLikeNavigation (false for old-school nav)
+   */
+  prefetch?: boolean;
   /**
    * Custom styles using Panda CSS SystemStyleObject
    */
@@ -67,6 +74,7 @@ export const NavLink = ({
   href,
   isExternal,
   showExternalIcon,
+  prefetch = !config.features.phpLikeNavigation,
   ...props
 }: NavLinkProps) => {
   // Determine if link is external (use prop or auto-detect)
@@ -122,9 +130,23 @@ export const NavLink = ({
     );
   }
 
-  // Render internal links with Next.js Link
+  // Render internal links - use native <a> for old-school navigation by default
+  if (!prefetch) {
+    return (
+      <a href={href} className={mergedClassName} {...props}>
+        {children}
+      </a>
+    );
+  }
+
+  // Use Next.js Link if prefetch explicitly enabled
   return (
-    <NextLink href={href} className={mergedClassName} {...props}>
+    <NextLink
+      href={href}
+      prefetch={prefetch}
+      className={mergedClassName}
+      {...props}
+    >
       {children}
     </NextLink>
   );

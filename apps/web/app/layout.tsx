@@ -6,6 +6,7 @@ import { Box, Header, ImagePreview, LazyMotionProvider } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
+import { Suspense } from "react";
 import { ConsentProvider } from "../components/providers/consent-provider";
 import { ObservabilityProvider } from "../components/providers/observability-provider";
 import { StoryblokProvider } from "../components/providers/storyblok-provider";
@@ -93,16 +94,33 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             {/* Main Content Area - NO container wrapper here
                 Pages must use Container/Section components themselves
                 This allows for full-width sections and controlled breakouts */}
-            <Box
-              as="main"
-              css={{
-                bg: "white",
-                w: "full",
-                minH: "100vh",
-              }}
-            >
-              {children}
-            </Box>
+            {config.features.phpLikeNavigation ? (
+              // PHP-like: Block rendering until content is ready
+              <Suspense>
+                <Box
+                  as="main"
+                  css={{
+                    bg: "white",
+                    w: "full",
+                    minH: "100vh",
+                  }}
+                >
+                  {children}
+                </Box>
+              </Suspense>
+            ) : (
+              // Modern SPA: Stream content as it becomes available
+              <Box
+                as="main"
+                css={{
+                  bg: "white",
+                  w: "full",
+                  minH: "100vh",
+                }}
+              >
+                {children}
+              </Box>
+            )}
 
             {/* Footer - always full width */}
             <FooterWrapper

@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@httpjpg/config";
 import NextLink from "next/link";
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 import { css, cva } from "styled-system/css";
@@ -26,6 +27,12 @@ export interface LinkProps
    * @default true for external links
    */
   showExternalIcon?: boolean;
+  /**
+   * Enable Next.js prefetching and client-side navigation
+   * When false, uses native <a> tag with full page reload
+   * @default !config.features.phpLikeNavigation (true when PHP-like is off, false when on)
+   */
+  prefetch?: boolean;
   /**
    * Custom styles using Panda CSS SystemStyleObject
    */
@@ -79,6 +86,7 @@ export const Link = ({
   children,
   isExternal,
   showExternalIcon,
+  prefetch = !config.features.phpLikeNavigation,
   css: cssProp,
   className,
   ...props
@@ -132,10 +140,25 @@ export const Link = ({
     );
   }
 
-  // Render internal links with Next.js Link
+  // Render internal links - use Next.js Link if prefetch enabled, otherwise native <a>
+  if (!prefetch) {
+    return (
+      <a
+        href={href}
+        className={
+          className ? `${combinedStyles} ${className}` : combinedStyles
+        }
+        {...props}
+      >
+        {children}
+      </a>
+    );
+  }
+
   return (
     <NextLink
       href={href}
+      prefetch={prefetch}
       className={className ? `${combinedStyles} ${className}` : combinedStyles}
       {...props}
     >

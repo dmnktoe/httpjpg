@@ -1,3 +1,4 @@
+import { config } from "@httpjpg/config";
 import { CACHE_TAGS, getStoryblokApi } from "@httpjpg/storyblok-api";
 import { DynamicRender, STORYBLOK_RELATIONS } from "@httpjpg/storyblok-utils";
 import type { Metadata } from "next";
@@ -16,20 +17,21 @@ interface PageProps {
 /**
  * Fetch story with caching
  * In draft mode: Direct fetch with preview token (no cache)
+ * In PHP-like mode: Direct fetch (no cache, classic behavior)
  * In production: Cached fetch with ISR (1 hour revalidation)
  */
 const fetchStoryWithCache = async (fullSlug: string, isDraft: boolean) => {
   try {
-    // Draft mode: Always fetch fresh with preview token
-    if (isDraft) {
-      const { getStory } = getStoryblokApi({ draftMode: true });
+    // Draft mode or PHP-like mode: Always fetch fresh
+    if (isDraft || config.features.phpLikeNavigation) {
+      const { getStory } = getStoryblokApi({ draftMode: isDraft });
       return await getStory({
         slug: fullSlug,
         resolve_relations: [STORYBLOK_RELATIONS.WORK_LIST],
       });
     }
 
-    // Production: Use ISR cache with revalidation tags
+    // Modern mode: Use ISR cache with revalidation tags
     return unstable_cache(
       async () => {
         const { getStory } = getStoryblokApi();
@@ -259,8 +261,13 @@ export default async function DynamicPage({
 
 /**
  * Generate static params for all Storyblok stories at build time
+ * Only used when phpLikeNavigation is disabled (ISR mode)
  */
 export async function generateStaticParams() {
+  if (config.features.phpLikeNavigation) {
+    return []; // Skip static generation in PHP-like mode
+  }
+
   try {
     const { getAllSlugs } = getStoryblokApi();
 
@@ -279,8 +286,13 @@ export async function generateStaticParams() {
   }
 }
 
-// Enable ISR with revalidation
-export const revalidate = 3600; // Revalidate every hour
-
-// Enable dynamic params for stories created after build
+// Route Segment Config
+// Next.js 15 doesn't support conditional expressions in route segment configs
+// Optimized for modern mode (ISR with revalidation)
+// PHP-like mode behavior is handled via:
+// - No caching in fetchStoryWithCache when phpLikeNavigation is true
+// - No static params generation in generateStaticParams
+// - Native <a> tags in Link/NavLink components (no prefetch)
+export const dynamic = "auto";
+export const revalidate = 3600; // 1 hour (only applies to modern mode with ISR)
 export const dynamicParams = true;

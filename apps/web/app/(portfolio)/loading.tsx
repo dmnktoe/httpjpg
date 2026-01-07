@@ -8,7 +8,7 @@ import { Container, Loading } from "@httpjpg/ui";
  */
 export default function PortfolioLoading() {
   return (
-    <Container size="2xl" px={{ base: 4, md: 6, lg: 8 }}>
+    <Container size="xl" px={{ base: 4, md: 6, lg: 8 }} center={false}>
       <Loading />
     </Container>
   );

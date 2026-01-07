@@ -1,5 +1,6 @@
 "use client";
 
+import { getProcessedImage } from "@httpjpg/storyblok-utils";
 import { Box } from "../box/box";
 import { Divider } from "../divider/divider";
 import { Link } from "../link/link";
@@ -70,16 +71,19 @@ export const MobileMenuContent = ({
             m: { md: "6" },
             borderRadius: 0,
             position: "relative",
+            overflow: "hidden",
+            maxW: "100%",
           }}
         >
           <Box
             css={{
               display: "flex",
-              flex: 1,
-              flexGrow: 1,
               flexDirection: "column",
               p: { base: "2", md: "6" },
               fontSize: { base: "lg", md: "xl" },
+              overflowY: "auto",
+              maxW: "100%",
+              height: "100%",
             }}
           >
             <Box css={{ mb: "4", fontWeight: "bold", fontSize: "sm" }}>
@@ -110,8 +114,12 @@ export const MobileMenuContent = ({
             <Divider
               variant="ascii"
               pattern="⋆｡°✩ ･ ✦ ･ ✧ ･ ✦ ･ ✩°｡⋆"
-              color="neutral.200"
+              color="neutral.300"
               spacing="3"
+              css={{
+                textAlign: "left",
+                justifyContent: "flex-start",
+              }}
             />
 
             <Box
@@ -128,21 +136,31 @@ export const MobileMenuContent = ({
             </Box>
 
             {personalWork.length > 0 ? (
-              personalWork.map((work) => (
-                <NavLink
-                  key={work.id}
-                  variant="personal"
-                  href={work.isExternal ? work.slug : `/work/${work.slug}`}
-                  isExternal={work.isExternal}
-                  onClick={handleMenuItemClick}
-                  data-preview-image={work.imageUrl}
-                  css={{
-                    fontSize: { base: "sm", md: "md" },
-                  }}
-                >
-                  {work.title}
-                </NavLink>
-              ))
+              personalWork.map((work) => {
+                // Optimize preview image to 200px thumbnail
+                const previewImage = work.imageUrl
+                  ? getProcessedImage(work.imageUrl, "200x0", "", "")
+                  : undefined;
+                return (
+                  <NavLink
+                    key={work.id}
+                    variant="personal"
+                    href={work.isExternal ? work.slug : `/work/${work.slug}`}
+                    isExternal={work.isExternal}
+                    onClick={handleMenuItemClick}
+                    data-preview-image={previewImage}
+                    css={{
+                      fontSize: { base: "sm", md: "md" },
+                      maxW: "100%",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {work.title}
+                  </NavLink>
+                );
+              })
             ) : (
               <Box css={{ fontSize: "sm", opacity: 0.4, ml: "2" }}>
                 ∅ ɴᴏ ᴡᴏʀᴋ ʏᴇᴛ ⊹
@@ -152,8 +170,12 @@ export const MobileMenuContent = ({
             <Divider
               variant="ascii"
               pattern="⋆｡°✩ ･ ✦ ･ ✧ ･ ✦ ･ ✩°｡⋆"
-              color="neutral.200"
+              color="neutral.300"
               spacing="3"
+              css={{
+                textAlign: "left",
+                justifyContent: "flex-start",
+              }}
             />
 
             <Box
@@ -170,21 +192,31 @@ export const MobileMenuContent = ({
             </Box>
 
             {clientWork.length > 0 ? (
-              clientWork.map((work) => (
-                <NavLink
-                  key={work.id}
-                  variant="client"
-                  href={work.isExternal ? work.slug : `/work/${work.slug}`}
-                  isExternal={work.isExternal}
-                  onClick={handleMenuItemClick}
-                  data-preview-image={work.imageUrl}
-                  css={{
-                    fontSize: { base: "sm", md: "md" },
-                  }}
-                >
-                  {work.title}
-                </NavLink>
-              ))
+              clientWork.map((work) => {
+                // Optimize preview image to 200px thumbnail
+                const previewImage = work.imageUrl
+                  ? getProcessedImage(work.imageUrl, "200x0", "", "")
+                  : undefined;
+                return (
+                  <NavLink
+                    key={work.id}
+                    variant="client"
+                    href={work.isExternal ? work.slug : `/work/${work.slug}`}
+                    isExternal={work.isExternal}
+                    onClick={handleMenuItemClick}
+                    data-preview-image={previewImage}
+                    css={{
+                      fontSize: { base: "sm", md: "md" },
+                      maxW: "100%",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {work.title}
+                  </NavLink>
+                );
+              })
             ) : (
               <Box css={{ fontSize: "sm", opacity: 0.4, ml: "2" }}>
                 ⊹ ᴛᴀᴋɪɴɢ ᴄʟɪᴇɴᴛꜱ ⊹

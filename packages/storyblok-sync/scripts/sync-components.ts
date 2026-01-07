@@ -1664,6 +1664,114 @@ async function getSbMusicPlayerComponent(): Promise<StoryblokComponent> {
   };
 }
 
+async function getSbMarqueeComponent(): Promise<StoryblokComponent> {
+  const mediaGroupUuid = await getComponentGroupUuid("Media");
+
+  return {
+    name: "marquee",
+    display_name: "Marquee",
+    is_root: false,
+    is_nestable: true,
+    component_group_uuid: mediaGroupUuid,
+    icon: "block-arrows-h",
+    color: "#38b2ac",
+    schema: {
+      text: {
+        type: "text",
+        display_name: "Text",
+        description: "Scrolling text content (supports ASCII decorations)",
+        required: true,
+        translatable: true,
+        pos: 0,
+      },
+      speed: {
+        type: "number",
+        display_name: "Speed (seconds)",
+        description: "Animation speed in seconds (lower = faster)",
+        default_value: "20",
+        pos: 1,
+      },
+      direction: {
+        type: "option",
+        display_name: "Direction",
+        description: "Scroll direction",
+        default_value: "left",
+        options: [
+          { name: "Left", value: "left" },
+          { name: "Right", value: "right" },
+        ],
+        pos: 2,
+      },
+      pauseOnHover: {
+        type: "boolean",
+        display_name: "Pause on Hover",
+        description: "Pause animation when hovering",
+        default_value: "false",
+        pos: 3,
+      },
+      repeat: {
+        type: "number",
+        display_name: "Repeat Count",
+        description: "Number of times to repeat content",
+        default_value: "3",
+        pos: 4,
+      },
+      iosStyle: {
+        type: "boolean",
+        display_name: "iOS Style",
+        description: "Pause at beginning before scrolling (iOS-style)",
+        default_value: "false",
+        pos: 5,
+      },
+      pauseDuration: {
+        type: "number",
+        display_name: "Pause Duration (seconds)",
+        description: "Duration of pause at beginning (if iOS style enabled)",
+        default_value: "2",
+        pos: 6,
+      },
+      bgColor: {
+        type: "option",
+        display_name: "Background Color",
+        description: "Background color from design tokens",
+        source: "internal",
+        datasource_slug: "color-options",
+        pos: 7,
+      },
+      textColor: {
+        type: "option",
+        display_name: "Text Color",
+        description: "Text color from design tokens",
+        source: "internal",
+        datasource_slug: "color-options",
+        pos: 8,
+      },
+      marginTop: {
+        type: "option",
+        display_name: "Margin Top",
+        source: "internal",
+        datasource_slug: "spacing-options",
+        pos: 9,
+      },
+      marginBottom: {
+        type: "option",
+        display_name: "Margin Bottom",
+        source: "internal",
+        datasource_slug: "spacing-options",
+        pos: 10,
+      },
+      paddingY: {
+        type: "option",
+        display_name: "Padding Vertical",
+        description: "Vertical padding (top & bottom)",
+        source: "internal",
+        datasource_slug: "spacing-options",
+        pos: 11,
+      },
+    },
+  };
+}
+
 /**
  * Sleep helper to avoid rate limits
  */
@@ -1692,6 +1800,7 @@ async function syncComponents(): Promise<void> {
     getSbVideoComponent,
     getSbSlideshowComponent,
     getSbMusicPlayerComponent,
+    getSbMarqueeComponent,
     getSbWorkCardComponent,
     getSbWorkListComponent,
     getSbPageComponent,
@@ -1727,6 +1836,7 @@ async function syncComponents(): Promise<void> {
   console.log("   - video (Video player)");
   console.log("   - slideshow (Image carousel with effects)");
   console.log("   - music_player (Spotify/SoundCloud/MP3 player)");
+  console.log("   - marquee (Infinite scrolling text)");
   console.log("\n   Portfolio:");
   console.log("   - work_card (Project showcase card)");
   console.log("   - work_list (Portfolio list)");

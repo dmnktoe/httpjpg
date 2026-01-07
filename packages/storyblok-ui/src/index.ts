@@ -37,6 +37,10 @@ export {
   type StoryblokLinkObject,
 } from "./components/link";
 export {
+  SbMarquee,
+  type SbMarqueeProps,
+} from "./components/marquee";
+export {
   SbMediaWrapper,
   type SbMediaWrapperProps,
 } from "./components/media-wrapper";

@@ -3,8 +3,8 @@
 import type { StoryblokRichTextProps } from "@httpjpg/storyblok-richtext";
 import { getProcessedImage } from "@httpjpg/storyblok-utils";
 import { Image } from "@httpjpg/ui";
-import { css } from "@httpjpg/ui/css";
 import { memo } from "react";
+import { css } from "styled-system/css";
 import { useStoryblokEditable } from "../../lib/use-storyblok-editable";
 import type { StoryblokImage } from "../../types";
 import { SbCaption } from "../caption";

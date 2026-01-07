@@ -71,15 +71,19 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
   const editableProps = useStoryblokEditable(blok);
 
   // Track consent state and re-render on changes
-  const [hasConsent, setHasConsent] = useState(() => {
+  // Start with false to avoid hydration mismatch (server has no cookies)
+  const [hasConsent, setHasConsent] = useState(false);
+
+  // Check consent client-side only to avoid SSR/client mismatch
+  useEffect(() => {
     if (source === "youtube") {
-      return hasVendorConsent("youtube");
+      setHasConsent(hasVendorConsent("youtube"));
+    } else if (source === "vimeo") {
+      setHasConsent(hasVendorConsent("vimeo"));
+    } else {
+      setHasConsent(true);
     }
-    if (source === "vimeo") {
-      return hasVendorConsent("vimeo");
-    }
-    return true;
-  });
+  }, [source]);
 
   useEffect(() => {
     const handleConsentChange = () => {

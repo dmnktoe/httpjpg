@@ -1,5 +1,6 @@
 "use client";
 
+import { getProcessedImage } from "@httpjpg/storyblok-utils";
 import { Box } from "../box/box";
 import { Link } from "../link/link";
 import { NavLink } from "../nav-link/nav-link";
@@ -90,13 +91,17 @@ export const Navigation = ({
                 const year = work.date
                   ? new Date(work.date).getFullYear().toString()
                   : null;
+                // Optimize preview image to 200px thumbnail for better performance
+                const previewImage = work.imageUrl
+                  ? getProcessedImage(work.imageUrl, "200x0", "", "")
+                  : undefined;
                 return (
                   <NavLink
                     key={work.id}
                     variant="personal"
                     href={work.isExternal ? work.slug : `/work/${work.slug}`}
                     isExternal={work.isExternal}
-                    data-preview-image={work.imageUrl}
+                    data-preview-image={previewImage}
                     css={{
                       backgroundColor: work.isDraft
                         ? "warning.200"
@@ -156,6 +161,10 @@ export const Navigation = ({
               const year = work.date
                 ? new Date(work.date).getFullYear().toString()
                 : null;
+              // Optimize preview image to 200px thumbnail for better performance
+              const previewImage = work.imageUrl
+                ? getProcessedImage(work.imageUrl, "200x0", "", "")
+                : undefined;
 
               return (
                 <NavLink
@@ -164,7 +173,7 @@ export const Navigation = ({
                   href={href}
                   isExternal={work.isExternal}
                   showExternalIcon={work.isExternal}
-                  data-preview-image={work.imageUrl}
+                  data-preview-image={previewImage}
                   css={{
                     backgroundColor: work.isDraft
                       ? "warning.200"

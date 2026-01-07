@@ -51,7 +51,8 @@ export const MobileMenuContent = ({
         css={{
           m: 0,
           display: "flex",
-          h: "calc(100vh)",
+          h: "100vh",
+          maxH: "100vh",
           w: { base: "full", md: "96" },
           overflow: "hidden",
           transition: "all 200ms ease-in-out",
@@ -73,6 +74,7 @@ export const MobileMenuContent = ({
             position: "relative",
             overflow: "hidden",
             maxW: "100%",
+            maxH: "100%",
           }}
         >
           <Box
@@ -82,11 +84,21 @@ export const MobileMenuContent = ({
               p: { base: "2", md: "6" },
               fontSize: { base: "lg", md: "xl" },
               overflowY: "auto",
+              overflowX: "hidden",
               maxW: "100%",
-              height: "100%",
+              flex: "1 1 auto",
+              minHeight: 0,
+              gap: { base: "1", md: "2" },
             }}
           >
-            <Box css={{ mb: "4", fontWeight: "bold", fontSize: "sm" }}>
+            <Box
+              css={{
+                mb: { base: "2", md: "4" },
+                fontWeight: "bold",
+                fontSize: "sm",
+                flexShrink: 0,
+              }}
+            >
               ╭─────────────────────╮
               <br />│ ⇝ MENU NAVIGATION │
               <br />
@@ -104,6 +116,7 @@ export const MobileMenuContent = ({
                   fontFamily: "accent",
                   textDecoration: "none",
                   color: "inherit",
+                  flexShrink: 0,
                   _hover: { textDecoration: "underline" },
                 }}
               >
@@ -115,21 +128,24 @@ export const MobileMenuContent = ({
               variant="ascii"
               pattern="⋆｡°✩ ･ ✦ ･ ✧ ･ ✦ ･ ✩°｡⋆"
               color="neutral.300"
-              spacing="3"
+              spacing="0"
               css={{
                 textAlign: "left",
                 justifyContent: "flex-start",
+                flexShrink: 0,
+                my: { base: "2", md: "3" },
               }}
             />
 
             <Box
               css={{
                 fontFamily: "headline",
-                mb: "2",
+                mb: { base: "1", md: "2" },
                 fontWeight: "bold",
                 fontSize: "sm",
                 letterSpacing: "wider",
                 textTransform: "lowercase",
+                flexShrink: 0,
               }}
             >
               Personal Work
@@ -155,6 +171,7 @@ export const MobileMenuContent = ({
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
+                      flexShrink: 0,
                     }}
                   >
                     {work.title}
@@ -162,7 +179,9 @@ export const MobileMenuContent = ({
                 );
               })
             ) : (
-              <Box css={{ fontSize: "sm", opacity: 0.4, ml: "2" }}>
+              <Box
+                css={{ fontSize: "sm", opacity: 0.4, ml: "2", flexShrink: 0 }}
+              >
                 ∅ ɴᴏ ᴡᴏʀᴋ ʏᴇᴛ ⊹
               </Box>
             )}
@@ -171,21 +190,24 @@ export const MobileMenuContent = ({
               variant="ascii"
               pattern="⋆｡°✩ ･ ✦ ･ ✧ ･ ✦ ･ ✩°｡⋆"
               color="neutral.300"
-              spacing="3"
+              spacing="0"
               css={{
                 textAlign: "left",
                 justifyContent: "flex-start",
+                flexShrink: 0,
+                my: { base: "2", md: "3" },
               }}
             />
 
             <Box
               css={{
                 fontFamily: "headline",
-                mb: "2",
+                mb: { base: "1", md: "2" },
                 fontWeight: "bold",
                 fontSize: "sm",
                 letterSpacing: "wider",
                 textTransform: "lowercase",
+                flexShrink: 0,
               }}
             >
               Client Work
@@ -211,6 +233,7 @@ export const MobileMenuContent = ({
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
+                      flexShrink: 0,
                     }}
                   >
                     {work.title}
@@ -218,7 +241,9 @@ export const MobileMenuContent = ({
                 );
               })
             ) : (
-              <Box css={{ fontSize: "sm", opacity: 0.4, ml: "2" }}>
+              <Box
+                css={{ fontSize: "sm", opacity: 0.4, ml: "2", flexShrink: 0 }}
+              >
                 ⊹ ᴛᴀᴋɪɴɢ ᴄʟɪᴇɴᴛꜱ ⊹
               </Box>
             )}

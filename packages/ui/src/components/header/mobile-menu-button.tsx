@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Box } from "../box/box";
 
 interface MobileMenuButtonProps {
@@ -14,12 +15,24 @@ export const MobileMenuButton = ({
   isOpen,
   setIsOpen,
 }: MobileMenuButtonProps) => {
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   return (
     <Box
       css={{
         position: { base: "fixed", md: "relative" },
-        right: { base: "2", md: "auto" },
-        top: { base: "3", md: "auto" },
+        right: { base: "4", md: "auto" },
+        top: { base: "4", md: "auto" },
         zIndex: 65,
         ml: "auto",
         display: { base: "block", lg: "none" },
@@ -37,24 +50,35 @@ export const MobileMenuButton = ({
           bg: "transparent",
           color: "black",
           border: "none",
-          p: "2 3",
+          p: "2",
           cursor: "pointer",
-          fontFamily: "Impact, Haettenschweiler, sans-serif",
-          fontSize: "xs",
-          lineHeight: "none",
-          letterSpacing: "wider",
-          transition: "opacity 150ms ease-in-out",
-          _hover: { opacity: 0.5 },
+          fontFamily: "monospace",
+          fontSize: "sm",
+          lineHeight: "1",
+          fontWeight: "bold",
+          letterSpacing: "tight",
+          minW: "12",
+          minH: "12",
+          transition: "all 150ms ease-out",
+          _hover: {
+            opacity: 0.6,
+          },
         }}
         aria-label={isOpen ? "Close menu" : "Open menu"}
       >
-        <Box as="span" css={{ mb: "0.15rem" }}>
-          ╔═══╗
-        </Box>
-        <Box as="span" css={{ mb: "0.15rem" }}>
-          ║ ☰ ║
-        </Box>
-        <Box as="span">╚═══╝</Box>
+        {isOpen ? (
+          <>
+            <Box as="span">✦━━━✦</Box>
+            <Box as="span">━╳━╳━</Box>
+            <Box as="span">✦━━━✦</Box>
+          </>
+        ) : (
+          <>
+            <Box as="span">◆━━━━</Box>
+            <Box as="span">━━━━◆</Box>
+            <Box as="span">◆━━━━</Box>
+          </>
+        )}
       </Box>
     </Box>
   );

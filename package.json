@@ -61,7 +61,7 @@
   },
   "pnpm": {
     "overrides": {
-      "esbuild": "^0.24.0",
+      "esbuild": "^0.27.0",
       "merge-anything": "^5.1.7",
       "package-manager-detector": "^0.2.6"
     }

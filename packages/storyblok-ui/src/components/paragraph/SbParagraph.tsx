@@ -33,3 +33,5 @@ export const SbParagraph = memo(function SbParagraph({ blok }: SbParagraphProps)
     </Paragraph>
   );
 });
+
+SbParagraph.displayName = "SbParagraph";

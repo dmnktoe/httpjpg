@@ -29,3 +29,5 @@ export const SbPage = memo(function SbPage({ blok }: SbPageProps) {
     </Box>
   );
 });
+
+SbPage.displayName = "SbPage";

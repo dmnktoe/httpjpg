@@ -1,3 +1,4 @@
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { draftMode } from "next/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -7,8 +8,6 @@ export async function GET(request: NextRequest) {
     // Disable draft mode
     const draft = await draftMode();
     draft.disable();
-
-    console.log("[Exit Draft] Draft mode disabled");
 
     // Get referrer or redirect parameter
     const redirectParam = request.nextUrl.searchParams.get("redirect");
@@ -30,7 +29,7 @@ export async function GET(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error("[Exit Draft] Error:", error);
+    captureServerException(error);
     return NextResponse.redirect(new URL("/", request.url));
   }
 }

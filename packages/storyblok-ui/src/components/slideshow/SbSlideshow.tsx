@@ -61,3 +61,5 @@ export const SbSlideshow = memo(function SbSlideshow({ blok }: SbSlideshowProps)
     </Box>
   );
 });
+
+SbSlideshow.displayName = "SbSlideshow";

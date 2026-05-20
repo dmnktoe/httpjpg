@@ -97,3 +97,5 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
     </GridItem>
   );
 });
+
+SbGridItem.displayName = "SbGridItem";

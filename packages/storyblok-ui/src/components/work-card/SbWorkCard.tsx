@@ -65,3 +65,5 @@ export const SbWorkCard = memo(function SbWorkCard({ blok }: SbWorkCardProps) {
     />
   );
 });
+
+SbWorkCard.displayName = "SbWorkCard";

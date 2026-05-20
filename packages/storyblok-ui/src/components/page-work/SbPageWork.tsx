@@ -40,3 +40,5 @@ export const SbPageWork = memo(function SbPageWork({ blok }: SbPageWorkProps) {
     </Box>
   );
 });
+
+SbPageWork.displayName = "SbPageWork";

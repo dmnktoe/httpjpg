@@ -32,3 +32,5 @@ export const SbContainer = memo(function SbContainer({ blok }: SbContainerProps)
     </Container>
   );
 });
+
+SbContainer.displayName = "SbContainer";

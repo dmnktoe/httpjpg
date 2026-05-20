@@ -27,3 +27,5 @@ export const SbCaption = memo(function SbCaption({ data }: SbCaptionProps) {
     </Box>
   );
 });
+
+SbCaption.displayName = "SbCaption";

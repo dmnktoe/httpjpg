@@ -116,3 +116,5 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
 
   return grid;
 });
+
+SbGrid.displayName = "SbGrid";

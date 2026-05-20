@@ -109,3 +109,5 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     </Box>
   );
 });
+
+SbImage.displayName = "SbImage";

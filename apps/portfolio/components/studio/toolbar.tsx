@@ -14,6 +14,10 @@ interface ToolbarProps {
   itemCount: number;
   pushEnabled: boolean;
   siteUrl: string;
+  canUndo: boolean;
+  canRedo: boolean;
+  onUndo(): void;
+  onRedo(): void;
   onClear(): void;
 }
 
@@ -36,6 +40,10 @@ export function Toolbar({
   itemCount,
   pushEnabled,
   siteUrl,
+  canUndo,
+  canRedo,
+  onUndo,
+  onRedo,
   onClear,
 }: ToolbarProps) {
   const siteHost = (siteUrl ?? "").replace(/^https?:\/\//, "").replace(/\/$/, "");
@@ -177,6 +185,15 @@ export function Toolbar({
         options={GAP_OPTIONS}
         onChange={(v) => onSettingsChange({ ...settings, gap: v })}
       />
+
+      <Divider />
+
+      <button type="button" onClick={onUndo} disabled={!canUndo} className={btn} title="Undo (⌘Z)">
+        Undo
+      </button>
+      <button type="button" onClick={onRedo} disabled={!canRedo} className={btn} title="Redo (⇧⌘Z)">
+        Redo
+      </button>
 
       <Divider />
 

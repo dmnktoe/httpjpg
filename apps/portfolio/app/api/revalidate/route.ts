@@ -6,8 +6,6 @@ import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
 interface StoryblokWebhookPayload {
   action: "published" | "unpublished" | "deleted";
-  // Storyblok's current webhook format is flat — full_slug sits at the top level.
-  // The nested `story` shape is kept for forward-compat with management-API style payloads.
   full_slug?: string;
   story_id?: number;
   space_id?: number;
@@ -21,21 +19,8 @@ interface StoryblokWebhookPayload {
   };
 }
 
-/**
- * Webhook endpoint for Storyblok to trigger revalidation
- *
- * Setup in Storyblok:
- * Settings > Webhooks > Add Webhook
- * URL: https://yourdomain.com/api/revalidate
- * Secret: YOUR_REVALIDATE_SECRET
- * Trigger: Story published/unpublished/deleted
- *
- * Headers:
- * webhook-secret: YOUR_REVALIDATE_SECRET
- */
 export async function POST(request: NextRequest) {
   try {
-    // Verify secret from header or query param
     const headerSecret = request.headers.get("webhook-secret");
     const querySecret = request.nextUrl.searchParams.get("secret");
     const secret = headerSecret || querySecret;
@@ -58,19 +43,16 @@ export async function POST(request: NextRequest) {
     const revalidatedPaths: string[] = [];
     const revalidatedTags: string[] = [];
 
-    // Revalidate specific story cache tag (expire: 0 — webhook wants immediate refresh)
     revalidateTag(CACHE_TAGS.STORY(storySlug), { expire: 0 });
     revalidatedTags.push(CACHE_TAGS.STORY(storySlug));
 
     revalidateTag(CACHE_TAGS.STORIES, { expire: 0 });
     revalidatedTags.push(CACHE_TAGS.STORIES);
 
-    // Revalidate the actual page path
     const pagePath = storySlug === STORYBLOK_SLUGS.HOME ? "/" : `/${storySlug}`;
     revalidatePath(pagePath);
     revalidatedPaths.push(pagePath);
 
-    // Revalidate parent folder (e.g., /work if story is /work/project-1)
     const pathParts = storySlug.split("/");
     if (pathParts.length > 1) {
       const parentPath = `/${pathParts[0]}`;
@@ -78,7 +60,6 @@ export async function POST(request: NextRequest) {
       revalidatedPaths.push(parentPath);
     }
 
-    // If config story changed, revalidate all pages (navigation updated)
     if (storySlug === STORYBLOK_SLUGS.CONFIG || contentType === STORYBLOK_SLUGS.CONFIG) {
       revalidateTag(CACHE_TAGS.CONFIG, { expire: 0 });
       revalidatePath("/", "layout");

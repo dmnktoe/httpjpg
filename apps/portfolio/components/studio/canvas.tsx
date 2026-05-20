@@ -9,19 +9,27 @@ import {
   blokDef,
   clamp,
   createItemId,
+  effectiveColumns,
+  effectiveH,
+  effectiveW,
   type GridSettings,
   MIN_ROWS,
+  patchSize,
   ROW_HEIGHT_PX,
+  type Viewport,
+  VIEWPORT_WIDTH_PX,
 } from "./lib";
 
 interface CanvasProps {
   items: BuilderItem[];
   selectedId: string | null;
   settings: GridSettings;
+  viewport: Viewport;
   extraRows: number;
   onItemsChange(next: BuilderItem[]): void;
   onSelect(id: string | null): void;
   onAddRows(count: number): void;
+  onRemoveRows(count: number): void;
 }
 
 interface DragState {
@@ -36,10 +44,12 @@ export function Canvas({
   items,
   selectedId,
   settings,
+  viewport,
   extraRows,
   onItemsChange,
   onSelect,
   onAddRows,
+  onRemoveRows,
 }: CanvasProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const itemsRef = useRef(items);
@@ -47,10 +57,11 @@ export function Canvas({
   const [drag, setDrag] = useState<DragState | null>(null);
   const [hoverCell, setHoverCell] = useState<{ x: number; y: number } | null>(null);
 
-  const cols = settings.columns;
-  const occupiedRows = Math.max(0, ...items.map((it) => it.y + it.h));
+  const cols = effectiveColumns(settings, viewport);
+  const occupiedRows = Math.max(0, ...items.map((it) => it.y + effectiveH(it, viewport)));
   const rows = Math.max(MIN_ROWS, occupiedRows + 4) + extraRows;
   const gapPx = spacingPx(settings.gap) ?? "0";
+  const maxWidth = VIEWPORT_WIDTH_PX[viewport];
 
   useEffect(() => {
     if (!drag) return;
@@ -65,13 +76,16 @@ export function Canvas({
 
       const current = itemsRef.current;
       if (drag.mode === "move") {
-        const x = clamp(drag.origin.x + dxCells, 0, cols - drag.origin.w);
+        const x = clamp(drag.origin.x + dxCells, 0, cols - effectiveW(drag.origin, viewport));
         const y = Math.max(0, drag.origin.y + dyCells);
         onItemsChange(current.map((it) => (it.id === drag.id ? { ...it, x, y } : it)));
       } else {
-        const w = clamp(drag.origin.w + dxCells, 1, cols - drag.origin.x);
-        const h = Math.max(1, drag.origin.h + dyCells);
-        onItemsChange(current.map((it) => (it.id === drag.id ? { ...it, w, h } : it)));
+        const originW = effectiveW(drag.origin, viewport);
+        const originH = effectiveH(drag.origin, viewport);
+        const w = clamp(originW + dxCells, 1, cols - drag.origin.x);
+        const h = Math.max(1, originH + dyCells);
+        const patch = patchSize(viewport, w, h);
+        onItemsChange(current.map((it) => (it.id === drag.id ? { ...it, ...patch } : it)));
       }
     };
     const onUp = () => setDrag(null);
@@ -83,7 +97,7 @@ export function Canvas({
       window.removeEventListener("pointerup", onUp);
       window.removeEventListener("pointercancel", onUp);
     };
-  }, [drag, cols, gapPx, onItemsChange]);
+  }, [drag, cols, gapPx, viewport, onItemsChange]);
 
   const handleDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
@@ -142,111 +156,142 @@ export function Canvas({
       })}
     >
       <div
-        ref={containerRef}
-        role="application"
-        aria-label="Grid canvas"
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={() => setHoverCell(null)}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) onSelect(null);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Escape") onSelect(null);
-        }}
-        className={css({
-          position: "relative",
-          display: "grid",
-          width: "100%",
-          border: "1px solid",
-          borderColor: "pageBorder",
-          backgroundImage: `linear-gradient(to right, var(--colors-page-border) 1px, transparent 1px), linear-gradient(to bottom, var(--colors-page-border) 1px, transparent 1px)`,
-        })}
-        style={{
-          minHeight: `${rows * ROW_HEIGHT_PX}px`,
-          gridTemplateColumns: `repeat(${cols}, 1fr)`,
-          gridAutoRows: `${ROW_HEIGHT_PX}px`,
-          gap: gapPx,
-          backgroundSize: `calc(100% / ${cols}) ${ROW_HEIGHT_PX}px`,
-        }}
+        className={css({ marginX: "auto" })}
+        style={{ maxWidth: maxWidth ? `${maxWidth}px` : undefined }}
       >
-        {hoverCell && drag === null && (
-          <div
-            className={css({
-              bg: "pageFg",
-              opacity: 0.1,
-              pointerEvents: "none",
-            })}
-            style={{
-              gridColumn: `${hoverCell.x + 1} / span 1`,
-              gridRow: `${hoverCell.y + 1} / span 1`,
-            }}
-          />
-        )}
-        {items.map((it) => (
-          <CanvasItem
-            key={it.id}
-            item={it}
-            selected={it.id === selectedId}
-            onSelect={() => onSelect(it.id)}
-            onStartDrag={(mode, e) => {
-              e.stopPropagation();
-              setDrag({
-                id: it.id,
-                mode,
-                startX: e.clientX,
-                startY: e.clientY,
-                origin: { ...it },
-              });
-              onSelect(it.id);
-            }}
-            onDelete={() => {
-              onItemsChange(items.filter((x) => x.id !== it.id));
-              if (selectedId === it.id) onSelect(null);
-            }}
-          />
-        ))}
-      </div>
-      <div
-        className={css({
-          display: "flex",
-          justifyContent: "center",
-          padding: 2,
-        })}
-      >
-        <button
-          type="button"
-          onClick={() => onAddRows(10)}
+        <div
+          ref={containerRef}
+          role="application"
+          aria-label="Grid canvas"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={() => setHoverCell(null)}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) onSelect(null);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") onSelect(null);
+          }}
           className={css({
-            border: "1px dashed",
+            position: "relative",
+            display: "grid",
+            width: "100%",
+            border: "1px solid",
             borderColor: "pageBorder",
-            bg: "pageBg",
-            color: "pageFg",
-            fontFamily: "mono",
-            fontSize: "sm",
-            padding: "4px 16px",
-            cursor: "pointer",
-            opacity: 0.6,
-            _hover: { opacity: 1, bg: "pageFg", color: "pageBg" },
+            backgroundImage: `linear-gradient(to right, var(--colors-page-border) 1px, transparent 1px), linear-gradient(to bottom, var(--colors-page-border) 1px, transparent 1px)`,
+          })}
+          style={{
+            minHeight: `${rows * ROW_HEIGHT_PX}px`,
+            gridTemplateColumns: `repeat(${cols}, 1fr)`,
+            gridAutoRows: `${ROW_HEIGHT_PX}px`,
+            gap: gapPx,
+            backgroundSize: `calc(100% / ${cols}) ${ROW_HEIGHT_PX}px`,
+          }}
+        >
+          {hoverCell && drag === null && (
+            <div
+              className={css({
+                bg: "pageFg",
+                opacity: 0.1,
+                pointerEvents: "none",
+              })}
+              style={{
+                gridColumn: `${hoverCell.x + 1} / span 1`,
+                gridRow: `${hoverCell.y + 1} / span 1`,
+              }}
+            />
+          )}
+          {items.map((it) => (
+            <CanvasItem
+              key={it.id}
+              item={it}
+              viewport={viewport}
+              cols={cols}
+              selected={it.id === selectedId}
+              onSelect={() => onSelect(it.id)}
+              onStartDrag={(mode, e) => {
+                e.stopPropagation();
+                setDrag({
+                  id: it.id,
+                  mode,
+                  startX: e.clientX,
+                  startY: e.clientY,
+                  origin: { ...it },
+                });
+                onSelect(it.id);
+              }}
+              onDelete={() => {
+                onItemsChange(items.filter((x) => x.id !== it.id));
+                if (selectedId === it.id) onSelect(null);
+              }}
+            />
+          ))}
+        </div>
+        <div
+          className={css({
+            display: "flex",
+            justifyContent: "center",
+            gap: 2,
+            padding: 2,
           })}
         >
-          + 10 rows ({rows} total)
-        </button>
+          <button type="button" onClick={() => onAddRows(10)} className={rowBtn}>
+            + 10 rows
+          </button>
+          <button
+            type="button"
+            onClick={() => onRemoveRows(10)}
+            disabled={extraRows <= 0}
+            className={rowBtn}
+          >
+            − 10 rows
+          </button>
+          <span className={css({ fontFamily: "mono", fontSize: "sm", opacity: 0.6 })}>
+            {rows} rows
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
+const rowBtn = css({
+  border: "1px dashed",
+  borderColor: "pageBorder",
+  bg: "pageBg",
+  color: "pageFg",
+  fontFamily: "mono",
+  fontSize: "sm",
+  padding: "4px 16px",
+  cursor: "pointer",
+  opacity: 0.6,
+  _hover: { opacity: 1, bg: "pageFg", color: "pageBg" },
+  _disabled: { cursor: "not-allowed", opacity: 0.3, _hover: { bg: "pageBg", color: "pageFg" } },
+});
+
 interface CanvasItemProps {
   item: BuilderItem;
+  viewport: Viewport;
+  cols: number;
   selected: boolean;
   onSelect(): void;
   onStartDrag(mode: "move" | "resize", e: PointerEvent<HTMLElement>): void;
   onDelete(): void;
 }
 
-function CanvasItem({ item, selected, onSelect, onStartDrag, onDelete }: CanvasItemProps) {
+function CanvasItem({
+  item,
+  viewport,
+  cols,
+  selected,
+  onSelect,
+  onStartDrag,
+  onDelete,
+}: CanvasItemProps) {
   const def = blokDef(item.type);
+  const w = Math.min(effectiveW(item, viewport), cols);
+  const h = effectiveH(item, viewport);
+  const x = Math.min(item.x, Math.max(0, cols - w));
 
   return (
     <div
@@ -262,8 +307,8 @@ function CanvasItem({ item, selected, onSelect, onStartDrag, onDelete }: CanvasI
         display: "flex",
       })}
       style={{
-        gridColumn: `${item.x + 1} / span ${item.w}`,
-        gridRow: `${item.y + 1} / span ${item.h}`,
+        gridColumn: `${x + 1} / span ${w}`,
+        gridRow: `${item.y + 1} / span ${h}`,
         alignSelf: item.alignSelf || undefined,
         justifySelf: item.justifySelf || undefined,
         marginTop: spacingPx(item.mt),
@@ -322,7 +367,7 @@ function CanvasItem({ item, selected, onSelect, onStartDrag, onDelete }: CanvasI
         >
           <span>{def?.label ?? item.type}</span>
           <span>
-            · {item.w}×{item.h}
+            · {w}×{h}
           </span>
         </div>
         <BlokPreview item={item} />

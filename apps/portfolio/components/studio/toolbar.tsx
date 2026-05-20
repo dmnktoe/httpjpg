@@ -3,17 +3,25 @@
 import { useState } from "react";
 import { css } from "styled-system/css";
 
-import { type ExportedGrid, GRID_COLS, type GridSettings } from "./lib";
+import { type ExportedGrid, GRID_COLS, type GridSettings, type Viewport } from "./lib";
 
 interface ToolbarProps {
   settings: GridSettings;
   onSettingsChange(next: GridSettings): void;
+  viewport: Viewport;
+  onViewportChange(next: Viewport): void;
   exported: ExportedGrid;
   itemCount: number;
   pushEnabled: boolean;
   siteUrl: string;
   onClear(): void;
 }
+
+const VIEWPORTS: { id: Viewport; label: string }[] = [
+  { id: "base", label: "Mobile" },
+  { id: "md", label: "Tablet" },
+  { id: "lg", label: "Desktop" },
+];
 
 type Status = { kind: "idle" } | { kind: "ok"; text: string } | { kind: "error"; text: string };
 
@@ -22,6 +30,8 @@ const GAP_OPTIONS = ["", "0", "1", "2", "3", "4", "6", "8", "12"];
 export function Toolbar({
   settings,
   onSettingsChange,
+  viewport,
+  onViewportChange,
   exported,
   itemCount,
   pushEnabled,
@@ -109,18 +119,55 @@ export function Toolbar({
 
       <Divider />
 
+      <div
+        className={css({
+          display: "inline-flex",
+          border: "1px solid",
+          borderColor: "pageBorder",
+        })}
+      >
+        {VIEWPORTS.map((v) => {
+          const isActive = v.id === viewport;
+          return (
+            <button
+              key={v.id}
+              type="button"
+              onClick={() => onViewportChange(v.id)}
+              aria-pressed={isActive}
+              className={css({
+                padding: "1px 8px",
+                bg: isActive ? "pageFg" : "pageBg",
+                color: isActive ? "pageBg" : "pageFg",
+                fontFamily: "mono",
+                fontSize: "sm",
+                cursor: "pointer",
+                border: "none",
+                _hover: { bg: "pageFg", color: "pageBg" },
+              })}
+            >
+              {v.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <Divider />
+
       <ColField
         label="Cols"
+        active={viewport === "base"}
         value={settings.columns}
         onChange={(v) => onSettingsChange({ ...settings, columns: v })}
       />
       <ColField
         label="Cols (md)"
+        active={viewport === "md"}
         value={settings.columnsMd ?? settings.columns}
         onChange={(v) => onSettingsChange({ ...settings, columnsMd: v })}
       />
       <ColField
         label="Cols (lg)"
+        active={viewport === "lg"}
         value={settings.columnsLg ?? settings.columns}
         onChange={(v) => onSettingsChange({ ...settings, columnsLg: v })}
       />
@@ -232,15 +279,20 @@ function Divider() {
 function ColField({
   label,
   value,
+  active,
   onChange,
 }: {
   label: string;
   value: number;
+  active?: boolean;
   onChange(v: number): void;
 }) {
   return (
-    <label className={css({ display: "flex", gap: 1, alignItems: "center" })}>
-      <span className={css({ opacity: 0.6 })}>{label}</span>
+    <label
+      className={css({ display: "flex", gap: 1, alignItems: "center" })}
+      style={{ opacity: active ? 1 : 0.6 }}
+    >
+      <span>{label}</span>
       <input
         type="number"
         min={1}

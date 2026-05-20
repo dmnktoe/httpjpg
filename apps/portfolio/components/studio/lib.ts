@@ -2,6 +2,14 @@ export const GRID_COLS = 12;
 export const ROW_HEIGHT_PX = 40;
 export const MIN_ROWS = 30;
 
+export type Viewport = "base" | "md" | "lg";
+
+export const VIEWPORT_WIDTH_PX: Record<Viewport, number | null> = {
+  base: 390,
+  md: 768,
+  lg: null,
+};
+
 export interface BuilderItem {
   id: string;
   type: string;
@@ -11,6 +19,8 @@ export interface BuilderItem {
   h: number;
   wMd?: number;
   wLg?: number;
+  hMd?: number;
+  hLg?: number;
   mt?: string;
   mb?: string;
   ml?: string;
@@ -18,6 +28,30 @@ export interface BuilderItem {
   alignSelf?: string;
   justifySelf?: string;
   data: Record<string, unknown>;
+}
+
+export function effectiveColumns(settings: GridSettings, viewport: Viewport): number {
+  if (viewport === "lg") return settings.columnsLg ?? settings.columnsMd ?? settings.columns;
+  if (viewport === "md") return settings.columnsMd ?? settings.columns;
+  return settings.columns;
+}
+
+export function effectiveW(item: BuilderItem, viewport: Viewport): number {
+  if (viewport === "lg") return item.wLg ?? item.wMd ?? item.w;
+  if (viewport === "md") return item.wMd ?? item.w;
+  return item.w;
+}
+
+export function effectiveH(item: BuilderItem, viewport: Viewport): number {
+  if (viewport === "lg") return item.hLg ?? item.hMd ?? item.h;
+  if (viewport === "md") return item.hMd ?? item.h;
+  return item.h;
+}
+
+export function patchSize(viewport: Viewport, w: number, h: number): Partial<BuilderItem> {
+  if (viewport === "lg") return { wLg: w, hLg: h };
+  if (viewport === "md") return { wMd: w, hMd: h };
+  return { w, h };
 }
 
 export interface GridSettings {
@@ -294,6 +328,8 @@ export interface ExportedGridItem {
   colSpanMd?: string;
   colSpanLg?: string;
   rowSpan: number;
+  rowSpanMd?: number;
+  rowSpanLg?: number;
   alignSelf?: string;
   justifySelf?: string;
   content: ExportedBlok[];
@@ -335,6 +371,8 @@ export function serializeGrid(settings: GridSettings, items: BuilderItem[]): Exp
           colSpanMd: it.wMd ? String(it.wMd) : undefined,
           colSpanLg: it.wLg ? String(it.wLg) : undefined,
           rowSpan: it.h,
+          rowSpanMd: it.hMd,
+          rowSpanLg: it.hLg,
           alignSelf: it.alignSelf || undefined,
           justifySelf: it.justifySelf || undefined,
           content: [child],

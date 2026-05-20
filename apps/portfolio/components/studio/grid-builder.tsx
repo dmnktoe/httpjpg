@@ -5,7 +5,13 @@ import { css } from "styled-system/css";
 
 import { Canvas } from "./canvas";
 import { Inspector } from "./inspector";
-import { type BuilderItem, GRID_COLS, type GridSettings, serializeGrid } from "./lib";
+import {
+  type BuilderItem,
+  GRID_COLS,
+  type GridSettings,
+  serializeGrid,
+  type Viewport,
+} from "./lib";
 import { Palette } from "./palette";
 import { Toolbar } from "./toolbar";
 
@@ -26,6 +32,7 @@ export function GridBuilder({ pushEnabled, siteUrl }: GridBuilderProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [settings, setSettings] = useState<GridSettings>(DEFAULT_SETTINGS);
   const [extraRows, setExtraRows] = useState(0);
+  const [viewport, setViewport] = useState<Viewport>("lg");
 
   const selected = useMemo(
     () => items.find((it) => it.id === selectedId) ?? null,
@@ -67,6 +74,8 @@ export function GridBuilder({ pushEnabled, siteUrl }: GridBuilderProps) {
       <Toolbar
         settings={settings}
         onSettingsChange={setSettings}
+        viewport={viewport}
+        onViewportChange={setViewport}
         exported={exported}
         itemCount={items.length}
         pushEnabled={pushEnabled}
@@ -82,10 +91,12 @@ export function GridBuilder({ pushEnabled, siteUrl }: GridBuilderProps) {
           items={items}
           selectedId={selectedId}
           settings={settings}
+          viewport={viewport}
           extraRows={extraRows}
           onItemsChange={setItems}
           onSelect={setSelectedId}
           onAddRows={(n) => setExtraRows((r) => r + n)}
+          onRemoveRows={(n) => setExtraRows((r) => Math.max(0, r - n))}
         />
         <Inspector item={selected} onChange={handleItemChange} onDataChange={handleDataChange} />
       </div>

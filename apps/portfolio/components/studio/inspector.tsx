@@ -108,6 +108,18 @@ function InspectorBody({ item, onChange, onDataChange }: InspectorBodyProps) {
             onChange({ wLg: v ? (v === "full" ? undefined : Number(v)) : undefined })
           }
         />
+        <NumberField
+          label="Row Span (md)"
+          value={item.hMd ?? 0}
+          min={0}
+          onChange={(v) => onChange({ hMd: v > 0 ? v : undefined })}
+        />
+        <NumberField
+          label="Row Span (lg)"
+          value={item.hLg ?? 0}
+          min={0}
+          onChange={(v) => onChange({ hLg: v > 0 ? v : undefined })}
+        />
       </Group>
 
       <Group label="Grid Item">

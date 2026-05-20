@@ -192,6 +192,12 @@ function str(v: unknown): string | undefined {
   return String(v);
 }
 
+function asInt(value: unknown): number | undefined {
+  if (value == null || value === "") return undefined;
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+}
+
 export function deserializeGrid(grid: ExportedGrid): {
   settings: GridSettings;
   items: BuilderItem[];
@@ -203,17 +209,49 @@ export function deserializeGrid(grid: ExportedGrid): {
     gap: grid.gap ?? "",
   };
 
+  const flowCols = settings.columnsLg ?? settings.columnsMd ?? settings.columns;
+
+  // Track auto-flow cursor for items without explicit colStart/rowStart.
+  let cursorX = 0;
+  let cursorY = 0;
+  let rowMaxH = 1;
+
   const items: BuilderItem[] = (grid.items ?? []).map((gi) => {
     const inner = gi.content?.[0] ?? { component: "missing", _uid: "" };
     const plugin = blokPlugin(inner.component);
     const data = plugin ? plugin.deserialize(inner) : { ...inner };
+
+    const w = parseSpan(gi.colSpan, plugin?.defaultSize.w ?? 1);
+    const h = typeof gi.rowSpan === "number" ? gi.rowSpan : Number(gi.rowSpan ?? 0) || 1;
+
+    const explicitX = asInt(gi.colStart);
+    const explicitY = asInt(gi.rowStart);
+
+    let x: number;
+    let y: number;
+    if (explicitX != null || explicitY != null) {
+      x = Math.max(0, (explicitX ?? 1) - 1);
+      y = Math.max(0, (explicitY ?? 1) - 1);
+    } else {
+      const fitW = Math.min(w, flowCols);
+      if (cursorX + fitW > flowCols) {
+        cursorX = 0;
+        cursorY += rowMaxH;
+        rowMaxH = 1;
+      }
+      x = cursorX;
+      y = cursorY;
+      cursorX += fitW;
+      rowMaxH = Math.max(rowMaxH, h);
+    }
+
     return {
       id: createItemId(),
       type: inner.component,
-      x: Math.max(0, (gi.colStart ?? 1) - 1),
-      y: Math.max(0, (gi.rowStart ?? 1) - 1),
-      w: parseSpan(gi.colSpan, plugin?.defaultSize.w ?? 1),
-      h: typeof gi.rowSpan === "number" ? gi.rowSpan : Number(gi.rowSpan ?? 1) || 1,
+      x,
+      y,
+      w,
+      h,
       wMd: optionalSpan(gi.colSpanMd),
       wLg: optionalSpan(gi.colSpanLg),
       hMd: gi.rowSpanMd && gi.rowSpanMd > 0 ? gi.rowSpanMd : undefined,
@@ -229,6 +267,13 @@ export function deserializeGrid(grid: ExportedGrid): {
   });
 
   return { settings, items };
+}
+
+export function findGridsInBody(body: unknown): ExportedGrid[] {
+  if (!Array.isArray(body)) return [];
+  return (body as Array<{ component?: string }>).filter(
+    (entry): entry is ExportedGrid => entry?.component === "grid",
+  );
 }
 
 export function clamp(value: number, min: number, max: number): number {

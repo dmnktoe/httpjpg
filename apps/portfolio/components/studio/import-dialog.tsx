@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { css } from "styled-system/css";
 
-import { type BuilderItem, deserializeGrid, type ExportedGrid, type GridSettings } from "./lib";
+import {
+  type BuilderItem,
+  deserializeGrid,
+  type ExportedGrid,
+  findGridsInBody,
+  type GridSettings,
+} from "./lib";
 
 interface ImportDialogProps {
   open: boolean;
@@ -14,17 +20,26 @@ interface ImportDialogProps {
 
 type Mode = "paste" | "fetch";
 
-interface BodyEntry {
-  component?: string;
-  [key: string]: unknown;
+function extractGrids(raw: unknown): ExportedGrid[] {
+  if (!raw || typeof raw !== "object") return [];
+  const obj = raw as {
+    component?: string;
+    body?: unknown;
+    items?: unknown;
+    story?: { content?: { body?: unknown } };
+    content?: { body?: unknown };
+  };
+  if (obj.component === "grid") return [raw as ExportedGrid];
+  if (Array.isArray(obj.body)) return findGridsInBody(obj.body);
+  if (obj.story?.content?.body) return findGridsInBody(obj.story.content.body);
+  if (obj.content?.body) return findGridsInBody(obj.content.body);
+  return [];
 }
 
-function findFirstGrid(body: unknown): ExportedGrid | null {
-  if (!Array.isArray(body)) return null;
-  for (const entry of body as BodyEntry[]) {
-    if (entry?.component === "grid") return entry as unknown as ExportedGrid;
-  }
-  return null;
+function summarizeGrid(grid: ExportedGrid, index: number): string {
+  const itemCount = grid.items?.length ?? 0;
+  const cols = grid.columnsLg ?? grid.columnsMd ?? grid.columns ?? "?";
+  return `#${index + 1} · ${itemCount} items · ${cols} cols (lg)`;
 }
 
 export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDialogProps) {
@@ -33,28 +48,38 @@ export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDia
   const [slug, setSlug] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [candidates, setCandidates] = useState<ExportedGrid[]>([]);
+  const [pickIndex, setPickIndex] = useState(0);
 
   if (!open) return null;
+
+  const commit = (grid: ExportedGrid) => {
+    onImport(deserializeGrid(grid));
+    onClose();
+    setPaste("");
+    setSlug("");
+    setCandidates([]);
+    setPickIndex(0);
+  };
+
+  const loadCandidates = (grids: ExportedGrid[]) => {
+    if (grids.length === 0) {
+      setError("Could not find a grid blok in the input");
+      return;
+    }
+    if (grids.length === 1) {
+      commit(grids[0]);
+      return;
+    }
+    setCandidates(grids);
+    setPickIndex(0);
+  };
 
   const importPasted = () => {
     setError(null);
     try {
-      const parsed = JSON.parse(paste) as
-        | ExportedGrid
-        | { story?: { content?: { body?: unknown } } };
-      const grid =
-        "component" in parsed && parsed.component === "grid"
-          ? (parsed as ExportedGrid)
-          : (findFirstGrid(
-              (parsed as { story?: { content?: { body?: unknown } } }).story?.content?.body,
-            ) ?? findFirstGrid((parsed as { content?: { body?: unknown } }).content?.body));
-      if (!grid) {
-        setError("Could not find a grid blok in the pasted JSON");
-        return;
-      }
-      onImport(deserializeGrid(grid));
-      onClose();
-      setPaste("");
+      const parsed = JSON.parse(paste) as unknown;
+      loadCandidates(extractGrids(parsed));
     } catch (e) {
       setError((e as Error).message);
     }
@@ -78,14 +103,12 @@ export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDia
         setError(data.error ?? `HTTP ${res.status}`);
         return;
       }
-      const grid = findFirstGrid(data.story.content?.body);
-      if (!grid) {
+      const grids = findGridsInBody(data.story.content?.body);
+      if (grids.length === 0) {
         setError(`Story "${slug}" has no grid blok in its body`);
         return;
       }
-      onImport(deserializeGrid(grid));
-      onClose();
-      setSlug("");
+      loadCandidates(grids);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -190,7 +213,43 @@ export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDia
             gap: 2,
           })}
         >
-          {mode === "paste" && (
+          {candidates.length > 0 && (
+            <>
+              <p className={css({ opacity: 0.7 })}>
+                Multiple grids found. Pick which one to import.
+              </p>
+              <label className={css({ display: "flex", flexDirection: "column", gap: 1 })}>
+                <span className={css({ opacity: 0.6 })}>Grid</span>
+                <select
+                  value={pickIndex}
+                  onChange={(e) => setPickIndex(Number(e.target.value))}
+                  className={inputCss}
+                >
+                  {candidates.map((g, i) => (
+                    <option key={g._uid ?? i} value={i}>
+                      {summarizeGrid(g, i)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className={css({ display: "flex", justifyContent: "flex-end", gap: 2 })}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCandidates([]);
+                    setPickIndex(0);
+                  }}
+                  className={btn}
+                >
+                  Back
+                </button>
+                <button type="button" onClick={() => commit(candidates[pickIndex])} className={btn}>
+                  Import grid {pickIndex + 1}
+                </button>
+              </div>
+            </>
+          )}
+          {candidates.length === 0 && mode === "paste" && (
             <>
               <p className={css({ opacity: 0.7 })}>
                 Paste a grid blok JSON or a full story payload. Replaces the current grid.
@@ -212,11 +271,11 @@ export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDia
               </div>
             </>
           )}
-          {mode === "fetch" && (
+          {candidates.length === 0 && mode === "fetch" && (
             <>
               <p className={css({ opacity: 0.7 })}>
-                Fetches the story via the Management API and imports the first <code>grid</code>{" "}
-                entry from its body[].
+                Fetches the story via the Management API and picks a <code>grid</code> entry from
+                its body[].
               </p>
               <label className={css({ display: "flex", flexDirection: "column", gap: 1 })}>
                 <span className={css({ opacity: 0.6 })}>Story full_slug</span>

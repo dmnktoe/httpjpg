@@ -190,6 +190,7 @@ export function Canvas({
             <div
               key={`col-${col}`}
               className={css({
+                borderLeft: "1px dashed",
                 borderRight: "1px dashed",
                 borderColor: "pageBorder",
                 opacity: 0.35,
@@ -206,6 +207,7 @@ export function Canvas({
             <div
               key={`row-${row}`}
               className={css({
+                borderTop: "1px dashed",
                 borderBottom: "1px dashed",
                 borderColor: "pageBorder",
                 opacity: 0.35,

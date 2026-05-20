@@ -28,7 +28,7 @@ export function Toolbar({
   siteUrl,
   onClear,
 }: ToolbarProps) {
-  const siteHost = siteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const siteHost = (siteUrl ?? "").replace(/^https?:\/\//, "").replace(/\/$/, "");
   const [showPush, setShowPush] = useState(false);
   const [slug, setSlug] = useState("");
   const [status, setStatus] = useState<Status>({ kind: "idle" });

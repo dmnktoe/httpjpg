@@ -1,6 +1,6 @@
 "use client";
 
-import { Headline, Paragraph } from "@httpjpg/ui";
+import { Button, Headline, Image, Marquee, MusicPlayer, Paragraph, Video } from "@httpjpg/ui";
 import type { ReactNode } from "react";
 import { css } from "styled-system/css";
 
@@ -111,50 +111,10 @@ function Placeholder({ label, sub }: { label: string; sub?: string }) {
   );
 }
 
-function ButtonPreview({ text, variant, size }: { text: string; variant?: string; size?: string }) {
-  const pad = size === "lg" ? "12px 24px" : size === "sm" ? "4px 12px" : "8px 16px";
-  const isOutline = variant === "outline";
-  const isSecondary = variant === "secondary";
-  const isDisabled = variant === "disabled";
-  return (
-    <span
-      className={css({
-        display: "inline-block",
-        fontFamily: "headline",
-        fontWeight: "bold",
-        textTransform: "uppercase",
-        letterSpacing: "wide",
-        bg: isOutline ? "transparent" : isSecondary ? "pageBg" : "pageFg",
-        color: isOutline || isSecondary ? "pageFg" : "pageBg",
-        border: "2px solid",
-        borderColor: "pageFg",
-        opacity: isDisabled ? 0.4 : 1,
-      })}
-      style={{ padding: pad }}
-    >
-      {text}
-    </span>
-  );
-}
-
-function MarqueePreview({ text }: { text: string }) {
-  return (
-    <div
-      className={css({
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        overflow: "hidden",
-        fontFamily: "headline",
-        fontSize: "xl",
-        textTransform: "uppercase",
-      })}
-    >
-      <span className={css({ whiteSpace: "nowrap", px: 2 })}>« {text} »</span>
-    </div>
-  );
-}
+type ButtonVariant = "primary" | "secondary" | "outline" | "disabled";
+type ButtonSize = "sm" | "md" | "lg";
+type VideoSource = "native" | "youtube" | "vimeo";
+type MusicSource = "mp3" | "spotify" | "soundcloud";
 
 const headline: BlokPlugin = {
   type: "headline",
@@ -236,11 +196,14 @@ const button: BlokPlugin = {
     };
   },
   preview: (d) => (
-    <ButtonPreview
-      text={str(d.text, "Button")}
-      variant={d.variant as string}
-      size={d.size as string}
-    />
+    <Button
+      variant={(str(d.variant, "primary") as ButtonVariant) || "primary"}
+      size={(str(d.size, "md") as ButtonSize) || "md"}
+      type="button"
+      tabIndex={-1}
+    >
+      {str(d.text, "Button")}
+    </Button>
   ),
 };
 
@@ -293,10 +256,11 @@ const image: BlokPlugin = {
   },
   preview: (d) =>
     d.imageUrl ? (
-      <img
+      <Image
         src={str(d.imageUrl)}
         alt={str(d.alt)}
-        className={css({ width: "100%", height: "100%", objectFit: "cover" })}
+        objectFit="cover"
+        css={{ width: "100%", height: "100%" }}
       />
     ) : (
       <Placeholder label="IMAGE" />
@@ -317,7 +281,14 @@ const video: BlokPlugin = {
   deserialize: (b) => ({ videoUrl: str(b.videoUrl), source: str(b.source, "native") }),
   preview: (d) =>
     d.videoUrl ? (
-      <Placeholder label={`VIDEO · ${str(d.source)}`} sub={str(d.videoUrl)} />
+      <Video
+        src={str(d.videoUrl)}
+        source={(str(d.source, "native") as VideoSource) || "native"}
+        controls={false}
+        autoPlay={false}
+        muted
+        css={{ width: "100%", height: "100%" }}
+      />
     ) : (
       <Placeholder label="VIDEO" />
     ),
@@ -344,7 +315,21 @@ const marquee: BlokPlugin = {
   fields: [{ key: "text", label: "Text", type: "text" }],
   serialize: (d) => ({ text: str(d.text) }),
   deserialize: (b) => ({ text: str(b.text) }),
-  preview: (d) => <MarqueePreview text={str(d.text)} />,
+  preview: (d) => (
+    <Marquee pauseOnHover>
+      <span
+        className={css({
+          fontFamily: "headline",
+          fontSize: "xl",
+          textTransform: "uppercase",
+          px: 4,
+          whiteSpace: "nowrap",
+        })}
+      >
+        {str(d.text)}
+      </span>
+    </Marquee>
+  ),
 };
 
 const musicPlayer: BlokPlugin = {
@@ -356,7 +341,17 @@ const musicPlayer: BlokPlugin = {
   fields: [{ key: "spotifyUrl", label: "Spotify URL / ID", type: "text" }],
   serialize: (d) => ({ spotifyUrl: str(d.spotifyUrl) }),
   deserialize: (b) => ({ spotifyUrl: str(b.spotifyUrl) }),
-  preview: (d) => <Placeholder label="MUSIC PLAYER" sub={str(d.spotifyUrl)} />,
+  preview: (d) =>
+    d.spotifyUrl ? (
+      <MusicPlayer
+        source={"spotify" as MusicSource}
+        src={str(d.spotifyUrl)}
+        showInfo={false}
+        showArtwork={false}
+      />
+    ) : (
+      <Placeholder label="MUSIC PLAYER" />
+    ),
 };
 
 const workCard: BlokPlugin = {

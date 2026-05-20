@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { css } from "styled-system/css";
 
-import { type ExportedGrid, GRID_COLS, type GridSettings, type Viewport } from "./lib";
+import {
+  type ExportedGrid,
+  GRID_COLS,
+  type GridSettings,
+  SPACING_OPTIONS,
+  type Viewport,
+} from "./lib";
 
 interface ToolbarProps {
   settings: GridSettings;
@@ -29,8 +35,6 @@ const VIEWPORTS: { id: Viewport; label: string }[] = [
 ];
 
 type Status = { kind: "idle" } | { kind: "ok"; text: string } | { kind: "error"; text: string };
-
-const GAP_OPTIONS = ["", "0", "1", "2", "3", "4", "6", "8", "12"];
 
 export function Toolbar({
   settings,
@@ -184,7 +188,7 @@ export function Toolbar({
       <SelectField
         label="Gap"
         value={settings.gap}
-        options={GAP_OPTIONS}
+        options={SPACING_OPTIONS}
         onChange={(v) => onSettingsChange({ ...settings, gap: v })}
       />
 
@@ -347,7 +351,7 @@ function SelectField({
 }: {
   label: string;
   value: string;
-  options: string[];
+  options: ReadonlyArray<{ value: string; label: string }>;
   onChange(v: string): void;
 }) {
   return (
@@ -366,9 +370,9 @@ function SelectField({
           fontSize: "sm",
         })}
       >
-        {options.map((v) => (
-          <option key={v} value={v}>
-            {v || "—"}
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label || "—"}
           </option>
         ))}
       </select>

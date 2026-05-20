@@ -1,3 +1,6 @@
+import { CMS_OPTIONS } from "@httpjpg/storyblok-utils";
+import { spacing } from "@httpjpg/tokens";
+
 import { blokPlugin } from "./bloks";
 
 export { BLOK_REGISTRY, type BlokPlugin, blokPlugin } from "./bloks";
@@ -6,6 +9,16 @@ export type { FieldDef, FieldType } from "./bloks";
 export const GRID_COLS = 12;
 export const ROW_HEIGHT_PX = 40;
 export const MIN_ROWS = 30;
+
+/** Pixel value for each CMS spacing token key (e.g., "4" → "1rem"). */
+export const SPACING_PX: Record<string, string> = Object.fromEntries(
+  Object.entries(spacing).map(([key, value]) => [key, value]),
+);
+
+export function spacingToPx(key?: string): string | undefined {
+  if (!key) return undefined;
+  return SPACING_PX[key];
+}
 
 export type Viewport = "base" | "md" | "lg";
 
@@ -85,25 +98,41 @@ export function patchSize(viewport: Viewport, w: number, h: number): Partial<Bui
   return { w, h };
 }
 
-export const ALIGN_SELF_OPTIONS = [
-  { value: "", label: "—" },
-  { value: "start", label: "Start" },
-  { value: "center", label: "Center" },
-  { value: "end", label: "End" },
-  { value: "stretch", label: "Stretch" },
-];
+function labelize<T extends string>(values: readonly T[]): { value: T; label: string }[] {
+  return values.map((v) => ({
+    value: v,
+    label: v.charAt(0).toUpperCase() + v.slice(1),
+  }));
+}
+
+const EMPTY_OPTION = { value: "", label: "—" } as const;
+
+export const ALIGN_SELF_OPTIONS = [EMPTY_OPTION, ...labelize(CMS_OPTIONS.alignItems)];
+
+export const JUSTIFY_SELF_OPTIONS = [EMPTY_OPTION, ...labelize(CMS_OPTIONS.justifyItems)];
+
+export const TEXT_ALIGN_OPTIONS = [EMPTY_OPTION, ...labelize(CMS_OPTIONS.textAlign)];
 
 export const SPACING_OPTIONS = [
-  { value: "", label: "—" },
-  { value: "0", label: "0" },
-  { value: "1", label: "1 (4px)" },
-  { value: "2", label: "2 (8px)" },
-  { value: "3", label: "3 (12px)" },
-  { value: "4", label: "4 (16px)" },
-  { value: "6", label: "6 (24px)" },
-  { value: "8", label: "8 (32px)" },
-  { value: "12", label: "12 (48px)" },
+  EMPTY_OPTION,
+  ...CMS_OPTIONS.spacing.map((key) => ({
+    value: key,
+    label: SPACING_PX[key] ? `${key} (${SPACING_PX[key]})` : key,
+  })),
 ];
+
+export const GRID_SPAN_OPTIONS = [
+  EMPTY_OPTION,
+  ...CMS_OPTIONS.gridSpan.map((v) => ({
+    value: v,
+    label: v === "full" ? "Full" : v,
+  })),
+];
+
+export const GRID_COLUMN_OPTIONS = CMS_OPTIONS.gridColumn.map((v) => ({
+  value: v,
+  label: v === "auto" ? "Auto" : v,
+}));
 
 function uuid(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {

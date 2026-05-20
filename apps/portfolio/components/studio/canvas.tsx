@@ -19,6 +19,7 @@ import {
   patchSize,
   ROW_HEIGHT_PX,
   type SpacingSet,
+  spacingToPx,
   type Viewport,
   VIEWPORT_WIDTH_PX,
 } from "./lib";
@@ -63,7 +64,7 @@ export function Canvas({
   const cols = effectiveColumns(settings, viewport);
   const occupiedRows = Math.max(0, ...items.map((it) => it.y + effectiveH(it, viewport)));
   const rows = Math.max(MIN_ROWS, occupiedRows + 4) + extraRows;
-  const gapPx = spacingPx(settings.gap) ?? "0";
+  const gapPx = spacingToPx(settings.gap) ?? "0";
   const maxWidth = VIEWPORT_WIDTH_PX[viewport];
 
   useEffect(() => {
@@ -460,37 +461,21 @@ function CanvasItem({
   );
 }
 
-const SPACING_PX: Record<string, string> = {
-  "0": "0",
-  "1": "0.25rem",
-  "2": "0.5rem",
-  "3": "0.75rem",
-  "4": "1rem",
-  "6": "1.5rem",
-  "8": "2rem",
-  "12": "3rem",
-};
-
-function spacingPx(key?: string): string | undefined {
-  if (!key) return undefined;
-  return SPACING_PX[key];
-}
-
 function marginStyle(s: SpacingSet): React.CSSProperties {
   return {
-    marginTop: spacingPx(s.mt),
-    marginBottom: spacingPx(s.mb),
-    marginLeft: spacingPx(s.ml),
-    marginRight: spacingPx(s.mr),
+    marginTop: spacingToPx(s.mt),
+    marginBottom: spacingToPx(s.mb),
+    marginLeft: spacingToPx(s.ml),
+    marginRight: spacingToPx(s.mr),
   };
 }
 
 function paddingStyle(s: SpacingSet): React.CSSProperties {
   return {
-    paddingTop: spacingPx(s.pt) ?? "4px",
-    paddingBottom: spacingPx(s.pb) ?? "4px",
-    paddingLeft: spacingPx(s.pl) ?? "4px",
-    paddingRight: spacingPx(s.pr) ?? "4px",
+    paddingTop: spacingToPx(s.pt) ?? "4px",
+    paddingBottom: spacingToPx(s.pb) ?? "4px",
+    paddingLeft: spacingToPx(s.pl) ?? "4px",
+    paddingRight: spacingToPx(s.pr) ?? "4px",
   };
 }
 

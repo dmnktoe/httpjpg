@@ -10,7 +10,9 @@ import {
   effectiveW,
   type FieldDef,
   GRID_COLS,
+  GRID_SPAN_OPTIONS,
   type ItemSpacing,
+  JUSTIFY_SELF_OPTIONS,
   SPACING_OPTIONS,
   type SpacingSet,
   type SpacingSide,
@@ -23,8 +25,6 @@ interface InspectorProps {
   onChange(patch: Partial<BuilderItem>): void;
   onDataChange(key: string, value: unknown): void;
 }
-
-const SPAN_CHOICES = ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "full"];
 
 const VIEWPORT_LABEL: Record<Viewport, string> = {
   base: "mobile",
@@ -150,7 +150,7 @@ function InspectorBody({ item, viewport, onChange, onDataChange }: InspectorBody
         <SelectField
           label="Col Span"
           value={ownSpan(item, viewport, "w")}
-          options={SPAN_CHOICES.map((v) => ({ value: v, label: v || "—" }))}
+          options={GRID_SPAN_OPTIONS}
           onChange={(v) =>
             writeSize("w", v === "" ? undefined : v === "full" ? GRID_COLS : Number(v))
           }
@@ -175,7 +175,7 @@ function InspectorBody({ item, viewport, onChange, onDataChange }: InspectorBody
         <SelectField
           label="Justify Self"
           value={item.justifySelf ?? ""}
-          options={ALIGN_SELF_OPTIONS}
+          options={JUSTIFY_SELF_OPTIONS}
           onChange={(v) => onChange({ justifySelf: v || undefined })}
         />
       </Group>

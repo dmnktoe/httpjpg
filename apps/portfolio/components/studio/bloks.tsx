@@ -1,5 +1,6 @@
 "use client";
 
+import { CMS_OPTIONS } from "@httpjpg/storyblok-utils";
 import { Button, Headline, Image, Marquee, MusicPlayer, Paragraph, Video } from "@httpjpg/ui";
 import type { ReactNode } from "react";
 import { css } from "styled-system/css";
@@ -11,6 +12,10 @@ export interface FieldDef {
   label: string;
   type: FieldType;
   options?: { value: string; label: string }[];
+}
+
+function labelOption<T extends string>(v: T): { value: T; label: string } {
+  return { value: v, label: v.charAt(0).toUpperCase() + v.slice(1) };
 }
 
 export interface BlokPlugin {
@@ -25,20 +30,9 @@ export interface BlokPlugin {
   preview(data: Record<string, unknown>): ReactNode;
 }
 
-const TEXT_ALIGN_OPTIONS = [
-  { value: "", label: "—" },
-  { value: "left", label: "Left" },
-  { value: "center", label: "Center" },
-  { value: "right", label: "Right" },
-];
+const TEXT_ALIGN_OPTIONS = [{ value: "", label: "—" }, ...CMS_OPTIONS.textAlign.map(labelOption)];
 
-const BUTTON_VARIANTS = [
-  { value: "primary", label: "Primary" },
-  { value: "secondary", label: "Secondary" },
-  { value: "outline", label: "Outline" },
-  { value: "disabled", label: "Disabled" },
-];
-
+const BUTTON_VARIANTS = (["primary", "secondary", "outline", "disabled"] as const).map(labelOption);
 const BUTTON_SIZES = [
   { value: "sm", label: "Small" },
   { value: "md", label: "Medium" },
@@ -51,11 +45,7 @@ const HEADLINE_LEVELS = [
   { value: "3", label: "H3" },
 ];
 
-const VIDEO_SOURCES = [
-  { value: "native", label: "Native" },
-  { value: "youtube", label: "YouTube" },
-  { value: "vimeo", label: "Vimeo" },
-];
+const VIDEO_SOURCES = (["native", "youtube", "vimeo"] as const).map(labelOption);
 
 function str(v: unknown, fallback = ""): string {
   return v == null ? fallback : String(v);

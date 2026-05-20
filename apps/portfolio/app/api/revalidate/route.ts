@@ -6,6 +6,12 @@ import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
 interface StoryblokWebhookPayload {
   action: "published" | "unpublished" | "deleted";
+  // Storyblok's current webhook format is flat — full_slug sits at the top level.
+  // The nested `story` shape is kept for forward-compat with management-API style payloads.
+  full_slug?: string;
+  story_id?: number;
+  space_id?: number;
+  text?: string;
   story?: {
     id: number;
     name: string;
@@ -40,15 +46,15 @@ export async function POST(request: NextRequest) {
     }
 
     const body = (await request.json()) as StoryblokWebhookPayload;
-    const { action, story } = body;
+    const { action } = body;
 
-    if (!story?.full_slug) {
+    const storySlug = body.story?.full_slug ?? body.full_slug;
+    const contentType = body.story?.content_type;
+
+    if (!storySlug) {
       console.warn("Webhook received without story slug", body);
       return NextResponse.json({ message: "No story slug provided" }, { status: 400 });
     }
-
-    const storySlug = story.full_slug;
-    const contentType = story.content_type;
     const revalidatedPaths: string[] = [];
     const revalidatedTags: string[] = [];
 

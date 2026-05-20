@@ -11,11 +11,14 @@ import {
   createItemId,
   effectiveColumns,
   effectiveH,
+  effectiveSpacing,
   effectiveW,
+  emptySpacing,
   type GridSettings,
   MIN_ROWS,
   patchSize,
   ROW_HEIGHT_PX,
+  type SpacingSet,
   type Viewport,
   VIEWPORT_WIDTH_PX,
 } from "./lib";
@@ -122,6 +125,7 @@ export function Canvas({
         y,
         w: Math.min(def.defaultSize.w, cols),
         h: def.defaultSize.h,
+        spacing: emptySpacing(),
         data: { ...def.defaults },
       };
       onItemsChange([...items, item]);
@@ -324,6 +328,7 @@ function CanvasItem({
   const w = Math.min(effectiveW(item, viewport), cols);
   const h = effectiveH(item, viewport);
   const x = Math.min(item.x, Math.max(0, cols - w));
+  const spacing = effectiveSpacing(item, viewport);
 
   return (
     <div
@@ -341,10 +346,7 @@ function CanvasItem({
         gridRow: `${item.y + 1} / span ${h}`,
         alignSelf: item.alignSelf || undefined,
         justifySelf: item.justifySelf || undefined,
-        marginTop: spacingPx(item.mt),
-        marginBottom: spacingPx(item.mb),
-        marginLeft: spacingPx(item.ml),
-        marginRight: spacingPx(item.mr),
+        ...marginStyle(spacing),
       }}
     >
       <button
@@ -365,7 +367,6 @@ function CanvasItem({
           display: "block",
           width: "100%",
           height: "100%",
-          padding: 1,
           boxSizing: "border-box",
           cursor: "move",
           userSelect: "none",
@@ -375,6 +376,7 @@ function CanvasItem({
           color: "pageFg",
           position: "relative",
         })}
+        style={paddingStyle(spacing)}
       >
         <div
           className={css({
@@ -472,6 +474,24 @@ const SPACING_PX: Record<string, string> = {
 function spacingPx(key?: string): string | undefined {
   if (!key) return undefined;
   return SPACING_PX[key];
+}
+
+function marginStyle(s: SpacingSet): React.CSSProperties {
+  return {
+    marginTop: spacingPx(s.mt),
+    marginBottom: spacingPx(s.mb),
+    marginLeft: spacingPx(s.ml),
+    marginRight: spacingPx(s.mr),
+  };
+}
+
+function paddingStyle(s: SpacingSet): React.CSSProperties {
+  return {
+    paddingTop: spacingPx(s.pt) ?? "4px",
+    paddingBottom: spacingPx(s.pb) ?? "4px",
+    paddingLeft: spacingPx(s.pl) ?? "4px",
+    paddingRight: spacingPx(s.pr) ?? "4px",
+  };
 }
 
 function pxFromCssValue(value?: string): number {

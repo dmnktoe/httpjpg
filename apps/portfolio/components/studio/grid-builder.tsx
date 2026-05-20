@@ -166,6 +166,7 @@ export function GridBuilder({ pushEnabled, siteUrl }: GridBuilderProps) {
         />
         <Inspector
           item={selectedItem}
+          viewport={viewport}
           onChange={handleItemChange}
           onDataChange={handleDataChange}
         />

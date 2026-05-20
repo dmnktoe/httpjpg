@@ -2,7 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { type BuilderItem, GRID_COLS, type GridSettings, type Viewport } from "./lib";
+import {
+  type BuilderItem,
+  emptySpacing,
+  GRID_COLS,
+  type GridSettings,
+  SPACING_SIDES,
+  type Viewport,
+} from "./lib";
 
 export interface StudioState {
   items: BuilderItem[];
@@ -26,6 +33,23 @@ const INITIAL: StudioState = {
   extraRows: 0,
 };
 
+function migrateItem(raw: Record<string, unknown>): BuilderItem {
+  const item = raw as Partial<BuilderItem> & Record<string, unknown>;
+  let spacing = item.spacing;
+  if (!spacing || typeof spacing !== "object" || !("base" in (spacing as object))) {
+    // v1 stored flat mt/mb/ml/mr on the item; lift onto spacing.base.
+    spacing = emptySpacing();
+    for (const side of SPACING_SIDES) {
+      const v = (raw as Record<string, unknown>)[side];
+      if (typeof v === "string" && v) spacing.base[side] = v;
+    }
+  }
+  return {
+    ...(item as BuilderItem),
+    spacing,
+  } as BuilderItem;
+}
+
 function readStored(): StudioState | null {
   if (typeof window === "undefined") return null;
   try {
@@ -33,7 +57,8 @@ function readStored(): StudioState | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<StudioState>;
     if (!parsed || !Array.isArray(parsed.items)) return null;
-    return { ...INITIAL, ...parsed };
+    const items = (parsed.items as unknown as Record<string, unknown>[]).map(migrateItem);
+    return { ...INITIAL, ...parsed, items };
   } catch {
     return null;
   }

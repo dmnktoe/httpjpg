@@ -15,6 +15,17 @@ export const VIEWPORT_WIDTH_PX: Record<Viewport, number | null> = {
   lg: null,
 };
 
+export const SPACING_SIDES = ["mt", "mb", "ml", "mr", "pt", "pb", "pl", "pr"] as const;
+export type SpacingSide = (typeof SPACING_SIDES)[number];
+
+export type SpacingSet = Partial<Record<SpacingSide, string>>;
+
+export interface ItemSpacing {
+  base: SpacingSet;
+  md: SpacingSet;
+  lg: SpacingSet;
+}
+
 export interface BuilderItem {
   id: string;
   type: string;
@@ -26,13 +37,21 @@ export interface BuilderItem {
   wLg?: number;
   hMd?: number;
   hLg?: number;
-  mt?: string;
-  mb?: string;
-  ml?: string;
-  mr?: string;
+  spacing: ItemSpacing;
   alignSelf?: string;
   justifySelf?: string;
   data: Record<string, unknown>;
+}
+
+export function emptySpacing(): ItemSpacing {
+  return { base: {}, md: {}, lg: {} };
+}
+
+export function effectiveSpacing(item: BuilderItem, viewport: Viewport): SpacingSet {
+  const { base, md, lg } = item.spacing;
+  if (viewport === "lg") return { ...base, ...md, ...lg };
+  if (viewport === "md") return { ...base, ...md };
+  return { ...base };
 }
 
 export interface GridSettings {
@@ -93,14 +112,37 @@ function uuid(): string {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
+const BREAKPOINT_SUFFIX: Record<keyof ItemSpacing, string> = {
+  base: "",
+  md: "Md",
+  lg: "Lg",
+};
+
 function withSpacing(blok: Record<string, unknown>, item: BuilderItem): Record<string, unknown> {
-  return {
-    ...blok,
-    ...(item.mt ? { mt: item.mt } : {}),
-    ...(item.mb ? { mb: item.mb } : {}),
-    ...(item.ml ? { ml: item.ml } : {}),
-    ...(item.mr ? { mr: item.mr } : {}),
-  };
+  const out: Record<string, unknown> = { ...blok };
+  for (const breakpoint of ["base", "md", "lg"] as const) {
+    const set = item.spacing[breakpoint];
+    const suffix = BREAKPOINT_SUFFIX[breakpoint];
+    for (const side of SPACING_SIDES) {
+      const v = set[side];
+      if (v) out[`${side}${suffix}`] = v;
+    }
+  }
+  return out;
+}
+
+function readSpacing(blok: Record<string, unknown>): ItemSpacing {
+  const spacing = emptySpacing();
+  for (const breakpoint of ["base", "md", "lg"] as const) {
+    const suffix = BREAKPOINT_SUFFIX[breakpoint];
+    for (const side of SPACING_SIDES) {
+      const raw = blok[`${side}${suffix}`];
+      if (raw != null && raw !== "") {
+        spacing[breakpoint][side] = String(raw);
+      }
+    }
+  }
+  return spacing;
 }
 
 export interface ExportedGrid {
@@ -256,10 +298,7 @@ export function deserializeGrid(grid: ExportedGrid): {
       wLg: optionalSpan(gi.colSpanLg),
       hMd: gi.rowSpanMd && gi.rowSpanMd > 0 ? gi.rowSpanMd : undefined,
       hLg: gi.rowSpanLg && gi.rowSpanLg > 0 ? gi.rowSpanLg : undefined,
-      mt: str(inner.mt),
-      mb: str(inner.mb),
-      ml: str(inner.ml),
-      mr: str(inner.mr),
+      spacing: readSpacing(inner as Record<string, unknown>),
       alignSelf: str(gi.alignSelf),
       justifySelf: str(gi.justifySelf),
       data,

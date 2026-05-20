@@ -391,10 +391,6 @@ pnpm format:check
 - Commit messages follow Conventional Commits (`commitlint` runs on `commit-msg`).
 - No console.log in shipped code paths; `console.error` / `console.warn` are acceptable for genuine error reporting that complements Sentry.
 
-### Releases
-
-Versioning and release notes are driven by [Changesets](https://github.com/changesets/changesets) in simple-mode: one shared version across all `@httpjpg/*` packages, one root `CHANGELOG.md`, one `vX.Y.Z` tag. When a PR introduces a user-visible change, run `pnpm changeset`, commit the generated `.changeset/*.md`, and merge — the Release workflow handles the rest. Full flow: [`RELEASING.md`](./RELEASING.md).
-
 ### Adding dependencies
 
 - Use `pnpm add` from the **specific package directory**, not the root.

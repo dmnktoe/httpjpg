@@ -15,15 +15,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "changeset": "changeset",
-    "release:version": "node scripts/release-version.mjs",
-    "release:publish": "node scripts/release-publish.mjs",
     "clean": "turbo run clean && rm -rf node_modules",
     "prepare": "husky",
     "postinstall": "turbo run build --filter=@httpjpg/tokens --filter=@httpjpg/ui"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.10",
     "@commitlint/cli": "^21.0.0",
     "@commitlint/config-conventional": "^21.0.0",
     "@commitlint/types": "21.0.1",

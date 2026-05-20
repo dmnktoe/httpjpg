@@ -8,7 +8,7 @@ import {
   type FieldDef,
   GRID_COLS,
   SPACING_OPTIONS,
-  blokDef,
+  blokPlugin,
 } from "./lib";
 
 interface InspectorProps {
@@ -61,7 +61,7 @@ interface InspectorBodyProps {
 }
 
 function InspectorBody({ item, onChange, onDataChange }: InspectorBodyProps) {
-  const def = blokDef(item.type);
+  const def = blokPlugin(item.type);
 
   return (
     <div className={css({ display: "flex", flexDirection: "column", gap: 3 })}>

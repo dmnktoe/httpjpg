@@ -6,7 +6,7 @@ import { css } from "styled-system/css";
 import { BlokPreview } from "./blok-preview";
 import {
   type BuilderItem,
-  blokDef,
+  blokPlugin,
   clamp,
   createItemId,
   effectiveColumns,
@@ -104,7 +104,7 @@ export function Canvas({
       e.preventDefault();
       const type = e.dataTransfer.getData("application/x-blok-type");
       if (!type) return;
-      const def = blokDef(type);
+      const def = blokPlugin(type);
       if (!def) return;
       const rect = e.currentTarget.getBoundingClientRect();
       const gapValue = pxFromCssValue(gapPx);
@@ -320,7 +320,7 @@ function CanvasItem({
   onStartDrag,
   onDelete,
 }: CanvasItemProps) {
-  const def = blokDef(item.type);
+  const def = blokPlugin(item.type);
   const w = Math.min(effectiveW(item, viewport), cols);
   const h = effectiveH(item, viewport);
   const x = Math.min(item.x, Math.max(0, cols - w));

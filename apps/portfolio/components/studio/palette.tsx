@@ -2,15 +2,15 @@
 
 import { css } from "styled-system/css";
 
-import { BLOK_CATALOG, type BlokDef } from "./lib";
+import { BLOK_REGISTRY, type BlokPlugin } from "./lib";
 
 interface PaletteProps {
-  onDragStart(blok: BlokDef): void;
+  onDragStart(blok: BlokPlugin): void;
   onDragEnd(): void;
 }
 
 export function Palette({ onDragStart, onDragEnd }: PaletteProps) {
-  const grouped = BLOK_CATALOG.reduce<Record<string, BlokDef[]>>((acc, b) => {
+  const grouped = BLOK_REGISTRY.reduce<Record<string, BlokPlugin[]>>((acc, b) => {
     (acc[b.group] ||= []).push(b);
     return acc;
   }, {});

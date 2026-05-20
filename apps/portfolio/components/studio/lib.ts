@@ -1,3 +1,8 @@
+import { blokPlugin } from "./bloks";
+
+export { BLOK_REGISTRY, type BlokPlugin, blokPlugin } from "./bloks";
+export type { FieldDef, FieldType } from "./bloks";
+
 export const GRID_COLS = 12;
 export const ROW_HEIGHT_PX = 40;
 export const MIN_ROWS = 30;
@@ -30,6 +35,13 @@ export interface BuilderItem {
   data: Record<string, unknown>;
 }
 
+export interface GridSettings {
+  columns: number;
+  columnsMd?: number;
+  columnsLg?: number;
+  gap: string;
+}
+
 export function effectiveColumns(settings: GridSettings, viewport: Viewport): number {
   if (viewport === "lg") return settings.columnsLg ?? settings.columnsMd ?? settings.columns;
   if (viewport === "md") return settings.columnsMd ?? settings.columns;
@@ -54,63 +66,6 @@ export function patchSize(viewport: Viewport, w: number, h: number): Partial<Bui
   return { w, h };
 }
 
-export interface GridSettings {
-  columns: number;
-  columnsMd?: number;
-  columnsLg?: number;
-  gap: string;
-}
-
-export type FieldType = "text" | "textarea" | "number" | "boolean" | "select" | "assetUrl";
-
-export interface FieldDef {
-  key: string;
-  label: string;
-  type: FieldType;
-  options?: { value: string; label: string }[];
-}
-
-export interface BlokDef {
-  type: string;
-  label: string;
-  group: string;
-  defaultSize: { w: number; h: number };
-  defaults: Record<string, unknown>;
-  fields: FieldDef[];
-}
-
-const TEXT_ALIGN_OPTIONS = [
-  { value: "", label: "—" },
-  { value: "left", label: "Left" },
-  { value: "center", label: "Center" },
-  { value: "right", label: "Right" },
-];
-
-const BUTTON_VARIANTS = [
-  { value: "primary", label: "Primary" },
-  { value: "secondary", label: "Secondary" },
-  { value: "outline", label: "Outline" },
-  { value: "disabled", label: "Disabled" },
-];
-
-const BUTTON_SIZES = [
-  { value: "sm", label: "Small" },
-  { value: "md", label: "Medium" },
-  { value: "lg", label: "Large" },
-];
-
-const HEADLINE_LEVELS = [
-  { value: "1", label: "H1" },
-  { value: "2", label: "H2" },
-  { value: "3", label: "H3" },
-];
-
-const VIDEO_SOURCES = [
-  { value: "native", label: "Native" },
-  { value: "youtube", label: "YouTube" },
-  { value: "vimeo", label: "Vimeo" },
-];
-
 export const ALIGN_SELF_OPTIONS = [
   { value: "", label: "—" },
   { value: "start", label: "Start" },
@@ -131,172 +86,11 @@ export const SPACING_OPTIONS = [
   { value: "12", label: "12 (48px)" },
 ];
 
-export const BLOK_CATALOG: BlokDef[] = [
-  {
-    type: "headline",
-    label: "Headline",
-    group: "Content",
-    defaultSize: { w: 12, h: 2 },
-    defaults: { text: "Headline", level: "2" },
-    fields: [
-      { key: "text", label: "Text", type: "text" },
-      { key: "level", label: "Level", type: "select", options: HEADLINE_LEVELS },
-      { key: "align", label: "Align", type: "select", options: TEXT_ALIGN_OPTIONS },
-    ],
-  },
-  {
-    type: "paragraph",
-    label: "Paragraph",
-    group: "Content",
-    defaultSize: { w: 6, h: 3 },
-    defaults: { text: "Lorem ipsum dolor sit amet." },
-    fields: [
-      { key: "text", label: "Text", type: "textarea" },
-      { key: "align", label: "Align", type: "select", options: TEXT_ALIGN_OPTIONS },
-    ],
-  },
-  {
-    type: "button",
-    label: "Button",
-    group: "Content",
-    defaultSize: { w: 3, h: 2 },
-    defaults: { text: "Click", variant: "primary", size: "md", type: "button" },
-    fields: [
-      { key: "text", label: "Text", type: "text" },
-      { key: "variant", label: "Variant", type: "select", options: BUTTON_VARIANTS },
-      { key: "size", label: "Size", type: "select", options: BUTTON_SIZES },
-      { key: "linkUrl", label: "Link URL", type: "text" },
-    ],
-  },
-  {
-    type: "richtext",
-    label: "Rich Text",
-    group: "Content",
-    defaultSize: { w: 8, h: 4 },
-    defaults: { content: "" },
-    fields: [{ key: "content", label: "Plain text (wrapped as richtext)", type: "textarea" }],
-  },
-  {
-    type: "image",
-    label: "Image",
-    group: "Media",
-    defaultSize: { w: 6, h: 4 },
-    defaults: { imageUrl: "", alt: "" },
-    fields: [
-      { key: "imageUrl", label: "Image URL", type: "assetUrl" },
-      { key: "alt", label: "Alt Text", type: "text" },
-    ],
-  },
-  {
-    type: "video",
-    label: "Video",
-    group: "Media",
-    defaultSize: { w: 8, h: 5 },
-    defaults: { videoUrl: "", source: "youtube" },
-    fields: [
-      { key: "videoUrl", label: "Video URL", type: "text" },
-      { key: "source", label: "Source", type: "select", options: VIDEO_SOURCES },
-    ],
-  },
-  {
-    type: "slideshow",
-    label: "Slideshow",
-    group: "Media",
-    defaultSize: { w: 12, h: 6 },
-    defaults: {},
-    fields: [],
-  },
-  {
-    type: "marquee",
-    label: "Marquee",
-    group: "Media",
-    defaultSize: { w: 12, h: 2 },
-    defaults: { text: "Scrolling text" },
-    fields: [{ key: "text", label: "Text", type: "text" }],
-  },
-  {
-    type: "music_player",
-    label: "Music Player",
-    group: "Widgets",
-    defaultSize: { w: 6, h: 4 },
-    defaults: { spotifyUrl: "" },
-    fields: [{ key: "spotifyUrl", label: "Spotify URL / ID", type: "text" }],
-  },
-  {
-    type: "work_card",
-    label: "Work Card",
-    group: "Widgets",
-    defaultSize: { w: 4, h: 5 },
-    defaults: { workUuid: "" },
-    fields: [{ key: "workUuid", label: "Work Story UUID", type: "text" }],
-  },
-  {
-    type: "work_list",
-    label: "Work List",
-    group: "Widgets",
-    defaultSize: { w: 12, h: 6 },
-    defaults: {},
-    fields: [],
-  },
-];
-
-export function blokDef(type: string): BlokDef | undefined {
-  return BLOK_CATALOG.find((b) => b.type === type);
-}
-
 function uuid(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
   }
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
-}
-
-function serializeBlokData(type: string, data: Record<string, unknown>): Record<string, unknown> {
-  switch (type) {
-    case "image":
-      return {
-        image: data.imageUrl ? { filename: data.imageUrl, alt: data.alt ?? "" } : null,
-        alt: data.alt ?? "",
-      };
-    case "button":
-      return {
-        text: data.text ?? "",
-        variant: data.variant ?? "primary",
-        size: data.size ?? "md",
-        type: data.type ?? "button",
-        link: data.linkUrl ? { url: data.linkUrl, linktype: "url" } : { linktype: "url" },
-      };
-    case "richtext":
-      return {
-        content: {
-          type: "doc",
-          content: data.content
-            ? [{ type: "paragraph", content: [{ type: "text", text: String(data.content) }] }]
-            : [],
-        },
-      };
-    case "work_card":
-      return { work: data.workUuid ?? "" };
-    case "music_player":
-      return { spotifyUrl: data.spotifyUrl ?? "" };
-    case "marquee":
-      return { text: data.text ?? "" };
-    case "video":
-      return { videoUrl: data.videoUrl ?? "", source: data.source ?? "native" };
-    case "headline":
-      return {
-        text: data.text ?? "",
-        level: data.level ?? "2",
-        align: data.align ?? "",
-      };
-    case "paragraph":
-      return {
-        text: data.text ?? "",
-        align: data.align ?? "",
-      };
-    default:
-      return { ...data };
-  }
 }
 
 function withSpacing(blok: Record<string, unknown>, item: BuilderItem): Record<string, unknown> {
@@ -354,12 +148,10 @@ export function serializeGrid(settings: GridSettings, items: BuilderItem[]): Exp
       .slice()
       .sort((a, b) => a.y - b.y || a.x - b.x)
       .map<ExportedGridItem>((it) => {
-        const child: ExportedBlok = withSpacing(
-          {
-            component: it.type,
-            _uid: uuid(),
-            ...serializeBlokData(it.type, it.data),
-          },
+        const plugin = blokPlugin(it.type);
+        const serialized = plugin ? plugin.serialize(it.data) : { ...it.data };
+        const child = withSpacing(
+          { component: it.type, _uid: uuid(), ...serialized },
           it,
         ) as ExportedBlok;
         return {
@@ -379,6 +171,64 @@ export function serializeGrid(settings: GridSettings, items: BuilderItem[]): Exp
         };
       }),
   };
+}
+
+function parseSpan(value: unknown, fallback: number): number {
+  if (value == null || value === "") return fallback;
+  if (value === "full") return GRID_COLS;
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
+function optionalSpan(value: unknown): number | undefined {
+  if (value == null || value === "") return undefined;
+  if (value === "full") return GRID_COLS;
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+}
+
+function str(v: unknown): string | undefined {
+  if (v == null || v === "") return undefined;
+  return String(v);
+}
+
+export function deserializeGrid(grid: ExportedGrid): {
+  settings: GridSettings;
+  items: BuilderItem[];
+} {
+  const settings: GridSettings = {
+    columns: parseSpan(grid.columns, GRID_COLS),
+    columnsMd: grid.columnsMd ? parseSpan(grid.columnsMd, GRID_COLS) : undefined,
+    columnsLg: grid.columnsLg ? parseSpan(grid.columnsLg, GRID_COLS) : undefined,
+    gap: grid.gap ?? "",
+  };
+
+  const items: BuilderItem[] = (grid.items ?? []).map((gi) => {
+    const inner = gi.content?.[0] ?? { component: "missing", _uid: "" };
+    const plugin = blokPlugin(inner.component);
+    const data = plugin ? plugin.deserialize(inner) : { ...inner };
+    return {
+      id: createItemId(),
+      type: inner.component,
+      x: Math.max(0, (gi.colStart ?? 1) - 1),
+      y: Math.max(0, (gi.rowStart ?? 1) - 1),
+      w: parseSpan(gi.colSpan, plugin?.defaultSize.w ?? 1),
+      h: typeof gi.rowSpan === "number" ? gi.rowSpan : Number(gi.rowSpan ?? 1) || 1,
+      wMd: optionalSpan(gi.colSpanMd),
+      wLg: optionalSpan(gi.colSpanLg),
+      hMd: gi.rowSpanMd && gi.rowSpanMd > 0 ? gi.rowSpanMd : undefined,
+      hLg: gi.rowSpanLg && gi.rowSpanLg > 0 ? gi.rowSpanLg : undefined,
+      mt: str(inner.mt),
+      mb: str(inner.mb),
+      ml: str(inner.ml),
+      mr: str(inner.mr),
+      alignSelf: str(gi.alignSelf),
+      justifySelf: str(gi.justifySelf),
+      data,
+    };
+  });
+
+  return { settings, items };
 }
 
 export function clamp(value: number, min: number, max: number): number {

@@ -178,16 +178,29 @@ export function Canvas({
             width: "100%",
             border: "1px solid",
             borderColor: "pageBorder",
-            backgroundImage: `linear-gradient(to right, var(--colors-page-border) 1px, transparent 1px), linear-gradient(to bottom, var(--colors-page-border) 1px, transparent 1px)`,
           })}
           style={{
             minHeight: `${rows * ROW_HEIGHT_PX}px`,
             gridTemplateColumns: `repeat(${cols}, 1fr)`,
             gridAutoRows: `${ROW_HEIGHT_PX}px`,
             gap: gapPx,
-            backgroundSize: `calc(100% / ${cols}) ${ROW_HEIGHT_PX}px`,
           }}
         >
+          {Array.from({ length: cols }, (_, i) => i + 1).map((col) => (
+            <div
+              key={`col-${col}`}
+              className={css({
+                gridRow: "1 / -1",
+                borderRight: "1px dashed",
+                borderColor: "pageBorder",
+                opacity: 0.4,
+                pointerEvents: "none",
+                _last: { borderRight: "none" },
+              })}
+              style={{ gridColumn: `${col} / span 1` }}
+              aria-hidden
+            />
+          ))}
           {hoverCell && drag === null && (
             <div
               className={css({
@@ -301,10 +314,8 @@ function CanvasItem({
         borderColor: selected ? "pageFg" : "pageBorder",
         bg: "pageBg",
         color: "pageFg",
-        outline: selected ? "1px solid" : "none",
-        outlineColor: "pageFg",
-        outlineOffset: "1px",
-        display: "flex",
+        boxSizing: "border-box",
+        boxShadow: selected ? "inset 0 0 0 1px var(--colors-page-fg)" : "none",
       })}
       style={{
         gridColumn: `${x + 1} / span ${w}`,
@@ -373,56 +384,57 @@ function CanvasItem({
         <BlokPreview item={item} />
       </button>
       {selected && (
-        <>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}
-            onPointerDown={(e) => e.stopPropagation()}
-            className={css({
-              position: "absolute",
-              top: 1,
-              right: 1,
-              width: "20px",
-              height: "20px",
-              border: "1px solid",
-              borderColor: "pageFg",
-              bg: "pageBg",
-              color: "pageFg",
-              cursor: "pointer",
-              fontSize: "sm",
-              lineHeight: 1,
-              zIndex: 3,
-              _hover: { bg: "pageFg", color: "pageBg" },
-            })}
-            aria-label="Delete"
-          >
-            ×
-          </button>
-          <button
-            type="button"
-            aria-label="Resize"
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              onStartDrag("resize", e);
-            }}
-            className={css({
-              all: "unset",
-              position: "absolute",
-              right: 0,
-              bottom: 0,
-              width: "14px",
-              height: "14px",
-              bg: "pageFg",
-              cursor: "se-resize",
-              touchAction: "none",
-              zIndex: 3,
-            })}
-          />
-        </>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          className={css({
+            position: "absolute",
+            top: 1,
+            right: 1,
+            width: "20px",
+            height: "20px",
+            border: "1px solid",
+            borderColor: "pageFg",
+            bg: "pageBg",
+            color: "pageFg",
+            cursor: "pointer",
+            fontSize: "sm",
+            lineHeight: 1,
+            zIndex: 3,
+            _hover: { bg: "pageFg", color: "pageBg" },
+          })}
+          aria-label="Delete"
+        >
+          ×
+        </button>
       )}
+      <button
+        type="button"
+        aria-label="Resize"
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          onStartDrag("resize", e);
+        }}
+        onClick={(e) => e.stopPropagation()}
+        className={css({
+          all: "unset",
+          position: "absolute",
+          right: "-1px",
+          bottom: "-1px",
+          width: "14px",
+          height: "14px",
+          bg: "pageFg",
+          cursor: "se-resize",
+          touchAction: "none",
+          zIndex: 3,
+          opacity: selected ? 1 : 0.4,
+          _hover: { opacity: 1 },
+        })}
+      />
     </div>
   );
 }

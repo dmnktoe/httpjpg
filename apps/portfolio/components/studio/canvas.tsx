@@ -193,11 +193,24 @@ export function Canvas({
                 gridRow: "1 / -1",
                 borderRight: "1px dashed",
                 borderColor: "pageBorder",
-                opacity: 0.4,
+                opacity: 0.35,
                 pointerEvents: "none",
-                _last: { borderRight: "none" },
               })}
               style={{ gridColumn: `${col} / span 1` }}
+              aria-hidden
+            />
+          ))}
+          {Array.from({ length: rows }, (_, i) => i + 1).map((row) => (
+            <div
+              key={`row-${row}`}
+              className={css({
+                gridColumn: "1 / -1",
+                borderBottom: "1px dashed",
+                borderColor: "pageBorder",
+                opacity: 0.35,
+                pointerEvents: "none",
+              })}
+              style={{ gridRow: `${row} / span 1` }}
               aria-hidden
             />
           ))}

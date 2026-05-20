@@ -50,16 +50,18 @@ export function Canvas({
   const cols = settings.columns;
   const occupiedRows = Math.max(0, ...items.map((it) => it.y + it.h));
   const rows = Math.max(MIN_ROWS, occupiedRows + 4) + extraRows;
+  const gapPx = spacingPx(settings.gap) ?? "0";
 
   useEffect(() => {
     if (!drag) return;
     const onMove = (e: globalThis.PointerEvent) => {
       const el = containerRef.current;
       if (!el) return;
-      const cw = el.clientWidth / cols;
+      const gapValue = pxFromCssValue(gapPx);
+      const cw = (el.clientWidth - (cols - 1) * gapValue) / cols;
       if (!cw) return;
-      const dxCells = Math.round((e.clientX - drag.startX) / cw);
-      const dyCells = Math.round((e.clientY - drag.startY) / ROW_HEIGHT_PX);
+      const dxCells = Math.round((e.clientX - drag.startX) / (cw + gapValue));
+      const dyCells = Math.round((e.clientY - drag.startY) / (ROW_HEIGHT_PX + gapValue));
 
       const current = itemsRef.current;
       if (drag.mode === "move") {
@@ -81,7 +83,7 @@ export function Canvas({
       window.removeEventListener("pointerup", onUp);
       window.removeEventListener("pointercancel", onUp);
     };
-  }, [drag, cols, onItemsChange]);
+  }, [drag, cols, gapPx, onItemsChange]);
 
   const handleDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
@@ -91,9 +93,14 @@ export function Canvas({
       const def = blokDef(type);
       if (!def) return;
       const rect = e.currentTarget.getBoundingClientRect();
-      const cw = rect.width / cols;
-      const x = clamp(Math.floor((e.clientX - rect.left) / cw), 0, cols - def.defaultSize.w);
-      const y = Math.max(0, Math.floor((e.clientY - rect.top) / ROW_HEIGHT_PX));
+      const gapValue = pxFromCssValue(gapPx);
+      const cw = (rect.width - (cols - 1) * gapValue) / cols;
+      const x = clamp(
+        Math.floor((e.clientX - rect.left) / (cw + gapValue)),
+        0,
+        cols - def.defaultSize.w,
+      );
+      const y = Math.max(0, Math.floor((e.clientY - rect.top) / (ROW_HEIGHT_PX + gapValue)));
       const item: BuilderItem = {
         id: createItemId(),
         type,
@@ -115,12 +122,13 @@ export function Canvas({
       e.preventDefault();
       e.dataTransfer.dropEffect = "copy";
       const rect = e.currentTarget.getBoundingClientRect();
-      const cw = rect.width / cols;
-      const x = clamp(Math.floor((e.clientX - rect.left) / cw), 0, cols - 1);
-      const y = Math.max(0, Math.floor((e.clientY - rect.top) / ROW_HEIGHT_PX));
+      const gapValue = pxFromCssValue(gapPx);
+      const cw = (rect.width - (cols - 1) * gapValue) / cols;
+      const x = clamp(Math.floor((e.clientX - rect.left) / (cw + gapValue)), 0, cols - 1);
+      const y = Math.max(0, Math.floor((e.clientY - rect.top) / (ROW_HEIGHT_PX + gapValue)));
       setHoverCell({ x, y });
     },
-    [cols],
+    [cols, gapPx],
   );
 
   return (
@@ -150,25 +158,29 @@ export function Canvas({
           position: "relative",
           display: "grid",
           width: "100%",
+          border: "1px solid",
+          borderColor: "pageBorder",
+          backgroundImage: `linear-gradient(to right, var(--colors-page-border) 1px, transparent 1px), linear-gradient(to bottom, var(--colors-page-border) 1px, transparent 1px)`,
+        })}
+        style={{
           minHeight: `${rows * ROW_HEIGHT_PX}px`,
           gridTemplateColumns: `repeat(${cols}, 1fr)`,
           gridAutoRows: `${ROW_HEIGHT_PX}px`,
-          gap: 0,
-          backgroundImage: `linear-gradient(to right, var(--colors-page-border) 1px, transparent 1px), linear-gradient(to bottom, var(--colors-page-border) 1px, transparent 1px)`,
+          gap: gapPx,
           backgroundSize: `calc(100% / ${cols}) ${ROW_HEIGHT_PX}px`,
-          border: "1px solid",
-          borderColor: "pageBorder",
-        })}
+        }}
       >
         {hoverCell && drag === null && (
           <div
             className={css({
-              gridColumn: `${hoverCell.x + 1} / span 1`,
-              gridRow: `${hoverCell.y + 1} / span 1`,
               bg: "pageFg",
               opacity: 0.1,
               pointerEvents: "none",
             })}
+            style={{
+              gridColumn: `${hoverCell.x + 1} / span 1`,
+              gridRow: `${hoverCell.y + 1} / span 1`,
+            }}
           />
         )}
         {items.map((it) => (
@@ -239,8 +251,6 @@ function CanvasItem({ item, selected, onSelect, onStartDrag, onDelete }: CanvasI
   return (
     <div
       className={css({
-        gridColumn: `${item.x + 1} / span ${item.w}`,
-        gridRow: `${item.y + 1} / span ${item.h}`,
         position: "relative",
         border: "1px solid",
         borderColor: selected ? "pageFg" : "pageBorder",
@@ -250,10 +260,12 @@ function CanvasItem({ item, selected, onSelect, onStartDrag, onDelete }: CanvasI
         outlineColor: "pageFg",
         outlineOffset: "1px",
         display: "flex",
-        alignSelf: (item.alignSelf as "start" | "center" | "end" | "stretch") || undefined,
-        justifySelf: (item.justifySelf as "start" | "center" | "end" | "stretch") || undefined,
       })}
       style={{
+        gridColumn: `${item.x + 1} / span ${item.w}`,
+        gridRow: `${item.y + 1} / span ${item.h}`,
+        alignSelf: item.alignSelf || undefined,
+        justifySelf: item.justifySelf || undefined,
         marginTop: spacingPx(item.mt),
         marginBottom: spacingPx(item.mb),
         marginLeft: spacingPx(item.ml),
@@ -384,4 +396,12 @@ const SPACING_PX: Record<string, string> = {
 function spacingPx(key?: string): string | undefined {
   if (!key) return undefined;
   return SPACING_PX[key];
+}
+
+function pxFromCssValue(value?: string): number {
+  if (!value) return 0;
+  if (value.endsWith("rem")) return Number.parseFloat(value) * 16;
+  if (value.endsWith("px")) return Number.parseFloat(value);
+  const n = Number.parseFloat(value);
+  return Number.isFinite(n) ? n : 0;
 }

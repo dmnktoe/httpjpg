@@ -18,9 +18,10 @@ const DEFAULT_SETTINGS: GridSettings = {
 
 interface GridBuilderProps {
   pushEnabled: boolean;
+  siteUrl: string;
 }
 
-export function GridBuilder({ pushEnabled }: GridBuilderProps) {
+export function GridBuilder({ pushEnabled, siteUrl }: GridBuilderProps) {
   const [items, setItems] = useState<BuilderItem[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [settings, setSettings] = useState<GridSettings>(DEFAULT_SETTINGS);
@@ -69,6 +70,7 @@ export function GridBuilder({ pushEnabled }: GridBuilderProps) {
         exported={exported}
         itemCount={items.length}
         pushEnabled={pushEnabled}
+        siteUrl={siteUrl}
         onClear={() => {
           setItems([]);
           setSelectedId(null);

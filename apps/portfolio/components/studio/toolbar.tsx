@@ -11,6 +11,7 @@ interface ToolbarProps {
   exported: ExportedGrid;
   itemCount: number;
   pushEnabled: boolean;
+  siteUrl: string;
   onClear(): void;
 }
 
@@ -24,8 +25,10 @@ export function Toolbar({
   exported,
   itemCount,
   pushEnabled,
+  siteUrl,
   onClear,
 }: ToolbarProps) {
+  const siteHost = siteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
   const [showPush, setShowPush] = useState(false);
   const [slug, setSlug] = useState("");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -80,14 +83,28 @@ export function Toolbar({
         alignItems: "center",
       })}
     >
-      <strong
+      <span
         className={css({
-          textTransform: "uppercase",
-          letterSpacing: "wide",
+          fontFamily: "mono",
+          fontSize: "sm",
+          display: "inline-flex",
+          gap: 1,
+          alignItems: "baseline",
         })}
       >
-        Grid Studio
-      </strong>
+        <span>hello</span>
+        <a
+          href={siteUrl || "/"}
+          className={css({
+            color: "pageFg",
+            textDecoration: "underline",
+            _hover: { opacity: 0.7 },
+          })}
+        >
+          {siteHost || "httpjpg"}
+        </a>
+        <span className={css({ opacity: 0.6 })}>/ Studio</span>
+      </span>
       <span className={css({ opacity: 0.6 })}>{itemCount} items</span>
 
       <Divider />

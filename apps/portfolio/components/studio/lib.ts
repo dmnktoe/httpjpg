@@ -1,5 +1,6 @@
 export const GRID_COLS = 12;
 export const ROW_HEIGHT_PX = 40;
+export const MIN_ROWS = 30;
 
 export interface BuilderItem {
   id: string;
@@ -10,6 +11,12 @@ export interface BuilderItem {
   h: number;
   wMd?: number;
   wLg?: number;
+  mt?: string;
+  mb?: string;
+  ml?: string;
+  mr?: string;
+  alignSelf?: string;
+  justifySelf?: string;
   data: Record<string, unknown>;
 }
 
@@ -36,7 +43,6 @@ export interface BlokDef {
   defaultSize: { w: number; h: number };
   defaults: Record<string, unknown>;
   fields: FieldDef[];
-  preview(data: Record<string, unknown>): string;
 }
 
 const TEXT_ALIGN_OPTIONS = [
@@ -71,6 +77,26 @@ const VIDEO_SOURCES = [
   { value: "vimeo", label: "Vimeo" },
 ];
 
+export const ALIGN_SELF_OPTIONS = [
+  { value: "", label: "—" },
+  { value: "start", label: "Start" },
+  { value: "center", label: "Center" },
+  { value: "end", label: "End" },
+  { value: "stretch", label: "Stretch" },
+];
+
+export const SPACING_OPTIONS = [
+  { value: "", label: "—" },
+  { value: "0", label: "0" },
+  { value: "1", label: "1 (4px)" },
+  { value: "2", label: "2 (8px)" },
+  { value: "3", label: "3 (12px)" },
+  { value: "4", label: "4 (16px)" },
+  { value: "6", label: "6 (24px)" },
+  { value: "8", label: "8 (32px)" },
+  { value: "12", label: "12 (48px)" },
+];
+
 export const BLOK_CATALOG: BlokDef[] = [
   {
     type: "headline",
@@ -83,7 +109,6 @@ export const BLOK_CATALOG: BlokDef[] = [
       { key: "level", label: "Level", type: "select", options: HEADLINE_LEVELS },
       { key: "align", label: "Align", type: "select", options: TEXT_ALIGN_OPTIONS },
     ],
-    preview: (d) => String(d.text ?? "Headline"),
   },
   {
     type: "paragraph",
@@ -95,7 +120,6 @@ export const BLOK_CATALOG: BlokDef[] = [
       { key: "text", label: "Text", type: "textarea" },
       { key: "align", label: "Align", type: "select", options: TEXT_ALIGN_OPTIONS },
     ],
-    preview: (d) => String(d.text ?? ""),
   },
   {
     type: "button",
@@ -109,7 +133,6 @@ export const BLOK_CATALOG: BlokDef[] = [
       { key: "size", label: "Size", type: "select", options: BUTTON_SIZES },
       { key: "linkUrl", label: "Link URL", type: "text" },
     ],
-    preview: (d) => `[ ${d.text ?? "Button"} ]`,
   },
   {
     type: "richtext",
@@ -118,7 +141,6 @@ export const BLOK_CATALOG: BlokDef[] = [
     defaultSize: { w: 8, h: 4 },
     defaults: { content: "" },
     fields: [{ key: "content", label: "Plain text (wrapped as richtext)", type: "textarea" }],
-    preview: (d) => String(d.content ?? ""),
   },
   {
     type: "image",
@@ -130,7 +152,6 @@ export const BLOK_CATALOG: BlokDef[] = [
       { key: "imageUrl", label: "Image URL", type: "assetUrl" },
       { key: "alt", label: "Alt Text", type: "text" },
     ],
-    preview: (d) => (d.imageUrl ? `IMG ${d.imageUrl}` : "IMG —"),
   },
   {
     type: "video",
@@ -142,7 +163,6 @@ export const BLOK_CATALOG: BlokDef[] = [
       { key: "videoUrl", label: "Video URL", type: "text" },
       { key: "source", label: "Source", type: "select", options: VIDEO_SOURCES },
     ],
-    preview: (d) => (d.videoUrl ? `VIDEO ${d.videoUrl}` : "VIDEO —"),
   },
   {
     type: "slideshow",
@@ -151,7 +171,6 @@ export const BLOK_CATALOG: BlokDef[] = [
     defaultSize: { w: 12, h: 6 },
     defaults: {},
     fields: [],
-    preview: () => "SLIDESHOW (configure in CMS)",
   },
   {
     type: "marquee",
@@ -160,7 +179,6 @@ export const BLOK_CATALOG: BlokDef[] = [
     defaultSize: { w: 12, h: 2 },
     defaults: { text: "Scrolling text" },
     fields: [{ key: "text", label: "Text", type: "text" }],
-    preview: (d) => `« ${d.text ?? ""} »`,
   },
   {
     type: "music_player",
@@ -169,7 +187,6 @@ export const BLOK_CATALOG: BlokDef[] = [
     defaultSize: { w: 6, h: 4 },
     defaults: { spotifyUrl: "" },
     fields: [{ key: "spotifyUrl", label: "Spotify URL / ID", type: "text" }],
-    preview: (d) => (d.spotifyUrl ? `♪ ${d.spotifyUrl}` : "♪ —"),
   },
   {
     type: "work_card",
@@ -178,7 +195,6 @@ export const BLOK_CATALOG: BlokDef[] = [
     defaultSize: { w: 4, h: 5 },
     defaults: { workUuid: "" },
     fields: [{ key: "workUuid", label: "Work Story UUID", type: "text" }],
-    preview: (d) => (d.workUuid ? `WORK ${d.workUuid}` : "WORK —"),
   },
   {
     type: "work_list",
@@ -187,7 +203,6 @@ export const BLOK_CATALOG: BlokDef[] = [
     defaultSize: { w: 12, h: 6 },
     defaults: {},
     fields: [],
-    preview: () => "WORK LIST (configure in CMS)",
   },
 ];
 
@@ -250,6 +265,16 @@ function serializeBlokData(type: string, data: Record<string, unknown>): Record<
   }
 }
 
+function withSpacing(blok: Record<string, unknown>, item: BuilderItem): Record<string, unknown> {
+  return {
+    ...blok,
+    ...(item.mt ? { mt: item.mt } : {}),
+    ...(item.mb ? { mb: item.mb } : {}),
+    ...(item.ml ? { ml: item.ml } : {}),
+    ...(item.mr ? { mr: item.mr } : {}),
+  };
+}
+
 export interface ExportedGrid {
   component: "grid";
   _uid: string;
@@ -269,6 +294,8 @@ export interface ExportedGridItem {
   colSpanMd?: string;
   colSpanLg?: string;
   rowSpan: number;
+  alignSelf?: string;
+  justifySelf?: string;
   content: ExportedBlok[];
 }
 
@@ -291,11 +318,14 @@ export function serializeGrid(settings: GridSettings, items: BuilderItem[]): Exp
       .slice()
       .sort((a, b) => a.y - b.y || a.x - b.x)
       .map<ExportedGridItem>((it) => {
-        const child: ExportedBlok = {
-          component: it.type,
-          _uid: uuid(),
-          ...serializeBlokData(it.type, it.data),
-        };
+        const child: ExportedBlok = withSpacing(
+          {
+            component: it.type,
+            _uid: uuid(),
+            ...serializeBlokData(it.type, it.data),
+          },
+          it,
+        ) as ExportedBlok;
         return {
           component: "grid_item",
           _uid: uuid(),
@@ -305,6 +335,8 @@ export function serializeGrid(settings: GridSettings, items: BuilderItem[]): Exp
           colSpanMd: it.wMd ? String(it.wMd) : undefined,
           colSpanLg: it.wLg ? String(it.wLg) : undefined,
           rowSpan: it.h,
+          alignSelf: it.alignSelf || undefined,
+          justifySelf: it.justifySelf || undefined,
           content: [child],
         };
       }),

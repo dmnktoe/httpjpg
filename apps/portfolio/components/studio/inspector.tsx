@@ -2,7 +2,14 @@
 
 import { css } from "styled-system/css";
 
-import { type BuilderItem, type FieldDef, GRID_COLS, blokDef } from "./lib";
+import {
+  ALIGN_SELF_OPTIONS,
+  type BuilderItem,
+  type FieldDef,
+  GRID_COLS,
+  SPACING_OPTIONS,
+  blokDef,
+} from "./lib";
 
 interface InspectorProps {
   item: BuilderItem | null;
@@ -100,6 +107,48 @@ function InspectorBody({ item, onChange, onDataChange }: InspectorBodyProps) {
           onChange={(v) =>
             onChange({ wLg: v ? (v === "full" ? undefined : Number(v)) : undefined })
           }
+        />
+      </Group>
+
+      <Group label="Grid Item">
+        <SelectField
+          label="Align Self"
+          value={item.alignSelf ?? ""}
+          options={ALIGN_SELF_OPTIONS}
+          onChange={(v) => onChange({ alignSelf: v || undefined })}
+        />
+        <SelectField
+          label="Justify Self"
+          value={item.justifySelf ?? ""}
+          options={ALIGN_SELF_OPTIONS}
+          onChange={(v) => onChange({ justifySelf: v || undefined })}
+        />
+      </Group>
+
+      <Group label="Spacing (margin)">
+        <SelectField
+          label="Top"
+          value={item.mt ?? ""}
+          options={SPACING_OPTIONS}
+          onChange={(v) => onChange({ mt: v || undefined })}
+        />
+        <SelectField
+          label="Bottom"
+          value={item.mb ?? ""}
+          options={SPACING_OPTIONS}
+          onChange={(v) => onChange({ mb: v || undefined })}
+        />
+        <SelectField
+          label="Left"
+          value={item.ml ?? ""}
+          options={SPACING_OPTIONS}
+          onChange={(v) => onChange({ ml: v || undefined })}
+        />
+        <SelectField
+          label="Right"
+          value={item.mr ?? ""}
+          options={SPACING_OPTIONS}
+          onChange={(v) => onChange({ mr: v || undefined })}
         />
       </Group>
 

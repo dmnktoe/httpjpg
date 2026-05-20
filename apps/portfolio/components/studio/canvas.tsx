@@ -1,14 +1,16 @@
 "use client";
 
-import { type PointerEvent, useCallback, useRef, useState } from "react";
+import { type PointerEvent, useCallback, useEffect, useRef, useState } from "react";
 import { css } from "styled-system/css";
 
+import { BlokPreview } from "./blok-preview";
 import {
   type BuilderItem,
   blokDef,
   clamp,
   createItemId,
   type GridSettings,
+  MIN_ROWS,
   ROW_HEIGHT_PX,
 } from "./lib";
 
@@ -16,8 +18,10 @@ interface CanvasProps {
   items: BuilderItem[];
   selectedId: string | null;
   settings: GridSettings;
+  extraRows: number;
   onItemsChange(next: BuilderItem[]): void;
   onSelect(id: string | null): void;
+  onAddRows(count: number): void;
 }
 
 interface DragState {
@@ -28,49 +32,56 @@ interface DragState {
   origin: BuilderItem;
 }
 
-export function Canvas({ items, selectedId, settings, onItemsChange, onSelect }: CanvasProps) {
+export function Canvas({
+  items,
+  selectedId,
+  settings,
+  extraRows,
+  onItemsChange,
+  onSelect,
+  onAddRows,
+}: CanvasProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
   const [drag, setDrag] = useState<DragState | null>(null);
   const [hoverCell, setHoverCell] = useState<{ x: number; y: number } | null>(null);
 
   const cols = settings.columns;
-  const rows = Math.max(20, ...items.map((it) => it.y + it.h)) + 4;
+  const occupiedRows = Math.max(0, ...items.map((it) => it.y + it.h));
+  const rows = Math.max(MIN_ROWS, occupiedRows + 4) + extraRows;
 
-  const cellWidth = () => {
-    const el = containerRef.current;
-    if (!el) return 0;
-    return el.clientWidth / cols;
-  };
-
-  const updateItem = useCallback(
-    (id: string, patch: Partial<BuilderItem>) => {
-      onItemsChange(items.map((it) => (it.id === id ? { ...it, ...patch } : it)));
-    },
-    [items, onItemsChange],
-  );
-
-  const handlePointerMove = useCallback(
-    (e: PointerEvent<HTMLDivElement>) => {
-      if (!drag) return;
-      const cw = cellWidth();
+  useEffect(() => {
+    if (!drag) return;
+    const onMove = (e: globalThis.PointerEvent) => {
+      const el = containerRef.current;
+      if (!el) return;
+      const cw = el.clientWidth / cols;
       if (!cw) return;
       const dxCells = Math.round((e.clientX - drag.startX) / cw);
       const dyCells = Math.round((e.clientY - drag.startY) / ROW_HEIGHT_PX);
 
+      const current = itemsRef.current;
       if (drag.mode === "move") {
         const x = clamp(drag.origin.x + dxCells, 0, cols - drag.origin.w);
         const y = Math.max(0, drag.origin.y + dyCells);
-        updateItem(drag.id, { x, y });
+        onItemsChange(current.map((it) => (it.id === drag.id ? { ...it, x, y } : it)));
       } else {
         const w = clamp(drag.origin.w + dxCells, 1, cols - drag.origin.x);
         const h = Math.max(1, drag.origin.h + dyCells);
-        updateItem(drag.id, { w, h });
+        onItemsChange(current.map((it) => (it.id === drag.id ? { ...it, w, h } : it)));
       }
-    },
-    [cols, drag, updateItem],
-  );
-
-  const handlePointerUp = useCallback(() => setDrag(null), []);
+    };
+    const onUp = () => setDrag(null);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+    };
+  }, [drag, cols, onItemsChange]);
 
   const handleDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
@@ -129,8 +140,6 @@ export function Canvas({ items, selectedId, settings, onItemsChange, onSelect }:
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={() => setHoverCell(null)}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
         onClick={(e) => {
           if (e.target === e.currentTarget) onSelect(null);
         }}
@@ -186,6 +195,32 @@ export function Canvas({ items, selectedId, settings, onItemsChange, onSelect }:
           />
         ))}
       </div>
+      <div
+        className={css({
+          display: "flex",
+          justifyContent: "center",
+          padding: 2,
+        })}
+      >
+        <button
+          type="button"
+          onClick={() => onAddRows(10)}
+          className={css({
+            border: "1px dashed",
+            borderColor: "pageBorder",
+            bg: "pageBg",
+            color: "pageFg",
+            fontFamily: "mono",
+            fontSize: "sm",
+            padding: "4px 16px",
+            cursor: "pointer",
+            opacity: 0.6,
+            _hover: { opacity: 1, bg: "pageFg", color: "pageBg" },
+          })}
+        >
+          + 10 rows ({rows} total)
+        </button>
+      </div>
     </div>
   );
 }
@@ -200,7 +235,6 @@ interface CanvasItemProps {
 
 function CanvasItem({ item, selected, onSelect, onStartDrag, onDelete }: CanvasItemProps) {
   const def = blokDef(item.type);
-  const previewText = def ? def.preview(item.data) : item.type;
 
   return (
     <div
@@ -215,7 +249,16 @@ function CanvasItem({ item, selected, onSelect, onStartDrag, onDelete }: CanvasI
         outline: selected ? "1px solid" : "none",
         outlineColor: "pageFg",
         outlineOffset: "1px",
+        display: "flex",
+        alignSelf: (item.alignSelf as "start" | "center" | "end" | "stretch") || undefined,
+        justifySelf: (item.justifySelf as "start" | "center" | "end" | "stretch") || undefined,
       })}
+      style={{
+        marginTop: spacingPx(item.mt),
+        marginBottom: spacingPx(item.mb),
+        marginLeft: spacingPx(item.ml),
+        marginRight: spacingPx(item.mr),
+      }}
     >
       <button
         type="button"
@@ -235,7 +278,7 @@ function CanvasItem({ item, selected, onSelect, onStartDrag, onDelete }: CanvasI
           display: "block",
           width: "100%",
           height: "100%",
-          padding: 2,
+          padding: 1,
           boxSizing: "border-box",
           cursor: "move",
           userSelect: "none",
@@ -243,35 +286,34 @@ function CanvasItem({ item, selected, onSelect, onStartDrag, onDelete }: CanvasI
           overflow: "hidden",
           textAlign: "left",
           color: "pageFg",
+          position: "relative",
         })}
       >
         <div
           className={css({
+            position: "absolute",
+            top: 0,
+            left: 0,
             display: "flex",
-            justifyContent: "space-between",
+            gap: 1,
             alignItems: "center",
             fontSize: "sm",
+            fontFamily: "mono",
             textTransform: "uppercase",
-            opacity: 0.6,
-            mb: 1,
+            bg: "pageFg",
+            color: "pageBg",
+            padding: "1px 6px",
+            zIndex: 2,
+            pointerEvents: "none",
+            opacity: selected ? 1 : 0.5,
           })}
         >
           <span>{def?.label ?? item.type}</span>
           <span>
-            {item.w}×{item.h}
+            · {item.w}×{item.h}
           </span>
         </div>
-        <div
-          className={css({
-            fontSize: "sm",
-            lineHeight: "tight",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            wordBreak: "break-word",
-          })}
-        >
-          {previewText}
-        </div>
+        <BlokPreview item={item} />
       </button>
       {selected && (
         <>
@@ -295,6 +337,7 @@ function CanvasItem({ item, selected, onSelect, onStartDrag, onDelete }: CanvasI
               cursor: "pointer",
               fontSize: "sm",
               lineHeight: 1,
+              zIndex: 3,
               _hover: { bg: "pageFg", color: "pageBg" },
             })}
             aria-label="Delete"
@@ -313,15 +356,32 @@ function CanvasItem({ item, selected, onSelect, onStartDrag, onDelete }: CanvasI
               position: "absolute",
               right: 0,
               bottom: 0,
-              width: "12px",
-              height: "12px",
+              width: "14px",
+              height: "14px",
               bg: "pageFg",
               cursor: "se-resize",
               touchAction: "none",
+              zIndex: 3,
             })}
           />
         </>
       )}
     </div>
   );
+}
+
+const SPACING_PX: Record<string, string> = {
+  "0": "0",
+  "1": "0.25rem",
+  "2": "0.5rem",
+  "3": "0.75rem",
+  "4": "1rem",
+  "6": "1.5rem",
+  "8": "2rem",
+  "12": "3rem",
+};
+
+function spacingPx(key?: string): string | undefined {
+  if (!key) return undefined;
+  return SPACING_PX[key];
 }

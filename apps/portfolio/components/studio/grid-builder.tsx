@@ -24,6 +24,7 @@ export function GridBuilder({ pushEnabled }: GridBuilderProps) {
   const [items, setItems] = useState<BuilderItem[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [settings, setSettings] = useState<GridSettings>(DEFAULT_SETTINGS);
+  const [extraRows, setExtraRows] = useState(0);
 
   const selected = useMemo(
     () => items.find((it) => it.id === selectedId) ?? null,
@@ -79,8 +80,10 @@ export function GridBuilder({ pushEnabled }: GridBuilderProps) {
           items={items}
           selectedId={selectedId}
           settings={settings}
+          extraRows={extraRows}
           onItemsChange={setItems}
           onSelect={setSelectedId}
+          onAddRows={(n) => setExtraRows((r) => r + n)}
         />
         <Inspector item={selected} onChange={handleItemChange} onDataChange={handleDataChange} />
       </div>

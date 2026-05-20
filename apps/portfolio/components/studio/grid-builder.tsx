@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { css } from "styled-system/css";
 
 import { Canvas } from "./canvas";
+import { ImportDialog } from "./import-dialog";
 import { Inspector } from "./inspector";
 import { type BuilderItem, type GridSettings, serializeGrid, type Viewport } from "./lib";
 import { Palette } from "./palette";
@@ -22,6 +23,7 @@ export function GridBuilder({ pushEnabled, siteUrl }: GridBuilderProps) {
   const { items, settings, viewport, extraRows } = state;
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
 
   useEffect(() => {
     if (selectedId && !items.some((it) => it.id === selectedId)) {
@@ -120,8 +122,23 @@ export function GridBuilder({ pushEnabled, siteUrl }: GridBuilderProps) {
         canRedo={store.canRedo}
         onUndo={store.undo}
         onRedo={store.redo}
+        onImport={() => setImportOpen(true)}
         onClear={() => {
           store.reset();
+          setSelectedId(null);
+        }}
+      />
+      <ImportDialog
+        open={importOpen}
+        pushEnabled={pushEnabled}
+        onClose={() => setImportOpen(false)}
+        onImport={({ settings: nextSettings, items: nextItems }) => {
+          store.replace({
+            items: nextItems,
+            settings: nextSettings,
+            viewport,
+            extraRows: 0,
+          });
           setSelectedId(null);
         }}
       />

@@ -18,6 +18,7 @@ interface ToolbarProps {
   canRedo: boolean;
   onUndo(): void;
   onRedo(): void;
+  onImport(): void;
   onClear(): void;
 }
 
@@ -44,6 +45,7 @@ export function Toolbar({
   canRedo,
   onUndo,
   onRedo,
+  onImport,
   onClear,
 }: ToolbarProps) {
   const siteHost = (siteUrl ?? "").replace(/^https?:\/\//, "").replace(/\/$/, "");
@@ -197,6 +199,9 @@ export function Toolbar({
 
       <Divider />
 
+      <button type="button" onClick={onImport} className={btn}>
+        Import…
+      </button>
       <button type="button" onClick={handleCopy} className={btn}>
         Copy JSON
       </button>

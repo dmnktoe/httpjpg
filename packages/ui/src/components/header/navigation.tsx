@@ -18,32 +18,48 @@ function ExpandableLinks<T>({
   renderItem: (item: T) => ReactNode;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const visible = isExpanded ? items : items.slice(0, INITIAL_WORK_COUNT);
-  const remaining = items.length - INITIAL_WORK_COUNT;
+  const initial = items.slice(0, INITIAL_WORK_COUNT);
+  const extras = items.slice(INITIAL_WORK_COUNT);
+  const remaining = extras.length;
 
   return (
     <>
-      {visible.map(renderItem)}
+      {initial.map(renderItem)}
       {remaining > 0 && (
-        <Box
-          as="button"
-          type="button"
-          onClick={() => setIsExpanded((v) => !v)}
-          css={{
-            display: "block",
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-            color: "inherit",
-            font: "inherit",
-            p: 0,
-            mt: "1",
-            opacity: 0.7,
-            textAlign: "left",
-            _hover: { opacity: 1, textDecoration: "underline" },
-          }}
-        >
-          {isExpanded ? "▴ less" : `▾ more (${remaining})`}
+        <Box css={{ position: "relative" }}>
+          <Box
+            as="button"
+            type="button"
+            onClick={() => setIsExpanded((v) => !v)}
+            css={{
+              display: "block",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: "inherit",
+              font: "inherit",
+              p: 0,
+              mt: "1",
+              opacity: 0.7,
+              textAlign: "left",
+              _hover: { opacity: 1, textDecoration: "underline" },
+            }}
+          >
+            {isExpanded ? "▴ less" : `▾ more (${remaining})`}
+          </Box>
+          {isExpanded && (
+            <Box
+              css={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                right: 0,
+                bg: "pageBg",
+              }}
+            >
+              {extras.map(renderItem)}
+            </Box>
+          )}
         </Box>
       )}
     </>

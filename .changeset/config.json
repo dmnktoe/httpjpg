@@ -1,0 +1,34 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@latest/schema.json",
+  "changelog": false,
+  "commit": false,
+  "fixed": [
+    [
+      "@httpjpg/analytics",
+      "@httpjpg/consent",
+      "@httpjpg/env",
+      "@httpjpg/now-playing",
+      "@httpjpg/observability",
+      "@httpjpg/portfolio",
+      "@httpjpg/spotify",
+      "@httpjpg/storyblok-api",
+      "@httpjpg/storyblok-next",
+      "@httpjpg/storyblok-richtext",
+      "@httpjpg/storyblok-sync",
+      "@httpjpg/storyblok-ui",
+      "@httpjpg/storyblok-utils",
+      "@httpjpg/storybook",
+      "@httpjpg/tokens",
+      "@httpjpg/ui"
+    ]
+  ],
+  "linked": [],
+  "access": "restricted",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": [],
+  "privatePackages": {
+    "version": true,
+    "tag": false
+  }
+}

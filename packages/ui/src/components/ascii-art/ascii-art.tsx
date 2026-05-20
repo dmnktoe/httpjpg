@@ -45,3 +45,4 @@ export const AsciiArt = forwardRef<HTMLPreElement, AsciiArtProps>(function Ascii
     </Box>
   );
 });
+AsciiArt.displayName = "AsciiArt";

@@ -51,3 +51,5 @@ export const SbButton = memo(function SbButton({ blok, onClick }: SbButtonProps)
     </Box>
   );
 });
+
+SbButton.displayName = "SbButton";

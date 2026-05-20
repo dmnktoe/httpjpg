@@ -123,9 +123,9 @@ storyblok-utils  ←  storyblok-api    storyblok-richtext  ←  storyblok-ui
 
 Only `apps/portfolio` defines an alias:
 
-| Alias  | Path                  |
-| ------ | --------------------- |
-| `@/*`  | `apps/portfolio/*`    |
+| Alias | Path               |
+| ----- | ------------------ |
+| `@/*` | `apps/portfolio/*` |
 
 Across packages, always import workspace siblings via their package name (`@httpjpg/<name>`), never via relative paths into `../../<package>/src`.
 
@@ -153,7 +153,12 @@ Across packages, always import workspace siblings via their package name (`@http
   type Status = (typeof STATUS)[keyof typeof STATUS];
 
   // ❌
-  enum Status { Online, Idle, Dnd, Offline }
+  enum Status {
+    Online,
+    Idle,
+    Dnd,
+    Offline,
+  }
   ```
 
 - **Export types next to implementations** (`export { Foo, type FooProps }`). Don't ship a separate `*.types.ts` file unless the surface is large.
@@ -176,7 +181,8 @@ export function formatYear(date?: string): string | null {
 }
 
 // ❌
-export const formatYear = (date?: string) => (date ? new Date(date).getFullYear().toString() : null);
+export const formatYear = (date?: string) =>
+  date ? new Date(date).getFullYear().toString() : null;
 ```
 
 ### React components
@@ -192,9 +198,9 @@ export const formatYear = (date?: string) => (date ? new Date(date).getFullYear(
 - **Component that needs `forwardRef` or `memo`** → named `const` with the wrapper, plus `displayName`.
 
   ```tsx
-  export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
-    function WorkCard(props, ref) { /* … */ },
-  );
+  export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(function WorkCard(props, ref) {
+    /* … */
+  });
   WorkCard.displayName = "WorkCard";
   ```
 
@@ -207,29 +213,29 @@ export const formatYear = (date?: string) => (date ? new Date(date).getFullYear(
 
 #### Identifiers
 
-| Kind                       | Style                  | Example                            |
-| -------------------------- | ---------------------- | ---------------------------------- |
-| Components & types         | PascalCase             | `WorkCard`, `NavItem`, `BlokSpacing` |
-| Hooks                      | camelCase, `use` prefix | `useNowPlaying`, `useVibrantColor` |
-| Variables / regular fns    | camelCase              | `formatYear`, `isLoading`          |
-| Module-scope const data    | SCREAMING_SNAKE_CASE   | `FALLBACK_NAVIGATION`, `STATUS_COLORS` |
-| Module-scope const handles | camelCase              | `tagRenderers`, `sizeConfig`       |
-| Props interface            | `<Component>Props`     | `WorkCardProps`, `SbButtonProps`   |
-| Boolean variables          | `is*` / `has*` / `can*` | `isPlaying`, `hasVibrantColor`    |
-| Event handlers             | `handle*` (local) / `on*` (prop) | `handleSeek`, `onAcceptAll` |
+| Kind                       | Style                            | Example                                |
+| -------------------------- | -------------------------------- | -------------------------------------- |
+| Components & types         | PascalCase                       | `WorkCard`, `NavItem`, `BlokSpacing`   |
+| Hooks                      | camelCase, `use` prefix          | `useNowPlaying`, `useVibrantColor`     |
+| Variables / regular fns    | camelCase                        | `formatYear`, `isLoading`              |
+| Module-scope const data    | SCREAMING_SNAKE_CASE             | `FALLBACK_NAVIGATION`, `STATUS_COLORS` |
+| Module-scope const handles | camelCase                        | `tagRenderers`, `sizeConfig`           |
+| Props interface            | `<Component>Props`               | `WorkCardProps`, `SbButtonProps`       |
+| Boolean variables          | `is*` / `has*` / `can*`          | `isPlaying`, `hasVibrantColor`         |
+| Event handlers             | `handle*` (local) / `on*` (prop) | `handleSeek`, `onAcceptAll`            |
 
 For booleans, the prop on the receiving component is the noun (`disabled`, `priority`) but the local variable inside the implementation uses the predicate form (`isDisabled`, `isPriority`). Follow existing component contracts before inventing new prop names.
 
 #### File and folder layout
 
-| Kind                       | Style                  | Example                            |
-| -------------------------- | ---------------------- | ---------------------------------- |
-| Directories                | kebab-case             | `work-card/`, `grid-item/`         |
-| Most source files          | kebab-case             | `work-card-date.tsx`, `spotify-id.ts` |
-| Sub-component files        | `<parent>-<child>.tsx` | `work-card-meta.tsx`, `mp3-player.tsx` |
-| Per-folder helpers         | `lib.ts` (or scoped name) | `work-list/lib.ts`, `music-player/spotify-id.ts` |
-| Tests                      | `<source>.test.ts(x)`  | `image-processing.test.ts`         |
-| Stories (storybook app)    | `<Component>.stories.tsx` | `WorkCard.stories.tsx`          |
+| Kind                    | Style                     | Example                                          |
+| ----------------------- | ------------------------- | ------------------------------------------------ |
+| Directories             | kebab-case                | `work-card/`, `grid-item/`                       |
+| Most source files       | kebab-case                | `work-card-date.tsx`, `spotify-id.ts`            |
+| Sub-component files     | `<parent>-<child>.tsx`    | `work-card-meta.tsx`, `mp3-player.tsx`           |
+| Per-folder helpers      | `lib.ts` (or scoped name) | `work-list/lib.ts`, `music-player/spotify-id.ts` |
+| Tests                   | `<source>.test.ts(x)`     | `image-processing.test.ts`                       |
+| Stories (storybook app) | `<Component>.stories.tsx` | `WorkCard.stories.tsx`                           |
 
 One source file may not export more than one component. Subcomponents either move to a sibling file or stay private and unexported. Helpers > 20 LOC or shared between sibling components belong in a `lib.ts` next to them, not inlined.
 
@@ -275,11 +281,13 @@ packages/storyblok-ui/src/components/
 - Re-exports from `src/index.ts` are **explicit**, not wildcarded: `export { SbButton, type SbButtonProps } from "./components/button/SbButton"`. This keeps the public surface auditable against the CMS component list.
 
 The `Sb` prefix is mandatory in `storyblok-ui` for three reasons:
+
 1. It marks the component as a CMS-driven blok, not a generic primitive.
 2. It prevents collisions with the underlying `@httpjpg/ui` primitive (`SbImage` wraps `Image`, `SbButton` wraps `Button`).
 3. It makes the `storyblokInit` registry mapping (`{ work_card: SbWorkCard }`) read symmetrically.
 
 When you add a new blok:
+
 1. Add the schema to `packages/storyblok-sync/scripts/blocks/<group>.ts`.
 2. Run `pnpm --filter @httpjpg/storyblok-sync sync:components` (and `sync:datasources` if it uses new options).
 3. Add a folder `packages/storyblok-ui/src/components/<kebab>/Sb<Pascal>.tsx` that consumes the matching `@httpjpg/ui` primitive.

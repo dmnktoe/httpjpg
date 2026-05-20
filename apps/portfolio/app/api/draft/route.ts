@@ -1,3 +1,4 @@
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { draftMode } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -10,7 +11,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: "Missing secret parameter" }, { status: 400 });
   }
   if (secret !== process.env.STORYBLOK_PREVIEW_SECRET) {
-    console.warn("Draft mode attempt with invalid secret");
+    captureServerException(new Error("Draft mode attempt with invalid secret"), {
+      extra: { slug },
+    });
     return NextResponse.json({ message: "Invalid token" }, { status: 401 });
   }
 
@@ -34,10 +37,6 @@ export async function GET(request: NextRequest) {
     redirectUrl.searchParams.append(key, value);
   }
   redirectUrl.searchParams.set("_draft", "1");
-
-  console.log(
-    `[Draft Mode] Enabled for slug="${slug}" → ${redirectUrl.pathname}${redirectUrl.search}`,
-  );
 
   const response = NextResponse.redirect(redirectUrl);
   response.headers.set("Cache-Control", "no-store, must-revalidate");

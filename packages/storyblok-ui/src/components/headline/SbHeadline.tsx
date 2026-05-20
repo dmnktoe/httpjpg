@@ -23,3 +23,5 @@ export const SbHeadline = memo(function SbHeadline({ blok }: SbHeadlineProps) {
     </Headline>
   );
 });
+
+SbHeadline.displayName = "SbHeadline";

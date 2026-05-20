@@ -96,3 +96,5 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
     </Box>
   );
 });
+
+SbVideo.displayName = "SbVideo";

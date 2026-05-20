@@ -70,3 +70,5 @@ export const SbWorkList = memo(function SbWorkList({ blok }: SbWorkListProps) {
     />
   );
 });
+
+SbWorkList.displayName = "SbWorkList";

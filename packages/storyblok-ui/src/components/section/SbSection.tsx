@@ -34,3 +34,5 @@ export const SbSection = memo(function SbSection({ blok }: SbSectionProps) {
     </Section>
   );
 });
+
+SbSection.displayName = "SbSection";

@@ -38,3 +38,5 @@ export const SbRichText = memo(function SbRichText({ blok }: SbRichTextProps) {
     </Box>
   );
 });
+
+SbRichText.displayName = "SbRichText";

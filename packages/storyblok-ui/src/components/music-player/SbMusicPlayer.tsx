@@ -94,3 +94,5 @@ export const SbMusicPlayer = memo(function SbMusicPlayer({ blok }: SbMusicPlayer
     </Box>
   );
 });
+
+SbMusicPlayer.displayName = "SbMusicPlayer";

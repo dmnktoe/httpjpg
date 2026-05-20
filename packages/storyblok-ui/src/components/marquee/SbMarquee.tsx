@@ -52,3 +52,5 @@ export const SbMarquee = memo(function SbMarquee({ blok }: SbMarqueeProps) {
     </Box>
   );
 });
+
+SbMarquee.displayName = "SbMarquee";

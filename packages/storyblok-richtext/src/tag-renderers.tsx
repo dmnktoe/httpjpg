@@ -27,7 +27,7 @@ function headingRenderer(level: 1 | 2 | 3): TagRenderer {
   );
 }
 
-const renderImage: TagRenderer = (key, attrs, _children) => {
+function renderImage(key: string | undefined, attrs: TagAttrs, _children: ReactNode): ReactNode {
   const imgAttrs = attrs as {
     src?: string;
     alt?: string;
@@ -67,9 +67,9 @@ const renderImage: TagRenderer = (key, attrs, _children) => {
       />
     </Box>
   );
-};
+}
 
-const renderLink: TagRenderer = (key, attrs, children) => {
+function renderLink(key: string | undefined, attrs: TagAttrs, children: ReactNode): ReactNode {
   const { href, target } = attrs as { href?: string; target?: string };
   if (!href) {
     return children;
@@ -85,9 +85,9 @@ const renderLink: TagRenderer = (key, attrs, children) => {
       {children}
     </Link>
   );
-};
+}
 
-const renderCode: TagRenderer = (key, attrs, children) => {
+function renderCode(key: string | undefined, attrs: TagAttrs, children: ReactNode): ReactNode {
   const { "data-inline-code": inline, ...rest } = attrs as TagAttrs & {
     "data-inline-code"?: string;
   };
@@ -110,7 +110,7 @@ const renderCode: TagRenderer = (key, attrs, children) => {
     );
   }
   return createElement("code", { ...rest, key }, children);
-};
+}
 
 export const tagRenderers: Record<string, TagRenderer> = {
   p: (key, _attrs, children) => (

@@ -190,13 +190,15 @@ export function Canvas({
             <div
               key={`col-${col}`}
               className={css({
-                gridRow: "1 / -1",
                 borderRight: "1px dashed",
                 borderColor: "pageBorder",
                 opacity: 0.35,
                 pointerEvents: "none",
               })}
-              style={{ gridColumn: `${col} / span 1` }}
+              style={{
+                gridColumn: `${col} / span 1`,
+                gridRow: `1 / span ${rows}`,
+              }}
               aria-hidden
             />
           ))}
@@ -204,13 +206,15 @@ export function Canvas({
             <div
               key={`row-${row}`}
               className={css({
-                gridColumn: "1 / -1",
                 borderBottom: "1px dashed",
                 borderColor: "pageBorder",
                 opacity: 0.35,
                 pointerEvents: "none",
               })}
-              style={{ gridRow: `${row} / span 1` }}
+              style={{
+                gridColumn: `1 / span ${cols}`,
+                gridRow: `${row} / span 1`,
+              }}
               aria-hidden
             />
           ))}

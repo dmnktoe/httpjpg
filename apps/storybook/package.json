@@ -1,0 +1,35 @@
+{
+  "name": "@httpjpg/storybook",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "storybook dev -p 3002",
+    "dev:https": "storybook dev -p 3002",
+    "build": "turbo run build --filter=@httpjpg/ui && storybook build",
+    "preview": "storybook preview",
+    "type-check": "tsc --noEmit",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix"
+  },
+  "dependencies": {
+    "@httpjpg/now-playing": "workspace:*",
+    "@httpjpg/spotify": "workspace:*",
+    "@httpjpg/tokens": "workspace:*",
+    "@httpjpg/ui": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@storybook/addon-docs": "^10.4.0",
+    "@storybook/addon-links": "^10.4.0",
+    "@storybook/react": "^10.4.0",
+    "@storybook/react-vite": "^10.4.0",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "storybook": "^10.4.0",
+    "typescript": "catalog:",
+    "vite": "^8.0.0"
+  }
+}

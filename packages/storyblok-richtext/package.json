@@ -1,0 +1,25 @@
+{
+  "name": "@httpjpg/storyblok-richtext",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@httpjpg/ui": "workspace:*",
+    "@storyblok/richtext": "^4.0.0",
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
+  }
+}

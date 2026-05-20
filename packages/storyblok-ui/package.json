@@ -1,0 +1,36 @@
+{
+  "name": "@httpjpg/storyblok-ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Storyblok-specific UI components consuming @httpjpg/ui base components",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@httpjpg/consent": "workspace:*",
+    "@httpjpg/storyblok-richtext": "workspace:*",
+    "@httpjpg/storyblok-utils": "workspace:*",
+    "@httpjpg/ui": "workspace:*",
+    "@storyblok/react": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  }
+}

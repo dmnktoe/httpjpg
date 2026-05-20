@@ -1,0 +1,163 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  NEXT_PUBLIC_APP_URL: https://httpjpg.com
+  NEXT_PUBLIC_APP_VERSION: ${{ github.sha }}
+  NEXT_PUBLIC_STORYBLOK_TOKEN: ${{ secrets.NEXT_PUBLIC_STORYBLOK_TOKEN }}
+  NEXT_PUBLIC_STORYBLOK_VERSION: published
+  STORYBLOK_PREVIEW_TOKEN: ${{ secrets.STORYBLOK_PREVIEW_TOKEN }}
+  STORYBLOK_PREVIEW_SECRET: ${{ secrets.STORYBLOK_PREVIEW_SECRET }}
+  STORYBLOK_REVALIDATE_SECRET: ${{ secrets.STORYBLOK_REVALIDATE_SECRET }}
+  SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+  SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+  SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+  SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+  SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+  SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+  ARCJET_KEY: ${{ secrets.ARCJET_KEY }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm run lint
+
+  typecheck:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm run type-check
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm run test:coverage
+      - name: Upload coverage
+        if: always()
+        uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/coverage-final.json
+          fail_ci_if_error: false
+
+  build-packages:
+    name: Build Packages
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm run build --filter="./packages/*"
+
+  build-apps:
+    name: Build Apps
+    runs-on: ubuntu-latest
+    needs: [build-packages]
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [portfolio, storybook]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - name: Build ${{ matrix.app }}
+        run: pnpm run build --filter=@httpjpg/${{ matrix.app }}
+      - name: Upload Sentry sourcemaps
+        if: matrix.app == 'portfolio' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: |
+          pnpm --filter=@httpjpg/portfolio exec sentry-cli sourcemaps upload \
+            --org=${{ secrets.SENTRY_ORG }} \
+            --project=${{ secrets.SENTRY_PROJECT }} \
+            --release=${{ github.sha }} \
+            .next/static
+
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - name: Build portfolio
+        run: pnpm run build --filter=@httpjpg/portfolio
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm --filter=@httpjpg/portfolio exec playwright install --with-deps chromium
+      - name: Install Playwright system deps
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm --filter=@httpjpg/portfolio exec playwright install-deps chromium
+      - name: Run E2E tests
+        run: pnpm --filter=@httpjpg/portfolio run test:e2e
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: apps/portfolio/playwright-report/
+          retention-days: 30
+
+  ci:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, build-packages, build-apps, test, e2e]
+    if: always()
+    timeout-minutes: 5
+    steps:
+      - name: Write summary
+        run: |
+          {
+            echo "## CI Results"
+            echo ""
+            echo "| Job | Result |"
+            echo "| --- | --- |"
+            echo "| Lint           | ${{ needs.lint.result }} |"
+            echo "| TypeScript     | ${{ needs.typecheck.result }} |"
+            echo "| Unit Tests     | ${{ needs.test.result }} |"
+            echo "| Build Packages | ${{ needs.build-packages.result }} |"
+            echo "| Build Apps     | ${{ needs.build-apps.result }} |"
+            echo "| E2E Tests      | ${{ needs.e2e.result }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Verify pipeline status
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "Pipeline failed"
+          exit 1

@@ -1,0 +1,11 @@
+# Storybook build output
+storybook-static/
+
+# Build output
+storybook-static/
+
+# Dependencies
+node_modules/
+
+# Build info
+*.tsbuildinfo

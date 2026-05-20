@@ -1,0 +1,28 @@
+{
+  "name": "@httpjpg/analytics",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Analytics and tracking utilities for httpjpg",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./google": {
+      "types": "./src/google/index.ts",
+      "default": "./src/google/index.ts"
+    }
+  },
+  "scripts": {
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@httpjpg/env": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

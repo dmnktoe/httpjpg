@@ -1,0 +1,46 @@
+{
+  "name": "@httpjpg/portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "dev:https": "node server.js",
+    "build": "PANDA_PRODUCTION=1 turbo run build --filter=@httpjpg/ui && PANDA_PRODUCTION=1 next build",
+    "start": "next start",
+    "type-check": "tsc --noEmit",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
+  },
+  "dependencies": {
+    "@httpjpg/analytics": "workspace:*",
+    "@httpjpg/consent": "workspace:*",
+    "@httpjpg/env": "workspace:*",
+    "@httpjpg/now-playing": "workspace:*",
+    "@httpjpg/observability": "workspace:*",
+    "@httpjpg/spotify": "workspace:*",
+    "@httpjpg/storyblok-api": "workspace:*",
+    "@httpjpg/storyblok-next": "workspace:*",
+    "@httpjpg/storyblok-ui": "workspace:*",
+    "@httpjpg/storyblok-utils": "workspace:*",
+    "@httpjpg/tokens": "workspace:*",
+    "@httpjpg/ui": "workspace:*",
+    "@next/third-parties": "^16.0.7",
+    "@storyblok/react": "catalog:",
+    "next": "^16.0.7",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@sentry/cli": "^3.0.0",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "schema-dts": "^2.0.0",
+    "typescript": "catalog:"
+  }
+}

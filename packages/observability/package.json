@@ -1,0 +1,33 @@
+{
+  "name": "@httpjpg/observability",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    },
+    "./sentry": {
+      "import": "./src/sentry/index.ts"
+    },
+    "./sentry/*.ts": {
+      "import": "./src/sentry/*.ts"
+    }
+  },
+  "scripts": {
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix"
+  },
+  "dependencies": {
+    "@httpjpg/env": "workspace:*",
+    "@sentry/nextjs": "^10.53.1"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "next": "^16.0.7",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "next": ">=15.0.0"
+  }
+}

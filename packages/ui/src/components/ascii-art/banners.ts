@@ -1,0 +1,84 @@
+export const ASCII_404 = String.raw`
+    /\\___/\\
+   ( o   o )
+   (  =^=  )    404
+    (--m-m-)   not_found
+`;
+
+export const ASCII_500 = String.raw`
+   ___________
+  | _________ |
+  ||  500    ||
+  ||  ERROR  ||
+  ||_________||
+  |___________|
+  /::::::::::::\\
+ /::=========::\\
+ ~~~~~~~~~~~~~~~
+`;
+
+export const ASCII_OFFLINE = String.raw`
+  ┌─[ no signal ]─┐
+  │ · · · · · · · │
+  │ · . · · . · · │
+  │ . · · · · . · │
+  └───────────────┘
+`;
+
+export const ASCII_HEART = String.raw` ♡ ♡ ♡ `;
+
+export const ASCII_SPARKLES = "·°•. ⋆ ✦ ⋆ .•°·";
+
+export const ASCII_TAPE = "▰▰▰▱▱▱▰▰▰▱▱▱▰▰▰";
+
+export const ASCII_CASSETTE = String.raw`
+   ┌─────────────────┐
+   │ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ │
+   │ ░ ╭───╮   ╭───╮ │
+   │ ░ │ ◉ │ ─ │ ◉ │ │
+   │ ░ ╰───╯   ╰───╯ │
+   │ ░░░░░░░░░░░░░░░ │
+   └─────────────────┘
+`;
+
+export const ASCII_FLOPPY = String.raw`
+   ┌──────────┐
+   │ ▓▓▓▓▓▓▓▓ │
+   │ ▓ ┌──┐ ▓ │
+   │ ▓ │  │ ▓ │
+   │ ▓ └──┘ ▓ │
+   │ ░░░░░░░░ │
+   └──────────┘
+`;
+
+export const ASCII_LOADING_BAR = "▰▰▰▰▰▱▱▱▱▱";
+
+export const ASCII_DIVIDER_STARS = "*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚";
+export const ASCII_DIVIDER_DOTS = "· ─ · ─ · ─ · ─ ·";
+export const ASCII_DIVIDER_WAVE = "～～～～～～～～";
+export const ASCII_DIVIDER_ARROWS = "»»»»»———»»»»»";
+export const ASCII_DIVIDER_MUSIC = "･ﾟ⋆ ♪ ♫ ･ﾟ⋆";
+
+export const ASCII_PIXEL_HEART = String.raw`
+  ░██░██░
+  █▓██▓██
+  █▓████▓█
+  ░█▓██▓█░
+  ░░█▓▓█░░
+  ░░░██░░░
+`;
+
+export const ASCII_GHOST = String.raw`
+   .-.
+  ( o.o )
+   > ^ <
+`;
+
+export const CONSOLE_BANNER = String.raw`
+       __     __    __                 _
+      / /_   / /_  / /_  ____    (_)___  ____ _
+     / __ \\/ __/ __/ __ \\/ __ \\  / / __ \\/ __ \`/
+    / / / / /_/ /_/ /_/ / /_/ / / / /_/ / /_/ /
+   /_/ /_/\\__/\\__/ .___/\\____/_/ / .___/\\__, /
+                /_/         /___/_/    /____/
+`;

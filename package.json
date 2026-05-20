@@ -1,0 +1,54 @@
+{
+  "name": "httpjpg",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "PANDA_PRODUCTION=1 turbo run build",
+    "dev": "turbo run dev",
+    "dev:portfolio": "turbo run dev --filter=@httpjpg/portfolio...",
+    "dev:storybook": "turbo run dev --filter=@httpjpg/storybook...",
+    "dev:https": "turbo run dev:https --filter=@httpjpg/portfolio...",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "type-check": "turbo run type-check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "prepare": "husky",
+    "postinstall": "turbo run build --filter=@httpjpg/tokens --filter=@httpjpg/ui"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.0.0",
+    "@commitlint/config-conventional": "^21.0.0",
+    "@commitlint/types": "21.0.1",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "husky": "^9.1.7",
+    "jsdom": "catalog:",
+    "lint-staged": "^17.0.0",
+    "oxfmt": "^0.51.0",
+    "oxlint": "^1.64.0",
+    "turbo": "^2.6.0",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,js,jsx}": [
+      "oxlint --fix",
+      "oxfmt"
+    ],
+    "**/*.json": [
+      "oxfmt"
+    ]
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@11.1.3"
+}

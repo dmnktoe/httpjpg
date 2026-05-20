@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig/base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@httpjpg/ui": ["../../packages/ui/src"],
+      "@httpjpg/ui/*": ["../../packages/ui/src/*"],
+      "@httpjpg/ui/styled-system/*": ["../../packages/ui/styled-system/*"],
+      "@httpjpg/tokens": ["../../packages/tokens/src"],
+      "styled-system/*": ["../../packages/ui/styled-system/*"]
+    }
+  },
+  "include": [".storybook", "stories", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist", "storybook-static"]
+}

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "stream",
+  "globalDependencies": [
+    "tsconfig/*.json",
+    "tsconfig.json",
+    ".oxlintrc.json",
+    ".oxfmtrc.json",
+    ".oxlintignore",
+    ".env",
+    ".env.local",
+    ".env.production"
+  ],
+  "globalEnv": ["NODE_ENV", "CI"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}",
+        "!**/__tests__/**",
+        "!**/tests/**"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "storybook-static/**",
+        "dist/**",
+        "styled-system/**",
+        "styles.css"
+      ],
+      "env": [
+        "PANDA_PRODUCTION",
+        "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_STORYBLOK_TOKEN",
+        "NEXT_PUBLIC_STORYBLOK_VERSION",
+        "NEXT_PUBLIC_SENTRY_DSN",
+        "NEXT_PUBLIC_SENTRY_ENABLE_IN_DEV",
+        "NEXT_PUBLIC_GA_MEASUREMENT_ID",
+        "STORYBLOK_PREVIEW_TOKEN",
+        "STORYBLOK_PREVIEW_SECRET",
+        "STORYBLOK_REVALIDATE_SECRET",
+        "STORYBLOK_MANAGEMENT_TOKEN",
+        "STORYBLOK_SPACE_ID",
+        "SENTRY_DSN",
+        "SENTRY_ORG",
+        "SENTRY_PROJECT",
+        "SENTRY_AUTH_TOKEN",
+        "SENTRY_ENABLE_IN_DEV",
+        "SPOTIFY_CLIENT_ID",
+        "SPOTIFY_CLIENT_SECRET",
+        "SPOTIFY_REFRESH_TOKEN",
+        "DISCORD_USER_ID"
+      ]
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "dev:https": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "inputs": ["src/**", "app/**", "components/**", "lib/**", "scripts/**", ".oxlintrc.json"],
+      "outputs": []
+    },
+    "lint:fix": {
+      "dependsOn": ["^lint:fix"],
+      "cache": false,
+      "outputs": []
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "inputs": ["**/*.ts", "**/*.tsx", "**/*.cts", "**/*.mts", "**/*.d.ts", "tsconfig.json"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "test/config/**", "vitest.config.ts"],
+      "outputs": ["coverage/**"]
+    },
+    "test:e2e": {
+      "dependsOn": ["build"],
+      "inputs": ["tests/e2e/**", "playwright.config.ts"],
+      "outputs": ["playwright-report/**", "test-results/**"],
+      "env": ["PLAYWRIGHT_TEST_BASE_URL"]
+    },
+    "format:check": {
+      "inputs": ["**/*.{ts,tsx,js,jsx,json}", ".oxfmtrc.json"],
+      "outputs": []
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

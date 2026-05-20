@@ -1,0 +1,26 @@
+@import "@httpjpg/tokens/dist/tokens.css";
+
+@layer base {
+  body {
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  figure,
+  blockquote,
+  dl,
+  dd {
+    margin: 0;
+    padding: 0;
+  }
+
+  p {
+    line-height: 1.5;
+  }
+}

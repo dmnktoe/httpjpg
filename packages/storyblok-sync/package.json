@@ -1,0 +1,31 @@
+{
+  "name": "@httpjpg/storyblok-sync",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sync design tokens and component schemas to Storyblok via Management API",
+  "bin": {
+    "storyblok-sync-components": "./scripts/sync-components.ts",
+    "storyblok-sync-datasources": "./scripts/sync-datasources.ts",
+    "storyblok-sync-groups": "./scripts/sync-component-groups.ts"
+  },
+  "type": "module",
+  "scripts": {
+    "sync:groups": "tsx scripts/sync-component-groups.ts",
+    "sync:datasources": "tsx scripts/sync-datasources.ts",
+    "sync:components": "tsx scripts/sync-components.ts",
+    "sync:all": "pnpm sync:groups && pnpm sync:datasources && pnpm sync:components",
+    "cleanup:groups": "tsx scripts/cleanup-duplicate-groups.ts",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@httpjpg/storyblok-utils": "workspace:*",
+    "@httpjpg/tokens": "workspace:*",
+    "dotenv": "catalog:"
+  },
+  "devDependencies": {
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

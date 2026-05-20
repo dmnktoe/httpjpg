@@ -1,0 +1,40 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "import", "jsx-a11y", "oxc"],
+  "categories": {
+    "correctness": "error",
+    "perf": "off",
+    "restriction": "off",
+    "suspicious": "off",
+    "pedantic": "off",
+    "style": "off",
+    "nursery": "off"
+  },
+  "rules": {
+    "no-explicit-any": "off",
+    "no-array-index-key": "off",
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "react-hooks/exhaustive-deps": "off"
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/dist/**",
+    "**/styled-system/**",
+    "**/styles.css",
+    "**/globals.css",
+    "**/tailwind-animate.css",
+    "**/coverage/**",
+    "**/.panda-studio/**",
+    "**/storybook-static/**"
+  ]
+}

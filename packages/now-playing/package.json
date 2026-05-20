@@ -1,0 +1,35 @@
+{
+  "name": "@httpjpg/now-playing",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@httpjpg/spotify": "workspace:*",
+    "@httpjpg/tokens": "workspace:*",
+    "react-draggable": "^4.5.0"
+  },
+  "devDependencies": {
+    "@httpjpg/ui": "workspace:*",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@httpjpg/ui": "workspace:*",
+    "react": "^18.3.1 || ^19.0.0",
+    "react-dom": "^18.3.1 || ^19.0.0"
+  }
+}

@@ -37,7 +37,6 @@ interface WorkStory {
 }
 
 const IS_DEV = process.env.NODE_ENV === "development";
-const RECENT_WORK_LIMIT = 10;
 const PERSONAL_TAG = "Personal";
 const CLIENT_TAG = "Client";
 
@@ -109,10 +108,7 @@ export async function getRecentWork(): Promise<{
       const isClient = (story: WorkStory) => (story.tag_list ?? []).includes(CLIENT_TAG);
 
       const take = (predicate: (s: WorkStory) => boolean): WorkItem[] =>
-        visible
-          .filter(predicate)
-          .slice(0, RECENT_WORK_LIMIT)
-          .map((s) => toWorkItem(s, publishedUuids));
+        visible.filter(predicate).map((s) => toWorkItem(s, publishedUuids));
 
       return {
         personalWork: take(isPersonal),

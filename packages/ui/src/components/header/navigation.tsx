@@ -17,8 +17,9 @@ const toggleStyles = {
   cursor: "pointer",
   color: "inherit",
   font: "inherit",
-  p: 0,
-  mt: "1",
+  fontFamily: "sans",
+  py: "2px",
+  px: "2px",
   opacity: 0.7,
   textAlign: "left",
   _hover: { opacity: 1, textDecoration: "underline" },
@@ -39,24 +40,41 @@ function ExpandableLinks<T>({
   return (
     <Box css={{ position: "relative" }}>
       {initial.map(renderItem)}
-      {remaining > 0 && !isExpanded && (
-        <Box as="button" type="button" onClick={() => setIsExpanded(true)} css={toggleStyles}>
-          {`▾ more (${remaining})`}
-        </Box>
-      )}
-      {remaining > 0 && isExpanded && (
-        <Box
-          css={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            right: 0,
-          }}
-        >
-          {extras.map(renderItem)}
-          <Box as="button" type="button" onClick={() => setIsExpanded(false)} css={toggleStyles}>
-            ▴ less
+      {remaining > 0 && (
+        <Box css={{ position: "relative" }}>
+          <Box
+            as="button"
+            type="button"
+            onClick={() => setIsExpanded(true)}
+            aria-hidden={isExpanded}
+            tabIndex={isExpanded ? -1 : 0}
+            css={{
+              ...toggleStyles,
+              visibility: isExpanded ? "hidden" : "visible",
+            }}
+          >
+            {`▾ more (${remaining})`}
           </Box>
+          {isExpanded && (
+            <Box
+              css={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+              }}
+            >
+              {extras.map(renderItem)}
+              <Box
+                as="button"
+                type="button"
+                onClick={() => setIsExpanded(false)}
+                css={toggleStyles}
+              >
+                ▴ less
+              </Box>
+            </Box>
+          )}
         </Box>
       )}
     </Box>

@@ -6,6 +6,7 @@ import { css } from "styled-system/css";
 import { Canvas } from "./canvas";
 import { ImportDialog } from "./import-dialog";
 import { Inspector } from "./inspector";
+import { JsonPanel } from "./json-panel";
 import { type BuilderItem, type GridSettings, serializeGrid, type Viewport } from "./lib";
 import { Palette } from "./palette";
 import { Toolbar } from "./toolbar";
@@ -142,7 +143,15 @@ export function GridBuilder({ pushEnabled, siteUrl }: GridBuilderProps) {
           setSelectedId(null);
         }}
       />
-      <div className={css({ flex: 1, display: "flex", overflow: "hidden", minHeight: 0 })}>
+      <div
+        className={css({
+          flex: 1,
+          display: "flex",
+          overflow: "hidden",
+          minHeight: 0,
+          position: "relative",
+        })}
+      >
         <Palette onDragStart={() => {}} onDragEnd={() => {}} />
         <Canvas
           items={items}
@@ -160,6 +169,7 @@ export function GridBuilder({ pushEnabled, siteUrl }: GridBuilderProps) {
           onChange={handleItemChange}
           onDataChange={handleDataChange}
         />
+        <JsonPanel exported={exported} />
       </div>
     </div>
   );

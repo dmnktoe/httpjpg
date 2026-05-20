@@ -103,6 +103,9 @@ export const Navigation = ({
                 &ensp;ꗃ&ensp;
               </span>
             ))}
+            <Box as="span" css={{ textAlign: "justify" }}>
+              —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷)))
+            </Box>
             <br />
             <Link
               href="/feed-xml_html"
@@ -113,9 +116,6 @@ export const Navigation = ({
             >
               ⋆.˚ ᡣ𐭩 .𖥔˚ music ⋆.˚✮🎧✮˚.⋆ &nd pics ˙✧˖°📷 ༘ ⋆｡˚
             </Link>
-            <Box as="span" css={{ textAlign: "justify" }}>
-              —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷)))
-            </Box>
           </Box>
         </Box>
 

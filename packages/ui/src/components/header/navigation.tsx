@@ -10,6 +10,20 @@ import type { HeaderProps } from "./header";
 
 const INITIAL_WORK_COUNT = 5;
 
+const toggleStyles = {
+  display: "block",
+  background: "transparent",
+  border: "none",
+  cursor: "pointer",
+  color: "inherit",
+  font: "inherit",
+  p: 0,
+  mt: "1",
+  opacity: 0.7,
+  textAlign: "left",
+  _hover: { opacity: 1, textDecoration: "underline" },
+} as const;
+
 function ExpandableLinks<T>({
   items,
   renderItem,
@@ -23,46 +37,29 @@ function ExpandableLinks<T>({
   const remaining = extras.length;
 
   return (
-    <>
+    <Box css={{ position: "relative" }}>
       {initial.map(renderItem)}
-      {remaining > 0 && (
-        <Box css={{ position: "relative" }}>
-          <Box
-            as="button"
-            type="button"
-            onClick={() => setIsExpanded((v) => !v)}
-            css={{
-              display: "block",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              color: "inherit",
-              font: "inherit",
-              p: 0,
-              mt: "1",
-              opacity: 0.7,
-              textAlign: "left",
-              _hover: { opacity: 1, textDecoration: "underline" },
-            }}
-          >
-            {isExpanded ? "▴ less" : `▾ more (${remaining})`}
-          </Box>
-          {isExpanded && (
-            <Box
-              css={{
-                position: "absolute",
-                top: "100%",
-                left: 0,
-                right: 0,
-                bg: "pageBg",
-              }}
-            >
-              {extras.map(renderItem)}
-            </Box>
-          )}
+      {remaining > 0 && !isExpanded && (
+        <Box as="button" type="button" onClick={() => setIsExpanded(true)} css={toggleStyles}>
+          {`▾ more (${remaining})`}
         </Box>
       )}
-    </>
+      {remaining > 0 && isExpanded && (
+        <Box
+          css={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            right: 0,
+          }}
+        >
+          {extras.map(renderItem)}
+          <Box as="button" type="button" onClick={() => setIsExpanded(false)} css={toggleStyles}>
+            ▴ less
+          </Box>
+        </Box>
+      )}
+    </Box>
   );
 }
 

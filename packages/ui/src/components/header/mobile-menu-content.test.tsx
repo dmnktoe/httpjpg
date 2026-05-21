@@ -34,21 +34,16 @@ function renderMenu(props: Partial<React.ComponentProps<typeof MobileMenuContent
 }
 
 describe("MobileMenuContent", () => {
-  it("renders the desktop-style intro headline", () => {
-    renderMenu();
-    expect(screen.getByText(/⇝HE𝓁𝓁O www\.httpjpg\.com/)).toBeInTheDocument();
-  });
-
   it("renders the nav links with the same inline ribbon as the desktop header", () => {
     renderMenu();
     expect(screen.getByRole("link", { name: /^HOME$/ })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: /^ABOUT$/ })).toHaveAttribute("href", "/about");
   });
 
-  it("renders the music/pics link inside the intro section", () => {
+  it("does not duplicate the small-header hello block", () => {
     renderMenu();
-    const musicLink = screen.getByRole("link", { name: /music/i });
-    expect(musicLink).toHaveAttribute("href", "/feed-xml_html");
+    expect(screen.queryByText(/⇝HE𝓁𝓁O www\.httpjpg\.com/)).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /music/i })).not.toBeInTheDocument();
   });
 
   it("renders both recent-work section headers", () => {
@@ -83,12 +78,6 @@ describe("MobileMenuContent", () => {
   it("closes the menu when a work item is clicked", () => {
     const { setIsOpen } = renderMenu({ personalWork: makeWork(1, "p") });
     fireEvent.click(screen.getByRole("link", { name: /p title 0/ }));
-    expect(setIsOpen).toHaveBeenCalledWith(false);
-  });
-
-  it("closes the menu when the music link is clicked", () => {
-    const { setIsOpen } = renderMenu();
-    fireEvent.click(screen.getByRole("link", { name: /music/i }));
     expect(setIsOpen).toHaveBeenCalledWith(false);
   });
 

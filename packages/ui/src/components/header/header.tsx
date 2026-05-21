@@ -53,7 +53,7 @@ export const Header = ({ nav, personalWork = [], clientWork = [], children }: He
         w: "full",
         bg: "transparent",
         color: "pageFg",
-        zIndex: "header",
+        zIndex: { base: "mobileMenuButton", md: "header" },
         pointerEvents: "none",
         py: 4,
         fontSize: "sm",

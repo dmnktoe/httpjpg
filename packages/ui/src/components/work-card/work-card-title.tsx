@@ -14,8 +14,9 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
         as="h3"
         css={{
           lineHeight: 0.9,
+          fontFamily: "headline",
           letterSpacing: "tighter",
-          textAlign: { base: "left", md: "right" },
+          textAlign: { base: "left", md: "justify" },
           textWrap: "balance",
           mt: "-0.60em",
           ...(variant === "compact"
@@ -25,7 +26,7 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
               : {
                   fontSize: {
                     base: "clamp(1.5rem, 7cqi, 3rem)",
-                    md: "clamp(1.75rem, 13cqi, 5rem)",
+                    md: "clamp(1.75rem, 9cqi, 5rem)",
                   },
                 }),
         }}

@@ -41,6 +41,7 @@ export const MobileMenuBackdrop = () => (
       display: "grid",
       gridTemplateColumns: `repeat(${COLS}, 1fr)`,
       gridAutoRows: "1fr",
+      bg: "pageBg",
       color: "pageFg",
       fontFamily: "mono",
       fontSize: "xs",
@@ -55,7 +56,7 @@ export const MobileMenuBackdrop = () => (
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          opacity: 0.08,
+          opacity: 0.2,
           animation: "asciiPulse 4s ease-in-out infinite",
           "@media (prefers-reduced-motion: reduce)": {
             animation: "none",

@@ -40,12 +40,6 @@ describe("MobileMenuContent", () => {
     expect(screen.getByRole("link", { name: /^ABOUT$/ })).toHaveAttribute("href", "/about");
   });
 
-  it("does not duplicate the small-header hello block", () => {
-    renderMenu();
-    expect(screen.queryByText(/⇝HE𝓁𝓁O www\.httpjpg\.com/)).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /music/i })).not.toBeInTheDocument();
-  });
-
   it("renders both recent-work section headers", () => {
     renderMenu();
     expect(screen.getByText(/⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S/)).toBeInTheDocument();

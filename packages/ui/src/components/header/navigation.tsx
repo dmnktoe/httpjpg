@@ -1,7 +1,9 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
+import { usePathname } from "next/navigation";
+import { type ReactNode, useEffect, useState } from "react";
 
+import { getFaviconUrl } from "../../lib/favicon-url";
 import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
 import { Link } from "../link/link";
@@ -9,6 +11,44 @@ import { NavLink } from "../nav-link/nav-link";
 import type { HeaderProps } from "./header";
 
 const INITIAL_WORK_COUNT = 5;
+
+function Favicon({ href }: { href: string }) {
+  const src = getFaviconUrl(href);
+  if (!src) return null;
+  return (
+    <Box
+      as="img"
+      src={src}
+      alt=""
+      aria-hidden="true"
+      width={14}
+      height={14}
+      loading="lazy"
+      css={{
+        display: { base: "none", md: "inline-block" },
+        flexShrink: 0,
+        verticalAlign: "middle",
+        w: "14px",
+        h: "14px",
+        mr: "0.25em",
+        imageRendering: "pixelated",
+      }}
+    />
+  );
+}
+
+const WORK_LINK_FLEX = {
+  display: "flex",
+  alignItems: "center",
+} as const;
+
+const WORK_LABEL_STYLES = {
+  minWidth: 0,
+  flex: "1 1 auto",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+} as const;
 
 const toggleStyles = {
   display: "block",
@@ -33,6 +73,10 @@ function ExpandableLinks<T>({
   renderItem: (item: T) => ReactNode;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const pathname = usePathname();
+  useEffect(() => {
+    setIsExpanded(false);
+  }, [pathname]);
   const initial = items.slice(0, INITIAL_WORK_COUNT);
   const extras = items.slice(INITIAL_WORK_COUNT);
   const remaining = extras.length;
@@ -129,6 +173,7 @@ export const Navigation = ({
                     _hover: { textDecoration: "underline" },
                   }}
                 >
+                  {item.isExternal && <Favicon href={item.href} />}
                   {item.name.toUpperCase()}
                 </Link>
                 &ensp;ꗃ&ensp;
@@ -175,18 +220,22 @@ export const Navigation = ({
                     isExternal={work.isExternal}
                     data-preview-image={previewImage}
                     css={{
+                      ...WORK_LINK_FLEX,
                       backgroundColor: work.isDraft ? "warning.200" : "transparent",
                       color: work.isDraft ? "black" : "inherit",
                       ...(work.isDraft && { padding: "2px 4px" }),
                     }}
                   >
-                    {work.isDraft && "[DRAFT] "}
-                    {year && (
-                      <Box as="span" css={{ fontStyle: "italic" }}>
-                        {year}{" "}
-                      </Box>
-                    )}
-                    {work.title}
+                    <Box as="span" css={WORK_LABEL_STYLES}>
+                      {work.isDraft && "[DRAFT] "}
+                      {year && (
+                        <Box as="span" css={{ fontStyle: "italic" }}>
+                          {year}{" "}
+                        </Box>
+                      )}
+                      <Favicon href={work.externalUrl ?? (work.isExternal ? work.slug : "")} />
+                      {work.title}
+                    </Box>
                   </NavLink>
                 );
               }}
@@ -229,18 +278,22 @@ export const Navigation = ({
                     showExternalIcon={work.isExternal}
                     data-preview-image={previewImage}
                     css={{
+                      ...WORK_LINK_FLEX,
                       backgroundColor: work.isDraft ? "warning.200" : "transparent",
                       color: work.isDraft ? "black" : "inherit",
                       ...(work.isDraft && { padding: "0 4px" }),
                     }}
                   >
-                    {work.isDraft && "[DRAFT] "}
-                    {year && (
-                      <Box as="span" css={{ fontStyle: "italic" }}>
-                        {year}{" "}
-                      </Box>
-                    )}
-                    {work.title}
+                    <Box as="span" css={WORK_LABEL_STYLES}>
+                      {work.isDraft && "[DRAFT] "}
+                      {year && (
+                        <Box as="span" css={{ fontStyle: "italic" }}>
+                          {year}{" "}
+                        </Box>
+                      )}
+                      <Favicon href={work.externalUrl ?? (work.isExternal ? work.slug : "")} />
+                      {work.title}
+                    </Box>
                   </NavLink>
                 );
               }}

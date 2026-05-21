@@ -1,7 +1,13 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { vi } from "vitest";
 
 import type { NavItem, WorkItem } from "./header";
 import { Navigation } from "./navigation";
+
+const mockPathname = vi.fn<() => string>(() => "/");
+vi.mock("next/navigation", () => ({
+  usePathname: () => mockPathname(),
+}));
 
 const nav: NavItem[] = [
   { name: "home", href: "/" },
@@ -62,6 +68,23 @@ describe("Navigation", () => {
     expect(placeholder).toHaveAttribute("tabIndex", "-1");
   });
 
+  it("collapses an expanded column when the pathname changes", () => {
+    mockPathname.mockReturnValue("/");
+    const { rerender } = render(
+      <Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={[]} />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /▾ more \(3\)/ }));
+    expect(screen.getByRole("button", { name: /▴ less/ })).toBeInTheDocument();
+
+    mockPathname.mockReturnValue("/work/something");
+    rerender(<Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={[]} />);
+
+    expect(screen.queryByRole("button", { name: /▴ less/ })).not.toBeInTheDocument();
+    expect(screen.queryByText(/p title 5/)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /▾ more \(3\)/ })).toBeInTheDocument();
+  });
+
   it("collapses back to the initial 5 items when less is clicked", () => {
     render(<Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={[]} />);
 
@@ -71,6 +94,120 @@ describe("Navigation", () => {
     expect(screen.queryByText(/p title 5/)).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /▴ less/ })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /▾ more \(3\)/ })).toBeInTheDocument();
+  });
+
+  it("renders a 14x14 favicon image next to external pages-column links", () => {
+    const { container } = render(
+      <Navigation
+        nav={[
+          { name: "home", href: "/" },
+          { name: "github", href: "https://github.com/dmnktoe", isExternal: true },
+        ]}
+        personalWork={[]}
+        clientWork={[]}
+      />,
+    );
+
+    const favicons = Array.from(container.querySelectorAll("img")).filter((img) =>
+      img.getAttribute("src")?.includes("google.com/s2/favicons"),
+    );
+
+    expect(favicons).toHaveLength(1);
+    expect(favicons[0]).toHaveAttribute(
+      "src",
+      "https://www.google.com/s2/favicons?domain=github.com&sz=16",
+    );
+    expect(favicons[0]).toHaveAttribute("width", "14");
+    expect(favicons[0]).toHaveAttribute("height", "14");
+  });
+
+  it("renders favicons for external work items in the recent work columns", () => {
+    const { container } = render(
+      <Navigation
+        nav={[]}
+        personalWork={[
+          {
+            id: "p-ext",
+            slug: "https://dribbble.com/dmnktoe",
+            title: "external personal",
+            isExternal: true,
+          },
+          { id: "p-int", slug: "internal-piece", title: "internal personal", isExternal: false },
+        ]}
+        clientWork={[
+          {
+            id: "c-ext",
+            slug: "https://acme.com",
+            title: "external client",
+            isExternal: true,
+          },
+        ]}
+      />,
+    );
+
+    const sources = Array.from(container.querySelectorAll("img"))
+      .map((img) => img.getAttribute("src") ?? "")
+      .filter((src) => src.includes("google.com/s2/favicons"));
+
+    expect(sources).toEqual([
+      "https://www.google.com/s2/favicons?domain=dribbble.com&sz=16",
+      "https://www.google.com/s2/favicons?domain=acme.com&sz=16",
+    ]);
+  });
+
+  it("prefixes draft work items with [DRAFT] in both columns", () => {
+    render(
+      <Navigation
+        nav={[]}
+        personalWork={[
+          {
+            id: "p-draft",
+            slug: "wip-personal",
+            title: "wip personal",
+            isExternal: false,
+            isDraft: true,
+            date: "2026-04-01",
+          },
+        ]}
+        clientWork={[
+          {
+            id: "c-draft",
+            slug: "wip-client",
+            title: "wip client",
+            isExternal: false,
+            isDraft: true,
+            date: "2026-04-02",
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText(/\[DRAFT\] .*wip personal/)).toBeInTheDocument();
+    expect(screen.getByText(/\[DRAFT\] wip client/)).toBeInTheDocument();
+  });
+
+  it("renders a favicon from externalUrl on internal work that has a preview link", () => {
+    const { container } = render(
+      <Navigation
+        nav={[]}
+        personalWork={[]}
+        clientWork={[
+          {
+            id: "c-preview",
+            slug: "acme-case-study",
+            title: "Acme case study",
+            isExternal: false,
+            externalUrl: "https://acme.com/launch",
+          },
+        ]}
+      />,
+    );
+
+    const sources = Array.from(container.querySelectorAll("img"))
+      .map((img) => img.getAttribute("src") ?? "")
+      .filter((src) => src.includes("google.com/s2/favicons"));
+
+    expect(sources).toEqual(["https://www.google.com/s2/favicons?domain=acme.com&sz=16"]);
   });
 
   it("expands personal and client columns independently", () => {

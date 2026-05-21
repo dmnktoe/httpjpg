@@ -176,6 +176,34 @@ describe("getRecentWork", () => {
     const result = await getRecentWork();
     expect(result.personalWork[0]?.slug).toBe("https://example.com/case");
     expect(result.personalWork[0]?.isExternal).toBe(true);
+    expect(result.personalWork[0]?.externalUrl).toBe("https://example.com/case");
+  });
+
+  it("exposes externalUrl when the story has a link but is not external_only", async () => {
+    setupRecentWork(
+      [
+        workStory({
+          uuid: "prev",
+          slug: "internal-1",
+          full_slug: "work/internal-1",
+          tag_list: ["Client"],
+          content: {
+            title: "Client case",
+            link: { url: "https://client.example/preview" },
+          },
+        }),
+      ],
+      [
+        {
+          ...workStory({ uuid: "prev", slug: "internal-1" }),
+          first_published_at: "2026-01-01",
+        },
+      ],
+    );
+    const result = await getRecentWork();
+    expect(result.clientWork[0]?.slug).toBe("internal-1");
+    expect(result.clientWork[0]?.isExternal).toBe(false);
+    expect(result.clientWork[0]?.externalUrl).toBe("https://client.example/preview");
   });
 
   it("falls back to story.name when content.title is missing", async () => {

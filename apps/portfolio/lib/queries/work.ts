@@ -13,6 +13,7 @@ export interface WorkItem {
   imageUrl?: string;
   isDraft: boolean;
   isExternal: boolean;
+  externalUrl?: string;
   date?: string;
 }
 
@@ -46,7 +47,7 @@ function isDirectWorkSlug(slug: string): boolean {
 
 function toWorkItem(story: WorkStory, publishedUuids: Set<string>): WorkItem {
   const externalOnly = story.content?.external_only === true;
-  const externalUrl = story.content?.link?.url || story.content?.link?.cached_url;
+  const externalUrl = story.content?.link?.url || story.content?.link?.cached_url || undefined;
   const rawImageUrl = firstImageFilename(story.content?.images);
   return {
     id: story.uuid,
@@ -55,6 +56,7 @@ function toWorkItem(story: WorkStory, publishedUuids: Set<string>): WorkItem {
     imageUrl: imagePreset.thumb(rawImageUrl) || undefined,
     isDraft: !publishedUuids.has(story.uuid),
     isExternal: externalOnly,
+    externalUrl,
     date: story.content?.date,
   };
 }

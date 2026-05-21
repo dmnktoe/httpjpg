@@ -24,7 +24,7 @@ export const Page = forwardRef<HTMLDivElement, PageProps>(
       css={{
         display: "flex",
         flexDirection: "column",
-        minHeight: "100dvh",
+        minHeight: "100lvh",
         background: "pageBg",
         ...cssProp,
       }}

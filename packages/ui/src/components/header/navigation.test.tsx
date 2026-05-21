@@ -155,6 +155,37 @@ describe("Navigation", () => {
     ]);
   });
 
+  it("prefixes draft work items with [DRAFT] in both columns", () => {
+    render(
+      <Navigation
+        nav={[]}
+        personalWork={[
+          {
+            id: "p-draft",
+            slug: "wip-personal",
+            title: "wip personal",
+            isExternal: false,
+            isDraft: true,
+            date: "2026-04-01",
+          },
+        ]}
+        clientWork={[
+          {
+            id: "c-draft",
+            slug: "wip-client",
+            title: "wip client",
+            isExternal: false,
+            isDraft: true,
+            date: "2026-04-02",
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText(/\[DRAFT\] .*wip personal/)).toBeInTheDocument();
+    expect(screen.getByText(/\[DRAFT\] wip client/)).toBeInTheDocument();
+  });
+
   it("renders a favicon from externalUrl on internal work that has a preview link", () => {
     const { container } = render(
       <Navigation

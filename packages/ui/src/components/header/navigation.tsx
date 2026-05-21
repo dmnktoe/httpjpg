@@ -37,12 +37,12 @@ function Favicon({ href }: { href: string }) {
   );
 }
 
-const workLinkFlex = {
+const WORK_LINK_FLEX = {
   display: "flex",
   alignItems: "center",
 } as const;
 
-const workLabelStyles = {
+const WORK_LABEL_STYLES = {
   minWidth: 0,
   flex: "1 1 auto",
   overflow: "hidden",
@@ -220,13 +220,13 @@ export const Navigation = ({
                     isExternal={work.isExternal}
                     data-preview-image={previewImage}
                     css={{
-                      ...workLinkFlex,
+                      ...WORK_LINK_FLEX,
                       backgroundColor: work.isDraft ? "warning.200" : "transparent",
                       color: work.isDraft ? "black" : "inherit",
                       ...(work.isDraft && { padding: "2px 4px" }),
                     }}
                   >
-                    <Box as="span" css={workLabelStyles}>
+                    <Box as="span" css={WORK_LABEL_STYLES}>
                       {work.isDraft && "[DRAFT] "}
                       {year && (
                         <Box as="span" css={{ fontStyle: "italic" }}>
@@ -278,13 +278,13 @@ export const Navigation = ({
                     showExternalIcon={work.isExternal}
                     data-preview-image={previewImage}
                     css={{
-                      ...workLinkFlex,
+                      ...WORK_LINK_FLEX,
                       backgroundColor: work.isDraft ? "warning.200" : "transparent",
                       color: work.isDraft ? "black" : "inherit",
                       ...(work.isDraft && { padding: "0 4px" }),
                     }}
                   >
-                    <Box as="span" css={workLabelStyles}>
+                    <Box as="span" css={WORK_LABEL_STYLES}>
                       {work.isDraft && "[DRAFT] "}
                       {year && (
                         <Box as="span" css={{ fontStyle: "italic" }}>

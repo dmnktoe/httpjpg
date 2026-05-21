@@ -1,7 +1,13 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { vi } from "vitest";
 
 import type { NavItem, WorkItem } from "./header";
 import { Navigation } from "./navigation";
+
+const mockPathname = vi.fn<() => string>(() => "/");
+vi.mock("next/navigation", () => ({
+  usePathname: () => mockPathname(),
+}));
 
 const nav: NavItem[] = [
   { name: "home", href: "/" },
@@ -62,6 +68,23 @@ describe("Navigation", () => {
     expect(placeholder).toHaveAttribute("tabIndex", "-1");
   });
 
+  it("collapses an expanded column when the pathname changes", () => {
+    mockPathname.mockReturnValue("/");
+    const { rerender } = render(
+      <Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={[]} />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /▾ more \(3\)/ }));
+    expect(screen.getByRole("button", { name: /▴ less/ })).toBeInTheDocument();
+
+    mockPathname.mockReturnValue("/work/something");
+    rerender(<Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={[]} />);
+
+    expect(screen.queryByRole("button", { name: /▴ less/ })).not.toBeInTheDocument();
+    expect(screen.queryByText(/p title 5/)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /▾ more \(3\)/ })).toBeInTheDocument();
+  });
+
   it("collapses back to the initial 5 items when less is clicked", () => {
     render(<Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={[]} />);
 
@@ -73,7 +96,7 @@ describe("Navigation", () => {
     expect(screen.getByRole("button", { name: /▾ more \(3\)/ })).toBeInTheDocument();
   });
 
-  it("renders a 16x16 favicon image next to external pages-column links", () => {
+  it("renders a 14x14 favicon image next to external pages-column links", () => {
     const { container } = render(
       <Navigation
         nav={[
@@ -94,8 +117,8 @@ describe("Navigation", () => {
       "src",
       "https://www.google.com/s2/favicons?domain=github.com&sz=16",
     );
-    expect(favicons[0]).toHaveAttribute("width", "16");
-    expect(favicons[0]).toHaveAttribute("height", "16");
+    expect(favicons[0]).toHaveAttribute("width", "14");
+    expect(favicons[0]).toHaveAttribute("height", "14");
   });
 
   it("renders favicons for external work items in the recent work columns", () => {

@@ -1,6 +1,7 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
+import { usePathname } from "next/navigation";
+import { type ReactNode, useEffect, useState } from "react";
 
 import { getFaviconUrl } from "../../lib/favicon-url";
 import { formatYear } from "../../lib/format";
@@ -20,15 +21,15 @@ function Favicon({ href }: { href: string }) {
       src={src}
       alt=""
       aria-hidden="true"
-      width={16}
-      height={16}
+      width={14}
+      height={14}
       loading="lazy"
       css={{
         display: { base: "none", md: "inline-block" },
         flexShrink: 0,
         verticalAlign: "middle",
-        w: "16px",
-        h: "16px",
+        w: "14px",
+        h: "14px",
         mr: "0.25em",
         imageRendering: "pixelated",
       }}
@@ -72,6 +73,10 @@ function ExpandableLinks<T>({
   renderItem: (item: T) => ReactNode;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const pathname = usePathname();
+  useEffect(() => {
+    setIsExpanded(false);
+  }, [pathname]);
   const initial = items.slice(0, INITIAL_WORK_COUNT);
   const extras = items.slice(INITIAL_WORK_COUNT);
   const remaining = extras.length;

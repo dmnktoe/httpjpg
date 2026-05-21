@@ -43,7 +43,7 @@ export const MobileMenuContent = ({
         maxW: "full",
         flexDirection: "row",
         justifyContent: { md: "end" },
-        transition: "all 200ms ease-in-out",
+        transition: `opacity 200ms ease-in-out, visibility 0s linear ${isOpen ? "0s" : "200ms"}`,
         visibility: isOpen ? "visible" : "hidden",
         opacity: isOpen ? 1 : 0,
       }}
@@ -60,8 +60,11 @@ export const MobileMenuContent = ({
           maxH: "100vh",
           w: { base: "full", md: "96" },
           overflow: "hidden",
-          transition: "all 200ms ease-in-out",
-          transform: isOpen ? "translateX(0)" : "translateX(0.5rem)",
+          transition: "opacity 200ms ease-in-out, transform 200ms ease-in-out",
+          transform: {
+            base: "translateX(0)",
+            md: isOpen ? "translateX(0)" : "translateX(0.5rem)",
+          },
           opacity: isOpen ? 1 : 0,
         }}
       >

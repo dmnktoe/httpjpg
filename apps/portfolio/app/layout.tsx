@@ -86,7 +86,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 bg: "pageBg",
                 color: "pageFg",
                 w: "full",
-                minH: "100lvh",
+                minH: "100dvh",
               }}
             >
               {children}

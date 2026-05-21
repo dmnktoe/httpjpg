@@ -43,6 +43,17 @@ export const Header = ({ nav, personalWork = [], clientWork = [], children }: He
     setMobileMenuIsOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)");
+    const onChange = (event: MediaQueryListEvent) => {
+      if (event.matches) {
+        setMobileMenuIsOpen(false);
+      }
+    };
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
+
   return (
     <Box
       as="header"

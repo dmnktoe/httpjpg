@@ -149,10 +149,11 @@ export const Navigation = ({
         <Box
           css={{
             display: { base: "none", md: "block" },
-            w: { md: "100%", lg: "33.333333%" },
+            flexShrink: 0,
+            w: { md: "24rem" },
           }}
         >
-          <Box css={{ maxW: "24rem", lineHeight: "snug" }}>
+          <Box css={{ lineHeight: "snug" }}>
             <Box as="span" css={{ fontWeight: "bold" }}>
               ⇝HE𝓁𝓁O www.httpjpg.com
             </Box>
@@ -198,7 +199,8 @@ export const Navigation = ({
         <Box
           css={{
             display: { base: "none", lg: "block" },
-            w: { lg: "33.333333%" },
+            flex: { lg: "1 1 0" },
+            minW: { lg: 0 },
             lineHeight: "snug",
           }}
         >
@@ -253,7 +255,8 @@ export const Navigation = ({
         <Box
           css={{
             display: { base: "none", lg: "block" },
-            w: { lg: "33.333333%" },
+            flex: { lg: "1 1 0" },
+            minW: { lg: 0 },
             lineHeight: "snug",
           }}
         >

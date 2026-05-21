@@ -175,6 +175,10 @@ export default defineConfig({
           "0%": { backgroundPosition: "0% 50%" },
           "100%": { backgroundPosition: "200% 50%" },
         },
+        asciiPulse: {
+          "0%, 100%": { opacity: "0.2" },
+          "50%": { opacity: "0.55" },
+        },
       },
       tokens: {
         colors: toPandaTokens(colors),

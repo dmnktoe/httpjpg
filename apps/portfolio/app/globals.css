@@ -1,6 +1,10 @@
 @import "@httpjpg/tokens/dist/tokens.css";
 
 @layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
+
   body {
     min-height: 100dvh;
     margin: 0;

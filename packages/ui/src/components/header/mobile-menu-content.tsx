@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
-import { Link } from "../link/link";
-import { NavLink } from "../nav-link/nav-link";
 import type { HeaderProps } from "./header";
+import { MobileMenuBackdrop } from "./mobile-menu-backdrop";
+import { MobileMenuNavRibbon } from "./mobile-menu-nav-ribbon";
+import { MobileMenuWorkSection } from "./mobile-menu-work-section";
 
 interface MobileMenuContentProps extends Omit<HeaderProps, "children"> {
   isOpen: boolean;
@@ -37,7 +37,7 @@ export const MobileMenuContent = ({
         position: "fixed",
         inset: 0,
         zIndex: "mobileMenu",
-        display: { base: "flex", xl: "none" },
+        display: { base: "flex", lg: "none" },
         maxH: "100dvh",
         w: "full",
         maxW: "full",
@@ -47,11 +47,8 @@ export const MobileMenuContent = ({
         visibility: isOpen ? "visible" : "hidden",
         opacity: isOpen ? 1 : 0,
       }}
-      style={{
-        backgroundColor: "rgba(235, 232, 232, 0.3)",
-        backdropFilter: isOpen ? "blur(5px)" : "none",
-      }}
     >
+      {isOpen && <MobileMenuBackdrop />}
       <Box
         css={{
           m: 0,
@@ -77,8 +74,8 @@ export const MobileMenuContent = ({
             alignItems: "stretch",
             bg: "pageBg",
             color: "pageFg",
-            m: { md: "6" },
-            borderRadius: 0,
+            borderLeft: { md: "1px solid" },
+            borderLeftColor: "pageFg",
             position: "relative",
             overflow: "hidden",
             maxW: "100%",
@@ -90,7 +87,7 @@ export const MobileMenuContent = ({
               display: "flex",
               flexDirection: "column",
               px: { base: "4", md: "6" },
-              pt: { base: "20", md: "6" },
+              pt: "20",
               pb: { base: "4", md: "6" },
               fontSize: "sm",
               lineHeight: "snug",
@@ -102,115 +99,37 @@ export const MobileMenuContent = ({
               gap: "6",
             }}
           >
-            <Box>
-              {nav.map((item) => (
-                <span key={item.name}>
-                  🎀 ⋆ﾟ･
-                  <Link
-                    href={item.href}
-                    isExternal={item.isExternal}
-                    showExternalIcon={false}
-                    onClick={handleMenuItemClick}
-                    css={{
-                      fontFamily: "accent",
-                      textDecoration: "none",
-                      _hover: { textDecoration: "underline" },
-                    }}
-                  >
-                    {item.name.toUpperCase()}
-                  </Link>
-                  &ensp;ꗃ&ensp;
-                </span>
-              ))}
-            </Box>
+            <MobileMenuNavRibbon nav={nav} onItemClick={handleMenuItemClick} />
 
-            <Box>
-              <Box as="span" css={{ fontWeight: "bold" }}>
-                ⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S
-              </Box>
-              <br />
-              {personalWork.length > 0 ? (
-                personalWork.map((work) => {
-                  const year = formatYear(work.date);
-                  const previewImage = work.imageUrl;
-                  return (
-                    <NavLink
-                      key={work.id}
-                      variant="personal"
-                      href={work.isExternal ? work.slug : `/work/${work.slug}`}
-                      isExternal={work.isExternal}
-                      onClick={handleMenuItemClick}
-                      data-preview-image={previewImage}
-                      css={{
-                        backgroundColor: work.isDraft ? "warning.200" : "transparent",
-                        color: work.isDraft ? "black" : "inherit",
-                        ...(work.isDraft && { padding: "2px 4px" }),
-                      }}
-                    >
-                      {work.isDraft && "[DRAFT] "}
-                      {year && (
-                        <Box as="span" css={{ fontStyle: "italic" }}>
-                          {year}{" "}
-                        </Box>
-                      )}
-                      {work.title}
-                    </NavLink>
-                  );
-                })
-              ) : (
+            <MobileMenuWorkSection
+              heading="⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S"
+              works={personalWork}
+              variant="personal"
+              onItemClick={handleMenuItemClick}
+              emptyState={
                 <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
                   ╭─────────────────╮
                   <br />│ ∅ coming soon ∅ │
                   <br />
                   ╰─────────────────╯
                 </Box>
-              )}
-            </Box>
+              }
+            />
 
-            <Box>
-              <Box as="span" css={{ fontWeight: "bold" }}>
-                ⇝ᵣₑcꫀₙₜ ℘ɑׁׅ֮ᧁׁꫀׁׅܻ꯱ׁׅ֒
-              </Box>
-              <br />
-              {clientWork.length > 0 ? (
-                clientWork.map((work) => {
-                  const href = work.isExternal ? work.slug : `/work/${work.slug}`;
-                  const year = formatYear(work.date);
-                  const previewImage = work.imageUrl;
-                  return (
-                    <NavLink
-                      key={work.id}
-                      variant="client"
-                      href={href}
-                      isExternal={work.isExternal}
-                      showExternalIcon={work.isExternal}
-                      onClick={handleMenuItemClick}
-                      data-preview-image={previewImage}
-                      css={{
-                        backgroundColor: work.isDraft ? "warning.200" : "transparent",
-                        color: work.isDraft ? "black" : "inherit",
-                        ...(work.isDraft && { padding: "0 4px" }),
-                      }}
-                    >
-                      {work.isDraft && "[DRAFT] "}
-                      {year && (
-                        <Box as="span" css={{ fontStyle: "italic" }}>
-                          {year}{" "}
-                        </Box>
-                      )}
-                      {work.title}
-                    </NavLink>
-                  );
-                })
-              ) : (
+            <MobileMenuWorkSection
+              heading="⇝ᵣₑcꫀₙₜ ℘ɑׁׅ֮ᧁׁꫀׁׅܻ꯱ׁׅ֒"
+              works={clientWork}
+              variant="client"
+              onItemClick={handleMenuItemClick}
+              emptyState={
                 <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
                   ╭───────────────────╮
                   <br />│ ⊹ taking clients ⊹ │
                   <br />
                   ╰───────────────────╯
                 </Box>
-              )}
-            </Box>
+              }
+            />
           </Box>
         </Box>
       </Box>

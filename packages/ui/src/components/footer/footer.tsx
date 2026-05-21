@@ -117,13 +117,15 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                 )}
               </Box>
 
+              {copyrightText && <Box as="span">{copyrightText}</Box>}
+
               {(widgets || copyrightText || showVersion) && (
-                <Box as="span">{ASCII_DIVIDER_STARS}</Box>
+                <Box as="span" css={{ my: "6" }}>
+                  {ASCII_DIVIDER_STARS}
+                </Box>
               )}
 
               {widgets && <Box css={{ w: "full" }}>{widgets}</Box>}
-
-              {copyrightText && <Box as="span">{copyrightText}</Box>}
 
               {showVersion && (
                 <Box

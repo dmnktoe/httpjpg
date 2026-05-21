@@ -486,6 +486,7 @@ function headlineRecipe() {
         left: { textAlign: "left" },
         center: { textAlign: "center" },
         right: { textAlign: "right" },
+        justify: { textAlign: "justify", textJustify: "inter-word", textWrap: "wrap" },
       },
     },
     defaultVariants: { level: 1 },

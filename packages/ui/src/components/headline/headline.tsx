@@ -12,6 +12,7 @@ const HEADLINE_FONT_SIZES = {
 
 export interface HeadlineProps extends Omit<HTMLAttributes<HTMLHeadingElement>, "css" | "style"> {
   level?: 1 | 2 | 3;
+  align?: "left" | "center" | "right" | "justify";
   children: ReactNode;
   /** Override the HTML tag; defaults to `h{level}`. */
   as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
@@ -45,12 +46,19 @@ const headlineRecipe = cva({
       },
       3: { fontSize: HEADLINE_FONT_SIZES[3], fontWeight: "bold" },
     },
+    align: {
+      left: { textAlign: "left" },
+      center: { textAlign: "center" },
+      right: { textAlign: "right" },
+      justify: { textAlign: "justify", textJustify: "inter-word", textWrap: "wrap" },
+    },
   },
   defaultVariants: { level: 1 },
 });
 
 export function Headline({
   level = 1,
+  align,
   children,
   as,
   marginTop,
@@ -64,7 +72,7 @@ export function Headline({
   return (
     <Element
       className={cx(
-        css(headlineRecipe.raw({ level })),
+        css(headlineRecipe.raw({ level, align })),
         (marginTop || marginBottom) &&
           css({
             ...(marginTop && { mt: marginTop }),

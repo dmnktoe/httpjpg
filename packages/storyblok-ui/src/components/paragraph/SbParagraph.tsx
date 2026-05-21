@@ -9,7 +9,7 @@ export interface SbParagraphProps {
     text: string;
     size?: "sm" | "md" | "lg" | "xl";
     weight?: string;
-    align?: "left" | "center" | "right";
+    align?: "left" | "center" | "right" | "justify";
     color?: string;
   };
 }
@@ -22,8 +22,8 @@ export const SbParagraph = memo(function SbParagraph({ blok }: SbParagraphProps)
     <Paragraph
       {...editable}
       size={size}
+      align={align}
       css={{
-        textAlign: align,
         color,
         fontWeight: weight,
         ...spacingCss(blok),

@@ -70,7 +70,8 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                 css={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "2",
+                  columnGap: "2",
+                  rowGap: "0",
                   flexWrap: "wrap",
                   justifyContent: "center",
                 }}

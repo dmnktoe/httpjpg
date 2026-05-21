@@ -80,7 +80,7 @@ export const MobileMenuContent = ({
               px: { base: "4", md: "6" },
               pt: { base: "20", md: "6" },
               pb: { base: "4", md: "6" },
-              fontSize: { base: "sm", md: "md" },
+              fontSize: "sm",
               lineHeight: "snug",
               overflowY: "auto",
               overflowX: "hidden",

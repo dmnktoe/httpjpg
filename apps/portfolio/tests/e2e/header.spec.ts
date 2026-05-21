@@ -2,8 +2,9 @@ import { expect, test } from "@playwright/test";
 
 test.describe("header work list expand toggle", () => {
   test("music link lives inside the header intro block", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
-    const musicLink = page.locator("header").getByRole("link", { name: /music/i });
+    const musicLink = page.locator("header").getByRole("link", { name: /music/i }).first();
     await expect(musicLink).toHaveAttribute("href", "/feed-xml_html");
   });
 

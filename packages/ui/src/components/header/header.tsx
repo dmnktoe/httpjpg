@@ -24,6 +24,7 @@ export interface WorkItem {
   imageUrl?: string;
   isDraft?: boolean;
   isExternal?: boolean;
+  externalUrl?: string;
   date?: string;
 }
 

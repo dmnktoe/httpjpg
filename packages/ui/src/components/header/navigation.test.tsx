@@ -132,6 +132,30 @@ describe("Navigation", () => {
     ]);
   });
 
+  it("renders a favicon from externalUrl on internal work that has a preview link", () => {
+    const { container } = render(
+      <Navigation
+        nav={[]}
+        personalWork={[]}
+        clientWork={[
+          {
+            id: "c-preview",
+            slug: "acme-case-study",
+            title: "Acme case study",
+            isExternal: false,
+            externalUrl: "https://acme.com/launch",
+          },
+        ]}
+      />,
+    );
+
+    const sources = Array.from(container.querySelectorAll("img"))
+      .map((img) => img.getAttribute("src") ?? "")
+      .filter((src) => src.includes("google.com/s2/favicons"));
+
+    expect(sources).toEqual(["https://www.google.com/s2/favicons?domain=acme.com&sz=16"]);
+  });
+
   it("expands personal and client columns independently", () => {
     render(<Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={makeWork(7, "c")} />);
 

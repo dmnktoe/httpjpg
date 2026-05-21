@@ -5,7 +5,8 @@
     "paths": {
       "@/*": ["./*"],
       "styled-system/*": ["../../packages/ui/styled-system/*"]
-    }
+    },
+    "types": ["node", "@testing-library/jest-dom", "vitest/globals"]
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

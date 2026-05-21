@@ -57,7 +57,7 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
         className={cx(
           css({
             position: "fixed",
-            bottom: "8",
+            bottom: "12",
             left: "0",
             right: "0",
             marginInline: "auto",

@@ -8,6 +8,7 @@ import { Box } from "../box/box";
 import { Link } from "../link/link";
 import { NavLink } from "../nav-link/nav-link";
 import type { HeaderProps } from "./header";
+import { MobileMenuBackdrop } from "./mobile-menu-backdrop";
 
 interface MobileMenuContentProps extends Omit<HeaderProps, "children"> {
   isOpen: boolean;
@@ -47,11 +48,8 @@ export const MobileMenuContent = ({
         visibility: isOpen ? "visible" : "hidden",
         opacity: isOpen ? 1 : 0,
       }}
-      style={{
-        backgroundColor: "rgba(235, 232, 232, 0.3)",
-        backdropFilter: isOpen ? "blur(5px)" : "none",
-      }}
     >
+      {isOpen && <MobileMenuBackdrop />}
       <Box
         css={{
           m: 0,

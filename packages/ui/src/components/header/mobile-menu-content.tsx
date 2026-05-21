@@ -87,7 +87,7 @@ export const MobileMenuContent = ({
               display: "flex",
               flexDirection: "column",
               px: { base: "4", md: "6" },
-              pt: { base: "20", md: "6" },
+              pt: "20",
               pb: { base: "4", md: "6" },
               fontSize: "sm",
               lineHeight: "snug",

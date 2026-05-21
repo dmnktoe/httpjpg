@@ -26,6 +26,7 @@ function Favicon({ href }: { href: string }) {
       css={{
         display: { base: "none", md: "inline-block" },
         flexShrink: 0,
+        verticalAlign: "middle",
         w: "16px",
         h: "16px",
         mr: "0.25em",
@@ -155,9 +156,8 @@ export const Navigation = ({
               ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ——— ꠹ρᧁ! :)))) hׁׅ֮υׁׅhׁׅ֮υׁׅυׁׅυׁׅ hׁׅ֮tׁׅtׁׅ℘ &&& —— յׁׅ℘ᧁׁ!
             </Box>
             {nav.map((item) => (
-              <Box as="span" key={item.name} css={{ display: "inline-flex", alignItems: "center" }}>
-                <span>🎀 ⋆ﾟ･</span>
-                {item.isExternal && <Favicon href={item.href} />}
+              <span key={item.name}>
+                🎀 ⋆ﾟ･
                 <Link
                   href={item.href}
                   isExternal={item.isExternal}
@@ -168,10 +168,11 @@ export const Navigation = ({
                     _hover: { textDecoration: "underline" },
                   }}
                 >
+                  {item.isExternal && <Favicon href={item.href} />}
                   {item.name.toUpperCase()}
                 </Link>
-                <span>&ensp;ꗃ&ensp;</span>
-              </Box>
+                &ensp;ꗃ&ensp;
+              </span>
             ))}
             <Box as="span" css={{ textAlign: "justify" }}>
               —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷)))

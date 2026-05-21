@@ -1,6 +1,7 @@
 "use client";
 
 import { zIndex } from "@httpjpg/tokens";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export interface ImagePreviewProps {
@@ -16,6 +17,12 @@ export function ImagePreview({
   const [previewImage, setPreviewImage] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setIsVisible(false);
+    setPreviewImage("");
+  }, [pathname]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {

@@ -61,7 +61,7 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
             left: "0",
             right: "0",
             marginInline: "auto",
-            zIndex: "preview",
+            zIndex: "previewBadge",
             width: `${MOBILE_SIZE}px`,
             height: `${MOBILE_SIZE}px`,
             borderRadius: "full",

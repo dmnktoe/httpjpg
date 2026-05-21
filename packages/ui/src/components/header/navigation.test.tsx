@@ -73,6 +73,31 @@ describe("Navigation", () => {
     expect(screen.getByRole("button", { name: /▾ more \(3\)/ })).toBeInTheDocument();
   });
 
+  it("renders a 16x16 favicon image next to external pages-column links", () => {
+    const { container } = render(
+      <Navigation
+        nav={[
+          { name: "home", href: "/" },
+          { name: "github", href: "https://github.com/dmnktoe", isExternal: true },
+        ]}
+        personalWork={[]}
+        clientWork={[]}
+      />,
+    );
+
+    const favicons = Array.from(container.querySelectorAll("img")).filter((img) =>
+      img.getAttribute("src")?.includes("google.com/s2/favicons"),
+    );
+
+    expect(favicons).toHaveLength(1);
+    expect(favicons[0]).toHaveAttribute(
+      "src",
+      "https://www.google.com/s2/favicons?domain=github.com&sz=16",
+    );
+    expect(favicons[0]).toHaveAttribute("width", "16");
+    expect(favicons[0]).toHaveAttribute("height", "16");
+  });
+
   it("expands personal and client columns independently", () => {
     render(<Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={makeWork(7, "c")} />);
 

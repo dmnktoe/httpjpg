@@ -2,6 +2,7 @@
 
 import { type ReactNode, useState } from "react";
 
+import { getFaviconUrl } from "../../lib/favicon-url";
 import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
 import { Link } from "../link/link";
@@ -116,24 +117,46 @@ export const Navigation = ({
             <Box as="span" css={{ textAlign: "justify" }}>
               ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ——— ꠹ρᧁ! :)))) hׁׅ֮υׁׅhׁׅ֮υׁׅυׁׅυׁׅ hׁׅ֮tׁׅtׁׅ℘ &&& —— յׁׅ℘ᧁׁ!
             </Box>
-            {nav.map((item) => (
-              <span key={item.name}>
-                🎀 ⋆ﾟ･
-                <Link
-                  href={item.href}
-                  isExternal={item.isExternal}
-                  showExternalIcon={false}
-                  css={{
-                    fontFamily: "accent",
-                    textDecoration: "none",
-                    _hover: { textDecoration: "underline" },
-                  }}
-                >
-                  {item.name.toUpperCase()}
-                </Link>
-                &ensp;ꗃ&ensp;
-              </span>
-            ))}
+            {nav.map((item) => {
+              const faviconUrl = item.isExternal ? getFaviconUrl(item.href) : null;
+              return (
+                <span key={item.name}>
+                  🎀 ⋆ﾟ･
+                  <Link
+                    href={item.href}
+                    isExternal={item.isExternal}
+                    showExternalIcon={false}
+                    css={{
+                      fontFamily: "accent",
+                      textDecoration: "none",
+                      _hover: { textDecoration: "underline" },
+                    }}
+                  >
+                    {faviconUrl && (
+                      <Box
+                        as="img"
+                        src={faviconUrl}
+                        alt=""
+                        aria-hidden="true"
+                        width={16}
+                        height={16}
+                        loading="lazy"
+                        css={{
+                          display: { base: "none", md: "inline-block" },
+                          verticalAlign: "text-bottom",
+                          w: "16px",
+                          h: "16px",
+                          mr: "0.25em",
+                          imageRendering: "pixelated",
+                        }}
+                      />
+                    )}
+                    {item.name.toUpperCase()}
+                  </Link>
+                  &ensp;ꗃ&ensp;
+                </span>
+              );
+            })}
             <Box as="span" css={{ textAlign: "justify" }}>
               —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷)))
             </Box>

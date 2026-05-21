@@ -2,7 +2,7 @@
 
 @layer base {
   body {
-    min-height: 100dvh;
+    min-height: 100lvh;
     margin: 0;
   }
 

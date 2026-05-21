@@ -1,15 +1,15 @@
 "use client";
 
 import type { AnchorHTMLAttributes } from "react";
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
-export type FloatingPreviewBadgePosition =
-  | "bottom-right"
-  | "bottom-left"
-  | "top-right"
-  | "top-left";
+const MOBILE_SIZE = 40;
+const DESKTOP_HEIGHT = 32;
+const DESKTOP_PREFIX = "(っ◔◡◔)っ ♥ preview •°*”˜.•°*”˜ ";
+const BACKDROP_FILTER = "blur(20px) saturate(180%)";
 
 export interface FloatingPreviewBadgeProps extends Omit<
   AnchorHTMLAttributes<HTMLAnchorElement>,
@@ -17,69 +17,90 @@ export interface FloatingPreviewBadgeProps extends Omit<
 > {
   href: string;
   label?: string;
-  value?: string;
-  position?: FloatingPreviewBadgePosition;
   css?: SystemStyleObject;
 }
 
-const POSITION_CSS: Record<FloatingPreviewBadgePosition, SystemStyleObject> = {
-  "bottom-right": { bottom: "4", right: "4" },
-  "bottom-left": { bottom: "4", left: "4" },
-  "top-right": { top: "4", right: "4" },
-  "top-left": { top: "4", left: "4" },
-};
+const arrowClass = css({
+  display: "inline-block",
+  fontSize: "1.6em",
+  lineHeight: "1",
+  verticalAlign: "middle",
+});
 
 export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPreviewBadgeProps>(
   function FloatingPreviewBadge(
-    {
-      href,
-      label = "PREVIEW",
-      value = "LIVE",
-      position = "bottom-right",
-      className,
-      css: cssProp,
-      ...props
-    },
+    { href, label = "preview", className, css: cssProp, style, ...props },
     ref,
   ) {
-    return (
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+      setMounted(true);
+    }, []);
+
+    if (!mounted) {
+      return null;
+    }
+
+    const anchor = (
       <a
         ref={ref}
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={`${label} ${value} — open external preview`}
+        aria-label={`${label} — open external preview`}
+        style={{
+          backdropFilter: BACKDROP_FILTER,
+          WebkitBackdropFilter: BACKDROP_FILTER,
+          ...style,
+        }}
         className={cx(
           css({
             position: "fixed",
-            zIndex: "floating",
+            bottom: "4",
+            left: "0",
+            right: "0",
+            marginInline: "auto",
+            zIndex: "preview",
+            width: `${MOBILE_SIZE}px`,
+            height: `${MOBILE_SIZE}px`,
+            borderRadius: "full",
             display: "inline-flex",
-            alignItems: "stretch",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.32)",
+            border: "1px solid rgba(255, 255, 255, 0.28)",
+            color: "white",
             fontFamily: "mono",
             fontSize: "sm",
-            fontWeight: "bold",
+            fontWeight: "normal",
             letterSpacing: "wider",
-            textTransform: "uppercase",
             textDecoration: "none",
             lineHeight: "none",
-            border: "1px solid",
-            borderColor: "black",
-            boxShadow: "2px 2px 0 0 black",
-            transition: "transform 150ms ease-out, box-shadow 150ms ease-out",
+            whiteSpace: "nowrap",
+            textShadow: "0 1px 2px rgba(0, 0, 0, 0.6), 0 0 6px rgba(0, 0, 0, 0.3)",
+            boxShadow:
+              "0 8px 32px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.30), inset 0 -1px 0 0 rgba(0, 0, 0, 0.25)",
+            transition:
+              "transform 150ms ease-out, box-shadow 200ms ease-out, background-color 200ms ease-out, border-color 200ms ease-out",
+            sm: {
+              width: "fit-content",
+              height: `${DESKTOP_HEIGHT}px`,
+              paddingInline: "4",
+            },
             _hover: {
-              transform: "translate(-1px, -1px)",
-              boxShadow: "3px 3px 0 0 black",
+              transform: "translateY(-1px)",
+              backgroundColor: "rgba(0, 0, 0, 0.42)",
+              borderColor: "rgba(255, 255, 255, 0.45)",
+              boxShadow:
+                "0 12px 40px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.40), inset 0 -1px 0 0 rgba(0, 0, 0, 0.25)",
             },
-            _active: {
-              transform: "translate(1px, 1px)",
-              boxShadow: "1px 1px 0 0 black",
-            },
+            _active: { transform: "translateY(1px)" },
             _focusVisible: {
               outline: "2px solid",
               outlineColor: "var(--accent-of-day, var(--colors-primary-500))",
               outlineOffset: "2px",
             },
-            ...POSITION_CSS[position],
           }),
           cssProp && css(cssProp),
           className,
@@ -88,42 +109,18 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
       >
         <span
           className={css({
-            backgroundColor: "black",
-            color: "white",
-            px: "2",
-            py: "1.5",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "1",
+            display: "none",
+            sm: { display: "inline" },
           })}
         >
-          <span aria-hidden="true">◆</span>
-          {label}
+          {DESKTOP_PREFIX}
         </span>
-        <span
-          className={css({
-            backgroundColor: "var(--accent-of-day, var(--colors-primary-500))",
-            color: "white",
-            px: "2",
-            py: "1.5",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "1",
-          })}
-        >
-          {value}
-          <span
-            aria-hidden="true"
-            className={css({
-              display: "inline-block",
-              fontSize: "md",
-              lineHeight: "none",
-            })}
-          >
-            ↗
-          </span>
+        <span aria-hidden="true" className={arrowClass}>
+          ↗
         </span>
       </a>
     );
+
+    return createPortal(anchor, document.body);
   },
 );

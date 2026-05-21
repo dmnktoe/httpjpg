@@ -48,7 +48,7 @@ export const MobileMenuContent = ({
         opacity: isOpen ? 1 : 0,
       }}
       style={{
-        backgroundColor: "rgba(235, 232, 232, 0.3)",
+        backgroundColor: isOpen ? "rgba(235, 232, 232, 0.3)" : "transparent",
         backdropFilter: isOpen ? "blur(5px)" : "none",
       }}
     >

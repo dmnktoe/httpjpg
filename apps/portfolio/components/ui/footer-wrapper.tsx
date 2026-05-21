@@ -1,6 +1,6 @@
 "use client";
 
-import { ASCII_DIVIDER_WAVE, AsciiArt, Box, Footer } from "@httpjpg/ui";
+import { ASCII_DIVIDER_WAVE, ASCII_SPARKLES, AsciiArt, Box, Footer } from "@httpjpg/ui";
 
 import { DiscordStatus } from "@/components/widgets/discord-status";
 import { FlagCounter } from "@/components/widgets/flag-counter";
@@ -44,6 +44,7 @@ export function FooterWrapper({
     <Footer
       backgroundImage={backgroundImage}
       footerLinks={footerLinks}
+      copyrightText={copyrightText}
       onCookieSettingsClick={handleCookieSettingsClick}
       widgets={
         <Box
@@ -56,8 +57,7 @@ export function FooterWrapper({
           }}
         >
           <DiscordStatus />
-          <Box as="span">{copyrightText}</Box>
-          {version && (
+          {(lastUpdated || version) && (
             <Box
               as="span"
               css={{
@@ -67,20 +67,9 @@ export function FooterWrapper({
                 letterSpacing: "0.05em",
               }}
             >
+              {lastUpdated && `↻ last updated ${formatLastUpdated(lastUpdated)}`}
+              {lastUpdated && version && ` // ${ASCII_SPARKLES} // `}
               {version}
-            </Box>
-          )}
-          {lastUpdated && (
-            <Box
-              as="span"
-              css={{
-                fontSize: "xs",
-                opacity: 0.4,
-                fontFamily: "mono",
-                letterSpacing: "0.05em",
-              }}
-            >
-              ↻ last updated {formatLastUpdated(lastUpdated)}
             </Box>
           )}
           <Box

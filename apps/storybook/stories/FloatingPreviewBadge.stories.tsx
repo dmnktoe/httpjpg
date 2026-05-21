@@ -1,8 +1,6 @@
 import { Box, FloatingPreviewBadge } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-const POSITION_OPTIONS = ["bottom-right", "bottom-left", "top-right", "top-left"] as const;
-
 const meta = {
   title: "Components/FloatingPreviewBadge",
   component: FloatingPreviewBadge,
@@ -20,19 +18,8 @@ const meta = {
     },
     label: {
       control: "text",
-      description: "Dark label text shown on the left side",
+      description: "Label shown inside the pill on desktop",
       table: { defaultValue: { summary: "PREVIEW" } },
-    },
-    value: {
-      control: "text",
-      description: "Accent-coloured value shown on the right side",
-      table: { defaultValue: { summary: "LIVE" } },
-    },
-    position: {
-      control: { type: "select" },
-      options: POSITION_OPTIONS,
-      description: "Where the badge floats inside its containing viewport",
-      table: { defaultValue: { summary: "bottom-right" } },
     },
   },
 } satisfies Meta<typeof FloatingPreviewBadge>;
@@ -61,8 +48,6 @@ export const Default: Story = {
   args: {
     href: "https://example.com",
     label: "PREVIEW",
-    value: "LIVE",
-    position: "bottom-right",
   },
   render: (args) => (
     <Stage>
@@ -71,40 +56,14 @@ export const Default: Story = {
   ),
 };
 
-export const TopLeft: Story = {
-  args: {
-    href: "https://example.com",
-    position: "top-left",
-  },
-  render: (args) => (
-    <Stage>
-      <FloatingPreviewBadge {...args} />
-    </Stage>
-  ),
-};
-
-export const CustomLabels: Story = {
+export const CustomLabel: Story = {
   args: {
     href: "https://example.com",
     label: "DEMO",
-    value: "OPEN",
   },
   render: (args) => (
     <Stage>
       <FloatingPreviewBadge {...args} />
-    </Stage>
-  ),
-};
-
-export const AllPositions: Story = {
-  args: {
-    href: "https://example.com",
-  },
-  render: (args) => (
-    <Stage>
-      {POSITION_OPTIONS.map((position) => (
-        <FloatingPreviewBadge key={position} {...args} position={position} value={position} />
-      ))}
     </Stage>
   ),
 };

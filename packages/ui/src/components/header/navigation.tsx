@@ -135,7 +135,7 @@ export const Navigation = ({
       css={{
         position: "relative",
         w: "full",
-        display: { base: "none", md: "flex" },
+        display: { base: "none", lg: "flex" },
       }}
     >
       <Box

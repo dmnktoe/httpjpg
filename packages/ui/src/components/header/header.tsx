@@ -65,7 +65,7 @@ export const Header = ({ nav, personalWork = [], clientWork = [], children }: He
         w: "full",
         bg: "transparent",
         color: "pageFg",
-        zIndex: { base: "mobileMenuButton", md: "header" },
+        zIndex: { base: "mobileMenuButton", lg: "header" },
         pointerEvents: "none",
         py: 4,
         fontSize: "sm",
@@ -84,7 +84,7 @@ export const Header = ({ nav, personalWork = [], clientWork = [], children }: He
         >
           <Box
             css={{
-              display: { base: "block", md: "none" },
+              display: { base: "block", lg: "none" },
               lineHeight: "snug",
               fontSize: "xs",
               maxW: "64",

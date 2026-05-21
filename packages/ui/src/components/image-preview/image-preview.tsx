@@ -87,7 +87,7 @@ export function ImagePreview({
         height: `${height}px`,
         transform: "translate(-1000px, -1000px)",
         pointerEvents: "none",
-        zIndex: zIndex.preview,
+        zIndex: zIndex.previewImage,
       }}
     >
       <img

@@ -221,7 +221,6 @@ export const Navigation = ({
                       ...(work.isDraft && { padding: "2px 4px" }),
                     }}
                   >
-                    <Favicon href={work.externalUrl ?? (work.isExternal ? work.slug : "")} />
                     <Box as="span" css={workLabelStyles}>
                       {work.isDraft && "[DRAFT] "}
                       {year && (
@@ -229,6 +228,7 @@ export const Navigation = ({
                           {year}{" "}
                         </Box>
                       )}
+                      <Favicon href={work.externalUrl ?? (work.isExternal ? work.slug : "")} />
                       {work.title}
                     </Box>
                   </NavLink>
@@ -279,7 +279,6 @@ export const Navigation = ({
                       ...(work.isDraft && { padding: "0 4px" }),
                     }}
                   >
-                    <Favicon href={work.externalUrl ?? (work.isExternal ? work.slug : "")} />
                     <Box as="span" css={workLabelStyles}>
                       {work.isDraft && "[DRAFT] "}
                       {year && (
@@ -287,6 +286,7 @@ export const Navigation = ({
                           {year}{" "}
                         </Box>
                       )}
+                      <Favicon href={work.externalUrl ?? (work.isExternal ? work.slug : "")} />
                       {work.title}
                     </Box>
                   </NavLink>

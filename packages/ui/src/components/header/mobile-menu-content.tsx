@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+
 import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
 import { Link } from "../link/link";
@@ -18,11 +21,17 @@ export const MobileMenuContent = ({
   personalWork = [],
   clientWork = [],
 }: MobileMenuContentProps) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleMenuItemClick = () => {
     setIsOpen(false);
   };
 
-  return (
+  const menu = (
     <Box
       css={{
         position: "fixed",
@@ -225,6 +234,12 @@ export const MobileMenuContent = ({
       </Box>
     </Box>
   );
+
+  if (!mounted) {
+    return null;
+  }
+
+  return createPortal(menu, document.body);
 };
 
 MobileMenuContent.displayName = "MobileMenuContent";

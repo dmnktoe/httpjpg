@@ -49,7 +49,7 @@ export const MobileMenuContent = ({
       }}
       style={{
         backgroundColor: "rgba(235, 232, 232, 0.3)",
-        backdropFilter: "blur(5px)",
+        backdropFilter: isOpen ? "blur(5px)" : "none",
       }}
     >
       <Box

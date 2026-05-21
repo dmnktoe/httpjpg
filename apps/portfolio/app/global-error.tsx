@@ -37,7 +37,7 @@ export default function GlobalError({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            minH: "100lvh",
+            minH: "100dvh",
             p: "4",
           }}
         >

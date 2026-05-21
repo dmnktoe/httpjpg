@@ -1,10 +1,85 @@
 "use client";
 
+import { type ReactNode, useState } from "react";
+
 import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
 import { Link } from "../link/link";
 import { NavLink } from "../nav-link/nav-link";
 import type { HeaderProps } from "./header";
+
+const INITIAL_WORK_COUNT = 5;
+
+const toggleStyles = {
+  display: "block",
+  background: "transparent",
+  border: "none",
+  cursor: "pointer",
+  color: "inherit",
+  font: "inherit",
+  fontFamily: "sans",
+  py: "2px",
+  px: "2px",
+  opacity: 0.7,
+  textAlign: "left",
+  _hover: { opacity: 1, textDecoration: "underline" },
+} as const;
+
+function ExpandableLinks<T>({
+  items,
+  renderItem,
+}: {
+  items: T[];
+  renderItem: (item: T) => ReactNode;
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const initial = items.slice(0, INITIAL_WORK_COUNT);
+  const extras = items.slice(INITIAL_WORK_COUNT);
+  const remaining = extras.length;
+
+  return (
+    <Box css={{ position: "relative" }}>
+      {initial.map(renderItem)}
+      {remaining > 0 && (
+        <Box css={{ position: "relative" }}>
+          <Box
+            as="button"
+            type="button"
+            onClick={() => setIsExpanded(true)}
+            aria-hidden={isExpanded}
+            tabIndex={isExpanded ? -1 : 0}
+            css={{
+              ...toggleStyles,
+              visibility: isExpanded ? "hidden" : "visible",
+            }}
+          >
+            {`▾ more (${remaining})`}
+          </Box>
+          {isExpanded && (
+            <Box
+              css={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+              }}
+            >
+              {extras.map(renderItem)}
+              <Box
+                as="button"
+                type="button"
+                onClick={() => setIsExpanded(false)}
+                css={toggleStyles}
+              >
+                ▴ less
+              </Box>
+            </Box>
+          )}
+        </Box>
+      )}
+    </Box>
+  );
+}
 
 export const Navigation = ({
   nav,
@@ -62,6 +137,16 @@ export const Navigation = ({
             <Box as="span" css={{ textAlign: "justify" }}>
               —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷)))
             </Box>
+            <br />
+            <Link
+              href="/feed-xml_html"
+              css={{
+                textDecoration: "none",
+                _hover: { textDecoration: "underline" },
+              }}
+            >
+              ⋆.˚ ᡣ𐭩 .𖥔˚ music ⋆.˚✮🎧✮˚.⋆ &nd pics ˙✧˖°📷 ༘ ⋆｡˚
+            </Link>
           </Box>
         </Box>
 
@@ -77,8 +162,9 @@ export const Navigation = ({
           </Box>
           <br />
           {personalWork.length > 0 ? (
-            <>
-              {personalWork.map((work) => {
+            <ExpandableLinks
+              items={personalWork}
+              renderItem={(work) => {
                 const year = formatYear(work.date);
                 const previewImage = work.imageUrl;
                 return (
@@ -103,20 +189,8 @@ export const Navigation = ({
                     {work.title}
                   </NavLink>
                 );
-              })}
-              <Link
-                href="/feed-xml_html"
-                css={{
-                  display: "block",
-                  textDecoration: "none",
-                  _hover: { textDecoration: "underline" },
-                  py: "0.5",
-                  px: "0.5",
-                }}
-              >
-                ⋆.˚ ᡣ𐭩 .𖥔˚ music ⋆.˚✮🎧✮˚.⋆ &nd pics ˙✧˖°📷 ༘ ⋆｡˚
-              </Link>
-            </>
+              }}
+            />
           ) : (
             <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
               ╭─────────────────╮
@@ -139,35 +213,38 @@ export const Navigation = ({
           </Box>
           <br />
           {clientWork.length > 0 ? (
-            clientWork.map((work) => {
-              const href = work.isExternal ? work.slug : `/work/${work.slug}`;
-              const year = formatYear(work.date);
-              const previewImage = work.imageUrl;
+            <ExpandableLinks
+              items={clientWork}
+              renderItem={(work) => {
+                const href = work.isExternal ? work.slug : `/work/${work.slug}`;
+                const year = formatYear(work.date);
+                const previewImage = work.imageUrl;
 
-              return (
-                <NavLink
-                  key={work.id}
-                  variant="client"
-                  href={href}
-                  isExternal={work.isExternal}
-                  showExternalIcon={work.isExternal}
-                  data-preview-image={previewImage}
-                  css={{
-                    backgroundColor: work.isDraft ? "warning.200" : "transparent",
-                    color: work.isDraft ? "black" : "inherit",
-                    ...(work.isDraft && { padding: "0 4px" }),
-                  }}
-                >
-                  {work.isDraft && "[DRAFT] "}
-                  {year && (
-                    <Box as="span" css={{ fontStyle: "italic" }}>
-                      {year}{" "}
-                    </Box>
-                  )}
-                  {work.title}
-                </NavLink>
-              );
-            })
+                return (
+                  <NavLink
+                    key={work.id}
+                    variant="client"
+                    href={href}
+                    isExternal={work.isExternal}
+                    showExternalIcon={work.isExternal}
+                    data-preview-image={previewImage}
+                    css={{
+                      backgroundColor: work.isDraft ? "warning.200" : "transparent",
+                      color: work.isDraft ? "black" : "inherit",
+                      ...(work.isDraft && { padding: "0 4px" }),
+                    }}
+                  >
+                    {work.isDraft && "[DRAFT] "}
+                    {year && (
+                      <Box as="span" css={{ fontStyle: "italic" }}>
+                        {year}{" "}
+                      </Box>
+                    )}
+                    {work.title}
+                  </NavLink>
+                );
+              }}
+            />
           ) : (
             <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
               ╭───────────────────╮

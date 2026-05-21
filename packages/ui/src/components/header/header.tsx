@@ -1,7 +1,8 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Box } from "../box/box";
 import { Container } from "../container/container";
@@ -35,6 +36,11 @@ export interface HeaderProps {
 
 export const Header = ({ nav, personalWork = [], clientWork = [], children }: HeaderProps) => {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setMobileMenuIsOpen(false);
+  }, [pathname]);
 
   return (
     <Box

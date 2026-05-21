@@ -103,13 +103,6 @@ export const MobileMenuContent = ({
             }}
           >
             <Box>
-              <Box as="span" css={{ fontWeight: "bold" }}>
-                ⇝HE𝓁𝓁O www.httpjpg.com
-              </Box>
-              <br />
-              <Box as="span" css={{ textAlign: "justify" }}>
-                ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ——— ꠹ρᧁ! :)))) hׁׅ֮υׁׅhׁׅ֮υׁׅυׁׅυׁׅ hׁׅ֮tׁׅtׁׅ℘ &&& —— յׁׅ℘ᧁׁ!
-              </Box>
               {nav.map((item) => (
                 <span key={item.name}>
                   🎀 ⋆ﾟ･
@@ -129,20 +122,6 @@ export const MobileMenuContent = ({
                   &ensp;ꗃ&ensp;
                 </span>
               ))}
-              <Box as="span" css={{ textAlign: "justify" }}>
-                —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷)))
-              </Box>
-              <br />
-              <Link
-                href="/feed-xml_html"
-                onClick={handleMenuItemClick}
-                css={{
-                  textDecoration: "none",
-                  _hover: { textDecoration: "underline" },
-                }}
-              >
-                ⋆.˚ ᡣ𐭩 .𖥔˚ music ⋆.˚✮🎧✮˚.⋆ &nd pics ˙✧˖°📷 ༘ ⋆｡˚
-              </Link>
             </Box>
 
             <Box>

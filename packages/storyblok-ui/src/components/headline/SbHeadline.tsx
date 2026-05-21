@@ -8,7 +8,7 @@ export interface SbHeadlineProps {
     _uid: string;
     text: string;
     level?: 1 | 2 | 3;
-    align?: "left" | "center" | "right";
+    align?: "left" | "center" | "right" | "justify";
     color?: string;
   };
 }
@@ -18,7 +18,7 @@ export const SbHeadline = memo(function SbHeadline({ blok }: SbHeadlineProps) {
   const editable = editableAttrs(blok);
 
   return (
-    <Headline {...editable} level={level} css={{ textAlign: align, color, ...spacingCss(blok) }}>
+    <Headline {...editable} level={level} align={align} css={{ color, ...spacingCss(blok) }}>
       {text}
     </Headline>
   );

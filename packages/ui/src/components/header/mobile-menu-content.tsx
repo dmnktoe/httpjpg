@@ -1,7 +1,7 @@
 "use client";
 
+import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
-import { Divider } from "../divider/divider";
 import { Link } from "../link/link";
 import { NavLink } from "../nav-link/nav-link";
 import type { HeaderProps } from "./header";
@@ -77,162 +77,147 @@ export const MobileMenuContent = ({
             css={{
               display: "flex",
               flexDirection: "column",
-              p: { base: "2", md: "6" },
-              fontSize: { base: "lg", md: "xl" },
+              p: { base: "4", md: "6" },
+              fontSize: { base: "sm", md: "md" },
+              lineHeight: "snug",
               overflowY: "auto",
               overflowX: "hidden",
               maxW: "100%",
               flex: "1 1 auto",
               minHeight: 0,
-              gap: { base: "1", md: "2" },
+              gap: "6",
             }}
           >
-            <Box
-              css={{
-                mb: { base: "2", md: "4" },
-                fontWeight: "bold",
-                fontSize: "sm",
-                flexShrink: 0,
-              }}
-            >
-              ╭─────────────────────╮
-              <br />│ ⇝ MENU NAVIGATION │
+            <Box>
+              <Box as="span" css={{ fontWeight: "bold" }}>
+                ⇝HE𝓁𝓁O www.httpjpg.com
+              </Box>
               <br />
-              ╰─────────────────────╯
-            </Box>
-
-            {nav.map((item) => (
+              <Box as="span" css={{ textAlign: "justify" }}>
+                ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ——— ꠹ρᧁ! :)))) hׁׅ֮υׁׅhׁׅ֮υׁׅυׁׅυׁׅ hׁׅ֮tׁׅtׁׅ℘ &&& —— յׁׅ℘ᧁׁ!
+              </Box>
+              {nav.map((item) => (
+                <span key={item.name}>
+                  🎀 ⋆ﾟ･
+                  <Link
+                    href={item.href}
+                    isExternal={item.isExternal}
+                    showExternalIcon={false}
+                    onClick={handleMenuItemClick}
+                    css={{
+                      fontFamily: "accent",
+                      textDecoration: "none",
+                      _hover: { textDecoration: "underline" },
+                    }}
+                  >
+                    {item.name.toUpperCase()}
+                  </Link>
+                  &ensp;ꗃ&ensp;
+                </span>
+              ))}
+              <Box as="span" css={{ textAlign: "justify" }}>
+                —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷)))
+              </Box>
+              <br />
               <Link
-                key={item.name}
-                href={item.href}
-                isExternal={item.isExternal}
-                showExternalIcon={false}
+                href="/feed-xml_html"
                 onClick={handleMenuItemClick}
                 css={{
-                  fontFamily: "accent",
                   textDecoration: "none",
-                  color: "inherit",
-                  flexShrink: 0,
                   _hover: { textDecoration: "underline" },
                 }}
               >
-                {item.name}
+                ⋆.˚ ᡣ𐭩 .𖥔˚ music ⋆.˚✮🎧✮˚.⋆ &nd pics ˙✧˖°📷 ༘ ⋆｡˚
               </Link>
-            ))}
-
-            <Divider
-              variant="ascii"
-              pattern="⋆｡°✩ ･ ✦ ･ ✧ ･ ✦ ･ ✩°｡⋆"
-              color="neutral.300"
-              spacing="0"
-              css={{
-                textAlign: "left",
-                justifyContent: "flex-start",
-                flexShrink: 0,
-                my: { base: "2", md: "3" },
-              }}
-            />
-
-            <Box
-              css={{
-                fontFamily: "headline",
-                mb: { base: "1", md: "2" },
-                fontWeight: "bold",
-                fontSize: "sm",
-                letterSpacing: "wider",
-                textTransform: "lowercase",
-                flexShrink: 0,
-              }}
-            >
-              Personal Work
             </Box>
 
-            {personalWork.length > 0 ? (
-              personalWork.map((work) => {
-                const previewImage = work.imageUrl;
-                return (
-                  <NavLink
-                    key={work.id}
-                    variant="personal"
-                    href={work.isExternal ? work.slug : `/work/${work.slug}`}
-                    isExternal={work.isExternal}
-                    onClick={handleMenuItemClick}
-                    data-preview-image={previewImage}
-                    css={{
-                      fontSize: { base: "sm", md: "md" },
-                      maxW: "100%",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {work.title}
-                  </NavLink>
-                );
-              })
-            ) : (
-              <Box css={{ fontSize: "sm", opacity: 0.4, ml: "2", flexShrink: 0 }}>
-                ∅ ɴᴏ ᴡᴏʀᴋ ʏᴇᴛ ⊹
+            <Box>
+              <Box as="span" css={{ fontWeight: "bold" }}>
+                ⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S
               </Box>
-            )}
-
-            <Divider
-              variant="ascii"
-              pattern="⋆｡°✩ ･ ✦ ･ ✧ ･ ✦ ･ ✩°｡⋆"
-              color="neutral.300"
-              spacing="0"
-              css={{
-                textAlign: "left",
-                justifyContent: "flex-start",
-                flexShrink: 0,
-                my: { base: "2", md: "3" },
-              }}
-            />
-
-            <Box
-              css={{
-                fontFamily: "headline",
-                mb: { base: "1", md: "2" },
-                fontWeight: "bold",
-                fontSize: "sm",
-                letterSpacing: "wider",
-                textTransform: "lowercase",
-                flexShrink: 0,
-              }}
-            >
-              Client Work
+              <br />
+              {personalWork.length > 0 ? (
+                personalWork.map((work) => {
+                  const year = formatYear(work.date);
+                  const previewImage = work.imageUrl;
+                  return (
+                    <NavLink
+                      key={work.id}
+                      variant="personal"
+                      href={work.isExternal ? work.slug : `/work/${work.slug}`}
+                      isExternal={work.isExternal}
+                      onClick={handleMenuItemClick}
+                      data-preview-image={previewImage}
+                      css={{
+                        backgroundColor: work.isDraft ? "warning.200" : "transparent",
+                        color: work.isDraft ? "black" : "inherit",
+                        ...(work.isDraft && { padding: "2px 4px" }),
+                      }}
+                    >
+                      {work.isDraft && "[DRAFT] "}
+                      {year && (
+                        <Box as="span" css={{ fontStyle: "italic" }}>
+                          {year}{" "}
+                        </Box>
+                      )}
+                      {work.title}
+                    </NavLink>
+                  );
+                })
+              ) : (
+                <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
+                  ╭─────────────────╮
+                  <br />│ ∅ coming soon ∅ │
+                  <br />
+                  ╰─────────────────╯
+                </Box>
+              )}
             </Box>
 
-            {clientWork.length > 0 ? (
-              clientWork.map((work) => {
-                const previewImage = work.imageUrl;
-                return (
-                  <NavLink
-                    key={work.id}
-                    variant="client"
-                    href={work.isExternal ? work.slug : `/work/${work.slug}`}
-                    isExternal={work.isExternal}
-                    onClick={handleMenuItemClick}
-                    data-preview-image={previewImage}
-                    css={{
-                      fontSize: { base: "sm", md: "md" },
-                      maxW: "100%",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {work.title}
-                  </NavLink>
-                );
-              })
-            ) : (
-              <Box css={{ fontSize: "sm", opacity: 0.4, ml: "2", flexShrink: 0 }}>
-                ⊹ ᴛᴀᴋɪɴɢ ᴄʟɪᴇɴᴛꜱ ⊹
+            <Box>
+              <Box as="span" css={{ fontWeight: "bold" }}>
+                ⇝ᵣₑcꫀₙₜ ℘ɑׁׅ֮ᧁׁꫀׁׅܻ꯱ׁׅ֒
               </Box>
-            )}
+              <br />
+              {clientWork.length > 0 ? (
+                clientWork.map((work) => {
+                  const href = work.isExternal ? work.slug : `/work/${work.slug}`;
+                  const year = formatYear(work.date);
+                  const previewImage = work.imageUrl;
+                  return (
+                    <NavLink
+                      key={work.id}
+                      variant="client"
+                      href={href}
+                      isExternal={work.isExternal}
+                      showExternalIcon={work.isExternal}
+                      onClick={handleMenuItemClick}
+                      data-preview-image={previewImage}
+                      css={{
+                        backgroundColor: work.isDraft ? "warning.200" : "transparent",
+                        color: work.isDraft ? "black" : "inherit",
+                        ...(work.isDraft && { padding: "0 4px" }),
+                      }}
+                    >
+                      {work.isDraft && "[DRAFT] "}
+                      {year && (
+                        <Box as="span" css={{ fontStyle: "italic" }}>
+                          {year}{" "}
+                        </Box>
+                      )}
+                      {work.title}
+                    </NavLink>
+                  );
+                })
+              ) : (
+                <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
+                  ╭───────────────────╮
+                  <br />│ ⊹ taking clients ⊹ │
+                  <br />
+                  ╰───────────────────╯
+                </Box>
+              )}
+            </Box>
           </Box>
         </Box>
       </Box>

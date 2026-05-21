@@ -98,6 +98,40 @@ describe("Navigation", () => {
     expect(favicons[0]).toHaveAttribute("height", "16");
   });
 
+  it("renders favicons for external work items in the recent work columns", () => {
+    const { container } = render(
+      <Navigation
+        nav={[]}
+        personalWork={[
+          {
+            id: "p-ext",
+            slug: "https://dribbble.com/dmnktoe",
+            title: "external personal",
+            isExternal: true,
+          },
+          { id: "p-int", slug: "internal-piece", title: "internal personal", isExternal: false },
+        ]}
+        clientWork={[
+          {
+            id: "c-ext",
+            slug: "https://acme.com",
+            title: "external client",
+            isExternal: true,
+          },
+        ]}
+      />,
+    );
+
+    const sources = Array.from(container.querySelectorAll("img"))
+      .map((img) => img.getAttribute("src") ?? "")
+      .filter((src) => src.includes("google.com/s2/favicons"));
+
+    expect(sources).toEqual([
+      "https://www.google.com/s2/favicons?domain=dribbble.com&sz=16",
+      "https://www.google.com/s2/favicons?domain=acme.com&sz=16",
+    ]);
+  });
+
   it("expands personal and client columns independently", () => {
     render(<Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={makeWork(7, "c")} />);
 

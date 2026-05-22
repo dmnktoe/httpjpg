@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import { useEffect } from "react";
 
 import { Box } from "../box/box";
 
@@ -11,12 +10,6 @@ interface MobileMenuButtonProps {
 }
 
 export const MobileMenuButton = ({ isOpen, setIsOpen }: MobileMenuButtonProps) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -28,14 +21,12 @@ export const MobileMenuButton = ({ isOpen, setIsOpen }: MobileMenuButtonProps) =
     };
   }, [isOpen]);
 
-  const button = (
+  return (
     <Box
       css={{
-        position: "fixed",
-        right: "4",
-        top: "4",
-        zIndex: "mobileMenuButton",
-        display: { base: "block", lg: "none" },
+        display: { base: "flex", lg: "none" },
+        flexShrink: 0,
+        pointerEvents: "auto",
       }}
     >
       <Box
@@ -82,12 +73,6 @@ export const MobileMenuButton = ({ isOpen, setIsOpen }: MobileMenuButtonProps) =
       </Box>
     </Box>
   );
-
-  if (!mounted) {
-    return null;
-  }
-
-  return createPortal(button, document.body);
 };
 
 MobileMenuButton.displayName = "MobileMenuButton";

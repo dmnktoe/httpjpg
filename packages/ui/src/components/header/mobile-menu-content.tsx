@@ -31,24 +31,26 @@ export const MobileMenuContent = ({
     setIsOpen(false);
   };
 
+  if (!mounted) {
+    return null;
+  }
+
   const menu = (
     <Box
+      aria-hidden={!isOpen}
       css={{
         position: "fixed",
         inset: 0,
         zIndex: "mobileMenu",
-        display: { base: "flex", lg: "none" },
+        display: isOpen ? { base: "flex", lg: "none" } : "none",
         maxH: "100dvh",
         w: "full",
         maxW: "full",
         flexDirection: "row",
         justifyContent: { md: "end" },
-        transition: `opacity 200ms ease-in-out, visibility 0s linear ${isOpen ? "0s" : "200ms"}`,
-        visibility: isOpen ? "visible" : "hidden",
-        opacity: isOpen ? 1 : 0,
       }}
     >
-      {isOpen && <MobileMenuBackdrop />}
+      <MobileMenuBackdrop />
       <Box
         css={{
           m: 0,
@@ -57,12 +59,6 @@ export const MobileMenuContent = ({
           maxH: "100dvh",
           w: { base: "full", md: "96" },
           overflow: "hidden",
-          transition: "opacity 200ms ease-in-out, transform 200ms ease-in-out",
-          transform: {
-            base: "translateX(0)",
-            md: isOpen ? "translateX(0)" : "translateX(0.5rem)",
-          },
-          opacity: isOpen ? 1 : 0,
         }}
       >
         <Box
@@ -135,10 +131,6 @@ export const MobileMenuContent = ({
       </Box>
     </Box>
   );
-
-  if (!mounted) {
-    return null;
-  }
 
   return createPortal(menu, document.body);
 };

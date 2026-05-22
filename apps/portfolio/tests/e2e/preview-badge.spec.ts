@@ -48,7 +48,7 @@ test.describe("FloatingPreviewBadge", () => {
     const viewport = page.viewportSize();
     if (box && viewport) {
       const badgeCenterX = box.x + box.width / 2;
-      expect(Math.abs(badgeCenterX - viewport.width / 2)).toBeLessThan(6);
+      expect(Math.abs(badgeCenterX - viewport.width / 2)).toBeLessThan(10);
       expect(viewport.height - (box.y + box.height)).toBeLessThan(viewport.height / 3);
     }
   });

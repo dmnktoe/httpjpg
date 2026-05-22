@@ -5,6 +5,54 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-05-22
+
+### Added
+
+- **Header**: 16x16 pixelated favicons next to external links in the pages
+  column and in recent personal/client work columns, driven by `externalUrl`
+  and flex-aligned centered.
+- **Mobile menu**: animated ASCII tessellation backdrop replaces the previous
+  blur effect.
+
+### Changed
+
+- **Mobile menu**: extracted into subcomponents, brutalist panel border,
+  then dropped the panel border in favor of a flush-right thin divider with
+  boosted pattern visibility.
+- **Footer**: reordered sections — copyright now sits above the stars
+  divider with an inline metadata line.
+- **Header**: navigation style consts renamed to `SCREAMING_SNAKE_CASE`,
+  pages-column nav items restored to inline text flow, favicons placed
+  after the year in recent work columns.
+- **Workcard**: title now uses the headline font.
+- **Preview badge**: bottom offset bumped from `4` → `12`.
+
+### Fixed
+
+- **Mobile menu**: Safari 26 chrome tinting mitigation with inline button,
+  10% transparent backdrop tint with stable scrollbar gutter, unified panel
+  top padding so the close button no longer overlaps content on tablet,
+  auto-close when viewport crosses the `lg` breakpoint, prevent right-edge
+  clip and flicker on toggle, drop `backdrop-filter` on close to restore
+  `100dvh` page heights, body lock via `position: fixed` to preserve scroll
+  position on Safari (later reverted in favor of `overflow: hidden`).
+- **Header**: mobile menu button portaled to body so it sits above the
+  preview badge and the open menu, first nav column kept at fixed width on
+  desktop, expanded work columns collapse on route change.
+- **Mobile header**: small header stays visible above the open mobile menu.
+- **Image preview**: sticky preview now clears on route change.
+- **Viewport**: switched page containers to `100dvh` / `100lvh` so Safari
+  toolbars no longer clip content.
+- **Footer**: wrapped link `rowGap` now aligns with copyright spacing on
+  mobile.
+
+### Tooling
+
+- **Tests**: covered portfolio `lib` helpers and queries, added regression
+  coverage for the image-preview route-change reset, and relaxed the
+  preview-badge centering tolerance from 6px to 10px.
+
 ## [1.1.0] - 2026-05-21
 
 ### Added
@@ -69,5 +117,6 @@ First production-ready release.
 - **Quality gates**: oxlint + oxfmt, Vitest unit tests, Playwright E2E,
   commitlint + husky pre-commit hooks, strict TypeScript across all packages.
 
+[1.2.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.2.0
 [1.1.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.1.0
 [1.0.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.0.0

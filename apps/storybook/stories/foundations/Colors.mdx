@@ -1,0 +1,191 @@
+import { Meta, ColorPalette, ColorItem } from "@storybook/addon-docs/blocks";
+import { colors } from "@httpjpg/tokens";
+
+<Meta title="Foundations/Colors" />
+
+# Colors
+
+Monochromatic palette with vibrant accent colors following brutalistic design principles.
+
+## Base Colors
+
+<ColorPalette>
+  <ColorItem
+    title="black"
+    subtitle="Primary text, dramatic backgrounds"
+    colors={{ Black: colors.black }}
+  />
+  <ColorItem
+    title="white"
+    subtitle="Default background, inverted text"
+    colors={{ White: colors.white }}
+  />
+</ColorPalette>
+
+## Neutral Scale
+
+Complete gray scale for backgrounds, borders, and text. Perfect for brutalist layouts that need strong contrast.
+
+<ColorPalette>
+  <ColorItem
+    title="neutral"
+    subtitle="Gray scale from light to dark"
+    colors={Object.keys(colors.neutral).reduce((acc, key) => {
+      acc[key] = colors.neutral[key];
+      return acc;
+    }, {})}
+  />
+</ColorPalette>
+
+### Usage
+
+```tsx
+import { Box, Paragraph } from "@httpjpg/ui";
+
+<Box css={{ bg: "neutral.100", p: "24px" }}>
+  <Paragraph css={{ color: "neutral.700" }}>Body text on subtle background</Paragraph>
+</Box>;
+```
+
+## Primary Colors
+
+Electric blue tones for primary actions and brand moments.
+
+<ColorPalette>
+  <ColorItem
+    title="primary"
+    subtitle="Electric blue for primary actions"
+    colors={Object.keys(colors.primary).reduce((acc, key) => {
+      acc[key] = colors.primary[key];
+      return acc;
+    }, {})}
+  />
+</ColorPalette>
+
+### Usage
+
+```tsx
+import { Button } from "@httpjpg/ui";
+
+<Button css={{ bg: "primary.500", color: "white" }}>Primary Action</Button>;
+```
+
+## Secondary Colors
+
+Vibrant rose/pink tones for secondary actions and highlights.
+
+<ColorPalette>
+  <ColorItem
+    title="secondary"
+    subtitle="Rose/pink for secondary actions"
+    colors={Object.keys(colors.secondary).reduce((acc, key) => {
+      acc[key] = colors.secondary[key];
+      return acc;
+    }, {})}
+  />
+</ColorPalette>
+
+### Usage
+
+```tsx
+import { Button } from "@httpjpg/ui";
+
+<Button css={{ bg: "secondary.500", color: "white" }}>Secondary Action</Button>;
+```
+
+## Accent Colors
+
+Vibrant peachy orange tones for accents, highlights, and creative energy.
+
+<ColorPalette>
+  <ColorItem
+    title="accent"
+    subtitle="Peachy orange for highlights and accents"
+    colors={Object.keys(colors.accent).reduce((acc, key) => {
+      acc[key] = colors.accent[key];
+      return acc;
+    }, {})}
+  />
+</ColorPalette>
+
+### Usage
+
+```tsx
+import { Box } from "@httpjpg/ui";
+
+<Box css={{ borderLeft: "4px solid", borderColor: "accent.500" }}>Highlighted content</Box>;
+```
+
+## Semantic Status Colors
+
+### Success
+
+<ColorPalette>
+  <ColorItem
+    title="success"
+    subtitle="Green for success states"
+    colors={Object.keys(colors.success).reduce((acc, key) => {
+      acc[key] = colors.success[key];
+      return acc;
+    }, {})}
+  />
+</ColorPalette>
+
+### Warning
+
+<ColorPalette>
+  <ColorItem
+    title="warning"
+    subtitle="Amber/yellow for warnings"
+    colors={Object.keys(colors.warning).reduce((acc, key) => {
+      acc[key] = colors.warning[key];
+      return acc;
+    }, {})}
+  />
+</ColorPalette>
+
+### Danger
+
+<ColorPalette>
+  <ColorItem
+    title="danger"
+    subtitle="Red for errors and destructive actions"
+    colors={Object.keys(colors.danger).reduce((acc, key) => {
+      acc[key] = colors.danger[key];
+      return acc;
+    }, {})}
+  />
+</ColorPalette>
+
+## Color Semantics
+
+### Text Colors
+
+- `black` - Primary text (default)
+- `neutral.700` - Body text
+- `neutral.500` - Secondary text
+- `neutral.400` - Disabled text
+- `white` - Inverted text
+- `primary.500` - Primary links and actions
+- `secondary.500` - Secondary emphasis
+- `accent.500` - Highlights, creative emphasis
+
+### Background Colors
+
+- `white` - Default background
+- `neutral.50` - Subtle background
+- `neutral.100` - Section background
+- `black` - Dramatic sections
+- `primary.50` - Subtle brand background
+- `secondary.50` - Subtle secondary background
+- `accent.50` - Subtle accent background
+
+### Border Colors
+
+- `neutral.200` - Default borders
+- `neutral.300` - Hover borders
+- `neutral.400` - Active borders
+- `black` - Strong borders
+- `primary.500` - Brand borders
+- `secondary.500` - Secondary borders
+- `accent.500` - Accent borders

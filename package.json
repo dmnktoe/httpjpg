@@ -6,7 +6,7 @@
     "dev": "turbo run dev",
     "dev:portfolio": "turbo run dev --filter=@httpjpg/portfolio...",
     "dev:storybook": "turbo run dev --filter=@httpjpg/storybook...",
-    "dev:https": "turbo run dev:https --filter=@httpjpg/portfolio...",
+    "dev:https": "turbo run dev:https --filter=@httpjpg/portfolio... --filter=@httpjpg/storybook...",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",

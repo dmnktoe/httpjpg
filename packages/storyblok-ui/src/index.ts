@@ -12,6 +12,10 @@ export { SbPage, type SbPageProps } from "./components/page/SbPage";
 export { SbPageWork, type SbPageWorkProps } from "./components/page-work/SbPageWork";
 export { SbParagraph, type SbParagraphProps } from "./components/paragraph/SbParagraph";
 export { SbRichText, type SbRichTextProps } from "./components/richtext/SbRichText";
+export {
+  SbScrollPinImage,
+  type SbScrollPinImageProps,
+} from "./components/scroll-pin-image/SbScrollPinImage";
 export { SbSection, type SbSectionProps } from "./components/section/SbSection";
 export type { FooterConfig, MenuLink, SbConfigStory } from "./components/settings/SbSettings";
 export { SbSlideshow, type SbSlideshowProps } from "./components/slideshow/SbSlideshow";

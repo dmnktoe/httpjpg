@@ -70,6 +70,42 @@ export const mediaBlocks: BlockDef[] = [
     }),
   },
   {
+    name: "scroll_pin_image",
+    display_name: "Scroll Pin Image",
+    group: "Media",
+    icon: "block-image",
+    color: "#38b2ac",
+    schema: withSpacing({
+      image: field.asset("Image", ["images"], { required: true }),
+      alt: field.text("Alt Text", { translatable: true }),
+      caption: field.richtext("Caption", { translatable: true }),
+      link: field.multilink("Link"),
+      copyrightPosition: field.options("Copyright Position", COPYRIGHT_POSITION_OPTIONS, {
+        default_value: "inline-white",
+      }),
+      ...tabbed("Layout", "layout", {
+        aspectRatio: field.options("Aspect Ratio", inlineOptions.aspectRatio),
+        width: field.options("Width", inlineOptions.imageWidth, { default_value: "100%" }),
+        widthMd: field.options("Width (Tablet)", inlineOptions.imageWidth),
+        widthLg: field.options("Width (Desktop)", inlineOptions.imageWidth),
+      }),
+      ...tabbed("Loading", "loading", {
+        fetchPriority: field.options("Fetch Priority", FETCH_PRIORITY_OPTIONS, {
+          default_value: "auto",
+        }),
+      }),
+      ...tabbed("Pin Reveal", "pin", {
+        pinDistance: field.text("Pin Distance (CSS length, e.g. 100vh)", {
+          default_value: "100vh",
+        }),
+        maxClipRatio: field.number("Max Clip Ratio (%)", { default_value: "12" }),
+        maxScale: field.number("Max Scale", { default_value: "1.15" }),
+        brackets: field.boolean("ASCII Corner Brackets", "true"),
+        showProgress: field.boolean("Show Progress Label", "true"),
+      }),
+    }),
+  },
+  {
     name: "video",
     display_name: "Video",
     group: "Media",

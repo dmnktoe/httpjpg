@@ -8,6 +8,9 @@
     "dev:https": "storybook dev -p 3002",
     "build": "turbo run build --filter=@httpjpg/ui && storybook build",
     "preview": "storybook preview",
+    "test-storybook": "test-storybook --url http://localhost:3002",
+    "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"http-server storybook-static --port 3002 --silent\" \"wait-on http://localhost:3002 && pnpm test-storybook\"",
+    "test-storybook:update": "test-storybook --url http://localhost:3002 -u",
     "type-check": "tsc --noEmit",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix"
@@ -21,15 +24,22 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@storybook/addon-docs": "^10.4.0",
     "@storybook/addon-links": "^10.4.0",
     "@storybook/react": "^10.4.0",
     "@storybook/react-vite": "^10.4.0",
+    "@storybook/test-runner": "^0.24.4",
+    "@types/jest-image-snapshot": "^6.4.0",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "concurrently": "^9.1.0",
+    "http-server": "^14.1.1",
+    "jest-image-snapshot": "^6.4.0",
     "storybook": "^10.4.0",
     "typescript": "catalog:",
-    "vite": "^8.0.0"
+    "vite": "^8.0.0",
+    "wait-on": "^9.0.0"
   }
 }

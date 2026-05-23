@@ -9,3 +9,10 @@ node_modules/
 
 # Build info
 *.tsbuildinfo
+
+# Playwright (visual regression)
+/playwright-report
+/test-results
+
+# Storybook test-runner — only commit baseline screenshots, not diffs
+/__image_snapshots__/__diff_output__/

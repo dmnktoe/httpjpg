@@ -90,6 +90,16 @@
       "outputs": ["playwright-report/**", "test-results/**"],
       "env": ["PLAYWRIGHT_TEST_BASE_URL"]
     },
+    "test-storybook": {
+      "dependsOn": ["build"],
+      "inputs": ["stories/**", ".storybook/**", "__image_snapshots__/**"],
+      "outputs": ["test-results/**"]
+    },
+    "test-storybook:ci": {
+      "dependsOn": ["build"],
+      "inputs": ["stories/**", ".storybook/**", "__image_snapshots__/**"],
+      "outputs": ["test-results/**"]
+    },
     "format:check": {
       "inputs": ["**/*.{ts,tsx,js,jsx,json}", ".oxfmtrc.json"],
       "outputs": []

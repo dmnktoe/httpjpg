@@ -1,5 +1,6 @@
 import { Box, Headline, Paragraph } from "@httpjpg/ui";
 import type { Meta } from "@storybook/react";
+import type { ReactNode } from "react";
 
 const meta = {
   title: "Foundations/Typography",
@@ -9,6 +10,31 @@ const meta = {
 } satisfies Meta;
 
 export default meta;
+
+interface FontSizeRowProps {
+  size: string;
+  rem: string;
+  px: string;
+  desc: string;
+  children: ReactNode;
+}
+
+function FontSizeRow({ size, rem, px, desc, children }: FontSizeRowProps) {
+  return (
+    <Box css={{ p: "4", bg: "neutral.50", borderRadius: "md" }}>
+      <Box css={{ display: "flex", alignItems: "baseline", gap: "4", mb: "2" }}>
+        <Paragraph css={{ fontFamily: "mono", fontSize: "sm", fontWeight: "bold" }}>
+          {size}
+        </Paragraph>
+        <Paragraph css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.6 }}>
+          {rem} ({px})
+        </Paragraph>
+        <Paragraph css={{ fontSize: "xs", opacity: 0.6 }}>- {desc}</Paragraph>
+      </Box>
+      {children}
+    </Box>
+  );
+}
 
 export const TypographyGuide = {
   render: () => (
@@ -122,53 +148,36 @@ export const TypographyGuide = {
       </Headline>
 
       <Box css={{ mb: "8", display: "flex", flexDirection: "column", gap: "4" }}>
-        {[
-          {
-            size: "xs",
-            rem: "0.75rem",
-            px: "12px",
-            desc: "Small text, captions",
-          },
-          { size: "sm", rem: "0.875rem", px: "14px", desc: "Secondary text" },
-          {
-            size: "base",
-            rem: "1rem",
-            px: "16px",
-            desc: "Body text (default)",
-          },
-          {
-            size: "lg",
-            rem: "1.125rem",
-            px: "18px",
-            desc: "Emphasized body text",
-          },
-          { size: "xl", rem: "1.25rem", px: "20px", desc: "Small headings" },
-          { size: "2xl", rem: "1.5rem", px: "24px", desc: "Section headings" },
-          { size: "3xl", rem: "1.875rem", px: "30px", desc: "Page headings" },
-          { size: "4xl", rem: "2.25rem", px: "36px", desc: "Large headings" },
-          { size: "5xl", rem: "3rem", px: "48px", desc: "Hero headings" },
-          { size: "6xl", rem: "3.75rem", px: "60px", desc: "Display text" },
-        ].map(({ size, rem, px, desc }) => (
-          <Box key={size} css={{ p: "4", bg: "neutral.50", borderRadius: "md" }}>
-            <Box
-              css={{
-                display: "flex",
-                alignItems: "baseline",
-                gap: "4",
-                mb: "2",
-              }}
-            >
-              <Paragraph css={{ fontFamily: "mono", fontSize: "sm", fontWeight: "bold" }}>
-                {size}
-              </Paragraph>
-              <Paragraph css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.6 }}>
-                {rem} ({px})
-              </Paragraph>
-              <Paragraph css={{ fontSize: "xs", opacity: 0.6 }}>- {desc}</Paragraph>
-            </Box>
-            <Box css={{ fontSize: size }}>The quick brown fox</Box>
-          </Box>
-        ))}
+        <FontSizeRow size="xs" rem="0.75rem" px="12px" desc="Small text, captions">
+          <Box css={{ fontSize: "xs" }}>The quick brown fox</Box>
+        </FontSizeRow>
+        <FontSizeRow size="sm" rem="0.875rem" px="14px" desc="Secondary text">
+          <Box css={{ fontSize: "sm" }}>The quick brown fox</Box>
+        </FontSizeRow>
+        <FontSizeRow size="base" rem="1rem" px="16px" desc="Body text (default)">
+          <Box css={{ fontSize: "base" }}>The quick brown fox</Box>
+        </FontSizeRow>
+        <FontSizeRow size="lg" rem="1.125rem" px="18px" desc="Emphasized body text">
+          <Box css={{ fontSize: "lg" }}>The quick brown fox</Box>
+        </FontSizeRow>
+        <FontSizeRow size="xl" rem="1.25rem" px="20px" desc="Small headings">
+          <Box css={{ fontSize: "xl" }}>The quick brown fox</Box>
+        </FontSizeRow>
+        <FontSizeRow size="2xl" rem="1.5rem" px="24px" desc="Section headings">
+          <Box css={{ fontSize: "2xl" }}>The quick brown fox</Box>
+        </FontSizeRow>
+        <FontSizeRow size="3xl" rem="1.875rem" px="30px" desc="Page headings">
+          <Box css={{ fontSize: "3xl" }}>The quick brown fox</Box>
+        </FontSizeRow>
+        <FontSizeRow size="4xl" rem="2.25rem" px="36px" desc="Large headings">
+          <Box css={{ fontSize: "4xl" }}>The quick brown fox</Box>
+        </FontSizeRow>
+        <FontSizeRow size="5xl" rem="3rem" px="48px" desc="Hero headings">
+          <Box css={{ fontSize: "5xl" }}>The quick brown fox</Box>
+        </FontSizeRow>
+        <FontSizeRow size="6xl" rem="3.75rem" px="60px" desc="Display text">
+          <Box css={{ fontSize: "6xl" }}>The quick brown fox</Box>
+        </FontSizeRow>
       </Box>
 
       {/* Font Weights */}

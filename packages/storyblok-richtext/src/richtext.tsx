@@ -125,9 +125,7 @@ export function renderStoryblokRichText(data?: ISbRichtext | null) {
 
 export interface StoryblokRichTextProps extends ComponentProps<"div"> {
   data?: ISbRichtext | null;
-  /** Reserved for parity with the previous API. */
   maxWidth?: string | boolean;
-  /** Overrides the text color of the entire rendered tree (any Panda color token or CSS color). */
   color?: string;
 }
 
@@ -145,9 +143,19 @@ const colorInherit = {
   },
 } as const;
 
+function resolveMaxWidth(value: string | boolean | undefined): string | undefined {
+  if (value === undefined || value === false) {
+    return undefined;
+  }
+  if (value === true) {
+    return "65ch";
+  }
+  return value;
+}
+
 export function StoryblokRichText({
   data,
-  maxWidth: _maxWidth,
+  maxWidth,
   color,
   style,
   ...props
@@ -155,11 +163,16 @@ export function StoryblokRichText({
   if (!data) {
     return null;
   }
+  const resolvedMaxWidth = resolveMaxWidth(maxWidth);
   return (
     <Box
       {...props}
       style={color ? { color, ...style } : style}
-      css={{ ...proseRhythm, ...(color && colorInherit) }}
+      css={{
+        ...proseRhythm,
+        ...(color && colorInherit),
+        ...(resolvedMaxWidth && { maxWidth: resolvedMaxWidth }),
+      }}
     >
       {renderStoryblokRichText(data)}
     </Box>

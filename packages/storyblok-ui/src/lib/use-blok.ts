@@ -1,32 +1,8 @@
+import type { BlokSpacing } from "@httpjpg/storyblok-utils";
 import { storyblokEditable } from "@storyblok/react/rsc";
 import type { SystemStyleObject } from "styled-system/types";
 
-export interface BlokSpacing {
-  mt?: string;
-  mb?: string;
-  ml?: string;
-  mr?: string;
-  pt?: string;
-  pb?: string;
-  pl?: string;
-  pr?: string;
-  mtMd?: string;
-  mbMd?: string;
-  mlMd?: string;
-  mrMd?: string;
-  ptMd?: string;
-  pbMd?: string;
-  plMd?: string;
-  prMd?: string;
-  mtLg?: string;
-  mbLg?: string;
-  mlLg?: string;
-  mrLg?: string;
-  ptLg?: string;
-  pbLg?: string;
-  plLg?: string;
-  prLg?: string;
-}
+export type { BlokSpacing };
 
 const AXES = ["mt", "mb", "ml", "mr", "pt", "pb", "pl", "pr"] as const;
 type Axis = (typeof AXES)[number];

@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/nextjs";
 import { getSentryConfig } from "./config";
 
 export function initSentryClient() {
-  const { dsn, environment, isProduction, isEnabled } = getSentryConfig("client");
+  const { dsn, environment, release, isProduction, isEnabled } = getSentryConfig("client");
   if (!dsn || !isEnabled) {
     return;
   }
@@ -11,6 +11,7 @@ export function initSentryClient() {
   Sentry.init({
     dsn,
     environment,
+    release,
     enabled: isEnabled,
     tracesSampleRate: isProduction ? 0.1 : 1.0,
     debug: false,

@@ -59,10 +59,11 @@ const meta = {
     },
     maxWidth: {
       control: "text",
-      description: "Max width constraint (true=65ch, false=none, or custom like '80ch')",
+      description:
+        "Max width: `true` → 65ch, preset (`narrow|readable|wide|extra-wide`), or any CSS length",
       table: {
-        type: { summary: "boolean | string" },
-        defaultValue: { summary: "true" },
+        type: { summary: "boolean | 'narrow' | 'readable' | 'wide' | 'extra-wide' | string" },
+        defaultValue: { summary: "false" },
       },
     },
     spacing: {

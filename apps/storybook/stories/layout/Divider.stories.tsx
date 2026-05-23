@@ -37,12 +37,15 @@ const meta = {
         defaultValue: { summary: "solid" },
       },
     },
+    preset: {
+      control: { type: "select" as const },
+      options: ["stars", "dots", "wave", "arrows", "sparkles"] as const,
+      description: "Shorthand for built-in ASCII presets (overridden by `pattern`)",
+    },
     pattern: {
       control: "text",
-      description: "ASCII pattern for divider",
-      table: {
-        defaultValue: { summary: "*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚" },
-      },
+      description: "Explicit ASCII pattern; overrides `preset`",
+      table: { defaultValue: { summary: "ASCII_DIVIDER_STARS" } },
     },
     spacing: spacingArgType("Spacing around divider", "4"),
     thickness: {

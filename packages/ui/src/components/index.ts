@@ -14,6 +14,7 @@ export * from "./grid/grid-item";
 export * from "./header/header";
 export * from "./headline/headline";
 export * from "./icon/icon";
+export * from "./icon-button/icon-button";
 export * from "./image/image";
 export * from "./image-overlay/image-overlay";
 export * from "./image-overlay/use-parallax";

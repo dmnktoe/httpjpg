@@ -45,7 +45,7 @@ const meta = {
       options: GRID_JUSTIFY_OPTIONS,
       description: "Horizontal alignment of items in their grid areas (justifyItems)",
       table: {
-        defaultValue: { summary: "start" },
+        defaultValue: { summary: "stretch" },
       },
     },
     flow: {

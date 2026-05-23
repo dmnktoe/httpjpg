@@ -136,38 +136,25 @@ jobs:
           retention-days: 30
 
   visual:
-    name: Visual Regression (Storybook)
+    name: Visual Regression (Chromatic)
     runs-on: ubuntu-latest
     needs: [lint, typecheck]
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/setup
-      - name: Build Storybook
-        run: pnpm run build --filter=@httpjpg/storybook
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v5
+      - name: Run Chromatic
+        uses: chromaui/action@v11
         with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm --filter=@httpjpg/storybook exec playwright install --with-deps chromium
-      - name: Install Playwright system deps
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm --filter=@httpjpg/storybook exec playwright install-deps chromium
-      - name: Run Storybook test-runner (visual regression)
-        run: pnpm --filter=@httpjpg/storybook run test-storybook:ci
-      - name: Upload diff artifacts on failure
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: storybook-visual-diffs
-          path: |
-            apps/storybook/__image_snapshots__/__diff_output__/
-            apps/storybook/test-results/
-          retention-days: 30
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: apps/storybook
+          buildScriptName: build
+          onlyChanged: true
+          autoAcceptChanges: main
+          exitZeroOnChanges: true
+          exitOnceUploaded: true
 
   ci:
     name: CI Summary

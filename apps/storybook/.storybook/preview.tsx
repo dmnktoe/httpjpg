@@ -100,36 +100,22 @@ const preview: Preview = {
       <LazyMotionProvider>
         <style>
           {`
-            /* Body text uses sans token */
+            /* Storyblok docs UI only — never bleeds into story content. */
+            .sbdocs,
             .sbdocs-content,
             .sbdocs-p,
             .docblock-argstable,
-            .docblock-description,
-            body,
-            p,
-            span,
-            div,
-            td,
-            th,
-            label {
-              font-family: Arial, Helvetica, sans-serif !important;
+            .docblock-description {
+              font-family: Arial, Helvetica, sans-serif;
             }
-
-            /* Headlines use headline token with !important to override */
             .sbdocs-h1,
             .sbdocs-h2,
             .sbdocs-h3,
             .sbdocs-h4,
             .sbdocs-h5,
             .sbdocs-h6,
-            .sbdocs-title,
-            h1,
-            h2,
-            h3,
-            h4,
-            h5,
-            h6 {
-              font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif !important;
+            .sbdocs-title {
+              font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
             }
           `}
         </style>

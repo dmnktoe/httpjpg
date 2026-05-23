@@ -30,6 +30,7 @@ export * from "./music-player/music-player";
 export * from "./nav-link/nav-link";
 export * from "./page/page";
 export * from "./paragraph/paragraph";
+export * from "./scroll-clip-image/scroll-clip-image";
 export * from "./section/section";
 export * from "./slideshow/slideshow";
 export * from "./stack/stack";

@@ -44,9 +44,8 @@ function toNavItem(item: MenuLink): NavItem | null {
 
 const FALLBACK_NAVIGATION: NavItem[] = [
   { name: "Home", href: "/", isExternal: false },
-  { name: "Work", href: "/work", isExternal: false },
-  { name: "About", href: "/about", isExternal: false },
-  { name: "Contact", href: "/contact", isExternal: false },
+  { name: "CV", href: "/cv", isExternal: false },
+  { name: "Feed", href: "/feed-xml_html", isExternal: false },
 ];
 
 export async function getNavigation(): Promise<NavItem[]> {

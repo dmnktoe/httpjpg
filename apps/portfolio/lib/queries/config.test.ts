@@ -87,14 +87,14 @@ describe("getNavigation", () => {
   it("returns the fallback navigation when no header_menu is configured", async () => {
     setupGetStory(async () => ({ content: { header_menu: [] } }));
     const nav = await getNavigation();
-    expect(nav.map((n) => n.name)).toEqual(["Home", "Work", "About", "Contact"]);
+    expect(nav.map((n) => n.name)).toEqual(["Home", "CV", "Feed"]);
     expect(nav.every((n) => n.isExternal === false)).toBe(true);
   });
 
   it("returns the fallback navigation when the config story is null", async () => {
     setupGetStory(async () => null);
     const nav = await getNavigation();
-    expect(nav).toHaveLength(4);
+    expect(nav).toHaveLength(3);
   });
 
   it("maps configured menu items into nav items", async () => {

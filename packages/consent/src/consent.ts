@@ -1,40 +1,40 @@
-import type { ConsentState, ExternalVendor } from "./types";
-import { CONSENT_COOKIE_EXPIRY, CONSENT_COOKIE_NAME, EXTERNAL_VENDORS } from "./types";
+"use client";
 
+import type { AllConsentNames } from "c15t";
+import { getConsentFromStorage } from "c15t";
+
+import type { ConsentState, ExternalVendor } from "./types";
+import { DEFAULT_CONSENT_STATE, VENDOR_TO_C15T } from "./types";
+
+interface C15tStoredConsent {
+  consents: Record<AllConsentNames, boolean>;
+}
+
+function readC15tConsents(): Record<AllConsentNames, boolean> | null {
+  const stored = getConsentFromStorage<C15tStoredConsent>();
+  return stored?.consents ?? null;
+}
+
+/**
+ * Reads the current consent state from c15t storage and maps it back
+ * to our app-level ConsentState shape.
+ */
 export function getConsent(): ConsentState | null {
   if (typeof document === "undefined") {
     return null;
   }
-  const cookie = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith(`${CONSENT_COOKIE_NAME}=`));
-  if (!cookie) {
+
+  const c = readC15tConsents();
+  if (!c) {
     return null;
   }
-  try {
-    return JSON.parse(decodeURIComponent(cookie.split("=")[1]));
-  } catch {
-    return null;
-  }
-}
 
-export function setConsent(consent: ConsentState): void {
-  if (typeof document === "undefined") {
-    return;
-  }
-  const expires = new Date();
-  expires.setDate(expires.getDate() + CONSENT_COOKIE_EXPIRY);
-  document.cookie = `${CONSENT_COOKIE_NAME}=${encodeURIComponent(JSON.stringify(consent))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent("consentChange", { detail: consent }));
-  }
-}
-
-export function clearConsent(): void {
-  if (typeof document === "undefined") {
-    return;
-  }
-  document.cookie = `${CONSENT_COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  return {
+    analytics: c.measurement ?? false,
+    monitoring: c.necessary ?? true,
+    preferences: c.functionality ?? true,
+    media: c.experience ?? false,
+  };
 }
 
 export function hasConsent(): boolean {
@@ -42,13 +42,45 @@ export function hasConsent(): boolean {
 }
 
 export function hasVendorConsent(vendor: ExternalVendor): boolean {
-  const consent = getConsent();
-  if (!consent) {
+  const c = readC15tConsents();
+  if (!c) {
     return false;
   }
-  return consent[EXTERNAL_VENDORS[vendor].category] === true;
+  const c15tName = VENDOR_TO_C15T[vendor];
+  return c[c15tName] === true;
 }
 
 export function hasMediaConsent(): boolean {
-  return getConsent()?.media === true;
+  const c = readC15tConsents();
+  return c?.experience === true;
+}
+
+/**
+ * @deprecated Use the c15t ConsentManagerProvider and useConsentManager() hook instead.
+ * Kept for backward compatibility with non-React consumers.
+ */
+export function setConsent(consent: ConsentState): void {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("consentChange", { detail: consent }));
+  }
+}
+
+/**
+ * @deprecated Consent is now managed by c15t. Clear via resetConsents() from the hook.
+ */
+export function clearConsent(): void {
+  if (typeof document === "undefined") {
+    return;
+  }
+  document.cookie = "c15t=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+}
+
+/** Convenience: map c15t consent state to our legacy shape. */
+export function mapC15tToConsentState(c15tConsents: Record<string, boolean>): ConsentState {
+  return {
+    analytics: c15tConsents.measurement ?? false,
+    monitoring: c15tConsents.necessary ?? DEFAULT_CONSENT_STATE.monitoring,
+    preferences: c15tConsents.functionality ?? DEFAULT_CONSENT_STATE.preferences,
+    media: c15tConsents.experience ?? false,
+  };
 }

@@ -1,12 +1,13 @@
 "use client";
 
+import { useConsentManager, useHeadlessConsentUI } from "@c15t/nextjs/headless";
 import { Box, Button } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { getConsent, hasConsent, setConsent } from "../consent";
+import { mapC15tToConsentState } from "../consent";
 import type { ConsentCategory, ConsentState } from "../types";
-import { DEFAULT_CONSENT_STATE, EXTERNAL_VENDORS } from "../types";
+import { CATEGORY_TO_C15T, EXTERNAL_VENDORS } from "../types";
 import { CookieCategory, type CookieCategoryVendor } from "./cookie-category";
 
 interface CookieBannerProps {
@@ -16,65 +17,77 @@ interface CookieBannerProps {
 }
 
 export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: CookieBannerProps) {
-  const [isVisible, setIsVisible] = useState(false);
+  const { selectedConsents, setSelectedConsent } = useConsentManager();
+
+  const { activeUI, performBannerAction, saveCustomPreferences, openBanner } =
+    useHeadlessConsentUI();
+
   const [showDetails, setShowDetails] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());
-  const [consent, setConsentState] = useState<ConsentState>(DEFAULT_CONSENT_STATE);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    if (!hasConsent()) {
-      setIsVisible(true);
-    } else {
-      const savedConsent = getConsent();
-      if (savedConsent) {
-        setConsentState(savedConsent);
-      }
-    }
+  }, []);
 
+  useEffect(() => {
     const handleOpenSettings = () => {
-      const savedConsent = getConsent();
-      if (savedConsent) {
-        setConsentState(savedConsent);
-      }
       setShowDetails(true);
-      setIsVisible(true);
+      openBanner({ force: true });
     };
 
     window.addEventListener("openCookieSettings", handleOpenSettings);
     return () => window.removeEventListener("openCookieSettings", handleOpenSettings);
-  }, []);
+  }, [openBanner]);
 
-  const handleAcceptAll = () => {
-    const fullConsent: ConsentState = {
-      analytics: true,
-      monitoring: true,
-      preferences: true,
-      media: true,
-    };
-    setConsent(fullConsent);
-    setIsVisible(false);
-    onAcceptAll?.(fullConsent);
+  const handleAcceptAll = async () => {
+    await performBannerAction("accept");
+    const mapped = mapC15tToConsentState({
+      necessary: true,
+      functionality: true,
+      measurement: true,
+      experience: true,
+      marketing: true,
+    });
+    onAcceptAll?.(mapped);
+    window.dispatchEvent(new CustomEvent("consentChange", { detail: mapped }));
   };
 
-  const handleRejectAll = () => {
-    setConsent(DEFAULT_CONSENT_STATE);
-    setIsVisible(false);
+  const handleRejectAll = async () => {
+    await performBannerAction("reject");
     onRejectAll?.();
+    const mapped = mapC15tToConsentState({
+      necessary: true,
+      functionality: true,
+      measurement: false,
+      experience: false,
+      marketing: false,
+    });
+    window.dispatchEvent(new CustomEvent("consentChange", { detail: mapped }));
   };
 
-  const handleSavePreferences = () => {
-    setConsent(consent);
-    setIsVisible(false);
-    onSavePreferences?.(consent);
+  const handleSavePreferences = async () => {
+    await saveCustomPreferences();
+    const mapped = mapC15tToConsentState(selectedConsents as unknown as Record<string, boolean>);
+    onSavePreferences?.(mapped);
+    window.dispatchEvent(new CustomEvent("consentChange", { detail: mapped }));
   };
 
-  const toggleCategory = (category: keyof ConsentState) => {
+  const toggleCategory = (category: ConsentCategory) => {
     if (category === "monitoring" || category === "preferences") {
       return;
     }
-    setConsentState((prev) => ({ ...prev, [category]: !prev[category] }));
+    const c15tName = CATEGORY_TO_C15T[category];
+    const current = (selectedConsents as unknown as Record<string, boolean>)[c15tName] ?? false;
+    setSelectedConsent(c15tName, !current);
+  };
+
+  const isCategoryChecked = (category: ConsentCategory): boolean => {
+    const c15tName = CATEGORY_TO_C15T[category];
+    if (category === "monitoring" || category === "preferences") {
+      return true;
+    }
+    return (selectedConsents as unknown as Record<string, boolean>)[c15tName] ?? false;
   };
 
   const toggleCategoryExpansion = (category: ConsentCategory) => {
@@ -93,6 +106,8 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
     Object.entries(EXTERNAL_VENDORS)
       .filter(([_, vendor]) => vendor.category === category)
       .map(([key, vendor]) => ({ key, ...vendor }));
+
+  const isVisible = activeUI === "banner";
 
   if (!isVisible || !mounted) {
     return null;
@@ -151,7 +166,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
               label="ᴘʀᴇꜰᴇʀᴇɴᴄᴇꜱ"
               description="Remembers your settings and preferences. Required for site functionality. ⚙️"
               required
-              checked={consent.preferences}
+              checked={isCategoryChecked("preferences")}
               expanded={expandedCategories.has("preferences")}
               vendors={getCategoryVendors("preferences")}
               emptyText="No external vendors in this category"
@@ -161,7 +176,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
               label="ᴍᴏɴɪᴛᴏʀɪɴɢ"
               description="Error tracking & performance monitoring. Required for site functionality. 🐛"
               required
-              checked={consent.monitoring}
+              checked={isCategoryChecked("monitoring")}
               expanded={expandedCategories.has("monitoring")}
               vendors={getCategoryVendors("monitoring")}
               onToggleExpansion={() => toggleCategoryExpansion("monitoring")}
@@ -169,7 +184,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
             <CookieCategory
               label="ᴀɴᴀʟʏᴛɪᴄꜱ"
               description="Helps us understand how visitors interact with our website. 📊"
-              checked={consent.analytics}
+              checked={isCategoryChecked("analytics")}
               expanded={expandedCategories.has("analytics")}
               vendors={getCategoryVendors("analytics")}
               onToggle={() => toggleCategory("analytics")}
@@ -179,7 +194,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
               <CookieCategory
                 label="ᴍᴇᴅɪᴀ & ᴇxᴛᴇʀɴᴀʟ ꜱᴇʀᴠɪᴄᴇꜱ"
                 description="Load external content from video and audio platforms. 🎬🎵"
-                checked={consent.media}
+                checked={isCategoryChecked("media")}
                 expanded={expandedCategories.has("media")}
                 vendors={getCategoryVendors("media")}
                 onToggle={() => toggleCategory("media")}

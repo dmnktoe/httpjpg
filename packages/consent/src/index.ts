@@ -7,6 +7,7 @@ export {
   hasConsent,
   hasMediaConsent,
   hasVendorConsent,
+  mapC15tToConsentState,
   setConsent,
 } from "./consent";
 export type {
@@ -17,8 +18,14 @@ export type {
   VendorInfo,
 } from "./types";
 export {
+  CATEGORY_TO_C15T,
   CONSENT_COOKIE_EXPIRY,
   CONSENT_COOKIE_NAME,
   DEFAULT_CONSENT_STATE,
   EXTERNAL_VENDORS,
+  VENDOR_TO_C15T,
 } from "./types";
+
+export { ConsentManagerProvider } from "@c15t/nextjs/headless";
+export { useConsentManager, useHeadlessConsentUI } from "@c15t/nextjs/headless";
+export type { Script } from "c15t";

@@ -1,7 +1,13 @@
 "use client";
 
-import type { ConsentState } from "@httpjpg/consent";
-import { CookieBanner, getConsent } from "@httpjpg/consent";
+import type { ConsentState, Script } from "@httpjpg/consent";
+import {
+  ConsentManagerProvider,
+  CookieBanner,
+  mapC15tToConsentState,
+  useConsentManager,
+} from "@httpjpg/consent";
+import { env } from "@httpjpg/env";
 import { useEffect, useRef } from "react";
 
 let observabilityInitialized = false;
@@ -15,8 +21,23 @@ async function initObservability() {
   initSentryClient();
 }
 
-export function ConsentProvider() {
+const scripts: Script[] = [];
+
+if (env.NEXT_PUBLIC_UMAMI_WEBSITE_ID) {
+  scripts.push({
+    id: "umami",
+    src: `${env.NEXT_PUBLIC_UMAMI_HOST}/script.js`,
+    category: "measurement",
+    defer: true,
+    attributes: {
+      "data-website-id": env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
+    },
+  });
+}
+
+function ConsentBannerInner() {
   const initializedRef = useRef(false);
+  const { consents, hasConsented, subscribeToConsentChanges } = useConsentManager();
 
   const handleConsent = async (consent: ConsentState) => {
     if (consent.monitoring) {
@@ -29,7 +50,8 @@ export function ConsentProvider() {
       return;
     }
     initializedRef.current = true;
-    if (getConsent()?.monitoring) {
+
+    if (hasConsented() && (consents as unknown as Record<string, boolean>).necessary) {
       initObservability();
     }
 
@@ -40,7 +62,20 @@ export function ConsentProvider() {
     return () => {
       delete (window as any).__openCookieSettings;
     };
-  }, []);
+  }, [consents, hasConsented]);
+
+  useEffect(() => {
+    return subscribeToConsentChanges((payload) => {
+      const mapped = mapC15tToConsentState(
+        payload.preferences as unknown as Record<string, boolean>,
+      );
+      window.dispatchEvent(new CustomEvent("consentChange", { detail: mapped }));
+
+      if (mapped.monitoring) {
+        initObservability();
+      }
+    });
+  }, [subscribeToConsentChanges]);
 
   return (
     <CookieBanner
@@ -48,5 +83,21 @@ export function ConsentProvider() {
       onRejectAll={() => {}}
       onSavePreferences={handleConsent}
     />
+  );
+}
+
+export function ConsentProvider() {
+  return (
+    <ConsentManagerProvider
+      options={{
+        mode: "offline",
+        noStyle: true,
+        disableAnimation: true,
+        consentCategories: ["necessary", "functionality", "measurement", "experience"],
+        scripts,
+      }}
+    >
+      <ConsentBannerInner />
+    </ConsentManagerProvider>
   );
 }

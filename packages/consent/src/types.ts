@@ -1,3 +1,5 @@
+import type { AllConsentNames } from "c15t";
+
 export type ConsentCategory = "analytics" | "monitoring" | "preferences" | "media";
 
 export interface ConsentState {
@@ -108,5 +110,30 @@ export const DEFAULT_CONSENT_STATE: ConsentState = {
   media: false,
 };
 
-export const CONSENT_COOKIE_NAME = "httpjpg_consent";
+export const CONSENT_COOKIE_NAME = "c15t";
 export const CONSENT_COOKIE_EXPIRY = 365;
+
+/**
+ * Maps our app-level consent categories to c15t's built-in consent names.
+ * - analytics  → measurement
+ * - monitoring → necessary (always on)
+ * - preferences → functionality (always on)
+ * - media      → experience
+ */
+export const CATEGORY_TO_C15T: Record<ConsentCategory, AllConsentNames> = {
+  analytics: "measurement",
+  monitoring: "necessary",
+  preferences: "functionality",
+  media: "experience",
+};
+
+export const VENDOR_TO_C15T: Record<ExternalVendor, AllConsentNames> = {
+  "google-analytics": "measurement",
+  umami: "measurement",
+  sentry: "necessary",
+  youtube: "experience",
+  vimeo: "experience",
+  spotify: "experience",
+  soundcloud: "experience",
+  "generic-media": "experience",
+};

@@ -29,12 +29,14 @@ function trackEvent(eventName: string, params?: GAEventParams): void {
     return;
   }
 
-  window.gtag("event", eventName, {
-    event_category: params?.category,
-    event_label: params?.label,
-    value: params?.value,
-    ...params,
-  });
+  try {
+    window.gtag("event", eventName, {
+      event_category: params?.category,
+      event_label: params?.label,
+      value: params?.value,
+      ...params,
+    });
+  } catch {}
 }
 
 export function trackNowPlayingClick(): void {

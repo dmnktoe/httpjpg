@@ -3,14 +3,17 @@ import * as Sentry from "@sentry/nextjs";
 import { getSentryConfig } from "./config";
 
 export function initSentryEdge() {
-  const { dsn, environment, isProduction, isEnabled } = getSentryConfig("edge");
+  const { dsn, environment, release, isProduction, isEnabled } = getSentryConfig("edge");
   if (!isEnabled) {
     return;
   }
   Sentry.init({
     dsn,
     environment,
+    release,
     enabled: isEnabled,
+    attachStacktrace: true,
+    normalizeDepth: 5,
     tracesSampleRate: isProduction ? 0.05 : 1.0,
     debug: false,
     integrations: [],
@@ -23,10 +26,12 @@ export function initSentryEdge() {
 }
 
 export function captureEdgeException(error: unknown, context?: Record<string, unknown>) {
-  if (context) {
-    Sentry.setContext("custom", context);
-  }
-  Sentry.captureException(error);
+  Sentry.withScope((scope) => {
+    if (context) {
+      scope.setContext("custom", context);
+    }
+    Sentry.captureException(error);
+  });
 }
 
 export { Sentry };

@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/nextjs";
 import { getSentryConfig } from "./config";
 
 export function initSentryClient() {
-  const { dsn, environment, isProduction, isEnabled } = getSentryConfig("client");
+  const { dsn, environment, release, isProduction, isEnabled } = getSentryConfig("client");
   if (!dsn || !isEnabled) {
     return;
   }
@@ -11,11 +11,16 @@ export function initSentryClient() {
   Sentry.init({
     dsn,
     environment,
+    release,
     enabled: isEnabled,
+    sendDefaultPii: false,
+    attachStacktrace: true,
+    normalizeDepth: 5,
     tracesSampleRate: isProduction ? 0.1 : 1.0,
     debug: false,
     replaysOnErrorSampleRate: 1.0,
     replaysSessionSampleRate: isProduction ? 0.01 : 0.1,
+    denyUrls: [/extensions\//i, /^chrome:\/\//i, /^moz-extension:\/\//i, /^safari-extension:\/\//i],
     ignoreErrors: [
       "top.GLOBALS",
       "chrome-extension://",
@@ -26,6 +31,8 @@ export function initSentryClient() {
       "NetworkError",
       "Failed to fetch",
       "Load failed",
+      "ResizeObserver loop completed with undelivered notifications",
+      "ResizeObserver loop limit exceeded",
     ],
     beforeSend(event) {
       if (event.request) {

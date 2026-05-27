@@ -1,6 +1,6 @@
 "use client";
 
-import { ASCII_DIVIDER_WAVE, ASCII_SPARKLES, AsciiArt, Box, Footer } from "@httpjpg/ui";
+import { ASCII_DIVIDER_WAVE, AsciiArt, Box, Footer } from "@httpjpg/ui";
 
 import { DiscordStatus } from "@/components/widgets/discord-status";
 import { FlagCounter } from "@/components/widgets/flag-counter";
@@ -21,6 +21,13 @@ function formatLastUpdated(iso: string): string {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
 }
 
+function formatVersion(raw: string): string {
+  if (/^v?\d+\.\d+\.\d+/.test(raw)) {
+    return raw.startsWith("v") ? raw : `v${raw}`;
+  }
+  return `v${raw.slice(0, 7)}`;
+}
+
 export function FooterWrapper({
   backgroundImage,
   footerLinks,
@@ -32,13 +39,7 @@ export function FooterWrapper({
   };
 
   const rawVersion = process.env.NEXT_PUBLIC_APP_VERSION;
-  const version = rawVersion
-    ? /^v?\d+\.\d+\.\d+/.test(rawVersion)
-      ? rawVersion.startsWith("v")
-        ? rawVersion
-        : `v${rawVersion}`
-      : `v${rawVersion.slice(0, 7)}`
-    : undefined;
+  const version = rawVersion ? formatVersion(rawVersion) : undefined;
 
   return (
     <Footer
@@ -46,6 +47,12 @@ export function FooterWrapper({
       footerLinks={footerLinks}
       copyrightText={copyrightText}
       onCookieSettingsClick={handleCookieSettingsClick}
+      showVersion={Boolean(lastUpdated || version)}
+      version={version}
+      versionHref={
+        version ? `https://github.com/dmnktoe/httpjpg/releases/tag/${version}` : undefined
+      }
+      lastUpdated={lastUpdated ? `last updated ${formatLastUpdated(lastUpdated)}` : undefined}
       widgets={
         <Box
           css={{
@@ -57,35 +64,6 @@ export function FooterWrapper({
           }}
         >
           <DiscordStatus />
-          {(lastUpdated || version) && (
-            <Box
-              as="span"
-              css={{
-                fontSize: "xs",
-                opacity: 0.4,
-                fontFamily: "mono",
-                letterSpacing: "0.05em",
-              }}
-            >
-              {lastUpdated && `↻ last updated ${formatLastUpdated(lastUpdated)}`}
-              {lastUpdated && version && ` // ${ASCII_SPARKLES} // `}
-              {version && (
-                <Box
-                  as="a"
-                  href={`https://github.com/dmnktoe/httpjpg/releases/tag/${version}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  css={{
-                    color: "inherit",
-                    textDecoration: "none",
-                    _hover: { textDecoration: "underline" },
-                  }}
-                >
-                  {version}
-                </Box>
-              )}
-            </Box>
-          )}
           <Box
             css={{
               display: "flex",

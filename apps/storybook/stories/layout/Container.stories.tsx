@@ -24,7 +24,8 @@ const meta = {
         defaultValue: { summary: "lg" },
       },
     },
-    px: spacingArgType("Horizontal padding", "4"),
+    px: spacingArgType("Horizontal padding (token scale)", "4"),
+    py: spacingArgType("Vertical padding (token scale)", "0"),
     center: {
       control: "boolean",
       description: "Center the container",

@@ -30,18 +30,20 @@ const meta = {
     },
     useContainer: {
       control: "boolean",
-      description: "Use container wrapper for content",
-      table: {
-        defaultValue: { summary: "true" },
-      },
+      description: "Wrap children in a Container",
+      table: { defaultValue: { summary: "false" } },
     },
     containerSize: {
       control: "select",
-      options: ["sm", "md", "lg", "xl", "2xl", "fluid"],
-      description: "Container size when useContainer is true",
-      table: {
-        defaultValue: { summary: "2xl" },
-      },
+      options: ["sm", "md", "lg", "xl", "2xl", "fluid"] as const,
+      description: "Container size when `useContainer` is true",
+      table: { defaultValue: { summary: "2xl" } },
+    },
+    containerAlign: {
+      control: { type: "inline-radio" as const },
+      options: ["left", "center"] as const,
+      description: "Container alignment within the section",
+      table: { defaultValue: { summary: "center" } },
     },
   },
 } satisfies Meta<typeof Section>;
@@ -61,6 +63,7 @@ export const Basic: Story = {
     fullWidth: true,
     useContainer: true,
     containerSize: "2xl",
+    containerAlign: "center",
     children: null,
   },
   render: (args) => (
@@ -72,6 +75,7 @@ export const Basic: Story = {
       fullWidth={args.fullWidth}
       useContainer={args.useContainer}
       containerSize={args.containerSize}
+      containerAlign={args.containerAlign}
     >
       <Headline level={2}>Section Title</Headline>
       <Paragraph css={{ mt: "4" }}>

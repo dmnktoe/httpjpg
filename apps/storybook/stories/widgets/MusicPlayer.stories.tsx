@@ -11,41 +11,39 @@ const meta: Meta<typeof MusicPlayer> = {
   argTypes: {
     source: {
       control: "select",
-      options: ["mp3", "spotify", "soundcloud", "custom"],
+      options: ["mp3", "spotify", "soundcloud", "custom"] as const,
       description: "Music source type",
+      table: { defaultValue: { summary: "mp3" } },
     },
-    src: {
-      control: "text",
-      description: "Source URL or ID",
-    },
-    title: {
-      control: "text",
-      description: "Track title (for MP3 display)",
-    },
-    artist: {
-      control: "text",
-      description: "Artist name (for MP3 display)",
-    },
+    src: { control: "text", description: "Source URL or Spotify URI" },
+    title: { control: "text", description: "Track title (MP3 display)" },
+    artist: { control: "text", description: "Artist name (MP3 display)" },
+    artwork: { control: "text", description: "Artwork URL (MP3 display)" },
     spotifySize: {
       control: "select",
-      options: ["compact", "normal"],
+      options: ["compact", "normal"] as const,
       description: "Spotify embed size",
+      table: { defaultValue: { summary: "normal" } },
     },
     showArtwork: {
       control: "boolean",
       description: "Show album artwork",
+      table: { defaultValue: { summary: "true" } },
     },
     showInfo: {
       control: "boolean",
       description: "Show track info",
+      table: { defaultValue: { summary: "true" } },
     },
     autoPlay: {
       control: "boolean",
       description: "Auto play audio",
+      table: { defaultValue: { summary: "false" } },
     },
     decoration: {
       control: "text",
-      description: "ASCII decoration pattern",
+      description: "ASCII decoration pattern shown around the player",
+      table: { defaultValue: { summary: "ASCII_DIVIDER_MUSIC" } },
     },
   },
 };

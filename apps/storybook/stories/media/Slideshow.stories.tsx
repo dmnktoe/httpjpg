@@ -69,6 +69,50 @@ const meta = {
         defaultValue: { summary: "true" },
       },
     },
+    animationDelay: {
+      control: { type: "range", min: 0, max: 2, step: 0.1 },
+      description: "Delay before entrance animation begins (seconds)",
+    },
+    disableBlurOnLoad: {
+      control: "boolean",
+      description: "Skip the blur-up loading effect on slide images",
+      table: { defaultValue: { summary: "false" } },
+    },
+    priority: {
+      control: "boolean",
+      description: "Mark first slide as LCP (eager + fetchpriority=high)",
+      table: { defaultValue: { summary: "false" } },
+    },
+    overlay: {
+      control: { type: "select" as const },
+      options: [
+        "none",
+        "random",
+        "stars",
+        "sparkles",
+        "hearts",
+        "confetti",
+        "tape",
+        "dots",
+        "arrows",
+        "ghost",
+        "bracket",
+        "noise",
+        "runes",
+      ] as const,
+      description: "ASCII overlay layered on every slide",
+      table: { defaultValue: { summary: "none" } },
+    },
+    overlayInset: {
+      control: { type: "range", min: 0, max: 20, step: 1 },
+      description: "Push overlay particles inward by N percent",
+      table: { defaultValue: { summary: "0" } },
+    },
+    showCounter: {
+      control: "boolean",
+      description: "Show `01/04` counter + decorative tape strip",
+      table: { defaultValue: { summary: "false" } },
+    },
   },
 } satisfies Meta<typeof Slideshow>;
 

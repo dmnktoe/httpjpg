@@ -16,17 +16,20 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: "select",
-      options: ["personal", "client"],
+      control: { type: "inline-radio" as const },
+      options: ["personal", "client"] as const,
       description: "Visual variant with decorative prefix",
+      table: { defaultValue: { summary: "personal" } },
     },
-    href: {
-      control: "text",
-      description: "Link destination",
+    href: { control: "text", description: "Link destination" },
+    children: { control: "text", description: "Link content (work title)" },
+    isExternal: {
+      control: "boolean",
+      description: "Force external link behavior (auto-detected by default)",
     },
-    children: {
-      control: "text",
-      description: "Link content (work title)",
+    showExternalIcon: {
+      control: "boolean",
+      description: "Show external link icon (↗) for external links",
     },
   },
 } satisfies Meta<typeof NavLink>;

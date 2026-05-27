@@ -26,9 +26,9 @@ const meta = {
     },
     color: {
       control: "color",
-      description: "Cursor color",
+      description: "Cursor color (any CSS color or var())",
       table: {
-        defaultValue: { summary: "black" },
+        defaultValue: { summary: "var(--colors-page-fg)" },
       },
     },
     symbol: {

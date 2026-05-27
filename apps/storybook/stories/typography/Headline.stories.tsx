@@ -36,6 +36,19 @@ const meta = {
         type: { summary: "h1 | h2 | h3 | h4 | h5 | h6" },
       },
     },
+    align: {
+      control: { type: "inline-radio" as const },
+      options: ["left", "center", "right", "justify"] as const,
+      description: "Text alignment",
+    },
+    marginTop: {
+      control: "text",
+      description: "Spacing token or CSS length applied as margin-top",
+    },
+    marginBottom: {
+      control: "text",
+      description: "Spacing token or CSS length applied as margin-bottom",
+    },
     children: {
       control: "text",
       description: "Headline text content",

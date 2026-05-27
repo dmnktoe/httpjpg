@@ -19,7 +19,7 @@ const meta = {
     label: {
       control: "text",
       description: "Label shown inside the pill on desktop",
-      table: { defaultValue: { summary: "PREVIEW" } },
+      table: { defaultValue: { summary: "preview" } },
     },
   },
 } satisfies Meta<typeof FloatingPreviewBadge>;
@@ -47,7 +47,7 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
 export const Default: Story = {
   args: {
     href: "https://example.com",
-    label: "PREVIEW",
+    label: "preview",
   },
   render: (args) => (
     <Stage>

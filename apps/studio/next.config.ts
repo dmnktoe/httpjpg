@@ -1,3 +1,4 @@
+import "@httpjpg/env";
 import type { NextConfig } from "next";
 
 export default (): NextConfig => ({

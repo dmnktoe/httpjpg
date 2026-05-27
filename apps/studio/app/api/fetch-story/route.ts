@@ -1,3 +1,4 @@
+import { env } from "@httpjpg/env";
 import { type NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -11,11 +12,11 @@ interface StoryblokStory {
 const MAPI = "https://mapi.storyblok.com/v1";
 
 export async function GET(request: NextRequest) {
-  if (process.env.NODE_ENV !== "development") {
+  if (env.NODE_ENV !== "development") {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  const token = process.env.STORYBLOK_MANAGEMENT_TOKEN;
-  const spaceId = process.env.STORYBLOK_SPACE_ID;
+  const token = env.STORYBLOK_MANAGEMENT_TOKEN;
+  const spaceId = env.STORYBLOK_SPACE_ID;
   if (!token || !spaceId) {
     return NextResponse.json(
       { error: "STORYBLOK_MANAGEMENT_TOKEN or STORYBLOK_SPACE_ID not set" },

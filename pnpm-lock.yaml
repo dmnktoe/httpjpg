@@ -241,6 +241,9 @@ importers:
 
   apps/studio:
     dependencies:
+      '@httpjpg/env':
+        specifier: workspace:*
+        version: link:../../packages/env
       '@httpjpg/storyblok-utils':
         specifier: workspace:*
         version: link:../../packages/storyblok-utils

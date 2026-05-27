@@ -12,6 +12,7 @@
     "format": "oxfmt"
   },
   "dependencies": {
+    "@httpjpg/env": "workspace:*",
     "@httpjpg/storyblok-utils": "workspace:*",
     "@httpjpg/tokens": "workspace:*",
     "@httpjpg/ui": "workspace:*",

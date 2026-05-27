@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 import { forwardRef, useId } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
+import { AsciiArt } from "../ascii-art/ascii-art";
+import { ASCII_EMPTY } from "../ascii-art/banners";
 import { Box } from "../box/box";
 import { Divider, type DividerProps } from "../divider/divider";
 import { VStack } from "../stack/stack";
@@ -60,6 +62,20 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
     },
     ref,
   ) => {
+    if (works.length === 0) {
+      return (
+        <Box ref={ref} css={cssProp} {...props}>
+          {header}
+          <Box css={{ display: "flex", justifyContent: "center", py: 16, opacity: 0.5 }}>
+            <AsciiArt label="No works to display" css={{ fontSize: "sm" }}>
+              {ASCII_EMPTY}
+            </AsciiArt>
+          </Box>
+          {footer}
+        </Box>
+      );
+    }
+
     const isStacked = columns === 1 && !columnsMd && !columnsLg;
     const sizes = sizesFromColumns(columns, columnsMd, columnsLg);
     const listScopeId = `work-list-${useId().replace(/:/g, "")}`;

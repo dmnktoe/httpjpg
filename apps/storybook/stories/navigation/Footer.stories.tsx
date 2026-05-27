@@ -40,6 +40,14 @@ const meta = {
       control: "text",
       description: "Version string to display",
     },
+    versionHref: {
+      control: "text",
+      description: "URL the version links to (underline on hover)",
+    },
+    lastUpdated: {
+      control: "text",
+      description: "Last-updated text shown before the version",
+    },
   },
 } satisfies Meta<typeof Footer>;
 
@@ -59,6 +67,8 @@ export const Default: Story = {
     copyrightText: "༺yl33ly httpjpg icon.icon.iconn te3shay༻",
     showVersion: true,
     version: "v1.0.0",
+    versionHref: "https://github.com/dmnktoe/httpjpg/releases/tag/v1.0.0",
+    lastUpdated: "last updated 2026-05-27",
   },
 };
 
@@ -108,6 +118,7 @@ export const WithWidgets: Story = {
     ),
     showVersion: true,
     version: "v1.0.0",
+    versionHref: "https://github.com/dmnktoe/httpjpg/releases/tag/v1.0.0",
   },
 };
 

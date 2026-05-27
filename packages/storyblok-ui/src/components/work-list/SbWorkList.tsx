@@ -17,10 +17,7 @@ export const SbWorkList = memo(function SbWorkList({ blok }: SbWorkListProps) {
   const [stories, setStories] = useState<WorkStory[]>(() => resolveStories(work, cacheRef.current));
 
   useEffect(() => {
-    const next = resolveStories(work, cacheRef.current);
-    if (next.length > 0) {
-      setStories(next);
-    }
+    setStories(resolveStories(work, cacheRef.current));
   }, [work]);
 
   if (!stories.length) {

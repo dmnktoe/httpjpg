@@ -140,7 +140,9 @@ jobs:
         with:
           name: portfolio-build
       - name: Extract build artifacts
-        run: tar -xzf portfolio-build.tar.gz && echo "Build ID: $(cat apps/portfolio/.next/BUILD_ID)"
+        run: |
+          tar -xzf portfolio-build.tar.gz
+          cat apps/portfolio/.next/BUILD_ID
       - name: Cache Playwright browsers
         id: playwright-cache
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5

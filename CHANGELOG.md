@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-05-27
+
+### Added
+
+- **Observability**: web vitals ingestion route (`/api/web-vitals`) with Sentry
+  forwarding for real-user Core Web Vitals monitoring.
+- **Observability**: replaced deprecated FID with INP in Google Analytics web
+  vitals tracking.
+- **Storybook**: visual regression testing via `@storybook/test-runner` with a
+  dedicated CI job, later replaced `jest-image-snapshot` with Chromatic for
+  cloud-hosted visual diffing.
+
+### Fixed
+
+- **Observability**: enforce body-size limit on actual bytes, cap pathname at
+  the route level, and guard against empty release strings in Sentry reporting.
+- **Observability**: hardened Sentry init with missing config guards and added
+  turbo env passthrough for build-time variables.
+- **Storybook**: scoped font overrides so they no longer leak outside stories,
+  and emit Typography size CSS utilities.
+- **Storyblok richtext**: `maxWidth` prop is now honored instead of silently
+  ignored.
+
+### Tooling
+
+- **CI**: parallelised jobs, scoped secrets per job, pinned GitHub Actions
+  versions, and added smart visual-test skip logic.
+- **Storybook**: regrouped stories by function and switched dev to HTTPS
+  (`dev:https`).
+- **Tests**: added observability coverage for edge runtime, config resolution,
+  and the web-vitals-reporter module.
+- **Docs**: aligned Node version note in `CLAUDE.md` with `.nvmrc` and root
+  `package.json`.
+
+### Dependencies
+
+- `chromaui/action` updated to v17.
+- `chromaui/action` digest updated to `1cfa065`.
+- `actions/setup-node` digest updated to `48b55a0`.
+
 ## [1.2.0] - 2026-05-22
 
 ### Added
@@ -117,6 +157,7 @@ First production-ready release.
 - **Quality gates**: oxlint + oxfmt, Vitest unit tests, Playwright E2E,
   commitlint + husky pre-commit hooks, strict TypeScript across all packages.
 
+[1.3.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.3.0
 [1.2.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.2.0
 [1.1.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.1.0
 [1.0.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.0.0

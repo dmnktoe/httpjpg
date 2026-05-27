@@ -1,6 +1,7 @@
+"use client";
+
 import {
   ASCII_DIVIDER_STARS,
-  AsciiArt,
   Box,
   Button,
   CodeBlock,
@@ -11,6 +12,7 @@ import {
   Stack,
 } from "@httpjpg/ui";
 import type { Meta } from "@storybook/react";
+import { useCallback, useState } from "react";
 
 const meta = {
   title: "Introduction",
@@ -21,37 +23,87 @@ const meta = {
 
 export default meta;
 
-const HERO_ASCII = `
-    ╭──────────────────────────────────╮
-    │   ⇝ www.httpjpg.com             │
-    │   ✦ brutalist design system ✦   │
-    ╰──────────────────────────────────╯
-`;
+function ThemeToggle() {
+  const [isDark, setIsDark] = useState(false);
+
+  const toggle = useCallback(() => {
+    setIsDark((prev) => !prev);
+    const root = document.querySelector("[data-intro-root]");
+    if (root) {
+      root.setAttribute("data-theme", isDark ? "light" : "dark");
+    }
+  }, [isDark]);
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      style={{
+        all: "unset",
+        cursor: "pointer",
+        fontFamily: "monospace",
+        fontSize: "12px",
+        letterSpacing: "0.05em",
+        padding: "4px 10px",
+        border: "1px solid currentColor",
+        opacity: 0.6,
+      }}
+    >
+      {isDark ? "☀ light" : "● dark"}
+    </button>
+  );
+}
 
 export const Introduction = {
   render: () => (
-    <Box css={{ bg: "pageBg", color: "pageFg", minH: "100vh" }}>
+    <Box data-intro-root css={{ bg: "pageBg", color: "pageFg", minH: "100vh" }}>
       <Container size="lg" py={12}>
         <Stack direction="vertical" gap="10">
+          {/* ── Top bar ── */}
+          <Stack
+            direction="horizontal"
+            css={{ justifyContent: "space-between", alignItems: "center" }}
+          >
+            <Box
+              css={{
+                fontFamily: "mono",
+                fontSize: "xs",
+                letterSpacing: "wider",
+                opacity: 0.4,
+              }}
+            >
+              ⇝ httpjpg / design system
+            </Box>
+            <ThemeToggle />
+          </Stack>
+
           {/* ── Hero ── */}
           <Box>
-            <AsciiArt label="httpjpg design system">{HERO_ASCII}</AsciiArt>
+            <Headline level={1}>HTTPJPG DESIGN SYSTEM</Headline>
 
-            <Headline level={1} css={{ mt: "6" }}>
-              HTTPJPG DESIGN SYSTEM
-            </Headline>
-
-            <Paragraph size="lg" color="muted" css={{ mt: "4" }}>
-              Brutalist component library. Mono type, hard edges, maximalist accents — ASCII and
-              kawaii decorations in the rendered UI, not in the margins.
+            <Paragraph size="lg" color="muted" css={{ mt: "4", maxW: "65ch" }}>
+              A brutalist component library for the httpjpg portfolio. Mono type, hard edges,
+              maximalist ASCII accents. Built on Panda CSS (zero-runtime), driven by Storyblok,
+              rendered by Next.js. Every component ships with semantic color tokens that flip
+              between light and dark — pageBg, pageFg, pageMuted, pageBorder.
             </Paragraph>
 
-            <Stack direction="horizontal" gap="3" css={{ mt: "6", flexWrap: "wrap" }}>
+            <Paragraph size="sm" color="muted" css={{ mt: "3", maxW: "65ch" }}>
+              The design language is deliberately raw: 2px borders instead of box-shadows, monospace
+              where others use sans-serif, corner brackets ┌ ┐ └ ┘ as decoration, unicode sparkles ✦
+              ◆ ⋆ as visual punctuation. Type hierarchy uses Impact for headlines and a compact 12px
+              base size for information density.
+            </Paragraph>
+
+            <Stack direction="horizontal" gap="2" css={{ mt: "6", flexWrap: "wrap" }}>
               <Button href="https://github.com/dmnktoe/httpjpg" variant="primary" size="sm">
                 ✦ GitHub ↗
               </Button>
               <Button href="https://www.httpjpg.com" variant="outline" size="sm">
                 ◆ Live Site ↗
+              </Button>
+              <Button href="https://www.npmjs.com/org/httpjpg" variant="outline" size="sm">
+                ⋆ npm ↗
               </Button>
             </Stack>
           </Box>
@@ -76,11 +128,15 @@ export const Introduction = {
 
           {/* ── Stack ── */}
           <Box>
-            <Headline level={2} css={{ mb: "4" }}>
+            <Headline level={2} css={{ mb: "2" }}>
               ◇ THE STACK
             </Headline>
+            <Paragraph size="sm" color="muted" css={{ mb: "4", maxW: "55ch" }}>
+              Monorepo managed by pnpm workspaces + Turborepo. Every package is ESM-only, TypeScript
+              strict, and published via workspace protocol.
+            </Paragraph>
 
-            <Stack direction="horizontal" gap="4" css={{ flexWrap: "wrap" }}>
+            <Stack direction="horizontal" gap="3" css={{ flexWrap: "wrap" }}>
               {[
                 "Next.js 16",
                 "React 19",
@@ -90,6 +146,8 @@ export const Introduction = {
                 "pnpm + Turbo",
                 "Vitest",
                 "Playwright",
+                "Sentry",
+                "oxlint",
               ].map((tech) => (
                 <Box
                   key={tech}
@@ -114,9 +172,12 @@ export const Introduction = {
 
           {/* ── Principles ── */}
           <Box>
-            <Headline level={2} css={{ mb: "6" }}>
+            <Headline level={2} css={{ mb: "2" }}>
               ◇ CORE PRINCIPLES
             </Headline>
+            <Paragraph size="sm" color="muted" css={{ mb: "6", maxW: "55ch" }}>
+              The system follows four rules. When in doubt, pick the rawer option.
+            </Paragraph>
 
             <Box
               css={{
@@ -129,22 +190,22 @@ export const Introduction = {
                 {
                   icon: "✦",
                   title: "Strong Typography",
-                  desc: "Impact headlines, clean body text, monospace for data",
+                  desc: "Impact for headlines, Arial for body, monospace for data and code. Fluid clamp() sizing across breakpoints. Balanced text-wrap on headings.",
                 },
                 {
                   icon: "◆",
                   title: "Minimal Palette",
-                  desc: "Monochromatic base with vibrant primary + accent",
+                  desc: "Monochromatic neutral scale 50–950. One electric-blue primary, one peachy-orange accent, status colors for feedback. Semantic tokens pageBg/pageFg flip with the theme.",
                 },
                 {
                   icon: "⋆",
                   title: "Raw Materials",
-                  desc: "Honest, unpolished, hard borders, no gratuitous rounding",
+                  desc: "2px solid borders, no gratuitous border-radius, no drop-shadows on containers. Spacing is generous but intentional — content breathes, decoration doesn't.",
                 },
                 {
                   icon: "┌",
-                  title: "ASCII Decoration",
-                  desc: "Corner brackets, sparkle overlays, kawaii text art",
+                  title: "ASCII & Kawaii",
+                  desc: "Corner brackets ride image masks, sparkle overlays layer on slides, emoji month-symbols in dates, divider patterns from *ੈ✩‧₊˚ to ━━━╳━━━. Decoration is content.",
                 },
               ].map((p) => (
                 <Box
@@ -180,18 +241,25 @@ export const Introduction = {
 
           {/* ── Quick Start ── */}
           <Box>
-            <Headline level={2} css={{ mb: "4" }}>
+            <Headline level={2} css={{ mb: "2" }}>
               ◇ QUICK START
             </Headline>
+            <Paragraph size="sm" color="muted" css={{ mb: "4", maxW: "55ch" }}>
+              Import from @httpjpg/ui. All components use the css() prop from Panda's styled-system
+              — no className strings, no runtime cost.
+            </Paragraph>
 
             <CodeBlock
-              code={`import { Box, Headline, Paragraph, Button } from "@httpjpg/ui";
+              code={`import { Box, Headline, Paragraph, Button, Divider } from "@httpjpg/ui";
 
 export default function MyPage() {
   return (
     <Box css={{ p: "8" }}>
       <Headline level={1}>BRUTALIST DESIGN</Headline>
-      <Paragraph>Clean, functional, and impactful.</Paragraph>
+      <Paragraph>
+        Clean, functional, and impactful.
+      </Paragraph>
+      <Divider variant="ascii" />
       <Button>Get Started ✦</Button>
     </Box>
   );
@@ -206,9 +274,13 @@ export default function MyPage() {
 
           {/* ── Components ── */}
           <Box>
-            <Headline level={2} css={{ mb: "6" }}>
+            <Headline level={2} css={{ mb: "2" }}>
               ◇ WHAT'S INSIDE
             </Headline>
+            <Paragraph size="sm" color="muted" css={{ mb: "6", maxW: "55ch" }}>
+              Browse all components in the sidebar. Each category groups related primitives — from
+              layout foundations to interactive widgets.
+            </Paragraph>
 
             <Box
               css={{
@@ -251,13 +323,40 @@ export default function MyPage() {
 
           <Divider variant="ascii" />
 
+          {/* ── Architecture ── */}
+          <Box>
+            <Headline level={2} css={{ mb: "2" }}>
+              ◇ ARCHITECTURE
+            </Headline>
+            <Paragraph size="sm" color="muted" css={{ mb: "4", maxW: "55ch" }}>
+              Layered package graph: tokens → utils → api → ui → storyblok-ui → apps. Each layer has
+              a single responsibility, no circular deps. The codegen bridges CMS schemas to
+              TypeScript interfaces.
+            </Paragraph>
+
+            <CodeBlock
+              code={`tokens          ← design tokens (colors, spacing, type)
+storyblok-utils ← runtime types, image processing
+storyblok-api   ← raw CDN client
+storyblok-next  ← Next.js cache layer (unstable_cache)
+ui              ← component library (Panda CSS)
+storyblok-ui    ← Sb* blok wrappers (generated types)
+storyblok-sync  ← schema push + codegen CLI
+portfolio       ← Next.js 16 App Router`}
+              language="text"
+              filename="dependency graph"
+            />
+          </Box>
+
+          <Divider variant="ascii" />
+
           {/* ── Footer ── */}
           <Box css={{ textAlign: "center", py: "8" }}>
             <Paragraph size="sm" color="muted" css={{ fontFamily: "mono", letterSpacing: "wider" }}>
               *ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚
             </Paragraph>
             <Paragraph size="sm" color="muted" css={{ mt: "2" }}>
-              Domenik Töfflinger · @dmnktoe
+              Domenik Töfflinger · @dmnktoe · 2024–2026
             </Paragraph>
           </Box>
         </Stack>

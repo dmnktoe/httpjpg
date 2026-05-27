@@ -1,5 +1,6 @@
+import type { SbGridItemData } from "@httpjpg/storyblok-utils";
 import { GridItem, type GridItemProps } from "@httpjpg/ui";
-import { type SbBlokData, StoryblokServerComponent } from "@storyblok/react/rsc";
+import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo, type CSSProperties } from "react";
 import { css } from "styled-system/css";
 
@@ -23,22 +24,7 @@ function spanCss(value: string): string {
 }
 
 export interface SbGridItemProps {
-  blok: {
-    _uid: string;
-    content?: SbBlokData[];
-    colSpan?: string;
-    colSpanMd?: string;
-    colSpanLg?: string;
-    rowSpan?: string;
-    rowSpanMd?: string;
-    rowSpanLg?: string;
-    colStart?: number;
-    colEnd?: number;
-    rowStart?: number;
-    rowEnd?: number;
-    alignSelf?: GridItemProps["alignSelf"];
-    justifySelf?: GridItemProps["justifySelf"];
-  };
+  blok: SbGridItemData;
 }
 
 export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
@@ -81,7 +67,7 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
     <GridItem
       {...editable}
       colSpan={parseSpan(colSpan)}
-      rowSpan={rowSpan ? Number.parseInt(rowSpan, 10) : undefined}
+      rowSpan={rowSpan}
       colStart={colStart}
       colEnd={colEnd}
       rowStart={rowStart}

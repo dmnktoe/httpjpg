@@ -1,16 +1,12 @@
+import type { SbPageData } from "@httpjpg/storyblok-utils";
 import { Box } from "@httpjpg/ui";
-import { type SbBlokData, StoryblokServerComponent } from "@storyblok/react/rsc";
+import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
 import { editableAttrs } from "../../lib/use-blok";
 
 export interface SbPageProps {
-  blok: {
-    _uid: string;
-    body?: SbBlokData[];
-    title?: string;
-    isDark?: boolean;
-  };
+  blok: SbPageData;
 }
 
 export const SbPage = memo(function SbPage({ blok }: SbPageProps) {

@@ -1,22 +1,14 @@
 "use client";
 
-import type { StoryblokLink } from "@httpjpg/storyblok-utils";
-import { Box, Button, type ButtonProps } from "@httpjpg/ui";
+import type { SbButtonData } from "@httpjpg/storyblok-utils";
+import { Box, Button } from "@httpjpg/ui";
 import { memo } from "react";
 
 import { storyblokHref } from "../../lib/href";
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbButtonProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    text: string;
-    variant?: ButtonProps["variant"];
-    size?: ButtonProps["size"];
-    type?: ButtonProps["type"];
-    disabled?: boolean;
-    link?: StoryblokLink;
-  };
+  blok: SbButtonData;
   onClick?: () => void;
 }
 

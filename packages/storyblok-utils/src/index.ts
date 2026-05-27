@@ -1,4 +1,29 @@
-export type { BlokSpacing, SbBlok, SbBlokName, SbBlokRegistry } from "./blok-types.gen";
+export type {
+  BlokSpacing,
+  SbBlok,
+  SbBlokName,
+  SbBlokRegistry,
+  SbButtonData,
+  SbConfigData,
+  SbContainerData,
+  SbFooterConfigData,
+  SbGridData,
+  SbGridItemData,
+  SbHeadlineData,
+  SbImageData,
+  SbMarqueeData,
+  SbMenuLinkData,
+  SbMusicPlayerData,
+  SbPageData,
+  SbParagraphData,
+  SbRichtextData,
+  SbSectionData,
+  SbSlideshowData,
+  SbVideoData,
+  SbWorkCardData,
+  SbWorkData,
+  SbWorkListData,
+} from "./blok-types.gen";
 export * from "./cms-options";
 export { extractPlainText } from "./extract-plain-text";
 export { imagePreset } from "./image-presets";

@@ -1,16 +1,12 @@
 import { StoryblokRichText } from "@httpjpg/storyblok-richtext";
+import type { SbRichtextData } from "@httpjpg/storyblok-utils";
 import { Box } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbRichTextProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    content: unknown;
-    maxWidth?: string;
-    color?: string;
-  };
+  blok: SbRichtextData;
 }
 
 function parseMaxWidth(value?: string): string | boolean | undefined {

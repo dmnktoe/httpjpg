@@ -5,8 +5,8 @@
  */
 
 export interface StoryblokBlokData {
-  _uid?: string;
-  component?: string;
+  _uid: string;
+  component: string;
   [key: string]: unknown;
 }
 

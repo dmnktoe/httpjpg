@@ -95,7 +95,7 @@ jobs:
         run: pnpm run build --filter=@httpjpg/${{ matrix.app }}
       - name: Package build artifacts
         if: matrix.app == 'portfolio'
-        run: tar -czf portfolio-build.tar.gz apps/portfolio/.next --exclude='apps/portfolio/.next/cache'
+        run: tar -czf portfolio-build.tar.gz --exclude='.next/cache' -C apps/portfolio .next
       - name: Upload build artifacts
         if: matrix.app == 'portfolio'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -141,7 +141,7 @@ jobs:
           name: portfolio-build
       - name: Extract build artifacts
         run: |
-          tar -xzf portfolio-build.tar.gz
+          tar -xzf portfolio-build.tar.gz -C apps/portfolio
           cat apps/portfolio/.next/BUILD_ID
       - name: Cache Playwright browsers
         id: playwright-cache

@@ -1,21 +1,12 @@
-import type { StoryblokLink } from "@httpjpg/storyblok-utils";
-import { Box, Button, Callout, type CalloutProps } from "@httpjpg/ui";
+import type { SbCalloutData } from "@httpjpg/storyblok-utils";
+import { Box, Button, Callout } from "@httpjpg/ui";
 import { memo } from "react";
 
 import { storyblokHref } from "../../lib/href";
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbCalloutProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    title?: string;
-    body: string;
-    tone?: CalloutProps["tone"];
-    align?: CalloutProps["align"];
-    ctaText?: string;
-    ctaLink?: StoryblokLink;
-    ctaVariant?: "primary" | "secondary" | "outline";
-  };
+  blok: SbCalloutData;
 }
 
 export const SbCallout = memo(function SbCallout({ blok }: SbCalloutProps) {

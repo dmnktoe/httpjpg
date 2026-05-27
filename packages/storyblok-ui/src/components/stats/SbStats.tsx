@@ -1,23 +1,11 @@
+import type { SbStatsData } from "@httpjpg/storyblok-utils";
 import { Box, Stats, type StatsProps } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
-
-interface SbStatItemData {
-  _uid: string;
-  value: string;
-  label: string;
-  caption?: string;
-}
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbStatsProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    items: SbStatItemData[];
-    columns?: string;
-    variant?: StatsProps["variant"];
-    align?: StatsProps["align"];
-  };
+  blok: SbStatsData;
 }
 
 function parseColumns(value?: string): StatsProps["columns"] {

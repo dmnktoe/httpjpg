@@ -1,16 +1,11 @@
-import { Box, Icon, type IconName } from "@httpjpg/ui";
+import type { SbIconData } from "@httpjpg/storyblok-utils";
+import { Box, Icon } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbIconProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    name: IconName;
-    size?: string;
-    color?: string;
-    label?: string;
-  };
+  blok: SbIconData;
 }
 
 export const SbIcon = memo(function SbIcon({ blok }: SbIconProps) {

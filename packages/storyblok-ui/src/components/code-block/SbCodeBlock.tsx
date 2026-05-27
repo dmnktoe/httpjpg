@@ -1,17 +1,11 @@
+import type { SbCodeBlockData } from "@httpjpg/storyblok-utils";
 import { Box, CodeBlock } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbCodeBlockProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    code: string;
-    language?: string;
-    filename?: string;
-    showLineNumbers?: boolean;
-    copyable?: boolean;
-  };
+  blok: SbCodeBlockData;
 }
 
 export const SbCodeBlock = memo(function SbCodeBlock({ blok }: SbCodeBlockProps) {

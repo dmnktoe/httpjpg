@@ -1,27 +1,11 @@
+import type { SbListData } from "@httpjpg/storyblok-utils";
 import { Box, ListItem, OrderedList, UnorderedList } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
-
-type ListSize = "sm" | "md" | "lg";
-type ListSpacing = "0" | "1" | "2" | "3" | "4";
-
-interface SbListItemData {
-  _uid: string;
-  text: string;
-}
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbListProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    items: SbListItemData[];
-    ordered?: boolean;
-    size?: ListSize;
-    itemSpacing?: ListSpacing;
-    unorderedStyle?: "disc" | "circle" | "square" | "none";
-    orderedStyle?: "decimal" | "lower-alpha" | "lower-roman" | "upper-alpha" | "upper-roman";
-    color?: string;
-  };
+  blok: SbListData;
 }
 
 export const SbList = memo(function SbList({ blok }: SbListProps) {

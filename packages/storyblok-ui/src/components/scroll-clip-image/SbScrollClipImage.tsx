@@ -1,59 +1,16 @@
 "use client";
 
-import type { StoryblokRichTextProps } from "@httpjpg/storyblok-richtext";
-import {
-  type CmsImageWidth,
-  getResponsiveImage,
-  type StoryblokImage,
-  type StoryblokLink,
-} from "@httpjpg/storyblok-utils";
+import type { SbScrollClipImageData } from "@httpjpg/storyblok-utils";
+import { getResponsiveImage } from "@httpjpg/storyblok-utils";
 import { Box, ScrollClipImage } from "@httpjpg/ui";
 import { memo } from "react";
 
 import { storyblokHref } from "../../lib/href";
-import {
-  type BlokSpacing,
-  editableAttrs,
-  sizesFromWidths,
-  spacingCss,
-  widthCss,
-} from "../../lib/use-blok";
-import { SbCaption } from "../caption/SbCaption";
+import { editableAttrs, sizesFromWidths, spacingCss, widthCss } from "../../lib/use-blok";
+import { SbCaption, type SbCaptionProps } from "../caption/SbCaption";
 
 export interface SbScrollClipImageProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    image: StoryblokImage;
-    alt?: string;
-    caption?: StoryblokRichTextProps["data"];
-    aspectRatio?: string;
-    width?: CmsImageWidth;
-    widthMd?: CmsImageWidth;
-    widthLg?: CmsImageWidth;
-    /** When true, the image pins at viewport center during the reveal. */
-    pin?: boolean;
-    /** Pin mode: CSS length controlling how long the pin lasts. */
-    pinDistance?: string;
-    /** Initial clip-path inset percentage. */
-    maxClipRatio?: string;
-    /** Initial image scale. */
-    maxScale?: string;
-    /** Render ASCII corner brackets riding the mask edges. */
-    brackets?: boolean;
-    /** Pin mode only: show a `[ NN / 99 ]` progress label. */
-    showProgress?: boolean;
-    copyrightPosition?: "inline-white" | "inline-black" | "below" | "overlay";
-    fetchPriority?: "auto" | "high" | "low";
-    link?: StoryblokLink;
-  };
-}
-
-function toNumber(value: string | undefined, fallback: number): number {
-  if (value === undefined || value === "") {
-    return fallback;
-  }
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : fallback;
+  blok: SbScrollClipImageData;
 }
 
 export const SbScrollClipImage = memo(function SbScrollClipImage({ blok }: SbScrollClipImageProps) {
@@ -108,15 +65,15 @@ export const SbScrollClipImage = memo(function SbScrollClipImage({ blok }: SbScr
         title={image.title}
         pin={pin}
         pinDistance={pinDistance || "100vh"}
-        maxClipRatio={toNumber(maxClipRatio, 10)}
-        maxScale={toNumber(maxScale, 1.1)}
+        maxClipRatio={maxClipRatio ?? 10}
+        maxScale={maxScale ?? 1.1}
         brackets={brackets}
         showProgress={showProgress}
         copyright={image.copyright || ""}
         copyrightPosition={copyrightPosition}
         fetchPriority={fetchPriority}
       />
-      {caption && <SbCaption data={caption} />}
+      {caption && <SbCaption data={caption as SbCaptionProps["data"]} />}
     </Box>
   );
 });

@@ -1,19 +1,11 @@
-import { Divider, type DividerProps } from "@httpjpg/ui";
+import type { SbDividerData } from "@httpjpg/storyblok-utils";
+import { Divider } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbDividerProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    orientation?: DividerProps["orientation"];
-    variant?: DividerProps["variant"];
-    pattern?: string;
-    thickness?: string;
-    color?: string;
-    spacing?: string;
-    label?: string;
-  };
+  blok: SbDividerData;
 }
 
 export const SbDivider = memo(function SbDivider({ blok }: SbDividerProps) {

@@ -1,18 +1,12 @@
-import type { StoryblokLink } from "@httpjpg/storyblok-utils";
+import type { SbLinkData } from "@httpjpg/storyblok-utils";
 import { Box, Link } from "@httpjpg/ui";
 import { memo } from "react";
 
 import { storyblokHref } from "../../lib/href";
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbLinkProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    text: string;
-    link?: StoryblokLink;
-    showExternalIcon?: boolean;
-    color?: string;
-  };
+  blok: SbLinkData;
 }
 
 export const SbLink = memo(function SbLink({ blok }: SbLinkProps) {

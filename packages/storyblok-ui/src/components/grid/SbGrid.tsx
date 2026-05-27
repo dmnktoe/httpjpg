@@ -1,9 +1,10 @@
+import type { SbGridData } from "@httpjpg/storyblok-utils";
 import { Grid, type GridProps } from "@httpjpg/ui";
-import { type SbBlokData, StoryblokServerComponent } from "@storyblok/react/rsc";
+import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 import { css } from "styled-system/css";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 type ColCount = NonNullable<GridProps["columns"]>;
 
@@ -34,21 +35,7 @@ function toCols(value: string | undefined): ColCount | undefined {
 }
 
 export interface SbGridProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    items?: SbBlokData[];
-    columns?: string;
-    columnsMd?: string;
-    columnsLg?: string;
-    gap?: string;
-    rowGap?: string;
-    columnGap?: string;
-    align?: GridProps["align"];
-    justify?: GridProps["justify"];
-    justifyContent?: GridProps["justifyContent"];
-    flow?: GridProps["flow"];
-    isList?: boolean;
-  };
+  blok: SbGridData;
 }
 
 export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
@@ -93,7 +80,7 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
       gap={gap}
       rowGap={rowGap}
       columnGap={columnGap}
-      align={align}
+      align={align as GridProps["align"]}
       justify={justify}
       justifyContent={justifyContent}
       flow={flow}

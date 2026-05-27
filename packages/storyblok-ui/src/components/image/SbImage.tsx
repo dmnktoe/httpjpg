@@ -1,43 +1,15 @@
 "use client";
 
-import type { StoryblokRichTextProps } from "@httpjpg/storyblok-richtext";
-import {
-  type CmsImageWidth,
-  getResponsiveImage,
-  imagePreset,
-  type StoryblokImage,
-} from "@httpjpg/storyblok-utils";
-import { Box, Image, ImageOverlay, type OverlayPattern, useParallax } from "@httpjpg/ui";
+import type { SbImageData } from "@httpjpg/storyblok-utils";
+import { getResponsiveImage, imagePreset } from "@httpjpg/storyblok-utils";
+import { Box, Image, ImageOverlay, useParallax } from "@httpjpg/ui";
 import { memo } from "react";
 
-import {
-  type BlokSpacing,
-  editableAttrs,
-  sizesFromWidths,
-  spacingCss,
-  widthCss,
-} from "../../lib/use-blok";
-import { SbCaption } from "../caption/SbCaption";
+import { editableAttrs, sizesFromWidths, spacingCss, widthCss } from "../../lib/use-blok";
+import { SbCaption, type SbCaptionProps } from "../caption/SbCaption";
 
 export interface SbImageProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    image: StoryblokImage;
-    alt?: string;
-    caption?: StoryblokRichTextProps["data"];
-    aspectRatio?: string;
-    width?: CmsImageWidth;
-    widthMd?: CmsImageWidth;
-    widthLg?: CmsImageWidth;
-    isLoadingEager?: boolean;
-    fetchPriority?: "auto" | "high" | "low";
-    blurOnLoad?: boolean;
-    copyrightPosition?: "inline-white" | "inline-black" | "below" | "overlay";
-    /** ASCII sparkle overlay around the image. @default "random" */
-    overlay?: OverlayPattern;
-    /** Strength of the parallax scroll effect (0 disables). @default 0 */
-    parallax?: number;
-  };
+  blok: SbImageData;
 }
 
 export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
@@ -105,7 +77,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
           <ImageOverlay pattern={overlay} seed={image.filename} color="currentColor" />
         )}
       </Box>
-      {caption && <SbCaption data={caption} />}
+      {caption && <SbCaption data={caption as SbCaptionProps["data"]} />}
     </Box>
   );
 });

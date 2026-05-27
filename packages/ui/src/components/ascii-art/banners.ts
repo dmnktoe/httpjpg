@@ -74,6 +74,19 @@ export const ASCII_GHOST = String.raw`
    > ^ <
 `;
 
+export const ASCII_EMPTY = `
+  ·°•. ⋆ ✦ ⋆ .•°·
+
+       .-.
+      ( ∅.∅ )
+       > ^ <
+
+  n͓̽o͓̽t͓̽h͓̽i͓̽n͓̽g͓̽ ͓̽t͓̽o͓̽ ͓̽s͓̽e͓̽e͓̽ ͓̽h͓̽e͓̽r͓̽e͓̽
+  nothing to see here
+
+  ·°•. ⋆ ✦ ⋆ .•°·
+`;
+
 export const CONSOLE_BANNER = String.raw`
        __     __    __                 _
       / /_   / /_  / /_  ____    (_)___  ____ _

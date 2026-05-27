@@ -1,23 +1,11 @@
-import type { StoryblokImage } from "@httpjpg/storyblok-utils";
-import { Box, type OverlayPattern, Slideshow, type SlideshowProps } from "@httpjpg/ui";
+import type { SbSlideshowData } from "@httpjpg/storyblok-utils";
+import { Box, Slideshow } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbSlideshowProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    images: StoryblokImage[];
-    aspectRatio?: SlideshowProps["aspectRatio"];
-    effect?: SlideshowProps["effect"];
-    autoplayDelay?: number;
-    speed?: number;
-    showNavigation?: boolean;
-    animation?: SlideshowProps["animation"];
-    animationDelay?: number;
-    overlay?: OverlayPattern;
-    showCounter?: boolean;
-  };
+  blok: SbSlideshowData;
 }
 
 export const SbSlideshow = memo(function SbSlideshow({ blok }: SbSlideshowProps) {

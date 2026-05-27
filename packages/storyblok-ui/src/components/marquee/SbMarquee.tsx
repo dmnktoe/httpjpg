@@ -1,21 +1,11 @@
+import type { SbMarqueeData } from "@httpjpg/storyblok-utils";
 import { Box, Marquee } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbMarqueeProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    text: string;
-    speed?: number;
-    direction?: "left" | "right";
-    pauseOnHover?: boolean;
-    repeat?: number;
-    iosStyle?: boolean;
-    pauseDuration?: number;
-    bgColor?: string;
-    textColor?: string;
-  };
+  blok: SbMarqueeData;
 }
 
 export const SbMarquee = memo(function SbMarquee({ blok }: SbMarqueeProps) {

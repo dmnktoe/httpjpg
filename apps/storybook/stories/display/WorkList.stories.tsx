@@ -273,6 +273,15 @@ export const WithASCIIDividers: Story = {
 };
 
 /**
+ * Empty work list (default ASCII art)
+ */
+export const Empty: Story = {
+  args: {
+    works: [],
+  },
+};
+
+/**
  * Work list with custom ASCII pattern
  */
 export const WithCustomPattern: Story = {

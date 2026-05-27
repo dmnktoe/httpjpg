@@ -28,6 +28,7 @@ build
 dist
 packages/ui/styled-system/
 packages/ui/styles.css
+packages/storyblok-utils/src/blok-types.gen.ts
 
 
 # Debug

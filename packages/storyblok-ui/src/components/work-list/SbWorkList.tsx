@@ -1,41 +1,24 @@
 "use client";
 
-import { type DividerProps, WorkList, type WorkListProps } from "@httpjpg/ui";
+import type { SbWorkListData } from "@httpjpg/storyblok-utils";
+import { WorkList } from "@httpjpg/ui";
 import { memo, useEffect, useRef, useState } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 import { parseCols, resolveStories, toWorkCardProps, type WorkStory } from "./lib";
 
 export interface SbWorkListProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    work?: Array<string | WorkStory>;
-    gap?: string;
-    columns?: string;
-    columnsMd?: string;
-    columnsLg?: string;
-    variant?: WorkListProps["variant"];
-    showDividers?: boolean;
-    dividerVariant?: DividerProps["variant"];
-    dividerPattern?: string;
-    dividerColor?: string;
-    dividerSpacing?: string;
-    enableTagFilter?: boolean;
-  };
+  blok: SbWorkListData;
 }
 
 export const SbWorkList = memo(function SbWorkList({ blok }: SbWorkListProps) {
+  const work = blok.work as Array<string | WorkStory> | undefined;
   const cacheRef = useRef<Map<string, WorkStory>>(new Map());
-  const [stories, setStories] = useState<WorkStory[]>(() =>
-    resolveStories(blok.work, cacheRef.current),
-  );
+  const [stories, setStories] = useState<WorkStory[]>(() => resolveStories(work, cacheRef.current));
 
   useEffect(() => {
-    const next = resolveStories(blok.work, cacheRef.current);
-    if (next.length > 0) {
-      setStories(next);
-    }
-  }, [blok.work]);
+    setStories(resolveStories(work, cacheRef.current));
+  }, [work]);
 
   if (!stories.length) {
     return null;

@@ -1,24 +1,13 @@
-import type { StoryblokImage, StoryblokLink } from "@httpjpg/storyblok-utils";
+import { type SbWorkData, type StoryblokLink } from "@httpjpg/storyblok-utils";
 import { Box, FloatingPreviewBadge } from "@httpjpg/ui";
-import { type SbBlokData, StoryblokServerComponent } from "@storyblok/react/rsc";
+import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
 import { storyblokHref } from "../../lib/href";
 import { editableAttrs } from "../../lib/use-blok";
 
 export interface SbPageWorkProps {
-  blok: {
-    _uid: string;
-    body?: SbBlokData[];
-    title?: string;
-    description?: unknown;
-    images?: StoryblokImage[];
-    date?: string;
-    date_end?: string;
-    link?: StoryblokLink;
-    external_only?: boolean;
-    isDark?: boolean;
-  };
+  blok: SbWorkData;
 }
 
 function isExternalPreviewLink(link?: StoryblokLink): link is StoryblokLink & { url: string } {

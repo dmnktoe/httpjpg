@@ -1,17 +1,12 @@
-import { Container, type ContainerProps } from "@httpjpg/ui";
-import { type SbBlokData, StoryblokServerComponent } from "@storyblok/react/rsc";
+import type { SbContainerData } from "@httpjpg/storyblok-utils";
+import { Container } from "@httpjpg/ui";
+import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbContainerProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    body?: SbBlokData[];
-    width?: ContainerProps["size"];
-    center?: boolean;
-    bgColor?: string;
-  };
+  blok: SbContainerData;
 }
 
 export const SbContainer = memo(function SbContainer({ blok }: SbContainerProps) {

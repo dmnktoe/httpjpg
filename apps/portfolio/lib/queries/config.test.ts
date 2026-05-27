@@ -113,16 +113,6 @@ describe("getNavigation", () => {
     expect(nav).toEqual([{ name: "Projects", href: "/work", isExternal: false }]);
   });
 
-  it("falls back to item.name when label is missing", async () => {
-    setupGetStory(async () => ({
-      content: {
-        header_menu: [{ name: "Fallback", link: { linktype: "story", cached_url: "about" } }],
-      },
-    }));
-    const nav = await getNavigation();
-    expect(nav[0]?.name).toBe("Fallback");
-  });
-
   it("drops menu items that have no name or no link", async () => {
     setupGetStory(async () => ({
       content: {

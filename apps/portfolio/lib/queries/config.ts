@@ -34,13 +34,12 @@ export async function getConfig(): Promise<SbConfigStory | null> {
 }
 
 function toNavItem(item: MenuLink): NavItem | null {
-  const name = item.label || item.name;
-  if (!name || !item.link) {
+  if (!item.label || !item.link) {
     return null;
   }
   const href = storyblokHref(item.link);
   const isExternal = item.is_external ?? isExternalLink(href);
-  return { name, href, isExternal };
+  return { name: item.label, href, isExternal };
 }
 
 const FALLBACK_NAVIGATION: NavItem[] = [

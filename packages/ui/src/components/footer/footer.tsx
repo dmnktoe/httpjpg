@@ -1,6 +1,6 @@
 "use client";
 
-import React, { forwardRef, type ReactNode } from "react";
+import React, { forwardRef, useCallback, type ReactNode } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { ASCII_DIVIDER_STARS } from "../ascii-art/banners";
@@ -18,6 +18,7 @@ export interface FooterProps {
   }>;
   copyrightText?: string;
   onCookieSettingsClick?: () => void;
+  showCookieSettings?: boolean;
   widgets?: ReactNode;
   showVersion?: boolean;
   version?: string;
@@ -34,6 +35,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       footerLinks,
       copyrightText,
       onCookieSettingsClick,
+      showCookieSettings = false,
       widgets,
       showVersion = false,
       version,
@@ -44,6 +46,16 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
     },
     ref,
   ) => {
+    const handleCookieSettingsClick = useCallback(() => {
+      if (onCookieSettingsClick) {
+        onCookieSettingsClick();
+      } else {
+        window.dispatchEvent(new CustomEvent("openCookieSettings"));
+      }
+    }, [onCookieSettingsClick]);
+
+    const hasCookieSettings = showCookieSettings || Boolean(onCookieSettingsClick);
+
     return (
       <Box
         as="footer"
@@ -90,7 +102,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                       </Link>
                     </React.Fragment>
                   ))}
-                {onCookieSettingsClick && (
+                {hasCookieSettings && (
                   <>
                     {footerLinks && footerLinks.length > 0 && (
                       <Box as="span" css={{ opacity: 0.3 }}>
@@ -99,7 +111,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                     )}
                     <Box
                       as="button"
-                      onClick={onCookieSettingsClick}
+                      onClick={handleCookieSettingsClick}
                       css={{
                         bg: "transparent",
                         border: "none",

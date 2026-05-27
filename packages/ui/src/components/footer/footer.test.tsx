@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 
 import { Footer } from "./footer";
 
@@ -67,5 +67,26 @@ describe("Footer", () => {
   it("renders custom children instead of default layout", () => {
     render(<Footer>Custom footer content</Footer>);
     expect(screen.getByText("Custom footer content")).toBeInTheDocument();
+  });
+
+  it("calls onCookieSettingsClick when provided", () => {
+    const handler = vi.fn();
+    render(<Footer onCookieSettingsClick={handler} />);
+    fireEvent.click(screen.getByText("Cookie Settings"));
+    expect(handler).toHaveBeenCalledOnce();
+  });
+
+  it("dispatches openCookieSettings event when showCookieSettings is true", () => {
+    const spy = vi.fn();
+    window.addEventListener("openCookieSettings", spy);
+    render(<Footer showCookieSettings />);
+    fireEvent.click(screen.getByText("Cookie Settings"));
+    expect(spy).toHaveBeenCalledOnce();
+    window.removeEventListener("openCookieSettings", spy);
+  });
+
+  it("does not show cookie button when neither prop is set", () => {
+    render(<Footer />);
+    expect(screen.queryByText("Cookie Settings")).not.toBeInTheDocument();
   });
 });

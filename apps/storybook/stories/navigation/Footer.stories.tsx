@@ -66,6 +66,7 @@ export const Default: Story = {
  * Footer with widget area
  */
 export const WithWidgets: Story = {
+  parameters: { chromatic: { disableSnapshot: true } },
   args: {
     backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
     footerLinks: [

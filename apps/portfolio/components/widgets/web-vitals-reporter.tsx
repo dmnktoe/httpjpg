@@ -4,15 +4,15 @@ import { trackWebVital } from "@httpjpg/analytics";
 import { usePathname } from "next/navigation";
 import { useReportWebVitals } from "next/web-vitals";
 
-type VitalName = "CLS" | "FID" | "FCP" | "LCP" | "TTFB" | "INP";
+type VitalName = "CLS" | "FCP" | "LCP" | "TTFB" | "INP";
 
-const TRACKED: ReadonlySet<VitalName> = new Set(["CLS", "FID", "FCP", "LCP", "TTFB", "INP"]);
+const TRACKED: ReadonlySet<VitalName> = new Set(["CLS", "FCP", "LCP", "TTFB", "INP"]);
 const GA_NAMES: ReadonlySet<Parameters<typeof trackWebVital>[0]> = new Set([
   "CLS",
-  "FID",
   "FCP",
   "LCP",
   "TTFB",
+  "INP",
 ]);
 
 interface VitalMetricLike {

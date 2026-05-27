@@ -1,7 +1,7 @@
 import { captureWebVital, type WebVitalName, type WebVitalRating } from "@httpjpg/observability";
 import { type NextRequest, NextResponse } from "next/server";
 
-const VITAL_NAMES: readonly WebVitalName[] = ["CLS", "FID", "FCP", "LCP", "TTFB", "INP"];
+const VITAL_NAMES: readonly WebVitalName[] = ["CLS", "FCP", "LCP", "TTFB", "INP"];
 const RATINGS: readonly WebVitalRating[] = ["good", "needs-improvement", "poor"];
 
 interface IncomingPayload {

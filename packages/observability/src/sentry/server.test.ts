@@ -89,7 +89,7 @@ describe("captureWebVital", () => {
   });
 
   it("sets level to info when no rating is provided", () => {
-    captureWebVital({ name: "FID", value: 10 });
+    captureWebVital({ name: "INP", value: 10 });
 
     expect(mockScope.setLevel).toHaveBeenCalledWith("info");
   });

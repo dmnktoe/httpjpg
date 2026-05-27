@@ -83,13 +83,35 @@ export const Callout = forwardRef<HTMLDivElement, CalloutProps>(function Callout
             fontWeight: "bold",
             fontSize: "lg",
             lineHeight: "tight",
+            display: "flex",
+            alignItems: "center",
+            gap: "2",
           })}
         >
+          {tone === "brutalist" && (
+            <span aria-hidden="true" className={css({ fontFamily: "mono", opacity: 0.5 })}>
+              ┌
+            </span>
+          )}
           {title}
         </div>
       )}
       <div className={css({ width: "full" })}>{children}</div>
       {action && <div className={css({ mt: "2" })}>{action}</div>}
+      {tone === "brutalist" && (
+        <div
+          aria-hidden="true"
+          className={css({
+            fontFamily: "mono",
+            fontSize: "xs",
+            opacity: 0.3,
+            letterSpacing: "wider",
+            mt: "1",
+          })}
+        >
+          └ ·°•. ⋆ ✦ ⋆ .•°· ┘
+        </div>
+      )}
     </div>
   );
 });

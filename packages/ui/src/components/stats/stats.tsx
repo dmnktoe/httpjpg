@@ -65,7 +65,7 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
         className,
       )}
     >
-      {items.map((item) => (
+      {items.map((item, idx) => (
         <div
           key={item.id}
           className={css({
@@ -77,6 +77,20 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
             ...variantItemStyles[variant],
           })}
         >
+          {variant === "brutalist" && (
+            <div
+              aria-hidden="true"
+              className={css({
+                fontFamily: "mono",
+                fontSize: "xs",
+                opacity: 0.3,
+                letterSpacing: "wider",
+                mb: "1",
+              })}
+            >
+              ┌ {String(idx + 1).padStart(2, "0")}
+            </div>
+          )}
           <div
             className={css({
               fontSize: { base: "4xl", md: "5xl" },
@@ -95,6 +109,11 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
               color: "pageMuted",
             })}
           >
+            {variant === "brutalist" && (
+              <span aria-hidden="true" className={css({ opacity: 0.4, mr: "1" })}>
+                ✦
+              </span>
+            )}
             {item.label}
           </div>
           {item.caption && (

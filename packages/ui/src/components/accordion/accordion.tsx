@@ -127,16 +127,30 @@ export function Accordion({
                 },
               })}
             >
-              <span>{item.title}</span>
+              <span className={css({ display: "flex", alignItems: "center", gap: "2" })}>
+                <span
+                  aria-hidden="true"
+                  className={css({
+                    fontFamily: "mono",
+                    fontSize: "xs",
+                    opacity: 0.4,
+                    letterSpacing: "wider",
+                  })}
+                >
+                  {isOpen ? "◆" : "◇"}
+                </span>
+                {item.title}
+              </span>
               <span
                 aria-hidden="true"
                 className={css({
                   fontFamily: "mono",
+                  fontSize: "sm",
                   transition: "transform 200ms ease",
                   transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
                 })}
               >
-                +
+                ✦
               </span>
             </button>
             <section

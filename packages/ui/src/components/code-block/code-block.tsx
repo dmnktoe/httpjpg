@@ -73,7 +73,12 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
             color: "neutral.400",
           })}
         >
-          <span>{filename || language}</span>
+          <span>
+            {filename || language}
+            {filename && language && (
+              <span className={css({ opacity: 0.4, ml: "2" })}>╱╱ {language}</span>
+            )}
+          </span>
           {copyable && (
             <button
               type="button"

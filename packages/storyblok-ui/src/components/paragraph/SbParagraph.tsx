@@ -12,10 +12,12 @@ export const SbParagraph = memo(function SbParagraph({ blok }: SbParagraphProps)
   const { text, size, weight, align, color } = blok;
   const editable = editableAttrs(blok);
 
+  const paragraphSize = size === "base" ? undefined : size;
+
   return (
     <Paragraph
       {...editable}
-      size={size as Exclude<typeof size, "base">}
+      size={paragraphSize}
       align={align}
       css={{
         color,

@@ -6,7 +6,7 @@ import { Box, Image, ImageOverlay, useParallax } from "@httpjpg/ui";
 import { memo } from "react";
 
 import { editableAttrs, sizesFromWidths, spacingCss, widthCss } from "../../lib/use-blok";
-import { SbCaption } from "../caption/SbCaption";
+import { SbCaption, type SbCaptionProps } from "../caption/SbCaption";
 
 export interface SbImageProps {
   blok: SbImageData;
@@ -77,7 +77,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
           <ImageOverlay pattern={overlay} seed={image.filename} color="currentColor" />
         )}
       </Box>
-      {caption && <SbCaption data={caption as never} />}
+      {caption && <SbCaption data={caption as SbCaptionProps["data"]} />}
     </Box>
   );
 });

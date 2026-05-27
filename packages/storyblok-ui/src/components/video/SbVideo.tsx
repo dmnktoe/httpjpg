@@ -6,7 +6,7 @@ import { Box, Video, type VideoSource } from "@httpjpg/ui";
 import { memo, useEffect, useState } from "react";
 
 import { editableAttrs, spacingCss } from "../../lib/use-blok";
-import { SbCaption } from "../caption/SbCaption";
+import { SbCaption, type SbCaptionProps } from "../caption/SbCaption";
 
 export interface SbVideoProps {
   blok: SbVideoData;
@@ -78,7 +78,7 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
         copyright={copyright}
         copyrightPosition={copyrightPosition}
       />
-      {caption?.content?.length ? <SbCaption data={caption as never} /> : null}
+      {caption?.content?.length ? <SbCaption data={caption as SbCaptionProps["data"]} /> : null}
     </Box>
   );
 });

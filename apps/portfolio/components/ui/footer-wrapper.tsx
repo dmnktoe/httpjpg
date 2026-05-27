@@ -69,7 +69,21 @@ export function FooterWrapper({
             >
               {lastUpdated && `↻ last updated ${formatLastUpdated(lastUpdated)}`}
               {lastUpdated && version && ` // ${ASCII_SPARKLES} // `}
-              {version}
+              {version && (
+                <Box
+                  as="a"
+                  href={`https://github.com/dmnktoe/httpjpg/releases/tag/${version}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  css={{
+                    color: "inherit",
+                    textDecoration: "none",
+                    _hover: { textDecoration: "underline" },
+                  }}
+                >
+                  {version}
+                </Box>
+              )}
             </Box>
           )}
           <Box

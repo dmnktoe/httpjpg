@@ -93,17 +93,15 @@ jobs:
       - uses: ./.github/actions/setup
       - name: Build ${{ matrix.app }}
         run: pnpm run build --filter=@httpjpg/${{ matrix.app }}
+      - name: Package build artifacts
+        if: matrix.app == 'portfolio'
+        run: tar -czf portfolio-build.tar.gz apps/portfolio/.next --exclude='apps/portfolio/.next/cache'
       - name: Upload build artifacts
         if: matrix.app == 'portfolio'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: portfolio-build
-          path: |
-            apps/portfolio/.next
-            !apps/portfolio/.next/cache
-            packages/*/dist
-            packages/ui/styled-system
-            packages/ui/styles.css
+          path: portfolio-build.tar.gz
           retention-days: 1
       - name: Upload Sentry sourcemaps
         if: matrix.app == 'portfolio' && github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -141,13 +139,8 @@ jobs:
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
         with:
           name: portfolio-build
-      - name: Verify build artifacts
-        run: |
-          if [ ! -f apps/portfolio/.next/BUILD_ID ]; then
-            echo "::error::Build artifacts missing — .next/BUILD_ID not found"
-            exit 1
-          fi
-          echo "Build ID: $(cat apps/portfolio/.next/BUILD_ID)"
+      - name: Extract build artifacts
+        run: tar -xzf portfolio-build.tar.gz && echo "Build ID: $(cat apps/portfolio/.next/BUILD_ID)"
       - name: Cache Playwright browsers
         id: playwright-cache
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5

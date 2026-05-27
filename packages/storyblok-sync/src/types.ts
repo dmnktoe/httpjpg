@@ -1,22 +1,9 @@
-/**
- * TypeScript types for Storyblok Management API
- * Based on official API documentation: https://www.storyblok.com/docs/api/management
- */
-
-/**
- * Datasource Entry Object
- * Represents a single entry in a datasource
- */
 export interface DatasourceEntry {
   name: string;
   value: string;
   dimension_value?: string;
 }
 
-/**
- * Datasource Object
- * Represents a datasource in a space
- */
 export interface Datasource {
   id?: number;
   name: string;
@@ -31,10 +18,6 @@ export interface Datasource {
   updated_at?: string;
 }
 
-/**
- * Component Group (Folder) Object
- * Represents a folder in the Block Library
- */
 export interface ComponentGroup {
   id?: number;
   name: string;
@@ -43,10 +26,6 @@ export interface ComponentGroup {
   parent_uuid?: string | null;
 }
 
-/**
- * Component Schema Field Object
- * Represents a field in a component schema
- */
 export interface StoryblokField {
   type: string;
   display_name?: string;
@@ -57,7 +36,6 @@ export interface StoryblokField {
   translatable?: boolean;
   default_value?: string;
 
-  // Blocks field options
   restrict_components?: boolean;
   restrict_type?: string;
   component_whitelist?: string[];
@@ -66,7 +44,6 @@ export interface StoryblokField {
   maximum?: number;
   minimum?: number;
 
-  // Option/datasource fields
   source?: "internal" | "internal_stories" | "external" | "internal_languages";
   datasource_slug?: string;
   external_datasource?: string;
@@ -76,7 +53,6 @@ export interface StoryblokField {
   max_options?: string;
   min_options?: string;
 
-  // Link/Asset fields
   filter_content_type?: string[];
   folder_slug?: string;
   filetypes?: string[];
@@ -91,7 +67,6 @@ export interface StoryblokField {
   force_link_scope?: boolean;
   link_scope?: string;
 
-  // Text/Number fields
   no_translate?: boolean;
   rtl?: boolean;
   regex?: string;
@@ -101,27 +76,21 @@ export interface StoryblokField {
   decimals?: number;
   steps?: number;
 
-  // Richtext/Markdown fields
   rich_markdown?: boolean;
   allow_multiline?: boolean;
   customize_toolbar?: boolean;
   toolbar?: string[];
   style_options?: Array<{ name: string; value: string }>;
 
-  // Date field
   disable_time?: boolean;
 
-  // Boolean field
   inline_label?: boolean;
 
-  // Group field
   keys?: string[];
 
-  // Plugin field
   field_type?: string;
   required_fields?: string;
 
-  // Advanced
   can_sync?: boolean;
   exclude_from_merge?: boolean;
   exclude_from_overwrite?: boolean;
@@ -129,10 +98,6 @@ export interface StoryblokField {
   conditional_settings?: Array<Record<string, unknown>>;
 }
 
-/**
- * Component Object
- * Represents a component (block) in a space
- */
 export interface StoryblokComponent {
   id?: number;
   name: string;

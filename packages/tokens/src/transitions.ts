@@ -1,8 +1,3 @@
-/**
- * Transition design tokens
- * Standard transition timings and easings
- */
-
 export const transitions = {
   duration: {
     fast: "0.1s",

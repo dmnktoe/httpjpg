@@ -1,12 +1,10 @@
 "use client";
 
 import { getColorSync } from "colorthief";
-import * as React from "react";
 
 export interface ExtractedColor {
   rgb: string;
   rgba: string;
-  /** Recommended text color for contrast against `rgb`. */
   textColor: "black" | "white";
 }
 
@@ -43,14 +41,4 @@ export async function extractVibrantColor(imageUrl: string): Promise<ExtractedCo
 
     img.src = imageUrl;
   });
-}
-
-export function useVibrantColor(artworkUrl: string): ExtractedColor | null {
-  const [color, setColor] = React.useState<ExtractedColor | null>(null);
-
-  React.useEffect(() => {
-    extractVibrantColor(artworkUrl).then(setColor);
-  }, [artworkUrl]);
-
-  return color;
 }

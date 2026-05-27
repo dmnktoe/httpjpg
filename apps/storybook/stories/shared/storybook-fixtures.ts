@@ -1,12 +1,3 @@
-/**
- * Central mock data and fixtures for Storybook stories
- * Single source of truth for test data across all stories
- */
-
-/**
- * Storyblok Image URLs
- * Consistent test images used throughout stories
- */
 export const MOCK_IMAGES = {
   videoStill1: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png",
   videoStill2: "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png",
@@ -23,10 +14,7 @@ export const MOCK_IMAGES = {
     "https://a.storyblok.com/f/281211/5000x2400/92dcf912ab/outlet-store_slideshow-3.jpg",
 } as const;
 
-/**
- * Helper to generate optimized Storyblok image URLs with transformations
- */
-export const getOptimizedImageUrl = (
+export function getOptimizedImageUrl(
   baseUrl: string,
   options: {
     width?: number;
@@ -34,14 +22,11 @@ export const getOptimizedImageUrl = (
     smart?: boolean;
     quality?: number;
   } = {},
-) => {
+) {
   const { width = 2000, height = 1125, smart = true, quality = 75 } = options;
   return `${baseUrl}/m/${width}x${height}${smart ? "/smart" : ""}/filters:quality(${quality})`;
-};
+}
 
-/**
- * Pre-optimized image URLs for common use cases
- */
 export const OPTIMIZED_IMAGES = {
   videoStill1: getOptimizedImageUrl(MOCK_IMAGES.videoStill1),
   videoStill2: getOptimizedImageUrl(MOCK_IMAGES.videoStill2),
@@ -51,7 +36,6 @@ export const OPTIMIZED_IMAGES = {
   outletStore1: getOptimizedImageUrl(MOCK_IMAGES.outletStore1),
   outletStore2: getOptimizedImageUrl(MOCK_IMAGES.outletStore2),
   outletStore3: getOptimizedImageUrl(MOCK_IMAGES.outletStore3),
-  // Smaller preview versions for cursor hover
   videoStill1Preview: getOptimizedImageUrl(MOCK_IMAGES.videoStill1, {
     width: 600,
     height: 400,
@@ -70,9 +54,6 @@ export const OPTIMIZED_IMAGES = {
   }),
 } as const;
 
-/**
- * Mock work items for navigation and work list stories
- */
 export const MOCK_WORK_ITEMS = [
   {
     id: "1",
@@ -118,9 +99,6 @@ export const MOCK_WORK_ITEMS = [
   },
 ] as const;
 
-/**
- * Mock navigation items
- */
 export const MOCK_NAV_ITEMS = [
   { href: "/", label: "Home" },
   { href: "/work", label: "Work" },
@@ -128,9 +106,6 @@ export const MOCK_NAV_ITEMS = [
   { href: "/contact", label: "Contact" },
 ] as const;
 
-/**
- * Mock rich text content for testing
- */
 export const MOCK_RICHTEXT = {
   simple: {
     type: "doc" as const,
@@ -190,9 +165,6 @@ export const MOCK_RICHTEXT = {
   },
 } as const;
 
-/**
- * Mock video URLs
- */
 export const MOCK_VIDEOS = {
   youtube: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
   vimeo: "https://vimeo.com/123456789",

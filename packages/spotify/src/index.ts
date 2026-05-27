@@ -1,4 +1,4 @@
-export { type ExtractedColor, extractVibrantColor, useVibrantColor } from "./extract-color";
+export { type ExtractedColor, extractVibrantColor } from "./extract-color";
 export { getAccessToken, getCurrentlyPlaying } from "./api";
 export {
   type NowPlayingData,

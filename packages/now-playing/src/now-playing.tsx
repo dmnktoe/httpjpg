@@ -9,47 +9,14 @@ import { MarqueeText } from "./marquee-text";
 import { type NowPlayingSize, sizeConfig } from "./size-config";
 
 export interface NowPlayingProps {
-  /**
-   * Song title
-   */
   title?: string;
-  /**
-   * Artist name
-   */
   artist?: string;
-  /**
-   * Album artwork URL
-   */
   artwork?: string;
-  /**
-   * Whether the track is currently playing
-   * @default false
-   */
   isPlaying?: boolean;
-  /**
-   * Show loading state
-   * @default false
-   */
   isLoading?: boolean;
-  /**
-   * Automatically extract vibrant color from artwork
-   * @default true
-   */
   autoExtractColor?: boolean;
-  /**
-   * Manual vibrant color override (disables autoExtractColor)
-   * If provided, uses this instead of auto-extraction
-   */
   vibrantColor?: string;
-  /**
-   * Manual text color override (disables auto-extraction)
-   * @default "white"
-   */
   textColor?: "black" | "white";
-  /**
-   * Size of the widget
-   * @default "sm"
-   */
   size?: NowPlayingSize;
 }
 
@@ -167,7 +134,6 @@ export const NowPlaying = ({
             userSelect: "none",
           }}
         >
-          {/* Blurred background layer - vibrant color, Spotify green, or neutral gray */}
           <div
             style={{
               position: "absolute",
@@ -183,7 +149,6 @@ export const NowPlaying = ({
             }}
           />
 
-          {/* Content container */}
           <div
             style={{
               position: "relative",
@@ -198,7 +163,6 @@ export const NowPlaying = ({
               isolation: "isolate",
             }}
           >
-            {/* Album artwork - crisp, no blur (or skeleton) */}
             <div
               style={{
                 width: config.artworkSize,
@@ -234,7 +198,6 @@ export const NowPlaying = ({
               )}
             </div>
 
-            {/* Text content with marquee (or skeleton) */}
             <div
               style={{
                 flex: 1,
@@ -285,7 +248,6 @@ export const NowPlaying = ({
               )}
             </div>
 
-            {/* Playing indicator - ASCII animation */}
             {isPlaying && (
               <div
                 style={{

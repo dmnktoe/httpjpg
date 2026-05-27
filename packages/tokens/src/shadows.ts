@@ -1,8 +1,3 @@
-/**
- * Shadow design tokens
- * Minimal shadow values following brutalistic design principles
- */
-
 export const shadows = {
   none: "none",
   sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)",

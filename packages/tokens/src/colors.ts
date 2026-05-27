@@ -1,8 +1,3 @@
-/**
- * Color design tokens
- * Monochromatic palette with vibrant accent colors
- */
-
 export const colors = {
   black: "#000000",
   white: "#FFFFFF",
@@ -19,14 +14,14 @@ export const colors = {
     900: "#171717",
     950: "#0A0A0A",
   },
-  // Vibrant accent colors
+
   primary: {
     50: "#EFF6FF",
     100: "#DBEAFE",
     200: "#BFDBFE",
     300: "#93C5FD",
     400: "#60A5FA",
-    500: "#3B82F6", // Main primary color - electric blue
+    500: "#3B82F6",
     600: "#2563EB",
     700: "#1D4ED8",
     800: "#1E40AF",
@@ -39,7 +34,7 @@ export const colors = {
     200: "#FECDD3",
     300: "#FDA4AF",
     400: "#FB7185",
-    500: "#F43F5E", // Secondary color - vibrant rose/pink
+    500: "#F43F5E",
     600: "#E11D48",
     700: "#BE123C",
     800: "#9F1239",
@@ -52,21 +47,21 @@ export const colors = {
     200: "#FFCDB8",
     300: "#FFAA88",
     400: "#FF8C6B",
-    500: "#FF6B47", // Peachy orange
+    500: "#FF6B47",
     600: "#F5576C",
     700: "#E64A5D",
     800: "#D43F50",
     900: "#B8344A",
     950: "#8E2A3C",
   },
-  // Semantic status colors
+
   success: {
     50: "#F0FDF4",
     100: "#DCFCE7",
     200: "#BBF7D0",
     300: "#86EFAC",
     400: "#4ADE80",
-    500: "#22C55E", // Success green
+    500: "#22C55E",
     600: "#16A34A",
     700: "#15803D",
     800: "#166534",
@@ -79,7 +74,7 @@ export const colors = {
     200: "#FDE68A",
     300: "#FCD34D",
     400: "#FBBF24",
-    500: "#F59E0B", // Warning amber/yellow
+    500: "#F59E0B",
     600: "#D97706",
     700: "#B45309",
     800: "#92400E",
@@ -92,7 +87,7 @@ export const colors = {
     200: "#FECACA",
     300: "#FCA5A5",
     400: "#F87171",
-    500: "#EF4444", // Error red
+    500: "#EF4444",
     600: "#DC2626",
     700: "#B91C1C",
     800: "#991B1B",

@@ -1,8 +1,3 @@
-/**
- * Spacing design tokens
- * Functional spacing scale following brutalistic design principles
- */
-
 export const spacing = {
   0: "0",
   1: "0.25rem",

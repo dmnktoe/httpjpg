@@ -1,8 +1,3 @@
-/**
- * Opacity design tokens
- * Standard opacity values for consistent transparency levels
- */
-
 export const opacity = {
   0: "0",
   5: "0.05",

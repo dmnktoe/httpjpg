@@ -1,29 +1,15 @@
 "use client";
 
 import { ConsentPlaceholder, hasVendorConsent } from "@httpjpg/consent";
-import type { StoryblokRichTextProps } from "@httpjpg/storyblok-richtext";
-import type { StoryblokVideoAsset } from "@httpjpg/storyblok-utils";
+import type { SbVideoData } from "@httpjpg/storyblok-utils";
 import { Box, Video, type VideoSource } from "@httpjpg/ui";
 import { memo, useEffect, useState } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 import { SbCaption } from "../caption/SbCaption";
 
 export interface SbVideoProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    source?: VideoSource;
-    video?: StoryblokVideoAsset;
-    videoUrl?: string;
-    poster?: StoryblokVideoAsset;
-    caption?: StoryblokRichTextProps["data"];
-    aspectRatio?: string;
-    controls?: boolean;
-    autoPlay?: boolean;
-    loop?: boolean;
-    muted?: boolean;
-    copyrightPosition?: "inline-white" | "inline-black" | "below" | "overlay";
-  };
+  blok: SbVideoData;
 }
 
 function resolveSrc(blok: SbVideoProps["blok"]): string {
@@ -92,7 +78,7 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
         copyright={copyright}
         copyrightPosition={copyrightPosition}
       />
-      {caption?.content?.length ? <SbCaption data={caption} /> : null}
+      {caption?.content?.length ? <SbCaption data={caption as never} /> : null}
     </Box>
   );
 });

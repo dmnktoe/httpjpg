@@ -47,8 +47,9 @@ function fieldToTsType(name: string, field: StoryblokField): string | null {
     case "textarea":
     case "markdown":
     case "datetime":
-    case "number":
       return "string";
+    case "number":
+      return "number";
     case "boolean":
       return "boolean";
     case "asset":

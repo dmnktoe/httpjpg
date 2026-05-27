@@ -69,13 +69,13 @@ export interface SbGridItemData extends StoryblokBlokData {
   colSpan?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "full";
   colSpanMd?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "full";
   colSpanLg?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "full";
-  rowSpan?: string;
-  rowSpanMd?: string;
-  rowSpanLg?: string;
-  colStart?: string;
-  colEnd?: string;
-  rowStart?: string;
-  rowEnd?: string;
+  rowSpan?: number;
+  rowSpanMd?: number;
+  rowSpanLg?: number;
+  colStart?: number;
+  colEnd?: number;
+  rowStart?: number;
+  rowEnd?: number;
   alignSelf?: "start" | "center" | "end" | "stretch" | "baseline";
   justifySelf?: "start" | "center" | "end" | "stretch";
 }
@@ -149,7 +149,7 @@ export interface SbWorkCardData extends StoryblokBlokData, BlokSpacing {
     | "bracket"
     | "noise"
     | "runes";
-  overlayInset?: string;
+  overlayInset?: number;
 }
 
 export interface SbWorkListData extends StoryblokBlokData, BlokSpacing {
@@ -195,7 +195,7 @@ export interface SbImageData extends StoryblokBlokData, BlokSpacing {
     | "bracket"
     | "noise"
     | "runes";
-  parallax?: string;
+  parallax?: number;
 }
 
 export interface SbVideoData extends StoryblokBlokData, BlokSpacing {
@@ -218,8 +218,8 @@ export interface SbSlideshowData extends StoryblokBlokData, BlokSpacing {
   images: StoryblokImage[];
   aspectRatio?: "16/9" | "4/3" | "1/1" | "3/4" | "9/16" | "21/9";
   effect?: "slide" | "fade" | "cube" | "coverflow" | "flip" | "cards" | "creative";
-  autoplayDelay?: string;
-  speed?: string;
+  autoplayDelay?: number;
+  speed?: number;
   showNavigation?: boolean;
   animation?:
     | "none"
@@ -229,7 +229,7 @@ export interface SbSlideshowData extends StoryblokBlokData, BlokSpacing {
     | "slideInFromRight"
     | "slideUp"
     | "slideDown";
-  animationDelay?: string;
+  animationDelay?: number;
   overlay?:
     | "none"
     | "random"
@@ -244,7 +244,7 @@ export interface SbSlideshowData extends StoryblokBlokData, BlokSpacing {
     | "bracket"
     | "noise"
     | "runes";
-  overlayInset?: string;
+  overlayInset?: number;
   showCounter?: boolean;
 }
 
@@ -267,12 +267,12 @@ export interface SbMusicPlayerData extends StoryblokBlokData, BlokSpacing {
 export interface SbMarqueeData extends StoryblokBlokData, BlokSpacing {
   component: "marquee";
   text: string;
-  speed?: string;
+  speed?: number;
   direction?: "left" | "right";
   pauseOnHover?: boolean;
-  repeat?: string;
+  repeat?: number;
   iosStyle?: boolean;
-  pauseDuration?: string;
+  pauseDuration?: number;
   bgColor?: string;
   textColor?: string;
 }

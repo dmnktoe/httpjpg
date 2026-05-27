@@ -1,25 +1,11 @@
-import { type StoryblokImage, toSlideshowImage } from "@httpjpg/storyblok-utils";
-import { type OverlayPattern, WorkCard, type WorkCardProps } from "@httpjpg/ui";
+import { type SbWorkCardData, toSlideshowImage } from "@httpjpg/storyblok-utils";
+import { WorkCard } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbWorkCardProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    title: string;
-    description?: string;
-    date?: string;
-    date_end?: string;
-    slug: string;
-    images: StoryblokImage[];
-    baseUrl?: string;
-    variant?: WorkCardProps["variant"];
-    priority?: boolean;
-    tags?: string;
-    overlay?: OverlayPattern;
-    overlayInset?: number;
-  };
+  blok: SbWorkCardData;
 }
 
 export const SbWorkCard = memo(function SbWorkCard({ blok }: SbWorkCardProps) {

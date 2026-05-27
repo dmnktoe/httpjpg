@@ -1,18 +1,12 @@
-import { Section, type SectionProps } from "@httpjpg/ui";
-import { type SbBlokData, StoryblokServerComponent } from "@storyblok/react/rsc";
+import type { SbSectionData } from "@httpjpg/storyblok-utils";
+import { Section } from "@httpjpg/ui";
+import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbSectionProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    content?: SbBlokData[];
-    bgColor?: string;
-    useContainer?: boolean;
-    containerSize?: SectionProps["containerSize"];
-    containerAlign?: SectionProps["containerAlign"];
-  };
+  blok: SbSectionData;
 }
 
 export const SbSection = memo(function SbSection({ blok }: SbSectionProps) {

@@ -1,29 +1,16 @@
 "use client";
 
 import { ConsentPlaceholder, hasVendorConsent } from "@httpjpg/consent";
+import type { SbMusicPlayerData } from "@httpjpg/storyblok-utils";
 import { ASCII_DIVIDER_MUSIC, Box, MusicPlayer, type MusicPlayerProps } from "@httpjpg/ui";
 import { memo, useEffect, useState } from "react";
 
-import { type BlokSpacing, editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 type Source = MusicPlayerProps["source"];
 
 export interface SbMusicPlayerProps {
-  blok: BlokSpacing & {
-    _uid: string;
-    source?: Source;
-    src: string;
-    title?: string;
-    artist?: string;
-    artwork?: string;
-    spotifySize?: MusicPlayerProps["spotifySize"];
-    showArtwork?: boolean;
-    showInfo?: boolean;
-    autoPlay?: boolean;
-    decoration?: string;
-    headerText?: string;
-    footerText?: string;
-  };
+  blok: SbMusicPlayerData;
 }
 
 function useConsent(source: Source): boolean {

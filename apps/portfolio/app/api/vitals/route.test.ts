@@ -127,12 +127,12 @@ describe("POST /api/vitals", () => {
     expect(await res.json()).toEqual({ error: "payload_too_large" });
   });
 
-  it("accepts all six vital names", async () => {
-    for (const name of ["CLS", "FID", "FCP", "LCP", "TTFB", "INP"]) {
+  it("accepts all five vital names", async () => {
+    for (const name of ["CLS", "FCP", "LCP", "TTFB", "INP"]) {
       const res = await POST(makeRequest({ name, value: 100 }) as never);
       expect(res.status).toBe(200);
     }
-    expect(captureWebVital).toHaveBeenCalledTimes(6);
+    expect(captureWebVital).toHaveBeenCalledTimes(5);
   });
 
   it("accepts all three rating values", async () => {

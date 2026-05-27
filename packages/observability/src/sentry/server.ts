@@ -47,7 +47,7 @@ export function captureServerException(
   });
 }
 
-export type WebVitalName = "CLS" | "FID" | "FCP" | "LCP" | "TTFB" | "INP";
+export type WebVitalName = "CLS" | "FCP" | "LCP" | "TTFB" | "INP";
 export type WebVitalRating = "good" | "needs-improvement" | "poor";
 
 export interface WebVitalReport {

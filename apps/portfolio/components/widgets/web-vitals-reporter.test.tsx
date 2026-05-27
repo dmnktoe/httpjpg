@@ -81,14 +81,15 @@ describe("WebVitalsReporter", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
-  it("tracks GA vitals (CLS, FID, FCP, LCP, TTFB) but not INP", () => {
+  it("forwards tracked vitals to GA", () => {
     render(<WebVitalsReporter />);
 
     reportCallback!({ name: "LCP", value: 2500 });
     reportCallback!({ name: "INP", value: 50 });
 
-    expect(trackWebVital).toHaveBeenCalledTimes(1);
+    expect(trackWebVital).toHaveBeenCalledTimes(2);
     expect(trackWebVital).toHaveBeenCalledWith("LCP", 2500);
+    expect(trackWebVital).toHaveBeenCalledWith("INP", 50);
   });
 
   it("ignores untracked vital names", () => {

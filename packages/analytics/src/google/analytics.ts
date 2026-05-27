@@ -215,6 +215,6 @@ export function trackPerformance(metric: string, value: number): void {
 /**
  * Track Web Vitals
  */
-export function trackWebVital(name: "CLS" | "FID" | "FCP" | "LCP" | "TTFB", value: number): void {
+export function trackWebVital(name: "CLS" | "FCP" | "LCP" | "TTFB" | "INP", value: number): void {
   trackPerformance(name, value);
 }

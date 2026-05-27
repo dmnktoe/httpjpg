@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useCallback, useState } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
@@ -19,6 +19,15 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
   ref,
 ) {
   const [copied, setCopied] = useState(false);
+  const resetTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (resetTimer.current !== null) {
+        window.clearTimeout(resetTimer.current);
+      }
+    };
+  }, []);
 
   const handleCopy = useCallback(async () => {
     if (typeof navigator === "undefined" || !navigator.clipboard) {
@@ -27,7 +36,10 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
     try {
       await navigator.clipboard.writeText(code);
       setCopied(true);
-      window.setTimeout(() => setCopied(false), 1500);
+      if (resetTimer.current !== null) {
+        window.clearTimeout(resetTimer.current);
+      }
+      resetTimer.current = window.setTimeout(() => setCopied(false), 1500);
     } catch {
       setCopied(false);
     }

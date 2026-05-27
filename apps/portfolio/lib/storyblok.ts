@@ -1,3 +1,4 @@
+import { env } from "@httpjpg/env";
 import {
   apiPlugin,
   SbButton,
@@ -52,7 +53,7 @@ export function initStoryblok() {
   const registry =
     process.env.NODE_ENV === "development" ? { ...components, _fallback: SbMissing } : components;
   storyblokInit({
-    accessToken: process.env.NEXT_PUBLIC_STORYBLOK_TOKEN,
+    accessToken: env.NEXT_PUBLIC_STORYBLOK_TOKEN,
     use: [apiPlugin],
     components: registry,
     apiOptions: { region: "eu" },

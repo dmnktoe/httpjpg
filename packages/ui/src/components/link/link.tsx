@@ -34,7 +34,7 @@ const linkRecipe = cva({
   },
 });
 
-export const Link = ({
+export function Link({
   href,
   children,
   isExternal,
@@ -42,7 +42,7 @@ export const Link = ({
   css: cssProp,
   className,
   ...props
-}: LinkProps) => {
+}: LinkProps) {
   const isExternalLink_ = isExternal ?? isExternalLink(href);
   const shouldShowIcon = showExternalIcon ?? isExternalLink_;
 
@@ -93,6 +93,6 @@ export const Link = ({
       {children}
     </NextLink>
   );
-};
+}
 
 Link.displayName = "Link";

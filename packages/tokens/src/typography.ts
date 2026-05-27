@@ -1,8 +1,3 @@
-/**
- * Typography design tokens
- * Strong typography hierarchy following brutalistic design principles
- */
-
 export const typography = {
   fontFamily: {
     sans: ["Arial", "Helvetica", "sans-serif"],
@@ -11,12 +6,11 @@ export const typography = {
     mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"],
   },
   fontSize: {
-    // Component size system (Paragraph/Button)
-    sm: "0.75rem", // 12px
-    md: "0.875rem", // 14px
-    base: "1rem", // 16px - default body size
-    lg: "1rem", // 16px
-    xl: "1.125rem", // 18px
+    sm: "0.75rem",
+    md: "0.875rem",
+    base: "1rem",
+    lg: "1rem",
+    xl: "1.125rem",
   },
   fontWeight: {
     thin: "100",

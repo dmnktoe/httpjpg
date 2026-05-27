@@ -1,3 +1,4 @@
+import { env } from "@httpjpg/env";
 import { CACHE_TAGS } from "@httpjpg/storyblok-next";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
     const querySecret = request.nextUrl.searchParams.get("secret");
     const secret = headerSecret || querySecret;
 
-    if (!secret || secret !== process.env.STORYBLOK_REVALIDATE_SECRET) {
+    if (!secret || secret !== env.STORYBLOK_REVALIDATE_SECRET) {
       console.warn("Revalidation attempt with invalid secret");
       return NextResponse.json({ message: "Invalid secret" }, { status: 401 });
     }
@@ -66,10 +67,6 @@ export async function POST(request: NextRequest) {
       revalidatedTags.push(CACHE_TAGS.CONFIG);
       revalidatedPaths.push("/layout");
     }
-
-    console.log(`[Storyblok Webhook] ${action} - ${storySlug}`);
-    console.log(`Revalidated tags: ${revalidatedTags.join(", ")}`);
-    console.log(`Revalidated paths: ${revalidatedPaths.join(", ")}`);
 
     return NextResponse.json({
       revalidated: true,

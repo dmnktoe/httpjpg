@@ -6,7 +6,6 @@ export { type Sizes, sizes } from "./sizes";
 export { type Spacing, spacing } from "./spacing";
 export { type Transitions, transitions } from "./transitions";
 export { type Typography, typography } from "./typography";
-export { clamp, getColor, getSpacing, pxToRem, remToPx, responsiveSpacing } from "./utils";
 export { type ZIndexKey, type ZIndexValue, zIndex } from "./z-index";
 
 import { borderRadius } from "./border-radius";

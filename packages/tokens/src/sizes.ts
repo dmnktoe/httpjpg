@@ -1,8 +1,3 @@
-/**
- * Size design tokens
- * Common fixed sizes for elements like icons, indicators, etc.
- */
-
 export const sizes = {
   icon: {
     xs: "12px",

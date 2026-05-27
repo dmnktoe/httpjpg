@@ -1,7 +1,7 @@
 import { renderStoryblokRichText } from "@httpjpg/storyblok-richtext";
 import { type StoryblokImage, toSlideshowImage } from "@httpjpg/storyblok-utils";
 
-export type WorkStory = {
+export interface WorkStory {
   uuid?: string;
   name: string;
   slug: string;
@@ -14,7 +14,7 @@ export type WorkStory = {
     date?: string;
     date_end?: string;
   };
-};
+}
 
 const BASE_URL = "/work";
 const TAXONOMY_TAGS = new Set(["Personal", "Client"]);

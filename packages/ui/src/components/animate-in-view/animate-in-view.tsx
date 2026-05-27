@@ -18,7 +18,7 @@ export interface AnimateInViewProps {
   css?: SystemStyleObject;
 }
 
-export const AnimateInView = ({
+export function AnimateInView({
   animation = "zoomIn",
   once = true,
   duration = 0.6,
@@ -26,7 +26,7 @@ export const AnimateInView = ({
   children,
   css: cssProp,
   ...props
-}: AnimateInViewProps) => {
+}: AnimateInViewProps) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const isInView = useInView(ref, {
@@ -58,4 +58,4 @@ export const AnimateInView = ({
       {children}
     </m.div>
   );
-};
+}

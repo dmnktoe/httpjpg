@@ -25,48 +25,15 @@ export const ASCII_OFFLINE = String.raw`
   └───────────────┘
 `;
 
-export const ASCII_HEART = String.raw` ♡ ♡ ♡ `;
-
 export const ASCII_SPARKLES = "·°•. ⋆ ✦ ⋆ .•°·";
 
 export const ASCII_TAPE = "▰▰▰▱▱▱▰▰▰▱▱▱▰▰▰";
-
-export const ASCII_CASSETTE = String.raw`
-   ┌─────────────────┐
-   │ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ │
-   │ ░ ╭───╮   ╭───╮ │
-   │ ░ │ ◉ │ ─ │ ◉ │ │
-   │ ░ ╰───╯   ╰───╯ │
-   │ ░░░░░░░░░░░░░░░ │
-   └─────────────────┘
-`;
-
-export const ASCII_FLOPPY = String.raw`
-   ┌──────────┐
-   │ ▓▓▓▓▓▓▓▓ │
-   │ ▓ ┌──┐ ▓ │
-   │ ▓ │  │ ▓ │
-   │ ▓ └──┘ ▓ │
-   │ ░░░░░░░░ │
-   └──────────┘
-`;
-
-export const ASCII_LOADING_BAR = "▰▰▰▰▰▱▱▱▱▱";
 
 export const ASCII_DIVIDER_STARS = "*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚";
 export const ASCII_DIVIDER_DOTS = "· ─ · ─ · ─ · ─ ·";
 export const ASCII_DIVIDER_WAVE = "～～～～～～～～";
 export const ASCII_DIVIDER_ARROWS = "»»»»»———»»»»»";
 export const ASCII_DIVIDER_MUSIC = "･ﾟ⋆ ♪ ♫ ･ﾟ⋆";
-
-export const ASCII_PIXEL_HEART = String.raw`
-  ░██░██░
-  █▓██▓██
-  █▓████▓█
-  ░█▓██▓█░
-  ░░█▓▓█░░
-  ░░░██░░░
-`;
 
 export const ASCII_GHOST = String.raw`
    .-.

@@ -2,7 +2,7 @@
 
 import { Box } from "@httpjpg/ui";
 
-export const FlagCounter = () => {
+export function FlagCounter() {
   return (
     <Box as="span">
       <a href="https://info.flagcounter.com/ncez">
@@ -14,4 +14,4 @@ export const FlagCounter = () => {
       </a>
     </Box>
   );
-};
+}

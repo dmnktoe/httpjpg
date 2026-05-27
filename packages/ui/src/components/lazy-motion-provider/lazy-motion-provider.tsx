@@ -7,8 +7,10 @@ export interface LazyMotionProviderProps {
   children: ReactNode;
 }
 
-export const LazyMotionProvider = ({ children }: LazyMotionProviderProps) => (
-  <LazyMotion features={domMax} strict>
-    {children}
-  </LazyMotion>
-);
+export function LazyMotionProvider({ children }: LazyMotionProviderProps) {
+  return (
+    <LazyMotion features={domMax} strict>
+      {children}
+    </LazyMotion>
+  );
+}

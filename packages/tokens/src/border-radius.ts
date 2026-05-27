@@ -1,8 +1,3 @@
-/**
- * Border radius design tokens
- * Minimal border radius following brutalistic design principles
- */
-
 export const borderRadius = {
   none: "0",
   sm: "0.125rem",

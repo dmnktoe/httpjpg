@@ -18,6 +18,7 @@ import type { PropsWithChildren } from "react";
 
 import { ConsentProvider } from "@/components/providers/consent-provider";
 import { StoryblokProvider } from "@/components/providers/storyblok-provider";
+import { UmamiProvider } from "@/components/providers/umami-provider";
 import { ConsoleBanner } from "@/components/ui/console-banner";
 import { CustomCursorWrapper } from "@/components/ui/custom-cursor-wrapper";
 import { NostalgiaSlideshow } from "@/components/ui/nostalgia-slideshow";
@@ -90,6 +91,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       <body style={{ margin: 0, padding: 0 }}>
         <ConsoleBanner />
         <ConsentProvider />
+        {env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+          <UmamiProvider
+            websiteId={env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            host={env.NEXT_PUBLIC_UMAMI_HOST}
+          />
+        )}
         <WebVitalsReporter />
         <ScrollToTop />
         <LazyMotionProvider>

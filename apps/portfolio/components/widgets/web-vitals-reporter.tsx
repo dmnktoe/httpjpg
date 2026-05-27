@@ -1,6 +1,7 @@
 "use client";
 
 import { trackWebVital } from "@httpjpg/analytics";
+import { trackWebVital as trackUmamiWebVital } from "@httpjpg/analytics/umami";
 import { usePathname } from "next/navigation";
 import { useReportWebVitals } from "next/web-vitals";
 
@@ -52,6 +53,7 @@ export function WebVitalsReporter() {
 
     if (GA_NAMES.has(metric.name as Parameters<typeof trackWebVital>[0])) {
       trackWebVital(metric.name as Parameters<typeof trackWebVital>[0], metric.value);
+      trackUmamiWebVital(metric.name as Parameters<typeof trackWebVital>[0], metric.value);
     }
 
     postToVitals({

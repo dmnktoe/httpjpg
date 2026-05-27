@@ -9,6 +9,7 @@ export interface ConsentState {
 
 export type ExternalVendor =
   | "google-analytics"
+  | "umami"
   | "sentry"
   | "youtube"
   | "vimeo"
@@ -29,6 +30,13 @@ export const EXTERNAL_VENDORS: Record<ExternalVendor, VendorInfo> = {
     description: "Tracks website usage, visitor behavior, and performance metrics",
     category: "analytics",
     privacyPolicy: "https://policies.google.com/privacy",
+  },
+
+  umami: {
+    name: "Umami",
+    description: "Privacy-focused website analytics for page views and usage patterns",
+    category: "analytics",
+    privacyPolicy: "https://umami.is/privacy",
   },
 
   sentry: {

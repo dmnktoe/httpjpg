@@ -12,6 +12,10 @@
     "./google": {
       "types": "./src/google/index.ts",
       "default": "./src/google/index.ts"
+    },
+    "./umami": {
+      "types": "./src/umami/index.ts",
+      "default": "./src/umami/index.ts"
     }
   },
   "scripts": {

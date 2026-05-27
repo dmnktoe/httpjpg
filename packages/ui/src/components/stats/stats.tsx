@@ -92,7 +92,7 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
               fontSize: "sm",
               textTransform: "uppercase",
               letterSpacing: "wider",
-              color: "neutral.600",
+              color: "pageMuted",
             })}
           >
             {item.label}
@@ -101,7 +101,7 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
             <div
               className={css({
                 fontSize: "xs",
-                color: "neutral.500",
+                color: "pageMuted",
                 mt: "1",
               })}
             >

@@ -119,7 +119,7 @@ export function Accordion({
                 cursor: "pointer",
                 textAlign: "left",
                 ...sizeStyles[size],
-                _hover: { bg: "neutral.50" },
+                _hover: { bg: "pageBorder", opacity: 0.5 },
                 _focusVisible: {
                   outline: "2px solid",
                   outlineColor: "primary.500",

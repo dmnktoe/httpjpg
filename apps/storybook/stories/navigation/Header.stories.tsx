@@ -41,16 +41,16 @@ const mockNav = [
 ];
 
 const mockPersonalWork = [
-  { id: "1", slug: "brutalist-portfolio", title: "Brutalist Portfolio 2024" },
-  { id: "2", slug: "design-system", title: "httpjpg Design System" },
-  { id: "3", slug: "experimental-ui", title: "Experimental UI Kit" },
-  { id: "4", slug: "ascii-art-generator", title: "ASCII Art Generator" },
+  { id: "1", slug: "brutalist-portfolio", title: "Brutalist Portfolio 2024", date: "2024-06-01" },
+  { id: "2", slug: "design-system", title: "httpjpg Design System", date: "2024-03-15" },
+  { id: "3", slug: "experimental-ui", title: "Experimental UI Kit", date: "2023-11-20" },
+  { id: "4", slug: "ascii-art-generator", title: "ASCII Art Generator", date: "2023-08-10" },
 ];
 
 const mockClientWork = [
-  { id: "1", slug: "client-project-1", title: "Client Alpha - Branding" },
-  { id: "2", slug: "client-project-2", title: "Client Beta - Web Design" },
-  { id: "3", slug: "client-project-3", title: "Client Gamma - App Dev" },
+  { id: "1", slug: "client-project-1", title: "Client Alpha - Branding", date: "2025-01-12" },
+  { id: "2", slug: "client-project-2", title: "Client Beta - Web Design", date: "2024-09-05" },
+  { id: "3", slug: "client-project-3", title: "Client Gamma - App Dev", date: "2024-07-22" },
 ];
 
 const mockExternalClientWork = [
@@ -242,6 +242,7 @@ const mockPersonalWorkWithImages = [
     id: "1",
     slug: "brutalist-portfolio",
     title: "Brutalist Portfolio 2024",
+    date: "2024-06-01",
     imageUrl:
       "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/600x400/smart/filters:quality(75)",
   },
@@ -249,6 +250,7 @@ const mockPersonalWorkWithImages = [
     id: "2",
     slug: "design-system",
     title: "httpjpg Design System",
+    date: "2024-03-15",
     imageUrl:
       "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/600x400/smart/filters:quality(75)",
   },
@@ -256,6 +258,7 @@ const mockPersonalWorkWithImages = [
     id: "3",
     slug: "experimental-ui",
     title: "Experimental UI Kit",
+    date: "2023-11-20",
     imageUrl:
       "https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/600x400/smart/filters:quality(75)",
   },
@@ -263,6 +266,7 @@ const mockPersonalWorkWithImages = [
     id: "4",
     slug: "ascii-art-generator",
     title: "ASCII Art Generator",
+    date: "2023-08-10",
     imageUrl:
       "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/600x400/smart/filters:quality(75)",
   },
@@ -273,6 +277,7 @@ const mockClientWorkWithImages = [
     id: "1",
     slug: "client-project-1",
     title: "Client Alpha - Branding",
+    date: "2025-01-12",
     imageUrl:
       "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/600x400/smart/filters:quality(75)",
   },
@@ -280,6 +285,7 @@ const mockClientWorkWithImages = [
     id: "2",
     slug: "client-project-2",
     title: "Client Beta - Web Design",
+    date: "2024-09-05",
     imageUrl:
       "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/600x400/smart/filters:quality(75)",
   },
@@ -287,6 +293,7 @@ const mockClientWorkWithImages = [
     id: "3",
     slug: "client-project-3",
     title: "Client Gamma - App Dev",
+    date: "2024-07-22",
     imageUrl:
       "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/600x400/smart/filters:quality(75)",
   },

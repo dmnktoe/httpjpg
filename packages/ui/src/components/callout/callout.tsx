@@ -19,9 +19,9 @@ export interface CalloutProps {
 
 const toneStyles: Record<CalloutTone, SystemStyleObject> = {
   neutral: {
-    bg: "neutral.50",
-    borderColor: "neutral.300",
-    color: "neutral.900",
+    bg: "pageBg",
+    borderColor: "pageBorder",
+    color: "pageFg",
   },
   info: {
     bg: "primary.50",

@@ -8,7 +8,9 @@ import type { SystemStyleObject } from "styled-system/types";
 
 const MOBILE_SIZE = 40;
 const DESKTOP_HEIGHT = 32;
-const DESKTOP_PREFIX = "(っ◔◡◔)っ ♥ preview •°*”˜.•°*”˜ ";
+function desktopPrefix(label: string): string {
+  return `(っ◔◡◔)っ ♥ ${label} •°*“˜.•°*“˜ `;
+}
 const BACKDROP_FILTER = "blur(20px) saturate(180%)";
 
 export interface FloatingPreviewBadgeProps extends Omit<
@@ -113,7 +115,7 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
             sm: { display: "inline" },
           })}
         >
-          {DESKTOP_PREFIX}
+          {desktopPrefix(label)}
         </span>
         <span aria-hidden="true" className={arrowClass}>
           ↗

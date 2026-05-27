@@ -65,7 +65,7 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
             px: "4",
             py: "2",
             borderBottom: "1px solid",
-            borderColor: "neutral.700",
+            borderColor: "neutral.800",
             bg: "neutral.900",
             fontSize: "xs",
             textTransform: "uppercase",

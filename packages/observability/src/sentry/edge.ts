@@ -12,6 +12,8 @@ export function initSentryEdge() {
     environment,
     release,
     enabled: isEnabled,
+    attachStacktrace: true,
+    normalizeDepth: 5,
     tracesSampleRate: isProduction ? 0.05 : 1.0,
     debug: false,
     integrations: [],

@@ -9,6 +9,8 @@ export function initSentryServer() {
     environment,
     release,
     enabled: isEnabled,
+    attachStacktrace: true,
+    normalizeDepth: 5,
     tracesSampleRate: isProduction ? 0.1 : 1.0,
     debug: false,
     ignoreErrors: [

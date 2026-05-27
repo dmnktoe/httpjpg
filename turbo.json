@@ -11,7 +11,7 @@
     ".env.local",
     ".env.production"
   ],
-  "globalEnv": ["NODE_ENV", "CI"],
+  "globalEnv": ["NODE_ENV", "CI", "GITHUB_SHA"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

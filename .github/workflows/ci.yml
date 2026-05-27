@@ -175,7 +175,7 @@ jobs:
         if: steps.changes.outputs.relevant == 'true'
       - name: Run Chromatic
         if: steps.changes.outputs.relevant == 'true'
-        uses: chromaui/action@1cfa065cbdab28f6ca3afaeb3d761383076a35aa # v11
+        uses: chromaui/action@0b8c883861c1663076150cf1f4592b19d1ff6a54 # v17
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: apps/storybook

@@ -115,13 +115,11 @@ describe("POST /api/vitals", () => {
   });
 
   it("returns 413 for oversized payloads", async () => {
+    const largeBody = JSON.stringify({ name: "LCP", value: 100, padding: "x".repeat(5000) });
     const req = new Request("http://localhost/api/vitals", {
       method: "POST",
-      body: JSON.stringify({ name: "LCP", value: 100 }),
-      headers: {
-        "Content-Type": "application/json",
-        "content-length": "10000",
-      },
+      body: largeBody,
+      headers: { "Content-Type": "application/json" },
     });
     const res = await POST(req as never);
 
@@ -146,6 +144,14 @@ describe("POST /api/vitals", () => {
     expect(calls[0][0].rating).toBe("good");
     expect(calls[1][0].rating).toBe("needs-improvement");
     expect(calls[2][0].rating).toBe("poor");
+  });
+
+  it("caps pathname to 500 characters", async () => {
+    const longPathname = "/" + "a".repeat(600);
+    await POST(makeRequest({ name: "LCP", value: 100, pathname: longPathname }) as never);
+
+    const call = vi.mocked(captureWebVital).mock.calls[0][0];
+    expect(call.pathname).toHaveLength(500);
   });
 
   it("ignores empty string fields", async () => {

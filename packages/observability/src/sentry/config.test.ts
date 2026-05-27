@@ -48,6 +48,23 @@ describe("getSentryConfig", () => {
     expect(config.release).toBeUndefined();
   });
 
+  it("treats empty GITHUB_SHA as absent and falls back", () => {
+    process.env.GITHUB_SHA = "";
+    process.env.npm_package_version = "3.0.0";
+
+    const config = getSentryConfig("server");
+
+    expect(config.release).toBe("3.0.0");
+  });
+
+  it("treats whitespace-only GITHUB_SHA as absent", () => {
+    process.env.GITHUB_SHA = "  ";
+
+    const config = getSentryConfig("server");
+
+    expect(config.release).toBeUndefined();
+  });
+
   it("uses server DSN for server scope", () => {
     const config = getSentryConfig("server");
 

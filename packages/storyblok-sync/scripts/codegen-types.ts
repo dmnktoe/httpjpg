@@ -25,23 +25,23 @@ const ALL_BLOCKS: BlockDef[] = [
 
 const SPACING_FIELDS = ["mt", "mb", "ml", "mr", "pt", "pb", "pl", "pr"] as const;
 
-function toPascal(snake: string): string {
+export function toPascal(snake: string): string {
   return snake
     .split("_")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join("");
 }
 
-function blokTypeName(name: string): string {
+export function blokTypeName(name: string): string {
   return `Sb${toPascal(name)}Data`;
 }
 
-function isSpacingField(key: string): boolean {
+export function isSpacingField(key: string): boolean {
   const stripped = key.replace(/(Md|Lg)$/, "");
   return (SPACING_FIELDS as readonly string[]).includes(stripped);
 }
 
-function fieldToTsType(name: string, field: StoryblokField): string | null {
+export function fieldToTsType(name: string, field: StoryblokField): string | null {
   switch (field.type) {
     case "text":
     case "textarea":
@@ -85,7 +85,7 @@ function fieldToTsType(name: string, field: StoryblokField): string | null {
   }
 }
 
-function renderInterface(def: BlockDef): string {
+export function renderInterface(def: BlockDef): string {
   const lines: string[] = [];
   const seen = new Set<string>();
   let hasSpacing = false;
@@ -185,7 +185,9 @@ async function main() {
   console.log(`✨ wrote ${ALL_BLOCKS.length} blok types to ${OUTPUT}`);
 }
 
-main().catch((error) => {
-  console.error("❌ Codegen failed:", error);
-  process.exit(1);
-});
+if (process.argv[1] && /codegen-types\.[tj]s$/.test(process.argv[1])) {
+  main().catch((error) => {
+    console.error("❌ Codegen failed:", error);
+    process.exit(1);
+  });
+}

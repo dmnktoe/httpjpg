@@ -75,7 +75,7 @@ export function Toolbar({
     setPushing(true);
     setStatus({ kind: "idle" });
     try {
-      const res = await fetch("/api/studio/push", {
+      const res = await fetch("/api/push", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ slug, grid: exported }),

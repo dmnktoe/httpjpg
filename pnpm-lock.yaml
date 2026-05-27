@@ -239,6 +239,40 @@ importers:
         specifier: ^8.0.0
         version: 8.0.13(@types/node@22.19.19)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.47.1)(tsx@4.21.0)(yaml@2.9.0)
 
+  apps/studio:
+    dependencies:
+      '@httpjpg/storyblok-utils':
+        specifier: workspace:*
+        version: link:../../packages/storyblok-utils
+      '@httpjpg/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
+      '@httpjpg/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      next:
+        specifier: ^16.0.7
+        version: 16.2.6(@babel/core@7.28.5)(@opentelemetry/api@1.9.1)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      react:
+        specifier: 'catalog:'
+        version: 19.2.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.1(react@19.2.1)
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.19.19
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.7
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.7)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
   packages/analytics:
     dependencies:
       '@httpjpg/env':

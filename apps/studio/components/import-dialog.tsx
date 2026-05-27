@@ -93,7 +93,7 @@ export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDia
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`/api/studio/fetch-story?slug=${encodeURIComponent(slug)}`);
+      const res = await fetch(`/api/fetch-story?slug=${encodeURIComponent(slug)}`);
       const data = (await res.json()) as {
         ok?: boolean;
         story?: { content?: { body?: unknown } };

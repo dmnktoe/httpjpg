@@ -1,6 +1,9 @@
+import "@httpjpg/tokens/dist/tokens.css";
+import "@httpjpg/ui/styles.css";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import type { PropsWithChildren } from "react";
+
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Studio",
@@ -8,8 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default function StudioLayout({ children }: PropsWithChildren) {
-  if (process.env.NODE_ENV !== "development") {
-    notFound();
-  }
-  return children;
+  return (
+    <html lang="de">
+      <body style={{ margin: 0, padding: 0 }}>{children}</body>
+    </html>
+  );
 }

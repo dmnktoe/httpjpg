@@ -21,7 +21,7 @@ export interface NavLinkProps extends Omit<
 }
 
 /** Recipe lives in panda.config.ts so pseudo-elements extract correctly in Panda v1.7+. */
-export const NavLink = ({
+export function NavLink({
   variant = "personal",
   children,
   css: cssProp,
@@ -30,7 +30,7 @@ export const NavLink = ({
   isExternal,
   showExternalIcon,
   ...props
-}: NavLinkProps) => {
+}: NavLinkProps) {
   const isExternalLink_ = isExternal ?? isExternalLink(href);
   const shouldShowIcon = showExternalIcon ?? isExternalLink_;
 
@@ -79,6 +79,6 @@ export const NavLink = ({
       {children}
     </NextLink>
   );
-};
+}
 
 NavLink.displayName = "NavLink";

@@ -125,11 +125,11 @@ function ExpandableLinks<T>({
   );
 }
 
-export const Navigation = ({
+export function Navigation({
   nav,
   personalWork = [],
   clientWork = [],
-}: Omit<HeaderProps, "children">) => {
+}: Omit<HeaderProps, "children">) {
   return (
     <Box
       css={{
@@ -313,6 +313,6 @@ export const Navigation = ({
       </Box>
     </Box>
   );
-};
+}
 
 Navigation.displayName = "Navigation";

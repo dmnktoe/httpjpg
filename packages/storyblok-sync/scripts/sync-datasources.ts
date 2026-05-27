@@ -87,10 +87,10 @@ async function upsertDatasource(datasource: Datasource, entries: DatasourceEntry
   }
 }
 
-type DatasourceWithEntries = {
+interface DatasourceWithEntries {
   datasource: Datasource;
   entries: DatasourceEntry[];
-};
+}
 
 function spacingDs(): DatasourceWithEntries {
   return {

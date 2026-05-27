@@ -1,3 +1,4 @@
+import { env } from "@httpjpg/env";
 import { validateStoryblokPreviewToken } from "@httpjpg/storyblok-utils";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -10,7 +11,7 @@ export async function proxy(request: NextRequest) {
 
   if (
     hasStoryblokToken &&
-    !(await validateStoryblokPreviewToken(searchParams, process.env.STORYBLOK_PREVIEW_TOKEN))
+    !(await validateStoryblokPreviewToken(searchParams, env.STORYBLOK_PREVIEW_TOKEN))
   ) {
     return NextResponse.json({ error: "Invalid Storyblok token" }, { status: 401 });
   }

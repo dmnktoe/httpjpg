@@ -82,7 +82,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const lastUpdated = flags.lastUpdatedBadgeEnabled ? await getLastUpdated() : undefined;
   const theme = await getPageTheme();
 
-  const rawVersion = process.env.NEXT_PUBLIC_APP_VERSION;
+  const rawVersion = env.NEXT_PUBLIC_APP_VERSION;
   const version = rawVersion ? formatVersion(rawVersion) : undefined;
 
   return (

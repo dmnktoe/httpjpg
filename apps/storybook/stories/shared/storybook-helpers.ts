@@ -23,41 +23,46 @@ export const BUTTON_VARIANT_OPTIONS = ["primary", "secondary", "outline", "disab
 export const HEADLINE_LEVEL_OPTIONS = [1, 2, 3] as const;
 export const HEADING_TAG_OPTIONS = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
 
-export const spacingArgType = (description: string, defaultValue: number | string = "4") => ({
-  control: { type: "select" as const },
-  options: COMMON_SPACING_OPTIONS,
-  description,
-  table: {
-    defaultValue: { summary: String(defaultValue) },
-  },
-});
+export function spacingArgType(description: string, defaultValue: number | string = "4") {
+  return {
+    control: { type: "select" as const },
+    options: COMMON_SPACING_OPTIONS,
+    description,
+    table: {
+      defaultValue: { summary: String(defaultValue) },
+    },
+  };
+}
 
-export const extendedSpacingArgType = (
-  description: string,
-  defaultValue: number | string = "16",
-) => ({
-  control: { type: "select" as const },
-  options: EXTENDED_SPACING_OPTIONS,
-  description,
-  table: {
-    defaultValue: { summary: String(defaultValue) },
-  },
-});
+export function extendedSpacingArgType(description: string, defaultValue: number | string = "16") {
+  return {
+    control: { type: "select" as const },
+    options: EXTENDED_SPACING_OPTIONS,
+    description,
+    table: {
+      defaultValue: { summary: String(defaultValue) },
+    },
+  };
+}
 
-export const alignArgType = (description: string, defaultValue = "stretch") => ({
-  control: { type: "select" as const },
-  options: ALIGN_OPTIONS,
-  description,
-  table: {
-    defaultValue: { summary: defaultValue },
-  },
-});
+export function alignArgType(description: string, defaultValue = "stretch") {
+  return {
+    control: { type: "select" as const },
+    options: ALIGN_OPTIONS,
+    description,
+    table: {
+      defaultValue: { summary: defaultValue },
+    },
+  };
+}
 
-export const justifyArgType = (description: string, defaultValue = "start") => ({
-  control: { type: "select" as const },
-  options: JUSTIFY_OPTIONS,
-  description,
-  table: {
-    defaultValue: { summary: defaultValue },
-  },
-});
+export function justifyArgType(description: string, defaultValue = "start") {
+  return {
+    control: { type: "select" as const },
+    options: JUSTIFY_OPTIONS,
+    description,
+    table: {
+      defaultValue: { summary: defaultValue },
+    },
+  };
+}

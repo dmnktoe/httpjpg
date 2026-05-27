@@ -1,3 +1,4 @@
+import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { draftMode } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest) {
   if (!secret) {
     return NextResponse.json({ message: "Missing secret parameter" }, { status: 400 });
   }
-  if (secret !== process.env.STORYBLOK_PREVIEW_SECRET) {
+  if (secret !== env.STORYBLOK_PREVIEW_SECRET) {
     captureServerException(new Error("Draft mode attempt with invalid secret"), {
       extra: { slug },
     });

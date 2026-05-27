@@ -35,7 +35,7 @@ export interface HeaderProps {
   children?: ReactNode;
 }
 
-export const Header = ({ nav, personalWork = [], clientWork = [], children }: HeaderProps) => {
+export function Header({ nav, personalWork = [], clientWork = [], children }: HeaderProps) {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const pathname = usePathname();
 
@@ -128,5 +128,5 @@ export const Header = ({ nav, personalWork = [], clientWork = [], children }: He
       {children}
     </Box>
   );
-};
+}
 Header.displayName = "Header";

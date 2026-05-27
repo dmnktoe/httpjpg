@@ -9,7 +9,7 @@ interface MobileMenuButtonProps {
   setIsOpen: (isOpen: boolean) => void;
 }
 
-export const MobileMenuButton = ({ isOpen, setIsOpen }: MobileMenuButtonProps) => {
+export function MobileMenuButton({ isOpen, setIsOpen }: MobileMenuButtonProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -73,6 +73,6 @@ export const MobileMenuButton = ({ isOpen, setIsOpen }: MobileMenuButtonProps) =
       </Box>
     </Box>
   );
-};
+}
 
 MobileMenuButton.displayName = "MobileMenuButton";

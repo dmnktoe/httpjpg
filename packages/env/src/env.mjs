@@ -55,6 +55,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SENTRY_ENABLE_IN_DEV: boolFromString,
 
     NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().default("G-H4TMWSN63E"),
+    NEXT_PUBLIC_APP_VERSION: z.string().optional(),
   },
   runtimeEnv: {
     STORYBLOK_PREVIEW_TOKEN: process.env.STORYBLOK_PREVIEW_TOKEN,
@@ -86,5 +87,6 @@ export const env = createEnv({
     NEXT_PUBLIC_SENTRY_ENABLE_IN_DEV: process.env.NEXT_PUBLIC_SENTRY_ENABLE_IN_DEV,
 
     NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
+    NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,
   },
 });

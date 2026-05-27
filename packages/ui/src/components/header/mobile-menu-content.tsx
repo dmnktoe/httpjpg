@@ -14,13 +14,13 @@ interface MobileMenuContentProps extends Omit<HeaderProps, "children"> {
   setIsOpen: (isOpen: boolean) => void;
 }
 
-export const MobileMenuContent = ({
+export function MobileMenuContent({
   isOpen,
   setIsOpen,
   nav,
   personalWork = [],
   clientWork = [],
-}: MobileMenuContentProps) => {
+}: MobileMenuContentProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -133,6 +133,6 @@ export const MobileMenuContent = ({
   );
 
   return createPortal(menu, document.body);
-};
+}
 
 MobileMenuContent.displayName = "MobileMenuContent";

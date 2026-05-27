@@ -20,7 +20,7 @@ export interface NowPlayingProps {
   size?: NowPlayingSize;
 }
 
-export const NowPlaying = ({
+export function NowPlaying({
   title,
   artist,
   artwork,
@@ -30,7 +30,7 @@ export const NowPlaying = ({
   vibrantColor,
   textColor,
   size = "sm",
-}: NowPlayingProps) => {
+}: NowPlayingProps) {
   const config = sizeConfig[size];
   const nodeRef = useRef<HTMLDivElement>(null);
 
@@ -271,4 +271,4 @@ export const NowPlaying = ({
       </Draggable>
     </>
   );
-};
+}

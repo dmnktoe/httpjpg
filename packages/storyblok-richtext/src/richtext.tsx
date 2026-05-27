@@ -6,7 +6,9 @@ import { type TagAttrs, tagRenderers } from "./tag-renderers";
 
 export type ISbRichtext = StoryblokRichTextDocumentNode;
 
-type RenderHTMLArgs = { HTMLAttributes: Record<string, unknown> };
+interface RenderHTMLArgs {
+  HTMLAttributes: Record<string, unknown>;
+}
 
 const cleanAttrs = (attrs: Record<string, unknown>) => {
   const out: Record<string, unknown> = {};

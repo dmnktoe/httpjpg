@@ -18,7 +18,7 @@ const STATUS_EMOJI = {
   offline: "⚫",
 };
 
-export const DiscordStatus = () => {
+export function DiscordStatus() {
   const [status, setStatus] = useState<"online" | "idle" | "dnd" | "offline">("offline");
   const [activity, setActivity] = useState<string | null>(null);
   const [playtime, setPlaytime] = useState<string | null>(null);
@@ -123,4 +123,4 @@ export const DiscordStatus = () => {
       )}
     </Box>
   );
-};
+}

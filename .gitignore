@@ -50,3 +50,4 @@ yarn-error.log*
 .linaria-cache
 *.linaria.css
 *.wyw-in-js.css
+.claude/

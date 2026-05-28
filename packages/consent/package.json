@@ -9,6 +9,9 @@
     },
     "./banner": {
       "import": "./src/components/cookie-banner.tsx"
+    },
+    "./catalog": {
+      "import": "./src/types.ts"
     }
   },
   "scripts": {

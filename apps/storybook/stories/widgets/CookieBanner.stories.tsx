@@ -1,5 +1,5 @@
-import type { ConsentCategory, ConsentState } from "@httpjpg/consent";
-import { CookieBanner, DEFAULT_CONSENT_STATE, EXTERNAL_VENDORS } from "@httpjpg/consent";
+import type { ConsentCategory, ConsentState } from "@httpjpg/consent/catalog";
+import { DEFAULT_CONSENT_STATE, EXTERNAL_VENDORS } from "@httpjpg/consent/catalog";
 import { Box, Button } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import { type MouseEvent, useState } from "react";
@@ -300,12 +300,12 @@ function CookieBannerVisual({
  */
 const meta = {
   title: "Widgets/CookieBanner",
-  component: CookieBanner,
+  component: CookieBannerVisual,
   parameters: {
     layout: "fullscreen",
   },
   tags: ["autodocs"],
-} satisfies Meta<typeof CookieBanner>;
+} satisfies Meta<typeof CookieBannerVisual>;
 
 export default meta;
 

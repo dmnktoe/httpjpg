@@ -23,7 +23,7 @@ async function initObservability() {
 
 const scripts: Script[] = [];
 
-if (env.NEXT_PUBLIC_UMAMI_WEBSITE_ID) {
+if (env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && env.NEXT_PUBLIC_UMAMI_HOST) {
   scripts.push({
     id: "umami",
     src: `${env.NEXT_PUBLIC_UMAMI_HOST}/script.js`,

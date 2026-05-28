@@ -54,12 +54,10 @@ export const env = createEnv({
     NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
     NEXT_PUBLIC_SENTRY_ENABLE_IN_DEV: boolFromString,
 
-    NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().default("G-H4TMWSN63E"),
+    NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().optional(),
 
-    NEXT_PUBLIC_UMAMI_WEBSITE_ID: z
-      .string()
-      .default("96535dfc-814f-444f-a1ca-c1345830b929"),
-    NEXT_PUBLIC_UMAMI_HOST: z.string().url().default("https://analytics.yl33ly.dev"),
+    NEXT_PUBLIC_UMAMI_WEBSITE_ID: z.string().optional(),
+    NEXT_PUBLIC_UMAMI_HOST: z.string().url().optional(),
 
     NEXT_PUBLIC_APP_VERSION: z.string().optional(),
   },

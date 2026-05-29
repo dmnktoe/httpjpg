@@ -357,19 +357,38 @@ function buttonRecipe() {
             },
           },
         },
-        outline: {
+        danger: {
           color: "white",
           _before: {
-            background: hexToRgba(colors.primary[500], 0.4),
+            background: hexToRgba(colors.danger[500], 0.9),
             filter: "blur(5px)",
             inset: "-3px",
-            boxShadow: `0 0 20px 0 ${hexToRgba(colors.primary[500], 0.2)}, 0 0 40px 0 ${hexToRgba(colors.primary[500], 0.1)}`,
+            boxShadow: `0 0 20px 0 ${hexToRgba(colors.danger[500], 0.3)}, 0 0 40px 0 ${hexToRgba(colors.danger[500], 0.15)}`,
           },
           _hover: {
             _before: {
-              background: hexToRgba(colors.primary[600], 0.5),
+              background: hexToRgba(colors.danger[600], 0.95),
               filter: "blur(5px)",
-              boxShadow: `0 0 25px 0 ${hexToRgba(colors.primary[600], 0.3)}, 0 0 45px 0 ${hexToRgba(colors.primary[600], 0.15)}`,
+              boxShadow: `0 0 25px 0 ${hexToRgba(colors.danger[600], 0.4)}, 0 0 45px 0 ${hexToRgba(colors.danger[600], 0.2)}`,
+            },
+          },
+        },
+        outline: {
+          color: "pageFg",
+          border: "1px solid",
+          borderColor: "pageFg",
+          _before: {
+            inset: "-2px",
+            boxShadow: `0 0 6px 0 ${hexToRgba(colors.primary[500], 0.12)}`,
+          },
+          _hover: {
+            color: "white",
+            borderColor: "transparent",
+            _before: {
+              background: hexToRgba(colors.primary[500], 0.9),
+              filter: "blur(5px)",
+              inset: "-3px",
+              boxShadow: `0 0 20px 0 ${hexToRgba(colors.primary[500], 0.3)}, 0 0 40px 0 ${hexToRgba(colors.primary[500], 0.15)}`,
             },
           },
         },

@@ -19,6 +19,7 @@ export interface FooterProps {
   copyrightText?: string;
   onCookieSettingsClick?: () => void;
   showCookieSettings?: boolean;
+  cookiePolicyHref?: string;
   widgets?: ReactNode;
   showVersion?: boolean;
   version?: string;
@@ -36,6 +37,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       copyrightText,
       onCookieSettingsClick,
       showCookieSettings = false,
+      cookiePolicyHref,
       widgets,
       showVersion = false,
       version,
@@ -130,6 +132,16 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                     >
                       Cookie Settings
                     </Box>
+                  </>
+                )}
+                {cookiePolicyHref && (
+                  <>
+                    {((footerLinks && footerLinks.length > 0) || hasCookieSettings) && (
+                      <Box as="span" css={{ opacity: 0.3 }}>
+                        ·
+                      </Box>
+                    )}
+                    <Link href={cookiePolicyHref}>Cookie Policy</Link>
                   </>
                 )}
               </Box>

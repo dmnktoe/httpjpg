@@ -119,6 +119,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 footerLinks={footerConfig.footerLinks}
                 copyrightText={footerConfig.copyrightText}
                 showCookieSettings
+                cookiePolicyHref="/cookie-policy"
                 showVersion={Boolean(lastUpdated || version)}
                 version={version}
                 versionHref={

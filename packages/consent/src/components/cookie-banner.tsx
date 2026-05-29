@@ -75,7 +75,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
   };
 
   const toggleCategory = (category: ConsentCategory) => {
-    if (category === "monitoring" || category === "preferences") {
+    if (category === "preferences") {
       return;
     }
     const c15tName = CATEGORY_TO_C15T[category];
@@ -85,7 +85,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
 
   const isCategoryChecked = (category: ConsentCategory): boolean => {
     const c15tName = CATEGORY_TO_C15T[category];
-    if (category === "monitoring" || category === "preferences") {
+    if (category === "preferences") {
       return true;
     }
     return (selectedConsents as unknown as Record<string, boolean>)[c15tName] ?? false;
@@ -180,9 +180,9 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
             />
             <CookieCategory
               label="ᴍᴏɴɪᴛᴏʀɪɴɢ"
-              description="Error tracking & performance monitoring. Required for site functionality. 🐛"
-              required
+              description="Error tracking & performance monitoring to keep the site stable. 🐛"
               checked={isCategoryChecked("monitoring")}
+              onToggle={() => toggleCategory("monitoring")}
               expanded={expandedCategories.has("monitoring")}
               vendors={getCategoryVendors("monitoring")}
               onToggleExpansion={() => toggleCategoryExpansion("monitoring")}

@@ -26,7 +26,7 @@ export function hasVendorConsent(vendor: ExternalVendor): boolean {
 export function mapC15tToConsentState(c15tConsents: Record<string, boolean>): ConsentState {
   return {
     analytics: c15tConsents.measurement ?? false,
-    monitoring: c15tConsents.necessary ?? DEFAULT_CONSENT_STATE.monitoring,
+    monitoring: c15tConsents.marketing ?? DEFAULT_CONSENT_STATE.monitoring,
     preferences: c15tConsents.functionality ?? DEFAULT_CONSENT_STATE.preferences,
     media: c15tConsents.experience ?? false,
   };

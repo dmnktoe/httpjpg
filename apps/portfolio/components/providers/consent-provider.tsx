@@ -70,7 +70,7 @@ function ConsentBannerInner() {
     }
     initializedRef.current = true;
 
-    if (hasConsented() && (consents as unknown as Record<string, boolean>).necessary) {
+    if (hasConsented() && (consents as unknown as Record<string, boolean>).marketing) {
       initObservability();
     }
 
@@ -112,7 +112,7 @@ export function ConsentProvider({ children }: PropsWithChildren) {
         mode: "offline",
         noStyle: true,
         disableAnimation: true,
-        consentCategories: ["necessary", "functionality", "measurement", "experience"],
+        consentCategories: ["necessary", "functionality", "measurement", "experience", "marketing"],
         scripts,
         storageConfig: {
           storageKey: CONSENT_COOKIE_NAME,

@@ -1,8 +1,8 @@
 "use client";
 
-import { useConsentManager, useHeadlessConsentUI } from "@c15t/nextjs/headless";
+import { useConsentManager, useFocusTrap, useHeadlessConsentUI } from "@c15t/nextjs/headless";
 import { Box, Button } from "@httpjpg/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { mapC15tToConsentState } from "../consent";
@@ -25,6 +25,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
   const [showDetails, setShowDetails] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());
   const [mounted, setMounted] = useState(false);
+  const bannerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -109,12 +110,17 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
 
   const isVisible = activeUI === "banner";
 
+  useFocusTrap(mounted && isVisible, bannerRef);
+
   if (!isVisible || !mounted) {
     return null;
   }
 
   const banner = (
     <Box
+      as="section"
+      ref={bannerRef}
+      aria-label="Cookie consent preferences"
       css={{
         position: "fixed",
         bottom: 0,

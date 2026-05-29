@@ -215,7 +215,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
             ✓ Accept All
           </Button>
 
-          <Button variant="outline" size="sm" onClick={handleRejectAll}>
+          <Button variant="danger" size="sm" onClick={handleRejectAll}>
             ✗ Reject All
           </Button>
 

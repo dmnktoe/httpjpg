@@ -19,7 +19,9 @@ export function trackEvent(eventName: string, eventData?: UmamiEventData): void 
     } else {
       window.umami.track(eventName);
     }
-  } catch {}
+  } catch (error) {
+    console.error("Umami tracking failed:", error);
+  }
 }
 
 export function trackWebVital(name: "CLS" | "FCP" | "LCP" | "TTFB" | "INP", value: number): void {

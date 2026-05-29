@@ -36,7 +36,9 @@ function trackEvent(eventName: string, params?: GAEventParams): void {
       value: params?.value,
       ...params,
     });
-  } catch {}
+  } catch (error) {
+    console.error("Google Analytics tracking failed:", error);
+  }
 }
 
 export function trackNowPlayingClick(): void {

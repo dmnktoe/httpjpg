@@ -21,7 +21,11 @@ function HtmlTheme({ theme }: { theme: "light" | "dark" }) {
     const previous = document.documentElement.dataset.theme;
     document.documentElement.dataset.theme = theme;
     return () => {
-      document.documentElement.dataset.theme = previous ?? "light";
+      if (previous === undefined) {
+        delete document.documentElement.dataset.theme;
+        return;
+      }
+      document.documentElement.dataset.theme = previous;
     };
   }, [theme]);
   return null;

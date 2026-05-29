@@ -96,21 +96,18 @@ export function buttonRecipe() {
           },
         },
         outline: {
-          color: "pageFg",
-          border: "1px solid",
-          borderColor: "pageFg",
+          color: "black",
           _before: {
-            inset: "-2px",
-            boxShadow: `0 0 6px 0 ${hexToRgba(colors.primary[500], 0.12)}`,
+            background: hexToRgba(colors.neutral[300], 0.5),
+            filter: "blur(5px)",
+            inset: "-3px",
+            boxShadow: `0 0 2px 1px ${hexToRgba(colors.neutral[400], 0.3)}`,
           },
           _hover: {
-            color: "white",
-            borderColor: "transparent",
             _before: {
-              background: hexToRgba(colors.primary[500], 0.9),
+              background: hexToRgba(colors.neutral[400], 0.6),
               filter: "blur(5px)",
-              inset: "-3px",
-              boxShadow: `0 0 20px 0 ${hexToRgba(colors.primary[500], 0.3)}, 0 0 40px 0 ${hexToRgba(colors.primary[500], 0.15)}`,
+              boxShadow: `0 0 4px 1px ${hexToRgba(colors.neutral[500], 0.4)}`,
             },
           },
         },

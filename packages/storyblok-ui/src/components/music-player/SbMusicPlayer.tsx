@@ -1,6 +1,6 @@
 "use client";
 
-import { ConsentPlaceholder, hasVendorConsent } from "@httpjpg/consent";
+import { ConsentPlaceholder, hasVendorConsent } from "@httpjpg/consent/utils";
 import type { SbMusicPlayerData } from "@httpjpg/storyblok-utils";
 import { ASCII_DIVIDER_MUSIC, Box, MusicPlayer, type MusicPlayerProps } from "@httpjpg/ui";
 import { memo, useEffect, useState } from "react";

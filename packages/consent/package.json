@@ -12,6 +12,9 @@
     },
     "./catalog": {
       "import": "./src/types.ts"
+    },
+    "./utils": {
+      "import": "./src/utils.ts"
     }
   },
   "scripts": {

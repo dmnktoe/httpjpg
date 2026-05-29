@@ -1,6 +1,6 @@
 "use client";
 
-import { ConsentPlaceholder, hasVendorConsent } from "@httpjpg/consent";
+import { ConsentPlaceholder, hasVendorConsent } from "@httpjpg/consent/utils";
 import type { SbVideoData } from "@httpjpg/storyblok-utils";
 import { Box, Video, type VideoSource } from "@httpjpg/ui";
 import { memo, useEffect, useState } from "react";

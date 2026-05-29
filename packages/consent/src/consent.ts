@@ -4,14 +4,14 @@ import type { AllConsentNames } from "c15t";
 import { getConsentFromStorage } from "c15t";
 
 import type { ConsentState, ExternalVendor } from "./types";
-import { DEFAULT_CONSENT_STATE, VENDOR_TO_C15T } from "./types";
+import { CONSENT_COOKIE_NAME, DEFAULT_CONSENT_STATE, VENDOR_TO_C15T } from "./types";
 
 interface C15tStoredConsent {
   consents: Record<AllConsentNames, boolean>;
 }
 
 function readC15tConsents(): Record<AllConsentNames, boolean> | null {
-  const stored = getConsentFromStorage<C15tStoredConsent>();
+  const stored = getConsentFromStorage<C15tStoredConsent>({ storageKey: CONSENT_COOKIE_NAME });
   return stored?.consents ?? null;
 }
 
@@ -72,7 +72,7 @@ export function clearConsent(): void {
   if (typeof document === "undefined") {
     return;
   }
-  document.cookie = "c15t=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = `${CONSENT_COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
 
 /** Convenience: map c15t consent state to our legacy shape. */

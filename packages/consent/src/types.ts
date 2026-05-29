@@ -110,7 +110,7 @@ export const DEFAULT_CONSENT_STATE: ConsentState = {
   media: false,
 };
 
-export const CONSENT_COOKIE_NAME = "c15t";
+export const CONSENT_COOKIE_NAME = "httpjpg_consent";
 export const CONSENT_COOKIE_EXPIRY = 365;
 
 /**

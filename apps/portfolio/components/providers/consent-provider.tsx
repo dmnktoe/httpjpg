@@ -2,6 +2,8 @@
 
 import type { ConsentState, Script } from "@httpjpg/consent";
 import {
+  CONSENT_COOKIE_EXPIRY,
+  CONSENT_COOKIE_NAME,
   ConsentManagerProvider,
   CookieBanner,
   mapC15tToConsentState,
@@ -95,6 +97,10 @@ export function ConsentProvider() {
         disableAnimation: true,
         consentCategories: ["necessary", "functionality", "measurement", "experience"],
         scripts,
+        storageConfig: {
+          storageKey: CONSENT_COOKIE_NAME,
+          defaultExpiryDays: CONSENT_COOKIE_EXPIRY,
+        },
       }}
     >
       <ConsentBannerInner />

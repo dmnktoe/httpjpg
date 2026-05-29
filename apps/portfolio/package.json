@@ -16,6 +16,7 @@
     "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
+    "@c15t/nextjs": "^2.1.0",
     "@httpjpg/analytics": "workspace:*",
     "@httpjpg/consent": "workspace:*",
     "@httpjpg/env": "workspace:*",

@@ -10,7 +10,7 @@ import {
   useConsentManager,
 } from "@httpjpg/consent";
 import { env } from "@httpjpg/env";
-import { useEffect, useRef } from "react";
+import { type PropsWithChildren, useEffect, useRef } from "react";
 
 let observabilityInitialized = false;
 
@@ -105,7 +105,7 @@ function ConsentBannerInner() {
   );
 }
 
-export function ConsentProvider() {
+export function ConsentProvider({ children }: PropsWithChildren) {
   return (
     <ConsentManagerProvider
       options={{
@@ -120,6 +120,7 @@ export function ConsentProvider() {
         },
       }}
     >
+      {children}
       <ConsentBannerInner />
     </ConsentManagerProvider>
   );

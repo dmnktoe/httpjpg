@@ -110,6 +110,9 @@ importers:
 
   apps/portfolio:
     dependencies:
+      '@c15t/nextjs':
+        specifier: ^2.1.0
+        version: 2.1.0(@types/react@19.2.7)(next@16.2.6(@opentelemetry/api@1.9.1)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@6.0.3)(use-sync-external-store@1.6.0(react@19.2.1))
       '@httpjpg/analytics':
         specifier: workspace:*
         version: link:../../packages/analytics

@@ -87,79 +87,80 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="de" data-theme={theme}>
       <body style={{ margin: 0, padding: 0 }}>
-        <ConsoleBanner />
-        <ConsentProvider />
-        <WebVitalsReporter />
-        <ScrollToTop />
-        <LazyMotionProvider>
-          <StoryblokProvider>
-            <CustomCursorWrapper
-              cursorEnabled={widgetConfig.customCursorEnabled}
-              trailEnabled={widgetConfig.mouseTrailEnabled}
-            />
-            <ImagePreview />
-            {widgetConfig.nostalgiaSlideshowEnabled && <NostalgiaSlideshow />}
-            {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
-            {widgetConfig.psnEnabled && <PSNCard username={widgetConfig.psnUsername} />}
-            <PreviewNotification />
-            <Header nav={navigation} personalWork={personalWork} clientWork={clientWork} />
-            <Box
-              as="main"
-              css={{
-                bg: "pageBg",
-                color: "pageFg",
-                w: "full",
-                minH: "100dvh",
-              }}
-            >
-              {children}
-            </Box>
-            <Footer
-              backgroundImage={footerConfig.backgroundImage}
-              footerLinks={footerConfig.footerLinks}
-              copyrightText={footerConfig.copyrightText}
-              showCookieSettings
-              showVersion={Boolean(lastUpdated || version)}
-              version={version}
-              versionHref={
-                version ? `https://github.com/dmnktoe/httpjpg/releases/tag/${version}` : undefined
-              }
-              lastUpdated={
-                lastUpdated ? `last updated ${formatLastUpdated(lastUpdated)}` : undefined
-              }
-              widgets={
-                <Box
-                  css={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: "0",
-                    w: "full",
-                  }}
-                >
-                  <DiscordStatus />
+        <ConsentProvider>
+          <ConsoleBanner />
+          <WebVitalsReporter />
+          <ScrollToTop />
+          <LazyMotionProvider>
+            <StoryblokProvider>
+              <CustomCursorWrapper
+                cursorEnabled={widgetConfig.customCursorEnabled}
+                trailEnabled={widgetConfig.mouseTrailEnabled}
+              />
+              <ImagePreview />
+              {widgetConfig.nostalgiaSlideshowEnabled && <NostalgiaSlideshow />}
+              {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
+              {widgetConfig.psnEnabled && <PSNCard username={widgetConfig.psnUsername} />}
+              <PreviewNotification />
+              <Header nav={navigation} personalWork={personalWork} clientWork={clientWork} />
+              <Box
+                as="main"
+                css={{
+                  bg: "pageBg",
+                  color: "pageFg",
+                  w: "full",
+                  minH: "100dvh",
+                }}
+              >
+                {children}
+              </Box>
+              <Footer
+                backgroundImage={footerConfig.backgroundImage}
+                footerLinks={footerConfig.footerLinks}
+                copyrightText={footerConfig.copyrightText}
+                showCookieSettings
+                showVersion={Boolean(lastUpdated || version)}
+                version={version}
+                versionHref={
+                  version ? `https://github.com/dmnktoe/httpjpg/releases/tag/${version}` : undefined
+                }
+                lastUpdated={
+                  lastUpdated ? `last updated ${formatLastUpdated(lastUpdated)}` : undefined
+                }
+                widgets={
                   <Box
                     css={{
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
-                      gap: "4",
-                      mt: "6",
+                      gap: "0",
+                      w: "full",
                     }}
                   >
-                    <FlagCounter />
-                    <AsciiArt
-                      label="signoff"
-                      css={{ fontSize: "xs", opacity: 0.3, letterSpacing: "0.2em" }}
+                    <DiscordStatus />
+                    <Box
+                      css={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "4",
+                        mt: "6",
+                      }}
                     >
-                      {ASCII_DIVIDER_WAVE}
-                    </AsciiArt>
+                      <FlagCounter />
+                      <AsciiArt
+                        label="signoff"
+                        css={{ fontSize: "xs", opacity: 0.3, letterSpacing: "0.2em" }}
+                      >
+                        {ASCII_DIVIDER_WAVE}
+                      </AsciiArt>
+                    </Box>
                   </Box>
-                </Box>
-              }
-            />
-          </StoryblokProvider>
-        </LazyMotionProvider>
+                }
+              />
+            </StoryblokProvider>
+          </LazyMotionProvider>
+        </ConsentProvider>
       </body>
     </html>
   );

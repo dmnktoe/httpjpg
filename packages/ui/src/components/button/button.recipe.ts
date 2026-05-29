@@ -96,12 +96,11 @@ export function buttonRecipe() {
           },
         },
         outline: {
-          color: "black",
-          // Silver glow fading inward from the rim, transparent centre — the inverse of the
-          // filled glow variants.
-          boxShadow: `inset 0 0 12px 0 ${hexToRgba(colors.neutral[400], 0.55)}, inset 0 0 3px 0 ${hexToRgba(colors.neutral[500], 0.7)}`,
+          color: "pageFg",
           _hover: {
-            boxShadow: `inset 0 0 16px 0 ${hexToRgba(colors.neutral[500], 0.65)}, inset 0 0 4px 0 ${hexToRgba(colors.neutral[600], 0.8)}`,
+            textDecoration: "underline",
+            textDecorationThickness: "1px",
+            textUnderlineOffset: "3px",
           },
         },
         disabled: {

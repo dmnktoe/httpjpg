@@ -28,7 +28,6 @@
     "@httpjpg/storyblok-utils": "workspace:*",
     "@httpjpg/tokens": "workspace:*",
     "@httpjpg/ui": "workspace:*",
-    "@next/third-parties": "^16.0.7",
     "@storyblok/react": "catalog:",
     "next": "^16.0.7",
     "react": "catalog:",

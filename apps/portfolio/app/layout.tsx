@@ -12,7 +12,6 @@ import {
   ImagePreview,
   LazyMotionProvider,
 } from "@httpjpg/ui";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 
@@ -161,10 +160,6 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             />
           </StoryblokProvider>
         </LazyMotionProvider>
-
-        {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
-          <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
-        )}
       </body>
     </html>
   );

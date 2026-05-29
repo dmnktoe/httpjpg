@@ -37,6 +37,23 @@ if (env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && env.NEXT_PUBLIC_UMAMI_HOST) {
   });
 }
 
+if (env.NEXT_PUBLIC_GA_MEASUREMENT_ID) {
+  const gaId = env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  scripts.push(
+    {
+      id: "google-analytics",
+      src: `https://www.googletagmanager.com/gtag/js?id=${gaId}`,
+      category: "measurement",
+      async: true,
+    },
+    {
+      id: "google-analytics-config",
+      category: "measurement",
+      textContent: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');`,
+    },
+  );
+}
+
 function ConsentBannerInner() {
   const initializedRef = useRef(false);
   const { consents, hasConsented, subscribeToConsentChanges } = useConsentManager();

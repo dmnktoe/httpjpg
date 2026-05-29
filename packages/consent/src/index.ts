@@ -1,15 +1,7 @@
 export { ConsentPlaceholder } from "./components/consent-placeholder";
 export { CookieBanner } from "./components/cookie-banner";
 export { VendorList } from "./components/vendor-list";
-export {
-  clearConsent,
-  getConsent,
-  hasConsent,
-  hasMediaConsent,
-  hasVendorConsent,
-  mapC15tToConsentState,
-  setConsent,
-} from "./consent";
+export { hasVendorConsent, mapC15tToConsentState } from "./consent";
 export type {
   ConsentCategory,
   ConsentConfig,

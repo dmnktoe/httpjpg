@@ -118,8 +118,6 @@ export function ConsentProvider({ children }: PropsWithChildren) {
           storageKey: CONSENT_COOKIE_NAME,
           defaultExpiryDays: CONSENT_COOKIE_EXPIRY,
         },
-        // Brutalist styling for the native ConsentWidget (cookie policy page).
-        // Light-only via fixed @httpjpg/tokens vars — the page never flips to dark.
         colorScheme: "light",
         theme: {
           colors: {

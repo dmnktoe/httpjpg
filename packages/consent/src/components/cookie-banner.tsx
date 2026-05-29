@@ -211,40 +211,20 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
         )}
 
         <Box css={{ display: "flex", gap: "3", flexWrap: "wrap", alignItems: "center" }}>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleAcceptAll}
-            css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
-          >
+          <Button variant="primary" size="sm" onClick={handleAcceptAll}>
             ✓ Accept All
           </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRejectAll}
-            css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
-          >
+          <Button variant="outline" size="sm" onClick={handleRejectAll}>
             ✗ Reject All
           </Button>
 
           {showDetails ? (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleSavePreferences}
-              css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
-            >
+            <Button variant="secondary" size="sm" onClick={handleSavePreferences}>
               ⚙ Save Preferences
             </Button>
           ) : (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowDetails(true)}
-              css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
-            >
+            <Button variant="outline" size="sm" onClick={() => setShowDetails(true)}>
               ⚙ Customize
             </Button>
           )}

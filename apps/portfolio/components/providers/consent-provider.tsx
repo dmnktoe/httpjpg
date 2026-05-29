@@ -118,6 +118,30 @@ export function ConsentProvider({ children }: PropsWithChildren) {
           storageKey: CONSENT_COOKIE_NAME,
           defaultExpiryDays: CONSENT_COOKIE_EXPIRY,
         },
+        // Brutalist styling for the native ConsentWidget (cookie policy page).
+        // Light-only via fixed @httpjpg/tokens vars — the page never flips to dark.
+        colorScheme: "light",
+        theme: {
+          colors: {
+            primary: "var(--color-primary-500)",
+            primaryHover: "var(--color-primary-600)",
+            surface: "var(--color-white)",
+            surfaceHover: "var(--color-neutral-100)",
+            border: "var(--color-black)",
+            borderHover: "var(--color-black)",
+            text: "var(--color-black)",
+            textMuted: "var(--color-neutral-700)",
+            switchTrackActive: "var(--color-primary-500)",
+          },
+          typography: { fontFamily: "Arial, Helvetica, sans-serif" },
+          radius: { sm: "0", md: "0", lg: "0" },
+          shadows: { sm: "none", md: "none", lg: "none" },
+          consentActions: {
+            accept: { variant: "primary", mode: "filled" },
+            reject: { variant: "neutral", mode: "stroke" },
+            customize: { variant: "neutral", mode: "stroke" },
+          },
+        },
       }}
     >
       {children}

@@ -97,28 +97,11 @@ export function buttonRecipe() {
         },
         outline: {
           color: "black",
-          boxShadow: `0 0 14px 0 ${hexToRgba(colors.neutral[400], 0.35)}`,
-          // Gradient ring with a transparent centre — the inverse of the filled glow variants.
-          _before: {
-            background: linearGradient("315deg", [
-              { hex: colors.neutral[300], alpha: 1 },
-              { hex: colors.neutral[600], alpha: 1 },
-            ]),
-            inset: 0,
-            padding: "1.5px",
-            WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-            WebkitMaskComposite: "xor",
-            mask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-            maskComposite: "exclude",
-          },
+          // Silver glow fading inward from the rim, transparent centre — the inverse of the
+          // filled glow variants.
+          boxShadow: `inset 0 0 12px 0 ${hexToRgba(colors.neutral[400], 0.55)}, inset 0 0 3px 0 ${hexToRgba(colors.neutral[500], 0.7)}`,
           _hover: {
-            boxShadow: `0 0 18px 0 ${hexToRgba(colors.neutral[500], 0.5)}`,
-            _before: {
-              background: linearGradient("315deg", [
-                { hex: colors.neutral[400], alpha: 1 },
-                { hex: colors.neutral[700], alpha: 1 },
-              ]),
-            },
+            boxShadow: `inset 0 0 16px 0 ${hexToRgba(colors.neutral[500], 0.65)}, inset 0 0 4px 0 ${hexToRgba(colors.neutral[600], 0.8)}`,
           },
         },
         disabled: {

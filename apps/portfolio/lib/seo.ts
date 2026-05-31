@@ -1,9 +1,12 @@
-import { extractPlainText, imagePreset } from "@httpjpg/storyblok-utils";
+import { extractPlainText } from "@httpjpg/storyblok-utils";
 import type { Metadata } from "next";
 
 interface StoryShape {
   name: string;
+  slug?: string;
+  full_slug?: string;
   content?: {
+    component?: string;
     title?: string;
     description?: string | { content?: unknown[] };
     images?: Array<{ filename?: string; alt?: string; focus?: string }>;
@@ -19,11 +22,6 @@ interface StoryMetadata {
 const APP_NAME = "httpjpg";
 const DESCRIPTION_LIMIT = 160;
 
-/**
- * Extract title / description / OG image from a Storyblok story for
- * Next's `generateMetadata`. Description falls through `string |
- * richtext | undefined`; OG image uses the first content image.
- */
 export function extractStoryMetadata(story: StoryShape): StoryMetadata {
   const title = story.content?.title || story.name;
 
@@ -36,20 +34,20 @@ export function extractStoryMetadata(story: StoryShape): StoryMetadata {
         : "";
 
   const firstImage = story.content?.images?.[0];
-  const ogImage = firstImage?.filename
-    ? {
-        url: imagePreset.og(firstImage.filename, firstImage.focus),
-        alt: firstImage.alt || title,
-      }
-    : undefined;
+  // Fall back to slug for stories where Storyblok didn't return full_slug,
+  // but keep the work/ prefix so the dynamic handler can resolve the story.
+  const path =
+    story.full_slug ||
+    (story.slug && (story.content?.component === "work" ? `work/${story.slug}` : story.slug));
+
+  let ogImage: StoryMetadata["ogImage"];
+  if (path) {
+    ogImage = { url: `/api/og/${path}`, alt: firstImage?.alt || title };
+  }
 
   return { title, description, ogImage };
 }
 
-/**
- * Build the Next `Metadata` object from extracted story metadata + a path.
- * Keeps OG title/description/url/twitter shape in one place.
- */
 export function toNextMetadata(meta: StoryMetadata, path: string): Metadata {
   const fullTitle = `${meta.title} | ${APP_NAME}`;
   const ogImages = meta.ogImage

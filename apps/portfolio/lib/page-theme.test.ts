@@ -28,7 +28,11 @@ describe("isInternalSlug", () => {
     ["_next/static/foo", true],
     [".well-known/security.txt", true],
     ["work/something/.well-known/", true],
+    ["api/og/work/foo", true],
+    ["api/og/feed-xml_html", true],
+    ["api/discord", true],
     ["work/about", false],
+    ["apiary", false],
     ["", false],
     ["home", false],
   ])("classifies %s correctly", (slug, expected) => {

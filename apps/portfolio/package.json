@@ -32,7 +32,8 @@
     "@storyblok/react": "catalog:",
     "next": "^16.0.7",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",

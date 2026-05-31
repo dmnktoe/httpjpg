@@ -13,9 +13,7 @@ interface JsxNode {
   type?: unknown;
   props?: { children?: unknown };
 }
-// Walk the JSX tree the route hands to ImageResponse so the layout
-// component functions actually execute (Satori would do this in
-// production). Without this, coverage misses every layout branch.
+// Force functional components to execute so coverage sees their branches.
 function evaluateJsx(node: unknown): void {
   if (!node || typeof node !== "object") return;
   const n = node as JsxNode;
@@ -89,9 +87,8 @@ describe("GET /api/og/[...slug]", () => {
     mockedCapture.mockReset();
   });
 
-  // Font-error tests run first while the module-level fontCache is still
-  // null; once the happy-path test populates it, loadFonts short-circuits.
-
+  // Font-error tests must run before any happy path so the module-level
+  // fontsPromise cache stays empty.
   it("reports a 500 when the Google Fonts CSS fetch fails", async () => {
     mockedFetchStory.mockResolvedValueOnce(validWorkStory());
     const prev = globalThis.fetch;

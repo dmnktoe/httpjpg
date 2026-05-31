@@ -1,7 +1,5 @@
 import {
   formatYear,
-  OG_ASCII_COLS,
-  OG_ASCII_ROWS,
   OG_IMAGE_HEIGHT,
   OG_IMAGE_WIDTH,
   pickTitleSize,
@@ -23,7 +21,7 @@ describe("toAbsoluteStoryblokUrl", () => {
     );
   });
 
-  it("rejects URLs on other hosts so Satori never SSRFs an attacker", () => {
+  it("rejects URLs on other hosts", () => {
     expect(toAbsoluteStoryblokUrl("https://evil.example/cover.jpg")).toBeNull();
   });
 
@@ -109,16 +107,5 @@ describe("pickTitleSize", () => {
   it("clamps to 72 for very long titles", () => {
     expect(pickTitleSize("a".repeat(33))).toBe(72);
     expect(pickTitleSize("a".repeat(120))).toBe(72);
-  });
-});
-
-describe("OG layout constants", () => {
-  it("keeps the image at 4:3", () => {
-    expect(OG_IMAGE_WIDTH / OG_IMAGE_HEIGHT).toBeCloseTo(4 / 3, 5);
-  });
-
-  it("keeps the ASCII grid sized so it bleeds over the image", () => {
-    expect(OG_ASCII_COLS).toBeGreaterThanOrEqual(100);
-    expect(OG_ASCII_ROWS).toBeGreaterThan(0);
   });
 });

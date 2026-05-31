@@ -23,7 +23,7 @@ export const revalidate = 3600;
 
 const WIDTH = 1200;
 const HEIGHT = 630;
-const PAD = 56; // matches spacing[14]
+const PAD = 56;
 const IMAGE_RIGHT_GAP = 32;
 
 interface FontSpec {
@@ -32,8 +32,7 @@ interface FontSpec {
   satoriName: string;
 }
 
-// Inter first = Satori's default for text; Noto subsets cover the
-// mixed-script glyphs in ASCII_DIVIDER_STARS / ASCII_TAPE.
+// Noto subsets cover the ASCII_DIVIDER_STARS / ASCII_TAPE glyphs Inter can't.
 const FONT_SPECS: readonly FontSpec[] = [
   {
     family: "Inter",
@@ -69,9 +68,7 @@ interface SatoriFont {
   style: "normal";
 }
 
-// Cache the in-flight promise so concurrent cold-start requests share a
-// single round of font fetches instead of racing to populate the cache.
-// Reset to null on failure so subsequent requests get a clean retry.
+// Shared in-flight promise; cleared on failure so the next request retries.
 let fontsPromise: Promise<SatoriFont[]> | null = null;
 
 function loadFonts(): Promise<SatoriFont[]> {
@@ -357,8 +354,6 @@ export async function GET(_req: Request, ctx: { params: Promise<{ slug: string[]
       return new Response("Image source not allowed", { status: 422 });
     }
 
-    // ASCII overlay only renders on the work layout; skip the cost
-    // otherwise. Fonts are always needed.
     const [asciiResult, fonts] = await Promise.all([
       isWorkPage && asciiSampleUrl
         ? imageToAscii(asciiSampleUrl, OG_ASCII_COLS, OG_ASCII_ROWS)

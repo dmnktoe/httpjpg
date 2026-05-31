@@ -1,9 +1,10 @@
-import { extractPlainText, imagePreset } from "@httpjpg/storyblok-utils";
+import { extractPlainText } from "@httpjpg/storyblok-utils";
 import type { Metadata } from "next";
 
 interface StoryShape {
   name: string;
   slug?: string;
+  full_slug?: string;
   content?: {
     component?: string;
     title?: string;
@@ -33,16 +34,11 @@ export function extractStoryMetadata(story: StoryShape): StoryMetadata {
         : "";
 
   const firstImage = story.content?.images?.[0];
-  const isWorkPage = story.content?.component === "work";
+  const path = story.full_slug || story.slug;
 
   let ogImage: StoryMetadata["ogImage"];
-  if (isWorkPage && story.slug && firstImage?.filename) {
-    ogImage = { url: `/api/og/work/${story.slug}`, alt: firstImage.alt || title };
-  } else if (firstImage?.filename) {
-    ogImage = {
-      url: imagePreset.og(firstImage.filename, firstImage.focus),
-      alt: firstImage.alt || title,
-    };
+  if (path) {
+    ogImage = { url: `/api/og/${path}`, alt: firstImage?.alt || title };
   }
 
   return { title, description, ogImage };

@@ -9,8 +9,34 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
 vi.mock("@/lib/og-ascii", () => ({
   imageToAscii: vi.fn(async () => ({ text: "ascii", cols: 1, rows: 1 })),
 }));
+interface JsxNode {
+  type?: unknown;
+  props?: { children?: unknown };
+}
+// Walk the JSX tree the route hands to ImageResponse so the layout
+// component functions actually execute (Satori would do this in
+// production). Without this, coverage misses every layout branch.
+function evaluateJsx(node: unknown): void {
+  if (!node || typeof node !== "object") return;
+  const n = node as JsxNode;
+  if (typeof n.type === "function") {
+    evaluateJsx((n.type as (p: unknown) => unknown)(n.props));
+    return;
+  }
+  const children = n.props?.children;
+  if (Array.isArray(children)) {
+    children.forEach(evaluateJsx);
+  } else if (children) {
+    evaluateJsx(children);
+  }
+}
+
 vi.mock("next/og", () => ({
-  ImageResponse: vi.fn(function MockImageResponse(this: { ok: boolean; status: number }) {
+  ImageResponse: vi.fn(function MockImageResponse(
+    this: { ok: boolean; status: number },
+    jsx: unknown,
+  ) {
+    evaluateJsx(jsx);
     this.ok = true;
     this.status = 200;
   }),
@@ -41,7 +67,7 @@ const mockedFetchStory = vi.mocked(fetchStory);
 const mockedCapture = vi.mocked(captureServerException);
 
 function callGET(slug: string[]) {
-  return GET(new Request("https://example.com/api/og/work/" + slug.join("/")), {
+  return GET(new Request("https://example.com/api/og/" + slug.join("/")), {
     params: Promise.resolve({ slug }),
   });
 }
@@ -57,7 +83,7 @@ function validWorkStory() {
   } as never;
 }
 
-describe("GET /api/og/work/[...slug]", () => {
+describe("GET /api/og/[...slug]", () => {
   beforeEach(() => {
     mockedFetchStory.mockReset();
     mockedCapture.mockReset();
@@ -115,27 +141,9 @@ describe("GET /api/og/work/[...slug]", () => {
 
   it("returns 404 when no story is found", async () => {
     mockedFetchStory.mockResolvedValueOnce(null as never);
-    const res = await callGET(["missing"]);
+    const res = await callGET(["work", "missing"]);
     expect(res.status).toBe(404);
     expect(mockedFetchStory).toHaveBeenCalledWith("work/missing", { draftMode: false });
-  });
-
-  it("returns 404 when the story isn't a work component", async () => {
-    mockedFetchStory.mockResolvedValueOnce({
-      content: { component: "page" },
-    } as never);
-    const res = await callGET(["about"]);
-    expect(res.status).toBe(404);
-    expect(await res.text()).toBe("Not a work page");
-  });
-
-  it("returns 404 when the work story has no image", async () => {
-    mockedFetchStory.mockResolvedValueOnce({
-      content: { component: "work", images: [] },
-    } as never);
-    const res = await callGET(["empty"]);
-    expect(res.status).toBe(404);
-    expect(await res.text()).toBe("No image available");
   });
 
   it("refuses to fetch images hosted off the Storyblok CDN", async () => {
@@ -145,22 +153,22 @@ describe("GET /api/og/work/[...slug]", () => {
         images: [{ filename: "https://attacker.example/cover.jpg" }],
       },
     } as never);
-    const res = await callGET(["spoof"]);
+    const res = await callGET(["work", "spoof"]);
     expect(res.status).toBe(422);
     expect(await res.text()).toBe("Image source not allowed");
   });
 
   it("forwards unexpected errors to Sentry and responds 500", async () => {
     mockedFetchStory.mockRejectedValueOnce(new Error("boom"));
-    const res = await callGET(["broken"]);
+    const res = await callGET(["work", "broken"]);
     expect(res.status).toBe(500);
     expect(mockedCapture).toHaveBeenCalledTimes(1);
     const [error, ctx] = mockedCapture.mock.calls[0]!;
     expect((error as Error).message).toBe("boom");
-    expect(ctx).toMatchObject({ tags: { route: "og/work" }, extra: { slug: "work/broken" } });
+    expect(ctx).toMatchObject({ tags: { route: "og" }, extra: { slug: "work/broken" } });
   });
 
-  it("renders an OG ImageResponse for a published work story", async () => {
+  it("renders the work layout for a published work story", async () => {
     mockedFetchStory.mockResolvedValueOnce({
       name: "Project",
       content: {
@@ -171,12 +179,33 @@ describe("GET /api/og/work/[...slug]", () => {
         images: [{ filename: "//a.storyblok.com/f/1/cover.jpg" }],
       },
     } as never);
-    const res = await callGET(["my-project"]);
+    const res = await callGET(["work", "my-project"]);
     expect(res.status).toBe(200);
     const { ImageResponse } = await import("next/og");
     expect(ImageResponse).toHaveBeenCalledTimes(1);
     const [, opts] = vi.mocked(ImageResponse).mock.calls[0]!;
     expect(opts).toMatchObject({ width: 1200, height: 630 });
+  });
+
+  it("renders the page layout for a non-work story with an image", async () => {
+    mockedFetchStory.mockResolvedValueOnce({
+      name: "CV",
+      content: {
+        component: "page",
+        images: [{ filename: "//a.storyblok.com/f/1/cv.jpg" }],
+      },
+    } as never);
+    const res = await callGET(["cv"]);
+    expect(res.status).toBe(200);
+  });
+
+  it("renders the page layout without an image when none is set", async () => {
+    mockedFetchStory.mockResolvedValueOnce({
+      name: "About",
+      content: { component: "page" },
+    } as never);
+    const res = await callGET(["about"]);
+    expect(res.status).toBe(200);
   });
 
   it("falls back to the story name when title is missing", async () => {
@@ -187,7 +216,7 @@ describe("GET /api/og/work/[...slug]", () => {
         images: [{ filename: "//a.storyblok.com/f/1/cover.jpg" }],
       },
     } as never);
-    const res = await callGET(["fallback"]);
+    const res = await callGET(["work", "fallback"]);
     expect(res.status).toBe(200);
   });
 });

@@ -58,47 +58,11 @@ describe("extractStoryMetadata", () => {
     expect(meta.description).toBe("");
   });
 
-  it("builds an Open Graph image from the first content image", () => {
-    const meta = extractStoryMetadata({
-      name: "n",
-      content: {
-        title: "Title",
-        images: [
-          { filename: "https://a.storyblok.com/f/1/cover.jpg", alt: "Cover", focus: "10x20:11x21" },
-        ],
-      },
-    });
-    expect(meta.ogImage?.url).toContain("/m/1200x630/smart");
-    expect(meta.ogImage?.alt).toBe("Cover");
-  });
-
-  it("uses the resolved title as og image alt when the image alt is missing", () => {
-    const meta = extractStoryMetadata({
-      name: "Story",
-      content: {
-        images: [{ filename: "https://a.storyblok.com/f/1/cover.jpg" }],
-      },
-    });
-    expect(meta.ogImage?.alt).toBe("Story");
-  });
-
-  it("omits the og image when no image filename exists", () => {
-    const meta = extractStoryMetadata({
-      name: "n",
-      content: { images: [{ alt: "no filename" }] },
-    });
-    expect(meta.ogImage).toBeUndefined();
-  });
-
-  it("omits the og image when content has no images at all", () => {
-    const meta = extractStoryMetadata({ name: "n", content: {} });
-    expect(meta.ogImage).toBeUndefined();
-  });
-
-  it("routes work-page OG images through the dynamic ASCII generator", () => {
+  it("routes the OG image through the dynamic handler using the full slug", () => {
     const meta = extractStoryMetadata({
       name: "Project",
       slug: "my-project",
+      full_slug: "work/my-project",
       content: {
         component: "work",
         title: "Project Title",
@@ -109,23 +73,52 @@ describe("extractStoryMetadata", () => {
     expect(meta.ogImage?.alt).toBe("Cover");
   });
 
-  it("falls back to the static image when a work story has no slug", () => {
+  it("routes non-work pages through the dynamic handler too", () => {
     const meta = extractStoryMetadata({
-      name: "Project",
+      name: "CV",
+      slug: "cv",
+      full_slug: "cv",
       content: {
-        component: "work",
+        component: "page",
+        images: [{ filename: "https://a.storyblok.com/f/1/cv.jpg" }],
+      },
+    });
+    expect(meta.ogImage?.url).toBe("/api/og/cv");
+  });
+
+  it("renders a dynamic OG even when the page has no image", () => {
+    const meta = extractStoryMetadata({
+      name: "About",
+      slug: "about",
+      full_slug: "about",
+      content: { component: "page" },
+    });
+    expect(meta.ogImage?.url).toBe("/api/og/about");
+  });
+
+  it("uses the resolved title as og image alt when the image alt is missing", () => {
+    const meta = extractStoryMetadata({
+      name: "Story",
+      slug: "story",
+      full_slug: "story",
+      content: {
         images: [{ filename: "https://a.storyblok.com/f/1/cover.jpg" }],
       },
     });
-    expect(meta.ogImage?.url).toContain("/m/1200x630/smart");
+    expect(meta.ogImage?.alt).toBe("Story");
   });
 
-  it("falls back to the static image when a work story has no image", () => {
+  it("falls back to slug when full_slug is missing", () => {
     const meta = extractStoryMetadata({
-      name: "Project",
-      slug: "my-project",
-      content: { component: "work" },
+      name: "X",
+      slug: "x",
+      content: {},
     });
+    expect(meta.ogImage?.url).toBe("/api/og/x");
+  });
+
+  it("omits the og image when neither slug nor full_slug is available", () => {
+    const meta = extractStoryMetadata({ name: "n", content: {} });
     expect(meta.ogImage).toBeUndefined();
   });
 });

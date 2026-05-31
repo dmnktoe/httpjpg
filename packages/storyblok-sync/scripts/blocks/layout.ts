@@ -78,7 +78,6 @@ export const layoutBlocks: BlockDef[] = [
         justifyContent: field.options("Justify Content", labelize(CMS_OPTIONS.justifyContent)),
         flow: field.options("Auto Flow", labelize(CMS_OPTIONS.gridFlow)),
       }),
-      isList: field.boolean("Render as <ul>"),
     }),
   },
   {

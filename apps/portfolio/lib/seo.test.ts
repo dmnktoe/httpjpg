@@ -94,6 +94,40 @@ describe("extractStoryMetadata", () => {
     const meta = extractStoryMetadata({ name: "n", content: {} });
     expect(meta.ogImage).toBeUndefined();
   });
+
+  it("routes work-page OG images through the dynamic ASCII generator", () => {
+    const meta = extractStoryMetadata({
+      name: "Project",
+      slug: "my-project",
+      content: {
+        component: "work",
+        title: "Project Title",
+        images: [{ filename: "https://a.storyblok.com/f/1/cover.jpg", alt: "Cover" }],
+      },
+    });
+    expect(meta.ogImage?.url).toBe("/api/og/work/my-project");
+    expect(meta.ogImage?.alt).toBe("Cover");
+  });
+
+  it("falls back to the static image when a work story has no slug", () => {
+    const meta = extractStoryMetadata({
+      name: "Project",
+      content: {
+        component: "work",
+        images: [{ filename: "https://a.storyblok.com/f/1/cover.jpg" }],
+      },
+    });
+    expect(meta.ogImage?.url).toContain("/m/1200x630/smart");
+  });
+
+  it("falls back to the static image when a work story has no image", () => {
+    const meta = extractStoryMetadata({
+      name: "Project",
+      slug: "my-project",
+      content: { component: "work" },
+    });
+    expect(meta.ogImage).toBeUndefined();
+  });
 });
 
 describe("toNextMetadata", () => {

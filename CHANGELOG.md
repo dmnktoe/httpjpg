@@ -32,6 +32,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Dependencies
 
+- `pnpm` updated to v10.34.1.
+- `oxfmt` updated to `^0.52.0`.
+- `chromaui/action` digest updated to `8ad69a4`.
 - `actions/upload-artifact` and `actions/download-artifact` pinned to v7 (digests `043fb46` / `37930b1`).
 
 ## [1.3.0] - 2026-05-27

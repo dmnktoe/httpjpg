@@ -4,6 +4,39 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-05-30
+
+### Added
+
+- **Storyblok**: codegen pipeline that generates TypeScript types from blok schemas, wired into all `Sb*` components and replacing the manual config types with generated `Sb*Data`. Types are generated on install and no longer tracked in the repo.
+- **Work list**: ASCII empty state rendered when no works are present.
+- **Footer**: version number now links to the matching GitHub release with an underline-on-hover treatment.
+
+### Changed
+
+- **Footer**: version link moved into the base `Footer` component and `FooterWrapper` eliminated in favor of using `Footer` directly.
+- **Config**: fallback navigation updated to Home, CV, Feed.
+
+### Fixed
+
+- **Analytics**: guard the `window.gtag` call with try/catch so a missing or throwing gtag no longer breaks tracking.
+- **Work list**: always sync stories state when the work prop changes.
+- **Storybook**: stabilized flaky Chromatic visual snapshots.
+- **Storyblok UI**: addressed CodeRabbit review findings.
+
+### Tooling
+
+- **CI**: reuse build artifacts in the E2E job instead of rebuilding, using a tar archive to preserve exact paths; fixed tar argument order, artifact action versions (v7), YAML syntax in the extract step, and added verification.
+- **Tests**: added unit tests for the storyblok-sync codegen type mapping.
+- **Codebase**: aligned with `CLAUDE.md` conventions and removed unused code, dead exports, and verbose comments.
+
+### Dependencies
+
+- `pnpm` updated to v10.34.1.
+- `oxfmt` updated to `^0.52.0`.
+- `chromaui/action` digest updated to `8ad69a4`.
+- `actions/upload-artifact` and `actions/download-artifact` pinned to v7 (digests `043fb46` / `37930b1`).
+
 ## [1.3.0] - 2026-05-27
 
 ### Added
@@ -105,6 +138,7 @@ First production-ready release.
 - **Observability**: Sentry wired through `@httpjpg/observability` for client, server, and edge runtimes.
 - **Quality gates**: oxlint + oxfmt, Vitest unit tests, Playwright E2E, commitlint + husky pre-commit hooks, strict TypeScript across all packages.
 
+[1.4.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.4.0
 [1.3.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.3.0
 [1.2.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.2.0
 [1.1.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.1.0

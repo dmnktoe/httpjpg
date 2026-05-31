@@ -1,16 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import { css } from "styled-system/css";
 
+import { AssetPicker, StoryPicker } from "./asset-picker";
 import {
   ALIGN_SELF_OPTIONS,
   blokPlugin,
   type BuilderItem,
   effectiveH,
+  effectiveHidden,
   effectiveW,
+  effectiveX,
+  effectiveY,
   type FieldDef,
   GRID_COLS,
   GRID_SPAN_OPTIONS,
+  hiddenFieldForViewport,
   type ItemSpacing,
   JUSTIFY_SELF_OPTIONS,
   SPACING_OPTIONS,
@@ -85,10 +91,16 @@ function InspectorBody({ item, viewport, onChange, onDataChange }: InspectorBody
   const def = blokPlugin(item.type);
   const w = effectiveW(item, viewport);
   const h = effectiveH(item, viewport);
+  const x = effectiveX(item, viewport);
+  const y = effectiveY(item, viewport);
   const wField = wFieldForViewport(viewport);
   const hField = hFieldForViewport(viewport);
+  const xField = xFieldForViewport(viewport);
+  const yField = yFieldForViewport(viewport);
   const ownSpacing = item.spacing[viewport];
   const inheritedSpacing = inheritedSpacingForViewport(item.spacing, viewport);
+  const hidden = effectiveHidden(item, viewport);
+  const hiddenField = hiddenFieldForViewport(viewport);
 
   const setSpacing = (side: SpacingSide, value: string) => {
     const next: ItemSpacing = {
@@ -118,6 +130,33 @@ function InspectorBody({ item, viewport, onChange, onDataChange }: InspectorBody
     onChange(patch);
   };
 
+  const writePosition = (key: "x" | "y", value: number | undefined) => {
+    const patch: Partial<BuilderItem> = {};
+    if (key === "x") {
+      patch[xField] = value;
+    } else {
+      patch[yField] = value;
+    }
+    if (viewport === "base" && value == null) return;
+    onChange(patch);
+  };
+
+  const ownPos = (axis: "x" | "y"): number => {
+    const value =
+      viewport === "lg"
+        ? axis === "x"
+          ? item.xLg
+          : item.yLg
+        : viewport === "md"
+          ? axis === "x"
+            ? item.xMd
+            : item.yMd
+          : axis === "x"
+            ? item.x
+            : item.y;
+    return value != null ? value + 1 : 0;
+  };
+
   return (
     <div className={css({ display: "flex", flexDirection: "column", gap: 3 })}>
       <Group label="Block">
@@ -126,21 +165,28 @@ function InspectorBody({ item, viewport, onChange, onDataChange }: InspectorBody
         <Row label="Editing" value={VIEWPORT_LABEL[viewport]} />
       </Group>
 
-      <Group label="Position">
-        <Hint>Position is the same across all breakpoints.</Hint>
+      <Group label={`Position · ${VIEWPORT_LABEL[viewport]}`}>
+        {viewport !== "base" && (
+          <Hint>Empty value inherits from {viewport === "lg" ? "tablet / mobile" : "mobile"}.</Hint>
+        )}
         <NumberField
           label="Col Start"
-          value={item.x + 1}
-          min={1}
+          value={ownPos("x")}
+          min={viewport === "base" ? 1 : 0}
           max={GRID_COLS}
-          onChange={(v) => onChange({ x: Math.max(0, v - 1) })}
+          onChange={(v) =>
+            writePosition("x", v > 0 ? Math.max(0, v - 1) : viewport === "base" ? 0 : undefined)
+          }
         />
         <NumberField
           label="Row Start"
-          value={item.y + 1}
-          min={1}
-          onChange={(v) => onChange({ y: Math.max(0, v - 1) })}
+          value={ownPos("y")}
+          min={viewport === "base" ? 1 : 0}
+          onChange={(v) =>
+            writePosition("y", v > 0 ? Math.max(0, v - 1) : viewport === "base" ? 0 : undefined)
+          }
         />
+        <Row label="Effective" value={`col ${x + 1} · row ${y + 1}`} />
       </Group>
 
       <Group label={`Span · ${VIEWPORT_LABEL[viewport]}`}>
@@ -155,13 +201,26 @@ function InspectorBody({ item, viewport, onChange, onDataChange }: InspectorBody
             writeSize("w", v === "" ? undefined : v === "full" ? GRID_COLS : Number(v))
           }
         />
-        <NumberField
+        <SelectField
           label="Row Span"
-          value={ownSpanNumber(item, viewport, "h")}
-          min={viewport === "base" ? 1 : 0}
-          onChange={(v) => writeSize("h", v > 0 ? v : viewport === "base" ? 1 : undefined)}
+          value={ownSpan(item, viewport, "h")}
+          options={GRID_SPAN_OPTIONS}
+          onChange={(v) =>
+            writeSize("h", v === "" ? undefined : v === "full" ? GRID_COLS : Number(v))
+          }
         />
         <Row label="Effective" value={`${w} × ${h}`} />
+      </Group>
+
+      <Group label={`Visibility · ${VIEWPORT_LABEL[viewport]}`}>
+        <label className={css({ display: "flex", gap: 2, alignItems: "center" })}>
+          <input
+            type="checkbox"
+            checked={hidden}
+            onChange={(e) => onChange({ [hiddenField]: e.target.checked || undefined })}
+          />
+          <span>Hide on {VIEWPORT_LABEL[viewport]}</span>
+        </label>
       </Group>
 
       <Group label="Grid Item">
@@ -228,6 +287,18 @@ function hFieldForViewport(v: Viewport): "h" | "hMd" | "hLg" {
   return "h";
 }
 
+function xFieldForViewport(v: Viewport): "x" | "xMd" | "xLg" {
+  if (v === "lg") return "xLg";
+  if (v === "md") return "xMd";
+  return "x";
+}
+
+function yFieldForViewport(v: Viewport): "y" | "yMd" | "yLg" {
+  if (v === "lg") return "yLg";
+  if (v === "md") return "yMd";
+  return "y";
+}
+
 function ownSpan(item: BuilderItem, viewport: Viewport, axis: "w" | "h"): string {
   const value =
     viewport === "lg"
@@ -244,22 +315,6 @@ function ownSpan(item: BuilderItem, viewport: Viewport, axis: "w" | "h"): string
   if (value == null) return "";
   if (axis === "w" && value === GRID_COLS) return "full";
   return String(value);
-}
-
-function ownSpanNumber(item: BuilderItem, viewport: Viewport, axis: "w" | "h"): number {
-  const value =
-    viewport === "lg"
-      ? axis === "w"
-        ? item.wLg
-        : item.hLg
-      : viewport === "md"
-        ? axis === "w"
-          ? item.wMd
-          : item.hMd
-        : axis === "w"
-          ? item.w
-          : item.h;
-  return value ?? 0;
 }
 
 function inheritedSpacingForViewport(spacing: ItemSpacing, viewport: Viewport): SpacingSet {
@@ -317,8 +372,7 @@ function Row({ label, value, mono }: { label: string; value: string; mono?: bool
 }
 
 const labelCss = css({ display: "flex", flexDirection: "column", gap: 1 });
-const fieldCss = css({
-  width: "100%",
+const fieldInline = {
   padding: 1,
   border: "1px solid",
   borderColor: "pageBorder",
@@ -326,7 +380,8 @@ const fieldCss = css({
   color: "pageFg",
   fontFamily: "mono",
   fontSize: "sm",
-});
+} as const;
+const fieldCss = css({ width: "100%", ...fieldInline });
 
 function NumberField({
   label,
@@ -531,6 +586,9 @@ function BlokField({
         />
       );
     case "assetUrl":
+      return <PickableField field={field} value={value} onChange={onChange} kind="asset" />;
+    case "storyUuid":
+      return <PickableField field={field} value={value} onChange={onChange} kind="story" />;
     case "text":
     default:
       return (
@@ -540,10 +598,75 @@ function BlokField({
             type="text"
             value={String(value ?? "")}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={field.type === "assetUrl" ? "https://..." : undefined}
             className={fieldCss}
           />
         </label>
       );
   }
+}
+
+function PickableField({
+  field,
+  value,
+  onChange,
+  kind,
+}: {
+  field: FieldDef;
+  value: unknown;
+  onChange(v: unknown): void;
+  kind: "asset" | "story";
+}) {
+  const [pickerOpen, setPickerOpen] = useState(false);
+  return (
+    <label className={labelCss}>
+      <span className={css({ opacity: 0.6 })}>{field.label}</span>
+      <div className={css({ display: "flex", gap: 1 })}>
+        <input
+          type="text"
+          value={String(value ?? "")}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={kind === "asset" ? "https://..." : "uuid"}
+          className={css({ flex: 1, ...fieldInline })}
+        />
+        <button
+          type="button"
+          onClick={() => setPickerOpen(true)}
+          className={css({
+            padding: "1px 8px",
+            border: "1px solid",
+            borderColor: "pageBorder",
+            bg: "pageBg",
+            color: "pageFg",
+            fontFamily: "mono",
+            fontSize: "sm",
+            cursor: "pointer",
+            _hover: { bg: "pageFg", color: "pageBg" },
+          })}
+        >
+          Browse
+        </button>
+      </div>
+      {kind === "asset" && (
+        <AssetPicker
+          open={pickerOpen}
+          onClose={() => setPickerOpen(false)}
+          onPick={(asset) => {
+            onChange(asset.filename);
+            setPickerOpen(false);
+          }}
+        />
+      )}
+      {kind === "story" && (
+        <StoryPicker
+          open={pickerOpen}
+          startsWith={field.storyStartsWith}
+          onClose={() => setPickerOpen(false)}
+          onPick={(story) => {
+            onChange(story.uuid);
+            setPickerOpen(false);
+          }}
+        />
+      )}
+    </label>
+  );
 }

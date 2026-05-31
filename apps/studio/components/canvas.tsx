@@ -11,11 +11,15 @@ import {
   createItemId,
   effectiveColumns,
   effectiveH,
+  effectiveHidden,
   effectiveSpacing,
   effectiveW,
+  effectiveX,
+  effectiveY,
   emptySpacing,
   type GridSettings,
   MIN_ROWS,
+  patchPosition,
   patchSize,
   ROW_HEIGHT_PX,
   type SpacingSet,
@@ -62,7 +66,10 @@ export function Canvas({
   const [hoverCell, setHoverCell] = useState<{ x: number; y: number } | null>(null);
 
   const cols = effectiveColumns(settings, viewport);
-  const occupiedRows = Math.max(0, ...items.map((it) => it.y + effectiveH(it, viewport)));
+  const occupiedRows = Math.max(
+    0,
+    ...items.map((it) => effectiveY(it, viewport) + effectiveH(it, viewport)),
+  );
   const rows = Math.max(MIN_ROWS, occupiedRows + 4) + extraRows;
   const gapPx = spacingToPx(settings.gap) ?? "0";
   const maxWidth = VIEWPORT_WIDTH_PX[viewport];
@@ -79,14 +86,17 @@ export function Canvas({
       const dyCells = Math.round((e.clientY - drag.startY) / (ROW_HEIGHT_PX + gapValue));
 
       const current = itemsRef.current;
+      const originX = effectiveX(drag.origin, viewport);
+      const originY = effectiveY(drag.origin, viewport);
+      const originW = effectiveW(drag.origin, viewport);
+      const originH = effectiveH(drag.origin, viewport);
       if (drag.mode === "move") {
-        const x = clamp(drag.origin.x + dxCells, 0, cols - effectiveW(drag.origin, viewport));
-        const y = Math.max(0, drag.origin.y + dyCells);
-        onItemsChange(current.map((it) => (it.id === drag.id ? { ...it, x, y } : it)));
+        const x = clamp(originX + dxCells, 0, cols - originW);
+        const y = Math.max(0, originY + dyCells);
+        const patch = patchPosition(viewport, x, y);
+        onItemsChange(current.map((it) => (it.id === drag.id ? { ...it, ...patch } : it)));
       } else {
-        const originW = effectiveW(drag.origin, viewport);
-        const originH = effectiveH(drag.origin, viewport);
-        const w = clamp(originW + dxCells, 1, cols - drag.origin.x);
+        const w = clamp(originW + dxCells, 1, cols - originX);
         const h = Math.max(1, originH + dyCells);
         const patch = patchSize(viewport, w, h);
         onItemsChange(current.map((it) => (it.id === drag.id ? { ...it, ...patch } : it)));
@@ -328,8 +338,11 @@ function CanvasItem({
   const def = blokPlugin(item.type);
   const w = Math.min(effectiveW(item, viewport), cols);
   const h = effectiveH(item, viewport);
-  const x = Math.min(item.x, Math.max(0, cols - w));
+  const itemY = effectiveY(item, viewport);
+  const itemX = effectiveX(item, viewport);
+  const x = Math.min(itemX, Math.max(0, cols - w));
   const spacing = effectiveSpacing(item, viewport);
+  const hidden = effectiveHidden(item, viewport);
 
   return (
     <div
@@ -337,14 +350,16 @@ function CanvasItem({
         position: "relative",
         border: "1px solid",
         borderColor: selected ? "pageFg" : "pageBorder",
+        borderStyle: hidden ? "dashed" : "solid",
         bg: "pageBg",
         color: "pageFg",
         boxSizing: "border-box",
         boxShadow: selected ? "inset 0 0 0 1px var(--colors-page-fg)" : "none",
+        opacity: hidden ? 0.35 : 1,
       })}
       style={{
         gridColumn: `${x + 1} / span ${w}`,
-        gridRow: `${item.y + 1} / span ${h}`,
+        gridRow: `${itemY + 1} / span ${h}`,
         alignSelf: item.alignSelf || undefined,
         justifySelf: item.justifySelf || undefined,
         ...marginStyle(spacing),

@@ -46,10 +46,17 @@ export interface BuilderItem {
   y: number;
   w: number;
   h: number;
+  xMd?: number;
+  yMd?: number;
+  xLg?: number;
+  yLg?: number;
   wMd?: number;
   wLg?: number;
   hMd?: number;
   hLg?: number;
+  hiddenBase?: boolean;
+  hiddenMd?: boolean;
+  hiddenLg?: boolean;
   spacing: ItemSpacing;
   alignSelf?: string;
   justifySelf?: string;
@@ -96,6 +103,36 @@ export function patchSize(viewport: Viewport, w: number, h: number): Partial<Bui
   if (viewport === "lg") return { wLg: w, hLg: h };
   if (viewport === "md") return { wMd: w, hMd: h };
   return { w, h };
+}
+
+export function effectiveX(item: BuilderItem, viewport: Viewport): number {
+  if (viewport === "lg") return item.xLg ?? item.xMd ?? item.x;
+  if (viewport === "md") return item.xMd ?? item.x;
+  return item.x;
+}
+
+export function effectiveY(item: BuilderItem, viewport: Viewport): number {
+  if (viewport === "lg") return item.yLg ?? item.yMd ?? item.y;
+  if (viewport === "md") return item.yMd ?? item.y;
+  return item.y;
+}
+
+export function patchPosition(viewport: Viewport, x: number, y: number): Partial<BuilderItem> {
+  if (viewport === "lg") return { xLg: x, yLg: y };
+  if (viewport === "md") return { xMd: x, yMd: y };
+  return { x, y };
+}
+
+export function effectiveHidden(item: BuilderItem, viewport: Viewport): boolean {
+  if (viewport === "lg") return Boolean(item.hiddenLg);
+  if (viewport === "md") return Boolean(item.hiddenMd);
+  return Boolean(item.hiddenBase);
+}
+
+export function hiddenFieldForViewport(viewport: Viewport): "hiddenBase" | "hiddenMd" | "hiddenLg" {
+  if (viewport === "lg") return "hiddenLg";
+  if (viewport === "md") return "hiddenMd";
+  return "hiddenBase";
 }
 
 function labelize<T extends string>(values: readonly T[]): { value: T; label: string }[] {
@@ -188,15 +225,22 @@ export interface ExportedGridItem {
   component: "grid_item";
   _uid: string;
   colStart: number;
+  colStartMd?: number;
+  colStartLg?: number;
   rowStart: number;
+  rowStartMd?: number;
+  rowStartLg?: number;
   colSpan: string;
   colSpanMd?: string;
   colSpanLg?: string;
-  rowSpan: number;
-  rowSpanMd?: number;
-  rowSpanLg?: number;
+  rowSpan: string;
+  rowSpanMd?: string;
+  rowSpanLg?: string;
   alignSelf?: string;
   justifySelf?: string;
+  hiddenBase?: boolean;
+  hiddenMd?: boolean;
+  hiddenLg?: boolean;
   content: ExportedBlok[];
 }
 
@@ -229,15 +273,22 @@ export function serializeGrid(settings: GridSettings, items: BuilderItem[]): Exp
           component: "grid_item",
           _uid: uuid(),
           colStart: it.x + 1,
+          colStartMd: it.xMd != null ? it.xMd + 1 : undefined,
+          colStartLg: it.xLg != null ? it.xLg + 1 : undefined,
           rowStart: it.y + 1,
+          rowStartMd: it.yMd != null ? it.yMd + 1 : undefined,
+          rowStartLg: it.yLg != null ? it.yLg + 1 : undefined,
           colSpan: String(it.w),
           colSpanMd: it.wMd ? String(it.wMd) : undefined,
           colSpanLg: it.wLg ? String(it.wLg) : undefined,
-          rowSpan: it.h,
-          rowSpanMd: it.hMd,
-          rowSpanLg: it.hLg,
+          rowSpan: String(it.h),
+          rowSpanMd: it.hMd ? String(it.hMd) : undefined,
+          rowSpanLg: it.hLg ? String(it.hLg) : undefined,
           alignSelf: it.alignSelf || undefined,
           justifySelf: it.justifySelf || undefined,
+          hiddenBase: it.hiddenBase || undefined,
+          hiddenMd: it.hiddenMd || undefined,
+          hiddenLg: it.hiddenLg || undefined,
           content: [child],
         };
       }),
@@ -293,7 +344,7 @@ export function deserializeGrid(grid: ExportedGrid): {
     const data = plugin ? plugin.deserialize(inner) : { ...inner };
 
     const w = parseSpan(gi.colSpan, plugin?.defaultSize.w ?? 1);
-    const h = typeof gi.rowSpan === "number" ? gi.rowSpan : Number(gi.rowSpan ?? 0) || 1;
+    const h = parseSpan(gi.rowSpan, 1);
 
     const explicitX = asInt(gi.colStart);
     const explicitY = asInt(gi.rowStart);
@@ -316,6 +367,11 @@ export function deserializeGrid(grid: ExportedGrid): {
       rowMaxH = Math.max(rowMaxH, h);
     }
 
+    const xMdRaw = asInt(gi.colStartMd);
+    const xLgRaw = asInt(gi.colStartLg);
+    const yMdRaw = asInt(gi.rowStartMd);
+    const yLgRaw = asInt(gi.rowStartLg);
+
     return {
       id: createItemId(),
       type: inner.component,
@@ -323,10 +379,17 @@ export function deserializeGrid(grid: ExportedGrid): {
       y,
       w,
       h,
+      xMd: xMdRaw != null ? xMdRaw - 1 : undefined,
+      xLg: xLgRaw != null ? xLgRaw - 1 : undefined,
+      yMd: yMdRaw != null ? yMdRaw - 1 : undefined,
+      yLg: yLgRaw != null ? yLgRaw - 1 : undefined,
       wMd: optionalSpan(gi.colSpanMd),
       wLg: optionalSpan(gi.colSpanLg),
-      hMd: gi.rowSpanMd && gi.rowSpanMd > 0 ? gi.rowSpanMd : undefined,
-      hLg: gi.rowSpanLg && gi.rowSpanLg > 0 ? gi.rowSpanLg : undefined,
+      hMd: optionalSpan(gi.rowSpanMd),
+      hLg: optionalSpan(gi.rowSpanLg),
+      hiddenBase: gi.hiddenBase || undefined,
+      hiddenMd: gi.hiddenMd || undefined,
+      hiddenLg: gi.hiddenLg || undefined,
       spacing: readSpacing(inner as Record<string, unknown>),
       alignSelf: str(gi.alignSelf),
       justifySelf: str(gi.justifySelf),

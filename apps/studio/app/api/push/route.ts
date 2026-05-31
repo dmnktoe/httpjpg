@@ -5,7 +5,12 @@ export const runtime = "nodejs";
 
 interface PushPayload {
   slug: string;
-  grid: { component: "grid"; [key: string]: unknown };
+  grid: { component: "grid"; _uid?: string; [key: string]: unknown };
+  mode?: "append" | "replace";
+  /** When mode = "replace", match the existing entry by `_uid` first, then by index. */
+  replaceUid?: string;
+  /** 0-based index into body[] used when mode = "replace" and no uid match found. */
+  replaceIndex?: number;
 }
 
 interface StoryblokStory {
@@ -70,7 +75,41 @@ export async function POST(request: NextRequest) {
 
   const content = { ...target.content };
   const body = Array.isArray(content.body) ? [...content.body] : [];
-  body.push(payload.grid);
+  const mode = payload.mode ?? "append";
+
+  let appliedAt = -1;
+  let action: "appended" | "replaced" = "appended";
+
+  if (mode === "replace") {
+    let idx = -1;
+    if (payload.replaceUid) {
+      idx = body.findIndex((entry) => {
+        const e = entry as { _uid?: string };
+        return e?._uid === payload.replaceUid;
+      });
+    }
+    if (idx < 0 && typeof payload.replaceIndex === "number") {
+      if (payload.replaceIndex >= 0 && payload.replaceIndex < body.length) {
+        idx = payload.replaceIndex;
+      }
+    }
+    if (idx < 0) {
+      return NextResponse.json(
+        { error: "Replace target not found (no matching _uid and no valid replaceIndex)" },
+        { status: 400 },
+      );
+    }
+    // Preserve the existing entry's _uid so Storyblok treats this as an update,
+    // not a brand-new blok (avoids losing _editable references in the Visual Editor).
+    const existing = body[idx] as { _uid?: string };
+    body[idx] = existing?._uid ? { ...payload.grid, _uid: existing._uid } : payload.grid;
+    appliedAt = idx;
+    action = "replaced";
+  } else {
+    body.push(payload.grid);
+    appliedAt = body.length - 1;
+  }
+
   content.body = body;
 
   const update = await fetch(`${MAPI}/spaces/${spaceId}/stories/${story.id}`, {
@@ -86,5 +125,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  return NextResponse.json({ ok: true, storyId: story.id, fullSlug: target.full_slug });
+  return NextResponse.json({
+    ok: true,
+    storyId: story.id,
+    fullSlug: target.full_slug,
+    action,
+    index: appliedAt,
+  });
 }

@@ -55,6 +55,8 @@ export function Toolbar({
   const siteHost = (siteUrl ?? "").replace(/^https?:\/\//, "").replace(/\/$/, "");
   const [showPush, setShowPush] = useState(false);
   const [slug, setSlug] = useState("");
+  const [mode, setMode] = useState<"append" | "replace">("append");
+  const [replaceIndex, setReplaceIndex] = useState(0);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [pushing, setPushing] = useState(false);
 
@@ -78,13 +80,25 @@ export function Toolbar({
       const res = await fetch("/api/push", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ slug, grid: exported }),
+        body: JSON.stringify({
+          slug,
+          grid: exported,
+          mode,
+          replaceIndex: mode === "replace" ? replaceIndex : undefined,
+        }),
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
+      const data = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        action?: "appended" | "replaced";
+        index?: number;
+      };
       if (!res.ok || !data.ok) {
         setStatus({ kind: "error", text: data.error ?? `HTTP ${res.status}` });
       } else {
-        setStatus({ kind: "ok", text: `Pushed to ${slug}` });
+        const verb = data.action === "replaced" ? "Replaced" : "Appended";
+        const where = typeof data.index === "number" ? ` at body[${data.index}]` : "";
+        setStatus({ kind: "ok", text: `${verb}${where} in ${slug}` });
       }
     } catch (e) {
       setStatus({ kind: "error", text: (e as Error).message });
@@ -245,6 +259,7 @@ export function Toolbar({
             borderColor: "pageBorder",
             pt: 2,
             mt: 1,
+            flexWrap: "wrap",
           })}
         >
           <label className={css({ display: "flex", gap: 1, alignItems: "center", flex: 1 })}>
@@ -266,8 +281,66 @@ export function Toolbar({
               })}
             />
           </label>
+
+          <div
+            className={css({
+              display: "inline-flex",
+              border: "1px solid",
+              borderColor: "pageBorder",
+            })}
+          >
+            {(["append", "replace"] as const).map((m) => {
+              const active = m === mode;
+              return (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setMode(m)}
+                  aria-pressed={active}
+                  className={css({
+                    padding: "1px 8px",
+                    bg: active ? "pageFg" : "pageBg",
+                    color: active ? "pageBg" : "pageFg",
+                    fontFamily: "mono",
+                    fontSize: "sm",
+                    cursor: "pointer",
+                    border: "none",
+                    _hover: { bg: "pageFg", color: "pageBg" },
+                  })}
+                >
+                  {m === "append" ? "Append" : "Replace"}
+                </button>
+              );
+            })}
+          </div>
+
+          {mode === "replace" && (
+            <label className={css({ display: "flex", gap: 1, alignItems: "center" })}>
+              <span className={css({ opacity: 0.6, whiteSpace: "nowrap" })}>body[N]</span>
+              <input
+                type="number"
+                min={0}
+                value={replaceIndex}
+                onChange={(e) => {
+                  const n = Number(e.target.value);
+                  if (Number.isFinite(n) && n >= 0) setReplaceIndex(n);
+                }}
+                className={css({
+                  width: "50px",
+                  padding: 1,
+                  border: "1px solid",
+                  borderColor: "pageBorder",
+                  bg: "pageBg",
+                  color: "pageFg",
+                  fontFamily: "mono",
+                  fontSize: "sm",
+                })}
+              />
+            </label>
+          )}
+
           <button type="button" onClick={handlePush} disabled={pushing} className={btn}>
-            {pushing ? "Pushing…" : "Append grid to story"}
+            {pushing ? "Pushing…" : mode === "replace" ? "Replace in story" : "Append to story"}
           </button>
         </div>
       )}

@@ -5,13 +5,22 @@ import { Button, Headline, Image, Marquee, MusicPlayer, Paragraph, Video } from 
 import type { ReactNode } from "react";
 import { css } from "styled-system/css";
 
-export type FieldType = "text" | "textarea" | "number" | "boolean" | "select" | "assetUrl";
+export type FieldType =
+  | "text"
+  | "textarea"
+  | "number"
+  | "boolean"
+  | "select"
+  | "assetUrl"
+  | "storyUuid";
 
 export interface FieldDef {
   key: string;
   label: string;
   type: FieldType;
   options?: { value: string; label: string }[];
+  /** For storyUuid: scope picker to stories under this prefix. */
+  storyStartsWith?: string;
 }
 
 function labelOption<T extends string>(v: T): { value: T; label: string } {
@@ -350,7 +359,7 @@ const workCard: BlokPlugin = {
   group: "Widgets",
   defaultSize: { w: 4, h: 5 },
   defaults: { workUuid: "" },
-  fields: [{ key: "workUuid", label: "Work Story UUID", type: "text" }],
+  fields: [{ key: "workUuid", label: "Work Story", type: "storyUuid", storyStartsWith: "work/" }],
   serialize: (d) => ({ work: str(d.workUuid) }),
   deserialize: (b) => ({ workUuid: str(b.work) }),
   preview: (d) => <Placeholder label="WORK CARD" sub={str(d.workUuid)} />,

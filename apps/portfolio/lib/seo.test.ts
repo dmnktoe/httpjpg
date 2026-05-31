@@ -108,6 +108,15 @@ describe("extractStoryMetadata", () => {
     expect(meta.ogImage?.alt).toBe("Story");
   });
 
+  it("keeps the work/ prefix when falling back to slug for work stories", () => {
+    const meta = extractStoryMetadata({
+      name: "Project",
+      slug: "my-project",
+      content: { component: "work" },
+    });
+    expect(meta.ogImage?.url).toBe("/api/og/work/my-project");
+  });
+
   it("falls back to slug when full_slug is missing", () => {
     const meta = extractStoryMetadata({
       name: "X",

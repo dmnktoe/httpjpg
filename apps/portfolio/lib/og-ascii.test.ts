@@ -92,4 +92,36 @@ describe("imageToAscii", () => {
       /source image fetch failed/,
     );
   });
+
+  it("rethrows non-abort fetch errors verbatim", async () => {
+    mockSharpChain([], 0, 0);
+    globalThis.fetch = vi.fn(async () => {
+      throw new TypeError("network down");
+    });
+    await expect(imageToAscii("https://a.storyblok.com/x.jpg", 1, 1)).rejects.toThrow(
+      /network down/,
+    );
+  });
+
+  it("aborts and surfaces a timeout error when the fetch hangs", async () => {
+    mockSharpChain([], 0, 0);
+    globalThis.fetch = vi.fn(
+      async (_url, opts) =>
+        new Promise<Response>((_, reject) => {
+          const signal = (opts as { signal?: AbortSignal } | undefined)?.signal;
+          signal?.addEventListener("abort", () => {
+            const err = new Error("aborted");
+            err.name = "AbortError";
+            reject(err);
+          });
+        }),
+    );
+    vi.useFakeTimers();
+    const assertion = expect(
+      imageToAscii("https://a.storyblok.com/slow.jpg", 1, 1),
+    ).rejects.toThrow(/timed out/);
+    await vi.advanceTimersByTimeAsync(5_000);
+    await assertion;
+    vi.useRealTimers();
+  });
 });

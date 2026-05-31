@@ -23,8 +23,22 @@ export function pixelsToAsciiGrid(pixels: ArrayLike<number>, cols: number, rows:
   return lines.join("\n");
 }
 
+const FETCH_TIMEOUT_MS = 5_000;
+
 export async function imageToAscii(url: string, cols = 110, rows = 38): Promise<AsciiResult> {
-  const res = await fetch(url);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  let res: Response;
+  try {
+    res = await fetch(url, { signal: controller.signal });
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error(`og-ascii: source image fetch timed out after ${FETCH_TIMEOUT_MS}ms`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
   if (!res.ok) {
     throw new Error(`og-ascii: source image fetch failed (${res.status})`);
   }

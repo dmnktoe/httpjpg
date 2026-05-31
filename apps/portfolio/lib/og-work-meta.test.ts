@@ -83,6 +83,12 @@ describe("formatYear", () => {
     expect(formatYear("2024-06-12")).toBe("2024");
   });
 
+  it("uses UTC so date-only strings don't roll back a year on UTC- offsets", () => {
+    // new Date("2024-01-01") parses as UTC midnight; on UTC-N timezones the
+    // local year would be 2023. UTC accessor keeps us in 2024.
+    expect(formatYear("2024-01-01")).toBe("2024");
+  });
+
   it("returns an empty string when the input doesn't parse as a date", () => {
     expect(formatYear("not a date")).toBe("");
   });

@@ -39,7 +39,7 @@ export function formatYear(date: string | undefined): string {
     return "";
   }
   const d = new Date(date);
-  return Number.isNaN(d.getTime()) ? "" : d.getFullYear().toString();
+  return Number.isNaN(d.getTime()) ? "" : d.getUTCFullYear().toString();
 }
 
 export function pickTitleSize(title: string): number {

@@ -34,7 +34,11 @@ export function extractStoryMetadata(story: StoryShape): StoryMetadata {
         : "";
 
   const firstImage = story.content?.images?.[0];
-  const path = story.full_slug || story.slug;
+  // Fall back to slug for stories where Storyblok didn't return full_slug,
+  // but keep the work/ prefix so the dynamic handler can resolve the story.
+  const path =
+    story.full_slug ||
+    (story.slug && (story.content?.component === "work" ? `work/${story.slug}` : story.slug));
 
   let ogImage: StoryMetadata["ogImage"];
   if (path) {

@@ -30,15 +30,13 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
   } = blok;
   const editable = editableAttrs(blok);
 
-  // Clamp to a sane range so the matching overscan (scale) never explodes.
   const parallaxSpeed = Math.min(Math.max(parallax, 0), 0.4);
   const isParallax = parallaxSpeed > 0;
   const { ref: parallaxRef, offset } = useParallax<HTMLDivElement>({
     speed: parallaxSpeed,
     disabled: !isParallax,
   });
-  // Overscan the moving layer so the bounded travel (±height * speed) never
-  // reveals an edge; the extra 0.4 is a small safety margin against rounding.
+  // Overscan so the bounded travel (±height * speed) never reveals an edge.
   const parallaxScale = 1 + parallaxSpeed * 2.4;
 
   if (!image?.filename) {
@@ -77,15 +75,10 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
         ...spacingCss(blok),
       }}
     >
-      {/*
-        Decorative overlay particles sit just outside the image edges. Clip
-        them horizontally so an edge-aligned full-bleed image can't push the
-        page wider, while keeping the top/bottom decorations visible. (#66)
-      */}
+      {/* Clip overlay particles horizontally so edge-aligned images don't widen the page. */}
       <Box css={{ position: "relative", overflowX: "clip", overflowY: "visible" }}>
         {isParallax ? (
-          // Clip the parallax travel to this slot so the image moves *within*
-          // its frame instead of overlapping its neighbours. (#57)
+          // Clip the travel so the image moves within its frame, not over its neighbours.
           <Box css={{ overflow: "hidden" }}>
             <Box
               ref={parallaxRef}

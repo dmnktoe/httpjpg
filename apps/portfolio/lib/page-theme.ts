@@ -5,7 +5,7 @@ import { STORYBLOK_SLUGS } from "./storyblok-slugs";
 
 export type PageTheme = "light" | "dark";
 
-const INTERNAL_PREFIXES = ["__nextjs", "_next", ".well-known"];
+const INTERNAL_PREFIXES = ["__nextjs", "_next", ".well-known", "api/"];
 
 export function isInternalSlug(slug: string): boolean {
   if (INTERNAL_PREFIXES.some((p) => slug.startsWith(p))) {

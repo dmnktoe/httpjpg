@@ -75,8 +75,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
         ...spacingCss(blok),
       }}
     >
-      {/* Clip overlay particles horizontally so edge-aligned images don't widen the page. */}
-      <Box css={{ position: "relative", overflowX: "clip", overflowY: "visible" }}>
+      <Box css={{ position: "relative" }}>
         {isParallax ? (
           // Clip the travel so the image moves within its frame, not over its neighbours.
           <Box css={{ overflow: "hidden" }}>

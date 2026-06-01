@@ -82,7 +82,7 @@ export const OVERLAY_PATTERNS: Record<
     { char: "↘", bottom: "-12px", right: "-8px", scale: 1.1, delay: "1.2s" },
   ],
   ghost: [
-    { char: "( o.o )", top: "-16px", right: "8%", scale: 0.7, delay: "0s", opacity: 0.6 },
+    { char: "( o.o )", top: "-22px", right: "8%", scale: 0.7, delay: "0s", opacity: 0.6 },
     { char: "·°", bottom: "10%", left: "-8px", scale: 1.2, delay: "0.6s" },
     { char: "⋆", top: "40%", right: "-6px", scale: 1, delay: "1.2s" },
   ],

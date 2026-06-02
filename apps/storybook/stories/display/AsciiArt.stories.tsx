@@ -1,18 +1,13 @@
 import {
   ASCII_404,
   ASCII_500,
-  ASCII_CASSETTE,
   ASCII_DIVIDER_ARROWS,
   ASCII_DIVIDER_DOTS,
   ASCII_DIVIDER_MUSIC,
   ASCII_DIVIDER_STARS,
   ASCII_DIVIDER_WAVE,
-  ASCII_FLOPPY,
   ASCII_GHOST,
-  ASCII_HEART,
-  ASCII_LOADING_BAR,
   ASCII_OFFLINE,
-  ASCII_PIXEL_HEART,
   ASCII_SPARKLES,
   ASCII_TAPE,
   AsciiArt,
@@ -84,24 +79,6 @@ export const Banners: Story = {
         </Paragraph>
         <AsciiArt label="ghost">{ASCII_GHOST}</AsciiArt>
       </Box>
-      <Box>
-        <Paragraph css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.5, mb: "2" }}>
-          ASCII_PIXEL_HEART
-        </Paragraph>
-        <AsciiArt label="pixel heart">{ASCII_PIXEL_HEART}</AsciiArt>
-      </Box>
-      <Box>
-        <Paragraph css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.5, mb: "2" }}>
-          ASCII_CASSETTE
-        </Paragraph>
-        <AsciiArt label="cassette">{ASCII_CASSETTE}</AsciiArt>
-      </Box>
-      <Box>
-        <Paragraph css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.5, mb: "2" }}>
-          ASCII_FLOPPY
-        </Paragraph>
-        <AsciiArt label="floppy">{ASCII_FLOPPY}</AsciiArt>
-      </Box>
     </Stack>
   ),
 };
@@ -114,10 +91,8 @@ export const Dividers: Story = {
         Inline ASCII strings
       </Headline>
       {[
-        ["ASCII_HEART", ASCII_HEART],
         ["ASCII_SPARKLES", ASCII_SPARKLES],
         ["ASCII_TAPE", ASCII_TAPE],
-        ["ASCII_LOADING_BAR", ASCII_LOADING_BAR],
         ["ASCII_DIVIDER_STARS", ASCII_DIVIDER_STARS],
         ["ASCII_DIVIDER_DOTS", ASCII_DIVIDER_DOTS],
         ["ASCII_DIVIDER_WAVE", ASCII_DIVIDER_WAVE],

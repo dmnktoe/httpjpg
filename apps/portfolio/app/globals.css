@@ -3,9 +3,7 @@
 @layer base {
   html {
     scrollbar-gutter: stable;
-    /* Decorative image overlays bleed past their edges; clip horizontally so
-       they never trigger a page-wide horizontal scroll. `clip` (not `hidden`)
-       keeps sticky positioning working. (#66) */
+    /* `clip` (not `hidden`) so edge-bleeding image overlays can't scroll the page sideways. */
     overflow-x: clip;
   }
 

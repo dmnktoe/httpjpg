@@ -36,7 +36,6 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     speed: parallaxSpeed,
     disabled: !isParallax,
   });
-  // Overscan so the bounded travel (±height * speed) never reveals an edge.
   const parallaxScale = 1 + parallaxSpeed * 2.4;
 
   if (!image?.filename) {
@@ -77,7 +76,6 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     >
       <Box css={{ position: "relative" }}>
         {isParallax ? (
-          // Clip the travel so the image moves within its frame, not over its neighbours.
           <Box css={{ overflow: "hidden" }}>
             <Box
               ref={parallaxRef}

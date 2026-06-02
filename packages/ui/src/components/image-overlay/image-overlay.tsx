@@ -42,7 +42,6 @@ export function ImageOverlay({
     if (pattern === "random") {
       return pickPattern(seed);
     }
-    // Existing stories may carry an empty/unknown value; fall back to a pick.
     if (pattern !== "none" && !(pattern in OVERLAY_PATTERNS)) {
       return pickPattern(seed);
     }

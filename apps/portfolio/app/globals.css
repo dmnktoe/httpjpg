@@ -3,7 +3,6 @@
 @layer base {
   html {
     scrollbar-gutter: stable;
-    /* `clip` (not `hidden`) so edge-bleeding image overlays can't scroll the page sideways. */
     overflow-x: clip;
   }
 

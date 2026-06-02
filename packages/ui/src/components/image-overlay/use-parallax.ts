@@ -43,7 +43,6 @@ export function useParallax<T extends HTMLElement = HTMLDivElement>({
       ticking = false;
       const rect = el.getBoundingClientRect();
       const viewportH = window.innerHeight || document.documentElement.clientHeight;
-      // -1 as the element enters from the bottom, +1 as it leaves the top.
       const center = rect.top + rect.height / 2;
       const range = (viewportH + rect.height) / 2;
       const normalized = range > 0 ? Math.max(-1, Math.min(1, (range - center) / range)) : 0;

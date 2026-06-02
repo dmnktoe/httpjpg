@@ -42,7 +42,7 @@ export function ImageOverlay({
     if (pattern === "random") {
       return pickPattern(seed);
     }
-    if (pattern !== "none" && !Object.hasOwn(OVERLAY_PATTERNS, pattern)) {
+    if (pattern !== "none" && !Object.prototype.hasOwnProperty.call(OVERLAY_PATTERNS, pattern)) {
       return pickPattern(seed);
     }
     return pattern;

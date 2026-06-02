@@ -1,7 +1,7 @@
 import type { SbGridData } from "@httpjpg/storyblok-utils";
 import { Grid, type GridProps } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
-import { memo } from "react";
+import { memo, type CSSProperties } from "react";
 import { css } from "styled-system/css";
 
 import { editableAttrs, spacingCss } from "../../lib/use-blok";
@@ -51,7 +51,6 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
     justify,
     justifyContent,
     flow,
-    isList,
   } = blok;
   const editable = editableAttrs(blok);
 
@@ -64,7 +63,7 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
       ? ({
           ...(columnsMd && { "--grid-cols-md": COLS[columnsMd] }),
           ...(columnsLg && { "--grid-cols-lg": COLS[columnsLg] }),
-        } as React.CSSProperties)
+        } as CSSProperties)
       : undefined;
 
   const responsive = css({
@@ -73,7 +72,7 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
     ...spacingCss(blok),
   });
 
-  const grid = (
+  return (
     <Grid
       {...editable}
       columns={toCols(columns) ?? 1}
@@ -92,16 +91,6 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
       ))}
     </Grid>
   );
-
-  if (isList) {
-    return (
-      <ul {...editable} className={css({ listStyle: "none", p: 0, m: 0 })}>
-        {grid}
-      </ul>
-    );
-  }
-
-  return grid;
 });
 
 SbGrid.displayName = "SbGrid";

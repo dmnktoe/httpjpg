@@ -48,6 +48,8 @@ export default defineConfig({
     "../../apps/storybook/stories/**/*.{ts,tsx}",
     "../../apps/portfolio/app/**/*.{ts,tsx}",
     "../../apps/portfolio/components/**/*.{ts,tsx}",
+    "../../apps/studio/app/**/*.{ts,tsx}",
+    "../../apps/studio/components/**/*.{ts,tsx}",
     "../../packages/consent/src/**/*.{ts,tsx}",
     "../../packages/storyblok-richtext/src/**/*.{ts,tsx}",
     "../../packages/storyblok-ui/src/**/*.{ts,tsx}",

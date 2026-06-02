@@ -47,6 +47,8 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
 
   const lines = code.split("\n");
 
+  // CodeBlock stays dark in both light/dark themes — terminal/editor convention.
+  // Four shades only: bg (950), header bg (900), border + muted (700), text (100).
   return (
     <div
       ref={ref}
@@ -77,18 +79,18 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
             px: "4",
             py: "2",
             borderBottom: "1px solid",
-            borderColor: "neutral.800",
+            borderColor: "neutral.700",
             bg: "neutral.900",
             fontSize: "xs",
             textTransform: "uppercase",
             letterSpacing: "wider",
-            color: "neutral.400",
+            color: "neutral.100",
           })}
         >
           <span>
             {filename || language}
             {filename && language && (
-              <span className={css({ opacity: 0.4, ml: "2" })}>╱╱ {language}</span>
+              <span className={css({ opacity: 0.5, ml: "2" })}>╱╱ {language}</span>
             )}
           </span>
           {copyable && (
@@ -103,11 +105,11 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
                 px: "2",
                 py: "1",
                 border: "1px solid",
-                borderColor: "neutral.600",
-                color: "neutral.200",
+                borderColor: "neutral.700",
+                color: "neutral.100",
                 fontSize: "xs",
                 fontFamily: "mono",
-                _hover: { bg: "neutral.800", borderColor: "neutral.500" },
+                _hover: { bg: "neutral.900", borderColor: "neutral.100" },
                 _focusVisible: {
                   outline: "1px solid",
                   outlineColor: "primary.500",
@@ -136,7 +138,7 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
                   className={css({
                     display: "inline-block",
                     width: "8",
-                    color: "neutral.600",
+                    color: "neutral.700",
                     textAlign: "right",
                     pr: "3",
                     userSelect: "none",

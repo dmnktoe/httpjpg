@@ -3,6 +3,7 @@
 @layer base {
   html {
     scrollbar-gutter: stable;
+    overflow-x: clip;
   }
 
   body {

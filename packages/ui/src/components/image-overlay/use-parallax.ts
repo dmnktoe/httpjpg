@@ -3,16 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 
 export interface UseParallaxOptions {
-  /** Strength multiplier; positive moves opposite the scroll. @default 0.15 */
+  /** Travel as a fraction of the element's height; offset is bounded to `±height * speed`. @default 0.15 */
   speed?: number;
   /** Skip work entirely (e.g. for users who prefer reduced motion). */
   disabled?: boolean;
 }
 
 /**
- * Returns a ref to attach to a wrapper plus a translateY (in px) that
- * tracks the element's position in the viewport. Idle when the element
- * is offscreen.
+ * Returns a ref to attach to the moving layer plus a translateY (in px) that
+ * tracks the element's position in the viewport. Idle when offscreen.
  */
 export function useParallax<T extends HTMLElement = HTMLDivElement>({
   speed = 0.15,
@@ -45,8 +44,9 @@ export function useParallax<T extends HTMLElement = HTMLDivElement>({
       const rect = el.getBoundingClientRect();
       const viewportH = window.innerHeight || document.documentElement.clientHeight;
       const center = rect.top + rect.height / 2;
-      const fromCenter = center - viewportH / 2;
-      setOffset(-fromCenter * speed);
+      const range = (viewportH + rect.height) / 2;
+      const normalized = range > 0 ? Math.max(-1, Math.min(1, (range - center) / range)) : 0;
+      setOffset(normalized * rect.height * speed);
     };
 
     const onScroll = () => {

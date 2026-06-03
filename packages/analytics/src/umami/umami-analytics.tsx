@@ -2,13 +2,10 @@ import Script from "next/script";
 
 export interface UmamiAnalyticsProps {
   websiteId: string;
-  src?: string;
+  src: string;
 }
 
-export function UmamiAnalytics({
-  websiteId,
-  src = "https://cloud.umami.is/script.js",
-}: UmamiAnalyticsProps) {
+export function UmamiAnalytics({ websiteId, src }: UmamiAnalyticsProps) {
   return (
     <Script
       src={src}

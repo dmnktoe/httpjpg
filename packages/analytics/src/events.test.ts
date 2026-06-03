@@ -40,7 +40,7 @@ describe("analytics event fan-out", () => {
       "performance",
       expect.objectContaining({ event_label: "LCP", value: 2346 }),
     );
-    expect(umamiSpy).toHaveBeenCalledWith("web-vital", { metric: "LCP", value: 2346 });
+    expect(umamiSpy).toHaveBeenCalledWith("web_vital", { metric: "LCP", value: 2346 });
   });
 
   it("a missing provider does not block the other", () => {

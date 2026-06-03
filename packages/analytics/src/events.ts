@@ -19,5 +19,5 @@ export function trackWebVital(name: WebVitalName, value: number): void {
     label: name,
     value: rounded,
   });
-  trackUmamiEvent("web-vital", { metric: name, value: rounded });
+  trackUmamiEvent("web_vital", { metric: name, value: rounded });
 }

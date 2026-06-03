@@ -1,5 +1,3 @@
-import { UmamiAnalytics } from "@httpjpg/analytics/umami";
-
 import "@httpjpg/tokens/dist/tokens.css";
 import "@httpjpg/ui/styles.css";
 import "@/lib/storyblok";
@@ -18,6 +16,7 @@ import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 
 import { ConsentProvider } from "@/components/providers/consent-provider";
+import { ConsentedUmami } from "@/components/providers/consented-umami";
 import { StoryblokProvider } from "@/components/providers/storyblok-provider";
 import { ConsoleBanner } from "@/components/ui/console-banner";
 import { CustomCursorWrapper } from "@/components/ui/custom-cursor-wrapper";
@@ -168,7 +167,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         )}
 
         {env.NEXT_PUBLIC_UMAMI_ID && (
-          <UmamiAnalytics websiteId={env.NEXT_PUBLIC_UMAMI_ID} src={env.NEXT_PUBLIC_UMAMI_SRC} />
+          <ConsentedUmami websiteId={env.NEXT_PUBLIC_UMAMI_ID} src={env.NEXT_PUBLIC_UMAMI_SRC} />
         )}
       </body>
     </html>

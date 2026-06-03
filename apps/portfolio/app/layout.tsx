@@ -1,8 +1,7 @@
-import { env } from "@httpjpg/env";
-
 import "@httpjpg/tokens/dist/tokens.css";
 import "@httpjpg/ui/styles.css";
 import "@/lib/storyblok";
+import { env } from "@httpjpg/env";
 import {
   ASCII_DIVIDER_WAVE,
   AsciiArt,
@@ -16,8 +15,10 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 
+import { ConsentGate } from "@/components/providers/consent-gate";
 import { ConsentProvider } from "@/components/providers/consent-provider";
 import { StoryblokProvider } from "@/components/providers/storyblok-provider";
+import { UmamiAnalytics } from "@/components/providers/umami-analytics";
 import { ConsoleBanner } from "@/components/ui/console-banner";
 import { CustomCursorWrapper } from "@/components/ui/custom-cursor-wrapper";
 import { NostalgiaSlideshow } from "@/components/ui/nostalgia-slideshow";
@@ -162,8 +163,18 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           </StoryblokProvider>
         </LazyMotionProvider>
 
-        {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
-          <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+        {(env.NEXT_PUBLIC_GA_MEASUREMENT_ID || env.NEXT_PUBLIC_UMAMI_ID) && (
+          <ConsentGate category="analytics">
+            {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+              <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+            )}
+            {env.NEXT_PUBLIC_UMAMI_ID && (
+              <UmamiAnalytics
+                websiteId={env.NEXT_PUBLIC_UMAMI_ID}
+                src={env.NEXT_PUBLIC_UMAMI_SRC}
+              />
+            )}
+          </ConsentGate>
         )}
       </body>
     </html>

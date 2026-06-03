@@ -7,9 +7,9 @@ vi.mock("@httpjpg/env", () => ({
   },
 }));
 
-import { trackNowPlayingClick, trackWebVital } from "./analytics";
+import { trackGoogleEvent } from "./analytics";
 
-describe("analytics", () => {
+describe("trackGoogleEvent", () => {
   let gtagSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
@@ -18,30 +18,26 @@ describe("analytics", () => {
     vi.stubGlobal("window", { gtag: gtagSpy });
   });
 
-  it("trackNowPlayingClick", () => {
-    trackNowPlayingClick();
+  it("forwards the event to gtag with category and label", () => {
+    trackGoogleEvent("now_playing_click", {
+      category: "user_interaction",
+      label: "spotify_widget",
+    });
 
     expect(gtagSpy).toHaveBeenCalledWith(
       "event",
       "now_playing_click",
-      expect.objectContaining({ event_label: "spotify_widget" }),
-    );
-  });
-
-  it("trackWebVital forwards vital as performance event with rounded value", () => {
-    trackWebVital("LCP", 2345.67);
-
-    expect(gtagSpy).toHaveBeenCalledWith(
-      "event",
-      "performance",
-      expect.objectContaining({ event_label: "LCP", value: 2346 }),
+      expect.objectContaining({
+        event_category: "user_interaction",
+        event_label: "spotify_widget",
+      }),
     );
   });
 
   it("does not call gtag when window.gtag is unavailable", () => {
     vi.stubGlobal("window", {});
 
-    trackNowPlayingClick();
+    trackGoogleEvent("now_playing_click");
 
     expect(gtagSpy).not.toHaveBeenCalled();
   });

@@ -2,7 +2,7 @@ import { env } from "@httpjpg/env";
 
 import "./types";
 
-const GA_CATEGORIES = {
+export const GA_CATEGORIES = {
   USER_INTERACTION: "user_interaction",
   PERFORMANCE: "performance",
 } as const;
@@ -24,7 +24,7 @@ function isGAAvailable(): boolean {
   );
 }
 
-function trackEvent(eventName: string, params?: GAEventParams): void {
+export function trackGoogleEvent(eventName: string, params?: GAEventParams): void {
   if (!isGAAvailable()) {
     return;
   }
@@ -37,19 +37,4 @@ function trackEvent(eventName: string, params?: GAEventParams): void {
       ...params,
     });
   } catch {}
-}
-
-export function trackNowPlayingClick(): void {
-  trackEvent("now_playing_click", {
-    category: GA_CATEGORIES.USER_INTERACTION,
-    label: "spotify_widget",
-  });
-}
-
-export function trackWebVital(name: "CLS" | "FCP" | "LCP" | "TTFB" | "INP", value: number): void {
-  trackEvent("performance", {
-    category: GA_CATEGORIES.PERFORMANCE,
-    label: name,
-    value: Math.round(value),
-  });
 }

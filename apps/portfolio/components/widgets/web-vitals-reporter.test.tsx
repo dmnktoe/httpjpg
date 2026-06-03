@@ -81,7 +81,7 @@ describe("WebVitalsReporter", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
-  it("forwards tracked vitals to GA", () => {
+  it("forwards tracked vitals to the analytics providers", () => {
     render(<WebVitalsReporter />);
 
     reportCallback!({ name: "LCP", value: 2500 });

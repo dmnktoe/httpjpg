@@ -115,7 +115,7 @@ storyblok-utils  ←  storyblok-api    storyblok-richtext  ←  storyblok-ui
 
 - **`@httpjpg/spotify`** — Spotify Web API client (server-side, uses `Buffer`), `useNowPlaying` polling hook, and `extractVibrantColor` (colorthief wrapper) for album-artwork color extraction.
 - **`@httpjpg/now-playing`** — the actual draggable widget UI. Consumes `@httpjpg/spotify` for color extraction and `@httpjpg/ui` (peer) for `Marquee`. UI-only — no API or hook logic lives here.
-- **`@httpjpg/analytics`** — Google Analytics 4 wrapper. Track-functions follow `track*` naming.
+- **`@httpjpg/analytics`** — analytics wrappers (Google Analytics 4 under `src/google/`, privacy-first Umami under `src/umami/`). Thin, env-driven wrappers; both tracker scripts load only behind `analytics` consent (gated in the app via `ConsentGate`). Track-functions follow `track*` naming and fan out to whichever providers are configured.
 - **`@httpjpg/observability`** — Sentry init for the three Next runtimes. `getSentryConfig(scope)` resolves DSN, env, production flag, and enabled state per runtime.
 - **`@httpjpg/consent`** — cookie consent state machine (`getConsent`, `setConsent`, `hasVendorConsent`, …), the `CookieBanner` (portal-rendered) + `CookieCategory` + `VendorList` UI, and the vendor catalog (`EXTERNAL_VENDORS`).
 

@@ -1,54 +1,69 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    ":dependencyDashboard",
-    ":enablePreCommit",
-    ":preserveSemverRanges",
-    ":disableDependencyDashboard",
-    ":semanticCommits",
+    "config:best-practices",
     ":semanticCommitTypeAll(chore)",
-    ":ignoreModulesAndTests",
-    "schedule:weekends",
-    "workarounds:all"
+    ":preserveSemverRanges",
+    ":enablePreCommit"
   ],
+  "timezone": "Europe/Berlin",
   "assignees": ["dmnktoe"],
   "reviewers": ["dmnktoe"],
   "labels": ["dependencies"],
-  "timezone": "Europe/Berlin",
+  "rangeStrategy": "bump",
   "prHourlyLimit": 4,
   "prConcurrentLimit": 12,
-  "rangeStrategy": "bump",
-  "rebaseWhen": "conflicted",
+  "dependencyDashboard": false,
+  "lockFileMaintenance": { "enabled": true },
   "vulnerabilityAlerts": {
-    "enabled": true,
-    "labels": ["security"],
-    "addLabels": ["priority:high"],
+    "labels": ["security", "priority:high"],
     "assignees": ["dmnktoe"]
   },
-  "osvVulnerabilityAlerts": true,
-  "configMigration": true,
-  "dependencyDashboard": false,
   "packageRules": [
     {
-      "description": "Label production dependencies (individual PRs)",
+      "description": "Production deps get individual PRs, dev deps are grouped",
       "matchDepTypes": ["dependencies", "peerDependencies", "optionalDependencies"],
       "addLabels": ["deps:prod"]
     },
     {
-      "description": "Group ALL development dependencies into one PR",
-      "groupName": "development-dependencies",
-      "groupSlug": "dev-deps",
+      "description": "All dev deps land in one PR by default",
+      "groupName": "dev-dependencies",
       "matchDepTypes": ["devDependencies"],
       "addLabels": ["deps:dev"]
     },
     {
-      "description": "Separate major updates into their own PRs",
+      "description": "Type definitions get their own group",
+      "groupName": "type definitions",
+      "matchPackageNames": ["@types/**"],
+      "addLabels": ["deps:dev", "deps:types"]
+    },
+    {
+      "description": "Test tooling gets its own group",
+      "groupName": "test tooling",
+      "matchPackageNames": [
+        "vitest",
+        "@vitest/**",
+        "playwright",
+        "@playwright/test",
+        "@testing-library/**",
+        "jsdom",
+        "happy-dom"
+      ],
+      "addLabels": ["deps:dev", "deps:test"]
+    },
+    {
+      "description": "Majors and 0.x bumps need a human",
       "matchUpdateTypes": ["major"],
       "addLabels": ["breaking", "manual-review"],
       "prPriority": 5
     },
     {
-      "description": "Workspace path → app label",
+      "matchCurrentVersion": "/^0\\./",
+      "matchUpdateTypes": ["major", "minor"],
+      "addLabels": ["manual-review"]
+    },
+    {
+      "description": "Workspace scoping",
       "matchFileNames": ["apps/portfolio/**"],
       "addLabels": ["app:portfolio"]
     },
@@ -57,102 +72,32 @@
       "addLabels": ["app:storybook"]
     },
     {
-      "description": "Workspace path → package label",
-      "matchFileNames": ["packages/analytics/**"],
-      "addLabels": ["pkg:analytics"]
+      "matchFileNames": ["packages/**"],
+      "addLabels": ["scope:packages"]
     },
     {
-      "matchFileNames": ["packages/consent/**"],
-      "addLabels": ["pkg:consent"]
-    },
-    {
-      "matchFileNames": ["packages/env/**"],
-      "addLabels": ["pkg:env"]
-    },
-    {
-      "matchFileNames": ["packages/now-playing/**"],
-      "addLabels": ["pkg:now-playing"]
-    },
-    {
-      "matchFileNames": ["packages/observability/**"],
-      "addLabels": ["pkg:observability"]
-    },
-    {
-      "matchFileNames": ["packages/storyblok-api/**"],
-      "addLabels": ["pkg:storyblok-api"]
-    },
-    {
-      "matchFileNames": ["packages/storyblok-richtext/**"],
-      "addLabels": ["pkg:storyblok-richtext"]
-    },
-    {
-      "matchFileNames": ["packages/storyblok-sync/**"],
-      "addLabels": ["pkg:storyblok-sync"]
-    },
-    {
-      "matchFileNames": ["packages/storyblok-ui/**"],
-      "addLabels": ["pkg:storyblok-ui"]
-    },
-    {
-      "matchFileNames": ["packages/storyblok-utils/**"],
-      "addLabels": ["pkg:storyblok-utils"]
-    },
-    {
-      "matchFileNames": ["packages/tokens/**"],
-      "addLabels": ["pkg:tokens"]
-    },
-    {
-      "matchFileNames": ["packages/ui/**"],
-      "addLabels": ["pkg:ui"]
-    },
-    {
-      "description": "Storyblok umbrella label (workspace + npm)",
-      "matchFileNames": [
-        "packages/storyblok-api/**",
-        "packages/storyblok-richtext/**",
-        "packages/storyblok-sync/**",
-        "packages/storyblok-ui/**",
-        "packages/storyblok-utils/**"
-      ],
-      "addLabels": ["storyblok"]
-    },
-    {
-      "matchPackageNames": ["storyblok", "storyblok-js-client", "@storyblok/{/,}**"],
-      "addLabels": ["storyblok"]
-    },
-    {
-      "description": "Root workspace tooling",
       "matchFileNames": ["package.json"],
       "addLabels": ["scope:root"]
     },
     {
-      "description": "GitHub Actions label (no grouping)",
+      "description": "Storyblok umbrella label (workspace + npm)",
+      "matchFileNames": ["packages/storyblok-*/**"],
+      "matchPackageNames": ["storyblok", "storyblok-js-client", "@storyblok/**"],
+      "addLabels": ["storyblok"]
+    },
+    {
+      "description": "CI / Docker tooling",
       "matchManagers": ["github-actions"],
       "addLabels": ["ci"]
     },
     {
-      "description": "Docker label (no grouping)",
       "matchManagers": ["dockerfile", "docker-compose"],
       "addLabels": ["docker"]
     },
     {
-      "matchDatasources": ["docker"]
-    },
-    {
-      "description": "Node.js engine bump = manual review",
-      "matchDepNames": ["node"],
-      "addLabels": ["scope:node", "manual-review"]
-    },
-    {
-      "description": "Flag 0.x bumps as breaking under semver",
-      "matchCurrentVersion": "/^0\\./",
-      "matchUpdateTypes": ["major", "minor"],
-      "addLabels": ["manual-review"]
-    },
-    {
-      "description": "pnpm itself: keep packageManager pin fresh",
-      "matchDepNames": ["pnpm"],
-      "addLabels": ["scope:tooling"]
+      "description": "Toolchain pins need a human (Node engine, pnpm)",
+      "matchDepNames": ["node", "pnpm"],
+      "addLabels": ["scope:tooling", "manual-review"]
     }
   ]
 }

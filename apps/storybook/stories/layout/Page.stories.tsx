@@ -27,13 +27,13 @@ const sampleNav = [
   { name: "Contact", href: "/contact" },
 ];
 
-const samplePersonalWork = [
+const sampleProjectsWork = [
   { id: "1", slug: "project-alpha", title: "Project Alpha" },
   { id: "2", slug: "project-beta", title: "Project Beta" },
   { id: "3", slug: "creative-experiment", title: "Creative Experiment" },
 ];
 
-const sampleClientWork = [
+const sampleWebsitesWork = [
   { id: "4", slug: "brand-identity", title: "Brand Identity" },
   { id: "5", slug: "web-redesign", title: "Web Redesign" },
 ];
@@ -46,8 +46,8 @@ export const Default: Story = {
     children: null,
     header: {
       nav: sampleNav,
-      personalWork: samplePersonalWork,
-      clientWork: sampleClientWork,
+      projectsWork: sampleProjectsWork,
+      websitesWork: sampleWebsitesWork,
     },
     footer: {
       backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
@@ -83,7 +83,7 @@ export const WithSections: Story = {
     children: null,
     header: {
       nav: sampleNav,
-      personalWork: samplePersonalWork,
+      projectsWork: sampleProjectsWork,
     },
     footer: {
       backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",

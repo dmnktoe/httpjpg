@@ -17,7 +17,7 @@ export interface WorkStory {
 }
 
 const BASE_URL = "/work";
-const TAXONOMY_TAGS = new Set(["Personal", "Client"]);
+const TAXONOMY_TAGS = new Set(["Projects", "Websites"]);
 
 export function toWorkCardProps(story: WorkStory) {
   const title = story.content?.title || story.name;

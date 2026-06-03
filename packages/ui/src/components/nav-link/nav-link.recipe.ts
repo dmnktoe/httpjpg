@@ -29,13 +29,13 @@ export const navLinkRecipe = defineRecipe({
   },
   variants: {
     variant: {
-      personal: {
+      projects: {
         _before: { content: "'🎀 ୧ꔛꗃ˖ '", marginRight: "0.5em" },
       },
-      client: {
+      websites: {
         _before: { content: "'(^‿^)-𝒷))) '", marginRight: "0.5em" },
       },
     },
   },
-  defaultVariants: { variant: "personal" },
+  defaultVariants: { variant: "projects" },
 });

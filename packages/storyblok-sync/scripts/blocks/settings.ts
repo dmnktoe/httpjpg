@@ -14,10 +14,10 @@ export const settingsBlocks: BlockDef[] = [
       variant: field.options(
         "Variant",
         [
-          { name: "Personal", value: "personal" },
-          { name: "Client", value: "client" },
+          { name: "Projects", value: "projects" },
+          { name: "Websites", value: "websites" },
         ],
-        { default_value: "personal" },
+        { default_value: "projects" },
       ),
       is_external: field.boolean("Force External"),
       target: field.options(

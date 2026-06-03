@@ -127,8 +127,8 @@ function ExpandableLinks<T>({
 
 export function Navigation({
   nav,
-  personalWork = [],
-  clientWork = [],
+  projectsWork = [],
+  websitesWork = [],
 }: Omit<HeaderProps, "children">) {
   return (
     <Box
@@ -208,16 +208,16 @@ export function Navigation({
             ⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S
           </Box>
           <br />
-          {personalWork.length > 0 ? (
+          {projectsWork.length > 0 ? (
             <ExpandableLinks
-              items={personalWork}
+              items={projectsWork}
               renderItem={(work) => {
                 const year = formatYear(work.date);
                 const previewImage = work.imageUrl;
                 return (
                   <NavLink
                     key={work.id}
-                    variant="personal"
+                    variant="projects"
                     href={work.isExternal ? work.slug : `/work/${work.slug}`}
                     isExternal={work.isExternal}
                     data-preview-image={previewImage}
@@ -264,9 +264,9 @@ export function Navigation({
             ⇝ᵣₑcꫀₙₜ ℘ɑׁׅ֮ᧁׁꫀׁׅܻ꯱ׁׅ֒
           </Box>
           <br />
-          {clientWork.length > 0 ? (
+          {websitesWork.length > 0 ? (
             <ExpandableLinks
-              items={clientWork}
+              items={websitesWork}
               renderItem={(work) => {
                 const href = work.isExternal ? work.slug : `/work/${work.slug}`;
                 const year = formatYear(work.date);
@@ -275,7 +275,7 @@ export function Navigation({
                 return (
                   <NavLink
                     key={work.id}
-                    variant="client"
+                    variant="websites"
                     href={href}
                     isExternal={work.isExternal}
                     showExternalIcon={work.isExternal}

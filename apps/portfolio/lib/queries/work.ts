@@ -39,8 +39,8 @@ interface WorkStory {
 }
 
 const IS_DEV = process.env.NODE_ENV === "development";
-const PERSONAL_TAG = "Personal";
-const CLIENT_TAG = "Client";
+const PROJECTS_TAG = "Projects";
+const WEBSITES_TAG = "Websites";
 
 function isDirectWorkSlug(slug: string): boolean {
   return slug.startsWith(STORYBLOK_SLUGS.WORK_PREFIX) && slug.split("/").length === 2;
@@ -71,8 +71,8 @@ export const getCachedStory = cache(async (fullSlug: string, opts: { draftMode: 
 });
 
 export async function getRecentWork(): Promise<{
-  personalWork: WorkItem[];
-  clientWork: WorkItem[];
+  projectsWork: WorkItem[];
+  websitesWork: WorkItem[];
 }> {
   const fetchWork = async () => {
     try {
@@ -104,23 +104,23 @@ export async function getRecentWork(): Promise<{
 
       const visible = IS_DEV ? workStories : workStories.filter((s) => publishedUuids.has(s.uuid));
 
-      const isPersonal = (story: WorkStory) => {
+      const isProjects = (story: WorkStory) => {
         const tags = story.tag_list ?? [];
-        return tags.length === 0 || tags.includes(PERSONAL_TAG);
+        return tags.length === 0 || tags.includes(PROJECTS_TAG);
       };
-      const isClient = (story: WorkStory) => (story.tag_list ?? []).includes(CLIENT_TAG);
+      const isWebsites = (story: WorkStory) => (story.tag_list ?? []).includes(WEBSITES_TAG);
 
       const take = (predicate: (s: WorkStory) => boolean): WorkItem[] =>
         visible.filter(predicate).map((s) => toWorkItem(s, publishedUuids));
 
       return {
-        personalWork: take(isPersonal),
-        clientWork: take(isClient),
+        projectsWork: take(isProjects),
+        websitesWork: take(isWebsites),
       };
     } catch (error) {
       console.error("Error fetching work items:", error);
       captureServerException(error, { tags: { query: "recent-work" } });
-      return { personalWork: [], clientWork: [] };
+      return { projectsWork: [], websitesWork: [] };
     }
   };
 

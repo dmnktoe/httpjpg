@@ -60,7 +60,7 @@ export const MOCK_WORK_ITEMS = [
     title: "Outlet Store",
     slug: "outlet-store",
     date: "2025-02-10",
-    tags: ["Personal"],
+    tags: ["Projects"],
     previewImage: OPTIMIZED_IMAGES.outletStore1,
   },
   {
@@ -68,7 +68,7 @@ export const MOCK_WORK_ITEMS = [
     title: "This Wild Beast in the Jungle",
     slug: "this-wild-beast-in-the-jungle",
     date: "2024-10-11",
-    tags: ["Personal"],
+    tags: ["Projects"],
     previewImage: OPTIMIZED_IMAGES.landscape,
   },
   {
@@ -76,7 +76,7 @@ export const MOCK_WORK_ITEMS = [
     title: "Video Project 1",
     slug: "video-project-1",
     date: "2024-06-01",
-    tags: ["Client"],
+    tags: ["Websites"],
     previewImage: OPTIMIZED_IMAGES.videoStill1,
   },
   {
@@ -84,7 +84,7 @@ export const MOCK_WORK_ITEMS = [
     title: "Video Project 2",
     slug: "video-project-2",
     date: "2024-03-15",
-    tags: ["Client"],
+    tags: ["Websites"],
     previewImage: OPTIMIZED_IMAGES.videoStill2,
   },
   {
@@ -92,7 +92,7 @@ export const MOCK_WORK_ITEMS = [
     title: "Video Project 3",
     slug: "video-project-3",
     date: "2023-11-20",
-    tags: ["Personal"],
+    tags: ["Projects"],
     previewImage: OPTIMIZED_IMAGES.videoStill3,
   },
   {
@@ -100,7 +100,7 @@ export const MOCK_WORK_ITEMS = [
     title: "Portrait Series",
     slug: "portrait-series",
     date: "2023-08-10",
-    tags: ["Client"],
+    tags: ["Websites"],
     previewImage: OPTIMIZED_IMAGES.portrait,
   },
 ] as const;
@@ -120,8 +120,8 @@ function toHeaderWork(items: typeof MOCK_WORK_ITEMS, tag: string) {
     }));
 }
 
-export const MOCK_HEADER_PERSONAL_WORK = toHeaderWork(MOCK_WORK_ITEMS, "Personal");
-export const MOCK_HEADER_CLIENT_WORK = toHeaderWork(MOCK_WORK_ITEMS, "Client");
+export const MOCK_HEADER_PROJECTS_WORK = toHeaderWork(MOCK_WORK_ITEMS, "Projects");
+export const MOCK_HEADER_WEBSITES_WORK = toHeaderWork(MOCK_WORK_ITEMS, "Websites");
 
 export const MOCK_NAV_ITEMS = [
   { href: "/", label: "Home" },

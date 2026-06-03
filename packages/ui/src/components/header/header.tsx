@@ -30,12 +30,12 @@ export interface WorkItem {
 
 export interface HeaderProps {
   nav: NavItem[];
-  personalWork?: WorkItem[];
-  clientWork?: WorkItem[];
+  projectsWork?: WorkItem[];
+  websitesWork?: WorkItem[];
   children?: ReactNode;
 }
 
-export function Header({ nav, personalWork = [], clientWork = [], children }: HeaderProps) {
+export function Header({ nav, projectsWork = [], websitesWork = [], children }: HeaderProps) {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const pathname = usePathname();
 
@@ -112,7 +112,7 @@ export function Header({ nav, personalWork = [], clientWork = [], children }: He
             </Box>
           </Box>
 
-          <Navigation nav={nav} personalWork={personalWork} clientWork={clientWork} />
+          <Navigation nav={nav} projectsWork={projectsWork} websitesWork={websitesWork} />
           <MobileMenuButton isOpen={mobileMenuIsOpen} setIsOpen={setMobileMenuIsOpen} />
         </Box>
       </Container>
@@ -121,8 +121,8 @@ export function Header({ nav, personalWork = [], clientWork = [], children }: He
         isOpen={mobileMenuIsOpen}
         setIsOpen={setMobileMenuIsOpen}
         nav={nav}
-        personalWork={personalWork}
-        clientWork={clientWork}
+        projectsWork={projectsWork}
+        websitesWork={websitesWork}
       />
 
       {children}

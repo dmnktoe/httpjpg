@@ -96,6 +96,13 @@ export const Outline: Story = {
   },
 };
 
+export const Danger: Story = {
+  args: {
+    variant: "danger",
+    children: "Reject All",
+  },
+};
+
 export const Disabled: Story = {
   args: {
     variant: "disabled",
@@ -171,6 +178,17 @@ export const AllVariants: Story = {
         </Button>
         <Button {...args} variant="outline" size="lg">
           Outline LG
+        </Button>
+      </div>
+      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <Button {...args} variant="danger" size="sm">
+          Danger SM
+        </Button>
+        <Button {...args} variant="danger" size="md">
+          Danger MD
+        </Button>
+        <Button {...args} variant="danger" size="lg">
+          Danger LG
         </Button>
       </div>
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>

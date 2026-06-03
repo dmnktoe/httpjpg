@@ -200,7 +200,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
           </Button>
 
           <Button
-            variant="outline"
+            variant="danger"
             size="sm"
             onClick={handleRejectAll}
             css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}

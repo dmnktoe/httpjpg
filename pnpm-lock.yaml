@@ -189,6 +189,9 @@ importers:
 
   apps/storybook:
     dependencies:
+      '@httpjpg/consent':
+        specifier: workspace:*
+        version: link:../../packages/consent
       '@httpjpg/now-playing':
         specifier: workspace:*
         version: link:../../packages/now-playing

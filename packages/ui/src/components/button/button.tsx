@@ -15,7 +15,7 @@ const externalArrowClass = css({
   lineHeight: "none",
 });
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "disabled";
+type ButtonVariant = "primary" | "secondary" | "outline" | "danger" | "disabled";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface CommonProps {

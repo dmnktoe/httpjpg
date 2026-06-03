@@ -1,4 +1,5 @@
 import { env } from "@httpjpg/env";
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { MetadataRoute } from "next";
 
@@ -56,6 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return entries;
   } catch (error) {
     console.error("Error generating sitemap:", error);
+    captureServerException(error, { tags: { route: "sitemap" } });
     // Fallback to minimal sitemap
     return [
       {

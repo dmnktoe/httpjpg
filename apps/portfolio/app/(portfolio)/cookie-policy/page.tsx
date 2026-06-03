@@ -1,5 +1,14 @@
 import { CookieCenter, VendorList } from "@httpjpg/consent";
-import { Box, Container, Divider, Headline, Link, Paragraph, Section } from "@httpjpg/ui";
+import {
+  Container,
+  Divider,
+  Headline,
+  Link,
+  ListItem,
+  Paragraph,
+  Section,
+  UnorderedList,
+} from "@httpjpg/ui";
 import type { Metadata } from "next";
 
 const LAST_UPDATED = "June 3, 2026";
@@ -50,24 +59,24 @@ export default function CookiePolicyPage() {
         <Headline level={2} as="h2">
           Cookie categories
         </Headline>
-        <Box as="ul" css={{ pl: "5", m: 0, mb: "4", display: "grid", gap: "2" }}>
-          <Box as="li">
+        <UnorderedList size="md">
+          <ListItem size="md">
             <strong>Preferences</strong> — remembers your settings (e.g. theme). Strictly necessary,
             always on.
-          </Box>
-          <Box as="li">
+          </ListItem>
+          <ListItem size="md">
             <strong>Monitoring</strong> — error tracking and performance monitoring so the site
             stays stable. Strictly necessary, always on.
-          </Box>
-          <Box as="li">
+          </ListItem>
+          <ListItem size="md">
             <strong>Analytics</strong> — privacy-conscious, aggregate usage statistics. Optional and
             off by default.
-          </Box>
-          <Box as="li">
+          </ListItem>
+          <ListItem size="md">
             <strong>Media &amp; external services</strong> — loads embeds from video and audio
             platforms. Optional and off by default.
-          </Box>
-        </Box>
+          </ListItem>
+        </UnorderedList>
 
         <Divider variant="ascii" preset="sparkles" spacing="8" />
 

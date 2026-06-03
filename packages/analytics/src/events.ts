@@ -3,11 +3,6 @@ import { trackUmamiEvent } from "./umami/analytics";
 
 type WebVitalName = "CLS" | "FCP" | "LCP" | "TTFB" | "INP";
 
-/**
- * Domain events are provider-agnostic: each fans out to every configured
- * analytics provider. Providers no-op individually when unconfigured, so call
- * sites never branch on which backend is active.
- */
 export function trackNowPlayingClick(): void {
   trackGoogleEvent("now_playing_click", {
     category: GA_CATEGORIES.USER_INTERACTION,

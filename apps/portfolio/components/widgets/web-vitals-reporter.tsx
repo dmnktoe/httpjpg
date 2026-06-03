@@ -7,7 +7,6 @@ import { useReportWebVitals } from "next/web-vitals";
 type VitalName = "CLS" | "FCP" | "LCP" | "TTFB" | "INP";
 
 const TRACKED: ReadonlySet<VitalName> = new Set(["CLS", "FCP", "LCP", "TTFB", "INP"]);
-// Subset of vitals forwarded to the external analytics providers (GA + Umami).
 const ANALYTICS_VITALS: ReadonlySet<Parameters<typeof trackWebVital>[0]> = new Set([
   "CLS",
   "FCP",

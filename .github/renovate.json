@@ -70,10 +70,10 @@
       "addLabels": ["panda"]
     },
     {
-      "description": "Sentry packages move together",
-      "groupName": "sentry",
-      "matchPackageNames": ["@sentry/**"],
-      "addLabels": ["sentry"]
+      "description": "Lint + format toolchain moves together",
+      "groupName": "linting & formatting",
+      "matchPackageNames": ["oxlint", "oxfmt"],
+      "addLabels": ["deps:dev", "tooling"]
     },
     {
       "description": "Majors and 0.x bumps need a human",

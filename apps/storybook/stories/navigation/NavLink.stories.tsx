@@ -1,5 +1,6 @@
 import { Box, NavLink } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import type { ReactNode } from "react";
 
 const meta = {
   title: "Navigation/NavLink",
@@ -36,6 +37,15 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/** Italic year prefix, mirroring how the Header renders recent work. */
+function Year({ children }: { children: ReactNode }) {
+  return (
+    <Box as="span" css={{ fontStyle: "italic" }}>
+      {children}{" "}
+    </Box>
+  );
+}
 
 /**
  * Basic personal/things work link with decorative emoji prefix
@@ -139,6 +149,25 @@ export const StoryblokWork: Story = {
 };
 
 /**
+ * With a leading year — mirrors the Header, where each recent-work link is
+ * prefixed with an italic year before the title.
+ */
+export const WithYear = {
+  render: () => (
+    <Box css={{ display: "flex", flexDirection: "column", gap: "1", maxW: "md" }}>
+      <NavLink variant="projects" href="/work/analog-series">
+        <Year>2024</Year>
+        Analog Photography Series
+      </NavLink>
+      <NavLink variant="websites" href="/work/shop-redesign">
+        <Year>2023</Year>
+        E-Commerce Redesign
+      </NavLink>
+    </Box>
+  ),
+};
+
+/**
  * Navigation list - Personal work
  */
 export const ProjectsWorkList = {
@@ -152,12 +181,15 @@ export const ProjectsWorkList = {
       }}
     >
       <NavLink variant="projects" href="/work/photo-series-1">
+        <Year>2024</Year>
         Analog Photography Series
       </NavLink>
       <NavLink variant="projects" href="/work/digital-art">
+        <Year>2023</Year>
         Digital Art Collection
       </NavLink>
       <NavLink variant="projects" href="/work/experimental">
+        <Year>2022</Year>
         Experimental Film Project
       </NavLink>
       <NavLink variant="projects" href="https://instagram.com/example">
@@ -181,12 +213,15 @@ export const WebsitesWorkList = {
       }}
     >
       <NavLink variant="websites" href="/work/brand-identity">
+        <Year>2025</Year>
         Brand Identity Design
       </NavLink>
       <NavLink variant="websites" href="/work/web-design">
+        <Year>2024</Year>
         E-Commerce Website
       </NavLink>
       <NavLink variant="websites" href="/work/campaign">
+        <Year>2023</Year>
         Marketing Campaign
       </NavLink>
       <NavLink variant="websites" href="/work/packaging">
@@ -215,9 +250,11 @@ export const MixedNavigation = {
         </Box>
         <Box css={{ display: "flex", flexDirection: "column", gap: "1" }}>
           <NavLink variant="projects" href="/work/personal-1">
+            <Year>2024</Year>
             Personal Project One
           </NavLink>
           <NavLink variant="projects" href="/work/personal-2">
+            <Year>2023</Year>
             Personal Project Two
           </NavLink>
         </Box>
@@ -229,9 +266,11 @@ export const MixedNavigation = {
         </Box>
         <Box css={{ display: "flex", flexDirection: "column", gap: "1" }}>
           <NavLink variant="websites" href="/work/client-1">
+            <Year>2025</Year>
             Client Project One
           </NavLink>
           <NavLink variant="websites" href="/work/client-2">
+            <Year>2024</Year>
             Client Project Two
           </NavLink>
         </Box>

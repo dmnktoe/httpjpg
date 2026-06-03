@@ -195,6 +195,9 @@ importers:
       '@httpjpg/spotify':
         specifier: workspace:*
         version: link:../../packages/spotify
+      '@httpjpg/storyblok-utils':
+        specifier: workspace:*
+        version: link:../../packages/storyblok-utils
       '@httpjpg/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens

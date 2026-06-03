@@ -16,6 +16,7 @@
   "dependencies": {
     "@httpjpg/now-playing": "workspace:*",
     "@httpjpg/spotify": "workspace:*",
+    "@httpjpg/storyblok-utils": "workspace:*",
     "@httpjpg/tokens": "workspace:*",
     "@httpjpg/ui": "workspace:*",
     "react": "catalog:",

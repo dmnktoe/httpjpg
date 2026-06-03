@@ -57,6 +57,7 @@ const preview: Preview = {
           "Motion",
           "Display",
           "Widgets",
+          "Utilities",
         ],
       },
     },

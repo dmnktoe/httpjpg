@@ -100,14 +100,12 @@ export function Marquee({
               animationPlayState: "running",
             }),
           }}
-          // @ts-expect-error - Mouse event types
-          onMouseEnter={(e) => {
+          onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
             if (pauseOnHover) {
               e.currentTarget.style.animationPlayState = "paused";
             }
           }}
-          // @ts-expect-error - Mouse event types
-          onMouseLeave={(e) => {
+          onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
             if (pauseOnHover) {
               e.currentTarget.style.animationPlayState = "running";
             }

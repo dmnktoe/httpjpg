@@ -69,7 +69,7 @@ export async function getCurrentlyPlaying(accessToken: string): Promise<SpotifyT
 
   return {
     title: data.item.name,
-    artist: data.item.artists.map((artist: any) => artist.name).join(", "),
+    artist: data.item.artists.map((artist: { name: string }) => artist.name).join(", "),
     artwork,
     isPlaying: data.is_playing,
     albumUrl: data.item.album.external_urls?.spotify,

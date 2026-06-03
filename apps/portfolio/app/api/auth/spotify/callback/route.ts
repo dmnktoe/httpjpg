@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Display the code so user can manually paste it
   return new NextResponse(
     `<html>
       <head>

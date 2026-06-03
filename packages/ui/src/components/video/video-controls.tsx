@@ -123,12 +123,10 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
           opacity: 1,
         },
       }}
-      // @ts-expect-error - Mouse event types
-      onMouseEnter={(e) => {
+      onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
         e.currentTarget.style.opacity = "1";
       }}
-      // @ts-expect-error - Mouse event types
-      onMouseLeave={(e) => {
+      onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
         e.currentTarget.style.opacity = "0";
       }}
     >

@@ -98,11 +98,14 @@ export function getStoryblokApi(config: StoryblokConfig = {}) {
         version,
         starts_with: params.starts_with,
       });
-      const links = response.data.links || {};
-      return Object.values(links).map((link: any) => ({
-        slug: link.slug,
+      const links = response.data.links;
+      if (!links) {
+        return [];
+      }
+      return Object.values(links).map((link) => ({
+        slug: link.slug ?? "",
         id: link.id,
-        isFolder: link.is_folder,
+        isFolder: link.is_folder ?? false,
       }));
     } catch (error) {
       console.error("Error fetching slugs", error);

@@ -30,7 +30,7 @@ export function extractStoryMetadata(story: StoryShape): StoryMetadata {
     typeof desc === "string"
       ? desc
       : desc
-        ? extractPlainText(desc as { content?: any[] }, DESCRIPTION_LIMIT)
+        ? extractPlainText(desc as Parameters<typeof extractPlainText>[0], DESCRIPTION_LIMIT)
         : "";
 
   const firstImage = story.content?.images?.[0];

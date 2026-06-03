@@ -39,7 +39,9 @@ function postToVitals(payload: Record<string, unknown>): void {
       headers: { "Content-Type": "application/json" },
       keepalive: true,
     });
-  } catch {}
+  } catch (error) {
+    console.warn("Failed to report web vital", error);
+  }
 }
 
 export function WebVitalsReporter() {

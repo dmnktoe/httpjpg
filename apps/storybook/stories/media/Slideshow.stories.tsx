@@ -166,8 +166,6 @@ export const SingleImage: Story = {
   },
 };
 
-// === Transition Effects ===
-
 /**
  * Fade transition between slides
  */
@@ -240,8 +238,6 @@ export const CreativeTransition: Story = {
   },
 };
 
-// === Timing & Speed ===
-
 /**
  * Fast autoplay with quick transitions
  */
@@ -264,8 +260,6 @@ export const SlowTransitions: Story = {
     effect: "fade",
   },
 };
-
-// === Aspect Ratios ===
 
 /**
  * Square aspect ratio
@@ -295,8 +289,6 @@ export const PortraitAspect: Story = {
     aspectRatio: "2/3",
   },
 };
-
-// === Features ===
 
 /**
  * Without navigation arrows

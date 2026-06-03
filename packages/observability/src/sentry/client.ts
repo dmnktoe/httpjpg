@@ -53,12 +53,4 @@ export function captureClientException(
   Sentry.captureException(error, context);
 }
 
-export function setUser(user: { id: string; email?: string; username?: string }) {
-  Sentry.setUser(user);
-}
-
-export function clearUser() {
-  Sentry.setUser(null);
-}
-
 export { Sentry };

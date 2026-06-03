@@ -16,7 +16,8 @@
   },
   "scripts": {
     "lint": "oxlint",
-    "lint:fix": "oxlint --fix"
+    "lint:fix": "oxlint --fix",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@httpjpg/env": "workspace:*",

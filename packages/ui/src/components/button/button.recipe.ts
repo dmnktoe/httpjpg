@@ -35,6 +35,7 @@ export const buttonRecipe = defineRecipe({
       cursor: "not-allowed",
       opacity: 0.5,
       filter: "grayscale(0.5)",
+      transition: "none",
     },
     _active: { transform: "scale(0.97) translateY(1px)" },
   },
@@ -48,7 +49,7 @@ export const buttonRecipe = defineRecipe({
           inset: "-3px",
           boxShadow: `0 0 20px 0 ${hexToRgba(colors.primary[500], 0.3)}, 0 0 40px 0 ${hexToRgba(colors.primary[500], 0.15)}`,
         },
-        _hover: {
+        "&:not(:disabled):hover": {
           _before: {
             background: hexToRgba(colors.primary[600], 0.95),
             filter: "blur(5px)",
@@ -64,7 +65,7 @@ export const buttonRecipe = defineRecipe({
           inset: "-3px",
           boxShadow: `0 0 18px 0 ${hexToRgba(colors.neutral[400], 0.2)}, 0 0 36px 0 ${hexToRgba(colors.neutral[400], 0.1)}`,
         },
-        _hover: {
+        "&:not(:disabled):hover": {
           _before: {
             background: hexToRgba(colors.neutral[400], 0.6),
             filter: "blur(5px)",
@@ -80,7 +81,7 @@ export const buttonRecipe = defineRecipe({
           inset: "-3px",
           boxShadow: `0 0 20px 0 ${hexToRgba(colors.accent[400], 0.3)}, 0 0 40px 0 ${hexToRgba(colors.accent[500], 0.15)}`,
         },
-        _hover: {
+        "&:not(:disabled):hover": {
           _before: {
             background: hexToRgba(colors.accent[500], 0.95),
             filter: "blur(5px)",
@@ -96,7 +97,7 @@ export const buttonRecipe = defineRecipe({
           inset: "-3px",
           boxShadow: `0 0 20px 0 ${hexToRgba(colors.danger[500], 0.3)}, 0 0 40px 0 ${hexToRgba(colors.danger[500], 0.15)}`,
         },
-        _hover: {
+        "&:not(:disabled):hover": {
           _before: {
             background: hexToRgba(colors.danger[600], 0.95),
             filter: "blur(5px)",

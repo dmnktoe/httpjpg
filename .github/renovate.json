@@ -52,6 +52,30 @@
       "addLabels": ["deps:dev", "deps:test"]
     },
     {
+      "description": "Storyblok SDK + client move together",
+      "groupName": "storyblok",
+      "matchPackageNames": ["@storyblok/**", "storyblok-js-client"],
+      "addLabels": ["storyblok"]
+    },
+    {
+      "description": "React core moves in lockstep",
+      "groupName": "react",
+      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
+      "addLabels": ["react"]
+    },
+    {
+      "description": "Panda CSS toolchain",
+      "groupName": "panda css",
+      "matchPackageNames": ["@pandacss/**"],
+      "addLabels": ["panda"]
+    },
+    {
+      "description": "Sentry packages move together",
+      "groupName": "sentry",
+      "matchPackageNames": ["@sentry/**"],
+      "addLabels": ["sentry"]
+    },
+    {
       "description": "Majors and 0.x bumps need a human",
       "matchUpdateTypes": ["major"],
       "addLabels": ["breaking", "manual-review"],
@@ -78,12 +102,6 @@
     {
       "matchFileNames": ["package.json"],
       "addLabels": ["scope:root"]
-    },
-    {
-      "description": "Storyblok umbrella label (workspace + npm)",
-      "matchFileNames": ["packages/storyblok-*/**"],
-      "matchPackageNames": ["storyblok", "storyblok-js-client", "@storyblok/**"],
-      "addLabels": ["storyblok"]
     },
     {
       "description": "CI / Docker tooling",

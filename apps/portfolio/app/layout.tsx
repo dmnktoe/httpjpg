@@ -1,3 +1,5 @@
+import { UmamiAnalytics } from "@httpjpg/analytics/umami";
+
 import "@httpjpg/tokens/dist/tokens.css";
 import "@httpjpg/ui/styles.css";
 import "@/lib/storyblok";
@@ -15,8 +17,8 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 
+import { ConsentGate } from "@/components/providers/consent-gate";
 import { ConsentProvider } from "@/components/providers/consent-provider";
-import { ConsentedUmami } from "@/components/providers/consented-umami";
 import { StoryblokProvider } from "@/components/providers/storyblok-provider";
 import { ConsoleBanner } from "@/components/ui/console-banner";
 import { CustomCursorWrapper } from "@/components/ui/custom-cursor-wrapper";
@@ -163,11 +165,15 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         </LazyMotionProvider>
 
         {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
-          <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+          <ConsentGate vendor="google-analytics">
+            <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+          </ConsentGate>
         )}
 
         {env.NEXT_PUBLIC_UMAMI_ID && (
-          <ConsentedUmami websiteId={env.NEXT_PUBLIC_UMAMI_ID} src={env.NEXT_PUBLIC_UMAMI_SRC} />
+          <ConsentGate vendor="umami">
+            <UmamiAnalytics websiteId={env.NEXT_PUBLIC_UMAMI_ID} src={env.NEXT_PUBLIC_UMAMI_SRC} />
+          </ConsentGate>
         )}
       </body>
     </html>

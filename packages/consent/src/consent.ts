@@ -81,7 +81,13 @@ export function readConsentCookie(): string | null {
   if (!cookie) {
     return null;
   }
-  return decodeURIComponent(cookie.slice(CONSENT_COOKIE_NAME.length + 1));
+  try {
+    return decodeURIComponent(cookie.slice(CONSENT_COOKIE_NAME.length + 1));
+  } catch {
+    // Malformed percent-encoding (e.g. a value set by another script) — treat
+    // as no consent rather than throwing through every getConsent caller.
+    return null;
+  }
 }
 
 /** Coerce an untrusted parsed value into a valid `ConsentState`, or null. */

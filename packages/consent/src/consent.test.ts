@@ -41,6 +41,12 @@ describe("consent storage", () => {
     expect(getConsent()).toBeNull();
   });
 
+  it("does not throw on a cookie with invalid percent-encoding", () => {
+    document.cookie = `${CONSENT_COOKIE_NAME}=100%zz; path=/`;
+    expect(() => getConsent()).not.toThrow();
+    expect(getConsent()).toBeNull();
+  });
+
   it("normalizes a partial consent object against defaults", () => {
     writeRawCookie(JSON.stringify({ v: CONSENT_VERSION, consent: { analytics: true } }));
     expect(getConsent()).toEqual({ ...DEFAULT, analytics: true });

@@ -115,7 +115,7 @@ storyblok-utils  ←  storyblok-api    storyblok-richtext  ←  storyblok-ui
 
 - **`@httpjpg/spotify`** — Spotify Web API client (server-side, uses `Buffer`), `useNowPlaying` polling hook, and `extractVibrantColor` (colorthief wrapper) for album-artwork color extraction.
 - **`@httpjpg/now-playing`** — the actual draggable widget UI. Consumes `@httpjpg/spotify` for color extraction and `@httpjpg/ui` (peer) for `Marquee`. UI-only — no API or hook logic lives here.
-- **`@httpjpg/analytics`** — Google Analytics 4 wrapper. Track-functions follow `track*` naming.
+- **`@httpjpg/analytics`** — analytics wrappers (Google Analytics 4 under `src/google/`, privacy-first Umami under `src/umami/`). Both are thin, consent-gated, env-driven wrappers; track-functions follow `track*` naming and fan out to whichever providers are configured. See [Analytics (Umami)](#analytics-umami).
 - **`@httpjpg/observability`** — Sentry init for the three Next runtimes. `getSentryConfig(scope)` resolves DSN, env, production flag, and enabled state per runtime.
 - **`@httpjpg/consent`** — cookie consent state machine (`getConsent`, `setConsent`, `hasVendorConsent`, …), the `CookieBanner` (portal-rendered) + `CookieCategory` + `VendorList` UI, and the vendor catalog (`EXTERNAL_VENDORS`).
 
@@ -348,6 +348,63 @@ When you add a new blok:
 - **Adding a new env var** — declare in `packages/env/src/env.mjs` (server or client section), wire `runtimeEnv`, add to `turbo.json`'s `globalEnv` or the relevant task `env` if it affects builds.
 - **Sentry** — use `captureClientException`, `captureServerException`, `captureEdgeException` from `@httpjpg/observability/sentry/{client,server,edge}`. Don't import `@sentry/nextjs` directly in apps.
 - **App config** — non-secret, non-CMS settings sit in `apps/portfolio/lib/config.ts` as a typed `as const satisfies AppConfig`. CMS-driven settings come from the Storyblok config story via `lib/queries/config.ts`.
+
+---
+
+## Analytics (Umami)
+
+[Umami](https://umami.is) is the privacy-first, cookieless analytics provider. It lives **alongside** the existing Google Analytics wrapper inside `@httpjpg/analytics` — it does not replace it. Mirror the GA conventions (thin wrapper, graceful no-op, env-driven, consent-gated); don't invent a new abstraction layer.
+
+### Why Umami, and the consent stance
+
+- **Cookieless by design.** Umami fingerprints nothing persistent and sets no cookies, so it is GDPR/ePrivacy-friendly out of the box. Even so, gate it behind the **`analytics`** consent category for parity with GA and a single, predictable opt-in surface — never load the script before consent.
+- **Self-hostable.** Point `NEXT_PUBLIC_UMAMI_SRC` at your own instance (or `https://cloud.umami.is/script.js`) so no third-party CDN is assumed.
+
+### Package layout — `@httpjpg/analytics`
+
+Add a sibling module to `google/`, never inline into it:
+
+```
+packages/analytics/src/
+  google/                 ← existing GA wrapper (untouched)
+  umami/
+    index.ts              ← re-exports the public surface
+    analytics.ts          ← isUmamiAvailable() guard + track* functions
+    types.ts              ← declare global Window.umami
+    analytics.test.ts     ← colocated Vitest (node env)
+```
+
+- Export a typed `window.umami` in `types.ts` (`umami?: { track: (event: string, data?: Record<string, unknown>) => void }`), exactly as `google/types.ts` declares `gtag`.
+- Mirror `isGAAvailable()` with an `isUmamiAvailable()` guard — check `typeof window !== "undefined"`, `window.umami`, and `env.NEXT_PUBLIC_UMAMI_ID`. Wrap every `umami.track(…)` call in `try/catch` and no-op on failure, like the GA wrapper does.
+- Expose **named** `track*` helpers (`trackNowPlayingClick`, `trackWebVital`, …) that fan out to *both* providers, rather than leaking a raw `trackEvent` to callers. Existing call sites (`web-vitals-reporter.tsx`, `now-playing-widget.tsx`) should not need provider-specific branches.
+- Add the subpath export to `package.json` (`"./umami": { "types": "./src/umami/index.ts", "default": "./src/umami/index.ts" }`) and re-export from `src/index.ts`.
+
+### Consent catalog — `@httpjpg/consent`
+
+1. Add `"umami"` to the `ExternalVendor` union in `packages/consent/src/types.ts`.
+2. Add the entry to `EXTERNAL_VENDORS` with `category: "analytics"` and `privacyPolicy: "https://umami.is/privacy"`. The cookie banner picks it up automatically from the catalog.
+
+### Script injection — `apps/portfolio/app/layout.tsx`
+
+- Load via `next/script` with `strategy="afterInteractive"`, guarded on `env.NEXT_PUBLIC_UMAMI_ID` (same conditional shape as the `<GoogleAnalytics />` block):
+
+  ```tsx
+  {env.NEXT_PUBLIC_UMAMI_ID && (
+    <Script
+      src={env.NEXT_PUBLIC_UMAMI_SRC}
+      data-website-id={env.NEXT_PUBLIC_UMAMI_ID}
+      strategy="afterInteractive"
+      defer
+    />
+  )}
+  ```
+
+- Umami autotracks page views by default — keep it, and reserve the `track*` helpers for custom events only. If SPA route changes need manual tracking, do it in a small client widget, not by promoting the layout to a client component.
+
+### Env & turbo
+
+- Declare in the **client** section of `packages/env/src/env.mjs`: `NEXT_PUBLIC_UMAMI_ID: z.string().optional()` and `NEXT_PUBLIC_UMAMI_SRC: z.string().url().default("https://cloud.umami.is/script.js")`. Wire both into `runtimeEnv`.
+- Add `NEXT_PUBLIC_UMAMI_ID` and `NEXT_PUBLIC_UMAMI_SRC` to the `build` task's `env` array in `turbo.json` so cache invalidates when they change. The website ID is public (it ships in the page), so no secret handling is required.
 
 ---
 

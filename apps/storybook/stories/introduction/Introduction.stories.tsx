@@ -1,5 +1,3 @@
-"use client";
-
 import {
   ASCII_DIVIDER_STARS,
   Box,
@@ -12,7 +10,6 @@ import {
   Stack,
 } from "@httpjpg/ui";
 import type { Meta } from "@storybook/react";
-import { useCallback, useState } from "react";
 
 const meta = {
   title: "Introduction",
@@ -23,59 +20,22 @@ const meta = {
 
 export default meta;
 
-function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false);
-
-  const toggle = useCallback(() => {
-    setIsDark((prev) => !prev);
-    const root = document.querySelector("[data-intro-root]");
-    if (root) {
-      root.setAttribute("data-theme", isDark ? "light" : "dark");
-    }
-  }, [isDark]);
-
-  return (
-    <button
-      type="button"
-      onClick={toggle}
-      style={{
-        all: "unset",
-        cursor: "pointer",
-        fontFamily: "monospace",
-        fontSize: "12px",
-        letterSpacing: "0.05em",
-        padding: "4px 10px",
-        border: "1px solid currentColor",
-        opacity: 0.6,
-      }}
-    >
-      {isDark ? "☀ light" : "● dark"}
-    </button>
-  );
-}
-
 export const Introduction = {
   render: () => (
-    <Box data-intro-root css={{ bg: "pageBg", color: "pageFg", minH: "100vh" }}>
+    <Box css={{ bg: "pageBg", color: "pageFg", minH: "100vh" }}>
       <Container size="lg" py={12}>
         <Stack direction="vertical" gap="10">
           {/* ── Top bar ── */}
-          <Stack
-            direction="horizontal"
-            css={{ justifyContent: "space-between", alignItems: "center" }}
+          <Box
+            css={{
+              fontFamily: "mono",
+              fontSize: "xs",
+              letterSpacing: "wider",
+              opacity: 0.4,
+            }}
           >
-            <Box
-              css={{
-                fontFamily: "mono",
-                fontSize: "xs",
-                letterSpacing: "wider",
-                opacity: 0.4,
-              }}
-            >
-              ⇝ httpjpg / design system
-            </Box>
-            <ThemeToggle />
-          </Stack>
+            ⇝ httpjpg / design system &nbsp; · &nbsp; toggle theme in the toolbar ↗
+          </Box>
 
           {/* ── Hero ── */}
           <Box>

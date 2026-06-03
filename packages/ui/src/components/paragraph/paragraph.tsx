@@ -47,9 +47,9 @@ const paragraphRecipe = cva({
       justify: { textAlign: "justify", textJustify: "inter-word" },
     },
     color: {
-      default: { color: "black", opacity: 1 },
-      muted: { color: "black", opacity: 0.7 },
-      dimmed: { color: "black", opacity: 0.5 },
+      default: { color: "pageFg", opacity: 1 },
+      muted: { color: "pageFg", opacity: 0.7 },
+      dimmed: { color: "pageFg", opacity: 0.5 },
     },
     weight: {
       normal: { fontWeight: 400 },

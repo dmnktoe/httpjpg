@@ -9,9 +9,12 @@ export interface SbRichTextProps {
   blok: SbRichtextData;
 }
 
-function parseMaxWidth(value?: string): string | boolean | undefined {
-  if (!value || value === "none") {
-    return value === "none" ? false : undefined;
+function parseMaxWidth(value?: string): string | boolean {
+  if (value === "none") {
+    return false;
+  }
+  if (!value) {
+    return true;
   }
   return value;
 }

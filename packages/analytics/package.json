@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@types/react": "catalog:",
-    "next": "^16.0.7",
+    "next": "catalog:",
     "react": "catalog:",
     "typescript": "catalog:"
   },

@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "next": "^16.0.7",
+    "next": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

@@ -164,15 +164,17 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           </StoryblokProvider>
         </LazyMotionProvider>
 
-        {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
-          <ConsentGate vendor="google-analytics">
-            <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
-          </ConsentGate>
-        )}
-
-        {env.NEXT_PUBLIC_UMAMI_ID && (
-          <ConsentGate vendor="umami">
-            <UmamiAnalytics websiteId={env.NEXT_PUBLIC_UMAMI_ID} src={env.NEXT_PUBLIC_UMAMI_SRC} />
+        {(env.NEXT_PUBLIC_GA_MEASUREMENT_ID || env.NEXT_PUBLIC_UMAMI_ID) && (
+          <ConsentGate category="analytics">
+            {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+              <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+            )}
+            {env.NEXT_PUBLIC_UMAMI_ID && (
+              <UmamiAnalytics
+                websiteId={env.NEXT_PUBLIC_UMAMI_ID}
+                src={env.NEXT_PUBLIC_UMAMI_SRC}
+              />
+            )}
           </ConsentGate>
         )}
       </body>

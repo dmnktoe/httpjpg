@@ -1,22 +1,22 @@
 "use client";
 
-import { type ExternalVendor, hasVendorConsent } from "@httpjpg/consent";
+import { type ConsentCategory, getConsent } from "@httpjpg/consent";
 import { type ReactNode, useEffect, useState } from "react";
 
 interface ConsentGateProps {
-  vendor: ExternalVendor;
+  category: ConsentCategory;
   children: ReactNode;
 }
 
-export function ConsentGate({ vendor, children }: ConsentGateProps) {
+export function ConsentGate({ category, children }: ConsentGateProps) {
   const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
-    const sync = () => setAllowed(hasVendorConsent(vendor));
+    const sync = () => setAllowed(getConsent()?.[category] === true);
     sync();
     window.addEventListener("consentChange", sync);
     return () => window.removeEventListener("consentChange", sync);
-  }, [vendor]);
+  }, [category]);
 
   return allowed ? <>{children}</> : null;
 }

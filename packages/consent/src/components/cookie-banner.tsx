@@ -200,7 +200,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
           </Button>
 
           <Button
-            variant="danger"
+            variant="secondary"
             size="sm"
             onClick={handleRejectAll}
             css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
@@ -210,7 +210,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
 
           {showDetails ? (
             <Button
-              variant="secondary"
+              variant="accent"
               size="sm"
               onClick={handleSavePreferences}
               css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
@@ -218,14 +218,27 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
               ⚙ Save Preferences
             </Button>
           ) : (
-            <Button
-              variant="outline"
-              size="sm"
+            <Box
+              as="button"
+              type="button"
               onClick={() => setShowDetails(true)}
-              css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
+              css={{
+                appearance: "none",
+                background: "none",
+                border: "none",
+                p: 0,
+                color: "pageFg",
+                fontFamily: "sans",
+                fontSize: "sm",
+                cursor: "pointer",
+                textDecoration: "underline",
+                textUnderlineOffset: "2px",
+                _hover: { opacity: 0.7 },
+                md: { fontSize: "md" },
+              }}
             >
               ⚙ Customize
-            </Button>
+            </Box>
           )}
 
           <Box as="span" css={{ fontSize: "xs", opacity: 0.6, ml: "auto" }}>

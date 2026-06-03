@@ -149,7 +149,7 @@ export const ButtonGroup: Story = {
     <HStack gap="4">
       <Button variant="primary">Primary</Button>
       <Button variant="secondary">Secondary</Button>
-      <Button variant="outline">Outline</Button>
+      <Button variant="accent">Accent</Button>
     </HStack>
   ),
 };
@@ -186,7 +186,7 @@ export const SpaceBetween: Story = {
     <HStack fullWidth css={{ p: "4", bg: "neutral.100", justifyContent: "space-between" }}>
       <Headline level={3}>Logo</Headline>
       <HStack gap="4">
-        <Button variant="outline" size="sm">
+        <Button variant="secondary" size="sm">
           Login
         </Button>
         <Button variant="primary" size="sm">

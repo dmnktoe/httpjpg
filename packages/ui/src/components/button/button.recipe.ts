@@ -1,7 +1,7 @@
 import { colors } from "@httpjpg/tokens";
 import { defineRecipe } from "@pandacss/dev";
 
-import { hexToRgba, linearGradient } from "../../../panda.helpers";
+import { hexToRgba } from "../../../panda.helpers";
 
 export const buttonRecipe = defineRecipe({
   className: "button",
@@ -57,40 +57,34 @@ export const buttonRecipe = defineRecipe({
         },
       },
       secondary: {
-        color: "white",
+        color: "black",
         _before: {
-          background: linearGradient("135deg", [
-            { hex: colors.accent[400], alpha: 0.9 },
-            { hex: colors.accent[600], alpha: 0.9 },
-          ]),
+          background: hexToRgba(colors.neutral[300], 0.6),
           filter: "blur(5px)",
           inset: "-3px",
-          boxShadow: `0 0 20px 0 ${hexToRgba(colors.accent[400], 0.3)}, 0 0 40px 0 ${hexToRgba(colors.accent[600], 0.15)}`,
+          boxShadow: `0 0 18px 0 ${hexToRgba(colors.neutral[400], 0.2)}, 0 0 36px 0 ${hexToRgba(colors.neutral[400], 0.1)}`,
         },
         _hover: {
           _before: {
-            background: linearGradient("135deg", [
-              { hex: colors.accent[400], alpha: 0.95 },
-              { hex: colors.accent[600], alpha: 0.95 },
-            ]),
+            background: hexToRgba(colors.neutral[400], 0.6),
             filter: "blur(5px)",
-            boxShadow: `0 0 25px 0 ${hexToRgba(colors.accent[400], 0.4)}, 0 0 45px 0 ${hexToRgba(colors.accent[600], 0.2)}`,
+            boxShadow: `0 0 22px 0 ${hexToRgba(colors.neutral[400], 0.3)}, 0 0 42px 0 ${hexToRgba(colors.neutral[400], 0.15)}`,
           },
         },
       },
-      outline: {
-        color: "white",
+      accent: {
+        color: "black",
         _before: {
-          background: hexToRgba(colors.primary[500], 0.4),
+          background: hexToRgba(colors.accent[400], 0.95),
           filter: "blur(5px)",
           inset: "-3px",
-          boxShadow: `0 0 20px 0 ${hexToRgba(colors.primary[500], 0.2)}, 0 0 40px 0 ${hexToRgba(colors.primary[500], 0.1)}`,
+          boxShadow: `0 0 20px 0 ${hexToRgba(colors.accent[400], 0.3)}, 0 0 40px 0 ${hexToRgba(colors.accent[500], 0.15)}`,
         },
         _hover: {
           _before: {
-            background: hexToRgba(colors.primary[600], 0.5),
+            background: hexToRgba(colors.accent[500], 0.95),
             filter: "blur(5px)",
-            boxShadow: `0 0 25px 0 ${hexToRgba(colors.primary[600], 0.3)}, 0 0 45px 0 ${hexToRgba(colors.primary[600], 0.15)}`,
+            boxShadow: `0 0 25px 0 ${hexToRgba(colors.accent[500], 0.4)}, 0 0 45px 0 ${hexToRgba(colors.accent[600], 0.2)}`,
           },
         },
       },
@@ -107,23 +101,6 @@ export const buttonRecipe = defineRecipe({
             background: hexToRgba(colors.danger[600], 0.95),
             filter: "blur(5px)",
             boxShadow: `0 0 25px 0 ${hexToRgba(colors.danger[600], 0.4)}, 0 0 45px 0 ${hexToRgba(colors.danger[600], 0.2)}`,
-          },
-        },
-      },
-      disabled: {
-        color: hexToRgba(colors.neutral[400], 0.7),
-        cursor: "not-allowed",
-        _before: {
-          background: hexToRgba(colors.neutral[500], 0.3),
-          filter: "blur(5px)",
-          inset: "-3px",
-          boxShadow: `0 0 15px 0 ${hexToRgba(colors.neutral[500], 0.2)}`,
-        },
-        _hover: {
-          _before: {
-            background: hexToRgba(colors.neutral[500], 0.3),
-            filter: "blur(5px)",
-            boxShadow: `0 0 15px 0 ${hexToRgba(colors.neutral[500], 0.2)}`,
           },
         },
       },

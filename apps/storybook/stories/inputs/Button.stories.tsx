@@ -89,23 +89,23 @@ export const Secondary: Story = {
   },
 };
 
-export const Outline: Story = {
+export const Accent: Story = {
   args: {
-    variant: "outline",
-    children: "Outline Button",
+    variant: "accent",
+    children: "Accent Button",
   },
 };
 
 export const Danger: Story = {
   args: {
     variant: "danger",
-    children: "Reject All",
+    children: "Danger Button",
   },
 };
 
 export const Disabled: Story = {
   args: {
-    variant: "disabled",
+    disabled: true,
     children: "Disabled Button",
   },
 };
@@ -170,14 +170,14 @@ export const AllVariants: Story = {
         </Button>
       </div>
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <Button {...args} variant="outline" size="sm">
-          Outline SM
+        <Button {...args} variant="accent" size="sm">
+          Accent SM
         </Button>
-        <Button {...args} variant="outline" size="md">
-          Outline MD
+        <Button {...args} variant="accent" size="md">
+          Accent MD
         </Button>
-        <Button {...args} variant="outline" size="lg">
-          Outline LG
+        <Button {...args} variant="accent" size="lg">
+          Accent LG
         </Button>
       </div>
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
@@ -192,14 +192,14 @@ export const AllVariants: Story = {
         </Button>
       </div>
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        <Button {...args} variant="disabled" size="sm">
-          Disabled SM
+        <Button variant="primary" size="md" disabled>
+          Disabled
         </Button>
-        <Button {...args} variant="disabled" size="md">
-          Disabled MD
+        <Button variant="secondary" size="md" disabled>
+          Disabled
         </Button>
-        <Button {...args} variant="disabled" size="lg">
-          Disabled LG
+        <Button variant="accent" size="md" disabled>
+          Disabled
         </Button>
       </div>
     </div>

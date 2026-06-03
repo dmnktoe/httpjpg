@@ -59,10 +59,10 @@ export const Introduction = {
               <Button href="https://github.com/dmnktoe/httpjpg" variant="primary" size="sm">
                 ✦ GitHub ↗
               </Button>
-              <Button href="https://www.httpjpg.com" variant="outline" size="sm">
+              <Button href="https://www.httpjpg.com" variant="secondary" size="sm">
                 ◆ Live Site ↗
               </Button>
-              <Button href="https://www.npmjs.com/org/httpjpg" variant="outline" size="sm">
+              <Button href="https://www.npmjs.com/org/httpjpg" variant="accent" size="sm">
                 ⋆ npm ↗
               </Button>
             </Stack>

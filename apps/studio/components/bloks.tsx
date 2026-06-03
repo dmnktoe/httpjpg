@@ -41,7 +41,7 @@ export interface BlokPlugin {
 
 const TEXT_ALIGN_OPTIONS = [{ value: "", label: "—" }, ...CMS_OPTIONS.textAlign.map(labelOption)];
 
-const BUTTON_VARIANTS = (["primary", "secondary", "outline", "disabled"] as const).map(labelOption);
+const BUTTON_VARIANTS = (["primary", "secondary"] as const).map(labelOption);
 const BUTTON_SIZES = [
   { value: "sm", label: "Small" },
   { value: "md", label: "Medium" },
@@ -110,7 +110,7 @@ function Placeholder({ label, sub }: { label: string; sub?: string }) {
   );
 }
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "disabled";
+type ButtonVariant = "primary" | "secondary";
 type ButtonSize = "sm" | "md" | "lg";
 type VideoSource = "native" | "youtube" | "vimeo";
 type MusicSource = "mp3" | "spotify" | "soundcloud";

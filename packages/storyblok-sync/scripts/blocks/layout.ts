@@ -25,7 +25,22 @@ export const layoutBlocks: BlockDef[] = [
     schema: withSpacing({
       content: field.bloks("Content", {
         required: true,
-        whitelist: ["container", "grid", "headline", "paragraph"],
+        whitelist: [
+          "container",
+          "grid",
+          "headline",
+          "paragraph",
+          "richtext",
+          "button",
+          "divider",
+          "link",
+          "icon",
+          "list",
+          "accordion",
+          "callout",
+          "code_block",
+          "stats",
+        ],
       }),
       bgColor: field.datasource("Background Color", "color-options"),
       ...tabbed("Container", "container", {

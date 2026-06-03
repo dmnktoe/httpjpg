@@ -42,6 +42,21 @@ const brutalistTheme = create({
 });
 
 const preview: Preview = {
+  globalTypes: {
+    theme: {
+      description: "Toggle pageBg / pageFg semantic tokens",
+      defaultValue: "light",
+      toolbar: {
+        title: "Theme",
+        icon: "paintbrush",
+        items: [
+          { value: "light", title: "● light", right: "☀" },
+          { value: "dark", title: "○ dark", right: "🌙" },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
   parameters: {
     options: {
       storySort: {
@@ -57,6 +72,7 @@ const preview: Preview = {
           "Motion",
           "Display",
           "Widgets",
+          "Utilities",
         ],
       },
     },
@@ -78,32 +94,45 @@ const preview: Preview = {
     },
   },
   decorators: [
-    (Story) => (
-      <LazyMotionProvider>
-        <style>
-          {`
-            /* Storyblok docs UI only — never bleeds into story content. */
-            .sbdocs,
-            .sbdocs-content,
-            .sbdocs-p,
-            .docblock-argstable,
-            .docblock-description {
-              font-family: Arial, Helvetica, sans-serif;
-            }
-            .sbdocs-h1,
-            .sbdocs-h2,
-            .sbdocs-h3,
-            .sbdocs-h4,
-            .sbdocs-h5,
-            .sbdocs-h6,
-            .sbdocs-title {
-              font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
-            }
-          `}
-        </style>
-        <Story />
-      </LazyMotionProvider>
-    ),
+    (Story, context) => {
+      const theme = (context.globals.theme as "light" | "dark") ?? "light";
+      return (
+        <LazyMotionProvider>
+          <style>
+            {`
+              /* Storyblok docs UI only — never bleeds into story content. */
+              .sbdocs,
+              .sbdocs-content,
+              .sbdocs-p,
+              .docblock-argstable,
+              .docblock-description {
+                font-family: Arial, Helvetica, sans-serif;
+              }
+              .sbdocs-h1,
+              .sbdocs-h2,
+              .sbdocs-h3,
+              .sbdocs-h4,
+              .sbdocs-h5,
+              .sbdocs-h6,
+              .sbdocs-title {
+                font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+              }
+              [data-sb-theme="dark"] {
+                background: #0a0a0a;
+                color: #fafafa;
+              }
+              [data-sb-theme="light"] {
+                background: #ffffff;
+                color: #0a0a0a;
+              }
+            `}
+          </style>
+          <div data-sb-theme={theme} data-theme={theme === "dark" ? "dark" : undefined}>
+            <Story />
+          </div>
+        </LazyMotionProvider>
+      );
+    },
   ],
 };
 

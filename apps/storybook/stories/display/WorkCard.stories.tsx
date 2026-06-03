@@ -23,25 +23,62 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    title: {
-      control: "text",
-      description: "Project title",
-    },
+    title: { control: "text", description: "Project title" },
     description: {
       control: false,
-      description: "Project description (can be rich text/ReactNode)",
+      description: "Project description (can be rich text / ReactNode)",
     },
-    date: {
+    date: { control: "text", description: "Project date (ISO string or Date)" },
+    dateEnd: { control: "text", description: "Optional end date for date ranges" },
+    slug: { control: "text", description: "Project URL slug" },
+    baseUrl: {
       control: "text",
-      description: "Project date (ISO format)",
+      description: "URL prefix joined with slug",
+      table: { defaultValue: { summary: "/work" } },
     },
-    slug: {
-      control: "text",
-      description: "Project URL slug",
+    variant: {
+      control: { type: "inline-radio" as const },
+      options: ["default", "compact", "featured"] as const,
+      description: "Card layout variant",
+      table: { defaultValue: { summary: "default" } },
     },
     images: {
       control: "object",
-      description: "Array of slideshow images with url, alt, and optional copyright",
+      description: "Array of slideshow images with url, alt, optional copyright",
+    },
+    tags: {
+      control: "object",
+      description: "Inline tags surfaced as `data-tags` for WorkTagFilter",
+    },
+    overlay: {
+      control: { type: "select" as const },
+      options: [
+        "none",
+        "random",
+        "stars",
+        "sparkles",
+        "hearts",
+        "confetti",
+        "tape",
+        "dots",
+        "arrows",
+        "ghost",
+        "bracket",
+        "noise",
+        "runes",
+      ] as const,
+      description: "ASCII sparkle overlay applied to each slide",
+      table: { defaultValue: { summary: "random" } },
+    },
+    overlayInset: {
+      control: { type: "range", min: 0, max: 20, step: 1 },
+      description: "Push overlay particles inward by N percent",
+      table: { defaultValue: { summary: "6" } },
+    },
+    priority: {
+      control: "boolean",
+      description: "Mark the card's first slide as LCP (eager + fetchpriority=high)",
+      table: { defaultValue: { summary: "false" } },
     },
   },
 } satisfies Meta<typeof WorkCard>;

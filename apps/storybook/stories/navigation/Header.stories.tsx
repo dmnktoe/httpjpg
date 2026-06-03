@@ -1,6 +1,8 @@
 import { Header, ImagePreview } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
+import { MOCK_HEADER_CLIENT_WORK, MOCK_HEADER_PERSONAL_WORK } from "../shared/storybook-fixtures";
+
 /**
  * Header component stories
  *
@@ -40,19 +42,6 @@ const mockNav = [
   { name: "Contact", href: "/contact" },
 ];
 
-const mockPersonalWork = [
-  { id: "1", slug: "brutalist-portfolio", title: "Brutalist Portfolio 2024" },
-  { id: "2", slug: "design-system", title: "httpjpg Design System" },
-  { id: "3", slug: "experimental-ui", title: "Experimental UI Kit" },
-  { id: "4", slug: "ascii-art-generator", title: "ASCII Art Generator" },
-];
-
-const mockClientWork = [
-  { id: "1", slug: "client-project-1", title: "Client Alpha - Branding" },
-  { id: "2", slug: "client-project-2", title: "Client Beta - Web Design" },
-  { id: "3", slug: "client-project-3", title: "Client Gamma - App Dev" },
-];
-
 const mockExternalClientWork = [
   {
     id: "1",
@@ -77,8 +66,8 @@ const mockExternalClientWork = [
 export const Basic: Story = {
   args: {
     nav: mockNav,
-    personalWork: mockPersonalWork,
-    clientWork: mockClientWork,
+    personalWork: MOCK_HEADER_PERSONAL_WORK,
+    clientWork: MOCK_HEADER_CLIENT_WORK,
   },
 };
 
@@ -91,8 +80,8 @@ export const MinimalNav: Story = {
       { name: "Home", href: "/" },
       { name: "Work", href: "/work" },
     ],
-    personalWork: mockPersonalWork.slice(0, 2),
-    clientWork: mockClientWork.slice(0, 2),
+    personalWork: MOCK_HEADER_PERSONAL_WORK.slice(0, 2),
+    clientWork: MOCK_HEADER_CLIENT_WORK.slice(0, 2),
   },
 };
 
@@ -140,8 +129,8 @@ export const NoWorkItems: Story = {
 export const WithContent: Story = {
   args: {
     nav: mockNav,
-    personalWork: mockPersonalWork,
-    clientWork: mockClientWork,
+    personalWork: MOCK_HEADER_PERSONAL_WORK,
+    clientWork: MOCK_HEADER_CLIENT_WORK,
   },
   render: (args) => (
     <div>
@@ -237,61 +226,6 @@ export const WithContent: Story = {
   ),
 };
 
-const mockPersonalWorkWithImages = [
-  {
-    id: "1",
-    slug: "brutalist-portfolio",
-    title: "Brutalist Portfolio 2024",
-    imageUrl:
-      "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/600x400/smart/filters:quality(75)",
-  },
-  {
-    id: "2",
-    slug: "design-system",
-    title: "httpjpg Design System",
-    imageUrl:
-      "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/600x400/smart/filters:quality(75)",
-  },
-  {
-    id: "3",
-    slug: "experimental-ui",
-    title: "Experimental UI Kit",
-    imageUrl:
-      "https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/600x400/smart/filters:quality(75)",
-  },
-  {
-    id: "4",
-    slug: "ascii-art-generator",
-    title: "ASCII Art Generator",
-    imageUrl:
-      "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/600x400/smart/filters:quality(75)",
-  },
-];
-
-const mockClientWorkWithImages = [
-  {
-    id: "1",
-    slug: "client-project-1",
-    title: "Client Alpha - Branding",
-    imageUrl:
-      "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/600x400/smart/filters:quality(75)",
-  },
-  {
-    id: "2",
-    slug: "client-project-2",
-    title: "Client Beta - Web Design",
-    imageUrl:
-      "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/600x400/smart/filters:quality(75)",
-  },
-  {
-    id: "3",
-    slug: "client-project-3",
-    title: "Client Gamma - App Dev",
-    imageUrl:
-      "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/600x400/smart/filters:quality(75)",
-  },
-];
-
 /**
  * Header with image preview on work items
  * Hover over work items in the navigation to see featured images
@@ -300,8 +234,8 @@ const mockClientWorkWithImages = [
 export const WithImagePreview: Story = {
   args: {
     nav: mockNav,
-    personalWork: mockPersonalWorkWithImages,
-    clientWork: mockClientWorkWithImages,
+    personalWork: MOCK_HEADER_PERSONAL_WORK,
+    clientWork: MOCK_HEADER_CLIENT_WORK,
   },
   render: (args) => (
     <div>

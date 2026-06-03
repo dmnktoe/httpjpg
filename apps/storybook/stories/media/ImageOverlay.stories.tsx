@@ -29,10 +29,30 @@ const meta = {
         "runes",
       ] satisfies OverlayPattern[],
     },
-    seed: { control: "text" },
-    size: { control: "text" },
-    color: { control: "color" },
-    opacity: { control: { type: "range", min: 0, max: 1, step: 0.1 } },
+    seed: {
+      control: "text",
+      description: "Seed for `random` pattern picker (same seed → same pattern)",
+    },
+    size: {
+      control: "text",
+      description: "Base font-size for particles",
+      table: { defaultValue: { summary: "1rem" } },
+    },
+    color: {
+      control: "color",
+      description: "Particle color (any CSS color or var())",
+      table: { defaultValue: { summary: "currentColor" } },
+    },
+    opacity: {
+      control: { type: "range", min: 0, max: 1, step: 0.1 },
+      description: "Master opacity multiplier",
+      table: { defaultValue: { summary: "0.7" } },
+    },
+    inset: {
+      control: { type: "range", min: 0, max: 30, step: 1 },
+      description: "Push particles inward by N percent",
+      table: { defaultValue: { summary: "0" } },
+    },
   },
 } satisfies Meta<typeof ImageOverlay>;
 

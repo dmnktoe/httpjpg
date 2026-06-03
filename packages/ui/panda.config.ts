@@ -14,6 +14,7 @@ import { defineConfig } from "@pandacss/dev";
 
 import { hexToRgba, linearGradient } from "./panda.helpers";
 import { buttonRecipe } from "./src/components/button/button.recipe";
+import { navLinkRecipe } from "./src/components/nav-link/nav-link.recipe";
 
 const pandaCliProduction = process.env.PANDA_PRODUCTION === "1";
 
@@ -229,9 +230,7 @@ export default defineConfig({
       },
       recipes: {
         button: buttonRecipe,
-        navLink: navLinkRecipe(),
-        headline: headlineRecipe(),
-        paragraph: paragraphRecipe(),
+        navLink: navLinkRecipe,
       },
     },
   },
@@ -283,131 +282,3 @@ export default defineConfig({
     jsx: "@httpjpg/ui/jsx",
   },
 });
-
-function navLinkRecipe() {
-  return {
-    className: "navLink",
-    base: {
-      display: "block",
-      color: "inherit",
-      fontFamily: "sans",
-      fontSize: "inherit",
-      lineHeight: "inherit",
-      py: "2px",
-      px: "2px",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-      textDecoration: "none",
-      _hover: {
-        textDecoration: "underline",
-        textDecorationStyle: "wavy",
-        textUnderlineOffset: "2px",
-      },
-      transition: "all 150ms ease-in-out",
-      outline: "none",
-      _focusVisible: {
-        outline: "2px solid",
-        outlineColor: "primary.500",
-        outlineOffset: "2px",
-      },
-    },
-    variants: {
-      variant: {
-        personal: {
-          _before: { content: "'🎀 ୧ꔛꗃ˖ '", marginRight: "0.5em" },
-        },
-        client: {
-          _before: { content: "'(^‿^)-𝒷))) '", marginRight: "0.5em" },
-        },
-      },
-    },
-    defaultVariants: { variant: "personal" },
-  } as const;
-}
-
-function headlineRecipe() {
-  return {
-    className: "headline",
-    base: {
-      margin: 0,
-      padding: 0,
-      fontFamily: "headline",
-      letterSpacing: "tight",
-      lineHeight: 1,
-      textWrap: "balance",
-    },
-    variants: {
-      level: {
-        1: {
-          fontSize: headlineClampSizes[0],
-          fontWeight: "black",
-          letterSpacing: "tighter",
-        },
-        2: {
-          fontSize: headlineClampSizes[1],
-          fontWeight: "extrabold",
-          letterSpacing: "tighter",
-        },
-        3: { fontSize: headlineClampSizes[2], fontWeight: "bold" },
-      },
-      align: {
-        left: { textAlign: "left" },
-        center: { textAlign: "center" },
-        right: { textAlign: "right" },
-        justify: { textAlign: "justify", textJustify: "inter-word", textWrap: "wrap" },
-      },
-    },
-    defaultVariants: { level: 1 },
-  } as const;
-}
-
-function paragraphRecipe() {
-  return {
-    className: "paragraph",
-    base: {
-      margin: 0,
-      padding: 0,
-      fontFamily: "sans",
-      lineHeight: 1.75,
-      textWrap: "pretty",
-    },
-    variants: {
-      size: {
-        sm: { fontSize: "sm" },
-        md: { fontSize: "md" },
-        lg: { fontSize: "lg", lineHeight: 1.8 },
-        xl: { fontSize: "xl", lineHeight: 1.8 },
-      },
-      align: {
-        left: { textAlign: "left" },
-        center: {
-          textAlign: "center",
-          marginLeft: "auto",
-          marginRight: "auto",
-        },
-        right: { textAlign: "right", marginLeft: "auto" },
-        justify: { textAlign: "justify", textJustify: "inter-word" },
-      },
-      color: {
-        default: { color: "black", opacity: 1 },
-        muted: { color: "black", opacity: 0.7 },
-        dimmed: { color: "black", opacity: 0.5 },
-      },
-      weight: {
-        normal: { fontWeight: 400 },
-        medium: { fontWeight: 500 },
-        semibold: { fontWeight: 600 },
-        bold: { fontWeight: 700 },
-      },
-      spacing: { true: { marginBottom: 4 } },
-    },
-    defaultVariants: {
-      size: "sm",
-      align: "left",
-      color: "default",
-      weight: "normal",
-      spacing: false,
-    },
-  } as const;
-}

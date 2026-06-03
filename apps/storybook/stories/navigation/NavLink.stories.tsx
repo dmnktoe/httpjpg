@@ -1,5 +1,6 @@
 import { Box, NavLink } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import type { ReactNode } from "react";
 
 const meta = {
   title: "Navigation/NavLink",
@@ -9,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Specialized navigation link component with decorative prefixes for personal/things work and client work. Features hover underline and inherits all Link capabilities including Next.js routing and Storyblok compatibility.",
+          "Specialized navigation link component with decorative prefixes for projects/things work and websites work. Features hover underline and inherits all Link capabilities including Next.js routing and Storyblok compatibility.",
       },
     },
   },
@@ -17,9 +18,9 @@ const meta = {
   argTypes: {
     variant: {
       control: { type: "inline-radio" as const },
-      options: ["personal", "client"] as const,
+      options: ["projects", "websites"] as const,
       description: "Visual variant with decorative prefix",
-      table: { defaultValue: { summary: "personal" } },
+      table: { defaultValue: { summary: "projects" } },
     },
     href: { control: "text", description: "Link destination" },
     children: { control: "text", description: "Link content (work title)" },
@@ -37,12 +38,21 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/** Italic year prefix, mirroring how the Header renders recent work. */
+function Year({ children }: { children: ReactNode }) {
+  return (
+    <Box as="span" css={{ fontStyle: "italic" }}>
+      {children}{" "}
+    </Box>
+  );
+}
+
 /**
  * Basic personal/things work link with decorative emoji prefix
  */
 export const Basic: Story = {
   args: {
-    variant: "personal",
+    variant: "projects",
     href: "/work/project-alpha",
     children: "Project Alpha - Photography Series",
   },
@@ -53,7 +63,7 @@ export const Basic: Story = {
  */
 export const Personal: Story = {
   args: {
-    variant: "personal",
+    variant: "projects",
     href: "/work/urban-exploration",
     children: "Urban Exploration 2024",
   },
@@ -64,7 +74,7 @@ export const Personal: Story = {
  */
 export const Client: Story = {
   args: {
-    variant: "client",
+    variant: "websites",
     href: "/work/client-brand-design",
     children: "Brand Identity - Tech Startup",
   },
@@ -75,7 +85,7 @@ export const Client: Story = {
  */
 export const PersonalExternal: Story = {
   args: {
-    variant: "personal",
+    variant: "projects",
     href: "https://behance.net/project/example",
     children: "Featured on Behance",
   },
@@ -86,7 +96,7 @@ export const PersonalExternal: Story = {
  */
 export const ClientExternal: Story = {
   args: {
-    variant: "client",
+    variant: "websites",
     href: "https://dribbble.com/shots/example",
     children: "Dribbble Case Study",
   },
@@ -97,7 +107,7 @@ export const ClientExternal: Story = {
  */
 export const LongText: Story = {
   args: {
-    variant: "personal",
+    variant: "projects",
     href: "/work/long-title",
     children:
       "This is a very long project title that will be truncated with ellipsis to maintain layout integrity",
@@ -116,7 +126,7 @@ export const LongText: Story = {
  */
 export const CustomStyles: Story = {
   args: {
-    variant: "client",
+    variant: "websites",
     href: "/work/premium-project",
     children: "Premium Client Project",
     css: {
@@ -132,16 +142,35 @@ export const CustomStyles: Story = {
  */
 export const StoryblokWork: Story = {
   args: {
-    variant: "personal",
+    variant: "projects",
     href: "",
     children: "Photography Exhibition 2024",
   },
 };
 
 /**
+ * With a leading year — mirrors the Header, where each recent-work link is
+ * prefixed with an italic year before the title.
+ */
+export const WithYear = {
+  render: () => (
+    <Box css={{ display: "flex", flexDirection: "column", gap: "1", maxW: "md" }}>
+      <NavLink variant="projects" href="/work/analog-series">
+        <Year>2024</Year>
+        Analog Photography Series
+      </NavLink>
+      <NavLink variant="websites" href="/work/shop-redesign">
+        <Year>2023</Year>
+        E-Commerce Redesign
+      </NavLink>
+    </Box>
+  ),
+};
+
+/**
  * Navigation list - Personal work
  */
-export const PersonalWorkList = {
+export const ProjectsWorkList = {
   render: () => (
     <Box
       css={{
@@ -151,16 +180,19 @@ export const PersonalWorkList = {
         maxW: "md",
       }}
     >
-      <NavLink variant="personal" href="/work/photo-series-1">
+      <NavLink variant="projects" href="/work/photo-series-1">
+        <Year>2024</Year>
         Analog Photography Series
       </NavLink>
-      <NavLink variant="personal" href="/work/digital-art">
+      <NavLink variant="projects" href="/work/digital-art">
+        <Year>2023</Year>
         Digital Art Collection
       </NavLink>
-      <NavLink variant="personal" href="/work/experimental">
+      <NavLink variant="projects" href="/work/experimental">
+        <Year>2022</Year>
         Experimental Film Project
       </NavLink>
-      <NavLink variant="personal" href="https://instagram.com/example">
+      <NavLink variant="projects" href="https://instagram.com/example">
         Instagram Portfolio
       </NavLink>
     </Box>
@@ -170,7 +202,7 @@ export const PersonalWorkList = {
 /**
  * Navigation list - Client work
  */
-export const ClientWorkList = {
+export const WebsitesWorkList = {
   render: () => (
     <Box
       css={{
@@ -180,16 +212,19 @@ export const ClientWorkList = {
         maxW: "md",
       }}
     >
-      <NavLink variant="client" href="/work/brand-identity">
+      <NavLink variant="websites" href="/work/brand-identity">
+        <Year>2025</Year>
         Brand Identity Design
       </NavLink>
-      <NavLink variant="client" href="/work/web-design">
+      <NavLink variant="websites" href="/work/web-design">
+        <Year>2024</Year>
         E-Commerce Website
       </NavLink>
-      <NavLink variant="client" href="/work/campaign">
+      <NavLink variant="websites" href="/work/campaign">
+        <Year>2023</Year>
         Marketing Campaign
       </NavLink>
-      <NavLink variant="client" href="/work/packaging">
+      <NavLink variant="websites" href="/work/packaging">
         Product Packaging
       </NavLink>
     </Box>
@@ -214,10 +249,12 @@ export const MixedNavigation = {
           ⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S
         </Box>
         <Box css={{ display: "flex", flexDirection: "column", gap: "1" }}>
-          <NavLink variant="personal" href="/work/personal-1">
+          <NavLink variant="projects" href="/work/personal-1">
+            <Year>2024</Year>
             Personal Project One
           </NavLink>
-          <NavLink variant="personal" href="/work/personal-2">
+          <NavLink variant="projects" href="/work/personal-2">
+            <Year>2023</Year>
             Personal Project Two
           </NavLink>
         </Box>
@@ -228,10 +265,12 @@ export const MixedNavigation = {
           ⇝ᵣₑcꫀₙₜ 𝒞𝓁LI€NT
         </Box>
         <Box css={{ display: "flex", flexDirection: "column", gap: "1" }}>
-          <NavLink variant="client" href="/work/client-1">
+          <NavLink variant="websites" href="/work/client-1">
+            <Year>2025</Year>
             Client Project One
           </NavLink>
-          <NavLink variant="client" href="/work/client-2">
+          <NavLink variant="websites" href="/work/client-2">
+            <Year>2024</Year>
             Client Project Two
           </NavLink>
         </Box>

@@ -13,7 +13,7 @@ export interface NavLinkProps extends Omit<
   "href" | "css"
 > {
   href: string;
-  variant?: "personal" | "client";
+  variant?: "projects" | "websites";
   children: ReactNode;
   isExternal?: boolean;
   showExternalIcon?: boolean;
@@ -21,7 +21,7 @@ export interface NavLinkProps extends Omit<
 }
 
 export function NavLink({
-  variant = "personal",
+  variant = "projects",
   children,
   css: cssProp,
   className,

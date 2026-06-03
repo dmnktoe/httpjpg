@@ -79,7 +79,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const footerConfig = await getFooterConfig();
   const widgetConfig = await getWidgetConfig();
   const flags = await getFeatureFlags();
-  const { personalWork, clientWork } = await getRecentWork();
+  const { projectsWork, websitesWork } = await getRecentWork();
   const lastUpdated = flags.lastUpdatedBadgeEnabled ? await getLastUpdated() : undefined;
   const theme = await getPageTheme();
 
@@ -104,7 +104,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
             {widgetConfig.psnEnabled && <PSNCard username={widgetConfig.psnUsername} />}
             <PreviewNotification />
-            <Header nav={navigation} personalWork={personalWork} clientWork={clientWork} />
+            <Header nav={navigation} projectsWork={projectsWork} websitesWork={websitesWork} />
             <Box
               as="main"
               css={{

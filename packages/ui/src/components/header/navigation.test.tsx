@@ -26,19 +26,19 @@ function makeWork(count: number, prefix: string): WorkItem[] {
 
 describe("Navigation", () => {
   it("renders the music/pics link inside the intro block", () => {
-    render(<Navigation nav={nav} personalWork={[]} clientWork={[]} />);
+    render(<Navigation nav={nav} projectsWork={[]} websitesWork={[]} />);
     const musicLink = screen.getByRole("link", { name: /music/i });
     expect(musicLink).toHaveAttribute("href", "/feed-xml_html");
   });
 
   it("hides the more toggle when there are 5 or fewer work items", () => {
-    render(<Navigation nav={nav} personalWork={makeWork(5, "p")} clientWork={[]} />);
+    render(<Navigation nav={nav} projectsWork={makeWork(5, "p")} websitesWork={[]} />);
     expect(screen.queryByRole("button", { name: /more/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /less/i })).not.toBeInTheDocument();
   });
 
   it("shows only the first 5 personal items and a more toggle with the remaining count", () => {
-    render(<Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={[]} />);
+    render(<Navigation nav={nav} projectsWork={makeWork(8, "p")} websitesWork={[]} />);
 
     expect(screen.getByText(/p title 0/)).toBeInTheDocument();
     expect(screen.getByText(/p title 4/)).toBeInTheDocument();
@@ -48,7 +48,7 @@ describe("Navigation", () => {
   });
 
   it("reveals every remaining item and the less toggle when more is clicked", () => {
-    render(<Navigation nav={nav} personalWork={makeWork(12, "p")} clientWork={[]} />);
+    render(<Navigation nav={nav} projectsWork={makeWork(12, "p")} websitesWork={[]} />);
 
     fireEvent.click(screen.getByRole("button", { name: /▾ more \(7\)/ }));
 
@@ -58,7 +58,7 @@ describe("Navigation", () => {
   });
 
   it("keeps the more toggle in the DOM (hidden) when expanded so the column height stays constant", () => {
-    render(<Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={[]} />);
+    render(<Navigation nav={nav} projectsWork={makeWork(8, "p")} websitesWork={[]} />);
 
     fireEvent.click(screen.getByRole("button", { name: /▾ more \(3\)/ }));
 
@@ -71,14 +71,14 @@ describe("Navigation", () => {
   it("collapses an expanded column when the pathname changes", () => {
     mockPathname.mockReturnValue("/");
     const { rerender } = render(
-      <Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={[]} />,
+      <Navigation nav={nav} projectsWork={makeWork(8, "p")} websitesWork={[]} />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: /▾ more \(3\)/ }));
     expect(screen.getByRole("button", { name: /▴ less/ })).toBeInTheDocument();
 
     mockPathname.mockReturnValue("/work/something");
-    rerender(<Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={[]} />);
+    rerender(<Navigation nav={nav} projectsWork={makeWork(8, "p")} websitesWork={[]} />);
 
     expect(screen.queryByRole("button", { name: /▴ less/ })).not.toBeInTheDocument();
     expect(screen.queryByText(/p title 5/)).not.toBeInTheDocument();
@@ -86,7 +86,7 @@ describe("Navigation", () => {
   });
 
   it("collapses back to the initial 5 items when less is clicked", () => {
-    render(<Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={[]} />);
+    render(<Navigation nav={nav} projectsWork={makeWork(8, "p")} websitesWork={[]} />);
 
     fireEvent.click(screen.getByRole("button", { name: /▾ more \(3\)/ }));
     fireEvent.click(screen.getByRole("button", { name: /▴ less/ }));
@@ -103,8 +103,8 @@ describe("Navigation", () => {
           { name: "home", href: "/" },
           { name: "github", href: "https://github.com/dmnktoe", isExternal: true },
         ]}
-        personalWork={[]}
-        clientWork={[]}
+        projectsWork={[]}
+        websitesWork={[]}
       />,
     );
 
@@ -125,7 +125,7 @@ describe("Navigation", () => {
     const { container } = render(
       <Navigation
         nav={[]}
-        personalWork={[
+        projectsWork={[
           {
             id: "p-ext",
             slug: "https://dribbble.com/dmnktoe",
@@ -134,7 +134,7 @@ describe("Navigation", () => {
           },
           { id: "p-int", slug: "internal-piece", title: "internal personal", isExternal: false },
         ]}
-        clientWork={[
+        websitesWork={[
           {
             id: "c-ext",
             slug: "https://acme.com",
@@ -159,7 +159,7 @@ describe("Navigation", () => {
     render(
       <Navigation
         nav={[]}
-        personalWork={[
+        projectsWork={[
           {
             id: "p-draft",
             slug: "wip-personal",
@@ -169,7 +169,7 @@ describe("Navigation", () => {
             date: "2026-04-01",
           },
         ]}
-        clientWork={[
+        websitesWork={[
           {
             id: "c-draft",
             slug: "wip-client",
@@ -190,8 +190,8 @@ describe("Navigation", () => {
     const { container } = render(
       <Navigation
         nav={[]}
-        personalWork={[]}
-        clientWork={[
+        projectsWork={[]}
+        websitesWork={[
           {
             id: "c-preview",
             slug: "acme-case-study",
@@ -211,7 +211,9 @@ describe("Navigation", () => {
   });
 
   it("expands personal and client columns independently", () => {
-    render(<Navigation nav={nav} personalWork={makeWork(8, "p")} clientWork={makeWork(7, "c")} />);
+    render(
+      <Navigation nav={nav} projectsWork={makeWork(8, "p")} websitesWork={makeWork(7, "c")} />,
+    );
 
     expect(screen.getByRole("button", { name: /▾ more \(3\)/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /▾ more \(2\)/ })).toBeInTheDocument();

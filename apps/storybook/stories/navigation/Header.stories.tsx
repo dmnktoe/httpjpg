@@ -1,7 +1,7 @@
 import { Header, ImagePreview } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { MOCK_HEADER_CLIENT_WORK, MOCK_HEADER_PERSONAL_WORK } from "../shared/storybook-fixtures";
+import { MOCK_HEADER_PROJECTS_WORK, MOCK_HEADER_WEBSITES_WORK } from "../shared/storybook-fixtures";
 
 /**
  * Header component stories
@@ -21,11 +21,11 @@ const meta = {
       control: "object",
       description: "Navigation items for the main menu",
     },
-    personalWork: {
+    projectsWork: {
       control: "object",
       description: "Recent personal work items",
     },
-    clientWork: {
+    websitesWork: {
       control: "object",
       description: "Recent client work items",
     },
@@ -42,7 +42,7 @@ const mockNav = [
   { name: "Contact", href: "/contact" },
 ];
 
-const mockExternalClientWork = [
+const mockExternalWebsitesWork = [
   {
     id: "1",
     slug: "https://www.behance.net/gallery/example1",
@@ -66,8 +66,8 @@ const mockExternalClientWork = [
 export const Basic: Story = {
   args: {
     nav: mockNav,
-    personalWork: MOCK_HEADER_PERSONAL_WORK,
-    clientWork: MOCK_HEADER_CLIENT_WORK,
+    projectsWork: MOCK_HEADER_PROJECTS_WORK,
+    websitesWork: MOCK_HEADER_WEBSITES_WORK,
   },
 };
 
@@ -80,8 +80,8 @@ export const MinimalNav: Story = {
       { name: "Home", href: "/" },
       { name: "Work", href: "/work" },
     ],
-    personalWork: MOCK_HEADER_PERSONAL_WORK.slice(0, 2),
-    clientWork: MOCK_HEADER_CLIENT_WORK.slice(0, 2),
+    projectsWork: MOCK_HEADER_PROJECTS_WORK.slice(0, 2),
+    websitesWork: MOCK_HEADER_WEBSITES_WORK.slice(0, 2),
   },
 };
 
@@ -95,7 +95,7 @@ export const WithExternalLinks: Story = {
       { name: "Behance", href: "https://www.behance.net", isExternal: true },
       { name: "Instagram", href: "https://instagram.com", isExternal: true },
     ],
-    personalWork: [
+    projectsWork: [
       {
         id: "1",
         slug: "https://codepen.io/example1",
@@ -108,7 +108,7 @@ export const WithExternalLinks: Story = {
       },
       { id: "3", slug: "https://dribbble.com/example3", title: "Design Shots" },
     ],
-    clientWork: mockExternalClientWork,
+    websitesWork: mockExternalWebsitesWork,
   },
 };
 
@@ -118,8 +118,8 @@ export const WithExternalLinks: Story = {
 export const NoWorkItems: Story = {
   args: {
     nav: mockNav,
-    personalWork: [],
-    clientWork: [],
+    projectsWork: [],
+    websitesWork: [],
   },
 };
 
@@ -129,8 +129,8 @@ export const NoWorkItems: Story = {
 export const WithContent: Story = {
   args: {
     nav: mockNav,
-    personalWork: MOCK_HEADER_PERSONAL_WORK,
-    clientWork: MOCK_HEADER_CLIENT_WORK,
+    projectsWork: MOCK_HEADER_PROJECTS_WORK,
+    websitesWork: MOCK_HEADER_WEBSITES_WORK,
   },
   render: (args) => (
     <div>
@@ -234,8 +234,8 @@ export const WithContent: Story = {
 export const WithImagePreview: Story = {
   args: {
     nav: mockNav,
-    personalWork: MOCK_HEADER_PERSONAL_WORK,
-    clientWork: MOCK_HEADER_CLIENT_WORK,
+    projectsWork: MOCK_HEADER_PROJECTS_WORK,
+    websitesWork: MOCK_HEADER_WEBSITES_WORK,
   },
   render: (args) => (
     <div>

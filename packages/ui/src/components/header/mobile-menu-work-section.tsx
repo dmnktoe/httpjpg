@@ -10,7 +10,7 @@ import type { WorkItem } from "./header";
 interface MobileMenuWorkSectionProps {
   heading: ReactNode;
   works: WorkItem[];
-  variant: "personal" | "client";
+  variant: "projects" | "websites";
   emptyState: ReactNode;
   onItemClick: () => void;
 }
@@ -38,14 +38,14 @@ export function MobileMenuWorkSection({
                 variant={variant}
                 href={href}
                 isExternal={work.isExternal}
-                showExternalIcon={variant === "client" && work.isExternal}
+                showExternalIcon={variant === "websites" && work.isExternal}
                 onClick={onItemClick}
                 data-preview-image={work.imageUrl}
                 css={{
                   backgroundColor: work.isDraft ? "warning.200" : "transparent",
                   color: work.isDraft ? "black" : "inherit",
                   ...(work.isDraft && {
-                    padding: variant === "personal" ? "2px 4px" : "0 4px",
+                    padding: variant === "projects" ? "2px 4px" : "0 4px",
                   }),
                 }}
               >

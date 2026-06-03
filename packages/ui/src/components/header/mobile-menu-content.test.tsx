@@ -25,8 +25,8 @@ function renderMenu(props: Partial<React.ComponentProps<typeof MobileMenuContent
       isOpen
       setIsOpen={setIsOpen}
       nav={nav}
-      personalWork={[]}
-      clientWork={[]}
+      projectsWork={[]}
+      websitesWork={[]}
       {...props}
     />,
   );
@@ -47,9 +47,9 @@ describe("MobileMenuContent", () => {
   });
 
   it("renders every work item without applying a cap", () => {
-    const personalWork = makeWork(25, "p");
-    const clientWork = makeWork(15, "c");
-    renderMenu({ personalWork, clientWork });
+    const projectsWork = makeWork(25, "p");
+    const websitesWork = makeWork(15, "c");
+    renderMenu({ projectsWork, websitesWork });
 
     expect(screen.getByText(/p title 0/)).toBeInTheDocument();
     expect(screen.getByText(/p title 24/)).toBeInTheDocument();
@@ -70,13 +70,13 @@ describe("MobileMenuContent", () => {
   });
 
   it("closes the menu when a work item is clicked", () => {
-    const { setIsOpen } = renderMenu({ personalWork: makeWork(1, "p") });
+    const { setIsOpen } = renderMenu({ projectsWork: makeWork(1, "p") });
     fireEvent.click(screen.getByRole("link", { name: /p title 0/ }));
     expect(setIsOpen).toHaveBeenCalledWith(false);
   });
 
   it("renders draft work items with a [DRAFT] prefix and year", () => {
-    const personalWork: WorkItem[] = [
+    const projectsWork: WorkItem[] = [
       {
         id: "draft-1",
         slug: "draft-1",
@@ -86,7 +86,7 @@ describe("MobileMenuContent", () => {
         date: "2024-03-01",
       },
     ];
-    renderMenu({ personalWork });
+    renderMenu({ projectsWork });
     const draftLink = screen.getByRole("link", { name: /draft.*2024.*wip piece/i });
     expect(draftLink).toBeInTheDocument();
     expect(within(draftLink).getByText(/2024/)).toBeInTheDocument();

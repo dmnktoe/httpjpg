@@ -79,20 +79,20 @@ describe("getRecentWork", () => {
     return getStories;
   }
 
-  it("partitions stories into personal vs client by tag", async () => {
+  it("partitions stories into projects vs websites by tag", async () => {
     setupRecentWork(
       [
         workStory({
           uuid: "p1",
-          slug: "personal-1",
-          full_slug: "work/personal-1",
-          tag_list: ["Personal"],
+          slug: "projects-1",
+          full_slug: "work/projects-1",
+          tag_list: ["Projects"],
         }),
         workStory({
           uuid: "c1",
-          slug: "client-1",
-          full_slug: "work/client-1",
-          tag_list: ["Client"],
+          slug: "websites-1",
+          full_slug: "work/websites-1",
+          tag_list: ["Websites"],
         }),
         workStory({
           uuid: "u1",
@@ -102,18 +102,18 @@ describe("getRecentWork", () => {
         }),
       ],
       [
-        { ...workStory({ uuid: "p1", slug: "personal-1" }), first_published_at: "2026-01-01" },
-        { ...workStory({ uuid: "c1", slug: "client-1" }), first_published_at: "2026-01-02" },
+        { ...workStory({ uuid: "p1", slug: "projects-1" }), first_published_at: "2026-01-01" },
+        { ...workStory({ uuid: "c1", slug: "websites-1" }), first_published_at: "2026-01-02" },
         { ...workStory({ uuid: "u1", slug: "untagged" }), first_published_at: "2026-01-03" },
       ],
     );
 
     const result = await getRecentWork();
-    const personalIds = result.personalWork.map((w) => w.id);
-    const clientIds = result.clientWork.map((w) => w.id);
-    expect(personalIds).toEqual(expect.arrayContaining(["p1", "u1"]));
-    expect(personalIds).not.toContain("c1");
-    expect(clientIds).toEqual(["c1"]);
+    const projectsIds = result.projectsWork.map((w) => w.id);
+    const websitesIds = result.websitesWork.map((w) => w.id);
+    expect(projectsIds).toEqual(expect.arrayContaining(["p1", "u1"]));
+    expect(projectsIds).not.toContain("c1");
+    expect(websitesIds).toEqual(["c1"]);
   });
 
   it("filters out stories nested deeper than work/<slug>", async () => {
@@ -128,7 +128,7 @@ describe("getRecentWork", () => {
       ],
     );
     const result = await getRecentWork();
-    const ids = [...result.personalWork, ...result.clientWork].map((w) => w.id);
+    const ids = [...result.projectsWork, ...result.websitesWork].map((w) => w.id);
     expect(ids).toContain("ok");
     expect(ids).not.toContain("nested");
   });
@@ -139,8 +139,8 @@ describe("getRecentWork", () => {
       [{ ...workStory({ uuid: "draft", slug: "draft-one" }), first_published_at: null }],
     );
     const result = await getRecentWork();
-    expect(result.personalWork).toEqual([]);
-    expect(result.clientWork).toEqual([]);
+    expect(result.projectsWork).toEqual([]);
+    expect(result.websitesWork).toEqual([]);
   });
 
   it("marks stories with first_published_at as not draft", async () => {
@@ -149,7 +149,7 @@ describe("getRecentWork", () => {
       [{ ...workStory({ uuid: "live", slug: "live-one" }), first_published_at: "2026-01-01" }],
     );
     const result = await getRecentWork();
-    expect(result.personalWork[0]?.isDraft).toBe(false);
+    expect(result.projectsWork[0]?.isDraft).toBe(false);
   });
 
   it("uses the external link as the slug when external_only is true", async () => {
@@ -174,9 +174,9 @@ describe("getRecentWork", () => {
       ],
     );
     const result = await getRecentWork();
-    expect(result.personalWork[0]?.slug).toBe("https://example.com/case");
-    expect(result.personalWork[0]?.isExternal).toBe(true);
-    expect(result.personalWork[0]?.externalUrl).toBe("https://example.com/case");
+    expect(result.projectsWork[0]?.slug).toBe("https://example.com/case");
+    expect(result.projectsWork[0]?.isExternal).toBe(true);
+    expect(result.projectsWork[0]?.externalUrl).toBe("https://example.com/case");
   });
 
   it("exposes externalUrl when the story has a link but is not external_only", async () => {
@@ -186,9 +186,9 @@ describe("getRecentWork", () => {
           uuid: "prev",
           slug: "internal-1",
           full_slug: "work/internal-1",
-          tag_list: ["Client"],
+          tag_list: ["Websites"],
           content: {
-            title: "Client case",
+            title: "Website case",
             link: { url: "https://client.example/preview" },
           },
         }),
@@ -201,9 +201,9 @@ describe("getRecentWork", () => {
       ],
     );
     const result = await getRecentWork();
-    expect(result.clientWork[0]?.slug).toBe("internal-1");
-    expect(result.clientWork[0]?.isExternal).toBe(false);
-    expect(result.clientWork[0]?.externalUrl).toBe("https://client.example/preview");
+    expect(result.websitesWork[0]?.slug).toBe("internal-1");
+    expect(result.websitesWork[0]?.isExternal).toBe(false);
+    expect(result.websitesWork[0]?.externalUrl).toBe("https://client.example/preview");
   });
 
   it("falls back to story.name when content.title is missing", async () => {
@@ -225,7 +225,7 @@ describe("getRecentWork", () => {
       ],
     );
     const result = await getRecentWork();
-    expect(result.personalWork[0]?.title).toBe("Fallback Name");
+    expect(result.projectsWork[0]?.title).toBe("Fallback Name");
   });
 
   it("returns empty arrays and logs when the API throws", async () => {
@@ -234,7 +234,7 @@ describe("getRecentWork", () => {
         throw new Error("boom");
       }),
     } as never);
-    await expect(getRecentWork()).resolves.toEqual({ personalWork: [], clientWork: [] });
+    await expect(getRecentWork()).resolves.toEqual({ projectsWork: [], websitesWork: [] });
     expect(console.error).toHaveBeenCalledWith("Error fetching work items:", expect.any(Error));
   });
 });

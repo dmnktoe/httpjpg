@@ -18,8 +18,8 @@ export function MobileMenuContent({
   isOpen,
   setIsOpen,
   nav,
-  personalWork = [],
-  clientWork = [],
+  projectsWork = [],
+  websitesWork = [],
 }: MobileMenuContentProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -99,8 +99,8 @@ export function MobileMenuContent({
 
             <MobileMenuWorkSection
               heading="⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S"
-              works={personalWork}
-              variant="personal"
+              works={projectsWork}
+              variant="projects"
               onItemClick={handleMenuItemClick}
               emptyState={
                 <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
@@ -114,8 +114,8 @@ export function MobileMenuContent({
 
             <MobileMenuWorkSection
               heading="⇝ᵣₑcꫀₙₜ ℘ɑׁׅ֮ᧁׁꫀׁׅܻ꯱ׁׅ֒"
-              works={clientWork}
-              variant="client"
+              works={websitesWork}
+              variant="websites"
               onItemClick={handleMenuItemClick}
               emptyState={
                 <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>

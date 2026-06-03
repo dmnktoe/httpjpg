@@ -7,7 +7,8 @@ import { useReportWebVitals } from "next/web-vitals";
 type VitalName = "CLS" | "FCP" | "LCP" | "TTFB" | "INP";
 
 const TRACKED: ReadonlySet<VitalName> = new Set(["CLS", "FCP", "LCP", "TTFB", "INP"]);
-const GA_NAMES: ReadonlySet<Parameters<typeof trackWebVital>[0]> = new Set([
+// Subset of vitals forwarded to the external analytics providers (GA + Umami).
+const ANALYTICS_VITALS: ReadonlySet<Parameters<typeof trackWebVital>[0]> = new Set([
   "CLS",
   "FCP",
   "LCP",
@@ -50,7 +51,7 @@ export function WebVitalsReporter() {
       return;
     }
 
-    if (GA_NAMES.has(metric.name as Parameters<typeof trackWebVital>[0])) {
+    if (ANALYTICS_VITALS.has(metric.name as Parameters<typeof trackWebVital>[0])) {
       trackWebVital(metric.name as Parameters<typeof trackWebVital>[0], metric.value);
     }
 

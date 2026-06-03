@@ -114,7 +114,7 @@ function renderCode(key: string | undefined, attrs: TagAttrs, children: ReactNod
 
 export const tagRenderers: Record<string, TagRenderer> = {
   p: (key, _attrs, children) => (
-    <Paragraph key={key} maxWidth spacing>
+    <Paragraph key={key} spacing>
       {children}
     </Paragraph>
   ),

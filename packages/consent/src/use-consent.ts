@@ -2,9 +2,10 @@
 
 import { useSyncExternalStore } from "react";
 
-import { getConsent, hasVendorConsent, readConsentCookie } from "./consent";
+import { getConsent, readConsentCookie } from "./consent";
 import { CONSENT_CHANGE_EVENT } from "./events";
 import type { ConsentCategory, ConsentState, ExternalVendor } from "./types";
+import { EXTERNAL_VENDORS } from "./types";
 
 function subscribe(onStoreChange: () => void): () => void {
   if (typeof window === "undefined") {
@@ -38,11 +39,21 @@ export function useConsent(): ConsentState | null {
 }
 
 export function useConsentCategory(category: ConsentCategory): boolean {
-  return useSyncExternalStore(subscribe, () => getConsent()?.[category] === true, getServerFalse);
+  return useSyncExternalStore(
+    subscribe,
+    () => getConsentSnapshot()?.[category] === true,
+    getServerFalse,
+  );
 }
 
-export function useVendorConsent(vendor: ExternalVendor): boolean {
-  return useSyncExternalStore(subscribe, () => hasVendorConsent(vendor), getServerFalse);
+// `vendor` is nullable so callers with sources that need no third-party consent
+// (native video, local mp3) can pass null and get `true` without a sentinel.
+export function useVendorConsent(vendor: ExternalVendor | null): boolean {
+  return useSyncExternalStore(
+    subscribe,
+    () => vendor === null || getConsentSnapshot()?.[EXTERNAL_VENDORS[vendor].category] === true,
+    () => vendor === null,
+  );
 }
 
 function getServerConsent(): ConsentState | null {

@@ -1,11 +1,11 @@
 "use client";
 
 import { Box, Button } from "@httpjpg/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { setConsent } from "../consent";
 import type { ConsentCategory, ConsentState } from "../types";
-import { DEFAULT_CONSENT_STATE, REQUIRED_CATEGORIES } from "../types";
+import { CONSENT_CATEGORIES, DEFAULT_CONSENT_STATE, REQUIRED_CATEGORIES } from "../types";
 import { useConsent } from "../use-consent";
 import { ConsentCategoryList } from "./consent-category-list";
 
@@ -25,21 +25,33 @@ export function CookieCenter({ onSave }: CookieCenterProps) {
   const [consent, setConsentState] = useState<ConsentState>(DEFAULT_CONSENT_STATE);
   const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());
   const [isSaved, setIsSaved] = useState(false);
+  const [hasEdits, setHasEdits] = useState(false);
   const externalConsent = useConsent();
+  const syncedRef = useRef<ConsentState | null>(null);
 
-  // Hydrate from stored consent and stay in sync when it changes elsewhere —
-  // e.g. the visitor uses the cookie banner while this page is open.
+  // Reflect consent changed elsewhere (e.g. the cookie banner on this page),
+  // but never clobber unsaved edits, and ignore the echo of our own save.
   useEffect(() => {
-    if (externalConsent) {
-      setConsentState(externalConsent);
+    if (!externalConsent) {
+      return;
     }
-  }, [externalConsent]);
+    if (syncedRef.current && consentEquals(externalConsent, syncedRef.current)) {
+      return;
+    }
+    if (hasEdits) {
+      return;
+    }
+    syncedRef.current = externalConsent;
+    setConsentState(externalConsent);
+    setIsSaved(false);
+  }, [externalConsent, hasEdits]);
 
   const toggleCategory = (category: ConsentCategory) => {
     if (REQUIRED_CATEGORIES.has(category)) {
       return;
     }
     setIsSaved(false);
+    setHasEdits(true);
     setConsentState((prev) => ({ ...prev, [category]: !prev[category] }));
   };
 
@@ -56,9 +68,11 @@ export function CookieCenter({ onSave }: CookieCenterProps) {
   };
 
   const persist = (next: ConsentState) => {
+    syncedRef.current = next;
     setConsentState(next);
     setConsent(next);
     setIsSaved(true);
+    setHasEdits(false);
     onSave?.(next);
   };
 
@@ -110,4 +124,8 @@ export function CookieCenter({ onSave }: CookieCenterProps) {
       </Box>
     </Box>
   );
+}
+
+function consentEquals(a: ConsentState, b: ConsentState): boolean {
+  return CONSENT_CATEGORIES.every((category) => a[category] === b[category]);
 }

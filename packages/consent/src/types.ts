@@ -87,29 +87,6 @@ export const EXTERNAL_VENDORS: Record<ExternalVendor, VendorInfo> = {
   },
 };
 
-export interface ConsentConfig {
-  analytics: {
-    label: string;
-    description: string;
-    required: boolean;
-  };
-  monitoring: {
-    label: string;
-    description: string;
-    required: boolean;
-  };
-  preferences: {
-    label: string;
-    description: string;
-    required: boolean;
-  };
-  media: {
-    label: string;
-    description: string;
-    required: boolean;
-  };
-}
-
 /** Required categories default to `true` (technical necessity); opt-ins default to `false`. */
 export const DEFAULT_CONSENT_STATE: ConsentState = {
   analytics: false,
@@ -121,5 +98,5 @@ export const DEFAULT_CONSENT_STATE: ConsentState = {
 export const CONSENT_COOKIE_NAME = "httpjpg_consent";
 export const CONSENT_COOKIE_EXPIRY = 365;
 
-/** Bump when the consent schema changes; older stored consent is discarded. */
+/** Stamped onto stored consent; bump on schema changes. getConsent migrates older payloads forward. */
 export const CONSENT_VERSION = 1;

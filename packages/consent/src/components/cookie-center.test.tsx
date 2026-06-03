@@ -74,4 +74,23 @@ describe("CookieCenter", () => {
     checkboxes = screen.getAllByRole("checkbox") as HTMLInputElement[];
     expect(checkboxes[MEDIA_INDEX].checked).toBe(true);
   });
+
+  it("does not clobber unsaved edits when consent changes elsewhere", () => {
+    render(<CookieCenter />);
+
+    // Toggle Analytics on but do not save.
+    fireEvent.click(screen.getAllByRole("checkbox")[ANALYTICS_INDEX]);
+    expect((screen.getAllByRole("checkbox")[ANALYTICS_INDEX] as HTMLInputElement).checked).toBe(
+      true,
+    );
+
+    // An external Reject All must not wipe the in-progress edit.
+    act(() => {
+      setConsent(DEFAULT_CONSENT);
+    });
+
+    expect((screen.getAllByRole("checkbox")[ANALYTICS_INDEX] as HTMLInputElement).checked).toBe(
+      true,
+    );
+  });
 });

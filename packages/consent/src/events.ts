@@ -3,8 +3,8 @@ import type { ConsentState } from "./types";
 /** Fired on the `window` whenever consent is saved or cleared. */
 export const CONSENT_CHANGE_EVENT = "consentChange";
 
-/** Fired on the `window` to ask the cookie banner to open its settings view. */
-export const OPEN_COOKIE_SETTINGS_EVENT = "openCookieSettings";
+// The "open cookie settings" event is owned by @httpjpg/ui's Footer (the
+// dispatcher); consent only listens. It's re-exported from the package index.
 
 declare global {
   interface WindowEventMap {

@@ -44,7 +44,7 @@ export function ConsentCategoryList({
 
 function getCategoryVendors(category: ConsentCategory): CookieCategoryVendor[] {
   return Object.entries(EXTERNAL_VENDORS)
-    .filter(([, vendor]) => vendor.category === category)
+    .filter(([key, vendor]) => vendor.category === category && key !== "generic-media")
     .map(([key, vendor]) => ({ key, ...vendor }));
 }
 

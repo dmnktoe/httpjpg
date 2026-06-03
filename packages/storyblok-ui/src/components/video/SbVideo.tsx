@@ -2,7 +2,7 @@
 
 import { ConsentPlaceholder, useVendorConsent } from "@httpjpg/consent";
 import type { SbVideoData } from "@httpjpg/storyblok-utils";
-import { Box, Video, type VideoSource } from "@httpjpg/ui";
+import { Box, Video } from "@httpjpg/ui";
 import { memo } from "react";
 
 import { editableAttrs, spacingCss } from "../../lib/use-blok";
@@ -17,13 +17,6 @@ function resolveSrc(blok: SbVideoProps["blok"]): string {
     return blok.videoUrl || "";
   }
   return blok.video?.filename || blok.videoUrl || "";
-}
-
-function useVideoConsent(source: VideoSource): boolean {
-  // Only the embed sources gate on third-party consent; native video is local.
-  const vendor = source === "youtube" || source === "vimeo" ? source : null;
-  const hasConsent = useVendorConsent(vendor ?? "youtube");
-  return vendor ? hasConsent : true;
 }
 
 export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
@@ -41,7 +34,8 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
   } = blok;
   const copyright = video?.copyright;
   const editable = editableAttrs(blok);
-  const consent = useVideoConsent(source);
+  // Only the embed sources gate on third-party consent; native video is local.
+  const consent = useVendorConsent(source === "youtube" || source === "vimeo" ? source : null);
   const src = resolveSrc(blok);
 
   if (!src) {

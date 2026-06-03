@@ -10,14 +10,9 @@ export {
   hasVendorConsent,
   setConsent,
 } from "./consent";
-export { CONSENT_CHANGE_EVENT, OPEN_COOKIE_SETTINGS_EVENT } from "./events";
-export type {
-  ConsentCategory,
-  ConsentConfig,
-  ConsentState,
-  ExternalVendor,
-  VendorInfo,
-} from "./types";
+export { OPEN_COOKIE_SETTINGS_EVENT } from "@httpjpg/ui";
+export { CONSENT_CHANGE_EVENT } from "./events";
+export type { ConsentCategory, ConsentState, ExternalVendor, VendorInfo } from "./types";
 export {
   CONSENT_CATEGORIES,
   CONSENT_COOKIE_EXPIRY,

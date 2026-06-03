@@ -8,6 +8,9 @@ import { Box } from "../box/box";
 import { Link } from "../link/link";
 import { VStack } from "../stack/stack";
 
+/** Dispatched on `window` to ask the cookie banner to open its settings view. */
+export const OPEN_COOKIE_SETTINGS_EVENT = "openCookieSettings";
+
 export interface FooterProps {
   children?: ReactNode;
   backgroundImage?: string;
@@ -52,7 +55,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       if (onCookieSettingsClick) {
         onCookieSettingsClick();
       } else {
-        window.dispatchEvent(new CustomEvent("openCookieSettings"));
+        window.dispatchEvent(new CustomEvent(OPEN_COOKIE_SETTINGS_EVENT));
       }
     }, [onCookieSettingsClick]);
 

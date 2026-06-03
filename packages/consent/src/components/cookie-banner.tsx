@@ -1,11 +1,10 @@
 "use client";
 
-import { Box, Button } from "@httpjpg/ui";
+import { Box, Button, OPEN_COOKIE_SETTINGS_EVENT } from "@httpjpg/ui";
 import { type ReactNode, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { getConsent, hasConsent, setConsent } from "../consent";
-import { OPEN_COOKIE_SETTINGS_EVENT } from "../events";
 import type { ConsentCategory, ConsentState } from "../types";
 import { DEFAULT_CONSENT_STATE, EXTERNAL_VENDORS, REQUIRED_CATEGORIES } from "../types";
 import { ConsentCategoryList } from "./consent-category-list";
@@ -90,9 +89,10 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
     });
   };
 
-  // "generic-media" is a catch-all slot, not a real vendor, so exclude it.
-  const trustedPartnerCount = Object.keys(EXTERNAL_VENDORS).filter(
-    (key) => key !== "generic-media",
+  // Count only the named opt-in third parties: required vendors (e.g. Sentry)
+  // receive data regardless of consent, and "generic-media" is a catch-all.
+  const trustedPartnerCount = Object.entries(EXTERNAL_VENDORS).filter(
+    ([key, vendor]) => key !== "generic-media" && !REQUIRED_CATEGORIES.has(vendor.category),
   ).length;
 
   if (!isVisible || !mounted) {

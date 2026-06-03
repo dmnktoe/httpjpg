@@ -187,6 +187,133 @@ export const MOCK_RICHTEXT = {
       },
     ],
   },
+  article: {
+    type: "doc" as const,
+    content: [
+      {
+        type: "heading",
+        attrs: { level: 1 },
+        content: [{ type: "text", text: "The art of brutalist typography" }],
+      },
+      {
+        type: "paragraph",
+        content: [
+          {
+            type: "text",
+            text: "Brutalist typography rejects polish in favor of presence. The body is set in a humble sans-serif at 12px — small, dense, deliberate. Headlines weigh in with Impact, the chunky condensed grotesque that has anchored every cassette label and gallery poster since the 1980s.",
+          },
+        ],
+      },
+      {
+        type: "heading",
+        attrs: { level: 2 },
+        content: [{ type: "text", text: "Why constrain the line length?" }],
+      },
+      {
+        type: "paragraph",
+        content: [
+          {
+            type: "text",
+            text: "Reading comprehension drops when lines stretch beyond ~75 characters. Type designers settled on 45–75 as the comfortable range; this component defaults to ",
+          },
+          { type: "text", text: "65ch", marks: [{ type: "code" }] },
+          { type: "text", text: " when " },
+          { type: "text", text: "maxWidth={true}", marks: [{ type: "code" }] },
+          {
+            type: "text",
+            text: ". You can also pass an explicit length (e.g. ",
+          },
+          { type: "text", text: "80ch", marks: [{ type: "code" }] },
+          { type: "text", text: ") or " },
+          { type: "text", text: "false", marks: [{ type: "code" }] },
+          { type: "text", text: " to remove the constraint entirely." },
+        ],
+      },
+      {
+        type: "heading",
+        attrs: { level: 3 },
+        content: [{ type: "text", text: "Other inline marks" }],
+      },
+      {
+        type: "paragraph",
+        content: [
+          { type: "text", text: "Try inline " },
+          { type: "text", text: "bold", marks: [{ type: "bold" }] },
+          { type: "text", text: ", " },
+          { type: "text", text: "italic", marks: [{ type: "italic" }] },
+          { type: "text", text: ", and " },
+          {
+            type: "text",
+            text: "underline",
+            marks: [{ type: "underline" }],
+          },
+          { type: "text", text: ", plus " },
+          {
+            type: "text",
+            text: "an inline link",
+            marks: [
+              {
+                type: "link",
+                attrs: { href: "https://www.httpjpg.com", target: "_blank" },
+              },
+            ],
+          },
+          { type: "text", text: " — all preserved by the resolver." },
+        ],
+      },
+      {
+        type: "bullet_list",
+        content: [
+          {
+            type: "list_item",
+            content: [
+              {
+                type: "paragraph",
+                content: [{ type: "text", text: "Lists keep their bullet rhythm" }],
+              },
+            ],
+          },
+          {
+            type: "list_item",
+            content: [
+              {
+                type: "paragraph",
+                content: [
+                  {
+                    type: "text",
+                    text: "Code marks render with the monospace stack",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "list_item",
+            content: [
+              {
+                type: "paragraph",
+                content: [{ type: "text", text: "Headlines reset to the Impact font" }],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: "blockquote",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Constraint is the parent of style — Massimo Vignelli (paraphrased).",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 } as const;
 
 export const MOCK_VIDEOS = {

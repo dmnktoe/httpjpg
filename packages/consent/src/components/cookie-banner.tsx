@@ -90,8 +90,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
     });
   };
 
-  // Count the named third-party services we may hand data to. The catch-all
-  // "generic-media" slot isn't a real vendor, so it's excluded from the tally.
+  // "generic-media" is a catch-all slot, not a real vendor, so exclude it.
   const trustedPartnerCount = Object.keys(EXTERNAL_VENDORS).filter(
     (key) => key !== "generic-media",
   ).length;

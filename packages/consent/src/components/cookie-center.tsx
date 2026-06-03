@@ -20,12 +20,7 @@ const FULL_CONSENT: ConsentState = {
   media: true,
 };
 
-/**
- * Inline variant of the consent manager. Unlike `CookieBanner` it renders in
- * the normal document flow (no portal, no fixed positioning), hydrates from
- * the already-stored consent, and confirms in place instead of dismissing —
- * built for embedding on the Cookie Policy page.
- */
+/** Inline consent manager for the Cookie Policy page — no portal, saves in place. */
 export function CookieCenter({ onSave }: CookieCenterProps) {
   const [consent, setConsentState] = useState<ConsentState>(DEFAULT_CONSENT_STATE);
   const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());

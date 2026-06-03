@@ -22,11 +22,8 @@ function subscribe(onStoreChange: () => void): () => void {
 let snapshotRaw: string | null = null;
 let snapshotValue: ConsentState | null = null;
 
-/**
- * `useSyncExternalStore` compares snapshots with `Object.is`, so we must hand
- * back a stable reference while the cookie is unchanged — re-parsing on every
- * call would yield a new object each render and loop forever.
- */
+// useSyncExternalStore compares with Object.is, so return a stable reference
+// while the cookie is unchanged — re-parsing each call would loop forever.
 function getConsentSnapshot(): ConsentState | null {
   const raw = readConsentCookie();
   if (raw !== snapshotRaw) {
@@ -36,17 +33,14 @@ function getConsentSnapshot(): ConsentState | null {
   return snapshotValue;
 }
 
-/** Reactive access to the full consent state. Re-renders on consent changes. */
 export function useConsent(): ConsentState | null {
   return useSyncExternalStore(subscribe, getConsentSnapshot, getServerConsent);
 }
 
-/** Reactive boolean for a single category. */
 export function useConsentCategory(category: ConsentCategory): boolean {
   return useSyncExternalStore(subscribe, () => getConsent()?.[category] === true, getServerFalse);
 }
 
-/** Reactive boolean for a specific external vendor (maps to its category). */
 export function useVendorConsent(vendor: ExternalVendor): boolean {
   return useSyncExternalStore(subscribe, () => hasVendorConsent(vendor), getServerFalse);
 }

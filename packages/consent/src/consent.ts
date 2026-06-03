@@ -22,8 +22,6 @@ export function getConsent(): ConsentState | null {
   }
   try {
     const parsed = JSON.parse(raw) as Partial<StoredConsent>;
-    // Stored consent from an older schema/policy version is treated as absent
-    // so the banner re-appears for a fresh decision.
     if (parsed.v !== CONSENT_VERSION) {
       return null;
     }
@@ -72,10 +70,7 @@ export function hasMediaConsent(): boolean {
   return getConsent()?.media === true;
 }
 
-/**
- * Decoded consent cookie value, or null. Internal helper the reactive store
- * uses to cheaply detect changes without re-parsing on every read.
- */
+/** Decoded consent cookie value, or null. */
 export function readConsentCookie(): string | null {
   if (typeof document === "undefined") {
     return null;
@@ -101,7 +96,6 @@ function normalizeConsent(value: unknown): ConsentState | null {
       result[category] = record[category] as boolean;
     }
   }
-  // Required categories are always on, whatever a stale or tampered cookie says.
   for (const category of REQUIRED_CATEGORIES) {
     result[category] = true;
   }

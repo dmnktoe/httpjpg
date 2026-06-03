@@ -11,11 +11,7 @@ export interface ConsentCategoryListProps {
   onToggleExpansion: (category: ConsentCategory) => void;
 }
 
-/**
- * Shared, presentational list of consent categories. Both the fixed
- * `CookieBanner` and the inline `CookieCenter` render it so the category
- * copy and vendor grouping live in exactly one place.
- */
+/** Shared category list rendered by both CookieBanner and CookieCenter. */
 export function ConsentCategoryList({
   consent,
   expandedCategories,

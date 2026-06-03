@@ -23,7 +23,6 @@ type ColorGroup = Record<string | number, string>;
 const palette: Record<string, ColorGroup> = {
   neutral: colors.neutral,
   primary: colors.primary,
-  secondary: colors.secondary,
   accent: colors.accent,
   success: colors.success,
   warning: colors.warning,

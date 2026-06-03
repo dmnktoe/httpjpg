@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Button } from "@httpjpg/ui";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { getConsent, hasConsent, setConsent } from "../consent";
@@ -94,6 +94,12 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
       .filter(([_, vendor]) => vendor.category === category)
       .map(([key, vendor]) => ({ key, ...vendor }));
 
+  // Count the named third-party services we may hand data to. The catch-all
+  // "generic-media" slot isn't a real vendor, so it's excluded from the tally.
+  const trustedPartnerCount = Object.keys(EXTERNAL_VENDORS).filter(
+    (key) => key !== "generic-media",
+  ).length;
+
   if (!isVisible || !mounted) {
     return null;
   }
@@ -131,8 +137,30 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
 
         <Box css={{ mb: "4", fontSize: "sm" }}>
           <Box as="p" css={{ m: 0, mb: "2" }}>
-            🎀 ⋆ﾟ･ We use cookies for analytics & monitoring. You can customize your preferences
-            below. ⋆ﾟ･ 🎀
+            🎀 ⋆ﾟ･ httpjpg uses personal data collected on this site — such as page visits via
+            cookies and other device identifiers — to generate personalized content, store your
+            preferences, and analyze usage to improve the experience. ⋆ﾟ･ 🎀
+          </Box>
+          <Box as="p" css={{ m: 0, mb: "2" }}>
+            If you consent, we also let up to{" "}
+            <Box as="strong" css={{ fontWeight: "bold", color: "primary.500" }}>
+              {trustedPartnerCount} trusted third-party services
+            </Box>{" "}
+            receive data from this site or store and access cookies on your device to measure
+            effectiveness and gain audience insights. You can review each service and its{" "}
+            <BannerLink onClick={() => setShowDetails(true)}>Privacy Policy ↗</BannerLink> below.
+          </Box>
+          <Box as="p" css={{ m: 0 }}>
+            By clicking{" "}
+            <Box as="strong" css={{ fontWeight: "bold" }}>
+              “Accept All”
+            </Box>{" "}
+            you consent to these activities. Click{" "}
+            <Box as="strong" css={{ fontWeight: "bold" }}>
+              “Reject All”
+            </Box>{" "}
+            to object, or <BannerLink onClick={() => setShowDetails(true)}>“Customize”</BannerLink>{" "}
+            to make detailed choices and learn more. You can change these settings anytime. 🍪
           </Box>
         </Box>
 
@@ -250,4 +278,33 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
   );
 
   return createPortal(banner, document.body);
+}
+
+interface BannerLinkProps {
+  onClick: () => void;
+  children: ReactNode;
+}
+
+function BannerLink({ onClick, children }: BannerLinkProps) {
+  return (
+    <Box
+      as="button"
+      type="button"
+      onClick={onClick}
+      css={{
+        appearance: "none",
+        background: "none",
+        border: "none",
+        p: 0,
+        color: "primary.500",
+        font: "inherit",
+        cursor: "pointer",
+        textDecoration: "underline",
+        textUnderlineOffset: "2px",
+        _hover: { opacity: 0.7 },
+      }}
+    >
+      {children}
+    </Box>
+  );
 }

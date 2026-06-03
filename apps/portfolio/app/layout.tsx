@@ -14,6 +14,7 @@ import {
 } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
+import Script from "next/script";
 import type { PropsWithChildren } from "react";
 
 import { ConsentProvider } from "@/components/providers/consent-provider";
@@ -164,6 +165,15 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
         {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
           <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+        )}
+
+        {env.NEXT_PUBLIC_UMAMI_ID && (
+          <Script
+            src={env.NEXT_PUBLIC_UMAMI_SRC}
+            data-website-id={env.NEXT_PUBLIC_UMAMI_ID}
+            data-do-not-track="true"
+            strategy="afterInteractive"
+          />
         )}
       </body>
     </html>

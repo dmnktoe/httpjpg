@@ -1,32 +1,34 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-vi.stubGlobal(
-  "matchMedia",
-  vi.fn().mockImplementation(function matchMedia(query: string) {
-    return {
-      matches: false,
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    };
-  }),
-);
-
-vi.stubGlobal(
-  "IntersectionObserver",
-  vi.fn().mockImplementation(function IntersectionObserver() {
-    return {
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn(),
-    };
-  }),
-);
-
 import { ScrollClipImage } from "./scroll-clip-image";
+
+vi.hoisted(() => {
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn().mockImplementation(function matchMedia(query: string) {
+      return {
+        matches: false,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      };
+    }),
+  );
+
+  vi.stubGlobal(
+    "IntersectionObserver",
+    vi.fn().mockImplementation(function IntersectionObserver() {
+      return {
+        observe: vi.fn(),
+        unobserve: vi.fn(),
+        disconnect: vi.fn(),
+      };
+    }),
+  );
+});
 
 describe("ScrollClipImage", () => {
   it("renders an image with src and alt", () => {

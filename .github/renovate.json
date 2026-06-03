@@ -109,11 +109,7 @@
     },
     {
       "matchFileNames": ["packages/**"],
-      "addLabels": ["scope:packages"]
-    },
-    {
-      "matchFileNames": ["package.json"],
-      "addLabels": ["scope:root"]
+      "addLabels": ["packages"]
     },
     {
       "description": "CI / Docker tooling",
@@ -127,7 +123,7 @@
     {
       "description": "Toolchain pins need a human (Node engine, pnpm)",
       "matchDepNames": ["node", "pnpm"],
-      "addLabels": ["scope:tooling", "manual-review"]
+      "addLabels": ["tooling", "manual-review"]
     }
   ]
 }

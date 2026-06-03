@@ -3,189 +3,106 @@ import { colors } from "@httpjpg/tokens";
 
 <Meta title="Foundations/Colors" />
 
+export const scale = (steps) => Object.fromEntries(Object.entries(steps));
+
 # Colors
 
-Monochromatic palette with vibrant accent colors following brutalistic design principles.
+A monochromatic foundation — black, white, and a full neutral scale — paired with two
+vibrant brand colors and a set of semantic status colors. Brutalist by default: strong
+contrast, sparing accents.
 
-## Base Colors
+## Base
 
-<ColorPalette>
-  <ColorItem
-    title="black"
-    subtitle="Primary text, dramatic backgrounds"
-    colors={{ Black: colors.black }}
-  />
-  <ColorItem
-    title="white"
-    subtitle="Default background, inverted text"
-    colors={{ White: colors.white }}
-  />
-</ColorPalette>
-
-## Neutral Scale
-
-Complete gray scale for backgrounds, borders, and text. Perfect for brutalist layouts that need strong contrast.
+The two anchors of the palette.
 
 <ColorPalette>
-  <ColorItem
-    title="neutral"
-    subtitle="Gray scale from light to dark"
-    colors={Object.keys(colors.neutral).reduce((acc, key) => {
-      acc[key] = colors.neutral[key];
-      return acc;
-    }, {})}
-  />
+  <ColorItem title="black" subtitle="Primary text, dramatic surfaces" colors={{ Black: colors.black }} />
+  <ColorItem title="white" subtitle="Default surface, inverted text" colors={{ White: colors.white }} />
 </ColorPalette>
 
-### Usage
+## Neutral
 
-```tsx
-import { Box, Paragraph } from "@httpjpg/ui";
+Full gray scale for surfaces, borders, and text — and the basis for low-emphasis
+(secondary) buttons.
 
-<Box css={{ bg: "neutral.100", p: "24px" }}>
-  <Paragraph css={{ color: "neutral.700" }}>Body text on subtle background</Paragraph>
-</Box>;
-```
+<ColorPalette>
+  <ColorItem title="neutral" subtitle="Gray scale, 50 → 950" colors={scale(colors.neutral)} />
+</ColorPalette>
 
-## Primary Colors
+## Brand
 
-Electric blue tones for primary actions and brand moments.
+The two colors that carry brand and interaction. Primary drives the main actions; accent
+adds creative energy and highlights.
 
 <ColorPalette>
   <ColorItem
     title="primary"
-    subtitle="Electric blue for primary actions"
-    colors={Object.keys(colors.primary).reduce((acc, key) => {
-      acc[key] = colors.primary[key];
-      return acc;
-    }, {})}
+    subtitle="Electric blue — primary actions"
+    colors={scale(colors.primary)}
   />
-</ColorPalette>
-
-### Usage
-
-```tsx
-import { Button } from "@httpjpg/ui";
-
-<Button css={{ bg: "primary.500", color: "white" }}>Primary Action</Button>;
-```
-
-## Secondary Colors
-
-Vibrant rose/pink tones for secondary actions and highlights.
-
-<ColorPalette>
-  <ColorItem
-    title="secondary"
-    subtitle="Rose/pink for secondary actions"
-    colors={Object.keys(colors.secondary).reduce((acc, key) => {
-      acc[key] = colors.secondary[key];
-      return acc;
-    }, {})}
-  />
-</ColorPalette>
-
-### Usage
-
-```tsx
-import { Button } from "@httpjpg/ui";
-
-<Button css={{ bg: "secondary.500", color: "white" }}>Secondary Action</Button>;
-```
-
-## Accent Colors
-
-Vibrant lime green tones for accents, highlights, and creative energy.
-
-<ColorPalette>
   <ColorItem
     title="accent"
-    subtitle="Lime green for highlights and accents"
-    colors={Object.keys(colors.accent).reduce((acc, key) => {
-      acc[key] = colors.accent[key];
-      return acc;
-    }, {})}
+    subtitle="Lime green — highlights and accent buttons"
+    colors={scale(colors.accent)}
   />
 </ColorPalette>
 
-### Usage
+## Status
 
-```tsx
-import { Box } from "@httpjpg/ui";
-
-<Box css={{ borderLeft: "4px solid", borderColor: "accent.500" }}>Highlighted content</Box>;
-```
-
-## Semantic Status Colors
-
-### Success
+Semantic feedback colors for success, caution, and destructive states.
 
 <ColorPalette>
-  <ColorItem
-    title="success"
-    subtitle="Green for success states"
-    colors={Object.keys(colors.success).reduce((acc, key) => {
-      acc[key] = colors.success[key];
-      return acc;
-    }, {})}
-  />
-</ColorPalette>
-
-### Warning
-
-<ColorPalette>
-  <ColorItem
-    title="warning"
-    subtitle="Amber/yellow for warnings"
-    colors={Object.keys(colors.warning).reduce((acc, key) => {
-      acc[key] = colors.warning[key];
-      return acc;
-    }, {})}
-  />
-</ColorPalette>
-
-### Danger
-
-<ColorPalette>
+  <ColorItem title="success" subtitle="Green — success states" colors={scale(colors.success)} />
+  <ColorItem title="warning" subtitle="Amber — warnings" colors={scale(colors.warning)} />
   <ColorItem
     title="danger"
-    subtitle="Red for errors and destructive actions"
-    colors={Object.keys(colors.danger).reduce((acc, key) => {
-      acc[key] = colors.danger[key];
-      return acc;
-    }, {})}
+    subtitle="Red — errors and destructive actions"
+    colors={scale(colors.danger)}
   />
 </ColorPalette>
 
-## Color Semantics
+## Extended
 
-### Text Colors
+An additional palette color available to CMS content. It is **not** part of the core button
+system — secondary buttons use the neutral scale.
 
-- `black` - Primary text (default)
-- `neutral.700` - Body text
-- `neutral.500` - Secondary text
-- `neutral.400` - Disabled text
-- `white` - Inverted text
-- `primary.500` - Primary links and actions
-- `secondary.500` - Secondary emphasis
-- `accent.500` - Highlights, creative emphasis
+<ColorPalette>
+  <ColorItem title="secondary" subtitle="Rose — extended palette" colors={scale(colors.secondary)} />
+</ColorPalette>
 
-### Background Colors
+## Semantic Tokens
 
-- `white` - Default background
-- `neutral.50` - Subtle background
-- `neutral.100` - Section background
-- `black` - Dramatic sections
-- `primary.50` - Subtle brand background
-- `secondary.50` - Subtle secondary background
-- `accent.50` - Subtle accent background
+Theme-aware tokens that resolve to different palette values in light and dark mode. Prefer
+these over raw scales for any surface that should respond to the theme.
 
-### Border Colors
+- `pageBg` — page background (white → black)
+- `pageFg` — page foreground / text (black → white)
+- `pageMuted` — muted text (`neutral.700` → `neutral.300`)
+- `pageBorder` — default border (`neutral.300` → `neutral.700`)
 
-- `neutral.200` - Default borders
-- `neutral.300` - Hover borders
-- `neutral.400` - Active borders
-- `black` - Strong borders
-- `primary.500` - Brand borders
-- `secondary.500` - Secondary borders
-- `accent.500` - Accent borders
+## Usage
+
+```tsx
+import { Box, Button, Paragraph } from "@httpjpg/ui";
+
+// Theme-aware surface
+<Box css={{ bg: "pageBg", color: "pageFg", p: "24px" }}>
+  <Paragraph css={{ color: "pageMuted" }}>Body text that follows the theme</Paragraph>
+</Box>;
+
+// Brand actions
+<Button variant="primary">Primary Action</Button>;
+<Button variant="accent">Accent Action</Button>;
+```
+
+### Quick reference
+
+| Role               | Token                                         |
+| ------------------ | --------------------------------------------- |
+| Primary action     | `primary.500`                                 |
+| Accent / highlight | `accent.500`                                  |
+| Destructive        | `danger.500`                                  |
+| Low-emphasis       | `neutral.200` – `neutral.400`                 |
+| Text               | `pageFg`, `pageMuted`, `neutral.500`          |
+| Surfaces           | `pageBg`, `neutral.50`, `neutral.100`         |
+| Borders            | `pageBorder`, `neutral.300`                   |

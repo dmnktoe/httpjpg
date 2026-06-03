@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 
 import { clearConsent, getConsent, setConsent } from "../consent";
 import { CookieCenter } from "./cookie-center";
@@ -57,6 +57,21 @@ describe("CookieCenter", () => {
     render(<CookieCenter />);
 
     const checkboxes = screen.getAllByRole("checkbox") as HTMLInputElement[];
+    expect(checkboxes[MEDIA_INDEX].checked).toBe(true);
+  });
+
+  it("stays in sync when consent changes elsewhere (e.g. the cookie banner)", () => {
+    render(<CookieCenter />);
+
+    let checkboxes = screen.getAllByRole("checkbox") as HTMLInputElement[];
+    expect(checkboxes[MEDIA_INDEX].checked).toBe(false);
+
+    // Simulate the visitor pressing "Accept All" in the banner.
+    act(() => {
+      setConsent(FULL_CONSENT);
+    });
+
+    checkboxes = screen.getAllByRole("checkbox") as HTMLInputElement[];
     expect(checkboxes[MEDIA_INDEX].checked).toBe(true);
   });
 });

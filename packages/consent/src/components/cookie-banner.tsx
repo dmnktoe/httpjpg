@@ -14,16 +14,9 @@ interface CookieBannerProps {
   onAcceptAll?: (consent: ConsentState) => void;
   onRejectAll?: () => void;
   onSavePreferences?: (consent: ConsentState) => void;
-  /** Where the "full Cookie Policy" link points. */
-  policyHref?: string;
 }
 
-export function CookieBanner({
-  onAcceptAll,
-  onRejectAll,
-  onSavePreferences,
-  policyHref = "/cookie-policy",
-}: CookieBannerProps) {
+export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: CookieBannerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());
@@ -125,6 +118,9 @@ export function CookieBanner({
         fontSize: "md",
         boxShadow: "0 -4px 20px rgba(0,0,0,0.1)",
         isolation: "isolate",
+        maxHeight: "90dvh",
+        overflowY: "auto",
+        overscrollBehavior: "contain",
       }}
     >
       <Box css={{ maxW: "1400px", mx: "auto", lineHeight: 1.4 }}>
@@ -138,33 +134,26 @@ export function CookieBanner({
           </Box>
         </Box>
 
-        <Box css={{ mb: "4", fontSize: "sm" }}>
-          <Box as="p" css={{ m: 0, mb: "2" }}>
-            🎀 ⋆ﾟ･ httpjpg uses personal data collected on this site — such as page visits via
-            cookies and other device identifiers — to generate personalized content, store your
-            preferences, and analyze usage to improve the experience. ⋆ﾟ･ 🎀
-          </Box>
-          <Box as="p" css={{ m: 0, mb: "2" }}>
-            If you consent, we also let up to{" "}
-            <Box as="strong" css={{ fontWeight: "bold", color: "primary.500" }}>
-              {trustedPartnerCount} trusted third-party services
-            </Box>{" "}
-            receive data from this site or store and access cookies on your device to measure
-            effectiveness and gain audience insights. You can review each service and its{" "}
-            <BannerLink onClick={() => setShowDetails(true)}>Privacy Policy ↗</BannerLink> below.
-          </Box>
-          <Box as="p" css={{ m: 0 }}>
-            By clicking{" "}
-            <Box as="strong" css={{ fontWeight: "bold" }}>
-              “Accept All”
-            </Box>{" "}
-            you consent to these activities. Click{" "}
-            <Box as="strong" css={{ fontWeight: "bold" }}>
-              “Reject All”
-            </Box>{" "}
-            to object, or <BannerLink onClick={() => setShowDetails(true)}>“Customize”</BannerLink>{" "}
-            to make detailed choices and learn more. You can change these settings anytime. 🍪
-          </Box>
+        <Box as="p" css={{ m: 0, mb: "4", fontSize: "sm" }}>
+          🎀 ⋆ﾟ･ httpjpg uses personal data collected on this site — such as page visits via cookies
+          and other device identifiers — to generate personalized content, store your preferences,
+          and analyze usage to improve the experience. If you consent, we also let up to{" "}
+          <Box as="strong" css={{ fontWeight: "bold", color: "primary.500" }}>
+            {trustedPartnerCount} trusted third-party services
+          </Box>{" "}
+          receive data from this site or store and access cookies on your device to measure
+          effectiveness and gain audience insights. You can review each service and its{" "}
+          <BannerLink onClick={() => setShowDetails(true)}>Privacy Policy ↗</BannerLink> below. By
+          clicking{" "}
+          <Box as="strong" css={{ fontWeight: "bold" }}>
+            “Accept All”
+          </Box>{" "}
+          you consent to these activities. Click{" "}
+          <Box as="strong" css={{ fontWeight: "bold" }}>
+            “Reject All”
+          </Box>{" "}
+          to object, or <BannerLink onClick={() => setShowDetails(true)}>“Customize”</BannerLink> to
+          make detailed choices and learn more. You can change these settings anytime. 🍪 ⋆ﾟ･
         </Box>
 
         {showDetails && (
@@ -188,31 +177,16 @@ export function CookieBanner({
         )}
 
         <Box css={{ display: "flex", gap: "3", flexWrap: "wrap", alignItems: "center" }}>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleAcceptAll}
-            css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
-          >
+          <Button variant="primary" size="sm" onClick={handleAcceptAll}>
             ✓ Accept All
           </Button>
 
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={handleRejectAll}
-            css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
-          >
+          <Button variant="secondary" size="sm" onClick={handleRejectAll}>
             ✗ Reject All
           </Button>
 
           {showDetails ? (
-            <Button
-              variant="accent"
-              size="sm"
-              onClick={handleSavePreferences}
-              css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
-            >
+            <Button variant="accent" size="sm" onClick={handleSavePreferences}>
               ⚙ Save Preferences
             </Button>
           ) : (
@@ -232,28 +206,11 @@ export function CookieBanner({
                 textDecoration: "underline",
                 textUnderlineOffset: "2px",
                 _hover: { opacity: 0.7 },
-                md: { fontSize: "md" },
               }}
             >
               ⚙ Customize
             </Box>
           )}
-
-          <Box
-            as="a"
-            href={policyHref}
-            css={{
-              color: "pageFg",
-              fontFamily: "sans",
-              fontSize: "sm",
-              textDecoration: "underline",
-              textUnderlineOffset: "2px",
-              _hover: { opacity: 0.7 },
-              md: { fontSize: "md" },
-            }}
-          >
-            📄 Full Cookie Policy ↗
-          </Box>
 
           <Box as="span" css={{ fontSize: "xs", opacity: 0.6, ml: "auto" }}>
             ⋆.˚ ᡣ𐭩 .𖥔˚ cookies ⋆.˚✮🍪✮˚.⋆

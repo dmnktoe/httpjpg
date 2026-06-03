@@ -3,9 +3,10 @@
 import { Box, Button } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 
-import { getConsent, setConsent } from "../consent";
+import { setConsent } from "../consent";
 import type { ConsentCategory, ConsentState } from "../types";
 import { DEFAULT_CONSENT_STATE, REQUIRED_CATEGORIES } from "../types";
+import { useConsent } from "../use-consent";
 import { ConsentCategoryList } from "./consent-category-list";
 
 interface CookieCenterProps {
@@ -29,13 +30,15 @@ export function CookieCenter({ onSave }: CookieCenterProps) {
   const [consent, setConsentState] = useState<ConsentState>(DEFAULT_CONSENT_STATE);
   const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());
   const [isSaved, setIsSaved] = useState(false);
+  const externalConsent = useConsent();
 
+  // Hydrate from stored consent and stay in sync when it changes elsewhere —
+  // e.g. the visitor uses the cookie banner while this page is open.
   useEffect(() => {
-    const stored = getConsent();
-    if (stored) {
-      setConsentState(stored);
+    if (externalConsent) {
+      setConsentState(externalConsent);
     }
-  }, []);
+  }, [externalConsent]);
 
   const toggleCategory = (category: ConsentCategory) => {
     if (REQUIRED_CATEGORIES.has(category)) {
@@ -95,13 +98,13 @@ export function CookieCenter({ onSave }: CookieCenterProps) {
       />
 
       <Box css={{ display: "flex", gap: "3", flexWrap: "wrap", alignItems: "center", mt: "5" }}>
-        <Button variant="primary" size="sm" onClick={() => persist(FULL_CONSENT)}>
+        <Button variant="primary" size="md" onClick={() => persist(FULL_CONSENT)}>
           ✓ Accept All
         </Button>
-        <Button variant="secondary" size="sm" onClick={() => persist(DEFAULT_CONSENT_STATE)}>
+        <Button variant="secondary" size="md" onClick={() => persist(DEFAULT_CONSENT_STATE)}>
           ✗ Reject All
         </Button>
-        <Button variant="accent" size="sm" onClick={() => persist(consent)}>
+        <Button variant="accent" size="md" onClick={() => persist(consent)}>
           ⚙ Save Preferences
         </Button>
         {isSaved && (

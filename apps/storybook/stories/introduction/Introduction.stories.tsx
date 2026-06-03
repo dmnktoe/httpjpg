@@ -155,7 +155,7 @@ export const Introduction = {
                 {
                   icon: "◆",
                   title: "Minimal Palette",
-                  desc: "Monochromatic neutral scale 50–950. One electric-blue primary, one peachy-orange accent, status colors for feedback. Semantic tokens pageBg/pageFg flip with the theme.",
+                  desc: "Monochromatic neutral scale 50–950. One electric-blue primary, one lime-green accent, status colors for feedback. Semantic tokens pageBg/pageFg flip with the theme.",
                 },
                 {
                   icon: "⋆",

@@ -1,8 +1,9 @@
-import { env } from "@httpjpg/env";
+import { UmamiAnalytics } from "@httpjpg/analytics/umami";
 
 import "@httpjpg/tokens/dist/tokens.css";
 import "@httpjpg/ui/styles.css";
 import "@/lib/storyblok";
+import { env } from "@httpjpg/env";
 import {
   ASCII_DIVIDER_WAVE,
   AsciiArt,
@@ -14,7 +15,6 @@ import {
 } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
-import Script from "next/script";
 import type { PropsWithChildren } from "react";
 
 import { ConsentProvider } from "@/components/providers/consent-provider";
@@ -168,12 +168,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         )}
 
         {env.NEXT_PUBLIC_UMAMI_ID && (
-          <Script
-            src={env.NEXT_PUBLIC_UMAMI_SRC}
-            data-website-id={env.NEXT_PUBLIC_UMAMI_ID}
-            data-do-not-track="true"
-            strategy="afterInteractive"
-          />
+          <UmamiAnalytics websiteId={env.NEXT_PUBLIC_UMAMI_ID} src={env.NEXT_PUBLIC_UMAMI_SRC} />
         )}
       </body>
     </html>

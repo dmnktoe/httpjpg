@@ -4,6 +4,48 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-06-03
+
+### Added
+
+- **Studio**: new standalone `apps/studio` Next.js app — a dev-only drag-and-drop grid builder. Previews bloks with the real `@httpjpg/ui` components, a viewport switcher with per-breakpoint span/height, a viewport-scoped inspector covering the full 24-field `BlokSpacing` matrix, localStorage persistence with undo/redo and keyboard shortcuts, grid import via JSON paste or Storyblok fetch, and a collapsible live JSON preview. Each blok is a self-contained plugin, with option lists driven from `CMS_OPTIONS` and tokens.
+- **OG**: dynamic editorial Open Graph images extended to every page, keeping the dedicated work layout.
+- **UI**: new components — `Accordion`, `Callout`, `CodeBlock`, `Stats`, `ScrollClipImage`, `Icon`, `List`, and `Divider` — each with a matching `Sb*` blok renderer wired to generated blok types.
+- **Storyblok**: new content/media/layout blok schemas backing the new components.
+- **Storybook**: Utilities playground for the image CDN and `useParallax` hook, a Richtext story with `maxWidth` + tone controls, a native theme toolbar, and a redesigned brutalist Introduction page.
+
+### Changed
+
+- **Storyblok**: dropped `grid.isList` — it was semantically broken and unused.
+- **Storybook**: derive Header mock data from shared fixtures.
+
+### Fixed
+
+- **Image overlay**: prevent page overflow without clipping edge decorations, make parallax usable, guard against empty/unknown pattern values, and use an own-property check for pattern validation (ES2021 compatibility).
+- **Code block**: clear the copy-reset timeout on unmount.
+- **OG**: address review findings — fetch timeout, UTC year, and work prefix.
+- **Catch-all route**: treat `api/*` slugs as internal to silence crawler noise.
+- **Studio**: grid-aligned guide columns and rows, always-visible resize handles, isolated studio layout, and guards against undefined `siteUrl`.
+- **Paragraph**: dark-mode color fix.
+
+### Style
+
+- **Callout**: replace the solid border with a repeating stars pattern.
+- **UI**: add ASCII decorators to the new components.
+- **Console**: refresh the dev console banner.
+
+### Tooling
+
+- **Renovate**: slimmed the config and added Storyblok, React, Panda CSS, build-tooling, and Next.js dependency groups; swapped the Sentry group for a linting & formatting group (oxlint + oxfmt); dropped the labels-as-code setup.
+- **Tests**: added unit tests for `Accordion`, `Callout`, `CodeBlock`, `Stats`, `ScrollClipImage`, `image-overlay`, and `use-parallax`.
+
+### Dependencies
+
+- `concurrently` updated to v10.
+- `actions/download-artifact` updated to v8.
+- `actions/checkout` digest updated to `df4cb1c`.
+- `chromaui/action` digest updated to `d92ea1c`.
+
 ## [1.4.0] - 2026-05-30
 
 ### Added
@@ -138,6 +180,7 @@ First production-ready release.
 - **Observability**: Sentry wired through `@httpjpg/observability` for client, server, and edge runtimes.
 - **Quality gates**: oxlint + oxfmt, Vitest unit tests, Playwright E2E, commitlint + husky pre-commit hooks, strict TypeScript across all packages.
 
+[1.5.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.5.0
 [1.4.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.4.0
 [1.3.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.3.0
 [1.2.0]: https://github.com/dmnktoe/httpjpg/releases/tag/v1.2.0

@@ -98,5 +98,5 @@ export const DEFAULT_CONSENT_STATE: ConsentState = {
 export const CONSENT_COOKIE_NAME = "httpjpg_consent";
 export const CONSENT_COOKIE_EXPIRY = 365;
 
-/** Stamped onto stored consent; bump on schema changes. getConsent migrates older payloads forward. */
+/** Bump on schema changes; consent stored under a different version is discarded. */
 export const CONSENT_VERSION = 1;

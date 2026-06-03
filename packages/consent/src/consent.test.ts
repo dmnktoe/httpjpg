@@ -30,15 +30,15 @@ describe("consent storage", () => {
     expect(getConsent()).toMatchObject({ monitoring: true, preferences: true });
   });
 
-  it("migrates consent stored under a different version, preserving choices", () => {
+  it("discards consent stored under a different version", () => {
     writeRawCookie(JSON.stringify({ v: CONSENT_VERSION + 1, consent: FULL }));
-    expect(getConsent()).toEqual(FULL);
-    expect(hasConsent()).toBe(true);
+    expect(getConsent()).toBeNull();
+    expect(hasConsent()).toBe(false);
   });
 
-  it("reads legacy unversioned (bare ConsentState) cookies", () => {
+  it("discards legacy unversioned (bare ConsentState) cookies", () => {
     writeRawCookie(JSON.stringify(FULL));
-    expect(getConsent()).toEqual(FULL);
+    expect(getConsent()).toBeNull();
   });
 
   it("ignores a malformed cookie", () => {

@@ -21,15 +21,13 @@ export function getConsent(): ConsentState | null {
     return null;
   }
   try {
-    const parsed = JSON.parse(raw) as Record<string, unknown>;
-    // Accept both the current `{ v, consent }` envelope and legacy bare
-    // ConsentState objects. Normalization migrates either onto the current
-    // schema — unknown keys are dropped, missing ones get safe defaults — so a
-    // version bump or schema change preserves the visitor's existing choices
-    // instead of silently discarding them.
-    const candidate =
-      typeof parsed.consent === "object" && parsed.consent !== null ? parsed.consent : parsed;
-    return normalizeConsent(candidate);
+    const parsed = JSON.parse(raw) as Partial<StoredConsent>;
+    // No backward compatibility: consent from a different schema version is
+    // discarded so the banner re-appears for a fresh decision.
+    if (parsed.v !== CONSENT_VERSION) {
+      return null;
+    }
+    return normalizeConsent(parsed.consent);
   } catch {
     return null;
   }

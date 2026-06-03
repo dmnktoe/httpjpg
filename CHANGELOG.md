@@ -43,6 +43,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 - `concurrently` updated to v10.
 - `actions/download-artifact` updated to v8.
+- `actions/checkout` digest updated to `df4cb1c`.
+- `chromaui/action` digest updated to `d92ea1c`.
 
 ## [1.4.0] - 2026-05-30
 

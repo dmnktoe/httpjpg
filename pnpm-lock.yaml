@@ -294,15 +294,6 @@ importers:
         specifier: workspace:*
         version: link:../env
     devDependencies:
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.2.7
-      next:
-        specifier: 'catalog:'
-        version: 16.2.6(@babel/core@7.28.5)(@opentelemetry/api@1.9.1)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
-      react:
-        specifier: 'catalog:'
-        version: 19.2.1
       typescript:
         specifier: 'catalog:'
         version: 6.0.3

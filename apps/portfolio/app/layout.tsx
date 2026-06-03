@@ -1,5 +1,3 @@
-import { UmamiAnalytics } from "@httpjpg/analytics/umami";
-
 import "@httpjpg/tokens/dist/tokens.css";
 import "@httpjpg/ui/styles.css";
 import "@/lib/storyblok";
@@ -20,6 +18,7 @@ import type { PropsWithChildren } from "react";
 import { ConsentGate } from "@/components/providers/consent-gate";
 import { ConsentProvider } from "@/components/providers/consent-provider";
 import { StoryblokProvider } from "@/components/providers/storyblok-provider";
+import { UmamiAnalytics } from "@/components/providers/umami-analytics";
 import { ConsoleBanner } from "@/components/ui/console-banner";
 import { CustomCursorWrapper } from "@/components/ui/custom-cursor-wrapper";
 import { NostalgiaSlideshow } from "@/components/ui/nostalgia-slideshow";

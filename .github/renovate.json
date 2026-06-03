@@ -76,6 +76,18 @@
       "addLabels": ["deps:dev", "tooling"]
     },
     {
+      "description": "Build toolchain moves together",
+      "groupName": "build tooling",
+      "matchPackageNames": ["turbo", "typescript"],
+      "addLabels": ["deps:dev", "tooling"]
+    },
+    {
+      "description": "Next.js",
+      "groupName": "next.js",
+      "matchPackageNames": ["next"],
+      "addLabels": ["next"]
+    },
+    {
       "description": "Majors and 0.x bumps need a human",
       "matchUpdateTypes": ["major"],
       "addLabels": ["breaking", "manual-review"],

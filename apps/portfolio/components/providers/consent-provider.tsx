@@ -32,14 +32,6 @@ export function ConsentProvider() {
     if (getConsent()?.monitoring) {
       initObservability();
     }
-
-    const openSettings = () => {
-      window.dispatchEvent(new CustomEvent("openCookieSettings"));
-    };
-    (window as any).__openCookieSettings = openSettings;
-    return () => {
-      delete (window as any).__openCookieSettings;
-    };
   }, []);
 
   return (

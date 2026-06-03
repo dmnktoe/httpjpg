@@ -1,7 +1,7 @@
 "use client";
 
 import type { ConsentCategory, ConsentState } from "../types";
-import { EXTERNAL_VENDORS } from "../types";
+import { CONSENT_CATEGORIES, EXTERNAL_VENDORS, REQUIRED_CATEGORIES } from "../types";
 import { CookieCategory, type CookieCategoryVendor } from "./cookie-category";
 
 export interface ConsentCategoryListProps {
@@ -24,19 +24,20 @@ export function ConsentCategoryList({
 }: ConsentCategoryListProps) {
   return (
     <>
-      {CATEGORY_ORDER.map((category) => {
+      {CONSENT_CATEGORIES.map((category) => {
         const copy = CATEGORY_COPY[category];
+        const required = REQUIRED_CATEGORIES.has(category);
         return (
           <CookieCategory
             key={category}
             label={copy.label}
             description={copy.description}
-            required={copy.required}
+            required={required}
             checked={consent[category]}
             expanded={expandedCategories.has(category)}
             vendors={getCategoryVendors(category)}
             emptyText={copy.emptyText}
-            onToggle={copy.required ? undefined : () => onToggle(category)}
+            onToggle={required ? undefined : () => onToggle(category)}
             onToggleExpansion={() => onToggleExpansion(category)}
           />
         );
@@ -51,35 +52,28 @@ function getCategoryVendors(category: ConsentCategory): CookieCategoryVendor[] {
     .map(([key, vendor]) => ({ key, ...vendor }));
 }
 
-const CATEGORY_ORDER: ConsentCategory[] = ["preferences", "monitoring", "analytics", "media"];
-
 const CATEGORY_COPY: Record<ConsentCategory, CategoryCopy> = {
   preferences: {
     label: "ᴘʀᴇꜰᴇʀᴇɴᴄᴇꜱ",
     description: "Remembers your settings and preferences. Required for site functionality. ⚙️",
-    required: true,
     emptyText: "No external vendors in this category",
   },
   monitoring: {
     label: "ᴍᴏɴɪᴛᴏʀɪɴɢ",
     description: "Error tracking & performance monitoring. Required for site functionality. 🐛",
-    required: true,
   },
   analytics: {
     label: "ᴀɴᴀʟʏᴛɪᴄꜱ",
     description: "Helps us understand how visitors interact with our website. 📊",
-    required: false,
   },
   media: {
     label: "ᴍᴇᴅɪᴀ & ᴇxᴛᴇʀɴᴀʟ ꜱᴇʀᴠɪᴄᴇꜱ",
     description: "Load external content from video and audio platforms. 🎬🎵",
-    required: false,
   },
 };
 
 interface CategoryCopy {
   label: string;
   description: string;
-  required: boolean;
   emptyText?: string;
 }

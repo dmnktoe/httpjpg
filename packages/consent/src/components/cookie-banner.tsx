@@ -5,17 +5,25 @@ import { type ReactNode, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { getConsent, hasConsent, setConsent } from "../consent";
+import { OPEN_COOKIE_SETTINGS_EVENT } from "../events";
 import type { ConsentCategory, ConsentState } from "../types";
-import { DEFAULT_CONSENT_STATE, EXTERNAL_VENDORS } from "../types";
+import { DEFAULT_CONSENT_STATE, EXTERNAL_VENDORS, REQUIRED_CATEGORIES } from "../types";
 import { ConsentCategoryList } from "./consent-category-list";
 
 interface CookieBannerProps {
   onAcceptAll?: (consent: ConsentState) => void;
   onRejectAll?: () => void;
   onSavePreferences?: (consent: ConsentState) => void;
+  /** Where the "full Cookie Policy" link points. */
+  policyHref?: string;
 }
 
-export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: CookieBannerProps) {
+export function CookieBanner({
+  onAcceptAll,
+  onRejectAll,
+  onSavePreferences,
+  policyHref = "/cookie-policy",
+}: CookieBannerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());
@@ -42,8 +50,8 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
       setIsVisible(true);
     };
 
-    window.addEventListener("openCookieSettings", handleOpenSettings);
-    return () => window.removeEventListener("openCookieSettings", handleOpenSettings);
+    window.addEventListener(OPEN_COOKIE_SETTINGS_EVENT, handleOpenSettings);
+    return () => window.removeEventListener(OPEN_COOKIE_SETTINGS_EVENT, handleOpenSettings);
   }, []);
 
   const handleAcceptAll = () => {
@@ -70,8 +78,8 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
     onSavePreferences?.(consent);
   };
 
-  const toggleCategory = (category: keyof ConsentState) => {
-    if (category === "monitoring" || category === "preferences") {
+  const toggleCategory = (category: ConsentCategory) => {
+    if (REQUIRED_CATEGORIES.has(category)) {
       return;
     }
     setConsentState((prev) => ({ ...prev, [category]: !prev[category] }));
@@ -230,6 +238,22 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
               ⚙ Customize
             </Box>
           )}
+
+          <Box
+            as="a"
+            href={policyHref}
+            css={{
+              color: "pageFg",
+              fontFamily: "sans",
+              fontSize: "sm",
+              textDecoration: "underline",
+              textUnderlineOffset: "2px",
+              _hover: { opacity: 0.7 },
+              md: { fontSize: "md" },
+            }}
+          >
+            📄 Full Cookie Policy ↗
+          </Box>
 
           <Box as="span" css={{ fontSize: "xs", opacity: 0.6, ml: "auto" }}>
             ⋆.˚ ᡣ𐭩 .𖥔˚ cookies ⋆.˚✮🍪✮˚.⋆

@@ -1,9 +1,9 @@
 "use client";
 
-import { ConsentPlaceholder, hasVendorConsent } from "@httpjpg/consent";
+import { ConsentPlaceholder, useVendorConsent } from "@httpjpg/consent";
 import type { SbMusicPlayerData } from "@httpjpg/storyblok-utils";
 import { ASCII_DIVIDER_MUSIC, Box, MusicPlayer, type MusicPlayerProps } from "@httpjpg/ui";
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 
 import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
@@ -13,19 +13,11 @@ export interface SbMusicPlayerProps {
   blok: SbMusicPlayerData;
 }
 
-function useConsent(source: Source): boolean {
-  const [ok, setOk] = useState(false);
-  useEffect(() => {
-    if (source !== "spotify" && source !== "soundcloud") {
-      setOk(true);
-      return;
-    }
-    const check = () => setOk(hasVendorConsent(source));
-    check();
-    window.addEventListener("consentChange", check);
-    return () => window.removeEventListener("consentChange", check);
-  }, [source]);
-  return ok;
+function useMusicConsent(source: Source): boolean {
+  // Only the streaming embeds gate on third-party consent; mp3 is local.
+  const vendor = source === "spotify" || source === "soundcloud" ? source : null;
+  const hasConsent = useVendorConsent(vendor ?? "spotify");
+  return vendor ? hasConsent : true;
 }
 
 export const SbMusicPlayer = memo(function SbMusicPlayer({ blok }: SbMusicPlayerProps) {
@@ -44,7 +36,7 @@ export const SbMusicPlayer = memo(function SbMusicPlayer({ blok }: SbMusicPlayer
     footerText,
   } = blok;
   const editable = editableAttrs(blok);
-  const consent = useConsent(source);
+  const consent = useMusicConsent(source);
 
   if (!src) {
     return null;

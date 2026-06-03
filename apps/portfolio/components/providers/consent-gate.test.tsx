@@ -1,19 +1,20 @@
+import { clearConsent, type ConsentState, setConsent } from "@httpjpg/consent";
 import { act, cleanup, render, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-vi.mock("@httpjpg/consent", () => ({
-  getConsent: vi.fn(),
-}));
-
-import { getConsent } from "@httpjpg/consent";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { ConsentGate } from "./consent-gate";
 
-const mockedGetConsent = vi.mocked(getConsent);
+const WITHOUT_ANALYTICS: ConsentState = {
+  analytics: false,
+  monitoring: true,
+  preferences: true,
+  media: false,
+};
+const WITH_ANALYTICS: ConsentState = { ...WITHOUT_ANALYTICS, analytics: true };
 
 describe("ConsentGate", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    clearConsent();
   });
 
   afterEach(() => {
@@ -21,12 +22,7 @@ describe("ConsentGate", () => {
   });
 
   it("renders nothing without category consent", () => {
-    mockedGetConsent.mockReturnValue({
-      analytics: false,
-      monitoring: true,
-      preferences: true,
-      media: false,
-    });
+    setConsent(WITHOUT_ANALYTICS);
 
     render(
       <ConsentGate category="analytics">
@@ -38,12 +34,7 @@ describe("ConsentGate", () => {
   });
 
   it("renders children once the category is granted", () => {
-    mockedGetConsent.mockReturnValue({
-      analytics: true,
-      monitoring: true,
-      preferences: true,
-      media: false,
-    });
+    setConsent(WITH_ANALYTICS);
 
     render(
       <ConsentGate category="analytics">
@@ -54,13 +45,8 @@ describe("ConsentGate", () => {
     expect(screen.getByText("tracker")).toBeInTheDocument();
   });
 
-  it("reacts to consentChange events", () => {
-    mockedGetConsent.mockReturnValue({
-      analytics: false,
-      monitoring: true,
-      preferences: true,
-      media: false,
-    });
+  it("reacts to consent changes", () => {
+    setConsent(WITHOUT_ANALYTICS);
 
     render(
       <ConsentGate category="analytics">
@@ -69,14 +55,8 @@ describe("ConsentGate", () => {
     );
     expect(screen.queryByText("tracker")).toBeNull();
 
-    mockedGetConsent.mockReturnValue({
-      analytics: true,
-      monitoring: true,
-      preferences: true,
-      media: false,
-    });
     act(() => {
-      window.dispatchEvent(new CustomEvent("consentChange"));
+      setConsent(WITH_ANALYTICS);
     });
 
     expect(screen.getByText("tracker")).toBeInTheDocument();

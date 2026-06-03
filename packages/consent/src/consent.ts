@@ -1,18 +1,33 @@
+import { CONSENT_CHANGE_EVENT } from "./events";
 import type { ConsentState, ExternalVendor } from "./types";
-import { CONSENT_COOKIE_EXPIRY, CONSENT_COOKIE_NAME, EXTERNAL_VENDORS } from "./types";
+import {
+  CONSENT_CATEGORIES,
+  CONSENT_COOKIE_EXPIRY,
+  CONSENT_COOKIE_NAME,
+  CONSENT_VERSION,
+  DEFAULT_CONSENT_STATE,
+  EXTERNAL_VENDORS,
+  REQUIRED_CATEGORIES,
+} from "./types";
+
+interface StoredConsent {
+  v: number;
+  consent: ConsentState;
+}
 
 export function getConsent(): ConsentState | null {
-  if (typeof document === "undefined") {
-    return null;
-  }
-  const cookie = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith(`${CONSENT_COOKIE_NAME}=`));
-  if (!cookie) {
+  const raw = readConsentCookie();
+  if (!raw) {
     return null;
   }
   try {
-    return JSON.parse(decodeURIComponent(cookie.split("=")[1]));
+    const parsed = JSON.parse(raw) as Partial<StoredConsent>;
+    // Stored consent from an older schema/policy version is treated as absent
+    // so the banner re-appears for a fresh decision.
+    if (parsed.v !== CONSENT_VERSION) {
+      return null;
+    }
+    return normalizeConsent(parsed.consent);
   } catch {
     return null;
   }
@@ -22,12 +37,15 @@ export function setConsent(consent: ConsentState): void {
   if (typeof document === "undefined") {
     return;
   }
+  const normalized = normalizeConsent(consent) ?? { ...DEFAULT_CONSENT_STATE };
   const expires = new Date();
   expires.setDate(expires.getDate() + CONSENT_COOKIE_EXPIRY);
-  document.cookie = `${CONSENT_COOKIE_NAME}=${encodeURIComponent(JSON.stringify(consent))}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent("consentChange", { detail: consent }));
-  }
+  const stored: StoredConsent = { v: CONSENT_VERSION, consent: normalized };
+  const value = encodeURIComponent(JSON.stringify(stored));
+  const secure =
+    typeof window !== "undefined" && window.location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `${CONSENT_COOKIE_NAME}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax${secure}`;
+  dispatchConsentChange(normalized);
 }
 
 export function clearConsent(): void {
@@ -35,6 +53,7 @@ export function clearConsent(): void {
     return;
   }
   document.cookie = `${CONSENT_COOKIE_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  dispatchConsentChange(null);
 }
 
 export function hasConsent(): boolean {
@@ -51,4 +70,47 @@ export function hasVendorConsent(vendor: ExternalVendor): boolean {
 
 export function hasMediaConsent(): boolean {
   return getConsent()?.media === true;
+}
+
+/**
+ * Decoded consent cookie value, or null. Internal helper the reactive store
+ * uses to cheaply detect changes without re-parsing on every read.
+ */
+export function readConsentCookie(): string | null {
+  if (typeof document === "undefined") {
+    return null;
+  }
+  const cookie = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${CONSENT_COOKIE_NAME}=`));
+  if (!cookie) {
+    return null;
+  }
+  return decodeURIComponent(cookie.slice(CONSENT_COOKIE_NAME.length + 1));
+}
+
+/** Coerce an untrusted parsed value into a valid `ConsentState`, or null. */
+function normalizeConsent(value: unknown): ConsentState | null {
+  if (typeof value !== "object" || value === null) {
+    return null;
+  }
+  const record = value as Record<string, unknown>;
+  const result: ConsentState = { ...DEFAULT_CONSENT_STATE };
+  for (const category of CONSENT_CATEGORIES) {
+    if (typeof record[category] === "boolean") {
+      result[category] = record[category] as boolean;
+    }
+  }
+  // Required categories are always on, whatever a stale or tampered cookie says.
+  for (const category of REQUIRED_CATEGORIES) {
+    result[category] = true;
+  }
+  return result;
+}
+
+function dispatchConsentChange(consent: ConsentState | null): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.dispatchEvent(new CustomEvent(CONSENT_CHANGE_EVENT, { detail: consent }));
 }

@@ -7,6 +7,21 @@ export interface ConsentState {
   media: boolean;
 }
 
+/** Canonical category order, used for rendering and validation. */
+export const CONSENT_CATEGORIES = [
+  "preferences",
+  "monitoring",
+  "analytics",
+  "media",
+] as const satisfies readonly ConsentCategory[];
+
+/**
+ * Technically necessary categories that can't be switched off. Single source
+ * of truth for "required" — UI toggles, defaults, and normalization all read
+ * from here instead of comparing category strings inline.
+ */
+export const REQUIRED_CATEGORIES = new Set<ConsentCategory>(["preferences", "monitoring"]);
+
 export type ExternalVendor =
   | "google-analytics"
   | "umami"
@@ -109,3 +124,10 @@ export const DEFAULT_CONSENT_STATE: ConsentState = {
 
 export const CONSENT_COOKIE_NAME = "httpjpg_consent";
 export const CONSENT_COOKIE_EXPIRY = 365;
+
+/**
+ * Bump when the consent schema or policy materially changes. Stored consent
+ * tagged with an older version is treated as "not given", so the banner
+ * re-appears and the visitor can review the new choices.
+ */
+export const CONSENT_VERSION = 1;

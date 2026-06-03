@@ -10,6 +10,7 @@ export {
   hasVendorConsent,
   setConsent,
 } from "./consent";
+export { CONSENT_CHANGE_EVENT, OPEN_COOKIE_SETTINGS_EVENT } from "./events";
 export type {
   ConsentCategory,
   ConsentConfig,
@@ -18,8 +19,12 @@ export type {
   VendorInfo,
 } from "./types";
 export {
+  CONSENT_CATEGORIES,
   CONSENT_COOKIE_EXPIRY,
   CONSENT_COOKIE_NAME,
+  CONSENT_VERSION,
   DEFAULT_CONSENT_STATE,
   EXTERNAL_VENDORS,
+  REQUIRED_CATEGORIES,
 } from "./types";
+export { useConsent, useConsentCategory, useVendorConsent } from "./use-consent";

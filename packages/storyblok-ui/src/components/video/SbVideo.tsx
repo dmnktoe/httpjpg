@@ -1,9 +1,9 @@
 "use client";
 
-import { ConsentPlaceholder, hasVendorConsent } from "@httpjpg/consent";
+import { ConsentPlaceholder, useVendorConsent } from "@httpjpg/consent";
 import type { SbVideoData } from "@httpjpg/storyblok-utils";
 import { Box, Video, type VideoSource } from "@httpjpg/ui";
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 
 import { editableAttrs, spacingCss } from "../../lib/use-blok";
 import { SbCaption, type SbCaptionProps } from "../caption/SbCaption";
@@ -19,19 +19,11 @@ function resolveSrc(blok: SbVideoProps["blok"]): string {
   return blok.video?.filename || blok.videoUrl || "";
 }
 
-function useConsent(source: VideoSource): boolean {
-  const [ok, setOk] = useState(false);
-  useEffect(() => {
-    if (source !== "youtube" && source !== "vimeo") {
-      setOk(true);
-      return;
-    }
-    const check = () => setOk(hasVendorConsent(source));
-    check();
-    window.addEventListener("consentChange", check);
-    return () => window.removeEventListener("consentChange", check);
-  }, [source]);
-  return ok;
+function useVideoConsent(source: VideoSource): boolean {
+  // Only the embed sources gate on third-party consent; native video is local.
+  const vendor = source === "youtube" || source === "vimeo" ? source : null;
+  const hasConsent = useVendorConsent(vendor ?? "youtube");
+  return vendor ? hasConsent : true;
 }
 
 export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
@@ -49,7 +41,7 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
   } = blok;
   const copyright = video?.copyright;
   const editable = editableAttrs(blok);
-  const consent = useConsent(source);
+  const consent = useVideoConsent(source);
   const src = resolveSrc(blok);
 
   if (!src) {

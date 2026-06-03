@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { getConsent, setConsent } from "../consent";
 import type { ConsentCategory, ConsentState } from "../types";
-import { DEFAULT_CONSENT_STATE } from "../types";
+import { DEFAULT_CONSENT_STATE, REQUIRED_CATEGORIES } from "../types";
 import { ConsentCategoryList } from "./consent-category-list";
 
 interface CookieCenterProps {
@@ -38,7 +38,7 @@ export function CookieCenter({ onSave }: CookieCenterProps) {
   }, []);
 
   const toggleCategory = (category: ConsentCategory) => {
-    if (category === "monitoring" || category === "preferences") {
+    if (REQUIRED_CATEGORIES.has(category)) {
       return;
     }
     setIsSaved(false);

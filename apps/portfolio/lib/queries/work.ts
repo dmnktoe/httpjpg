@@ -1,3 +1,4 @@
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { CACHE_TAGS, fetchStory } from "@httpjpg/storyblok-next";
 import { firstImageFilename, imagePreset, STORYBLOK_RELATIONS } from "@httpjpg/storyblok-utils";
@@ -118,6 +119,7 @@ export async function getRecentWork(): Promise<{
       };
     } catch (error) {
       console.error("Error fetching work items:", error);
+      captureServerException(error, { tags: { query: "recent-work" } });
       return { personalWork: [], clientWork: [] };
     }
   };
@@ -159,7 +161,8 @@ export async function getAdjacentWork(
           prev: toAdjacent(direct[idx - 1]),
           next: toAdjacent(direct[idx + 1]),
         };
-      } catch {
+      } catch (error) {
+        captureServerException(error, { tags: { query: "adjacent-work" } });
         return {};
       }
     },

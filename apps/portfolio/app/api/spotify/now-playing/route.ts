@@ -1,4 +1,5 @@
 import { env } from "@httpjpg/env";
+import { captureEdgeException } from "@httpjpg/observability/sentry/edge.ts";
 import { getAccessToken, getCurrentlyPlaying } from "@httpjpg/spotify";
 import { NextResponse } from "next/server";
 
@@ -28,6 +29,7 @@ export async function GET() {
     );
   } catch (error) {
     console.error("Spotify API error:", error);
+    captureEdgeException(error, { route: "spotify/now-playing" });
     return NextResponse.json(
       { error: "Failed to fetch now playing" },
       {

@@ -1,4 +1,5 @@
 import { env } from "@httpjpg/env";
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { CACHE_TAGS } from "@httpjpg/storyblok-next";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
@@ -78,6 +79,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("[Storyblok Webhook] Revalidation error:", error);
+    captureServerException(error, { tags: { route: "revalidate" } });
     return NextResponse.json(
       {
         message: "Error revalidating",

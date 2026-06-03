@@ -1,6 +1,16 @@
 import { env } from "@httpjpg/env";
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { MetadataRoute } from "next";
+
+interface SitemapStory {
+  slug: string;
+  full_slug: string;
+  first_published_at: string | null;
+  published_at: string | null;
+  is_startpage: boolean;
+  content?: { external_only?: boolean };
+}
 
 /**
  * Dynamic sitemap generation from Storyblok stories
@@ -19,14 +29,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       version: "published",
     });
 
-    const stories = response.stories || [];
+    const stories = (response.stories || []) as SitemapStory[];
 
     const entries: MetadataRoute.Sitemap = stories
-      .filter((story: any) => story.first_published_at !== null) // Only published
-      .filter((story: any) => !story.is_startpage) // No folders
-      .filter((story: any) => !EXCLUDED_SLUGS.includes(story.slug))
-      .filter((story: any) => !story.content?.external_only)
-      .map((story: any) => ({
+      .filter(
+        (story): story is SitemapStory & { first_published_at: string } =>
+          story.first_published_at !== null,
+      ) // Only published
+      .filter((story) => !story.is_startpage) // No folders
+      .filter((story) => !EXCLUDED_SLUGS.includes(story.slug))
+      .filter((story) => !story.content?.external_only)
+      .map((story) => ({
         url: `${baseUrl}/${story.full_slug}`,
         lastModified: new Date(story.published_at || story.first_published_at),
         changeFrequency: story.full_slug.startsWith("work/") ? "monthly" : "weekly",
@@ -44,6 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return entries;
   } catch (error) {
     console.error("Error generating sitemap:", error);
+    captureServerException(error, { tags: { route: "sitemap" } });
     // Fallback to minimal sitemap
     return [
       {

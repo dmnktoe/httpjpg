@@ -21,5 +21,7 @@ export function trackUmamiEvent(eventName: string, data?: UmamiEventData): void 
 
   try {
     window.umami!.track(eventName, data ?? {});
-  } catch {}
+  } catch (error) {
+    console.warn("Failed to track Umami event", error);
+  }
 }

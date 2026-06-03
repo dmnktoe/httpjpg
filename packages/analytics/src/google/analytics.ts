@@ -36,5 +36,7 @@ export function trackGoogleEvent(eventName: string, params?: GAEventParams): voi
       value: params?.value,
       ...params,
     });
-  } catch {}
+  } catch (error) {
+    console.warn("Failed to track Google Analytics event", error);
+  }
 }

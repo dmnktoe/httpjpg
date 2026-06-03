@@ -1,5 +1,6 @@
 "use client";
 
+import { captureClientException } from "@httpjpg/observability/sentry/client.ts";
 import { ASCII_500, AsciiArt, Box, Headline, Link, Paragraph } from "@httpjpg/ui";
 import { useEffect } from "react";
 
@@ -11,6 +12,12 @@ interface ErrorProps {
 export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
     console.error("[Portfolio] Render error:", error);
+    captureClientException(error, {
+      tags: {
+        errorBoundary: "portfolio-slug",
+        digest: error.digest,
+      },
+    });
   }, [error]);
 
   return (

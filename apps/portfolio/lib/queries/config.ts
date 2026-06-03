@@ -1,3 +1,4 @@
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { CACHE_TAGS } from "@httpjpg/storyblok-next";
 import { type MenuLink, type SbConfigStory, storyblokHref } from "@httpjpg/storyblok-ui";
@@ -20,6 +21,7 @@ export async function getConfig(): Promise<SbConfigStory | null> {
       return (story?.content as SbConfigStory) ?? null;
     } catch (error) {
       console.error("Error fetching config:", error);
+      captureServerException(error, { tags: { query: "config" } });
       return null;
     }
   };

@@ -1,4 +1,4 @@
-export { captureClientException, clearUser, initSentryClient, setUser } from "./client";
+export { captureClientException, initSentryClient } from "./client";
 export { captureEdgeException, initSentryEdge } from "./edge";
 export {
   captureServerException,

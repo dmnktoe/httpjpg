@@ -1,4 +1,5 @@
 import { env } from "@httpjpg/env";
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { imagePreset } from "@httpjpg/storyblok-utils";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
@@ -152,6 +153,7 @@ export async function generateStaticParams() {
       }));
   } catch (error) {
     console.error("Error generating static params:", error);
+    captureServerException(error, { tags: { route: "generateStaticParams" } });
     return [];
   }
 }

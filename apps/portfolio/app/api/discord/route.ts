@@ -1,3 +1,4 @@
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
 import { NextResponse } from "next/server";
@@ -42,6 +43,7 @@ export async function GET() {
     return NextResponse.json(result.presence);
   } catch (error) {
     console.error("Discord API error:", error);
+    captureServerException(error, { tags: { route: "discord" } });
     return NextResponse.json(
       {
         error: "Failed to fetch Discord status",

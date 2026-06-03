@@ -7,7 +7,7 @@ export interface PSNCardProps {
   username?: string;
 }
 
-export const PSNCard = ({ username }: PSNCardProps) => {
+export function PSNCard({ username }: PSNCardProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -46,4 +46,4 @@ export const PSNCard = ({ username }: PSNCardProps) => {
       />
     </Box>
   );
-};
+}

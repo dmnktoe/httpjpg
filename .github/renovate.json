@@ -112,10 +112,6 @@
       "addLabels": ["scope:packages"]
     },
     {
-      "matchFileNames": ["package.json"],
-      "addLabels": ["scope:root"]
-    },
-    {
       "description": "CI / Docker tooling",
       "matchManagers": ["github-actions"],
       "addLabels": ["ci"]

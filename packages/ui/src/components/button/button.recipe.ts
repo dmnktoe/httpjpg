@@ -3,12 +3,6 @@ import { defineRecipe } from "@pandacss/dev";
 
 import { hexToRgba, linearGradient } from "../../../panda.helpers";
 
-/**
- * Build-time only — imported by `panda.config.ts`, never by the runtime
- * bundle. `button.tsx` consumes the generated recipe from `styled-system/recipes`.
- * Lives here (next to the component) rather than inline in the config so the
- * button's styling stays colocated with the component it dresses.
- */
 export const buttonRecipe = defineRecipe({
   className: "button",
   base: {

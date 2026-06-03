@@ -1,0 +1,105 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { transitions } from "@httpjpg/tokens";
+
+<Meta title="Foundations/Transitions" />
+
+<style>{`
+  @keyframes httpjpgSlide { from { transform: translateX(0); } to { transform: translateX(236px); } }
+`}</style>
+
+# Transitions
+
+Shared durations and easing curves. Keep motion short and consistent — most interactions use
+`normal` (0.2s) with `easeInOut`. The dots below loop continuously so you can compare them.
+
+## Duration
+
+<div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "2rem" }}>
+  {Object.entries(transitions.duration).map(([key, value]) => (
+    <div key={key} style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+      <div style={{ fontFamily: "monospace", fontSize: "0.8125rem", minWidth: "80px" }}>{key}</div>
+      <div style={{ fontFamily: "monospace", fontSize: "0.75rem", opacity: 0.6, minWidth: "48px" }}>
+        {value}
+      </div>
+      <div
+        style={{
+          position: "relative",
+          width: "260px",
+          height: "12px",
+          background: "#F5F5F5",
+          border: "1px solid #E5E5E5",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "1px",
+            left: "1px",
+            width: "10px",
+            height: "10px",
+            background: "#84CC16",
+            animation: `httpjpgSlide ${value} ease-in-out infinite alternate`,
+          }}
+        />
+      </div>
+    </div>
+  ))}
+</div>
+
+## Easing
+
+Same distance and duration (1.2s) — only the curve changes.
+
+<div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "2rem" }}>
+  {Object.entries(transitions.easing).map(([key, value]) => (
+    <div key={key} style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+      <div style={{ fontFamily: "monospace", fontSize: "0.8125rem", minWidth: "100px" }}>{key}</div>
+      <div style={{ fontFamily: "monospace", fontSize: "0.75rem", opacity: 0.6, minWidth: "90px" }}>
+        {value}
+      </div>
+      <div
+        style={{
+          position: "relative",
+          width: "260px",
+          height: "12px",
+          background: "#F5F5F5",
+          border: "1px solid #E5E5E5",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "1px",
+            left: "1px",
+            width: "10px",
+            height: "10px",
+            background: "#84CC16",
+            animation: `httpjpgSlide 1.2s ${value} infinite alternate`,
+          }}
+        />
+      </div>
+    </div>
+  ))}
+</div>
+
+## Usage
+
+```tsx
+import { Box } from "@httpjpg/ui";
+
+<Box
+  css={{
+    transition: "all 0.2s ease-in-out",
+    _hover: { transform: "translateY(-2px)" },
+  }}
+>
+  Lifts on hover
+</Box>;
+```
+
+## Guidelines
+
+- **fast (0.1s)** — micro-feedback like color or opacity changes.
+- **normal (0.2s)** — the default for most hover and state transitions.
+- **slow / slower** — larger movements, panels, and entrances.
+- Respect reduced motion: gate non-essential animation behind `motionSafe`.

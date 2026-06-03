@@ -59,10 +59,10 @@ export const Introduction = {
               <Button href="https://github.com/dmnktoe/httpjpg" variant="primary" size="sm">
                 ✦ GitHub ↗
               </Button>
-              <Button href="https://www.httpjpg.com" variant="outline" size="sm">
+              <Button href="https://www.httpjpg.com" variant="secondary" size="sm">
                 ◆ Live Site ↗
               </Button>
-              <Button href="https://www.npmjs.com/org/httpjpg" variant="outline" size="sm">
+              <Button href="https://www.npmjs.com/org/httpjpg" variant="accent" size="sm">
                 ⋆ npm ↗
               </Button>
             </Stack>
@@ -155,7 +155,7 @@ export const Introduction = {
                 {
                   icon: "◆",
                   title: "Minimal Palette",
-                  desc: "Monochromatic neutral scale 50–950. One electric-blue primary, one peachy-orange accent, status colors for feedback. Semantic tokens pageBg/pageFg flip with the theme.",
+                  desc: "Monochromatic neutral scale 50–950. One electric-blue primary, one lime-green accent, status colors for feedback. Semantic tokens pageBg/pageFg flip with the theme.",
                 },
                 {
                   icon: "⋆",

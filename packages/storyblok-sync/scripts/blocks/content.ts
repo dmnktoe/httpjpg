@@ -60,7 +60,6 @@ const CALLOUT_TONE_OPTIONS = [
 const CTA_VARIANT_OPTIONS = [
   { name: "Primary", value: "primary" },
   { name: "Secondary", value: "secondary" },
-  { name: "Outline", value: "outline" },
 ];
 
 const CALLOUT_ALIGN_OPTIONS = labelize(["start", "center"] as const);
@@ -147,8 +146,6 @@ export const contentBlocks: BlockDef[] = [
         [
           { name: "Primary", value: "primary" },
           { name: "Secondary", value: "secondary" },
-          { name: "Outline", value: "outline" },
-          { name: "Disabled", value: "disabled" },
         ],
         { default_value: "primary" },
       ),

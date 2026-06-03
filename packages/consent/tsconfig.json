@@ -3,6 +3,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
+    "jsx": "react-jsx",
+    "types": ["@testing-library/jest-dom", "node", "vitest/globals"],
     "paths": {
       "styled-system/*": ["../ui/styled-system/*"]
     }

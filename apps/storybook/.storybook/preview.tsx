@@ -63,7 +63,17 @@ const preview: Preview = {
         order: [
           "Introduction",
           "Foundations",
-          ["Colors", "Typography", "Spacing", "Shadows"],
+          [
+            "Colors",
+            "Typography",
+            "Spacing",
+            "Sizes",
+            "Border Radius",
+            "Shadows",
+            "Opacity",
+            "Z-Index",
+            "Transitions",
+          ],
           "Layout",
           "Typography",
           "Navigation",

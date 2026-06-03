@@ -1,0 +1,53 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { sizes } from "@httpjpg/tokens";
+
+<Meta title="Foundations/Sizes" />
+
+# Sizes
+
+Fixed dimensions for recurring UI elements — icons, status indicators, and widgets. Reach for
+these named sizes instead of arbitrary pixel values so repeated elements stay consistent.
+
+{Object.entries(sizes).map(([group, scale]) => (
+  <div key={group} style={{ marginTop: "2.5rem" }}>
+    <div
+      style={{
+        fontFamily: "monospace",
+        fontWeight: "bold",
+        fontSize: "0.875rem",
+        textTransform: "capitalize",
+        marginBottom: "1rem",
+      }}
+    >
+      {group}
+    </div>
+    <div style={{ display: "flex", alignItems: "flex-end", flexWrap: "wrap", gap: "2rem" }}>
+      {Object.entries(scale).map(([key, value]) => (
+        <div
+          key={key}
+          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}
+        >
+          <div style={{ width: value, height: value, background: "#84CC16", border: "1px solid #65A30D" }} />
+          <div style={{ fontFamily: "monospace", fontSize: "0.8125rem" }}>{key}</div>
+          <div style={{ fontFamily: "monospace", fontSize: "0.6875rem", opacity: 0.6 }}>{value}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+))}
+
+## Usage
+
+```tsx
+import { sizes } from "@httpjpg/tokens";
+import { Box } from "@httpjpg/ui";
+
+<Box css={{ width: sizes.icon.md, height: sizes.icon.md }}>Icon slot</Box>;
+<Box css={{ width: sizes.widget.md }}>Widget column</Box>;
+```
+
+## Guidelines
+
+- **icon** — inline glyphs and buttons (12–32px).
+- **indicator** — dots, badges, status pips (6–16px).
+- **widget** — fixed-width floating modules like the music or now-playing widgets.

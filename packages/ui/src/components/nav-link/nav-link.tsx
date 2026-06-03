@@ -20,7 +20,6 @@ export interface NavLinkProps extends Omit<
   css?: SystemStyleObject;
 }
 
-/** Recipe lives in panda.config.ts so pseudo-elements extract correctly in Panda v1.7+. */
 export function NavLink({
   variant = "personal",
   children,

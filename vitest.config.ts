@@ -36,6 +36,7 @@ export default defineConfig({
         "**/dist/**",
         "**/styled-system/**",
         "**/scripts/**",
+        "**/*.recipe.ts",
         "**/index.ts",
         "**/types.ts",
       ],

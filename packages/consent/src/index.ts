@@ -1,5 +1,6 @@
 export { ConsentPlaceholder } from "./components/consent-placeholder";
 export { CookieBanner } from "./components/cookie-banner";
+export { CookieCenter } from "./components/cookie-center";
 export { VendorList } from "./components/vendor-list";
 export {
   clearConsent,

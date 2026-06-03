@@ -1,0 +1,115 @@
+"use client";
+
+import { Box, Button } from "@httpjpg/ui";
+import { useEffect, useState } from "react";
+
+import { getConsent, setConsent } from "../consent";
+import type { ConsentCategory, ConsentState } from "../types";
+import { DEFAULT_CONSENT_STATE } from "../types";
+import { ConsentCategoryList } from "./consent-category-list";
+
+interface CookieCenterProps {
+  onSave?: (consent: ConsentState) => void;
+}
+
+const FULL_CONSENT: ConsentState = {
+  analytics: true,
+  monitoring: true,
+  preferences: true,
+  media: true,
+};
+
+/**
+ * Inline variant of the consent manager. Unlike `CookieBanner` it renders in
+ * the normal document flow (no portal, no fixed positioning), hydrates from
+ * the already-stored consent, and confirms in place instead of dismissing —
+ * built for embedding on the Cookie Policy page.
+ */
+export function CookieCenter({ onSave }: CookieCenterProps) {
+  const [consent, setConsentState] = useState<ConsentState>(DEFAULT_CONSENT_STATE);
+  const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    const stored = getConsent();
+    if (stored) {
+      setConsentState(stored);
+    }
+  }, []);
+
+  const toggleCategory = (category: ConsentCategory) => {
+    if (category === "monitoring" || category === "preferences") {
+      return;
+    }
+    setIsSaved(false);
+    setConsentState((prev) => ({ ...prev, [category]: !prev[category] }));
+  };
+
+  const toggleCategoryExpansion = (category: ConsentCategory) => {
+    setExpandedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(category)) {
+        next.delete(category);
+      } else {
+        next.add(category);
+      }
+      return next;
+    });
+  };
+
+  const persist = (next: ConsentState) => {
+    setConsentState(next);
+    setConsent(next);
+    setIsSaved(true);
+    onSave?.(next);
+  };
+
+  return (
+    <Box
+      css={{
+        bg: "pageBg",
+        color: "pageFg",
+        border: "2px solid",
+        borderColor: "pageFg",
+        p: { base: "5", md: "6" },
+        fontFamily: "sans",
+        fontSize: "sm",
+        lineHeight: 1.4,
+      }}
+    >
+      <Box css={{ mb: "4" }}>
+        <Box as="span" css={{ fontWeight: "bold", fontSize: "md", color: "primary.500" }}>
+          ⇝🍪 ᴄᴏᴏᴋɪᴇ ᴄᴇɴᴛᴇʀ 🍪⇝
+        </Box>
+        <Box as="p" css={{ m: 0, mt: "2", fontSize: "sm", opacity: 0.8 }}>
+          ⋆ﾟ･ Choose which cookies and external services you allow. Required categories keep the site
+          working and can't be switched off. ⋆ﾟ･
+        </Box>
+      </Box>
+
+      <ConsentCategoryList
+        consent={consent}
+        expandedCategories={expandedCategories}
+        onToggle={toggleCategory}
+        onToggleExpansion={toggleCategoryExpansion}
+      />
+
+      <Box css={{ display: "flex", gap: "3", flexWrap: "wrap", alignItems: "center", mt: "5" }}>
+        <Button variant="primary" size="sm" onClick={() => persist(FULL_CONSENT)}>
+          ✓ Accept All
+        </Button>
+        <Button variant="secondary" size="sm" onClick={() => persist(DEFAULT_CONSENT_STATE)}>
+          ✗ Reject All
+        </Button>
+        <Button variant="accent" size="sm" onClick={() => persist(consent)}>
+          ⚙ Save Preferences
+        </Button>
+        {isSaved && (
+          <Box as="output" css={{ fontSize: "sm", fontWeight: "bold", color: "success.600" }}>
+            ✓ Preferences saved
+          </Box>
+        )}
+      </Box>
+    </Box>
+  );
+}

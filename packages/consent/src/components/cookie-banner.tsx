@@ -7,7 +7,7 @@ import { createPortal } from "react-dom";
 import { getConsent, hasConsent, setConsent } from "../consent";
 import type { ConsentCategory, ConsentState } from "../types";
 import { DEFAULT_CONSENT_STATE, EXTERNAL_VENDORS } from "../types";
-import { CookieCategory, type CookieCategoryVendor } from "./cookie-category";
+import { ConsentCategoryList } from "./consent-category-list";
 
 interface CookieBannerProps {
   onAcceptAll?: (consent: ConsentState) => void;
@@ -88,11 +88,6 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
       return next;
     });
   };
-
-  const getCategoryVendors = (category: ConsentCategory): CookieCategoryVendor[] =>
-    Object.entries(EXTERNAL_VENDORS)
-      .filter(([_, vendor]) => vendor.category === category)
-      .map(([key, vendor]) => ({ key, ...vendor }));
 
   // Count the named third-party services we may hand data to. The catch-all
   // "generic-media" slot isn't a real vendor, so it's excluded from the tally.
@@ -175,45 +170,12 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
               fontSize: "sm",
             }}
           >
-            <CookieCategory
-              label="ᴘʀᴇꜰᴇʀᴇɴᴄᴇꜱ"
-              description="Remembers your settings and preferences. Required for site functionality. ⚙️"
-              required
-              checked={consent.preferences}
-              expanded={expandedCategories.has("preferences")}
-              vendors={getCategoryVendors("preferences")}
-              emptyText="No external vendors in this category"
-              onToggleExpansion={() => toggleCategoryExpansion("preferences")}
+            <ConsentCategoryList
+              consent={consent}
+              expandedCategories={expandedCategories}
+              onToggle={toggleCategory}
+              onToggleExpansion={toggleCategoryExpansion}
             />
-            <CookieCategory
-              label="ᴍᴏɴɪᴛᴏʀɪɴɢ"
-              description="Error tracking & performance monitoring. Required for site functionality. 🐛"
-              required
-              checked={consent.monitoring}
-              expanded={expandedCategories.has("monitoring")}
-              vendors={getCategoryVendors("monitoring")}
-              onToggleExpansion={() => toggleCategoryExpansion("monitoring")}
-            />
-            <CookieCategory
-              label="ᴀɴᴀʟʏᴛɪᴄꜱ"
-              description="Helps us understand how visitors interact with our website. 📊"
-              checked={consent.analytics}
-              expanded={expandedCategories.has("analytics")}
-              vendors={getCategoryVendors("analytics")}
-              onToggle={() => toggleCategory("analytics")}
-              onToggleExpansion={() => toggleCategoryExpansion("analytics")}
-            />
-            <Box css={{ mb: 0 }}>
-              <CookieCategory
-                label="ᴍᴇᴅɪᴀ & ᴇxᴛᴇʀɴᴀʟ ꜱᴇʀᴠɪᴄᴇꜱ"
-                description="Load external content from video and audio platforms. 🎬🎵"
-                checked={consent.media}
-                expanded={expandedCategories.has("media")}
-                vendors={getCategoryVendors("media")}
-                onToggle={() => toggleCategory("media")}
-                onToggleExpansion={() => toggleCategoryExpansion("media")}
-              />
-            </Box>
           </Box>
         )}
 

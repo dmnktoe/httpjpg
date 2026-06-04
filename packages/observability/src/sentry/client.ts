@@ -4,7 +4,7 @@ import { getSentryConfig } from "./config";
 
 export function initSentryClient() {
   const { dsn, environment, release, isProduction, isEnabled } = getSentryConfig("client");
-  if (!dsn || !isEnabled) {
+  if (!dsn || !isEnabled || Sentry.getClient()) {
     return;
   }
 
@@ -52,5 +52,8 @@ export function captureClientException(
 ) {
   Sentry.captureException(error, context);
 }
+
+// oxlint-disable-next-line import/namespace
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
 
 export { Sentry };

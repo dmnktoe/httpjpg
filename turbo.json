@@ -5,6 +5,7 @@
     "tsconfig/*.json",
     "tsconfig.json",
     ".oxlintrc.json",
+    "tools/oxlint/**",
     ".oxfmtrc.json",
     ".oxlintignore",
     ".env",

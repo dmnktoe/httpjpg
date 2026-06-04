@@ -24,7 +24,7 @@
     ],
     "react/react-in-jsx-scope": "off",
     "react-hooks/exhaustive-deps": "off",
-    "panda/sort-properties": "warn"
+    "panda/sort-properties": "error"
   },
   "ignorePatterns": [
     "**/node_modules/**",

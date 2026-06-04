@@ -48,8 +48,8 @@ export interface DiscordPresenceSummary {
   avatar: string | null;
 }
 
-// Discord IDs are snowflakes: numeric strings, currently 17–20 digits. Validate
-// before interpolating CMS-sourced values into the Lanyard request path.
+// Discord IDs are snowflakes (17–20 digit numeric strings); validate CMS values
+// before they reach the Lanyard request path.
 const DISCORD_SNOWFLAKE = /^\d{17,20}$/;
 
 export function isDiscordUserId(value: unknown): value is string {

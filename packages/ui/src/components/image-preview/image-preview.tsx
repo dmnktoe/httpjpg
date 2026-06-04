@@ -30,6 +30,7 @@ export function ImagePreview({
 }: Omit<ImagePreviewProps, "height">) {
   const [previewImage, setPreviewImage] = useState("");
   const [ratio, setRatio] = useState(DEFAULT_RATIO);
+  const [previewWidth, setPreviewWidth] = useState(width);
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -59,8 +60,10 @@ export function ImagePreview({
       if (imageElement) {
         const imageUrl = imageElement.getAttribute("data-preview-image") || "";
         if (imageUrl) {
+          const widthOverride = Number(imageElement.getAttribute("data-preview-width"));
           setPreviewImage(imageUrl);
           setRatio(parseRatio(imageElement.getAttribute("data-preview-ratio")));
+          setPreviewWidth(widthOverride > 0 ? widthOverride : width);
           setIsVisible(true);
         }
       }
@@ -93,7 +96,7 @@ export function ImagePreview({
     };
   }, [offset.x, offset.y]);
 
-  const height = Math.round(width / ratio);
+  const height = Math.round(previewWidth / ratio);
 
   if (!isVisible || !previewImage) {
     return null;
@@ -106,7 +109,7 @@ export function ImagePreview({
         position: "fixed",
         top: 0,
         left: 0,
-        width: `${width}px`,
+        width: `${previewWidth}px`,
         height: `${height}px`,
         transform: "translate(-1000px, -1000px)",
         pointerEvents: "none",

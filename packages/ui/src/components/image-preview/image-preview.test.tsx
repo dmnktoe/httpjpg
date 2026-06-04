@@ -37,6 +37,18 @@ describe("ImagePreview", () => {
     expect(container.style.height).toBe("150px");
   });
 
+  it("uses the data-preview-width to override the default width when provided", () => {
+    document.body.innerHTML = `<a data-preview-image="/poster.jpg" data-preview-ratio="2:3" data-preview-width="70">film</a>`;
+    render(<ImagePreview width={100} />);
+
+    const trigger = document.body.querySelector("[data-preview-image]") as HTMLElement;
+    fireEvent.mouseOver(trigger);
+
+    const container = screen.getByAltText("Preview").parentElement as HTMLElement;
+    expect(container.style.width).toBe("70px");
+    expect(container.style.height).toBe("105px");
+  });
+
   it("falls back to a 16:9 ratio when none is provided", () => {
     document.body.innerHTML = `<a data-preview-image="/preview.jpg">work</a>`;
     render(<ImagePreview width={160} />);

@@ -22,12 +22,16 @@ const FULL_CONSENT: ConsentState = {
 
 /** Inline consent manager for the Cookie Policy page — no portal, saves in place. */
 export function CookieCenter({ onSave }: CookieCenterProps) {
-  const [consent, setConsentState] = useState<ConsentState>(DEFAULT_CONSENT_STATE);
+  const externalConsent = useConsent();
+  // Seed from the store on first render so saved preferences don't flash back
+  // to defaults before the sync effect runs (e.g. on client-side navigation).
+  const [consent, setConsentState] = useState<ConsentState>(
+    () => externalConsent ?? DEFAULT_CONSENT_STATE,
+  );
   const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());
   const [isSaved, setIsSaved] = useState(false);
   const [hasEdits, setHasEdits] = useState(false);
-  const externalConsent = useConsent();
-  const syncedRef = useRef<ConsentState | null>(null);
+  const syncedRef = useRef<ConsentState | null>(externalConsent);
 
   // Reflect consent changed elsewhere (e.g. the cookie banner on this page),
   // but never clobber unsaved edits, and ignore the echo of our own save.

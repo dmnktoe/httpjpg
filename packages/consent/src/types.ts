@@ -7,6 +7,17 @@ export interface ConsentState {
   media: boolean;
 }
 
+/** Render order for all consent categories. */
+export const CONSENT_CATEGORIES = [
+  "preferences",
+  "monitoring",
+  "analytics",
+  "media",
+] as const satisfies readonly ConsentCategory[];
+
+/** Categories that are technically necessary and can't be turned off. */
+export const REQUIRED_CATEGORIES = new Set<ConsentCategory>(["preferences", "monitoring"]);
+
 export type ExternalVendor =
   | "google-analytics"
   | "umami"
@@ -76,29 +87,6 @@ export const EXTERNAL_VENDORS: Record<ExternalVendor, VendorInfo> = {
   },
 };
 
-export interface ConsentConfig {
-  analytics: {
-    label: string;
-    description: string;
-    required: boolean;
-  };
-  monitoring: {
-    label: string;
-    description: string;
-    required: boolean;
-  };
-  preferences: {
-    label: string;
-    description: string;
-    required: boolean;
-  };
-  media: {
-    label: string;
-    description: string;
-    required: boolean;
-  };
-}
-
 /** Required categories default to `true` (technical necessity); opt-ins default to `false`. */
 export const DEFAULT_CONSENT_STATE: ConsentState = {
   analytics: false,
@@ -109,3 +97,6 @@ export const DEFAULT_CONSENT_STATE: ConsentState = {
 
 export const CONSENT_COOKIE_NAME = "httpjpg_consent";
 export const CONSENT_COOKIE_EXPIRY = 365;
+
+/** Bump on schema changes; consent stored under a different version is discarded. */
+export const CONSENT_VERSION = 1;

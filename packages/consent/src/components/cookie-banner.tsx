@@ -1,13 +1,13 @@
 "use client";
 
-import { Box, Button } from "@httpjpg/ui";
-import { useEffect, useState } from "react";
+import { Box, Button, OPEN_COOKIE_SETTINGS_EVENT } from "@httpjpg/ui";
+import { type ReactNode, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { getConsent, hasConsent, setConsent } from "../consent";
 import type { ConsentCategory, ConsentState } from "../types";
-import { DEFAULT_CONSENT_STATE, EXTERNAL_VENDORS } from "../types";
-import { CookieCategory, type CookieCategoryVendor } from "./cookie-category";
+import { DEFAULT_CONSENT_STATE, EXTERNAL_VENDORS, REQUIRED_CATEGORIES } from "../types";
+import { ConsentCategoryList } from "./consent-category-list";
 
 interface CookieBannerProps {
   onAcceptAll?: (consent: ConsentState) => void;
@@ -42,8 +42,8 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
       setIsVisible(true);
     };
 
-    window.addEventListener("openCookieSettings", handleOpenSettings);
-    return () => window.removeEventListener("openCookieSettings", handleOpenSettings);
+    window.addEventListener(OPEN_COOKIE_SETTINGS_EVENT, handleOpenSettings);
+    return () => window.removeEventListener(OPEN_COOKIE_SETTINGS_EVENT, handleOpenSettings);
   }, []);
 
   const handleAcceptAll = () => {
@@ -70,8 +70,8 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
     onSavePreferences?.(consent);
   };
 
-  const toggleCategory = (category: keyof ConsentState) => {
-    if (category === "monitoring" || category === "preferences") {
+  const toggleCategory = (category: ConsentCategory) => {
+    if (REQUIRED_CATEGORIES.has(category)) {
       return;
     }
     setConsentState((prev) => ({ ...prev, [category]: !prev[category] }));
@@ -89,10 +89,11 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
     });
   };
 
-  const getCategoryVendors = (category: ConsentCategory): CookieCategoryVendor[] =>
-    Object.entries(EXTERNAL_VENDORS)
-      .filter(([_, vendor]) => vendor.category === category)
-      .map(([key, vendor]) => ({ key, ...vendor }));
+  // Count only the named opt-in third parties: required vendors (e.g. Sentry)
+  // receive data regardless of consent, and "generic-media" is a catch-all.
+  const trustedPartnerCount = Object.entries(EXTERNAL_VENDORS).filter(
+    ([key, vendor]) => key !== "generic-media" && !REQUIRED_CATEGORIES.has(vendor.category),
+  ).length;
 
   if (!isVisible || !mounted) {
     return null;
@@ -116,6 +117,9 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
         fontSize: "md",
         boxShadow: "0 -4px 20px rgba(0,0,0,0.1)",
         isolation: "isolate",
+        maxHeight: "90dvh",
+        overflowY: "auto",
+        overscrollBehavior: "contain",
       }}
     >
       <Box css={{ maxW: "1400px", mx: "auto", lineHeight: 1.4 }}>
@@ -129,11 +133,26 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
           </Box>
         </Box>
 
-        <Box css={{ mb: "4", fontSize: "sm" }}>
-          <Box as="p" css={{ m: 0, mb: "2" }}>
-            🎀 ⋆ﾟ･ We use cookies for analytics & monitoring. You can customize your preferences
-            below. ⋆ﾟ･ 🎀
-          </Box>
+        <Box as="p" css={{ m: 0, mb: "4", fontSize: "sm" }}>
+          🎀 ⋆ﾟ･ httpjpg uses personal data collected on this site — such as page visits via cookies
+          and other device identifiers — to generate personalized content, store your preferences,
+          and analyze usage to improve the experience. If you consent, we also let up to{" "}
+          <Box as="strong" css={{ fontWeight: "bold", color: "primary.500" }}>
+            {trustedPartnerCount} trusted third-party services
+          </Box>{" "}
+          receive data from this site or store and access cookies on your device to measure
+          effectiveness and gain audience insights. You can review each service and its{" "}
+          <BannerLink onClick={() => setShowDetails(true)}>Privacy Policy ↗</BannerLink> below. By
+          clicking{" "}
+          <Box as="strong" css={{ fontWeight: "bold" }}>
+            “Accept All”
+          </Box>{" "}
+          you consent to these activities. Click{" "}
+          <Box as="strong" css={{ fontWeight: "bold" }}>
+            “Reject All”
+          </Box>{" "}
+          to object, or <BannerLink onClick={() => setShowDetails(true)}>“Customize”</BannerLink> to
+          make detailed choices and learn more. You can change these settings anytime. 🍪 ⋆ﾟ･
         </Box>
 
         {showDetails && (
@@ -147,74 +166,26 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
               fontSize: "sm",
             }}
           >
-            <CookieCategory
-              label="ᴘʀᴇꜰᴇʀᴇɴᴄᴇꜱ"
-              description="Remembers your settings and preferences. Required for site functionality. ⚙️"
-              required
-              checked={consent.preferences}
-              expanded={expandedCategories.has("preferences")}
-              vendors={getCategoryVendors("preferences")}
-              emptyText="No external vendors in this category"
-              onToggleExpansion={() => toggleCategoryExpansion("preferences")}
+            <ConsentCategoryList
+              consent={consent}
+              expandedCategories={expandedCategories}
+              onToggle={toggleCategory}
+              onToggleExpansion={toggleCategoryExpansion}
             />
-            <CookieCategory
-              label="ᴍᴏɴɪᴛᴏʀɪɴɢ"
-              description="Error tracking & performance monitoring. Required for site functionality. 🐛"
-              required
-              checked={consent.monitoring}
-              expanded={expandedCategories.has("monitoring")}
-              vendors={getCategoryVendors("monitoring")}
-              onToggleExpansion={() => toggleCategoryExpansion("monitoring")}
-            />
-            <CookieCategory
-              label="ᴀɴᴀʟʏᴛɪᴄꜱ"
-              description="Helps us understand how visitors interact with our website. 📊"
-              checked={consent.analytics}
-              expanded={expandedCategories.has("analytics")}
-              vendors={getCategoryVendors("analytics")}
-              onToggle={() => toggleCategory("analytics")}
-              onToggleExpansion={() => toggleCategoryExpansion("analytics")}
-            />
-            <Box css={{ mb: 0 }}>
-              <CookieCategory
-                label="ᴍᴇᴅɪᴀ & ᴇxᴛᴇʀɴᴀʟ ꜱᴇʀᴠɪᴄᴇꜱ"
-                description="Load external content from video and audio platforms. 🎬🎵"
-                checked={consent.media}
-                expanded={expandedCategories.has("media")}
-                vendors={getCategoryVendors("media")}
-                onToggle={() => toggleCategory("media")}
-                onToggleExpansion={() => toggleCategoryExpansion("media")}
-              />
-            </Box>
           </Box>
         )}
 
         <Box css={{ display: "flex", gap: "3", flexWrap: "wrap", alignItems: "center" }}>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleAcceptAll}
-            css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
-          >
+          <Button variant="primary" size="sm" onClick={handleAcceptAll}>
             ✓ Accept All
           </Button>
 
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={handleRejectAll}
-            css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
-          >
+          <Button variant="secondary" size="sm" onClick={handleRejectAll}>
             ✗ Reject All
           </Button>
 
           {showDetails ? (
-            <Button
-              variant="accent"
-              size="sm"
-              onClick={handleSavePreferences}
-              css={{ md: { fontSize: "md", paddingX: "7", paddingY: "3", minHeight: "11" } }}
-            >
+            <Button variant="accent" size="sm" onClick={handleSavePreferences}>
               ⚙ Save Preferences
             </Button>
           ) : (
@@ -234,7 +205,6 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
                 textDecoration: "underline",
                 textUnderlineOffset: "2px",
                 _hover: { opacity: 0.7 },
-                md: { fontSize: "md" },
               }}
             >
               ⚙ Customize
@@ -250,4 +220,33 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
   );
 
   return createPortal(banner, document.body);
+}
+
+interface BannerLinkProps {
+  onClick: () => void;
+  children: ReactNode;
+}
+
+function BannerLink({ onClick, children }: BannerLinkProps) {
+  return (
+    <Box
+      as="button"
+      type="button"
+      onClick={onClick}
+      css={{
+        appearance: "none",
+        background: "none",
+        border: "none",
+        p: 0,
+        color: "primary.500",
+        font: "inherit",
+        cursor: "pointer",
+        textDecoration: "underline",
+        textUnderlineOffset: "2px",
+        _hover: { opacity: 0.7 },
+      }}
+    >
+      {children}
+    </Box>
+  );
 }

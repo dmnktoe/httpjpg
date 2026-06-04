@@ -10,13 +10,13 @@ describe("CookieBanner", () => {
 
   it("renders the banner when no consent is stored", () => {
     render(<CookieBanner />);
-    expect(screen.getByText(/Accept All/)).toBeInTheDocument();
-    expect(screen.getByText(/Reject All/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Accept All/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Reject All/ })).toBeInTheDocument();
   });
 
   it("reveals the preferences panel when Customize is clicked", () => {
     render(<CookieBanner />);
-    fireEvent.click(screen.getByText(/Customize/));
-    expect(screen.getByText(/Save Preferences/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /⚙ Customize/ }));
+    expect(screen.getByRole("button", { name: /Save Preferences/ })).toBeInTheDocument();
   });
 });

@@ -113,6 +113,20 @@ describe("MobileMenuContent", () => {
     outside.remove();
   });
 
+  it("wraps focus to the last item on Shift+Tab from the first", () => {
+    renderMenu();
+    screen.getByRole("link", { name: /^HOME$/ }).focus();
+    fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+    expect(screen.getByRole("link", { name: /^ABOUT$/ })).toHaveFocus();
+  });
+
+  it("wraps focus to the first item on Tab from the last", () => {
+    renderMenu();
+    screen.getByRole("link", { name: /^ABOUT$/ }).focus();
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(screen.getByRole("link", { name: /^HOME$/ })).toHaveFocus();
+  });
+
   it("renders draft work items with a [DRAFT] prefix and year", () => {
     const projectsWork: WorkItem[] = [
       {

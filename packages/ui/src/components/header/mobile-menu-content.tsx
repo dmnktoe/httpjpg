@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { Box } from "../box/box";
@@ -22,10 +22,67 @@ export function MobileMenuContent({
   websitesWork = [],
 }: MobileMenuContentProps) {
   const [mounted, setMounted] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // While the menu is open, keep keyboard focus inside the panel: move focus in
+  // on open, cycle Tab within it, close on Escape, and restore focus on close.
+  // `mounted` is a dependency because the panel only renders once mounted.
+  useEffect(() => {
+    if (!isOpen || !mounted) {
+      return;
+    }
+    const panel = panelRef.current;
+    if (!panel) {
+      return;
+    }
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+
+    const getFocusable = () =>
+      Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+
+    (getFocusable()[0] ?? panel).focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setIsOpen(false);
+        return;
+      }
+      if (event.key !== "Tab") {
+        return;
+      }
+      const focusable = getFocusable();
+      if (focusable.length === 0) {
+        event.preventDefault();
+        panel.focus();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      previouslyFocused?.focus?.();
+    };
+  }, [isOpen, mounted, setIsOpen]);
 
   const handleMenuItemClick = () => {
     setIsOpen(false);
@@ -62,6 +119,15 @@ export function MobileMenuContent({
         }}
       >
         <Box
+          ref={panelRef}
+          // A native <dialog> would be hidden by the UA `dialog:not([open])` rule,
+          // which outranks Panda's single-class display; visibility is owned by the
+          // ancestor instead, so the dialog role is applied to this Box.
+          // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation"
+          tabIndex={-1}
           css={{
             position: "relative",
             display: "flex",
@@ -76,6 +142,7 @@ export function MobileMenuContent({
             borderLeftColor: "pageFg",
             pointerEvents: "auto",
             overflow: "hidden",
+            _focusVisible: { outline: "none" },
           }}
         >
           <Box

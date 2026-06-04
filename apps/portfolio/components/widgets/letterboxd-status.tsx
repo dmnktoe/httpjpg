@@ -70,6 +70,7 @@ export function LetterboxdStatus() {
           }}
           data-preview-image={film.poster}
           data-preview-ratio="2:3"
+          data-preview-width="70"
         >
           <img
             src={film.poster}
@@ -94,6 +95,7 @@ export function LetterboxdStatus() {
         }}
         data-preview-image={film.poster || undefined}
         data-preview-ratio="2:3"
+        data-preview-width="70"
       >
         {film.title}
       </Box>

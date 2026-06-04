@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Checkbox } from "@httpjpg/ui";
+import { Box } from "@httpjpg/ui";
 import type { MouseEvent } from "react";
 
 export interface CookieCategoryVendor {
@@ -36,73 +36,91 @@ export function CookieCategory({
   return (
     <Box css={{ mb: "4" }}>
       <Box
-        css={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "2" }}
+        as="label"
+        css={{
+          display: "flex",
+          alignItems: "flex-start",
+          cursor: required ? "not-allowed" : "pointer",
+          opacity: required ? 0.5 : 1,
+        }}
       >
-        <Checkbox
+        <Box
+          as="input"
+          type="checkbox"
           checked={checked}
           disabled={required}
-          onCheckedChange={onToggle ? () => onToggle() : undefined}
-          label={
+          onChange={onToggle}
+          css={{
+            mt: "0.5",
+            mr: "3",
+            w: "4",
+            h: "4",
+            cursor: required ? "not-allowed" : "pointer",
+          }}
+        />
+        <Box css={{ flex: 1 }}>
+          <Box css={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Box as="span" css={{ fontWeight: "bold" }}>
-              {label}
+              {checked ? "✓" : "☐"} {label}
               {required && " (Required)"}
             </Box>
-          }
-        />
-        <Box
-          as="button"
-          type="button"
-          onClick={(e: MouseEvent<HTMLButtonElement>) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onToggleExpansion();
-          }}
-          css={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "sm",
-            px: "1",
-            opacity: required ? 0.7 : 1,
-          }}
-        >
-          {expanded ? "▼" : "▶"}
-        </Box>
-      </Box>
-      <Box as="p" css={{ fontSize: "xs", opacity: 0.7, mt: "1", ml: "8" }}>
-        {description}
-      </Box>
+            <Box
+              as="button"
+              type="button"
+              // The button sits inside the <label>, so a bare click would also
+              // toggle the surrounding checkbox. Stop the event before it
+              // bubbles to the label.
+              onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onToggleExpansion();
+              }}
+              css={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "sm",
+                px: "1",
+                opacity: required ? 0.7 : 1,
+              }}
+            >
+              {expanded ? "▼" : "▶"}
+            </Box>
+          </Box>
+          <Box as="span" css={{ fontSize: "xs", opacity: 0.7 }}>
+            {description}
+          </Box>
 
-      {expanded && (
-        <Box
-          css={{ mt: "2", ml: "8", pl: "2", borderLeft: "2px solid", borderColor: "pageBorder" }}
-        >
-          {vendors.length > 0
-            ? vendors.map((vendor) => (
-                <Box key={vendor.key} css={{ mb: "1.5", fontSize: "xs" }}>
-                  <Box css={{ fontWeight: 500 }}>→ {vendor.name}</Box>
-                  <Box css={{ opacity: 0.7, ml: "2" }}>
-                    {vendor.description}
-                    {vendor.privacyPolicy && (
-                      <>
-                        {" "}
-                        <Box
-                          as="a"
-                          href={vendor.privacyPolicy}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          css={{ textDecoration: "underline" }}
-                        >
-                          Privacy Policy ↗
-                        </Box>
-                      </>
-                    )}
-                  </Box>
-                </Box>
-              ))
-            : emptyText && <Box css={{ opacity: 0.6, fontSize: "xs" }}>{emptyText}</Box>}
+          {expanded && (
+            <Box css={{ mt: "2", pl: "2", borderLeft: "2px solid", borderColor: "pageBorder" }}>
+              {vendors.length > 0
+                ? vendors.map((vendor) => (
+                    <Box key={vendor.key} css={{ mb: "1.5", fontSize: "xs" }}>
+                      <Box css={{ fontWeight: 500 }}>→ {vendor.name}</Box>
+                      <Box css={{ opacity: 0.7, ml: "2" }}>
+                        {vendor.description}
+                        {vendor.privacyPolicy && (
+                          <>
+                            {" "}
+                            <Box
+                              as="a"
+                              href={vendor.privacyPolicy}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              css={{ textDecoration: "underline" }}
+                            >
+                              Privacy Policy ↗
+                            </Box>
+                          </>
+                        )}
+                      </Box>
+                    </Box>
+                  ))
+                : emptyText && <Box css={{ opacity: 0.6, fontSize: "xs" }}>{emptyText}</Box>}
+            </Box>
+          )}
         </Box>
-      )}
+      </Box>
     </Box>
   );
 }

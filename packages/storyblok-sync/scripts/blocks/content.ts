@@ -89,6 +89,7 @@ export const contentBlocks: BlockDef[] = [
     group: "Content",
     icon: "block-heading-2",
     color: "#2d3748",
+    preview_field: "text",
     schema: withSpacing({
       text: field.text("Text", { required: true, translatable: true }),
       level: field.options(
@@ -98,7 +99,11 @@ export const contentBlocks: BlockDef[] = [
           { name: "H2", value: "2" },
           { name: "H3", value: "3" },
         ],
-        { default_value: "2" },
+        {
+          default_value: "2",
+          description: "Use a single H1 per page; H2/H3 for sub-sections.",
+          tooltip: true,
+        },
       ),
       align: field.options("Text Align", labelize(CMS_OPTIONS.textAlign)),
       color: field.datasource("Text Color", "color-options"),
@@ -110,6 +115,7 @@ export const contentBlocks: BlockDef[] = [
     group: "Content",
     icon: "block-paragraph",
     color: "#2d3748",
+    preview_field: "text",
     schema: withSpacing({
       text: field.textarea("Text", { required: true, translatable: true }),
       size: field.options("Font Size", inlineOptions.fontSize),
@@ -129,7 +135,10 @@ export const contentBlocks: BlockDef[] = [
         required: true,
         translatable: true,
       }),
-      maxWidth: field.options("Max Width", inlineOptions.proseMaxWidth),
+      maxWidth: field.options("Max Width", inlineOptions.proseMaxWidth, {
+        description: "Caps the text column width (in ch) for comfortable reading.",
+        tooltip: true,
+      }),
       color: field.datasource("Text Color", "color-options"),
     }),
   },
@@ -139,6 +148,7 @@ export const contentBlocks: BlockDef[] = [
     group: "Content",
     icon: "block-button",
     color: "#667eea",
+    preview_field: "text",
     schema: withSpacing({
       text: field.text("Text", { required: true, translatable: true }),
       variant: field.options(
@@ -177,10 +187,15 @@ export const contentBlocks: BlockDef[] = [
     group: "Content",
     icon: "block-image-text",
     color: "#8b5cf6",
+    preview_field: "title",
     schema: withSpacing({
       title: field.text("Title", { required: true, translatable: true }),
       description: field.textarea("Description", { translatable: true }),
-      slug: field.text("Slug", { required: true }),
+      slug: field.text("Slug", {
+        required: true,
+        description: "URL segment for this item, appended to the Base URL.",
+        tooltip: true,
+      }),
       images: field.multiasset("Images", ["images"], { required: true }),
       ...tabbed("Dates", "dates", {
         date: field.datetime("Date"),
@@ -196,9 +211,19 @@ export const contentBlocks: BlockDef[] = [
           ],
           { default_value: "default" },
         ),
-        baseUrl: field.text("Base URL", { default_value: "/work" }),
-        priority: field.boolean("LCP Priority (eager + fetchpriority=high)"),
-        tags: field.text("Tags (comma-separated)"),
+        baseUrl: field.text("Base URL", {
+          default_value: "/work",
+          description: "Path prefix the slug is appended to, e.g. /work.",
+          tooltip: true,
+        }),
+        priority: field.boolean("LCP Priority (eager + fetchpriority=high)", "false", {
+          description: "Enable only for above-the-fold cards; speeds up the largest image.",
+          tooltip: true,
+        }),
+        tags: field.text("Tags (comma-separated)", {
+          description: "Comma-separated; drives the Work List tag filter.",
+          tooltip: true,
+        }),
       }),
       ...tabbed("Effects", "effects", {
         overlay: field.options("ASCII Overlay", OVERLAY_PATTERN_OPTIONS, {
@@ -206,6 +231,8 @@ export const contentBlocks: BlockDef[] = [
         }),
         overlayInset: field.number("Overlay Inset (%, particles inward)", {
           default_value: "6",
+          description: "Percentage the ASCII particles are inset from the edges.",
+          tooltip: true,
         }),
       }),
     }),
@@ -251,7 +278,10 @@ export const contentBlocks: BlockDef[] = [
           ],
           { default_value: "default" },
         ),
-        enableTagFilter: field.boolean("Show Tag Filter Bar"),
+        enableTagFilter: field.boolean("Show Tag Filter Bar", "false", {
+          description: "Renders a filter bar from the comma-separated tags on each card.",
+          tooltip: true,
+        }),
       }),
       ...tabbed("Dividers", "dividers", {
         showDividers: field.boolean("Show Dividers (stacked only)"),
@@ -279,6 +309,7 @@ export const contentBlocks: BlockDef[] = [
     group: "Content",
     icon: "block-minus",
     color: "#a0aec0",
+    preview_field: "label",
     schema: withSpacing({
       variant: field.options("Variant", DIVIDER_VARIANT_OPTIONS, { default_value: "solid" }),
       orientation: field.options("Orientation", DIVIDER_ORIENTATION_OPTIONS, {
@@ -297,6 +328,7 @@ export const contentBlocks: BlockDef[] = [
     group: "Content",
     icon: "block-link",
     color: "#4299e1",
+    preview_field: "text",
     schema: withSpacing({
       text: field.text("Text", { required: true, translatable: true }),
       link: field.multilink("Link", { required: true }),
@@ -310,9 +342,14 @@ export const contentBlocks: BlockDef[] = [
     group: "Content",
     icon: "block-star",
     color: "#ed8936",
+    preview_field: "name",
     schema: withSpacing({
       name: field.options("Icon", ICON_NAME_OPTIONS, { required: true }),
-      size: field.text("Size (CSS length)", { default_value: "32px" }),
+      size: field.text("Size (CSS length)", {
+        default_value: "32px",
+        description: "Any CSS length, e.g. 32px or 2rem.",
+        tooltip: true,
+      }),
       color: field.datasource("Color", "color-options"),
       label: field.text("Aria Label", { translatable: true }),
     }),
@@ -323,6 +360,7 @@ export const contentBlocks: BlockDef[] = [
     group: "Content",
     icon: "block-paragraph",
     color: "#a0aec0",
+    preview_field: "text",
     schema: {
       text: field.text("Text", { required: true, translatable: true }),
     },
@@ -353,6 +391,7 @@ export const contentBlocks: BlockDef[] = [
     group: "Content",
     icon: "block-paragraph",
     color: "#9f7aea",
+    preview_field: "title",
     schema: {
       title: field.text("Title", { required: true, translatable: true }),
       content: field.textarea("Content", { required: true, translatable: true }),
@@ -378,6 +417,7 @@ export const contentBlocks: BlockDef[] = [
     group: "Content",
     icon: "block-quote",
     color: "#ed64a6",
+    preview_field: "title",
     schema: withSpacing({
       title: field.text("Title", { translatable: true }),
       body: field.textarea("Body", { required: true, translatable: true }),
@@ -398,9 +438,13 @@ export const contentBlocks: BlockDef[] = [
     group: "Content",
     icon: "block-code",
     color: "#1a202c",
+    preview_field: "filename",
     schema: withSpacing({
       code: field.textarea("Code", { required: true }),
-      language: field.text("Language (display only)"),
+      language: field.text("Language (display only)", {
+        description: "Shown as a label only; does not enable syntax highlighting.",
+        tooltip: true,
+      }),
       filename: field.text("Filename"),
       showLineNumbers: field.boolean("Show Line Numbers"),
       copyable: field.boolean("Show Copy Button", "true"),
@@ -412,6 +456,7 @@ export const contentBlocks: BlockDef[] = [
     group: "Content",
     icon: "block-paragraph",
     color: "#48bb78",
+    preview_tmpl: "{value} {label}",
     schema: {
       value: field.text("Value", { required: true, translatable: true }),
       label: field.text("Label", { required: true, translatable: true }),

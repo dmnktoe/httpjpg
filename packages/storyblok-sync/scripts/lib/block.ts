@@ -9,6 +9,10 @@ export interface BlockDef {
   icon: string;
   color: string;
   is_root?: boolean;
+  /** Field whose value labels the blok in the editor tree (e.g. `title`). */
+  preview_field?: string;
+  /** Template that labels the blok in the editor tree, e.g. `{value} {label}`. */
+  preview_tmpl?: string;
   schema: Record<string, StoryblokField>;
 }
 
@@ -50,6 +54,8 @@ async function toStoryblokComponent(def: BlockDef): Promise<StoryblokComponent> 
     component_group_uuid: await getGroupUuid(def.group),
     icon: def.icon,
     color: def.color,
+    ...(def.preview_field && { preview_field: def.preview_field }),
+    ...(def.preview_tmpl && { preview_tmpl: def.preview_tmpl }),
     schema: def.schema,
   };
 }

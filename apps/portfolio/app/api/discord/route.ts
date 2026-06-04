@@ -1,9 +1,10 @@
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 import { fetchDiscordPresence, isDiscordUserId } from "@/lib/integrations/discord";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 // The DISCORD_USER_ID env var is declared in env.mjs but not consulted here;
 // the source of truth is the Storyblok config story.
@@ -23,7 +24,12 @@ async function resolveUserId(): Promise<string | undefined> {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const limited = await enforceRateLimit(request);
+  if (limited) {
+    return limited;
+  }
+
   try {
     const userId = await resolveUserId();
     if (!userId) {

@@ -1,12 +1,19 @@
 import { env } from "@httpjpg/env";
 import { captureEdgeException } from "@httpjpg/observability/sentry/edge.ts";
 import { getAccessToken, getCurrentlyPlaying } from "@httpjpg/spotify";
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "edge";
 export const revalidate = 0;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const limited = await enforceRateLimit(request);
+  if (limited) {
+    return limited;
+  }
+
   try {
     const accessToken = await getAccessToken(
       env.SPOTIFY_CLIENT_ID,

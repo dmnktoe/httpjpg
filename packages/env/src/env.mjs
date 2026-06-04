@@ -43,6 +43,8 @@ export const env = createEnv({
 
     DISCORD_USER_ID: z.string().optional(),
 
+    ARCJET_KEY: z.string().optional(),
+
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   },
   client: {
@@ -79,6 +81,8 @@ export const env = createEnv({
     SPOTIFY_REFRESH_TOKEN: process.env.SPOTIFY_REFRESH_TOKEN,
 
     DISCORD_USER_ID: process.env.DISCORD_USER_ID,
+
+    ARCJET_KEY: process.env.ARCJET_KEY,
 
     NODE_ENV: process.env.NODE_ENV,
 

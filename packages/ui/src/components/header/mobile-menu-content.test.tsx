@@ -100,6 +100,19 @@ describe("MobileMenuContent", () => {
     expect(setIsOpen).not.toHaveBeenCalled();
   });
 
+  it("recaptures focus into the menu when Tab is pressed from outside", () => {
+    renderMenu();
+    const outside = document.createElement("button");
+    document.body.appendChild(outside);
+    outside.focus();
+    expect(outside).toHaveFocus();
+
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(screen.getByRole("link", { name: /^HOME$/ })).toHaveFocus();
+
+    outside.remove();
+  });
+
   it("renders draft work items with a [DRAFT] prefix and year", () => {
     const projectsWork: WorkItem[] = [
       {

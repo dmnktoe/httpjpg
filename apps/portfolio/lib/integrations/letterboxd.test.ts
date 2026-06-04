@@ -76,6 +76,10 @@ describe("parseLetterboxdFeed", () => {
     const films = parseLetterboxdFeed(feed(FILM_ITEM, FILM_ITEM, FILM_ITEM), 2);
     expect(films).toHaveLength(2);
   });
+
+  it("returns nothing for a non-positive limit", () => {
+    expect(parseLetterboxdFeed(feed(FILM_ITEM), 0)).toEqual([]);
+  });
 });
 
 describe("fetchLetterboxdFilms", () => {

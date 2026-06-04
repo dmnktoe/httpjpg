@@ -44,12 +44,6 @@ export async function GET() {
   } catch (error) {
     console.error("Letterboxd API error:", error);
     captureServerException(error, { tags: { route: "letterboxd" } });
-    return NextResponse.json(
-      {
-        error: "Failed to fetch Letterboxd films",
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to fetch Letterboxd films" }, { status: 500 });
   }
 }

@@ -28,11 +28,10 @@ const meta = {
     docs: {
       description: {
         component:
-          "Footer line showing the most recently watched film from the Letterboxd RSS feed (`/api/letterboxd`). Stories mock the API response.",
+          "Footer line showing the most recently watched film from the Letterboxd RSS feed (`/api/letterboxd`). Stories mock the API response. Each story mounts in isolation so the per-story mock applies cleanly.",
       },
     },
   },
-  tags: ["autodocs"],
 } satisfies Meta<typeof LetterboxdStatus>;
 
 export default meta;
@@ -40,20 +39,20 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Rated: Story = {
-  decorators: [withMockJson({ films: [film()] })],
+  decorators: [withMockJson("/api/letterboxd", { films: [film()] })],
 };
 
 export const Unrated: Story = {
-  decorators: [withMockJson({ films: [film({ rating: null })] })],
+  decorators: [withMockJson("/api/letterboxd", { films: [film({ rating: null })] })],
 };
 
 export const NoPoster: Story = {
-  decorators: [withMockJson({ films: [film({ poster: null })] })],
+  decorators: [withMockJson("/api/letterboxd", { films: [film({ poster: null })] })],
 };
 
 export const LongTitle: Story = {
   decorators: [
-    withMockJson({
+    withMockJson("/api/letterboxd", {
       films: [film({ title: "The Lord of the Rings: The Return of the King", year: "2003" })],
     }),
   ],

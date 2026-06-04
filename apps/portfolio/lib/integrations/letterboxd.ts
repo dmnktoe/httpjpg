@@ -32,6 +32,9 @@ function readTag(chunk: string, tag: string): string | null {
 // Diary entries carry the letterboxd:* namespace; list/other items don't, so
 // the presence of filmTitle is how we tell films apart from noise.
 export function parseLetterboxdFeed(xml: string, limit = DEFAULT_LIMIT): LetterboxdFilm[] {
+  if (limit <= 0) {
+    return [];
+  }
   const items = xml.match(/<item>[\s\S]*?<\/item>/g) ?? [];
   const films: LetterboxdFilm[] = [];
 

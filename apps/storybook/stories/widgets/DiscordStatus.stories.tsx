@@ -16,11 +16,10 @@ const meta = {
     docs: {
       description: {
         component:
-          "Footer presence line backed by the Lanyard API (`/api/discord`). Stories mock the API response to show each presence state.",
+          "Footer presence line backed by the Lanyard API (`/api/discord`). Stories mock the API response to show each presence state. Each story mounts in isolation so the per-story mock applies cleanly.",
       },
     },
   },
-  tags: ["autodocs"],
 } satisfies Meta<typeof DiscordStatus>;
 
 export default meta;
@@ -28,12 +27,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Online: Story = {
-  decorators: [withMockJson({ status: "online", activity: null, activityDetails: null })],
+  decorators: [
+    withMockJson("/api/discord", { status: "online", activity: null, activityDetails: null }),
+  ],
 };
 
 export const PlayingGame: Story = {
   decorators: [
-    withMockJson({
+    withMockJson("/api/discord", {
       status: "online",
       activity: "Playing Helldivers 2 on PS5",
       activityDetails: { playtime: "2h 14m", icon: GAME_ICON },
@@ -42,13 +43,19 @@ export const PlayingGame: Story = {
 };
 
 export const Idle: Story = {
-  decorators: [withMockJson({ status: "idle", activity: null, activityDetails: null })],
+  decorators: [
+    withMockJson("/api/discord", { status: "idle", activity: null, activityDetails: null }),
+  ],
 };
 
 export const DoNotDisturb: Story = {
-  decorators: [withMockJson({ status: "dnd", activity: null, activityDetails: null })],
+  decorators: [
+    withMockJson("/api/discord", { status: "dnd", activity: null, activityDetails: null }),
+  ],
 };
 
 export const Offline: Story = {
-  decorators: [withMockJson({ status: "offline", activity: null, activityDetails: null })],
+  decorators: [
+    withMockJson("/api/discord", { status: "offline", activity: null, activityDetails: null }),
+  ],
 };

@@ -134,7 +134,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                   }}
                 >
                   <DiscordStatus />
-                  {widgetConfig.letterboxdEnabled && <LetterboxdStatus />}
+                  <LetterboxdStatus />
                   <Box
                     css={{
                       display: "flex",

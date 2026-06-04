@@ -1,10 +1,11 @@
 /**
  * Oxlint JS plugin: sort Panda CSS style properties.
  *
- * Sorts the keys of Panda style objects (`css()`, `cva()`, the `css={{ … }}` JSX
- * prop, and pattern functions like `stack`/`flex`) into a fixed, group-based
- * order — Layout → Box model → Flex/Grid → Sizing → Spacing → Color/Typography →
- * Background → Border → Effects → Transform/Transition → Interactivity.
+ * Sorts the keys of Panda style objects — `css()` calls and the `css={{ … }}`
+ * JSX prop — into a fixed, group-based order: Layout → Box model → Flex/Grid →
+ * Sizing → Spacing → Color/Typography → Background → Border → Effects →
+ * Transform/Transition → Interactivity. Recipe configs (`cva`/`sva`) are left
+ * untouched; see `STYLE_FUNCTIONS`.
  *
  * The order is hardcoded (see `PROPERTY_ORDER`) rather than derived from the
  * Panda config, so the plugin has zero runtime dependencies and stays in the ox
@@ -231,16 +232,16 @@ const PROPERTY_ORDER = [
   "borderBlockWidth",
   "borderBlockStart",
   "borderBlockEnd",
-  "borderRadius",
   "rounded",
-  "borderTopLeftRadius",
+  "borderRadius",
   "roundedTopLeft",
-  "borderTopRightRadius",
+  "borderTopLeftRadius",
   "roundedTopRight",
-  "borderBottomLeftRadius",
+  "borderTopRightRadius",
   "roundedBottomLeft",
-  "borderBottomRightRadius",
+  "borderBottomLeftRadius",
   "roundedBottomRight",
+  "borderBottomRightRadius",
   "borderTopRadius",
   "borderRightRadius",
   "borderBottomRadius",
@@ -252,8 +253,8 @@ const PROPERTY_ORDER = [
   "outlineOffset",
 
   // Effects
-  "boxShadow",
   "shadow",
+  "boxShadow",
   "shadowColor",
   "mixBlendMode",
   "filter",
@@ -335,34 +336,18 @@ for (let i = 0; i < PROPERTY_ORDER.length; i++) {
   if (!ORDER_INDEX.has(name)) ORDER_INDEX.set(name, i);
 }
 
-/** Functions whose object argument is a Panda style object. */
-const STYLE_FUNCTIONS = new Set([
-  "css",
-  "cva",
-  "sva",
-  "cx",
-  // pattern functions
-  "stack",
-  "hstack",
-  "vstack",
-  "flex",
-  "grid",
-  "gridItem",
-  "wrap",
-  "aspectRatio",
-  "box",
-  "center",
-  "circle",
-  "square",
-  "container",
-  "divider",
-  "float",
-  "bleed",
-  "spacer",
-  "linkOverlay",
-  "visuallyHidden",
-  "cq",
-]);
+/**
+ * Functions whose object argument is an unambiguous Panda style object.
+ *
+ * Only `css()` is targeted. `cva`/`sva` recipe configs are deliberately
+ * excluded: their top-level keys (`base`, `variants`, `compoundVariants`,
+ * `defaultVariants`) and variant/selector keys (e.g. a variant literally named
+ * `color`) collide with style-property names, so reordering them as a style
+ * object would scramble recipe metadata. `cx` only joins class-name strings, so
+ * it never receives a style object. Pattern functions are omitted for the same
+ * collision reason and aren't used in this codebase.
+ */
+const STYLE_FUNCTIONS = new Set(["css"]);
 
 const KNOWN_BASE = 0;
 const UNKNOWN_BASE = 1_000_000;

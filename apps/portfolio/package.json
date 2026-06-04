@@ -16,6 +16,7 @@
     "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
+    "@arcjet/next": "^1.4.0",
     "@httpjpg/analytics": "workspace:*",
     "@httpjpg/consent": "workspace:*",
     "@httpjpg/env": "workspace:*",

@@ -18,16 +18,13 @@ export type LetterboxdFetchResult =
 const LETTERBOXD_TIMEOUT_MS = 5000;
 const DEFAULT_LIMIT = 4;
 
-// Letterboxd usernames are alphanumeric/underscore; validate CMS values before
-// they reach the RSS request path so a malformed value can't redirect the fetch.
+// Validate the CMS value before it reaches the RSS URL.
 const LETTERBOXD_USERNAME = /^\w{1,30}$/;
 
 export function isLetterboxdUsername(value: unknown): value is string {
   return typeof value === "string" && LETTERBOXD_USERNAME.test(value);
 }
 
-// Pull the text content of the first <tag>…</tag> in the given chunk,
-// unwrapping a CDATA section when present.
 function readTag(chunk: string, tag: string): string | null {
   const match = chunk.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`));
   if (!match) {
@@ -37,8 +34,7 @@ function readTag(chunk: string, tag: string): string | null {
   return (cdata ? cdata[1] : match[1]).trim();
 }
 
-// Diary entries carry the letterboxd:* namespace; list/other items don't, so
-// the presence of filmTitle is how we tell films apart from noise.
+// Only diary entries carry letterboxd:filmTitle; other feed items are skipped.
 export function parseLetterboxdFeed(xml: string, limit = DEFAULT_LIMIT): LetterboxdFilm[] {
   if (limit <= 0) {
     return [];
@@ -74,7 +70,6 @@ export function parseLetterboxdFeed(xml: string, limit = DEFAULT_LIMIT): Letterb
   return films;
 }
 
-// A private profile or wrong username surfaces as a non-200 from Letterboxd.
 export async function fetchLetterboxdFilms(
   username: string,
   limit = DEFAULT_LIMIT,

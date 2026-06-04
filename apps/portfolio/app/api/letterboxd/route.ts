@@ -5,8 +5,6 @@ import { NextResponse } from "next/server";
 
 import { fetchLetterboxdFilms, isLetterboxdUsername } from "@/lib/integrations/letterboxd";
 
-// The source of truth for the username is the Storyblok config story, matching
-// how the Discord widget resolves its user id.
 async function resolveUsername(): Promise<string | undefined> {
   try {
     const story = await getStoryblokApi().getStory({ slug: "config" });

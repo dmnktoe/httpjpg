@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 
 import type { LetterboxdFilm } from "@/lib/integrations/letterboxd";
 
-// Letterboxd ratings are 0.5–5 in half steps; render them the way Letterboxd
-// itself does in the RSS title (★★★★½).
+// Ratings are 0.5–5 in half steps (★★★★½).
 function formatRating(rating: number): string {
   const full = Math.floor(rating);
   const half = rating % 1 >= 0.5 ? "½" : "";

@@ -46,11 +46,10 @@ export function CookieCategory({
       >
         <Checkbox
           id={inputId}
-          size="sm"
           checked={checked}
           disabled={required}
           onCheckedChange={onToggle}
-          css={{ mt: "0.5", mr: "3", ...(required && { opacity: 1 }) }}
+          css={{ mr: "2", ...(required && { opacity: 1 }) }}
         />
         <Box css={{ flex: 1 }}>
           <Box css={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>

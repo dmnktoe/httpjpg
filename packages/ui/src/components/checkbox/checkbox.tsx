@@ -5,15 +5,8 @@ import { useId } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
-/** Tribal ASCII wave shown when the box is checked (U+224B TRIPLE TILDE). */
-const WAVE_MARK = "≋";
-
-const sizeStyles = {
-  sm: { box: "5", font: "sm", mark: "xs" },
-  md: { box: "6", font: "md", mark: "sm" },
-} as const;
-
-type CheckboxSize = keyof typeof sizeStyles;
+/** Tribal mark painted between the brackets when checked (U+25C6 BLACK DIAMOND). */
+const TRIBAL_MARK = "◆";
 
 export interface CheckboxProps {
   checked: boolean;
@@ -22,9 +15,8 @@ export interface CheckboxProps {
   required?: boolean;
   /** Inline label rendered to the right of the box. */
   label?: ReactNode;
-  /** Glyph painted inside the box when checked. @default "≋" */
+  /** Glyph painted between the brackets when checked. @default "◆" */
   marker?: string;
-  size?: CheckboxSize;
   id?: string;
   name?: string;
   value?: string;
@@ -38,8 +30,7 @@ export function Checkbox({
   disabled = false,
   required = false,
   label,
-  marker = WAVE_MARK,
-  size = "md",
+  marker = TRIBAL_MARK,
   id,
   name,
   value,
@@ -48,7 +39,6 @@ export function Checkbox({
 }: CheckboxProps) {
   const generatedId = useId();
   const inputId = id ?? generatedId;
-  const dims = sizeStyles[size];
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     if (disabled) return;
@@ -62,7 +52,7 @@ export function Checkbox({
         css({
           display: "inline-flex",
           alignItems: "center",
-          gap: "2.5",
+          gap: "2",
           fontFamily: "mono",
           cursor: disabled ? "not-allowed" : "pointer",
           opacity: disabled ? 0.5 : 1,
@@ -100,33 +90,34 @@ export function Checkbox({
         aria-hidden="true"
         className={css({
           flexShrink: 0,
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          w: dims.box,
-          h: dims.box,
-          fontSize: dims.mark,
+          fontFamily: "mono",
+          fontSize: "1em",
           lineHeight: 1,
-          fontWeight: "bold",
-          letterSpacing: "tighter",
-          border: "2px solid",
-          borderColor: checked ? "accent.500" : "pageBorder",
-          color: "accent.500",
-          bg: checked ? "accent.500/10" : "transparent",
-          transition: "border-color 150ms ease, background-color 150ms ease",
-          "label:hover &": disabled ? {} : { borderColor: "pageFg" },
+          whiteSpace: "pre",
+          letterSpacing: "normal",
           _peerFocusVisible: {
             outline: "2px solid",
             outlineColor: "primary.500",
             outlineOffset: "2px",
+            borderRadius: "2px",
           },
         })}
       >
-        {checked ? marker : ""}
+        <span className={css({ opacity: 0.5 })}>‹</span>
+        <span
+          className={css({
+            display: "inline-block",
+            width: "1ch",
+            textAlign: "center",
+            color: "accent.500",
+            transition: "color 150ms ease",
+          })}
+        >
+          {checked ? marker : " "}
+        </span>
+        <span className={css({ opacity: 0.5 })}>›</span>
       </span>
-      {label != null && (
-        <span className={css({ fontSize: dims.font, lineHeight: 1.4 })}>{label}</span>
-      )}
+      {label != null && <span className={css({ fontSize: "1em", lineHeight: 1.4 })}>{label}</span>}
     </label>
   );
 }

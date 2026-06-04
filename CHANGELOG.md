@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-06-04
+
+### Added
+
+- **UI**: a `Checkbox` primitive in `@httpjpg/ui` — a pure-monospace tribal indicator (angle brackets holding a diamond mark, `‹ ›` → `‹◆›`) in the accent color. The mark sits in a fixed 1ch slot so the control never changes width between states, the native input is kept for accessibility/keyboard, and a peer focus ring is exposed. Wired into the consent `CookieCategory` (the title becomes a `htmlFor` label) and documented with Storybook stories.
+
+### Tooling
+
+- **Lint**: a custom `panda/sort-properties` oxlint plugin that sorts Panda style properties into a fixed, group-based order (layout → box → flex/grid → sizing → spacing → color/typography → background → border → effects → transform/transition → interactivity). Scoped to `css()`, orders shorthands before their longhands so the resolved cascade never changes, ranks responsive object values by property, recurses into nested objects, and bails safely on spreads, computed keys, and commented objects. Ships with autofix and is tracked in Turbo's global cache inputs (`tools/oxlint/**`).
+- **Lint**: applied the `panda/sort-properties` autofix repo-wide (pure property reordering, no behavioral changes) and flipped the rule from warning to error so unsorted Panda style properties now fail CI.
+
 ## [2.0.0] - 2026-06-04
 
 ### Breaking

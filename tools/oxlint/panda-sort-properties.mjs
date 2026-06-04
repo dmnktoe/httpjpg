@@ -405,16 +405,22 @@ function levelReorderInfo(objNode) {
 }
 
 /**
- * Priority for a single property: known style props by their group index,
- * unknown scalar props next (stable), nested object props last (conditions).
+ * Priority for a single property:
+ * - known style props by their group index — whether the value is a scalar or a
+ *   responsive object (`{ base, md }`), since the responsive form is still that
+ *   property, not a condition;
+ * - unknown scalar props next (stable);
+ * - unknown object-valued props last (conditions like `_hover`, responsive keys,
+ *   raw selectors).
  * @param {any} prop
  * @returns {number}
  */
 function rankOf(prop) {
-  if (prop.value.type === "ObjectExpression") return NESTED_BASE;
   const name = staticKeyName(prop);
   const index = name === null ? undefined : ORDER_INDEX.get(name);
-  return index === undefined ? UNKNOWN_BASE : KNOWN_BASE + index;
+  if (index !== undefined) return KNOWN_BASE + index;
+  if (prop.value.type === "ObjectExpression") return NESTED_BASE;
+  return UNKNOWN_BASE;
 }
 
 /**

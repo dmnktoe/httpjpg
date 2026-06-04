@@ -6,10 +6,12 @@
     "types": ["vite/client", "node"],
     "paths": {
       "@httpjpg/ui": ["../../packages/ui/src"],
+      "@httpjpg/ui/tokens": ["../../packages/ui/styled-system/tokens"],
       "@httpjpg/ui/*": ["../../packages/ui/src/*"],
       "@httpjpg/ui/styled-system/*": ["../../packages/ui/styled-system/*"],
       "@httpjpg/tokens": ["../../packages/tokens/src"],
-      "styled-system/*": ["../../packages/ui/styled-system/*"]
+      "styled-system/*": ["../../packages/ui/styled-system/*"],
+      "@/*": ["../portfolio/*"]
     }
   },
   "include": [".storybook", "stories", "**/*.ts", "**/*.tsx"],

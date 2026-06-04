@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { Box } from "../box/box";
@@ -22,10 +22,75 @@ export function MobileMenuContent({
   websitesWork = [],
 }: MobileMenuContentProps) {
   const [mounted, setMounted] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Trap keyboard focus inside the panel while open; close on Escape. `mounted`
+  // is a dependency because the panel only exists once the portal has mounted.
+  useEffect(() => {
+    if (!isOpen || !mounted) {
+      return;
+    }
+    const panel = panelRef.current;
+    if (!panel) {
+      return;
+    }
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+
+    const getFocusable = () =>
+      Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+
+    (getFocusable()[0] ?? panel).focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setIsOpen(false);
+        return;
+      }
+      if (event.key !== "Tab") {
+        return;
+      }
+      const focusable = getFocusable();
+      if (focusable.length === 0) {
+        event.preventDefault();
+        panel.focus();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      // If focus has escaped the panel, pull it back in instead of letting Tab
+      // advance to background content (the backdrop is not inert).
+      if (!active || !panel.contains(active)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+        return;
+      }
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      previouslyFocused?.focus?.();
+    };
+  }, [isOpen, mounted, setIsOpen]);
 
   const handleMenuItemClick = () => {
     setIsOpen(false);
@@ -62,6 +127,14 @@ export function MobileMenuContent({
         }}
       >
         <Box
+          ref={panelRef}
+          // role over a native <dialog>, which the UA `dialog:not([open])` rule
+          // would hide; the ancestor owns visibility here.
+          // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation"
+          tabIndex={-1}
           css={{
             position: "relative",
             display: "flex",
@@ -76,6 +149,7 @@ export function MobileMenuContent({
             borderLeftColor: "pageFg",
             pointerEvents: "auto",
             overflow: "hidden",
+            _focusVisible: { outline: "none" },
           }}
         >
           <Box

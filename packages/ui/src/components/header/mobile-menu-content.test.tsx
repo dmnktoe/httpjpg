@@ -75,6 +75,58 @@ describe("MobileMenuContent", () => {
     expect(setIsOpen).toHaveBeenCalledWith(false);
   });
 
+  it("moves keyboard focus into the menu when opened", () => {
+    renderMenu();
+    expect(screen.getByRole("link", { name: /^HOME$/ })).toHaveFocus();
+  });
+
+  it("exposes the panel as a modal dialog", () => {
+    renderMenu();
+    expect(screen.getByRole("dialog", { name: "Navigation" })).toHaveAttribute(
+      "aria-modal",
+      "true",
+    );
+  });
+
+  it("closes the menu when Escape is pressed", () => {
+    const { setIsOpen } = renderMenu();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(setIsOpen).toHaveBeenCalledWith(false);
+  });
+
+  it("does not handle Escape while closed", () => {
+    const { setIsOpen } = renderMenu({ isOpen: false });
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(setIsOpen).not.toHaveBeenCalled();
+  });
+
+  it("recaptures focus into the menu when Tab is pressed from outside", () => {
+    renderMenu();
+    const outside = document.createElement("button");
+    document.body.appendChild(outside);
+    outside.focus();
+    expect(outside).toHaveFocus();
+
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(screen.getByRole("link", { name: /^HOME$/ })).toHaveFocus();
+
+    outside.remove();
+  });
+
+  it("wraps focus to the last item on Shift+Tab from the first", () => {
+    renderMenu();
+    screen.getByRole("link", { name: /^HOME$/ }).focus();
+    fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+    expect(screen.getByRole("link", { name: /^ABOUT$/ })).toHaveFocus();
+  });
+
+  it("wraps focus to the first item on Tab from the last", () => {
+    renderMenu();
+    screen.getByRole("link", { name: /^ABOUT$/ }).focus();
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(screen.getByRole("link", { name: /^HOME$/ })).toHaveFocus();
+  });
+
   it("renders draft work items with a [DRAFT] prefix and year", () => {
     const projectsWork: WorkItem[] = [
       {

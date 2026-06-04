@@ -9,6 +9,7 @@ export const pageBlocks: BlockDef[] = [
     is_root: true,
     icon: "block-doc",
     color: "#3b82f6",
+    preview_field: "title",
     schema: {
       body: field.bloks("Body"),
       title: field.text("Title", { translatable: true }),
@@ -22,6 +23,7 @@ export const pageBlocks: BlockDef[] = [
     is_root: true,
     icon: "block-suitcase",
     color: "#f59e0b",
+    preview_field: "title",
     schema: {
       body: field.bloks("Body"),
       title: field.text("Title", { translatable: true }),
@@ -32,7 +34,10 @@ export const pageBlocks: BlockDef[] = [
       date: field.datetime("Date"),
       date_end: field.datetime("End Date"),
       link: field.multilink("Link"),
-      external_only: field.boolean("External Only"),
+      external_only: field.boolean("External Only", "false", {
+        description: "Links straight to the external URL instead of an on-site detail page.",
+        tooltip: true,
+      }),
       isDark: field.boolean("Dark Mode"),
     },
   },

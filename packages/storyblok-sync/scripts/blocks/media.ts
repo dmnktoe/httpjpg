@@ -41,9 +41,14 @@ export const mediaBlocks: BlockDef[] = [
     group: "Media",
     icon: "block-image",
     color: "#38b2ac",
+    preview_field: "alt",
     schema: withSpacing({
       image: field.asset("Image", ["images"], { required: true }),
-      alt: field.text("Alt Text", { translatable: true }),
+      alt: field.text("Alt Text", {
+        translatable: true,
+        description: "Describe the image for screen readers; leave empty if purely decorative.",
+        tooltip: true,
+      }),
       caption: field.richtext("Caption", { translatable: true }),
       copyrightPosition: field.options("Copyright Position", COPYRIGHT_POSITION_OPTIONS, {
         default_value: "inline-white",
@@ -58,14 +63,23 @@ export const mediaBlocks: BlockDef[] = [
         isLoadingEager: field.boolean("Eager Loading"),
         fetchPriority: field.options("Fetch Priority", FETCH_PRIORITY_OPTIONS, {
           default_value: "auto",
+          description: "Set High only for the LCP (largest) image; otherwise leave Auto.",
+          tooltip: true,
         }),
-        blurOnLoad: field.boolean("Blur on Load"),
+        blurOnLoad: field.boolean("Blur on Load", "false", {
+          description: "Shows a low-res blurred placeholder while the full image loads.",
+          tooltip: true,
+        }),
       }),
       ...tabbed("Effects", "effects", {
         overlay: field.options("ASCII Overlay", OVERLAY_PATTERN_OPTIONS, {
           default_value: "random",
         }),
-        parallax: field.number("Parallax Speed (0 = off)", { default_value: "0" }),
+        parallax: field.number("Parallax Speed (0 = off)", {
+          default_value: "0",
+          description: "Scroll parallax strength as a fraction; 0 disables it.",
+          tooltip: true,
+        }),
       }),
     }),
   },
@@ -75,6 +89,7 @@ export const mediaBlocks: BlockDef[] = [
     group: "Media",
     icon: "block-image",
     color: "#38b2ac",
+    preview_field: "alt",
     schema: withSpacing({
       image: field.asset("Image", ["images"], { required: true }),
       alt: field.text("Alt Text", { translatable: true }),
@@ -112,9 +127,13 @@ export const mediaBlocks: BlockDef[] = [
     group: "Media",
     icon: "block-video",
     color: "#38b2ac",
+    preview_field: "videoUrl",
     schema: withSpacing({
       video: field.asset("Video File", ["videos"]),
-      videoUrl: field.text("Video URL (YouTube/Vimeo)"),
+      videoUrl: field.text("Video URL (YouTube/Vimeo)", {
+        description: "Required for the YouTube/Vimeo sources; ignored for Native.",
+        tooltip: true,
+      }),
       source: field.options("Source", VIDEO_SOURCES, { default_value: "native" }),
       poster: field.asset("Poster", ["images"]),
       caption: field.richtext("Caption", { translatable: true }),
@@ -170,6 +189,7 @@ export const mediaBlocks: BlockDef[] = [
     group: "Media",
     icon: "block-play",
     color: "#38b2ac",
+    preview_tmpl: "{title} — {artist}",
     schema: withSpacing({
       source: field.options(
         "Source",
@@ -181,7 +201,11 @@ export const mediaBlocks: BlockDef[] = [
         ],
         { default_value: "spotify" },
       ),
-      src: field.text("Source URL", { required: true }),
+      src: field.text("Source URL", {
+        required: true,
+        description: "Spotify/SoundCloud share URL, or the direct MP3 file URL.",
+        tooltip: true,
+      }),
       title: field.text("Title", { translatable: true }),
       artist: field.text("Artist", { translatable: true }),
       artwork: field.text("Artwork URL"),
@@ -212,6 +236,7 @@ export const mediaBlocks: BlockDef[] = [
     group: "Media",
     icon: "block-arrows-h",
     color: "#38b2ac",
+    preview_field: "text",
     schema: withSpacing({
       text: field.text("Text", { required: true, translatable: true }),
       ...tabbed("Motion", "motion", {

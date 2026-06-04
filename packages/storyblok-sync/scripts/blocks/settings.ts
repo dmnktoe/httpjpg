@@ -8,6 +8,7 @@ export const settingsBlocks: BlockDef[] = [
     group: "Settings",
     icon: "block-link",
     color: "#8b5cf6",
+    preview_field: "label",
     schema: {
       label: field.text("Label", { required: true, translatable: true }),
       link: field.multilink("Link", { required: true }),
@@ -59,14 +60,20 @@ export const settingsBlocks: BlockDef[] = [
         seo_title: field.text("Default Page Title", { translatable: true }),
         seo_description: field.textarea("Default Page Description", { translatable: true }),
         author_name: field.text("Author · Name"),
-        author_url: field.text("Author · URL"),
+        author_url: field.text("Author · URL", {
+          description: "Full URL (incl. https://); used in SEO metadata and structured data.",
+          tooltip: true,
+        }),
       }),
       ...tabbed("Widgets", "widgets", {
         spotify_enabled: field.boolean("Spotify · Now Playing", "true"),
         nostalgia_slideshow_enabled: field.boolean("Nostalgia · Slideshow", "true"),
         psn_enabled: field.boolean("PSN · Trophy Card"),
         psn_username: field.text("PSN · Username"),
-        discord_user_id: field.text("Discord · User ID"),
+        discord_user_id: field.text("Discord · User ID", {
+          description: "17–20 digit Discord snowflake; powers the live status widget.",
+          tooltip: true,
+        }),
         custom_cursor_enabled: field.boolean("Custom Cursor", "true"),
         mouse_trail_enabled: field.boolean("Mouse Trail", "true"),
       }),

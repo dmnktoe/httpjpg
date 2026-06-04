@@ -10,11 +10,26 @@ export interface ImagePreviewProps {
   offset?: { x: number; y: number };
 }
 
+const DEFAULT_RATIO = 16 / 9;
+
+// Parses a "w:h" ratio attribute (e.g. "2:3") into a numeric aspect ratio.
+function parseRatio(value: string | null): number {
+  if (!value) {
+    return DEFAULT_RATIO;
+  }
+  const [w, h] = value.split(":").map(Number);
+  if (!w || !h) {
+    return DEFAULT_RATIO;
+  }
+  return w / h;
+}
+
 export function ImagePreview({
   width = 100,
   offset = { x: 5, y: 5 },
 }: Omit<ImagePreviewProps, "height">) {
   const [previewImage, setPreviewImage] = useState("");
+  const [ratio, setRatio] = useState(DEFAULT_RATIO);
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -45,6 +60,7 @@ export function ImagePreview({
         const imageUrl = imageElement.getAttribute("data-preview-image") || "";
         if (imageUrl) {
           setPreviewImage(imageUrl);
+          setRatio(parseRatio(imageElement.getAttribute("data-preview-ratio")));
           setIsVisible(true);
         }
       }
@@ -77,7 +93,7 @@ export function ImagePreview({
     };
   }, [offset.x, offset.y]);
 
-  const height = Math.round((width * 9) / 16);
+  const height = Math.round(width / ratio);
 
   if (!isVisible || !previewImage) {
     return null;

@@ -1,6 +1,7 @@
 "use client";
 
-import { Box } from "@httpjpg/ui";
+import { Box, Checkbox } from "@httpjpg/ui";
+import { useId } from "react";
 import type { MouseEvent } from "react";
 
 export interface CookieCategoryVendor {
@@ -33,46 +34,42 @@ export function CookieCategory({
   onToggle,
   onToggleExpansion,
 }: CookieCategoryProps) {
+  const inputId = useId();
   return (
     <Box css={{ mb: "4" }}>
       <Box
-        as="label"
         css={{
           display: "flex",
           alignItems: "flex-start",
-          cursor: required ? "not-allowed" : "pointer",
           opacity: required ? 0.5 : 1,
         }}
       >
-        <Box
-          as="input"
-          type="checkbox"
+        <Checkbox
+          id={inputId}
+          size="sm"
           checked={checked}
           disabled={required}
-          onChange={onToggle}
-          css={{
-            mt: "0.5",
-            mr: "3",
-            w: "4",
-            h: "4",
-            cursor: required ? "not-allowed" : "pointer",
-          }}
+          onCheckedChange={onToggle}
+          css={{ mt: "0.5", mr: "3", ...(required && { opacity: 1 }) }}
         />
         <Box css={{ flex: 1 }}>
           <Box css={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <Box as="span" css={{ fontWeight: "bold" }}>
-              {checked ? "✓" : "☐"} {label}
+            <Box
+              as="label"
+              htmlFor={inputId}
+              css={{
+                fontWeight: "bold",
+                cursor: required ? "not-allowed" : "pointer",
+              }}
+            >
+              {label}
               {required && " (Required)"}
             </Box>
             <Box
               as="button"
               type="button"
-              // The button sits inside the <label>, so a bare click would also
-              // toggle the surrounding checkbox. Stop the event before it
-              // bubbles to the label.
               onClick={(e: MouseEvent<HTMLButtonElement>) => {
                 e.preventDefault();
-                e.stopPropagation();
                 onToggleExpansion();
               }}
               css={{

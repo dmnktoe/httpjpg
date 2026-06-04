@@ -69,6 +69,7 @@ export function AssetPicker({ open, onClose, onPick }: AssetPickerProps) {
     <PickerShell title="Pick Asset" onClose={onClose}>
       <input
         type="search"
+        aria-label="Search assets"
         placeholder="Search…"
         value={search}
         onChange={(e) => {
@@ -204,6 +205,7 @@ export function StoryPicker({ open, startsWith, onClose, onPick }: StoryPickerPr
     <PickerShell title={`Pick Story${startsWith ? ` (${startsWith}*)` : ""}`} onClose={onClose}>
       <input
         type="search"
+        aria-label="Search stories"
         placeholder="Search…"
         value={search}
         onChange={(e) => {

@@ -15,6 +15,8 @@ export interface CheckboxProps {
   required?: boolean;
   /** Inline label rendered to the right of the box. */
   label?: ReactNode;
+  /** Accessible name for the control, when no inline `label` text is rendered. */
+  ariaLabel?: string;
   /** Glyph painted between the brackets when checked. @default "◆" */
   marker?: string;
   id?: string;
@@ -30,6 +32,7 @@ export function Checkbox({
   disabled = false,
   required = false,
   label,
+  ariaLabel,
   marker = TRIBAL_MARK,
   id,
   name,
@@ -71,6 +74,7 @@ export function Checkbox({
         disabled={disabled}
         required={required}
         onChange={handleChange}
+        aria-label={ariaLabel}
         className={cx(
           "peer",
           css({

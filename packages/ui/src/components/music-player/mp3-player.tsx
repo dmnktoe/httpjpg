@@ -99,7 +99,7 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
     return (
       <Box ref={forwardedRef}>
         {/* oxlint-disable-next-line jsx-a11y/media-has-caption */}
-        <audio ref={audioRef} src={src} autoPlay={autoPlay} />
+        <audio ref={audioRef} src={src} autoPlay={autoPlay} aria-label={title || "Audio player"} />
 
         <VStack gap="3">
           {(showArtwork || showInfo) && (
@@ -208,6 +208,7 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
                   max={duration || 0}
                   value={currentTime}
                   onChange={handleSeek}
+                  aria-label="Seek"
                   className={css({
                     w: "full",
                     h: "4px",

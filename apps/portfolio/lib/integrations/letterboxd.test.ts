@@ -1,6 +1,6 @@
 import { beforeEach, type MockedFunction, vi } from "vitest";
 
-import { fetchLetterboxdFilms, parseLetterboxdFeed } from "./letterboxd";
+import { fetchLetterboxdFilms, isLetterboxdUsername, parseLetterboxdFeed } from "./letterboxd";
 
 global.fetch = vi.fn() as MockedFunction<typeof fetch>;
 const mockFetch = global.fetch as MockedFunction<typeof fetch>;
@@ -112,5 +112,20 @@ describe("fetchLetterboxdFilms", () => {
     if (!result.ok) {
       expect(result.status).toBe(404);
     }
+  });
+});
+
+describe("isLetterboxdUsername", () => {
+  it("accepts alphanumeric and underscore usernames", () => {
+    expect(isLetterboxdUsername("dom")).toBe(true);
+    expect(isLetterboxdUsername("dom_123")).toBe(true);
+  });
+
+  it("rejects values with slashes, dots, or other unsafe characters", () => {
+    expect(isLetterboxdUsername("../etc")).toBe(false);
+    expect(isLetterboxdUsername("dom/film")).toBe(false);
+    expect(isLetterboxdUsername("dom.user")).toBe(false);
+    expect(isLetterboxdUsername("")).toBe(false);
+    expect(isLetterboxdUsername(undefined)).toBe(false);
   });
 });

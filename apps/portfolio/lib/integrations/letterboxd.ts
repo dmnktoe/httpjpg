@@ -18,6 +18,14 @@ export type LetterboxdFetchResult =
 const LETTERBOXD_TIMEOUT_MS = 5000;
 const DEFAULT_LIMIT = 4;
 
+// Letterboxd usernames are alphanumeric/underscore; validate CMS values before
+// they reach the RSS request path so a malformed value can't redirect the fetch.
+const LETTERBOXD_USERNAME = /^\w{1,30}$/;
+
+export function isLetterboxdUsername(value: unknown): value is string {
+  return typeof value === "string" && LETTERBOXD_USERNAME.test(value);
+}
+
 // Pull the text content of the first <tag>…</tag> in the given chunk,
 // unwrapping a CDATA section when present.
 function readTag(chunk: string, tag: string): string | null {

@@ -3,7 +3,7 @@ import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
 import { NextResponse } from "next/server";
 
-import { fetchLetterboxdFilms } from "@/lib/integrations/letterboxd";
+import { fetchLetterboxdFilms, isLetterboxdUsername } from "@/lib/integrations/letterboxd";
 
 // The source of truth for the username is the Storyblok config story, matching
 // how the Discord widget resolves its user id.
@@ -11,7 +11,12 @@ async function resolveUsername(): Promise<string | undefined> {
   try {
     const story = await getStoryblokApi().getStory({ slug: "config" });
     const config = story?.content as SbConfigStory | undefined;
-    return config?.letterboxd_username;
+    const username = config?.letterboxd_username;
+    if (username && !isLetterboxdUsername(username)) {
+      console.warn("Ignoring malformed letterboxd_username from Storyblok config");
+      return undefined;
+    }
+    return username;
   } catch (error) {
     console.warn("Failed to fetch Letterboxd config from Storyblok:", error);
     return undefined;

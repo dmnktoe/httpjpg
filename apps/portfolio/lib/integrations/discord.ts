@@ -48,6 +48,14 @@ export interface DiscordPresenceSummary {
   avatar: string | null;
 }
 
+// Discord IDs are snowflakes (17–20 digit numeric strings); validate CMS values
+// before they reach the Lanyard request path.
+const DISCORD_SNOWFLAKE = /^\d{17,20}$/;
+
+export function isDiscordUserId(value: unknown): value is string {
+  return typeof value === "string" && DISCORD_SNOWFLAKE.test(value);
+}
+
 function formatPlaytime(elapsedMs: number): string {
   const hours = Math.floor(elapsedMs / (1000 * 60 * 60));
   const minutes = Math.floor((elapsedMs % (1000 * 60 * 60)) / (1000 * 60));
@@ -121,7 +129,7 @@ export async function fetchDiscordPresence(userId: string): Promise<LanyardFetch
 
   let response: Response;
   try {
-    response = await fetch(`https://api.lanyard.rest/v1/users/${userId}`, {
+    response = await fetch(`https://api.lanyard.rest/v1/users/${encodeURIComponent(userId)}`, {
       cache: "no-store",
       signal: controller.signal,
     });

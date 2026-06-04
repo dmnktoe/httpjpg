@@ -3,7 +3,7 @@ import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
 import { NextResponse } from "next/server";
 
-import { fetchDiscordPresence } from "@/lib/integrations/discord";
+import { fetchDiscordPresence, isDiscordUserId } from "@/lib/integrations/discord";
 
 // The DISCORD_USER_ID env var is declared in env.mjs but not consulted here;
 // the source of truth is the Storyblok config story.
@@ -11,7 +11,12 @@ async function resolveUserId(): Promise<string | undefined> {
   try {
     const story = await getStoryblokApi().getStory({ slug: "config" });
     const config = story?.content as SbConfigStory | undefined;
-    return config?.discord_user_id;
+    const userId = config?.discord_user_id;
+    if (userId && !isDiscordUserId(userId)) {
+      console.warn("Ignoring malformed discord_user_id from Storyblok config");
+      return undefined;
+    }
+    return userId;
   } catch (error) {
     console.warn("Failed to fetch Discord config from Storyblok:", error);
     return undefined;

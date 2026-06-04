@@ -1,6 +1,6 @@
 import { beforeEach, type MockedFunction, vi } from "vitest";
 
-import { fetchDiscordPresence } from "./discord";
+import { fetchDiscordPresence, isDiscordUserId } from "./discord";
 
 global.fetch = vi.fn() as MockedFunction<typeof fetch>;
 const mockFetch = global.fetch as MockedFunction<typeof fetch>;
@@ -12,6 +12,23 @@ function lanyardResponse(data: unknown, ok = true, status = 200): Response {
     json: async () => ({ data }),
   } as Response;
 }
+
+describe("isDiscordUserId", () => {
+  it("accepts a 17–20 digit snowflake", () => {
+    expect(isDiscordUserId("123456789012345678")).toBe(true);
+    expect(isDiscordUserId("12345678901234567")).toBe(true);
+    expect(isDiscordUserId("12345678901234567890")).toBe(true);
+  });
+
+  it("rejects non-snowflake values", () => {
+    expect(isDiscordUserId("1234")).toBe(false);
+    expect(isDiscordUserId("123456789012345678/../evil")).toBe(false);
+    expect(isDiscordUserId("not-a-number")).toBe(false);
+    expect(isDiscordUserId("")).toBe(false);
+    expect(isDiscordUserId(undefined)).toBe(false);
+    expect(isDiscordUserId(12345)).toBe(false);
+  });
+});
 
 describe("fetchDiscordPresence", () => {
   beforeEach(() => {

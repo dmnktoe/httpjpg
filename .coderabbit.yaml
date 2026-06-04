@@ -20,6 +20,7 @@ reviews:
     base_branches:
       - main
 
+  # Coding conventions are read from CLAUDE.md automatically; not duplicated here.
   path_filters:
     - "!**/pnpm-lock.yaml"
     - "!**/styled-system/**"
@@ -29,20 +30,6 @@ reviews:
     - "!**/*.snap"
     - "!**/playwright-report/**"
     - "!CHANGELOG.md"
-
-  path_instructions:
-    - path: "packages/**/*.{ts,tsx}"
-      instructions: >-
-        Respect dependency-direction rules: tokens/env are leaves; only
-        Next.js apps import from storyblok-next; ui must not import back from
-        now-playing. Prefer `function` declarations for helpers/components,
-        `interface` for object shapes, no enums, no default exports outside
-        apps/portfolio/app/**.
-    - path: "apps/portfolio/**/*.{ts,tsx}"
-      instructions: >-
-        Server Components by default; flag unnecessary "use client". Env access
-        must go through @httpjpg/env, never process.env (except NODE_ENV).
-        Storyblok data fetching stays server-side via storyblok-next.
 
   # Linters below run in CI already; gitleaks kept since CI has no secret scan.
   tools:

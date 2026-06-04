@@ -28,9 +28,8 @@ export function MobileMenuContent({
     setMounted(true);
   }, []);
 
-  // While the menu is open, keep keyboard focus inside the panel: move focus in
-  // on open, cycle Tab within it, close on Escape, and restore focus on close.
-  // `mounted` is a dependency because the panel only renders once mounted.
+  // Trap keyboard focus inside the panel while open; close on Escape. `mounted`
+  // is a dependency because the panel only exists once the portal has mounted.
   useEffect(() => {
     if (!isOpen || !mounted) {
       return;
@@ -120,9 +119,8 @@ export function MobileMenuContent({
       >
         <Box
           ref={panelRef}
-          // A native <dialog> would be hidden by the UA `dialog:not([open])` rule,
-          // which outranks Panda's single-class display; visibility is owned by the
-          // ancestor instead, so the dialog role is applied to this Box.
+          // role over a native <dialog>, which the UA `dialog:not([open])` rule
+          // would hide; the ancestor owns visibility here.
           // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
           role="dialog"
           aria-modal="true"

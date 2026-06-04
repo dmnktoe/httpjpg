@@ -57,12 +57,12 @@ export const Default: Story = {
       <MouseTrail {...args} />
       <Box
         css={{
-          minH: "100vh",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
           justifyContent: "center",
+          alignItems: "center",
           gap: "4",
+          minH: "100vh",
           p: "8",
           bg: "white",
         }}
@@ -90,10 +90,10 @@ export const Diamond: Story = {
       <MouseTrail {...args} />
       <Box
         css={{
-          minH: "100vh",
           display: "flex",
-          alignItems: "center",
           justifyContent: "center",
+          alignItems: "center",
+          minH: "100vh",
           p: "8",
           bg: "neutral.50",
         }}
@@ -120,10 +120,10 @@ export const Star: Story = {
       <MouseTrail {...args} />
       <Box
         css={{
-          minH: "100vh",
           display: "flex",
-          alignItems: "center",
           justifyContent: "center",
+          alignItems: "center",
+          minH: "100vh",
           p: "8",
           bg: "white",
         }}
@@ -150,10 +150,10 @@ export const LongTrail: Story = {
       <MouseTrail {...args} />
       <Box
         css={{
-          minH: "100vh",
           display: "flex",
-          alignItems: "center",
           justifyContent: "center",
+          alignItems: "center",
+          minH: "100vh",
           p: "8",
           bg: "neutral.100",
         }}
@@ -180,10 +180,10 @@ export const QuickTrail: Story = {
       <MouseTrail {...args} />
       <Box
         css={{
-          minH: "100vh",
           display: "flex",
-          alignItems: "center",
           justifyContent: "center",
+          alignItems: "center",
+          minH: "100vh",
           p: "8",
           bg: "white",
         }}
@@ -210,10 +210,10 @@ export const LargeParticles: Story = {
       <MouseTrail {...args} />
       <Box
         css={{
-          minH: "100vh",
           display: "flex",
-          alignItems: "center",
           justifyContent: "center",
+          alignItems: "center",
+          minH: "100vh",
           p: "8",
           bg: "neutral.50",
         }}
@@ -240,10 +240,10 @@ export const Dense: Story = {
       <MouseTrail {...args} />
       <Box
         css={{
-          minH: "100vh",
           display: "flex",
-          alignItems: "center",
           justifyContent: "center",
+          alignItems: "center",
+          minH: "100vh",
           p: "8",
           bg: "white",
         }}
@@ -352,29 +352,22 @@ export const Playground: Story = {
       <MouseTrail {...args} />
       <Box
         css={{
-          minH: "100vh",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
           justifyContent: "center",
+          alignItems: "center",
           gap: "4",
+          minH: "100vh",
           p: "8",
           bg: "white",
         }}
       >
         <Headline level={1}>MOUSE TRAIL PLAYGROUND</Headline>
-        <Paragraph size="lg" css={{ textAlign: "center", maxW: "2xl" }}>
+        <Paragraph size="lg" css={{ maxW: "2xl", textAlign: "center" }}>
           Experiment with the controls to customize your trail effect. Try different characters,
           counts, lifetimes, and colors.
         </Paragraph>
-        <Box
-          css={{
-            mt: "8",
-            p: "8",
-            border: "4px solid black",
-            bg: "neutral.50",
-          }}
-        >
+        <Box css={{ mt: "8", p: "8", bg: "neutral.50", border: "4px solid black" }}>
           <Paragraph css={{ fontFamily: "monospace", fontWeight: "bold" }}>
             Move your mouse in this area to see the trail effect clearly
           </Paragraph>

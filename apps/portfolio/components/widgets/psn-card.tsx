@@ -27,11 +27,9 @@ export function PSNCard({ username }: PSNCardProps) {
         top: 0,
         left: 0,
         zIndex: "widget",
-        width: "250px",
         display: "none",
-        lg: {
-          display: "block",
-        },
+        width: "250px",
+        lg: { display: "block" },
       }}
     >
       <Image

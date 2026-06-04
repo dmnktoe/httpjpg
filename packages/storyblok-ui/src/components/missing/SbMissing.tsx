@@ -16,15 +16,15 @@ export const SbMissing = memo(function SbMissing({ blok }: SbMissingProps) {
   return (
     <Box
       css={{
-        border: "2px dashed",
-        borderColor: "danger.500",
-        bg: "danger.50",
-        color: "danger.700",
-        p: "4",
         my: "4",
-        borderRadius: "md",
+        p: "4",
+        color: "danger.700",
         fontFamily: "mono",
         fontSize: "sm",
+        bg: "danger.50",
+        border: "2px dashed",
+        borderColor: "danger.500",
+        borderRadius: "md",
       }}
     >
       Missing Storyblok component:{" "}

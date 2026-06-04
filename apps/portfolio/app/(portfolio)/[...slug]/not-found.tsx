@@ -19,13 +19,13 @@ export default function NotFound() {
       </Paragraph>
       <AsciiArt
         label="ghost icon"
-        css={{ mt: "6", fontSize: "sm", opacity: 0.6, textAlign: "left" }}
+        css={{ mt: "6", opacity: 0.6, fontSize: "sm", textAlign: "left" }}
       >
         {ASCII_GHOST}
       </AsciiArt>
       <Box
         as="span"
-        css={{ display: "block", mt: "6", fontFamily: "mono", fontSize: "xs", opacity: 0.35 }}
+        css={{ display: "block", mt: "6", opacity: 0.35, fontFamily: "mono", fontSize: "xs" }}
       >
         {ASCII_DIVIDER_ARROWS}
       </Box>

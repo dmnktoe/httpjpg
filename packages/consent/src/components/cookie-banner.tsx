@@ -103,32 +103,32 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
     <Box
       css={{
         position: "fixed",
+        right: 0,
         bottom: 0,
         left: 0,
-        right: 0,
         zIndex: "cookieBanner",
-        bg: "pageBg",
-        color: "pageFg",
-        borderTop: "2px solid",
-        borderTopColor: "primary.500",
+        maxHeight: "90dvh",
         px: { base: "5", md: "10", lg: "16" },
         py: { base: "6", md: "8" },
+        color: "pageFg",
         fontFamily: "sans",
         fontSize: "md",
+        bg: "pageBg",
+        borderTop: "2px solid",
+        borderTopColor: "primary.500",
         boxShadow: "0 -4px 20px rgba(0,0,0,0.1)",
-        isolation: "isolate",
-        maxHeight: "90dvh",
         overflowY: "auto",
         overscrollBehavior: "contain",
+        isolation: "isolate",
       }}
     >
       <Box css={{ maxW: "1400px", mx: "auto", lineHeight: 1.4 }}>
         <Box css={{ mb: "5" }}>
-          <Box as="span" css={{ fontWeight: "bold", fontSize: "md", color: "primary.500" }}>
+          <Box as="span" css={{ color: "primary.500", fontSize: "md", fontWeight: "bold" }}>
             ⇝🍪 ᴄᴏᴏᴋɪᴇ ᴘᴏʟɪᴄʏ 🍪⇝
           </Box>
           <br />
-          <Box as="span" css={{ fontSize: "sm", opacity: 0.7 }}>
+          <Box as="span" css={{ opacity: 0.7, fontSize: "sm" }}>
             ꉔꆂꆂꀘꀤꏂꌚ ꉔꆂꆂꀘꀤꏂꌚ ꉔꆂꆂꀘꀤꏂꌚ &&& ——— 𝒸𝑜𝑜𝓀𝒾𝑒𝓈 𝒸𝑜𝑜𝓀𝒾𝑒𝓈 :)))))
           </Box>
         </Box>
@@ -137,7 +137,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
           🎀 ⋆ﾟ･ httpjpg uses personal data collected on this site — such as page visits via cookies
           and other device identifiers — to generate personalized content, store your preferences,
           and analyze usage to improve the experience. If you consent, we also let up to{" "}
-          <Box as="strong" css={{ fontWeight: "bold", color: "primary.500" }}>
+          <Box as="strong" css={{ color: "primary.500", fontWeight: "bold" }}>
             {trustedPartnerCount} trusted third-party services
           </Box>{" "}
           receive data from this site or store and access cookies on your device to measure
@@ -160,10 +160,10 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
             css={{
               mb: "5",
               p: "4",
+              fontSize: "sm",
+              bg: "rgba(127,127,127,0.08)",
               border: "2px solid",
               borderColor: "pageFg",
-              bg: "rgba(127,127,127,0.08)",
-              fontSize: "sm",
             }}
           >
             <ConsentCategoryList
@@ -175,7 +175,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
           </Box>
         )}
 
-        <Box css={{ display: "flex", gap: "3", flexWrap: "wrap", alignItems: "center" }}>
+        <Box css={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "3" }}>
           <Button variant="primary" size="sm" onClick={handleAcceptAll}>
             ✓ Accept All
           </Button>
@@ -194,15 +194,15 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
               type="button"
               onClick={() => setShowDetails(true)}
               css={{
-                appearance: "none",
-                background: "none",
-                border: "none",
                 p: 0,
                 color: "pageFg",
                 fontFamily: "sans",
                 fontSize: "sm",
-                cursor: "pointer",
                 textDecoration: "underline",
+                background: "none",
+                border: "none",
+                appearance: "none",
+                cursor: "pointer",
                 textUnderlineOffset: "2px",
                 _hover: { opacity: 0.7 },
               }}
@@ -211,7 +211,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
             </Box>
           )}
 
-          <Box as="span" css={{ fontSize: "xs", opacity: 0.6, ml: "auto" }}>
+          <Box as="span" css={{ ml: "auto", opacity: 0.6, fontSize: "xs" }}>
             ⋆.˚ ᡣ𐭩 .𖥔˚ cookies ⋆.˚✮🍪✮˚.⋆
           </Box>
         </Box>
@@ -234,14 +234,14 @@ function BannerLink({ onClick, children }: BannerLinkProps) {
       type="button"
       onClick={onClick}
       css={{
-        appearance: "none",
-        background: "none",
-        border: "none",
         p: 0,
         color: "primary.500",
-        font: "inherit",
-        cursor: "pointer",
         textDecoration: "underline",
+        background: "none",
+        border: "none",
+        appearance: "none",
+        cursor: "pointer",
+        font: "inherit",
         textUnderlineOffset: "2px",
         _hover: { opacity: 0.7 },
       }}

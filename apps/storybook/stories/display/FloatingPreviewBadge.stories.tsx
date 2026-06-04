@@ -31,8 +31,8 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
   <Box
     css={{
       position: "relative",
-      height: "320px",
       width: "100%",
+      height: "320px",
       backgroundColor: "neutral.100",
       backgroundImage:
         "linear-gradient(45deg, var(--colors-neutral-200) 25%, transparent 25%), linear-gradient(-45deg, var(--colors-neutral-200) 25%, transparent 25%)",

@@ -16,19 +16,16 @@ export interface UnorderedListProps extends Omit<ComponentPropsWithoutRef<"ul">,
 
 const baseClass = css({
   margin: 0,
-  padding: 0,
   marginTop: "4",
   marginBottom: "4",
+  padding: 0,
   listStyleType: "none",
   "& ul": { marginTop: "2", marginBottom: "2" },
-  "& > li": {
-    position: "relative",
-    paddingLeft: "6",
-  },
+  "& > li": { position: "relative", paddingLeft: "6" },
   "& > li::before": {
     position: "absolute",
-    left: "0",
     top: "0",
+    left: "0",
     opacity: 0.6,
     fontFamily: "mono",
     lineHeight: "inherit",

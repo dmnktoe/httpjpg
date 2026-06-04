@@ -315,16 +315,16 @@ export function Slideshow({
             bottom: "3",
             left: "3",
             zIndex: "docked",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5",
             color: "white",
             fontFamily: "mono",
             fontSize: "xs",
             letterSpacing: "0.15em",
-            textShadow: "0 0 6px rgba(0,0,0,0.6)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.5",
             pointerEvents: "none",
             userSelect: "none",
+            textShadow: "0 0 6px rgba(0,0,0,0.6)",
           }}
           aria-hidden="true"
         >
@@ -337,13 +337,7 @@ export function Slideshow({
               {String(images.length).padStart(2, "0")}
             </Box>
           </Box>
-          <Box
-            as="span"
-            css={{
-              fontSize: "2xs",
-              opacity: 0.5,
-            }}
-          >
+          <Box as="span" css={{ opacity: 0.5, fontSize: "2xs" }}>
             {ASCII_TAPE}
           </Box>
         </Box>

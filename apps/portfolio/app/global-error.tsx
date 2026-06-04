@@ -35,23 +35,23 @@ export default function GlobalError({
           as="main"
           css={{
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
+            alignItems: "center",
             minH: "100dvh",
             p: "4",
           }}
         >
           <Box
             css={{
-              maxW: "2xl",
-              textAlign: "center",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               gap: "4",
+              maxW: "2xl",
+              textAlign: "center",
             }}
           >
-            <AsciiArt label="fatal error" css={{ fontSize: "xs", opacity: 0.6 }}>
+            <AsciiArt label="fatal error" css={{ opacity: 0.6, fontSize: "xs" }}>
               {ASCII_500}
             </AsciiArt>
 

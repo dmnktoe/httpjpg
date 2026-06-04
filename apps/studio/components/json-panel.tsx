@@ -24,9 +24,9 @@ export function JsonPanel({ exported }: JsonPanelProps) {
         flexDirection: "column",
         alignItems: "flex-end",
         gap: 1,
-        pointerEvents: "none",
         fontFamily: "mono",
         fontSize: "sm",
+        pointerEvents: "none",
       })}
     >
       <button
@@ -34,16 +34,16 @@ export function JsonPanel({ exported }: JsonPanelProps) {
         onClick={() => setOpen((v) => !v)}
         aria-pressed={open}
         className={css({
-          pointerEvents: "auto",
           padding: "2px 10px",
-          border: "1px solid",
-          borderColor: "pageBorder",
-          bg: open ? "pageFg" : "pageBg",
           color: open ? "pageBg" : "pageFg",
-          cursor: "pointer",
           fontFamily: "mono",
           fontSize: "sm",
-          _hover: { bg: "pageFg", color: "pageBg" },
+          bg: open ? "pageFg" : "pageBg",
+          border: "1px solid",
+          borderColor: "pageBorder",
+          cursor: "pointer",
+          pointerEvents: "auto",
+          _hover: { color: "pageBg", bg: "pageFg" },
         })}
       >
         {open ? "Hide JSON" : "Show JSON"}
@@ -51,25 +51,20 @@ export function JsonPanel({ exported }: JsonPanelProps) {
       {open && (
         <div
           className={css({
-            pointerEvents: "auto",
             width: "min(520px, 90vw)",
             maxHeight: "50vh",
-            overflow: "auto",
+            padding: 2,
+            color: "pageFg",
+            bg: "pageBg",
             border: "1px solid",
             borderColor: "pageFg",
-            bg: "pageBg",
-            color: "pageFg",
-            padding: 2,
             boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+            pointerEvents: "auto",
+            overflow: "auto",
           })}
         >
           <pre
-            className={css({
-              fontFamily: "mono",
-              fontSize: "sm",
-              whiteSpace: "pre",
-              margin: 0,
-            })}
+            className={css({ margin: 0, fontFamily: "mono", fontSize: "sm", whiteSpace: "pre" })}
           >
             {json}
           </pre>

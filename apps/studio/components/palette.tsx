@@ -18,40 +18,33 @@ export function Palette({ onDragStart, onDragEnd }: PaletteProps) {
   return (
     <aside
       className={css({
-        width: "200px",
         flexShrink: 0,
-        borderRight: "1px solid",
-        borderColor: "pageBorder",
+        width: "200px",
         padding: 3,
-        overflowY: "auto",
         fontFamily: "mono",
         fontSize: "sm",
+        borderColor: "pageBorder",
+        borderRight: "1px solid",
+        overflowY: "auto",
       })}
     >
       <h2
         className={css({
+          mb: 3,
           fontSize: "sm",
           fontWeight: "bold",
-          textTransform: "uppercase",
-          mb: 3,
           letterSpacing: "wide",
+          textTransform: "uppercase",
         })}
       >
         Blocks
       </h2>
       {Object.entries(grouped).map(([group, items]) => (
         <section key={group} className={css({ mb: 4 })}>
-          <h3
-            className={css({
-              fontSize: "sm",
-              textTransform: "uppercase",
-              opacity: 0.6,
-              mb: 1,
-            })}
-          >
+          <h3 className={css({ mb: 1, opacity: 0.6, fontSize: "sm", textTransform: "uppercase" })}>
             {group}
           </h3>
-          <ul className={css({ listStyle: "none", p: 0, m: 0 })}>
+          <ul className={css({ m: 0, p: 0, listStyle: "none" })}>
             {items.map((blok) => (
               <li key={blok.type}>
                 <button
@@ -65,17 +58,17 @@ export function Palette({ onDragStart, onDragEnd }: PaletteProps) {
                   onDragEnd={onDragEnd}
                   className={css({
                     width: "100%",
-                    textAlign: "left",
-                    padding: 2,
-                    border: "1px solid",
-                    borderColor: "pageBorder",
-                    bg: "pageBg",
-                    color: "pageFg",
-                    cursor: "grab",
                     mb: 1,
+                    padding: 2,
+                    color: "pageFg",
                     fontFamily: "mono",
                     fontSize: "sm",
-                    _hover: { bg: "pageFg", color: "pageBg" },
+                    textAlign: "left",
+                    bg: "pageBg",
+                    border: "1px solid",
+                    borderColor: "pageBorder",
+                    cursor: "grab",
+                    _hover: { color: "pageBg", bg: "pageFg" },
                     _active: { cursor: "grabbing" },
                   })}
                 >

@@ -42,26 +42,18 @@ export function WorkCardDate({ date, dateEnd }: { date: string | Date; dateEnd?:
   const end = dateEnd ? formatWorkCardDate(dateEnd) : null;
 
   return (
-    <HStack
-      gap="2"
-      align="center"
-      css={{
-        fontFamily: "mono",
-        fontSize: "sm",
-        mb: "1",
-      }}
-    >
+    <HStack gap="2" align="center" css={{ mb: "1", fontFamily: "mono", fontSize: "sm" }}>
       <Box css={{ opacity: 0.5 }}>╱╱</Box>
       <Box css={{ letterSpacing: "wider" }}>
         {start.day}.
         <Box
           as="span"
           css={{
-            fontFamily: "system-ui",
-            fontSize: "md",
-            mx: "1",
             position: "relative",
             top: "1px",
+            mx: "1",
+            fontFamily: "system-ui",
+            fontSize: "md",
           }}
         >
           {start.monthSymbol} {start.month}
@@ -76,11 +68,11 @@ export function WorkCardDate({ date, dateEnd }: { date: string | Date; dateEnd?:
             <Box
               as="span"
               css={{
-                fontFamily: "system-ui",
-                fontSize: "md",
-                mx: "1",
                 position: "relative",
                 top: "1px",
+                mx: "1",
+                fontFamily: "system-ui",
+                fontSize: "md",
               }}
             >
               {end.monthSymbol} {end.month}

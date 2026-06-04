@@ -193,15 +193,15 @@ export function CustomCursor({
             backfaceVisibility: "hidden",
           }}
           css={{
-            bg: "pageFg",
-            color: "pageBg",
             px: "3",
             py: "1.5",
-            fontSize: "sm",
+            color: "pageBg",
             fontFamily: "mono",
-            textTransform: "uppercase",
+            fontSize: "sm",
             letterSpacing: "wider",
+            textTransform: "uppercase",
             whiteSpace: "nowrap",
+            bg: "pageFg",
           }}
         >
           {hoverText}

@@ -198,10 +198,10 @@ export const PortfolioContext: Story = {
     size: "sm",
   },
   render: (args: NowPlayingProps) => (
-    <Box css={{ minH: "100vh", bg: "black", color: "white", p: "8" }}>
+    <Box css={{ minH: "100vh", p: "8", color: "white", bg: "black" }}>
       <Box css={{ maxW: "6xl", mx: "auto" }}>
         <Box css={{ mb: "16" }}>
-          <Headline level={1} css={{ fontSize: "6xl", mb: "4" }}>
+          <Headline level={1} css={{ mb: "4", fontSize: "6xl" }}>
             MY PORTFOLIO
           </Headline>
           <Paragraph size="lg" css={{ opacity: 0.7 }}>
@@ -209,22 +209,16 @@ export const PortfolioContext: Story = {
           </Paragraph>
         </Box>
 
-        <Box
-          css={{
-            display: "grid",
-            gap: "8",
-            gridTemplateColumns: "repeat(2, 1fr)",
-          }}
-        >
+        <Box css={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "8" }}>
           {[1, 2, 3, 4].map((i) => (
             <Box
               key={i}
               css={{
-                bg: "neutral.900",
                 p: "6",
-                borderRadius: "lg",
+                bg: "neutral.900",
                 border: "1px solid",
                 borderColor: "neutral.800",
+                borderRadius: "lg",
               }}
             >
               <Headline level={3} css={{ mb: "2" }}>

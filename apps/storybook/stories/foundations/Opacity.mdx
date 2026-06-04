@@ -18,16 +18,23 @@ transparency.
     gap: "1.25rem",
     marginTop: "2rem",
     padding: "1.5rem",
-    background:
-      "repeating-conic-gradient(#E5E5E5 0% 25%, #ffffff 0% 50%) 50% / 16px 16px",
+    background: "repeating-conic-gradient(#E5E5E5 0% 25%, #ffffff 0% 50%) 50% / 16px 16px",
   }}
 >
   {Object.entries(opacity).map(([key, value]) => (
     <div
       key={key}
-      style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem", width: "72px" }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "0.4rem",
+        width: "72px",
+      }}
     >
-      <div style={{ width: "60px", height: "60px", background: "#171717", opacity: Number(value) }} />
+      <div
+        style={{ width: "60px", height: "60px", background: "#171717", opacity: Number(value) }}
+      />
       <div style={{ fontFamily: "monospace", fontSize: "0.8125rem" }}>{key}</div>
       <div style={{ fontFamily: "monospace", fontSize: "0.6875rem", opacity: 0.6 }}>{value}</div>
     </div>

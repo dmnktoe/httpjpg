@@ -74,14 +74,14 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
   const responsive = css({
     md: {
       gridColumn: colSpanMd ? "var(--col-md)" : undefined,
-      gridRow: rowSpanMd ? "var(--row-md)" : undefined,
       gridColumnStart: colStartMd ? "var(--colstart-md)" : undefined,
+      gridRow: rowSpanMd ? "var(--row-md)" : undefined,
       gridRowStart: rowStartMd ? "var(--rowstart-md)" : undefined,
     },
     lg: {
       gridColumn: colSpanLg ? "var(--col-lg)" : undefined,
-      gridRow: rowSpanLg ? "var(--row-lg)" : undefined,
       gridColumnStart: colStartLg ? "var(--colstart-lg)" : undefined,
+      gridRow: rowSpanLg ? "var(--row-lg)" : undefined,
       gridRowStart: rowStartLg ? "var(--rowstart-lg)" : undefined,
     },
   });

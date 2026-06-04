@@ -15,7 +15,7 @@ export default function PortfolioNotFound() {
   return (
     <Center minHeight="60vh">
       <VStack gap="6" align="center">
-        <AsciiArt label="404 — page not found" css={{ fontSize: "sm", opacity: 0.85 }}>
+        <AsciiArt label="404 — page not found" css={{ opacity: 0.85, fontSize: "sm" }}>
           {ASCII_404}
         </AsciiArt>
         <Box css={{ textAlign: "center" }}>
@@ -23,10 +23,10 @@ export default function PortfolioNotFound() {
           <Headline level={3} css={{ mt: "4", mb: "2", fontFamily: "mono" }}>
             page_not_found
           </Headline>
-          <Paragraph css={{ mb: "6", fontFamily: "mono", opacity: 0.7 }}>
+          <Paragraph css={{ mb: "6", opacity: 0.7, fontFamily: "mono" }}>
             The page you're looking for doesn't exist or has been moved.
           </Paragraph>
-          <Box as="span" css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.4 }}>
+          <Box as="span" css={{ opacity: 0.4, fontFamily: "mono", fontSize: "xs" }}>
             {ASCII_DIVIDER_DOTS}
           </Box>
         </Box>

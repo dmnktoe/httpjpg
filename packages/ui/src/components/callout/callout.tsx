@@ -29,15 +29,15 @@ const toneColors: Record<CalloutTone, SystemStyleObject> = {
 };
 
 const starBorderClass = css({
+  opacity: 0.35,
   fontFamily: "mono",
   fontSize: "xs",
-  letterSpacing: "wider",
-  userSelect: "none",
-  opacity: 0.35,
-  overflow: "hidden",
-  whiteSpace: "nowrap",
-  textOverflow: "clip",
   lineHeight: "none",
+  letterSpacing: "wider",
+  textOverflow: "clip",
+  whiteSpace: "nowrap",
+  userSelect: "none",
+  overflow: "hidden",
 });
 
 export const Callout = forwardRef<HTMLDivElement, CalloutProps>(function Callout(
@@ -66,25 +66,25 @@ export const Callout = forwardRef<HTMLDivElement, CalloutProps>(function Callout
       </div>
       <div
         className={css({
-          px: "2",
           display: "flex",
           flexDirection: "column",
           gap: "3",
           width: "full",
+          px: "2",
         })}
       >
         {title && (
           <div
             className={css({
-              fontWeight: "bold",
-              fontSize: "lg",
-              lineHeight: "tight",
               display: "flex",
               alignItems: "center",
               gap: "2",
+              fontSize: "lg",
+              fontWeight: "bold",
+              lineHeight: "tight",
             })}
           >
-            <span aria-hidden="true" className={css({ fontFamily: "mono", opacity: 0.4 })}>
+            <span aria-hidden="true" className={css({ opacity: 0.4, fontFamily: "mono" })}>
               ✦
             </span>
             {title}

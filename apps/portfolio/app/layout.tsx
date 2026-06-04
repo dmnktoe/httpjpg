@@ -105,15 +105,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             {widgetConfig.psnEnabled && <PSNCard username={widgetConfig.psnUsername} />}
             <PreviewNotification />
             <Header nav={navigation} projectsWork={projectsWork} websitesWork={websitesWork} />
-            <Box
-              as="main"
-              css={{
-                bg: "pageBg",
-                color: "pageFg",
-                w: "full",
-                minH: "100dvh",
-              }}
-            >
+            <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
               {children}
             </Box>
             <Footer
@@ -153,7 +145,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                     <FlagCounter />
                     <AsciiArt
                       label="signoff"
-                      css={{ fontSize: "xs", opacity: 0.3, letterSpacing: "0.2em" }}
+                      css={{ opacity: 0.3, fontSize: "xs", letterSpacing: "0.2em" }}
                     >
                       {ASCII_DIVIDER_WAVE}
                     </AsciiArt>

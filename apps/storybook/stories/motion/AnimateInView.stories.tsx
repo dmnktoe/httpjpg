@@ -66,7 +66,7 @@ export const Default: Story = {
     duration: 0.6,
     once: true,
     children: (
-      <Box css={{ p: "32px", bg: "neutral.100", textAlign: "center" }}>
+      <Box css={{ p: "32px", textAlign: "center", bg: "neutral.100" }}>
         <Headline level={2}>Animated Content</Headline>
         <Paragraph css={{ mt: "8px" }}>This content fades in when scrolled into view</Paragraph>
       </Box>
@@ -82,14 +82,7 @@ export const ZoomIn: Story = {
     animation: "zoomIn",
     duration: 0.8,
     children: (
-      <Box
-        css={{
-          p: "48px",
-          bg: "primary.500",
-          color: "white",
-          textAlign: "center",
-        }}
-      >
+      <Box css={{ p: "48px", color: "white", textAlign: "center", bg: "primary.500" }}>
         <Headline level={1} css={{ color: "white" }}>
           Zoom!
         </Headline>
@@ -142,7 +135,7 @@ export const SlideLeft: Story = {
     animation: "slideInFromLeft",
     duration: 0.6,
     children: (
-      <Box css={{ p: "32px", bg: "accent.500", color: "white" }}>
+      <Box css={{ p: "32px", color: "white", bg: "accent.500" }}>
         <Headline level={3} css={{ color: "white" }}>
           Sliding from the left!
         </Headline>
@@ -159,7 +152,7 @@ export const SlideRight: Story = {
     animation: "slideInFromRight",
     duration: 0.6,
     children: (
-      <Box css={{ p: "32px", bg: "accent.600", color: "white" }}>
+      <Box css={{ p: "32px", color: "white", bg: "accent.600" }}>
         <Headline level={3} css={{ color: "white" }}>
           Sliding from the right!
         </Headline>
@@ -176,14 +169,7 @@ export const SlideUp: Story = {
     animation: "slideUp",
     duration: 0.8,
     children: (
-      <Box
-        css={{
-          p: "48px",
-          bg: "neutral.900",
-          color: "white",
-          textAlign: "center",
-        }}
-      >
+      <Box css={{ p: "48px", color: "white", textAlign: "center", bg: "neutral.900" }}>
         <Headline level={2} css={{ color: "white" }}>
           Rising Up ↑
         </Headline>
@@ -201,7 +187,7 @@ export const WithDelay: Story = {
     duration: 0.6,
     delay: 1,
     children: (
-      <Box css={{ p: "32px", bg: "primary.100", textAlign: "center" }}>
+      <Box css={{ p: "32px", textAlign: "center", bg: "primary.100" }}>
         <Paragraph>This appears after 1 second delay</Paragraph>
       </Box>
     ),
@@ -244,7 +230,7 @@ export const Multiple: Story = {
       </AnimateInView>
 
       <AnimateInView animation="zoomIn" delay={0.6}>
-        <Box css={{ p: "24px", bg: "primary.500", color: "white" }}>
+        <Box css={{ p: "24px", color: "white", bg: "primary.500" }}>
           <Headline level={3} css={{ color: "white" }}>
             Fourth Element
           </Headline>

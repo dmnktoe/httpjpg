@@ -111,12 +111,12 @@ export const AllPatterns: Story = {
         <Box key={p}>
           <Box
             css={{
+              mb: "2",
+              opacity: 0.6,
               fontFamily: "mono",
               fontSize: "xs",
-              opacity: 0.6,
-              mb: "2",
-              textTransform: "uppercase",
               letterSpacing: "wider",
+              textTransform: "uppercase",
             }}
           >
             {p}
@@ -150,14 +150,7 @@ export const DeterministicRandom: Story = {
         "image-zeta",
       ].map((seed) => (
         <Box key={seed}>
-          <Box
-            css={{
-              fontFamily: "mono",
-              fontSize: "xs",
-              opacity: 0.6,
-              mb: "2",
-            }}
-          >
+          <Box css={{ mb: "2", opacity: 0.6, fontFamily: "mono", fontSize: "xs" }}>
             seed: {seed}
           </Box>
           <Box css={{ position: "relative" }}>

@@ -81,11 +81,11 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
             <div
               aria-hidden="true"
               className={css({
+                mb: "1",
+                opacity: 0.3,
                 fontFamily: "mono",
                 fontSize: "xs",
-                opacity: 0.3,
                 letterSpacing: "wider",
-                mb: "1",
               })}
             >
               ┌ {String(idx + 1).padStart(2, "0")}
@@ -93,37 +93,31 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
           )}
           <div
             className={css({
+              fontFamily: "mono",
               fontSize: { base: "4xl", md: "5xl" },
               fontWeight: "black",
               lineHeight: "none",
-              fontFamily: "mono",
             })}
           >
             {item.value}
           </div>
           <div
             className={css({
-              fontSize: "sm",
-              textTransform: "uppercase",
-              letterSpacing: "wider",
               color: "pageMuted",
+              fontSize: "sm",
+              letterSpacing: "wider",
+              textTransform: "uppercase",
             })}
           >
             {variant === "brutalist" && (
-              <span aria-hidden="true" className={css({ opacity: 0.4, mr: "1" })}>
+              <span aria-hidden="true" className={css({ mr: "1", opacity: 0.4 })}>
                 ✦
               </span>
             )}
             {item.label}
           </div>
           {item.caption && (
-            <div
-              className={css({
-                fontSize: "xs",
-                color: "pageMuted",
-                mt: "1",
-              })}
-            >
+            <div className={css({ mt: "1", color: "pageMuted", fontSize: "xs" })}>
               {item.caption}
             </div>
           )}

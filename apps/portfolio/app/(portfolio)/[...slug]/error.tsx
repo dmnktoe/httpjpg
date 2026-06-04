@@ -30,18 +30,18 @@ export default function Error({ error, reset }: ErrorProps) {
       </Paragraph>
       <AsciiArt
         label="crashed terminal"
-        css={{ mt: "6", fontSize: "xs", opacity: 0.55, textAlign: "left" }}
+        css={{ mt: "6", opacity: 0.55, fontSize: "xs", textAlign: "left" }}
       >
         {ASCII_500}
       </AsciiArt>
       <Box
         css={{
           display: "flex",
+          alignItems: "center",
           gap: "6",
           mt: "8",
           fontFamily: "mono",
           fontSize: "sm",
-          alignItems: "center",
         }}
       >
         <Box
@@ -49,14 +49,14 @@ export default function Error({ error, reset }: ErrorProps) {
           type="button"
           onClick={reset}
           css={{
-            cursor: "pointer",
-            bg: "transparent",
-            border: "1px solid",
-            borderColor: "neutral.400",
             px: "4",
             py: "2",
             color: "inherit",
             fontFamily: "mono",
+            bg: "transparent",
+            border: "1px solid",
+            borderColor: "neutral.400",
+            cursor: "pointer",
             _hover: { bg: "neutral.100" },
           }}
         >
@@ -65,7 +65,7 @@ export default function Error({ error, reset }: ErrorProps) {
         <Link href="/">← back to /</Link>
       </Box>
       {error.digest && (
-        <Box css={{ mt: "4", fontFamily: "mono", fontSize: "xs", opacity: 0.4 }}>
+        <Box css={{ mt: "4", opacity: 0.4, fontFamily: "mono", fontSize: "xs" }}>
           digest: {error.digest}
         </Box>
       )}

@@ -36,9 +36,9 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
           size="0.7em"
           css={{
             display: "inline-block",
-            transform: "rotate(90deg)",
-            verticalAlign: "middle",
             mr: "2",
+            verticalAlign: "middle",
+            transform: "rotate(90deg)",
           }}
         />
         {title}

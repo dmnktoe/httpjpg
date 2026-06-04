@@ -253,6 +253,7 @@ export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDia
                 value={paste}
                 onChange={(e) => setPaste(e.target.value)}
                 rows={12}
+                aria-label="Grid or story JSON"
                 placeholder='{ "component": "grid", "items": [...] }'
                 className={inputCss}
               />
@@ -278,6 +279,7 @@ export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDia
                   type="text"
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
+                  aria-label="Story full_slug"
                   placeholder="e.g. work/example"
                   className={inputCss}
                 />

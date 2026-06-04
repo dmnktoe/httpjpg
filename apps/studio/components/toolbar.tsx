@@ -268,6 +268,7 @@ export function Toolbar({
               type="text"
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
+              aria-label="Target full_slug"
               placeholder="e.g. work/example or studio/scratch"
               className={css({
                 flex: 1,
@@ -321,6 +322,7 @@ export function Toolbar({
                 type="number"
                 min={0}
                 value={replaceIndex}
+                aria-label="body[N]"
                 onChange={(e) => {
                   const n = Number(e.target.value);
                   if (Number.isFinite(n) && n >= 0) setReplaceIndex(n);
@@ -397,6 +399,7 @@ function ColField({
         min={1}
         max={GRID_COLS}
         value={value}
+        aria-label={label}
         onChange={(e) => {
           const v = Number(e.target.value);
           if (Number.isFinite(v) && v >= 1 && v <= GRID_COLS) onChange(v);

@@ -218,6 +218,7 @@ function InspectorBody({ item, viewport, onChange, onDataChange }: InspectorBody
             type="checkbox"
             checked={hidden}
             onChange={(e) => onChange({ [hiddenField]: e.target.checked || undefined })}
+            aria-label={`Hide on ${VIEWPORT_LABEL[viewport]}`}
           />
           <span>Hide on {VIEWPORT_LABEL[viewport]}</span>
         </label>
@@ -404,6 +405,7 @@ function NumberField({
         value={value}
         min={min}
         max={max}
+        aria-label={label}
         onChange={(e) => {
           const v = Number(e.target.value);
           if (Number.isFinite(v)) onChange(v);
@@ -549,6 +551,7 @@ function BlokField({
             value={String(value ?? "")}
             onChange={(e) => onChange(e.target.value)}
             rows={4}
+            aria-label={field.label}
             className={fieldCss}
           />
         </label>
@@ -561,6 +564,7 @@ function BlokField({
             type="number"
             value={Number(value ?? 0)}
             onChange={(e) => onChange(Number(e.target.value))}
+            aria-label={field.label}
             className={fieldCss}
           />
         </label>
@@ -572,6 +576,7 @@ function BlokField({
             type="checkbox"
             checked={Boolean(value)}
             onChange={(e) => onChange(e.target.checked)}
+            aria-label={field.label}
           />
           <span>{field.label}</span>
         </label>
@@ -598,6 +603,7 @@ function BlokField({
             type="text"
             value={String(value ?? "")}
             onChange={(e) => onChange(e.target.value)}
+            aria-label={field.label}
             className={fieldCss}
           />
         </label>
@@ -625,6 +631,7 @@ function PickableField({
           type="text"
           value={String(value ?? "")}
           onChange={(e) => onChange(e.target.value)}
+          aria-label={field.label}
           placeholder={kind === "asset" ? "https://..." : "uuid"}
           className={css({ flex: 1, ...fieldInline })}
         />

@@ -113,6 +113,15 @@ export function Canvas({
     };
   }, [drag, cols, gapPx, viewport, onItemsChange]);
 
+  useEffect(() => {
+    if (selectedId === null) return;
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") onSelect(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [selectedId, onSelect]);
+
   const handleDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
@@ -175,11 +184,8 @@ export function Canvas({
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={() => setHoverCell(null)}
-          onClick={(e) => {
+          onPointerDown={(e) => {
             if (e.target === e.currentTarget) onSelect(null);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Escape") onSelect(null);
           }}
           className={css({
             position: "relative",

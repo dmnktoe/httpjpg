@@ -23,8 +23,11 @@ async function listGroups(): Promise<RemoteGroup[]> {
   }
 }
 
-async function upsertGroup(group: ComponentGroup): Promise<RemoteGroup> {
-  const existing = (await listGroups()).find((g) => g.name === group.name);
+async function upsertGroup(
+  group: ComponentGroup,
+  existingByName: Map<string, RemoteGroup>,
+): Promise<RemoteGroup> {
+  const existing = existingByName.get(group.name);
   if (existing) {
     return existing;
   }
@@ -46,8 +49,9 @@ const GROUPS: ComponentGroup[] = [
 
 async function syncGroups() {
   validateEnv();
+  const existingByName = new Map((await listGroups()).map((g) => [g.name, g]));
   for (const group of GROUPS) {
-    const created = await upsertGroup(group);
+    const created = await upsertGroup(group, existingByName);
     console.log(`✓ ${group.name} (${created.uuid})`);
   }
 }

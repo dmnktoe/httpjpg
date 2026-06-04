@@ -16,14 +16,15 @@ export interface BlockDef {
   schema: Record<string, StoryblokField>;
 }
 
-async function getComponentId(name: string): Promise<number | null> {
+/** Index existing components by name once, so upsertBlock skips a per-blok list fetch. */
+export async function fetchComponentIds(): Promise<Map<string, number>> {
   try {
     const response = await storyblokRequest<{
       components: Array<{ id: number; name: string }>;
     }>("/components");
-    return response.components?.find((c) => c.name === name)?.id ?? null;
+    return new Map((response.components ?? []).map((c) => [c.name, c.id]));
   } catch {
-    return null;
+    return new Map();
   }
 }
 
@@ -60,9 +61,9 @@ async function toStoryblokComponent(def: BlockDef): Promise<StoryblokComponent> 
   };
 }
 
-export async function upsertBlock(def: BlockDef): Promise<void> {
+export async function upsertBlock(def: BlockDef, existingIds: Map<string, number>): Promise<void> {
   const component = await toStoryblokComponent(def);
-  const existingId = await getComponentId(component.name);
+  const existingId = existingIds.get(component.name);
   if (existingId) {
     console.log(`📝 ${component.display_name || component.name}`);
     await storyblokRequest(`/components/${existingId}`, "PUT", {

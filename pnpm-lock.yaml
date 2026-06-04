@@ -115,7 +115,7 @@ importers:
     dependencies:
       '@arcjet/next':
         specifier: ^1.4.0
-        version: 1.4.0(next@16.2.6(@opentelemetry/api@1.9.1)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
+        version: 1.4.0(next@16.2.7(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))
       '@httpjpg/analytics':
         specifier: workspace:*
         version: link:../../packages/analytics
@@ -5655,7 +5655,7 @@ snapshots:
     dependencies:
       '@arcjet/sprintf': 1.4.0
 
-  '@arcjet/next@1.4.0(next@16.2.6(@opentelemetry/api@1.9.1)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))':
+  '@arcjet/next@1.4.0(next@16.2.7(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))':
     dependencies:
       '@arcjet/body': 1.4.0
       '@arcjet/env': 1.4.0
@@ -5665,7 +5665,7 @@ snapshots:
       '@arcjet/protocol': 1.4.0
       '@arcjet/transport': 1.4.0
       arcjet: 1.4.0
-      next: 16.2.6(@babel/core@7.28.5)(@opentelemetry/api@1.9.1)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      next: 16.2.7(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
 
   '@arcjet/protocol@1.4.0':
     dependencies:

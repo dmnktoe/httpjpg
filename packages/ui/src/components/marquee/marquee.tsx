@@ -52,11 +52,13 @@ export function Marquee({
   );
 
   // Reduced motion: render the content statically instead of scrolling it.
+  // Allow horizontal scroll so overflowing content stays reachable, not clipped.
   if (prefersReducedMotion) {
     return (
       <Box
         css={{
-          overflow: "hidden",
+          overflowX: "auto",
+          overflowY: "hidden",
           whiteSpace: "nowrap",
           position: "relative",
           ...cssProp,

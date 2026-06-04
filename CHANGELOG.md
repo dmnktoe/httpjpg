@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2026-06-04
+
+### Fixed
+
+- **UI**: `ImagePreview` no longer hardcodes a 16:9 aspect ratio — it reads the existing `data-preview-ratio` attribute (falling back to 16:9) and an optional `data-preview-width` override, so the Letterboxd poster preview (2:3, sized to 70px → 105px tall) is no longer stretched or oversized.
+
+### Performance
+
+- **Storyblok-sync**: reduced request load during sync to stay under the Storyblok Management API rate limit.
+
+### Tooling
+
+- **Tests**: coverage for the previously-untested portfolio `components/ui` layout components (console-banner, custom-cursor-wrapper, nostalgia-slideshow, preview-notification, scroll-to-top, theme-sync, work-nav) and the `LetterboxdStatus` widget.
+- **CI**: JUnit test results uploaded to Codecov Test Analytics (via a dedicated `test:ci` script so the reporter flags reach vitest) for run times, failure rates, and flaky-test detection.
+- **CI**: the merge gate is now self-maintaining — a single `contains(needs.*.result, …)` guard covers every dependency automatically, and the aggregate job was renamed to "All checks passed".
+
 ## [2.2.0] - 2026-06-04
 
 ### Added

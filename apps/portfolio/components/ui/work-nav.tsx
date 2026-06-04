@@ -20,11 +20,11 @@ export function WorkNav({ prev, next }: WorkNavProps) {
         justifyContent: "space-between",
         alignItems: "stretch",
         gap: "4",
-        fontFamily: "mono",
-        fontSize: "sm",
         mt: "12",
         px: { base: "4", md: "8" },
         pb: "12",
+        fontFamily: "mono",
+        fontSize: "sm",
       }}
     >
       <Box css={{ flex: 1, minW: 0 }}>
@@ -35,9 +35,9 @@ export function WorkNav({ prev, next }: WorkNavProps) {
               display: "block",
               color: "primary.500",
               textDecoration: "none",
-              overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
+              overflow: "hidden",
               _hover: { textDecoration: "underline" },
             }}
           >
@@ -56,9 +56,9 @@ export function WorkNav({ prev, next }: WorkNavProps) {
               display: "block",
               color: "primary.500",
               textDecoration: "none",
-              overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
+              overflow: "hidden",
               _hover: { textDecoration: "underline" },
             }}
           >

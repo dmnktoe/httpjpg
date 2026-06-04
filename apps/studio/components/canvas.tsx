@@ -162,13 +162,7 @@ export function Canvas({
 
   return (
     <div
-      className={css({
-        flex: 1,
-        overflow: "auto",
-        bg: "pageBg",
-        padding: 4,
-        fontFamily: "mono",
-      })}
+      className={css({ flex: 1, padding: 4, fontFamily: "mono", bg: "pageBg", overflow: "auto" })}
     >
       <div
         className={css({ marginX: "auto" })}
@@ -205,10 +199,10 @@ export function Canvas({
             <div
               key={`col-${col}`}
               className={css({
-                borderLeft: "1px dashed",
-                borderRight: "1px dashed",
-                borderColor: "pageBorder",
                 opacity: 0.35,
+                borderColor: "pageBorder",
+                borderRight: "1px dashed",
+                borderLeft: "1px dashed",
                 pointerEvents: "none",
               })}
               style={{
@@ -222,10 +216,10 @@ export function Canvas({
             <div
               key={`row-${row}`}
               className={css({
+                opacity: 0.35,
+                borderColor: "pageBorder",
                 borderTop: "1px dashed",
                 borderBottom: "1px dashed",
-                borderColor: "pageBorder",
-                opacity: 0.35,
                 pointerEvents: "none",
               })}
               style={{
@@ -237,11 +231,7 @@ export function Canvas({
           ))}
           {hoverCell && drag === null && (
             <div
-              className={css({
-                bg: "pageFg",
-                opacity: 0.1,
-                pointerEvents: "none",
-              })}
+              className={css({ opacity: 0.1, bg: "pageFg", pointerEvents: "none" })}
               style={{
                 gridColumn: `${hoverCell.x + 1} / span 1`,
                 gridRow: `${hoverCell.y + 1} / span 1`,
@@ -293,7 +283,7 @@ export function Canvas({
           >
             − 10 rows
           </button>
-          <span className={css({ fontFamily: "mono", fontSize: "sm", opacity: 0.6 })}>
+          <span className={css({ opacity: 0.6, fontFamily: "mono", fontSize: "sm" })}>
             {rows} rows
           </span>
         </div>
@@ -303,17 +293,17 @@ export function Canvas({
 }
 
 const rowBtn = css({
-  border: "1px dashed",
-  borderColor: "pageBorder",
-  bg: "pageBg",
+  padding: "4px 16px",
   color: "pageFg",
+  opacity: 0.6,
   fontFamily: "mono",
   fontSize: "sm",
-  padding: "4px 16px",
+  bg: "pageBg",
+  border: "1px dashed",
+  borderColor: "pageBorder",
   cursor: "pointer",
-  opacity: 0.6,
-  _hover: { opacity: 1, bg: "pageFg", color: "pageBg" },
-  _disabled: { cursor: "not-allowed", opacity: 0.3, _hover: { bg: "pageBg", color: "pageFg" } },
+  _hover: { color: "pageBg", opacity: 1, bg: "pageFg" },
+  _disabled: { opacity: 0.3, cursor: "not-allowed", _hover: { color: "pageFg", bg: "pageBg" } },
 });
 
 interface CanvasItemProps {
@@ -348,14 +338,14 @@ function CanvasItem({
     <div
       className={css({
         position: "relative",
+        boxSizing: "border-box",
+        color: "pageFg",
+        opacity: hidden ? 0.35 : 1,
+        bg: "pageBg",
         border: "1px solid",
         borderColor: selected ? "pageFg" : "pageBorder",
         borderStyle: hidden ? "dashed" : "solid",
-        bg: "pageBg",
-        color: "pageFg",
-        boxSizing: "border-box",
         boxShadow: selected ? "inset 0 0 0 1px var(--colors-page-fg)" : "none",
-        opacity: hidden ? 0.35 : 1,
       })}
       style={{
         gridColumn: `${x + 1} / span ${w}`,
@@ -379,18 +369,18 @@ function CanvasItem({
           }
         }}
         className={css({
-          all: "unset",
+          position: "relative",
+          boxSizing: "border-box",
           display: "block",
           width: "100%",
           height: "100%",
-          boxSizing: "border-box",
+          color: "pageFg",
+          textAlign: "left",
           cursor: "move",
           userSelect: "none",
           touchAction: "none",
           overflow: "hidden",
-          textAlign: "left",
-          color: "pageFg",
-          position: "relative",
+          all: "unset",
         })}
         style={paddingStyle(spacing)}
       >
@@ -399,18 +389,18 @@ function CanvasItem({
             position: "absolute",
             top: 0,
             left: 0,
+            zIndex: 2,
             display: "flex",
-            gap: 1,
             alignItems: "center",
-            fontSize: "sm",
+            gap: 1,
+            padding: "1px 6px",
+            color: "pageBg",
+            opacity: selected ? 1 : 0.5,
             fontFamily: "mono",
+            fontSize: "sm",
             textTransform: "uppercase",
             bg: "pageFg",
-            color: "pageBg",
-            padding: "1px 6px",
-            zIndex: 2,
             pointerEvents: "none",
-            opacity: selected ? 1 : 0.5,
           })}
         >
           <span>{def?.label ?? item.type}</span>
@@ -432,17 +422,17 @@ function CanvasItem({
             position: "absolute",
             top: 1,
             right: 1,
+            zIndex: 3,
             width: "20px",
             height: "20px",
-            border: "1px solid",
-            borderColor: "pageFg",
-            bg: "pageBg",
             color: "pageFg",
-            cursor: "pointer",
             fontSize: "sm",
             lineHeight: 1,
-            zIndex: 3,
-            _hover: { bg: "pageFg", color: "pageBg" },
+            bg: "pageBg",
+            border: "1px solid",
+            borderColor: "pageFg",
+            cursor: "pointer",
+            _hover: { color: "pageBg", bg: "pageFg" },
           })}
           aria-label="Delete"
         >
@@ -458,17 +448,17 @@ function CanvasItem({
         }}
         onClick={(e) => e.stopPropagation()}
         className={css({
-          all: "unset",
           position: "absolute",
           right: "-1px",
           bottom: "-1px",
+          zIndex: 3,
           width: "14px",
           height: "14px",
+          opacity: selected ? 1 : 0.4,
           bg: "pageFg",
           cursor: "se-resize",
           touchAction: "none",
-          zIndex: 3,
-          opacity: selected ? 1 : 0.4,
+          all: "unset",
           _hover: { opacity: 1 },
         })}
       />

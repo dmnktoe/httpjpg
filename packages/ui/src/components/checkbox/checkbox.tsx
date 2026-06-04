@@ -53,9 +53,9 @@ export function Checkbox({
           display: "inline-flex",
           alignItems: "center",
           gap: "2",
+          opacity: disabled ? 0.5 : 1,
           fontFamily: "mono",
           cursor: disabled ? "not-allowed" : "pointer",
-          opacity: disabled ? 0.5 : 1,
           userSelect: "none",
         }),
         cssProp && css(cssProp),
@@ -77,11 +77,11 @@ export function Checkbox({
             position: "absolute",
             width: "1px",
             height: "1px",
-            padding: 0,
             margin: "-1px",
-            overflow: "hidden",
+            padding: 0,
             whiteSpace: "nowrap",
             border: 0,
+            overflow: "hidden",
             clipPath: "inset(50%)",
           }),
         )}
@@ -93,13 +93,13 @@ export function Checkbox({
           fontFamily: "mono",
           fontSize: "1em",
           lineHeight: 1,
-          whiteSpace: "pre",
           letterSpacing: "normal",
+          whiteSpace: "pre",
           _peerFocusVisible: {
+            borderRadius: "2px",
             outline: "2px solid",
             outlineColor: "primary.500",
             outlineOffset: "2px",
-            borderRadius: "2px",
           },
         })}
       >
@@ -108,8 +108,8 @@ export function Checkbox({
           className={css({
             display: "inline-block",
             width: "1ch",
-            textAlign: "center",
             color: "accent.500",
+            textAlign: "center",
             transition: "color 150ms ease",
           })}
         >

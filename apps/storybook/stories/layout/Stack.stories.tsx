@@ -37,9 +37,9 @@ export const Basic: Story = {
   },
   render: (args) => (
     <VStack gap={args.gap} align={args.align} justify={args.justify}>
-      <Box css={{ bg: "neutral.100", p: "4", w: "full" }}>Item 1</Box>
-      <Box css={{ bg: "neutral.200", p: "4", w: "full" }}>Item 2</Box>
-      <Box css={{ bg: "neutral.300", p: "4", w: "full" }}>Item 3</Box>
+      <Box css={{ w: "full", p: "4", bg: "neutral.100" }}>Item 1</Box>
+      <Box css={{ w: "full", p: "4", bg: "neutral.200" }}>Item 2</Box>
+      <Box css={{ w: "full", p: "4", bg: "neutral.300" }}>Item 3</Box>
     </VStack>
   ),
 };
@@ -54,9 +54,9 @@ export const Playground: Story = {
     justify: "start",
     children: (
       <>
-        <Box css={{ bg: "neutral.100", p: "4", w: "full" }}>Item 1</Box>
-        <Box css={{ bg: "neutral.200", p: "4", w: "full" }}>Item 2</Box>
-        <Box css={{ bg: "neutral.300", p: "4", w: "full" }}>Item 3</Box>
+        <Box css={{ w: "full", p: "4", bg: "neutral.100" }}>Item 1</Box>
+        <Box css={{ w: "full", p: "4", bg: "neutral.200" }}>Item 2</Box>
+        <Box css={{ w: "full", p: "4", bg: "neutral.300" }}>Item 3</Box>
       </>
     ),
   },
@@ -76,9 +76,9 @@ export const Vertical: Story = {
   },
   render: () => (
     <VStack gap="4">
-      <Box css={{ bg: "neutral.100", p: "4", w: "full" }}>Item 1</Box>
-      <Box css={{ bg: "neutral.200", p: "4", w: "full" }}>Item 2</Box>
-      <Box css={{ bg: "neutral.300", p: "4", w: "full" }}>Item 3</Box>
+      <Box css={{ w: "full", p: "4", bg: "neutral.100" }}>Item 1</Box>
+      <Box css={{ w: "full", p: "4", bg: "neutral.200" }}>Item 2</Box>
+      <Box css={{ w: "full", p: "4", bg: "neutral.300" }}>Item 3</Box>
     </VStack>
   ),
 };
@@ -92,9 +92,9 @@ export const Horizontal: Story = {
   },
   render: () => (
     <HStack gap="4">
-      <Box css={{ bg: "neutral.100", p: "4" }}>Item 1</Box>
-      <Box css={{ bg: "neutral.200", p: "4" }}>Item 2</Box>
-      <Box css={{ bg: "neutral.300", p: "4" }}>Item 3</Box>
+      <Box css={{ p: "4", bg: "neutral.100" }}>Item 1</Box>
+      <Box css={{ p: "4", bg: "neutral.200" }}>Item 2</Box>
+      <Box css={{ p: "4", bg: "neutral.300" }}>Item 3</Box>
     </HStack>
   ),
 };
@@ -108,27 +108,13 @@ export const CardLayout: Story = {
   },
   render: () => (
     <VStack gap="6" css={{ maxW: "400px" }}>
-      <Box
-        css={{
-          bg: "white",
-          p: "6",
-          border: "1px solid",
-          borderColor: "neutral.200",
-        }}
-      >
+      <Box css={{ p: "6", bg: "white", border: "1px solid", borderColor: "neutral.200" }}>
         <VStack gap="2">
           <Headline level={3}>Card Title</Headline>
           <Paragraph>Some descriptive text for this card component.</Paragraph>
         </VStack>
       </Box>
-      <Box
-        css={{
-          bg: "white",
-          p: "6",
-          border: "1px solid",
-          borderColor: "neutral.200",
-        }}
-      >
+      <Box css={{ p: "6", bg: "white", border: "1px solid", borderColor: "neutral.200" }}>
         <VStack gap="2">
           <Headline level={3}>Another Card</Headline>
           <Paragraph>More content in the second card.</Paragraph>
@@ -164,7 +150,7 @@ export const Centered: Story = {
   render: () => (
     <VStack gap="6" align="center" css={{ p: "12" }}>
       <Headline level={1}>Centered Title</Headline>
-      <Box css={{ textAlign: "center", maxW: "600px" }}>
+      <Box css={{ maxW: "600px", textAlign: "center" }}>
         <Paragraph>
           This content is centered horizontally within the stack. Perfect for hero sections and
           call-to-actions.
@@ -183,7 +169,7 @@ export const SpaceBetween: Story = {
     children: null,
   },
   render: () => (
-    <HStack fullWidth css={{ p: "4", bg: "neutral.100", justifyContent: "space-between" }}>
+    <HStack fullWidth css={{ justifyContent: "space-between", p: "4", bg: "neutral.100" }}>
       <Headline level={3}>Logo</Headline>
       <HStack gap="4">
         <Button variant="secondary" size="sm">
@@ -211,8 +197,8 @@ export const GapSizes: Story = {
           <Paragraph>Gap 0:</Paragraph>
         </Box>
         <VStack gap="0">
-          <Box css={{ bg: "neutral.100", p: "2" }}>Item 1</Box>
-          <Box css={{ bg: "neutral.200", p: "2" }}>Item 2</Box>
+          <Box css={{ p: "2", bg: "neutral.100" }}>Item 1</Box>
+          <Box css={{ p: "2", bg: "neutral.200" }}>Item 2</Box>
         </VStack>
       </VStack>
 
@@ -221,8 +207,8 @@ export const GapSizes: Story = {
           <Paragraph>Gap 2:</Paragraph>
         </Box>
         <VStack gap="2">
-          <Box css={{ bg: "neutral.100", p: "2" }}>Item 1</Box>
-          <Box css={{ bg: "neutral.200", p: "2" }}>Item 2</Box>
+          <Box css={{ p: "2", bg: "neutral.100" }}>Item 1</Box>
+          <Box css={{ p: "2", bg: "neutral.200" }}>Item 2</Box>
         </VStack>
       </VStack>
 
@@ -231,8 +217,8 @@ export const GapSizes: Story = {
           <Paragraph>Gap 8:</Paragraph>
         </Box>
         <VStack gap="8">
-          <Box css={{ bg: "neutral.100", p: "2" }}>Item 1</Box>
-          <Box css={{ bg: "neutral.200", p: "2" }}>Item 2</Box>
+          <Box css={{ p: "2", bg: "neutral.100" }}>Item 1</Box>
+          <Box css={{ p: "2", bg: "neutral.200" }}>Item 2</Box>
         </VStack>
       </VStack>
     </VStack>

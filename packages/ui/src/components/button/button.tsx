@@ -9,11 +9,7 @@ import type { SystemStyleObject } from "styled-system/types";
 
 import { isExternalLink } from "../../lib/is-external-link";
 
-const externalArrowClass = css({
-  ml: "1",
-  display: "inline-block",
-  lineHeight: "none",
-});
+const externalArrowClass = css({ display: "inline-block", ml: "1", lineHeight: "none" });
 
 type ButtonVariant = "primary" | "secondary" | "accent" | "danger";
 type ButtonSize = "sm" | "md" | "lg";

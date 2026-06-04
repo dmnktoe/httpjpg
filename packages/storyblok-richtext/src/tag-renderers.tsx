@@ -97,11 +97,11 @@ function renderCode(key: string | undefined, attrs: TagAttrs, children: ReactNod
         key={key}
         as="code"
         css={{
+          px: "1",
+          py: "0.5",
           fontFamily: "mono",
           fontSize: "sm",
           bg: "neutral.100",
-          px: "1",
-          py: "0.5",
           borderRadius: "sm",
         }}
       >
@@ -129,13 +129,13 @@ export const tagRenderers: Record<string, TagRenderer> = {
       key={key}
       as="blockquote"
       css={{
-        borderLeft: "4px solid",
-        borderColor: "neutral.300",
-        pl: "4",
-        py: "2",
         my: "6",
-        fontStyle: "italic",
+        py: "2",
+        pl: "4",
         color: "neutral.600",
+        fontStyle: "italic",
+        borderColor: "neutral.300",
+        borderLeft: "4px solid",
       }}
     >
       {children}
@@ -147,14 +147,14 @@ export const tagRenderers: Record<string, TagRenderer> = {
       key={key}
       as="pre"
       css={{
+        my: "6",
+        p: "4",
+        color: "white",
         fontFamily: "mono",
         fontSize: "sm",
         bg: "neutral.900",
-        color: "white",
-        p: "4",
         borderRadius: "md",
         overflow: "auto",
-        my: "6",
       }}
     >
       {children}

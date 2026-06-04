@@ -14,12 +14,7 @@ export function BlokPreview({ item }: BlokPreviewProps) {
   const node = plugin ? plugin.preview(item.data) : <span>{item.type}</span>;
   return (
     <div
-      className={css({
-        width: "100%",
-        height: "100%",
-        overflow: "hidden",
-        pointerEvents: "none",
-      })}
+      className={css({ width: "100%", height: "100%", pointerEvents: "none", overflow: "hidden" })}
     >
       {node}
     </div>

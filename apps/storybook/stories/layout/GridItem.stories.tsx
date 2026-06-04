@@ -56,9 +56,9 @@ export const Basic: Story = {
     children: null,
   },
   render: (args) => (
-    <Grid columns={12} gap={4} css={{ bg: "neutral.50", p: "8" }}>
+    <Grid columns={12} gap={4} css={{ p: "8", bg: "neutral.50" }}>
       <GridItem colSpan={args.colSpan} rowSpan={args.rowSpan}>
-        <Box css={{ bg: "blue.500", color: "white", p: "8", h: "full" }}>
+        <Box css={{ h: "full", p: "8", color: "white", bg: "blue.500" }}>
           <Headline level={3} css={{ m: 0, color: "white" }}>
             GridItem
           </Headline>
@@ -69,13 +69,13 @@ export const Basic: Story = {
       </GridItem>
       {/* Fill rest of grid */}
       <GridItem colSpan={6}>
-        <Box css={{ bg: "neutral.200", p: "4", h: "120px" }}>Other item</Box>
+        <Box css={{ h: "120px", p: "4", bg: "neutral.200" }}>Other item</Box>
       </GridItem>
       <GridItem colSpan={6}>
-        <Box css={{ bg: "neutral.200", p: "4", h: "120px" }}>Other item</Box>
+        <Box css={{ h: "120px", p: "4", bg: "neutral.200" }}>Other item</Box>
       </GridItem>
       <GridItem colSpan={6}>
-        <Box css={{ bg: "neutral.200", p: "4", h: "120px" }}>Other item</Box>
+        <Box css={{ h: "120px", p: "4", bg: "neutral.200" }}>Other item</Box>
       </GridItem>
     </Grid>
   ),
@@ -88,7 +88,7 @@ export const FullWidth: Story = {
   args: {
     colSpan: "full",
     children: (
-      <Box css={{ bg: "purple.500", color: "white", p: "8", textAlign: "center" }}>
+      <Box css={{ p: "8", color: "white", textAlign: "center", bg: "purple.500" }}>
         <Headline level={2} css={{ m: 0, color: "white" }}>
           🎀 ୧ꔛꗃ˖ Full Width GridItem
         </Headline>
@@ -97,15 +97,15 @@ export const FullWidth: Story = {
     ),
   },
   render: (args) => (
-    <Grid columns={12} gap={4} css={{ bg: "neutral.50", p: "8" }}>
+    <Grid columns={12} gap={4} css={{ p: "8", bg: "neutral.50" }}>
       <GridItem colSpan={4}>
-        <Box css={{ bg: "neutral.200", p: "4", h: "100px" }}>4 cols</Box>
+        <Box css={{ h: "100px", p: "4", bg: "neutral.200" }}>4 cols</Box>
       </GridItem>
       <GridItem colSpan={4}>
-        <Box css={{ bg: "neutral.200", p: "4", h: "100px" }}>4 cols</Box>
+        <Box css={{ h: "100px", p: "4", bg: "neutral.200" }}>4 cols</Box>
       </GridItem>
       <GridItem colSpan={4}>
-        <Box css={{ bg: "neutral.200", p: "4", h: "100px" }}>4 cols</Box>
+        <Box css={{ h: "100px", p: "4", bg: "neutral.200" }}>4 cols</Box>
       </GridItem>
       <GridItem {...args} />
     </Grid>
@@ -120,24 +120,24 @@ export const PrecisePositioning: Story = {
     children: null,
   },
   render: () => (
-    <Grid columns={12} gap={4} css={{ bg: "neutral.50", p: "8" }}>
+    <Grid columns={12} gap={4} css={{ p: "8", bg: "neutral.50" }}>
       {/* Row 1 */}
       <GridItem colStart={1} colEnd={4}>
-        <Box css={{ bg: "blue.500", color: "white", p: "4", h: "100px" }}>1 → 4</Box>
+        <Box css={{ h: "100px", p: "4", color: "white", bg: "blue.500" }}>1 → 4</Box>
       </GridItem>
       <GridItem colStart={5} colEnd={9}>
-        <Box css={{ bg: "red.500", color: "white", p: "4", h: "100px" }}>5 → 9</Box>
+        <Box css={{ h: "100px", p: "4", color: "white", bg: "red.500" }}>5 → 9</Box>
       </GridItem>
       <GridItem colStart={10} colEnd={13}>
-        <Box css={{ bg: "green.500", color: "white", p: "4", h: "100px" }}>10 → 13</Box>
+        <Box css={{ h: "100px", p: "4", color: "white", bg: "green.500" }}>10 → 13</Box>
       </GridItem>
 
       {/* Row 2 - Offset positioning */}
       <GridItem colStart={3} colEnd={7}>
-        <Box css={{ bg: "purple.500", color: "white", p: "4", h: "100px" }}>3 → 7</Box>
+        <Box css={{ h: "100px", p: "4", color: "white", bg: "purple.500" }}>3 → 7</Box>
       </GridItem>
       <GridItem colStart={8} colEnd={12}>
-        <Box css={{ bg: "orange.500", color: "white", p: "4", h: "100px" }}>8 → 12</Box>
+        <Box css={{ h: "100px", p: "4", color: "white", bg: "orange.500" }}>8 → 12</Box>
       </GridItem>
     </Grid>
   ),
@@ -151,7 +151,7 @@ export const Overlapping: Story = {
     children: null,
   },
   render: () => (
-    <Grid columns={12} gap={0} css={{ bg: "white", p: "8", position: "relative" }}>
+    <Grid columns={12} gap={0} css={{ position: "relative", p: "8", bg: "white" }}>
       {/* Base image */}
       <GridItem colSpan={8} colStart={1} rowSpan={2}>
         <Image src={OPTIMIZED_IMAGES.videoStill1} alt="Base" aspectRatio="16/9" />
@@ -159,26 +159,11 @@ export const Overlapping: Story = {
 
       {/* Overlapping card */}
       <GridItem colStart={6} colEnd={12} rowStart={2}>
-        <Box
-          css={{
-            bg: "white",
-            p: "8",
-            position: "relative",
-            zIndex: 10,
-            mt: "-16",
-          }}
-        >
-          <Box
-            css={{
-              fontSize: "xs",
-              mb: "4",
-              opacity: 0.5,
-              letterSpacing: "0.15em",
-            }}
-          >
+        <Box css={{ position: "relative", zIndex: 10, mt: "-16", p: "8", bg: "white" }}>
+          <Box css={{ mb: "4", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>
             ⇝ᵣₑcꫀₙₜ / 2025
           </Box>
-          <Headline level={2} css={{ fontSize: "2rem", m: 0 }}>
+          <Headline level={2} css={{ m: 0, fontSize: "2rem" }}>
             🎀 ୧ꔛꗃ˖ Overlapping Layout
           </Headline>
           <Paragraph css={{ mt: "4", fontSize: "sm" }}>
@@ -198,7 +183,7 @@ export const MagazineLayout: Story = {
     children: null,
   },
   render: () => (
-    <Grid columns={12} gap={6} css={{ bg: "white", p: "16 8" }}>
+    <Grid columns={12} gap={6} css={{ p: "16 8", bg: "white" }}>
       {/* Container für eingerückte Bildreihe */}
       <GridItem colSpan={10} colStart={2}>
         <Grid columns={7} gap={6}>
@@ -210,17 +195,10 @@ export const MagazineLayout: Story = {
           {/* Title block */}
           <GridItem colSpan={3}>
             <Box css={{ p: "4" }}>
-              <Box
-                css={{
-                  fontSize: "xs",
-                  mb: "4",
-                  opacity: 0.5,
-                  letterSpacing: "0.15em",
-                }}
-              >
+              <Box css={{ mb: "4", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>
                 ⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S
               </Box>
-              <Headline level={2} css={{ fontSize: "2rem", m: 0 }}>
+              <Headline level={2} css={{ m: 0, fontSize: "2rem" }}>
                 ⋆.˚ ᡣ𐭩 Magazine Grid
               </Headline>
             </Box>
@@ -233,7 +211,7 @@ export const MagazineLayout: Story = {
 
           {/* Text block */}
           <GridItem colSpan={3}>
-            <Paragraph css={{ fontSize: "sm", lineHeight: 2, opacity: 0.7 }}>
+            <Paragraph css={{ opacity: 0.7, fontSize: "sm", lineHeight: 2 }}>
               🎀 ୧ꔛꗃ˖ GridItem allows precise control over column spans and positioning ･ﾟ⋆
             </Paragraph>
           </GridItem>
@@ -256,40 +234,33 @@ export const Dashboard: Story = {
     children: null,
   },
   render: () => (
-    <Grid columns={12} gap={4} css={{ bg: "neutral.50", p: "8" }}>
+    <Grid columns={12} gap={4} css={{ p: "8", bg: "neutral.50" }}>
       {/* Large stat */}
       <GridItem colSpan={8} rowSpan={2}>
-        <Box css={{ bg: "blue.500", color: "white", p: "8", h: "full" }}>
-          <Box css={{ fontSize: "xs", mb: "2", opacity: 0.8 }}>TOTAL VIEWS</Box>
+        <Box css={{ h: "full", p: "8", color: "white", bg: "blue.500" }}>
+          <Box css={{ mb: "2", opacity: 0.8, fontSize: "xs" }}>TOTAL VIEWS</Box>
           <Box css={{ fontSize: "4xl", fontWeight: "bold" }}>127.5K</Box>
-          <Box css={{ fontSize: "sm", mt: "2", opacity: 0.8 }}>+12.5% from last month</Box>
+          <Box css={{ mt: "2", opacity: 0.8, fontSize: "sm" }}>+12.5% from last month</Box>
         </Box>
       </GridItem>
 
       {/* Small stats */}
       <GridItem colSpan={4}>
-        <Box css={{ bg: "green.500", color: "white", p: "6", h: "full" }}>
-          <Box css={{ fontSize: "xs", mb: "2", opacity: 0.8 }}>ENGAGEMENT</Box>
+        <Box css={{ h: "full", p: "6", color: "white", bg: "green.500" }}>
+          <Box css={{ mb: "2", opacity: 0.8, fontSize: "xs" }}>ENGAGEMENT</Box>
           <Box css={{ fontSize: "2xl", fontWeight: "bold" }}>89.2%</Box>
         </Box>
       </GridItem>
       <GridItem colSpan={4}>
-        <Box css={{ bg: "purple.500", color: "white", p: "6", h: "full" }}>
-          <Box css={{ fontSize: "xs", mb: "2", opacity: 0.8 }}>BOUNCE RATE</Box>
+        <Box css={{ h: "full", p: "6", color: "white", bg: "purple.500" }}>
+          <Box css={{ mb: "2", opacity: 0.8, fontSize: "xs" }}>BOUNCE RATE</Box>
           <Box css={{ fontSize: "2xl", fontWeight: "bold" }}>23.1%</Box>
         </Box>
       </GridItem>
 
       {/* Medium cards */}
       <GridItem colSpan={6}>
-        <Box
-          css={{
-            bg: "white",
-            p: "6",
-            border: "1px solid",
-            borderColor: "neutral.200",
-          }}
-        >
+        <Box css={{ p: "6", bg: "white", border: "1px solid", borderColor: "neutral.200" }}>
           <Headline level={3} css={{ m: 0, mb: "4" }}>
             ⋆.˚ Recent Activity
           </Headline>
@@ -297,14 +268,7 @@ export const Dashboard: Story = {
         </Box>
       </GridItem>
       <GridItem colSpan={6}>
-        <Box
-          css={{
-            bg: "white",
-            p: "6",
-            border: "1px solid",
-            borderColor: "neutral.200",
-          }}
-        >
+        <Box css={{ p: "6", bg: "white", border: "1px solid", borderColor: "neutral.200" }}>
           <Headline level={3} css={{ m: 0, mb: "4" }}>
             🎀 Quick Actions
           </Headline>

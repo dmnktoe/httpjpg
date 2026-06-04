@@ -90,11 +90,11 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
               <Box
                 css={{
                   display: "flex",
-                  alignItems: "center",
-                  columnGap: "2",
-                  rowGap: "0",
                   flexWrap: "wrap",
                   justifyContent: "center",
+                  alignItems: "center",
+                  rowGap: "0",
+                  columnGap: "2",
                 }}
               >
                 {footerLinks &&
@@ -118,19 +118,17 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                       as="button"
                       onClick={handleCookieSettingsClick}
                       css={{
-                        bg: "transparent",
-                        border: "none",
-                        cursor: "pointer",
                         p: 0,
-                        textDecoration: "underline",
-                        textDecorationThickness: "1px",
-                        textUnderlineOffset: "2px",
                         color: "inherit",
                         fontSize: "inherit",
+                        textDecoration: "underline",
+                        textDecorationThickness: "1px",
+                        bg: "transparent",
+                        border: "none",
                         transition: "text-decoration-style 150ms ease-in-out",
-                        _hover: {
-                          textDecorationStyle: "wavy",
-                        },
+                        cursor: "pointer",
+                        textUnderlineOffset: "2px",
+                        _hover: { textDecorationStyle: "wavy" },
                       }}
                     >
                       Cookie Settings
@@ -161,9 +159,9 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                 <Box
                   as="span"
                   css={{
-                    fontSize: "xs",
                     opacity: 0.4,
                     fontFamily: "mono",
+                    fontSize: "xs",
                     letterSpacing: "0.05em",
                   }}
                 >

@@ -70,16 +70,16 @@ function Placeholder({ label, sub }: { label: string; sub?: string }) {
   return (
     <div
       className={css({
-        width: "100%",
-        height: "100%",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
         justifyContent: "center",
+        alignItems: "center",
         gap: 1,
+        width: "100%",
+        height: "100%",
+        opacity: 0.6,
         border: "1px dashed",
         borderColor: "pageBorder",
-        opacity: 0.6,
       })}
     >
       <span
@@ -95,12 +95,12 @@ function Placeholder({ label, sub }: { label: string; sub?: string }) {
       {sub && (
         <span
           className={css({
+            px: 2,
+            opacity: 0.7,
             fontFamily: "mono",
             fontSize: "sm",
-            opacity: 0.7,
             textAlign: "center",
             wordBreak: "break-all",
-            px: 2,
           })}
         >
           {sub}
@@ -318,10 +318,10 @@ const marquee: BlokPlugin = {
     <Marquee pauseOnHover>
       <span
         className={css({
+          px: 4,
           fontFamily: "headline",
           fontSize: "xl",
           textTransform: "uppercase",
-          px: 4,
           whiteSpace: "nowrap",
         })}
       >

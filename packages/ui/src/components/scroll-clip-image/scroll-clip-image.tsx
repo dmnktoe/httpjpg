@@ -72,16 +72,16 @@ export interface ScrollClipImageProps {
 
 const bracketBaseClass = css({
   position: "absolute",
+  zIndex: "docked",
+  color: "white",
   fontFamily: "mono",
   fontSize: "lg",
   lineHeight: 1,
-  color: "white",
-  userSelect: "none",
-  pointerEvents: "none",
-  zIndex: "docked",
-  textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
   transition:
     "opacity 120ms cubic-bezier(.35, 0, 0, 1), transform 200ms cubic-bezier(.35, 0, 0, 1)",
+  pointerEvents: "none",
+  userSelect: "none",
+  textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
 });
 
 function getEntryProgress(rect: DOMRect, viewportHeight: number): number {
@@ -314,14 +314,14 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
               position: "absolute",
               top: 3,
               right: 3,
+              zIndex: "docked",
+              color: "white",
               fontFamily: "mono",
               fontSize: "xs",
-              color: "white",
               letterSpacing: "wider",
-              userSelect: "none",
               pointerEvents: "none",
+              userSelect: "none",
               textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
-              zIndex: "docked",
             }}
           >
             [ <span ref={progressLabelRef}>00</span> / 99 ]
@@ -341,11 +341,7 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
       <a
         href={href}
         title={title}
-        className={css({
-          display: "block",
-          textDecoration: "none",
-          color: "inherit",
-        })}
+        className={css({ display: "block", color: "inherit", textDecoration: "none" })}
       >
         {maskNode}
       </a>
@@ -373,11 +369,11 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
               css={{
                 position: "sticky",
                 top: 0,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
                 width: "100%",
                 height: "100vh",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
                 overflow: "hidden",
               }}
             >

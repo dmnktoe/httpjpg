@@ -14,10 +14,7 @@ export const SbPage = memo(function SbPage({ blok }: SbPageProps) {
   return (
     <Box
       {...editableAttrs(blok)}
-      css={{
-        backgroundColor: isDark ? "black" : "white",
-        color: isDark ? "white" : "black",
-      }}
+      css={{ color: isDark ? "white" : "black", backgroundColor: isDark ? "black" : "white" }}
     >
       {body?.map((child) => (
         <StoryblokServerComponent key={child._uid} blok={child} />

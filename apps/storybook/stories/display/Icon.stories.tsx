@@ -81,23 +81,15 @@ export const Overview: Story = {
             alignItems: "center",
             gap: "12px",
             p: "16px",
-            borderRadius: "8px",
             border: "1px solid",
             borderColor: "neutral.200",
-            _hover: {
-              bg: "neutral.50",
-              borderColor: "neutral.300",
-            },
+            borderRadius: "8px",
+            _hover: { bg: "neutral.50", borderColor: "neutral.300" },
           }}
         >
           <Icon name={iconName} size="48px" />
           <Box
-            css={{
-              fontSize: "xs",
-              fontFamily: "mono",
-              color: "neutral.600",
-              textAlign: "center",
-            }}
+            css={{ color: "neutral.600", fontFamily: "mono", fontSize: "xs", textAlign: "center" }}
           >
             {iconName}
           </Box>
@@ -118,14 +110,7 @@ export const Sizes: Story = {
     layout: "padded",
   },
   render: () => (
-    <Box
-      css={{
-        display: "flex",
-        alignItems: "center",
-        gap: "32px",
-        flexWrap: "wrap",
-      }}
-    >
+    <Box css={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "32px" }}>
       {["16px", "24px", "32px", "48px", "64px", "96px"].map((size) => (
         <Box
           key={size}
@@ -137,7 +122,7 @@ export const Sizes: Story = {
           }}
         >
           <Icon name="arrow-up" size={size} />
-          <Box css={{ fontSize: "xs", fontFamily: "mono", color: "neutral.600" }}>{size}</Box>
+          <Box css={{ color: "neutral.600", fontFamily: "mono", fontSize: "xs" }}>{size}</Box>
         </Box>
       ))}
     </Box>
@@ -155,13 +140,7 @@ export const Colors: Story = {
     layout: "padded",
   },
   render: () => (
-    <Box
-      css={{
-        display: "flex",
-        gap: "24px",
-        flexWrap: "wrap",
-      }}
-    >
+    <Box css={{ display: "flex", flexWrap: "wrap", gap: "24px" }}>
       <Icon name="arrow-up" size="48px" css={{ color: "neutral.900" }} />
       <Icon name="arrow-up" size="48px" css={{ color: "blue" }} />
       <Icon name="arrow-up" size="48px" css={{ color: "red" }} />
@@ -182,13 +161,7 @@ export const Arrows: Story = {
     layout: "padded",
   },
   render: () => (
-    <Box
-      css={{
-        display: "flex",
-        gap: "48px",
-        flexWrap: "wrap",
-      }}
-    >
+    <Box css={{ display: "flex", flexWrap: "wrap", gap: "48px" }}>
       {(["arrow-up", "arrow-right", "arrow-down", "arrow-left"] as const).map((iconName) => (
         <Box
           key={iconName}
@@ -200,7 +173,7 @@ export const Arrows: Story = {
           }}
         >
           <Icon name={iconName} size="48px" />
-          <Box css={{ fontSize: "xs", fontFamily: "mono", color: "neutral.600" }}>{iconName}</Box>
+          <Box css={{ color: "neutral.600", fontFamily: "mono", fontSize: "xs" }}>{iconName}</Box>
         </Box>
       ))}
     </Box>

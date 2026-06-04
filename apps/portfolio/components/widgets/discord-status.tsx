@@ -48,13 +48,13 @@ export function DiscordStatus() {
   return (
     <Box
       css={{
-        fontSize: "xs",
-        fontFamily: "mono",
         display: "flex",
-        alignItems: "center",
         justifyContent: "center",
+        alignItems: "center",
         gap: 2,
         opacity: 80,
+        fontFamily: "mono",
+        fontSize: "xs",
       }}
     >
       <Box as="span" css={{ opacity: 60 }}>
@@ -76,8 +76,8 @@ export function DiscordStatus() {
                 display: "inline-block",
                 width: "3",
                 height: "3",
-                verticalAlign: "middle",
                 marginRight: "1",
+                verticalAlign: "middle",
                 borderRadius: "sm",
                 overflow: "hidden",
               }}
@@ -99,11 +99,11 @@ export function DiscordStatus() {
           <Box
             as="span"
             css={{
-              opacity: 70,
               maxWidth: "200px",
-              overflow: "hidden",
+              opacity: 70,
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
+              overflow: "hidden",
             }}
             data-preview-image={activityIcon || undefined}
           >

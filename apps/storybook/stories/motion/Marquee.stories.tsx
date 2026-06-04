@@ -91,7 +91,7 @@ export const FastAnnouncement: Story = {
   },
   decorators: [
     (Story) => (
-      <Box css={{ p: "32px", bg: "black", color: "white" }}>
+      <Box css={{ p: "32px", color: "white", bg: "black" }}>
         <Story />
       </Box>
     ),
@@ -109,7 +109,7 @@ export const SlowASCII: Story = {
   },
   decorators: [
     (Story) => (
-      <Box css={{ p: "32px", bg: "neutral.50", fontSize: "lg" }}>
+      <Box css={{ p: "32px", fontSize: "lg", bg: "neutral.50" }}>
         <Story />
       </Box>
     ),
@@ -188,11 +188,11 @@ export const StackedMarquees: Story = {
       <Marquee
         speed={20}
         direction="right"
-        css={{ py: "12px", borderBottom: "2px solid black", bg: "neutral.50" }}
+        css={{ py: "12px", bg: "neutral.50", borderBottom: "2px solid black" }}
       >
         🎀 PORTFOLIO 2024 🎀 BRUTALIST DESIGN 🎀
       </Marquee>
-      <Marquee speed={25} css={{ py: "12px", bg: "black", color: "white" }}>
+      <Marquee speed={25} css={{ py: "12px", color: "white", bg: "black" }}>
         ⋆.˚ ᡣ𐭩 .𖥔˚ NEW WORK AVAILABLE ⋆.˚✮🎧✮˚.⋆
       </Marquee>
     </Box>
@@ -209,15 +209,7 @@ export const LargeText: Story = {
   },
   decorators: [
     (Story) => (
-      <Box
-        css={{
-          p: "48px",
-          bg: "black",
-          color: "white",
-          fontSize: "4xl",
-          fontWeight: "bold",
-        }}
-      >
+      <Box css={{ p: "48px", color: "white", fontSize: "4xl", fontWeight: "bold", bg: "black" }}>
         <Story />
       </Box>
     ),
@@ -234,7 +226,7 @@ export const GlitchStyle: Story = {
   },
   decorators: [
     (Story) => (
-      <Box css={{ p: "32px", bg: "white", fontFamily: "mono" }}>
+      <Box css={{ p: "32px", fontFamily: "mono", bg: "white" }}>
         <Story />
       </Box>
     ),
@@ -256,12 +248,12 @@ export const IOSStyle: Story = {
     (Story) => (
       <Box
         css={{
-          p: "16px",
-          bg: "neutral.900",
-          color: "white",
-          fontSize: "sm",
           maxW: "400px",
           mx: "auto",
+          p: "16px",
+          color: "white",
+          fontSize: "sm",
+          bg: "neutral.900",
           borderRadius: "8px",
         }}
       >
@@ -286,15 +278,15 @@ export const MusicPlayer: Story = {
     (Story) => (
       <Box
         css={{
+          maxW: "320px",
+          mx: "auto",
           p: "24px",
           bg: "white",
           border: "1px solid rgba(0,0,0,0.1)",
           borderRadius: "12px",
-          maxW: "320px",
-          mx: "auto",
         }}
       >
-        <Box css={{ fontSize: "xs", color: "neutral.500", mb: "8px" }}>NOW PLAYING</Box>
+        <Box css={{ mb: "8px", color: "neutral.500", fontSize: "xs" }}>NOW PLAYING</Box>
         <Story />
       </Box>
     ),

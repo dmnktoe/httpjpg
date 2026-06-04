@@ -58,9 +58,9 @@ function ParallaxBlock({
       css={{
         position: "relative",
         height: "60vh",
-        overflow: "hidden",
         border: "2px solid",
         borderColor: "pageFg",
+        overflow: "hidden",
       }}
     >
       <Box
@@ -79,8 +79,8 @@ function ParallaxBlock({
           position: "absolute",
           inset: 0,
           display: "flex",
-          alignItems: "center",
           justifyContent: "center",
+          alignItems: "center",
           color: "white",
           textShadow: "0 2px 8px rgba(0,0,0,0.6)",
         }}
@@ -90,8 +90,8 @@ function ParallaxBlock({
           <Paragraph
             size="sm"
             css={{
-              fontFamily: "mono",
               opacity: 0.8,
+              fontFamily: "mono",
               letterSpacing: "wider",
               textTransform: "uppercase",
             }}

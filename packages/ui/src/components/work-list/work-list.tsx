@@ -126,12 +126,12 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
           data-work-list={listScopeId}
           css={{
             display: "grid",
-            gap,
             gridTemplateColumns: {
               base: gridTemplate(columns),
               md: columnsMd ? gridTemplate(columnsMd) : undefined,
               lg: columnsLg ? gridTemplate(columnsLg) : undefined,
             },
+            gap,
           }}
         >
           {cards}

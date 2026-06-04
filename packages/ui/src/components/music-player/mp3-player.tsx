@@ -103,25 +103,19 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
 
         <VStack gap="3">
           {(showArtwork || showInfo) && (
-            <Box
-              css={{
-                display: "flex",
-                gap: 3,
-                alignItems: "center",
-              }}
-            >
+            <Box css={{ display: "flex", alignItems: "center", gap: 3 }}>
               {showArtwork && artwork && (
                 <Box
                   css={{
+                    display: "flex",
+                    flexShrink: 0,
+                    justifyContent: "center",
+                    alignItems: "center",
                     w: 16,
                     h: 16,
-                    flexShrink: 0,
+                    background: "neutral.100",
                     borderRadius: "sm",
                     overflow: "hidden",
-                    background: "neutral.100",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
                   }}
                 >
                   <img
@@ -140,11 +134,11 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
                   {title && (
                     <Box
                       css={{
+                        fontFamily: "mono",
                         fontSize: "sm",
                         fontWeight: "semibold",
-                        fontFamily: "mono",
-                        truncate: true,
                         letterSpacing: "wide",
+                        truncate: true,
                       }}
                     >
                       {title}
@@ -153,11 +147,11 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
                   {artist && (
                     <Box
                       css={{
-                        fontSize: "xs",
+                        mt: 0.5,
                         opacity: 60,
                         fontFamily: "mono",
+                        fontSize: "xs",
                         truncate: true,
-                        mt: 0.5,
                       }}
                     >
                       {artist}
@@ -186,23 +180,21 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
                 type="button"
                 onClick={togglePlay}
                 className={css({
-                  cursor: "pointer",
-                  background: "neutral.900",
-                  color: "white",
-                  border: "none",
-                  fontSize: "sm",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  minW: "60px",
                   px: 2,
                   py: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: "sm",
+                  color: "white",
                   fontFamily: "mono",
-                  minW: "60px",
+                  fontSize: "sm",
+                  background: "neutral.900",
+                  border: "none",
+                  borderRadius: "sm",
                   transition: "all 0.2s",
-                  _hover: {
-                    background: "neutral.800",
-                  },
+                  cursor: "pointer",
+                  _hover: { background: "neutral.800" },
                 })}
                 aria-label={isPlaying ? "Pause" : "Play"}
               >
@@ -219,28 +211,26 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
                   className={css({
                     w: "full",
                     h: "4px",
-                    cursor: "pointer",
-                    appearance: "none",
                     background: "neutral.200",
                     borderRadius: "full",
                     outline: "none",
-                    _hover: {
-                      background: "neutral.300",
-                    },
+                    appearance: "none",
+                    cursor: "pointer",
+                    _hover: { background: "neutral.300" },
                     "&::-webkit-slider-thumb": {
-                      appearance: "none",
                       w: "12px",
                       h: "12px",
-                      borderRadius: "full",
                       background: "neutral.900",
+                      borderRadius: "full",
+                      appearance: "none",
                       cursor: "pointer",
                     },
                     "&::-moz-range-thumb": {
                       w: "12px",
                       h: "12px",
-                      borderRadius: "full",
                       background: "neutral.900",
                       border: "none",
+                      borderRadius: "full",
                       cursor: "pointer",
                     },
                   })}
@@ -249,11 +239,11 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
 
               <Box
                 css={{
-                  fontSize: "2xs",
-                  fontFamily: "mono",
                   minW: "70px",
-                  textAlign: "right",
                   opacity: 60,
+                  fontFamily: "mono",
+                  fontSize: "2xs",
+                  textAlign: "right",
                 }}
               >
                 {formatTime(currentTime)} / {formatTime(duration)}
@@ -267,7 +257,7 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
                 gap: 2,
               }}
             >
-              <Box css={{ fontSize: "xs", opacity: 60 }}>VOL</Box>
+              <Box css={{ opacity: 60, fontSize: "xs" }}>VOL</Box>
               <input
                 type="range"
                 min="0"
@@ -278,41 +268,32 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
                 className={css({
                   flex: 1,
                   h: "3px",
-                  cursor: "pointer",
-                  appearance: "none",
                   background: "neutral.200",
                   borderRadius: "full",
                   outline: "none",
-                  _hover: {
-                    background: "neutral.300",
-                  },
+                  appearance: "none",
+                  cursor: "pointer",
+                  _hover: { background: "neutral.300" },
                   "&::-webkit-slider-thumb": {
-                    appearance: "none",
                     w: "10px",
                     h: "10px",
-                    borderRadius: "full",
                     background: "neutral.900",
+                    borderRadius: "full",
+                    appearance: "none",
                     cursor: "pointer",
                   },
                   "&::-moz-range-thumb": {
                     w: "10px",
                     h: "10px",
-                    borderRadius: "full",
                     background: "neutral.900",
                     border: "none",
+                    borderRadius: "full",
                     cursor: "pointer",
                   },
                 })}
                 aria-label="Volume"
               />
-              <Box
-                css={{
-                  fontSize: "xs",
-                  opacity: 60,
-                  minW: "30px",
-                  textAlign: "right",
-                }}
-              >
+              <Box css={{ minW: "30px", opacity: 60, fontSize: "xs", textAlign: "right" }}>
                 {Math.round(volume * 100)}%
               </Box>
             </Box>

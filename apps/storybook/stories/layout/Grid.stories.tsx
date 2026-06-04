@@ -83,8 +83,8 @@ export const Basic: Story = {
     children: null,
   },
   render: (args) => (
-    <Box css={{ minH: "600px", bg: "neutral.50", p: "8" }}>
-      <Box css={{ mb: "4", fontSize: "xs", fontFamily: "mono", opacity: 0.6 }}>
+    <Box css={{ minH: "600px", p: "8", bg: "neutral.50" }}>
+      <Box css={{ mb: "4", opacity: 0.6, fontFamily: "mono", fontSize: "xs" }}>
         columns: {args.columns} | gap: {args.gap} | align: {args.align} | justify: {args.justify} |
         flow: {args.flow}
       </Box>
@@ -194,8 +194,8 @@ export const BasicWithBoxes: Story = {
     children: null,
   },
   render: (args) => (
-    <Box css={{ minH: "600px", bg: "neutral.50", p: "8" }}>
-      <Box css={{ mb: "4", fontSize: "xs", fontFamily: "mono", opacity: 0.6 }}>
+    <Box css={{ minH: "600px", p: "8", bg: "neutral.50" }}>
+      <Box css={{ mb: "4", opacity: 0.6, fontFamily: "mono", fontSize: "xs" }}>
         columns: {args.columns} | gap: {args.gap} | align: {args.align} | justify: {args.justify} |
         flow: {args.flow}
       </Box>
@@ -214,15 +214,15 @@ export const BasicWithBoxes: Story = {
             justifySelf: args.justify,
           }}
           css={{
-            bg: "blue.500",
-            color: "white",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
-            fontSize: "3xl",
-            fontWeight: "bold",
+            alignItems: "center",
             w: args.justify === "stretch" ? "100%" : "120px",
             h: args.align === "stretch" ? "100%" : "120px",
+            color: "white",
+            fontSize: "3xl",
+            fontWeight: "bold",
+            bg: "blue.500",
           }}
         >
           1
@@ -233,15 +233,15 @@ export const BasicWithBoxes: Story = {
             justifySelf: args.justify,
           }}
           css={{
-            bg: "red.500",
-            color: "white",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
-            fontSize: "3xl",
-            fontWeight: "bold",
+            alignItems: "center",
             w: args.justify === "stretch" ? "100%" : "120px",
             h: args.align === "stretch" ? "100%" : "120px",
+            color: "white",
+            fontSize: "3xl",
+            fontWeight: "bold",
+            bg: "red.500",
           }}
         >
           2
@@ -252,15 +252,15 @@ export const BasicWithBoxes: Story = {
             justifySelf: args.justify,
           }}
           css={{
-            bg: "green.500",
-            color: "white",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
-            fontSize: "3xl",
-            fontWeight: "bold",
+            alignItems: "center",
             w: args.justify === "stretch" ? "100%" : "120px",
             h: args.align === "stretch" ? "100%" : "120px",
+            color: "white",
+            fontSize: "3xl",
+            fontWeight: "bold",
+            bg: "green.500",
           }}
         >
           3
@@ -271,15 +271,15 @@ export const BasicWithBoxes: Story = {
             justifySelf: args.justify,
           }}
           css={{
-            bg: "purple.500",
-            color: "white",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
-            fontSize: "3xl",
-            fontWeight: "bold",
+            alignItems: "center",
             w: args.justify === "stretch" ? "100%" : "120px",
             h: args.align === "stretch" ? "100%" : "120px",
+            color: "white",
+            fontSize: "3xl",
+            fontWeight: "bold",
+            bg: "purple.500",
           }}
         >
           4
@@ -290,15 +290,15 @@ export const BasicWithBoxes: Story = {
             justifySelf: args.justify,
           }}
           css={{
-            bg: "orange.500",
-            color: "white",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
-            fontSize: "3xl",
-            fontWeight: "bold",
+            alignItems: "center",
             w: args.justify === "stretch" ? "100%" : "120px",
             h: args.align === "stretch" ? "100%" : "120px",
+            color: "white",
+            fontSize: "3xl",
+            fontWeight: "bold",
+            bg: "orange.500",
           }}
         >
           5
@@ -309,15 +309,15 @@ export const BasicWithBoxes: Story = {
             justifySelf: args.justify,
           }}
           css={{
-            bg: "pink.500",
-            color: "white",
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
-            fontSize: "3xl",
-            fontWeight: "bold",
+            alignItems: "center",
             w: args.justify === "stretch" ? "100%" : "120px",
             h: args.align === "stretch" ? "100%" : "120px",
+            color: "white",
+            fontSize: "3xl",
+            fontWeight: "bold",
+            bg: "pink.500",
           }}
         >
           6
@@ -337,7 +337,7 @@ export const MagazineLayout: Story = {
     gap: 0,
   },
   render: (args) => (
-    <Grid {...args} css={{ bg: "white", p: "32 16" }}>
+    <Grid {...args} css={{ p: "32 16", bg: "white" }}>
       {/* Hero Image - Breathe */}
       <GridItem colSpan={8} colStart={3}>
         <Image
@@ -350,17 +350,10 @@ export const MagazineLayout: Story = {
       {/* Title - Generous spacing */}
       <GridItem colSpan={6} colStart={4}>
         <Box css={{ mt: "40", mb: "40" }}>
-          <Box
-            css={{
-              fontSize: "xs",
-              mb: "6",
-              opacity: 0.5,
-              letterSpacing: "0.15em",
-            }}
-          >
+          <Box css={{ mb: "6", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>
             ⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S
           </Box>
-          <Headline level={2} css={{ fontSize: "3rem", lineHeight: 1.1, fontWeight: 700 }}>
+          <Headline level={2} css={{ fontSize: "3rem", fontWeight: 700, lineHeight: 1.1 }}>
             ⋆.˚ ᡣ𐭩 Creative Direction
           </Headline>
         </Box>
@@ -391,7 +384,7 @@ export const MagazineLayout: Story = {
       {/* Text Block Float */}
       <GridItem colSpan={3} colStart={9}>
         <Box css={{ mt: "20", pr: "8" }}>
-          <Paragraph css={{ fontSize: "sm", lineHeight: 2, opacity: 0.7 }}>
+          <Paragraph css={{ opacity: 0.7, fontSize: "sm", lineHeight: 2 }}>
             🎀 ୧ꔛꗃ˖ Embracing the space between elements creates rhythm and allows each piece to
             breathe ･ﾟ⋆
           </Paragraph>
@@ -414,12 +407,7 @@ export const MagazineLayout: Story = {
         <Box css={{ mb: "56" }}>
           <Headline
             level={3}
-            css={{
-              fontSize: "2rem",
-              lineHeight: 1.3,
-              fontWeight: 600,
-              textAlign: "center",
-            }}
+            css={{ fontSize: "2rem", fontWeight: 600, lineHeight: 1.3, textAlign: "center" }}
           >
             ⋆.˚ "Less, but better" ⋆.˚✮
           </Headline>
@@ -470,17 +458,10 @@ export const MagazineLayout: Story = {
       {/* Footer Details */}
       <GridItem colSpan={8} colStart={3}>
         <Box css={{ mt: "40", mb: "20", textAlign: "center" }}>
-          <Box
-            css={{
-              fontSize: "xs",
-              mb: "4",
-              opacity: 0.5,
-              letterSpacing: "0.15em",
-            }}
-          >
+          <Box css={{ mb: "4", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>
             ꀷꏂ꓄ꋬꂑ꒒ꌗ
           </Box>
-          <Box css={{ fontSize: "sm", lineHeight: 2, opacity: 0.7 }}>
+          <Box css={{ opacity: 0.7, fontSize: "sm", lineHeight: 2 }}>
             httpjpg × 2025 × Digital Portfolio
           </Box>
         </Box>
@@ -521,25 +502,18 @@ export const OverlappingLayout: Story = {
           <Box
             css={{
               position: "absolute",
-              bottom: "-12",
               right: "8",
-              bg: "white",
-              p: "8 12",
-              backdropFilter: "blur(8px)",
+              bottom: "-12",
               maxW: "500px",
+              p: "8 12",
+              bg: "white",
+              backdropFilter: "blur(8px)",
             }}
           >
-            <Box
-              css={{
-                fontSize: "xs",
-                mb: "2",
-                opacity: 0.5,
-                letterSpacing: "0.15em",
-              }}
-            >
+            <Box css={{ mb: "2", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>
               ⇝ᵣₑcꫀₙₜ / 2025
             </Box>
-            <Headline level={1} css={{ fontSize: "2.5rem", m: 0, lineHeight: 1.1 }}>
+            <Headline level={1} css={{ m: 0, fontSize: "2.5rem", lineHeight: 1.1 }}>
               🎀 ୧ꔛꗃ˖ VISUAL IMPACT
             </Headline>
           </Box>
@@ -576,22 +550,15 @@ export const OverlappingLayout: Story = {
       <GridItem colSpan={4} colStart={8}>
         <Box
           css={{
-            mt: "-16",
-            bg: "#171717",
-            color: "white",
-            p: "8",
             position: "relative",
             zIndex: 10,
+            mt: "-16",
+            p: "8",
+            color: "white",
+            bg: "#171717",
           }}
         >
-          <Box
-            css={{
-              fontSize: "xs",
-              mb: "4",
-              opacity: 0.7,
-              letterSpacing: "0.15em",
-            }}
-          >
+          <Box css={{ mb: "4", opacity: 0.7, fontSize: "xs", letterSpacing: "0.15em" }}>
             ꀷꏂ꓄ꋬꂑ꒒ꌗ
           </Box>
           <Box css={{ fontSize: "sm", lineHeight: 2 }}>

@@ -22,7 +22,7 @@ export const SbCaption = memo(function SbCaption({ data }: SbCaptionProps) {
   }
 
   return (
-    <Box css={{ mt: "2", fontSize: "sm", color: "neutral.600", lineHeight: "1.5" }}>
+    <Box css={{ mt: "2", color: "neutral.600", fontSize: "sm", lineHeight: "1.5" }}>
       <StoryblokRichText data={data} />
     </Box>
   );

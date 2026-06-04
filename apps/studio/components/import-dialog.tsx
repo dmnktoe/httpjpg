@@ -121,11 +121,11 @@ export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDia
       className={css({
         position: "fixed",
         inset: 0,
-        bg: "rgba(0,0,0,0.4)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         zIndex: 100,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        bg: "rgba(0,0,0,0.4)",
       })}
       role="presentation"
     >
@@ -133,30 +133,25 @@ export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDia
         type="button"
         aria-label="Close import dialog"
         onClick={onClose}
-        className={css({
-          all: "unset",
-          position: "absolute",
-          inset: 0,
-          cursor: "default",
-        })}
+        className={css({ position: "absolute", inset: 0, cursor: "default", all: "unset" })}
       />
       <dialog
         open
         className={css({
-          bg: "pageBg",
-          color: "pageFg",
-          border: "1px solid",
-          borderColor: "pageFg",
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
           width: "560px",
           maxWidth: "90vw",
           maxHeight: "80vh",
-          display: "flex",
-          flexDirection: "column",
+          margin: 0,
+          padding: 0,
+          color: "pageFg",
           fontFamily: "mono",
           fontSize: "sm",
-          position: "relative",
-          padding: 0,
-          margin: 0,
+          bg: "pageBg",
+          border: "1px solid",
+          borderColor: "pageFg",
         })}
         aria-label="Import grid"
         onKeyDown={(e) => {
@@ -165,25 +160,25 @@ export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDia
       >
         <header
           className={css({
-            padding: 3,
-            borderBottom: "1px solid",
-            borderColor: "pageBorder",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            padding: 3,
+            borderColor: "pageBorder",
+            borderBottom: "1px solid",
           })}
         >
-          <strong className={css({ textTransform: "uppercase", letterSpacing: "wide" })}>
+          <strong className={css({ letterSpacing: "wide", textTransform: "uppercase" })}>
             Import Grid
           </strong>
           <button
             type="button"
             onClick={onClose}
             className={css({
-              all: "unset",
-              cursor: "pointer",
               padding: "0 6px",
-              _hover: { bg: "pageFg", color: "pageBg" },
+              cursor: "pointer",
+              all: "unset",
+              _hover: { color: "pageBg", bg: "pageFg" },
             })}
             aria-label="Close"
           >
@@ -192,7 +187,7 @@ export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDia
         </header>
 
         <div
-          className={css({ display: "flex", borderBottom: "1px solid", borderColor: "pageBorder" })}
+          className={css({ display: "flex", borderColor: "pageBorder", borderBottom: "1px solid" })}
         >
           <ModeTab active={mode === "paste"} onClick={() => setMode("paste")}>
             Paste JSON
@@ -206,11 +201,11 @@ export function ImportDialog({ open, pushEnabled, onClose, onImport }: ImportDia
 
         <div
           className={css({
-            padding: 3,
-            overflow: "auto",
             display: "flex",
             flexDirection: "column",
             gap: 2,
+            padding: 3,
+            overflow: "auto",
           })}
         >
           {candidates.length > 0 && (
@@ -326,15 +321,15 @@ function ModeTab({
       className={css({
         flex: 1,
         padding: 2,
-        bg: active ? "pageFg" : "pageBg",
         color: active ? "pageBg" : "pageFg",
         fontFamily: "mono",
         fontSize: "sm",
-        textTransform: "uppercase",
         letterSpacing: "wide",
-        cursor: "pointer",
+        textTransform: "uppercase",
+        bg: active ? "pageFg" : "pageBg",
         border: "none",
-        _hover: { bg: "pageFg", color: "pageBg" },
+        cursor: "pointer",
+        _hover: { color: "pageBg", bg: "pageFg" },
       })}
     >
       {children}
@@ -345,24 +340,24 @@ function ModeTab({
 const inputCss = css({
   width: "100%",
   padding: 2,
-  border: "1px solid",
-  borderColor: "pageBorder",
-  bg: "pageBg",
   color: "pageFg",
   fontFamily: "mono",
   fontSize: "sm",
+  bg: "pageBg",
+  border: "1px solid",
+  borderColor: "pageBorder",
   resize: "vertical",
 });
 
 const btn = css({
   padding: "4px 12px",
-  border: "1px solid",
-  borderColor: "pageBorder",
-  bg: "pageBg",
   color: "pageFg",
   fontFamily: "mono",
   fontSize: "sm",
+  bg: "pageBg",
+  border: "1px solid",
+  borderColor: "pageBorder",
   cursor: "pointer",
-  _hover: { bg: "pageFg", color: "pageBg" },
-  _disabled: { cursor: "not-allowed", opacity: 0.4, _hover: { bg: "pageBg", color: "pageFg" } },
+  _hover: { color: "pageBg", bg: "pageFg" },
+  _disabled: { opacity: 0.4, cursor: "not-allowed", _hover: { color: "pageFg", bg: "pageBg" } },
 });

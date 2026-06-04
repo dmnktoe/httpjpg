@@ -245,7 +245,7 @@ export const MixedNavigation = {
       }}
     >
       <Box>
-        <Box as="span" css={{ fontWeight: "bold", display: "block", mb: "2" }}>
+        <Box as="span" css={{ display: "block", mb: "2", fontWeight: "bold" }}>
           ⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S
         </Box>
         <Box css={{ display: "flex", flexDirection: "column", gap: "1" }}>
@@ -261,7 +261,7 @@ export const MixedNavigation = {
       </Box>
 
       <Box>
-        <Box as="span" css={{ fontWeight: "bold", display: "block", mb: "2" }}>
+        <Box as="span" css={{ display: "block", mb: "2", fontWeight: "bold" }}>
           ⇝ᵣₑcꫀₙₜ 𝒞𝓁LI€NT
         </Box>
         <Box css={{ display: "flex", flexDirection: "column", gap: "1" }}>

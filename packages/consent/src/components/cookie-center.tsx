@@ -83,21 +83,21 @@ export function CookieCenter({ onSave }: CookieCenterProps) {
   return (
     <Box
       css={{
-        bg: "pageBg",
-        color: "pageFg",
-        border: "2px solid",
-        borderColor: "pageFg",
         p: { base: "5", md: "6" },
+        color: "pageFg",
         fontFamily: "sans",
         fontSize: "sm",
         lineHeight: 1.4,
+        bg: "pageBg",
+        border: "2px solid",
+        borderColor: "pageFg",
       }}
     >
       <Box css={{ mb: "4" }}>
-        <Box as="span" css={{ fontWeight: "bold", fontSize: "md", color: "primary.500" }}>
+        <Box as="span" css={{ color: "primary.500", fontSize: "md", fontWeight: "bold" }}>
           ⇝🍪 ᴄᴏᴏᴋɪᴇ ᴄᴇɴᴛᴇʀ 🍪⇝
         </Box>
-        <Box as="p" css={{ m: 0, mt: "2", fontSize: "sm", opacity: 0.8 }}>
+        <Box as="p" css={{ m: 0, mt: "2", opacity: 0.8, fontSize: "sm" }}>
           ⋆ﾟ･ Choose which cookies and external services you allow. Required categories keep the site
           working and can't be switched off. ⋆ﾟ･
         </Box>
@@ -110,7 +110,7 @@ export function CookieCenter({ onSave }: CookieCenterProps) {
         onToggleExpansion={toggleCategoryExpansion}
       />
 
-      <Box css={{ display: "flex", gap: "3", flexWrap: "wrap", alignItems: "center", mt: "5" }}>
+      <Box css={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "3", mt: "5" }}>
         <Button variant="primary" size="md" onClick={() => persist(FULL_CONSENT)}>
           ✓ Accept All
         </Button>
@@ -121,7 +121,7 @@ export function CookieCenter({ onSave }: CookieCenterProps) {
           ⚙ Save Preferences
         </Button>
         {isSaved && (
-          <Box as="output" css={{ fontSize: "sm", fontWeight: "bold", color: "success.600" }}>
+          <Box as="output" css={{ color: "success.600", fontSize: "sm", fontWeight: "bold" }}>
             ✓ Preferences saved
           </Box>
         )}

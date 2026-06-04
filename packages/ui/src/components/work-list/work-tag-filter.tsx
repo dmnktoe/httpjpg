@@ -11,26 +11,21 @@ export interface WorkTagFilterProps {
 }
 
 const buttonClass = css({
-  cursor: "pointer",
-  bg: "transparent",
-  border: "1px solid",
-  borderColor: "neutral.300",
-  fontFamily: "mono",
-  fontSize: "xs",
-  letterSpacing: "0.05em",
   px: "2",
   py: "1",
   color: "inherit",
+  fontFamily: "mono",
+  fontSize: "xs",
+  letterSpacing: "0.05em",
+  bg: "transparent",
+  border: "1px solid",
+  borderColor: "neutral.300",
   transition: "all 150ms",
-  _hover: {
-    borderColor: "neutral.700",
-  },
+  cursor: "pointer",
+  _hover: { borderColor: "neutral.700" },
 });
 
-const buttonActiveClass = css({
-  borderColor: "primary.500",
-  color: "primary.500",
-});
+const buttonActiveClass = css({ color: "primary.500", borderColor: "primary.500" });
 
 export function WorkTagFilter({ scopeSelector = "[data-work-list]" }: WorkTagFilterProps) {
   const [tags, setTags] = useState<string[]>([]);

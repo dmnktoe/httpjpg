@@ -55,15 +55,15 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
       className={cx(
         css({
           position: "relative",
-          border: "2px solid",
-          borderColor: "pageFg",
-          bg: "neutral.950",
+          my: "4",
           color: "neutral.100",
           fontFamily: "mono",
           fontSize: "sm",
           lineHeight: "snug",
+          bg: "neutral.950",
+          border: "2px solid",
+          borderColor: "pageFg",
           overflow: "hidden",
-          my: "4",
         }),
         cssProp && css(cssProp),
         className,
@@ -73,24 +73,24 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
         <div
           className={css({
             display: "flex",
-            alignItems: "center",
             justifyContent: "space-between",
+            alignItems: "center",
             gap: "3",
             px: "4",
             py: "2",
-            borderBottom: "1px solid",
-            borderColor: "neutral.700",
-            bg: "neutral.900",
-            fontSize: "xs",
-            textTransform: "uppercase",
-            letterSpacing: "wider",
             color: "neutral.100",
+            fontSize: "xs",
+            letterSpacing: "wider",
+            textTransform: "uppercase",
+            bg: "neutral.900",
+            borderColor: "neutral.700",
+            borderBottom: "1px solid",
           })}
         >
           <span>
             {filename || language}
             {filename && language && (
-              <span className={css({ opacity: 0.5, ml: "2" })}>╱╱ {language}</span>
+              <span className={css({ ml: "2", opacity: 0.5 })}>╱╱ {language}</span>
             )}
           </span>
           {copyable && (
@@ -99,16 +99,16 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
               onClick={handleCopy}
               aria-label="Copy code"
               className={css({
-                all: "unset",
                 boxSizing: "border-box",
-                cursor: "pointer",
                 px: "2",
                 py: "1",
+                color: "neutral.100",
+                fontFamily: "mono",
+                fontSize: "xs",
                 border: "1px solid",
                 borderColor: "neutral.700",
-                color: "neutral.100",
-                fontSize: "xs",
-                fontFamily: "mono",
+                cursor: "pointer",
+                all: "unset",
                 _hover: { bg: "neutral.900", borderColor: "neutral.100" },
                 _focusVisible: {
                   outline: "1px solid",
@@ -122,14 +122,7 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
           )}
         </div>
       )}
-      <pre
-        className={css({
-          margin: 0,
-          padding: "4",
-          overflow: "auto",
-          whiteSpace: "pre",
-        })}
-      >
+      <pre className={css({ margin: 0, padding: "4", whiteSpace: "pre", overflow: "auto" })}>
         {showLineNumbers ? (
           <code>
             {lines.map((line, idx) => (
@@ -138,9 +131,9 @@ export const CodeBlock = forwardRef<HTMLDivElement, CodeBlockProps>(function Cod
                   className={css({
                     display: "inline-block",
                     width: "8",
+                    pr: "3",
                     color: "neutral.700",
                     textAlign: "right",
-                    pr: "3",
                     userSelect: "none",
                   })}
                 >

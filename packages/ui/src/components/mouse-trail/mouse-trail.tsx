@@ -100,11 +100,11 @@ export function MouseTrail({
             key={particle.id}
             css={{
               position: "absolute",
-              fontSize: size,
               color,
+              fontSize: size,
               fontWeight: "bold",
-              userSelect: "none",
               transform: "translate(-50%, -50%)",
+              userSelect: "none",
             }}
             style={{
               left: `${particle.x}px`,

@@ -106,8 +106,8 @@ export function GridBuilder({ pushEnabled, siteUrl }: GridBuilderProps) {
         display: "flex",
         flexDirection: "column",
         height: "100dvh",
-        bg: "pageBg",
         color: "pageFg",
+        bg: "pageBg",
       })}
     >
       <Toolbar
@@ -145,11 +145,11 @@ export function GridBuilder({ pushEnabled, siteUrl }: GridBuilderProps) {
       />
       <div
         className={css({
-          flex: 1,
-          display: "flex",
-          overflow: "hidden",
-          minHeight: 0,
           position: "relative",
+          display: "flex",
+          flex: 1,
+          minHeight: 0,
+          overflow: "hidden",
         })}
       >
         <Palette onDragStart={() => {}} onDragEnd={() => {}} />

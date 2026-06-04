@@ -22,16 +22,14 @@ export function WorkCardMeta({
           href={`${baseUrl}/${slug}`}
           aria-label={slug}
           css={{
-            fontSize: "sm",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
             display: "block",
             color: "primary.500",
+            fontSize: "sm",
             textDecoration: "none",
-            _hover: {
-              textDecoration: "underline",
-            },
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            _hover: { textDecoration: "underline" },
           }}
         >
           <span aria-hidden="true">-̸̨̱̠̳̩̼͙̈̀̀̄̃̆́͠ͅ↳↳↳</span>
@@ -45,9 +43,9 @@ export function WorkCardMeta({
         css={{
           display: "block",
           mt: "1",
+          opacity: 0.25,
           fontFamily: "mono",
           fontSize: "2xs",
-          opacity: 0.25,
           letterSpacing: "0.1em",
         }}
       >

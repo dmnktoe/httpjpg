@@ -109,19 +109,17 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
     <Box
       css={{
         position: "absolute",
+        right: 0,
         bottom: 0,
         left: 0,
-        right: 0,
-        background: "linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent)",
-        p: 4,
         display: "flex",
         flexDirection: "column",
         gap: 2,
+        p: 4,
         opacity: 0,
+        background: "linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent)",
         transition: "opacity 0.3s ease",
-        _hover: {
-          opacity: 1,
-        },
+        _hover: { opacity: 1 },
       }}
       onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
         e.currentTarget.style.opacity = "1";
@@ -139,26 +137,26 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
         className={css({
           width: "100%",
           height: "1",
-          cursor: "pointer",
-          appearance: "none",
           background: "rgba(255, 255, 255, 0.3)",
           borderRadius: "sm",
           outline: "none",
+          appearance: "none",
+          cursor: "pointer",
           "&::-webkit-slider-thumb": {
-            appearance: "none",
             width: "3",
             height: "3",
-            borderRadius: "50%",
             background: "white",
+            borderRadius: "50%",
+            appearance: "none",
             cursor: "pointer",
           },
           "&::-moz-range-thumb": {
             width: "3",
             height: "3",
-            borderRadius: "50%",
             background: "white",
-            cursor: "pointer",
             border: "none",
+            borderRadius: "50%",
+            cursor: "pointer",
           },
         })}
         aria-label="Seek"
@@ -175,19 +173,17 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
           type="button"
           onClick={togglePlay}
           className={css({
-            background: "transparent",
-            border: "none",
-            color: "white",
-            cursor: "pointer",
-            padding: 1,
             display: "flex",
-            alignItems: "center",
             justifyContent: "center",
+            alignItems: "center",
             width: "8",
             height: "8",
-            _hover: {
-              opacity: 0.8,
-            },
+            padding: 1,
+            color: "white",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            _hover: { opacity: 0.8 },
           })}
           aria-label={isPlaying ? "Pause" : "Play"}
         >
@@ -210,14 +206,7 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
           </svg>
         </button>
 
-        <Box
-          css={{
-            color: "white",
-            fontSize: "sm",
-            fontFamily: "mono",
-            whiteSpace: "nowrap",
-          }}
-        >
+        <Box css={{ color: "white", fontFamily: "mono", fontSize: "sm", whiteSpace: "nowrap" }}>
           ╱╱ {formatTime(currentTime)} ⋄ {formatTime(duration)} ╱╱
         </Box>
 
@@ -234,19 +223,17 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
             type="button"
             onClick={toggleMute}
             className={css({
-              background: "transparent",
-              border: "none",
-              color: "white",
-              cursor: "pointer",
-              padding: 1,
               display: "flex",
-              alignItems: "center",
               justifyContent: "center",
+              alignItems: "center",
               width: "7",
               height: "7",
-              _hover: {
-                opacity: 0.8,
-              },
+              padding: 1,
+              color: "white",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              _hover: { opacity: 0.8 },
             })}
             aria-label={isMuted ? "Unmute" : "Mute"}
           >
@@ -276,26 +263,26 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
             className={css({
               width: "20",
               height: "1",
-              cursor: "pointer",
-              appearance: "none",
               background: "rgba(255, 255, 255, 0.3)",
               borderRadius: "sm",
               outline: "none",
+              appearance: "none",
+              cursor: "pointer",
               "&::-webkit-slider-thumb": {
-                appearance: "none",
                 width: "2.5",
                 height: "2.5",
-                borderRadius: "50%",
                 background: "white",
+                borderRadius: "50%",
+                appearance: "none",
                 cursor: "pointer",
               },
               "&::-moz-range-thumb": {
                 width: "2.5",
                 height: "2.5",
-                borderRadius: "50%",
                 background: "white",
-                cursor: "pointer",
                 border: "none",
+                borderRadius: "50%",
+                cursor: "pointer",
               },
             })}
             aria-label="Volume"

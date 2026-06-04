@@ -77,9 +77,9 @@ export function ImageOverlay({
             position: "absolute",
             fontFamily: "mono",
             fontWeight: "bold",
-            userSelect: "none",
-            whiteSpace: "nowrap",
             lineHeight: 1,
+            whiteSpace: "nowrap",
+            userSelect: "none",
           }}
           style={{
             top: p.top,

@@ -83,8 +83,8 @@ export function AssetPicker({ open, onClose, onPick }: AssetPickerProps) {
         className={css({
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 2,
           alignContent: "start",
+          gap: 2,
         })}
       >
         {assets.map((asset) => (
@@ -93,14 +93,14 @@ export function AssetPicker({ open, onClose, onPick }: AssetPickerProps) {
             type="button"
             onClick={() => onPick(asset)}
             className={css({
-              all: "unset",
-              cursor: "pointer",
-              border: "1px solid",
-              borderColor: "pageBorder",
-              padding: 1,
               display: "flex",
               flexDirection: "column",
               gap: 1,
+              padding: 1,
+              border: "1px solid",
+              borderColor: "pageBorder",
+              cursor: "pointer",
+              all: "unset",
               _hover: { borderColor: "pageFg" },
             })}
           >
@@ -109,20 +109,20 @@ export function AssetPicker({ open, onClose, onPick }: AssetPickerProps) {
               alt={asset.alt ?? ""}
               loading="lazy"
               className={css({
-                width: "100%",
                 aspectRatio: "1/1",
-                objectFit: "cover",
+                width: "100%",
                 bg: "pageBorder",
+                objectFit: "cover",
               })}
             />
             <span
               className={css({
-                fontSize: "sm",
-                fontFamily: "mono",
                 opacity: 0.7,
-                overflow: "hidden",
+                fontFamily: "mono",
+                fontSize: "sm",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
+                overflow: "hidden",
               })}
             >
               {asset.filename.split("/").pop()}
@@ -216,12 +216,12 @@ export function StoryPicker({ open, startsWith, onClose, onPick }: StoryPickerPr
       {loading && <p className={css({ opacity: 0.6 })}>Loading…</p>}
       <ul
         className={css({
-          listStyle: "none",
-          padding: 0,
-          margin: 0,
           display: "flex",
           flexDirection: "column",
           gap: 1,
+          margin: 0,
+          padding: 0,
+          listStyle: "none",
         })}
       >
         {stories.map((story) => (
@@ -230,16 +230,16 @@ export function StoryPicker({ open, startsWith, onClose, onPick }: StoryPickerPr
               type="button"
               onClick={() => onPick(story)}
               className={css({
-                all: "unset",
-                cursor: "pointer",
+                boxSizing: "border-box",
                 display: "flex",
                 gap: 2,
+                width: "100%",
                 padding: 2,
                 border: "1px solid",
                 borderColor: "pageBorder",
-                width: "100%",
-                boxSizing: "border-box",
-                _hover: { bg: "pageFg", color: "pageBg" },
+                cursor: "pointer",
+                all: "unset",
+                _hover: { color: "pageBg", bg: "pageFg" },
               })}
             >
               <span className={css({ flex: 1 })}>{story.name}</span>
@@ -268,9 +268,9 @@ function Pagination({
     <div
       className={css({
         display: "flex",
-        gap: 2,
-        alignItems: "center",
         justifyContent: "center",
+        alignItems: "center",
+        gap: 2,
         padding: 2,
         fontFamily: "mono",
         fontSize: "sm",
@@ -313,11 +313,11 @@ function PickerShell({
       className={css({
         position: "fixed",
         inset: 0,
-        bg: "rgba(0,0,0,0.4)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         zIndex: 100,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        bg: "rgba(0,0,0,0.4)",
       })}
       role="presentation"
     >
@@ -325,12 +325,7 @@ function PickerShell({
         type="button"
         aria-label="Close picker"
         onClick={onClose}
-        className={css({
-          all: "unset",
-          position: "absolute",
-          inset: 0,
-          cursor: "default",
-        })}
+        className={css({ position: "absolute", inset: 0, cursor: "default", all: "unset" })}
       />
       <dialog
         open
@@ -340,32 +335,32 @@ function PickerShell({
         }}
         className={css({
           position: "relative",
+          display: "flex",
+          flexDirection: "column",
           width: "720px",
           maxWidth: "92vw",
           maxHeight: "80vh",
-          bg: "pageBg",
+          margin: 0,
+          padding: 0,
           color: "pageFg",
-          border: "1px solid",
-          borderColor: "pageFg",
-          display: "flex",
-          flexDirection: "column",
           fontFamily: "mono",
           fontSize: "sm",
-          padding: 0,
-          margin: 0,
+          bg: "pageBg",
+          border: "1px solid",
+          borderColor: "pageFg",
         })}
       >
         <header
           className={css({
-            padding: 3,
-            borderBottom: "1px solid",
-            borderColor: "pageBorder",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            padding: 3,
+            borderColor: "pageBorder",
+            borderBottom: "1px solid",
           })}
         >
-          <strong className={css({ textTransform: "uppercase", letterSpacing: "wide" })}>
+          <strong className={css({ letterSpacing: "wide", textTransform: "uppercase" })}>
             {title}
           </strong>
           <button
@@ -373,10 +368,10 @@ function PickerShell({
             onClick={onClose}
             aria-label="Close"
             className={css({
-              all: "unset",
-              cursor: "pointer",
               padding: "0 6px",
-              _hover: { bg: "pageFg", color: "pageBg" },
+              cursor: "pointer",
+              all: "unset",
+              _hover: { color: "pageBg", bg: "pageFg" },
             })}
           >
             ×
@@ -384,12 +379,12 @@ function PickerShell({
         </header>
         <div
           className={css({
-            padding: 3,
-            overflow: "auto",
             display: "flex",
+            flex: 1,
             flexDirection: "column",
             gap: 2,
-            flex: 1,
+            padding: 3,
+            overflow: "auto",
           })}
         >
           {children}
@@ -402,23 +397,23 @@ function PickerShell({
 const inputCss = css({
   width: "100%",
   padding: 1,
-  border: "1px solid",
-  borderColor: "pageBorder",
-  bg: "pageBg",
   color: "pageFg",
   fontFamily: "mono",
   fontSize: "sm",
+  bg: "pageBg",
+  border: "1px solid",
+  borderColor: "pageBorder",
 });
 
 const btnCss = css({
   padding: "1px 8px",
-  border: "1px solid",
-  borderColor: "pageBorder",
-  bg: "pageBg",
   color: "pageFg",
   fontFamily: "mono",
   fontSize: "sm",
+  bg: "pageBg",
+  border: "1px solid",
+  borderColor: "pageBorder",
   cursor: "pointer",
-  _hover: { bg: "pageFg", color: "pageBg" },
-  _disabled: { cursor: "not-allowed", opacity: 0.4, _hover: { bg: "pageBg", color: "pageFg" } },
+  _hover: { color: "pageBg", bg: "pageFg" },
+  _disabled: { opacity: 0.4, cursor: "not-allowed", _hover: { color: "pageFg", bg: "pageBg" } },
 });

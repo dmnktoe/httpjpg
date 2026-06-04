@@ -96,7 +96,7 @@ export const WithSections: Story = {
         <Headline level={1} css={{ mb: "6" }}>
           Portfolio Showcase
         </Headline>
-        <Paragraph css={{ fontSize: "lg", maxW: "2xl" }}>
+        <Paragraph css={{ maxW: "2xl", fontSize: "lg" }}>
           A curated collection of digital experiences, brand identities, and creative experiments.
           Each project tells a unique story.
         </Paragraph>
@@ -142,11 +142,11 @@ export const WithSections: Story = {
       </Section>
 
       {/* Call to Action */}
-      <Section css={{ py: "32", bg: "black", color: "white", textAlign: "center" }}>
+      <Section css={{ py: "32", color: "white", textAlign: "center", bg: "black" }}>
         <Headline level={2} css={{ mb: "6" }}>
           Let's Work Together
         </Headline>
-        <Paragraph css={{ fontSize: "lg", mb: "8" }}>
+        <Paragraph css={{ mb: "8", fontSize: "lg" }}>
           Have a project in mind? Let's create something amazing.
         </Paragraph>
         <Box
@@ -154,17 +154,14 @@ export const WithSections: Story = {
           css={{
             px: "8",
             py: "4",
-            bg: "white",
             color: "black",
-            border: "2px solid white",
-            cursor: "pointer",
             fontSize: "lg",
             fontWeight: "bold",
+            bg: "white",
+            border: "2px solid white",
             transition: "all 0.2s",
-            _hover: {
-              bg: "black",
-              color: "white",
-            },
+            cursor: "pointer",
+            _hover: { color: "white", bg: "black" },
           }}
         >
           Get in Touch

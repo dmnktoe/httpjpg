@@ -42,23 +42,23 @@ export function Inspector({ item, viewport, onChange, onDataChange }: InspectorP
   return (
     <aside
       className={css({
-        width: "260px",
         flexShrink: 0,
-        borderLeft: "1px solid",
-        borderColor: "pageBorder",
+        width: "260px",
         padding: 3,
-        overflowY: "auto",
         fontFamily: "mono",
         fontSize: "sm",
+        borderColor: "pageBorder",
+        borderLeft: "1px solid",
+        overflowY: "auto",
       })}
     >
       <h2
         className={css({
+          mb: 3,
           fontSize: "sm",
           fontWeight: "bold",
-          textTransform: "uppercase",
-          mb: 3,
           letterSpacing: "wide",
+          textTransform: "uppercase",
         })}
       >
         Inspector
@@ -213,7 +213,7 @@ function InspectorBody({ item, viewport, onChange, onDataChange }: InspectorBody
       </Group>
 
       <Group label={`Visibility · ${VIEWPORT_LABEL[viewport]}`}>
-        <label className={css({ display: "flex", gap: 2, alignItems: "center" })}>
+        <label className={css({ display: "flex", alignItems: "center", gap: 2 })}>
           <input
             type="checkbox"
             checked={hidden}
@@ -327,20 +327,20 @@ function Group({ label, children }: { label: string; children: React.ReactNode }
   return (
     <section
       className={css({
-        border: "1px solid",
-        borderColor: "pageBorder",
-        padding: 2,
         display: "flex",
         flexDirection: "column",
         gap: 2,
+        padding: 2,
+        border: "1px solid",
+        borderColor: "pageBorder",
       })}
     >
       <h3
         className={css({
-          fontSize: "sm",
-          textTransform: "uppercase",
-          letterSpacing: "wide",
           opacity: 0.6,
+          fontSize: "sm",
+          letterSpacing: "wide",
+          textTransform: "uppercase",
         })}
       >
         {label}
@@ -360,9 +360,9 @@ function Row({ label, value, mono }: { label: string; value: string; mono?: bool
       <span className={css({ opacity: 0.6 })}>{label}</span>
       <span
         className={css({
+          fontFamily: mono ? "mono" : undefined,
           textAlign: "right",
           wordBreak: "break-all",
-          fontFamily: mono ? "mono" : undefined,
         })}
       >
         {value}
@@ -429,7 +429,7 @@ function SelectField({
 }) {
   return (
     <label className={labelCss}>
-      <span className={css({ opacity: 0.6, display: "flex", justifyContent: "space-between" })}>
+      <span className={css({ display: "flex", justifyContent: "space-between", opacity: 0.6 })}>
         <span>{label}</span>
         {hint && <span className={css({ opacity: 0.6 })}>{hint}</span>}
       </span>
@@ -465,15 +465,15 @@ function SpacingPair({
   return (
     <fieldset
       className={css({
-        border: "1px solid",
-        borderColor: "pageBorder",
-        padding: 2,
         display: "flex",
         flexDirection: "column",
         gap: 1,
+        padding: 2,
+        border: "1px solid",
+        borderColor: "pageBorder",
       })}
     >
-      <legend className={css({ fontSize: "sm", textTransform: "uppercase", opacity: 0.6 })}>
+      <legend className={css({ opacity: 0.6, fontSize: "sm", textTransform: "uppercase" })}>
         {legend}
       </legend>
       {SIDE_ROWS.map(({ label, sides }) => {
@@ -567,7 +567,7 @@ function BlokField({
       );
     case "boolean":
       return (
-        <label className={css({ display: "flex", gap: 2, alignItems: "center" })}>
+        <label className={css({ display: "flex", alignItems: "center", gap: 2 })}>
           <input
             type="checkbox"
             checked={Boolean(value)}
@@ -633,14 +633,14 @@ function PickableField({
           onClick={() => setPickerOpen(true)}
           className={css({
             padding: "1px 8px",
-            border: "1px solid",
-            borderColor: "pageBorder",
-            bg: "pageBg",
             color: "pageFg",
             fontFamily: "mono",
             fontSize: "sm",
+            bg: "pageBg",
+            border: "1px solid",
+            borderColor: "pageBorder",
             cursor: "pointer",
-            _hover: { bg: "pageFg", color: "pageBg" },
+            _hover: { color: "pageBg", bg: "pageFg" },
           })}
         >
           Browse

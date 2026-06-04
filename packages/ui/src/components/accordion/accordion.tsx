@@ -119,7 +119,7 @@ export function Accordion({
                 cursor: "pointer",
                 textAlign: "left",
                 ...sizeStyles[size],
-                _hover: { bg: "pageBorder", opacity: 0.5 },
+                _hover: { opacity: 0.5, bg: "pageBorder" },
                 _focusVisible: {
                   outline: "2px solid",
                   outlineColor: "primary.500",
@@ -131,9 +131,9 @@ export function Accordion({
                 <span
                   aria-hidden="true"
                   className={css({
+                    opacity: 0.4,
                     fontFamily: "mono",
                     fontSize: "xs",
-                    opacity: 0.4,
                     letterSpacing: "wider",
                   })}
                 >
@@ -146,8 +146,8 @@ export function Accordion({
                 className={css({
                   fontFamily: "mono",
                   fontSize: "sm",
-                  transition: "transform 200ms ease",
                   transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
+                  transition: "transform 200ms ease",
                 })}
               >
                 ✦

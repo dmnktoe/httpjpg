@@ -26,10 +26,10 @@ function FontSizeRow({ size, rem, px, desc, children }: FontSizeRowProps) {
         <Paragraph css={{ fontFamily: "mono", fontSize: "sm", fontWeight: "bold" }}>
           {size}
         </Paragraph>
-        <Paragraph css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.6 }}>
+        <Paragraph css={{ opacity: 0.6, fontFamily: "mono", fontSize: "xs" }}>
           {rem} ({px})
         </Paragraph>
-        <Paragraph css={{ fontSize: "xs", opacity: 0.6 }}>- {desc}</Paragraph>
+        <Paragraph css={{ opacity: 0.6, fontSize: "xs" }}>- {desc}</Paragraph>
       </Box>
       {children}
     </Box>
@@ -48,7 +48,7 @@ export const TypographyGuide = {
       </Paragraph>
 
       {/* Font Families */}
-      <Headline level={2} css={{ mb: "6", mt: "12" }}>
+      <Headline level={2} css={{ mt: "12", mb: "6" }}>
         FONT FAMILIES
       </Headline>
 
@@ -61,13 +61,7 @@ export const TypographyGuide = {
           Stack: Arial, Helvetica, sans-serif
         </Paragraph>
         <Box
-          css={{
-            fontFamily: "sans",
-            fontSize: "lg",
-            p: "4",
-            bg: "neutral.50",
-            borderRadius: "md",
-          }}
+          css={{ p: "4", fontFamily: "sans", fontSize: "lg", bg: "neutral.50", borderRadius: "md" }}
         >
           The quick brown fox jumps over the lazy dog. 0123456789
         </Box>
@@ -83,10 +77,10 @@ export const TypographyGuide = {
         </Paragraph>
         <Box
           css={{
+            p: "4",
             fontFamily: "headline",
             fontSize: "4xl",
             textTransform: "uppercase",
-            p: "4",
             bg: "neutral.50",
             borderRadius: "md",
           }}
@@ -107,9 +101,9 @@ export const TypographyGuide = {
         </Paragraph>
         <Box
           css={{
+            p: "4",
             fontFamily: "accent",
             fontSize: "2xl",
-            p: "4",
             bg: "neutral.50",
             borderRadius: "md",
           }}
@@ -130,11 +124,11 @@ export const TypographyGuide = {
         </Paragraph>
         <Box
           css={{
+            p: "4",
+            color: "white",
             fontFamily: "mono",
             fontSize: "sm",
-            p: "4",
             bg: "neutral.900",
-            color: "white",
             borderRadius: "md",
           }}
         >
@@ -143,11 +137,11 @@ export const TypographyGuide = {
       </Box>
 
       {/* Font Sizes */}
-      <Headline level={2} css={{ mb: "6", mt: "12" }}>
+      <Headline level={2} css={{ mt: "12", mb: "6" }}>
         FONT SIZES
       </Headline>
 
-      <Box css={{ mb: "8", display: "flex", flexDirection: "column", gap: "4" }}>
+      <Box css={{ display: "flex", flexDirection: "column", gap: "4", mb: "8" }}>
         <FontSizeRow size="xs" rem="0.75rem" px="12px" desc="Small text, captions">
           <Box css={{ fontSize: "xs" }}>The quick brown fox</Box>
         </FontSizeRow>
@@ -181,11 +175,11 @@ export const TypographyGuide = {
       </Box>
 
       {/* Font Weights */}
-      <Headline level={2} css={{ mb: "6", mt: "12" }}>
+      <Headline level={2} css={{ mt: "12", mb: "6" }}>
         FONT WEIGHTS
       </Headline>
 
-      <Box css={{ mb: "12", display: "flex", flexDirection: "column", gap: "3" }}>
+      <Box css={{ display: "flex", flexDirection: "column", gap: "3", mb: "12" }}>
         {[
           { weight: 100, name: "Thin" },
           { weight: 200, name: "Extralight" },
@@ -197,18 +191,18 @@ export const TypographyGuide = {
           { weight: 800, name: "Extrabold" },
           { weight: 900, name: "Black" },
         ].map(({ weight, name }) => (
-          <Box key={weight} css={{ fontWeight: weight, fontSize: "lg" }}>
+          <Box key={weight} css={{ fontSize: "lg", fontWeight: weight }}>
             {name} ({weight}) - The quick brown fox
           </Box>
         ))}
       </Box>
 
       {/* Letter Spacing */}
-      <Headline level={2} css={{ mb: "6", mt: "12" }}>
+      <Headline level={2} css={{ mt: "12", mb: "6" }}>
         LETTER SPACING
       </Headline>
 
-      <Box css={{ mb: "12", display: "flex", flexDirection: "column", gap: "3" }}>
+      <Box css={{ display: "flex", flexDirection: "column", gap: "3", mb: "12" }}>
         {[
           { spacing: "-0.05em", name: "Tighter" },
           { spacing: "-0.025em", name: "Tight" },
@@ -217,18 +211,18 @@ export const TypographyGuide = {
           { spacing: "0.05em", name: "Wider" },
           { spacing: "0.1em", name: "Widest" },
         ].map(({ spacing, name }) => (
-          <Box key={spacing} css={{ letterSpacing: spacing, fontSize: "lg" }}>
+          <Box key={spacing} css={{ fontSize: "lg", letterSpacing: spacing }}>
             {name} ({spacing}) - The quick brown fox
           </Box>
         ))}
       </Box>
 
       {/* Line Heights */}
-      <Headline level={2} css={{ mb: "6", mt: "12" }}>
+      <Headline level={2} css={{ mt: "12", mb: "6" }}>
         LINE HEIGHTS
       </Headline>
 
-      <Box css={{ mb: "12", display: "flex", flexDirection: "column", gap: "6" }}>
+      <Box css={{ display: "flex", flexDirection: "column", gap: "6", mb: "12" }}>
         {[
           { height: 1, name: "None" },
           { height: 1.25, name: "Tight" },
@@ -238,17 +232,10 @@ export const TypographyGuide = {
           { height: 2, name: "Loose" },
         ].map(({ height, name }) => (
           <Box key={height}>
-            <Paragraph css={{ fontWeight: "bold", mb: "2" }}>
+            <Paragraph css={{ mb: "2", fontWeight: "bold" }}>
               {name} ({height})
             </Paragraph>
-            <Box
-              css={{
-                lineHeight: height,
-                p: "4",
-                bg: "neutral.50",
-                borderRadius: "md",
-              }}
-            >
+            <Box css={{ p: "4", lineHeight: height, bg: "neutral.50", borderRadius: "md" }}>
               The quick brown fox jumps over the lazy dog. Lorem ipsum dolor sit amet, consectetur
               adipiscing elit. Sed do eiusmod tempor incididunt.
             </Box>
@@ -257,7 +244,7 @@ export const TypographyGuide = {
       </Box>
 
       {/* Usage Examples */}
-      <Headline level={2} css={{ mb: "6", mt: "12" }}>
+      <Headline level={2} css={{ mt: "12", mb: "6" }}>
         USAGE EXAMPLES
       </Headline>
 
@@ -267,13 +254,13 @@ export const TypographyGuide = {
         </Headline>
         <Box
           css={{
-            bg: "neutral.900",
-            color: "white",
+            mb: "4",
             p: "4",
-            borderRadius: "md",
+            color: "white",
             fontFamily: "mono",
             fontSize: "sm",
-            mb: "4",
+            bg: "neutral.900",
+            borderRadius: "md",
           }}
         >
           <pre>
@@ -301,13 +288,13 @@ export const TypographyGuide = {
         </Headline>
         <Box
           css={{
-            bg: "neutral.900",
-            color: "white",
+            mb: "4",
             p: "4",
-            borderRadius: "md",
+            color: "white",
             fontFamily: "mono",
             fontSize: "sm",
-            mb: "4",
+            bg: "neutral.900",
+            borderRadius: "md",
           }}
         >
           <pre>
@@ -331,12 +318,12 @@ export const TypographyGuide = {
         </Box>
         <Box
           css={{
-            p: "4",
-            bg: "neutral.50",
-            borderRadius: "md",
             display: "flex",
             flexDirection: "column",
             gap: "3",
+            p: "4",
+            bg: "neutral.50",
+            borderRadius: "md",
           }}
         >
           <Paragraph>Small (default): Body text with optimal readability</Paragraph>
@@ -351,13 +338,13 @@ export const TypographyGuide = {
         </Headline>
         <Box
           css={{
-            bg: "neutral.900",
-            color: "white",
+            mb: "4",
             p: "4",
-            borderRadius: "md",
+            color: "white",
             fontFamily: "mono",
             fontSize: "sm",
-            mb: "4",
+            bg: "neutral.900",
+            borderRadius: "md",
           }}
         >
           <pre>

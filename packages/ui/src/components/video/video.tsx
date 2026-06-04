@@ -48,13 +48,13 @@ function getVimeoId(url: string): string {
 const skeletonClass = css({
   position: "absolute",
   inset: 0,
+  zIndex: 1,
   w: "100%",
   h: "100%",
   bg: `linear-gradient(90deg, ${token.var("colors.neutral.100")} 0%, ${token.var("colors.neutral.200")} 50%, ${token.var("colors.neutral.100")} 100%)`,
   backgroundSize: "200% 100%",
-  animation: "shimmer 1.5s ease-in-out infinite",
-  zIndex: 1,
   transition: "opacity 0.5s ease-in-out",
+  animation: "shimmer 1.5s ease-in-out infinite",
   pointerEvents: "none",
 });
 

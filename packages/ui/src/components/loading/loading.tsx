@@ -25,13 +25,13 @@ export function Loading() {
       css={{
         position: "fixed",
         inset: 0,
+        zIndex: "overlay",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
         justifyContent: "center",
+        alignItems: "center",
         gap: 2,
         pointerEvents: "none",
-        zIndex: "overlay",
       }}
       aria-live="polite"
     >
@@ -41,12 +41,7 @@ export function Loading() {
       <Box
         as="span"
         aria-hidden="true"
-        css={{
-          fontFamily: "mono",
-          fontSize: "xs",
-          letterSpacing: "0.2em",
-          opacity: 0.7,
-        }}
+        css={{ opacity: 0.7, fontFamily: "mono", fontSize: "xs", letterSpacing: "0.2em" }}
       >
         ▰▰▰▱▱▱▰▰▰▱▱▱
       </Box>

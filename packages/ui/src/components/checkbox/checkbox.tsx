@@ -110,9 +110,9 @@ export function Checkbox({
           fontWeight: "bold",
           letterSpacing: "tighter",
           border: "2px solid",
-          borderColor: checked ? "success.500" : "pageBorder",
-          color: "success.500",
-          bg: checked ? "success.500/10" : "transparent",
+          borderColor: checked ? "accent.500" : "pageBorder",
+          color: "accent.500",
+          bg: checked ? "accent.500/10" : "transparent",
           transition: "border-color 150ms ease, background-color 150ms ease",
           "label:hover &": disabled ? {} : { borderColor: "pageFg" },
           _peerFocusVisible: {

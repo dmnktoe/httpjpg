@@ -1,21 +1,12 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
-#
-# CodeRabbit configuration — tuned for low noise / low cost.
-# CI (.github/workflows/ci.yml) already runs oxlint, type-check, Vitest,
-# build and Playwright, so CodeRabbit does NOT re-run those linters here.
-# It focuses on logic, architecture and security review instead.
 
 language: en-US
 early_access: false
-tone_instructions: "Be concise. Only flag substantive issues (correctness, security, architecture). Skip stylistic nitpicks that oxlint/oxfmt already cover."
+tone_instructions: "Be concise. Only flag correctness, security, and architecture issues; skip style nitpicks covered by oxlint/oxfmt."
 
 reviews:
-  # 'chill' = far fewer nitpicks than the default 'assertive' profile.
   profile: chill
-
-  # Don't gate merges on CodeRabbit; CI is the source of truth.
   request_changes_workflow: false
-
   high_level_summary: true
   poem: false
   review_status: false
@@ -24,15 +15,11 @@ reviews:
 
   auto_review:
     enabled: true
-    # The big cost/noise saver: do NOT re-review on every push.
-    # Review the full PR once; skip incremental passes per commit.
     auto_incremental_review: false
-    # Skip draft PRs entirely.
     drafts: false
     base_branches:
       - main
 
-  # Skip generated / lockfile / vendored paths so they never consume a review.
   path_filters:
     - "!**/pnpm-lock.yaml"
     - "!**/styled-system/**"
@@ -43,7 +30,6 @@ reviews:
     - "!**/playwright-report/**"
     - "!CHANGELOG.md"
 
-  # Targeted guidance instead of broad commentary (matches CLAUDE.md conventions).
   path_instructions:
     - path: "packages/**/*.{ts,tsx}"
       instructions: >-
@@ -58,9 +44,7 @@ reviews:
         must go through @httpjpg/env, never process.env (except NODE_ENV).
         Storyblok data fetching stays server-side via storyblok-next.
 
-  # --- Tooling --------------------------------------------------------------
-  # Disabled: anything CI already covers, to avoid duplicate comments.
-  # Kept: gitleaks (no secret scanning in CI) — flip to false if undesired.
+  # Linters below run in CI already; gitleaks kept since CI has no secret scan.
   tools:
     biome:
       enabled: false
@@ -83,7 +67,6 @@ reviews:
     gitleaks:
       enabled: true
 
-# Keep @coderabbitai chat available, but no automatic, unprompted noise.
 chat:
   auto_reply: true
 

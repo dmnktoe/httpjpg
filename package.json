@@ -1,6 +1,6 @@
 {
   "name": "httpjpg",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "scripts": {
     "build": "PANDA_PRODUCTION=1 turbo run build",
     "dev": "turbo run dev",

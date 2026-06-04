@@ -1,4 +1,5 @@
 import { cleanup, render, screen } from "@testing-library/react";
+import { createElement, type ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 let searchParamKeys: Set<string>;
@@ -11,10 +12,8 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("@httpjpg/ui", () => ({
-  Box: ({ as, children, ...rest }: { as?: string; children?: React.ReactNode; href?: string }) => {
-    const Tag = (as ?? "div") as keyof JSX.IntrinsicElements;
-    return <Tag {...rest}>{children}</Tag>;
-  },
+  Box: ({ as, children, ...rest }: { as?: string; children?: ReactNode; href?: string }) =>
+    createElement(as ?? "div", rest, children),
 }));
 
 import { PreviewNotification } from "./preview-notification";

@@ -4,6 +4,45 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-06-04
+
+### Breaking
+
+- **UI / Buttons**: removed the `outline` and `disabled` button variants entirely (no back-compat). The variant set is now `primary` (blue), `secondary` (neutral grey), `accent` (lime), and `danger` (red), with flat fills and no gradient. The matching Storyblok button + cta schema options were dropped — run `pnpm --filter @httpjpg/storyblok-sync sync:components`.
+- **Tokens / CMS**: removed the rose `secondary` color palette from the design tokens and the CMS color datasource. Run `pnpm --filter @httpjpg/storyblok-sync sync:datasources` to drop the Secondary swatches from the live color picker.
+- **Work taxonomy**: renamed the binary work split from personal/client to projects/websites — `PERSONAL_TAG`/`CLIENT_TAG` → `PROJECTS_TAG`/`WEBSITES_TAG`, `getRecentWork()` keys → `projectsWork`/`websitesWork`, the Header/Navigation/MobileMenu props, the NavLink recipe variant keys (`personal`/`client` → `projects`/`websites`), and `TAXONOMY_TAGS`. Existing Storyblok stories must be re-tagged (Client → Websites; Personal → Projects or untagged).
+- **Consent**: stored consent is now versioned (`CONSENT_VERSION`); older and legacy unversioned cookies are discarded, so every visitor is prompted for a fresh decision. Removed the `window.__openCookieSettings` global and the `ConsentConfig` type; `OPEN_COOKIE_SETTINGS_EVENT` moved to `@httpjpg/ui`.
+
+### Added
+
+- **Analytics**: privacy-first Umami integration alongside Google Analytics — a `UmamiAnalytics` script component, provider-agnostic domain events that fan out to every configured provider, an `umami` consent vendor, and `NEXT_PUBLIC_UMAMI_ID` / `NEXT_PUBLIC_UMAMI_SRC` env. Cookieless and DNT-respecting.
+- **Consent**: a `/cookie-policy` page with an inline `CookieCenter` preference manager, a reactive store layer (`useConsent` / `useConsentCategory` / `useVendorConsent` built on `useSyncExternalStore`), an expanded cookie-banner intro with a live count of named third-party services and inline policy links, and a footer Cookie Policy link.
+- **UI**: a `danger` button variant, plus Storybook Foundations pages for Z-Index, Border Radius, Opacity, Sizes, and Transitions, and a CookieBanner widget story.
+
+### Changed
+
+- **Analytics**: Google Analytics and Umami now load only behind a single `analytics` consent via a generic `ConsentGate`; neither tracker fires before consent is granted. `@httpjpg/analytics` is now a framework-agnostic leaf (react/next deps moved into the app).
+- **UI**: the button and navLink recipes moved to build-time `*.recipe.ts` files colocated with their components, and the dead headline/paragraph recipe duplicates were dropped from `panda.config.ts`. The accent token is now lime green and secondary buttons use the neutral scale.
+- **Observability**: explicit Sentry capture added to catch-and-fallback paths that never reach the `onRequestError` hook — the config / recent-work / adjacent-work / last-updated queries, sitemap generation, `generateStaticParams`, the revalidate / discord / spotify route handlers, and the `[...slug]` error boundary.
+- **Deps**: `next` is now sourced from the pnpm catalog across packages.
+
+### Fixed
+
+- **Richtext**: the Storyblok Max Width option now controls prose width — ch classes are statically generated from `CMS_OPTIONS.proseMaxWidth`, `none` maps to no constraint, and an unset value defaults to 65ch.
+- **UI**: disabled buttons no longer run hover transitions.
+- **Consent**: guard the cookie decode against malformed percent-encoding (a bad `%` escape was white-screening the render), seed `CookieCenter` from the store on first render to avoid a flash to defaults, and keep the inline center in sync with the banner.
+
+### Tooling
+
+- **Observability**: added the missing `type-check` script so the package is no longer skipped by `turbo run type-check`.
+- **Renovate**: dropped the `scope:` label prefix and the unused `scope:root` label.
+- **Tests**: added consent-package unit tests (store, hooks, cookie banner, cookie center) plus `ConsentGate` and `UmamiAnalytics` tests.
+- **Refactor**: cleaned up AI-slop patterns across the monorepo — surfaced silent catches, replaced `any` with real types, and converted plain arrow components to function declarations.
+
+### Dependencies
+
+- linting & formatting (oxlint + oxfmt) updated to `^0.53.0`.
+
 ## [1.5.0] - 2026-06-03
 
 ### Added

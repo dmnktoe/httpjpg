@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-06-04
+
+### Added
+
+- **Portfolio**: Arcjet rate-limiting on the public API routes, throttling abusive traffic to the discord, spotify, and other handlers.
+- **Portfolio**: a Letterboxd recently-watched widget surfacing the latest films logged on Letterboxd.
+- **Storyblok-sync**: editor previews and field tooltips pushed to the CMS, giving editors inline guidance and live block previews in the Visual Editor.
+
+### Fixed
+
+- **Observability**: web vitals are now reported via browser tracing instead of the errors quota, keeping performance data off the error budget.
+- **A11y**: accessible labels added to form controls and canvas interactions.
+- **UI**: focus is trapped inside the mobile menu dialog while it is open.
+- **UI**: cursor, mouse trail, and marquee now respect `prefers-reduced-motion`.
+- **Portfolio**: the CMS-sourced discord user id is validated before the external Lanyard call.
+
+### Tooling
+
+- **CodeRabbit**: a lean CodeRabbit review config.
+- **Tests**: coverage for the storyblok api, next cache, and richtext layers.
+
+### Dependencies
+
+- lock file maintenance.
+
 ## [2.1.0] - 2026-06-04
 
 ### Added

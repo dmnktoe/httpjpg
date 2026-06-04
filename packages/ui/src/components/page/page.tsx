@@ -33,11 +33,7 @@ export const Page = forwardRef<HTMLDivElement, PageProps>(
       {header && <Header {...header} />}
       <Box
         as="main"
-        css={{
-          flex: 1,
-          paddingBottom: footer ? `${FOOTER_HEIGHT}px` : "0",
-          width: "100%",
-        }}
+        css={{ flex: 1, width: "100%", paddingBottom: footer ? `${FOOTER_HEIGHT}px` : "0" }}
       >
         {children}
       </Box>

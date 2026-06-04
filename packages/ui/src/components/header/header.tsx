@@ -60,15 +60,15 @@ export function Header({ nav, projectsWork = [], websitesWork = [], children }: 
       css={{
         position: "sticky",
         top: 0,
-        left: 0,
         right: 0,
-        w: "full",
-        bg: "transparent",
-        color: "pageFg",
+        left: 0,
         zIndex: { base: "mobileMenuButton", lg: "header" },
-        pointerEvents: "none",
+        w: "full",
         py: 4,
+        color: "pageFg",
         fontSize: "sm",
+        bg: "transparent",
+        pointerEvents: "none",
         userSelect: "none",
       }}
     >
@@ -76,18 +76,18 @@ export function Header({ nav, projectsWork = [], websitesWork = [], children }: 
         <Box
           css={{
             display: "flex",
-            w: "full",
-            alignItems: "flex-start",
             justifyContent: "space-between",
+            alignItems: "flex-start",
             gap: "12",
+            w: "full",
           }}
         >
           <Box
             css={{
               display: { base: "block", lg: "none" },
-              lineHeight: "snug",
-              fontSize: "xs",
               maxW: "64",
+              fontSize: "xs",
+              lineHeight: "snug",
             }}
           >
             <Box as="span" css={{ fontWeight: "bold" }}>
@@ -96,18 +96,12 @@ export function Header({ nav, projectsWork = [], websitesWork = [], children }: 
             <br />
             <Link
               href="/"
-              css={{
-                textDecoration: "underline",
-                color: "inherit",
-                _hover: {
-                  opacity: 0.7,
-                },
-              }}
+              css={{ color: "inherit", textDecoration: "underline", _hover: { opacity: 0.7 } }}
             >
               www.httpjpg.com
             </Link>
             <br />
-            <Box as="span" css={{ fontSize: "2xs", opacity: 0.7 }}>
+            <Box as="span" css={{ opacity: 0.7, fontSize: "2xs" }}>
               ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ꠹ρᧁ! 🎀
             </Box>
           </Box>

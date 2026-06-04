@@ -22,18 +22,11 @@ export default meta;
 
 export const Introduction = {
   render: () => (
-    <Box css={{ bg: "pageBg", color: "pageFg", minH: "100vh" }}>
+    <Box css={{ minH: "100vh", color: "pageFg", bg: "pageBg" }}>
       <Container size="lg" py={12}>
         <Stack direction="vertical" gap="10">
           {/* ── Top bar ── */}
-          <Box
-            css={{
-              fontFamily: "mono",
-              fontSize: "xs",
-              letterSpacing: "wider",
-              opacity: 0.4,
-            }}
-          >
+          <Box css={{ opacity: 0.4, fontFamily: "mono", fontSize: "xs", letterSpacing: "wider" }}>
             ⇝ httpjpg / design system &nbsp; · &nbsp; toggle theme in the toolbar ↗
           </Box>
 
@@ -41,21 +34,21 @@ export const Introduction = {
           <Box>
             <Headline level={1}>HTTPJPG DESIGN SYSTEM</Headline>
 
-            <Paragraph size="lg" color="muted" css={{ mt: "4", maxW: "65ch" }}>
+            <Paragraph size="lg" color="muted" css={{ maxW: "65ch", mt: "4" }}>
               A brutalist component library for the httpjpg portfolio. Mono type, hard edges,
               maximalist ASCII accents. Built on Panda CSS (zero-runtime), driven by Storyblok,
               rendered by Next.js. Every component ships with semantic color tokens that flip
               between light and dark — pageBg, pageFg, pageMuted, pageBorder.
             </Paragraph>
 
-            <Paragraph size="sm" color="muted" css={{ mt: "3", maxW: "65ch" }}>
+            <Paragraph size="sm" color="muted" css={{ maxW: "65ch", mt: "3" }}>
               The design language is deliberately raw: 2px borders instead of box-shadows, monospace
               where others use sans-serif, corner brackets ┌ ┐ └ ┘ as decoration, unicode sparkles ✦
               ◆ ⋆ as visual punctuation. Type hierarchy uses Impact for headlines and a compact 12px
               base size for information density.
             </Paragraph>
 
-            <Stack direction="horizontal" gap="2" css={{ mt: "6", flexWrap: "wrap" }}>
+            <Stack direction="horizontal" gap="2" css={{ flexWrap: "wrap", mt: "6" }}>
               <Button href="https://github.com/dmnktoe/httpjpg" variant="primary" size="sm">
                 ✦ GitHub ↗
               </Button>
@@ -91,7 +84,7 @@ export const Introduction = {
             <Headline level={2} css={{ mb: "2" }}>
               ◇ THE STACK
             </Headline>
-            <Paragraph size="sm" color="muted" css={{ mb: "4", maxW: "55ch" }}>
+            <Paragraph size="sm" color="muted" css={{ maxW: "55ch", mb: "4" }}>
               Monorepo managed by pnpm workspaces + Turborepo. Every package is ESM-only, TypeScript
               strict, and published via workspace protocol.
             </Paragraph>
@@ -114,12 +107,12 @@ export const Introduction = {
                   css={{
                     px: "3",
                     py: "1",
-                    border: "1px solid",
-                    borderColor: "pageBorder",
                     fontFamily: "mono",
                     fontSize: "xs",
                     letterSpacing: "wider",
                     textTransform: "uppercase",
+                    border: "1px solid",
+                    borderColor: "pageBorder",
                   }}
                 >
                   {tech}
@@ -135,7 +128,7 @@ export const Introduction = {
             <Headline level={2} css={{ mb: "2" }}>
               ◇ CORE PRINCIPLES
             </Headline>
-            <Paragraph size="sm" color="muted" css={{ mb: "6", maxW: "55ch" }}>
+            <Paragraph size="sm" color="muted" css={{ maxW: "55ch", mb: "6" }}>
               The system follows four rules. When in doubt, pick the rawer option.
             </Paragraph>
 
@@ -176,14 +169,7 @@ export const Introduction = {
                     borderColor: "pageFg",
                   }}
                 >
-                  <Box
-                    css={{
-                      fontFamily: "mono",
-                      fontSize: "lg",
-                      mb: "2",
-                      opacity: 0.5,
-                    }}
-                  >
+                  <Box css={{ mb: "2", opacity: 0.5, fontFamily: "mono", fontSize: "lg" }}>
                     {p.icon}
                   </Box>
                   <Paragraph weight="semibold" css={{ mb: "1" }}>
@@ -204,7 +190,7 @@ export const Introduction = {
             <Headline level={2} css={{ mb: "2" }}>
               ◇ QUICK START
             </Headline>
-            <Paragraph size="sm" color="muted" css={{ mb: "4", maxW: "55ch" }}>
+            <Paragraph size="sm" color="muted" css={{ maxW: "55ch", mb: "4" }}>
               Import from @httpjpg/ui. All components use the css() prop from Panda's styled-system
               — no className strings, no runtime cost.
             </Paragraph>
@@ -237,7 +223,7 @@ export default function MyPage() {
             <Headline level={2} css={{ mb: "2" }}>
               ◇ WHAT'S INSIDE
             </Headline>
-            <Paragraph size="sm" color="muted" css={{ mb: "6", maxW: "55ch" }}>
+            <Paragraph size="sm" color="muted" css={{ maxW: "55ch", mb: "6" }}>
               Browse all components in the sidebar. Each category groups related primitives — from
               layout foundations to interactive widgets.
             </Paragraph>
@@ -260,15 +246,15 @@ export default function MyPage() {
                 { cat: "Widgets", items: "MusicPlayer · NowPlaying" },
                 { cat: "Decoration", items: "Divider · ImageOverlay · FloatingPreviewBadge" },
               ].map((g) => (
-                <Box key={g.cat} css={{ p: "4", borderTop: "2px solid", borderColor: "pageFg" }}>
+                <Box key={g.cat} css={{ p: "4", borderColor: "pageFg", borderTop: "2px solid" }}>
                   <Box
                     css={{
-                      fontFamily: "mono",
-                      fontSize: "xs",
-                      textTransform: "uppercase",
-                      letterSpacing: "wider",
                       mb: "2",
                       opacity: 0.5,
+                      fontFamily: "mono",
+                      fontSize: "xs",
+                      letterSpacing: "wider",
+                      textTransform: "uppercase",
                     }}
                   >
                     ┌ {g.cat}
@@ -288,7 +274,7 @@ export default function MyPage() {
             <Headline level={2} css={{ mb: "2" }}>
               ◇ ARCHITECTURE
             </Headline>
-            <Paragraph size="sm" color="muted" css={{ mb: "4", maxW: "55ch" }}>
+            <Paragraph size="sm" color="muted" css={{ maxW: "55ch", mb: "4" }}>
               Layered package graph: tokens → utils → api → ui → storyblok-ui → apps. Each layer has
               a single responsibility, no circular deps. The codegen bridges CMS schemas to
               TypeScript interfaces.
@@ -311,7 +297,7 @@ portfolio       ← Next.js 16 App Router`}
           <Divider variant="ascii" />
 
           {/* ── Footer ── */}
-          <Box css={{ textAlign: "center", py: "8" }}>
+          <Box css={{ py: "8", textAlign: "center" }}>
             <Paragraph size="sm" color="muted" css={{ fontFamily: "mono", letterSpacing: "wider" }}>
               *ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚
             </Paragraph>

@@ -114,7 +114,7 @@ export const AccentColor: Story = {
     color: "var(--colors-primary-500)",
   },
   render: (args) => (
-    <Box css={{ bg: "pageBg", p: "6" }}>
+    <Box css={{ p: "6", bg: "pageBg" }}>
       <StoryblokRichText {...args} />
     </Box>
   ),

@@ -28,11 +28,11 @@ export function NostalgiaSlideshow() {
         position: "fixed",
         bottom: "4",
         left: "4",
+        zIndex: "widget",
+        display: { base: "none", lg: "block" },
         width: "70px",
         height: "auto",
-        zIndex: "widget",
         pointerEvents: "none",
-        display: { base: "none", lg: "block" },
       }}
     >
       <Slideshow
@@ -50,10 +50,10 @@ export function NostalgiaSlideshow() {
             overflow: "hidden",
           },
           "& img": {
-            imageRendering: "crisp-edges",
-            objectFit: "contain",
             width: "100px",
             height: "auto",
+            objectFit: "contain",
+            imageRendering: "crisp-edges",
           },
         }}
       />

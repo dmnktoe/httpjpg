@@ -135,18 +135,18 @@ export const WithHeader: Story = {
     header: (
       <Box
         css={{
-          w: "full",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          textAlign: "center",
+          w: "full",
           py: 16,
+          textAlign: "center",
         }}
       >
         <Headline level={1} css={{ mb: 4 }}>
           Selected Works
         </Headline>
-        <Paragraph css={{ fontSize: "lg", maxW: "2xl" }}>
+        <Paragraph css={{ maxW: "2xl", fontSize: "lg" }}>
           A curated collection of recent projects showcasing brand identities, digital experiences,
           and creative explorations.
         </Paragraph>
@@ -165,12 +165,12 @@ export const WithFooter: Story = {
     footer: (
       <Box
         css={{
-          w: "full",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          textAlign: "center",
+          w: "full",
           py: 16,
+          textAlign: "center",
         }}
       >
         <Headline level={2} css={{ mb: 4 }}>

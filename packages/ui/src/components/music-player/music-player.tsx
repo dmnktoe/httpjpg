@@ -87,10 +87,7 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
             loading="lazy"
             title={title || "Spotify Player"}
-            className={css({
-              borderRadius: "sm",
-              border: "none",
-            })}
+            className={css({ border: "none", borderRadius: "sm" })}
           />
         );
       }
@@ -136,11 +133,11 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
           {decoration && (
             <Box
               css={{
-                fontSize: "xs",
                 opacity: 60,
-                textAlign: "center",
                 fontFamily: "mono",
+                fontSize: "xs",
                 letterSpacing: "wider",
+                textAlign: "center",
               }}
             >
               {decoration}
@@ -148,14 +145,7 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
           )}
 
           {headerContent && (
-            <Box
-              css={{
-                fontSize: "sm",
-                opacity: 70,
-                textAlign: "center",
-                fontFamily: "mono",
-              }}
-            >
+            <Box css={{ opacity: 70, fontFamily: "mono", fontSize: "sm", textAlign: "center" }}>
               {headerContent}
             </Box>
           )}
@@ -163,14 +153,7 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
           {renderEmbed()}
 
           {footerContent && (
-            <Box
-              css={{
-                fontSize: "sm",
-                opacity: 70,
-                textAlign: "center",
-                fontFamily: "mono",
-              }}
-            >
+            <Box css={{ opacity: 70, fontFamily: "mono", fontSize: "sm", textAlign: "center" }}>
               {footerContent}
             </Box>
           )}
@@ -178,11 +161,11 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
           {decoration && (
             <Box
               css={{
-                fontSize: "xs",
                 opacity: 60,
-                textAlign: "center",
                 fontFamily: "mono",
+                fontSize: "xs",
                 letterSpacing: "wider",
+                textAlign: "center",
               }}
             >
               {decoration}

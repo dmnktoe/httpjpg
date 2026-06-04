@@ -31,33 +31,33 @@ export const Basic: Story = {
     offset: { x: 20, y: 20 },
   },
   render: (args) => (
-    <Box css={{ p: 8, maxW: "720px", mx: "auto" }}>
+    <Box css={{ maxW: "720px", mx: "auto", p: 8 }}>
       <Stack direction="vertical" gap="3">
         <Box
           as="span"
           data-preview-image={OPTIMIZED_IMAGES.videoStill1Preview}
-          css={{ cursor: "pointer", textDecoration: "underline" }}
+          css={{ textDecoration: "underline", cursor: "pointer" }}
         >
           Project Alpha — video still 1
         </Box>
         <Box
           as="span"
           data-preview-image={OPTIMIZED_IMAGES.videoStill2Preview}
-          css={{ cursor: "pointer", textDecoration: "underline" }}
+          css={{ textDecoration: "underline", cursor: "pointer" }}
         >
           Project Beta — video still 2
         </Box>
         <Box
           as="span"
           data-preview-image={OPTIMIZED_IMAGES.videoStill3Preview}
-          css={{ cursor: "pointer", textDecoration: "underline" }}
+          css={{ textDecoration: "underline", cursor: "pointer" }}
         >
           Project Gamma — video still 3
         </Box>
         <Box
           as="span"
           data-preview-image={OPTIMIZED_IMAGES.landscapePreview}
-          css={{ cursor: "pointer", textDecoration: "underline" }}
+          css={{ textDecoration: "underline", cursor: "pointer" }}
         >
           Klosterkirche Nordshausen — landscape
         </Box>
@@ -73,19 +73,19 @@ export const LargePreview: Story = {
     offset: { x: 24, y: 24 },
   },
   render: (args) => (
-    <Box css={{ p: 8, maxW: "720px", mx: "auto" }}>
+    <Box css={{ maxW: "720px", mx: "auto", p: 8 }}>
       <Stack direction="vertical" gap="3">
         <Box
           as="span"
           data-preview-image={OPTIMIZED_IMAGES.videoStill1Preview}
-          css={{ cursor: "pointer", textDecoration: "underline" }}
+          css={{ textDecoration: "underline", cursor: "pointer" }}
         >
           Hover for large preview 1
         </Box>
         <Box
           as="span"
           data-preview-image={OPTIMIZED_IMAGES.videoStill2Preview}
-          css={{ cursor: "pointer", textDecoration: "underline" }}
+          css={{ textDecoration: "underline", cursor: "pointer" }}
         >
           Hover for large preview 2
         </Box>

@@ -43,56 +43,56 @@ export function MobileMenuContent({
         inset: 0,
         zIndex: "mobileMenu",
         display: isOpen ? { base: "flex", lg: "none" } : "none",
-        maxH: "100dvh",
-        w: "full",
-        maxW: "full",
         flexDirection: "row",
         justifyContent: { md: "end" },
+        w: "full",
+        maxW: "full",
+        maxH: "100dvh",
       }}
     >
       <MobileMenuBackdrop />
       <Box
         css={{
-          m: 0,
           display: "flex",
+          w: { base: "full", md: "96" },
           h: "100dvh",
           maxH: "100dvh",
-          w: { base: "full", md: "96" },
+          m: 0,
           overflow: "hidden",
         }}
       >
         <Box
           css={{
-            pointerEvents: "auto",
-            display: "flex",
-            flexGrow: 1,
-            flexDirection: "column",
-            alignItems: "stretch",
-            bg: "pageBg",
-            color: "pageFg",
-            borderLeft: { md: "1px solid" },
-            borderLeftColor: "pageFg",
             position: "relative",
-            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            flexGrow: 1,
+            alignItems: "stretch",
             maxW: "100%",
             maxH: "100%",
+            color: "pageFg",
+            bg: "pageBg",
+            borderLeft: { md: "1px solid" },
+            borderLeftColor: "pageFg",
+            pointerEvents: "auto",
+            overflow: "hidden",
           }}
         >
           <Box
             css={{
               display: "flex",
+              flex: "1 1 auto",
               flexDirection: "column",
+              gap: "6",
+              maxW: "100%",
+              minHeight: 0,
               px: { base: "4", md: "6" },
               pt: "20",
               pb: { base: "4", md: "6" },
               fontSize: "sm",
               lineHeight: "snug",
-              overflowY: "auto",
               overflowX: "hidden",
-              maxW: "100%",
-              flex: "1 1 auto",
-              minHeight: 0,
-              gap: "6",
+              overflowY: "auto",
             }}
           >
             <MobileMenuNavRibbon nav={nav} onItemClick={handleMenuItemClick} />
@@ -103,7 +103,7 @@ export function MobileMenuContent({
               variant="projects"
               onItemClick={handleMenuItemClick}
               emptyState={
-                <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
+                <Box as="span" css={{ opacity: 0.5, fontSize: "xs" }}>
                   ╭─────────────────╮
                   <br />│ ∅ coming soon ∅ │
                   <br />
@@ -118,7 +118,7 @@ export function MobileMenuContent({
               variant="websites"
               onItemClick={handleMenuItemClick}
               emptyState={
-                <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
+                <Box as="span" css={{ opacity: 0.5, fontSize: "xs" }}>
                   ╭───────────────────╮
                   <br />│ ⊹ taking clients ⊹ │
                   <br />

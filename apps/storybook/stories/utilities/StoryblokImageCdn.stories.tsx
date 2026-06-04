@@ -80,13 +80,7 @@ export const ResponsivePlayground: Story = {
           <Paragraph size="sm" color="muted" css={{ mb: "3" }}>
             Browser picks the closest match from `srcSet` based on viewport + DPR.
           </Paragraph>
-          <Box
-            css={{
-              border: "2px solid",
-              borderColor: "pageFg",
-              maxW: "640px",
-            }}
-          >
+          <Box css={{ maxW: "640px", border: "2px solid", borderColor: "pageFg" }}>
             <img
               src={src}
               srcSet={srcSet}
@@ -143,7 +137,7 @@ export const Presets: Story = {
           <Headline level={3} css={{ mb: "2" }}>
             ◇ og (1200×630 smart-crop)
           </Headline>
-          <Box css={{ border: "2px solid", borderColor: "pageFg", maxW: "600px", mb: "3" }}>
+          <Box css={{ maxW: "600px", mb: "3", border: "2px solid", borderColor: "pageFg" }}>
             <img
               src={og}
               alt="og preset"
@@ -158,7 +152,7 @@ export const Presets: Story = {
             ◇ thumb (200px wide)
           </Headline>
           <Box
-            css={{ border: "2px solid", borderColor: "pageFg", display: "inline-block", mb: "3" }}
+            css={{ display: "inline-block", mb: "3", border: "2px solid", borderColor: "pageFg" }}
           >
             <img src={thumb} alt="thumb preset" style={{ display: "block", height: "auto" }} />
           </Box>
@@ -170,7 +164,7 @@ export const Presets: Story = {
             ◇ blur (20px low-res placeholder)
           </Headline>
           <Box
-            css={{ border: "2px solid", borderColor: "pageFg", display: "inline-block", mb: "3" }}
+            css={{ display: "inline-block", mb: "3", border: "2px solid", borderColor: "pageFg" }}
           >
             <img
               src={blur}
@@ -201,7 +195,7 @@ export const ExternalPassthrough: Story = {
           Non-Storyblok URLs pass through unchanged: `src` matches input, `srcSet` is empty. The
           image service is Storyblok-only.
         </Paragraph>
-        <Box css={{ border: "2px solid", borderColor: "pageFg", maxW: "400px" }}>
+        <Box css={{ maxW: "400px", border: "2px solid", borderColor: "pageFg" }}>
           <img
             src={src}
             alt="external"

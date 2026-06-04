@@ -27,10 +27,10 @@ function Favicon({ href }: { href: string }) {
       css={{
         display: { base: "none", md: "inline-block" },
         flexShrink: 0,
-        verticalAlign: "middle",
         w: "14px",
         h: "14px",
         mr: "0.25em",
+        verticalAlign: "middle",
         imageRendering: "pixelated",
       }}
     />
@@ -100,14 +100,7 @@ function ExpandableLinks<T>({
             {`▾ more (${remaining})`}
           </Box>
           {isExpanded && (
-            <Box
-              css={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-              }}
-            >
+            <Box css={{ position: "absolute", top: 0, right: 0, left: 0 }}>
               {extras.map(renderItem)}
               <Box
                 as="button"
@@ -131,19 +124,13 @@ export function Navigation({
   websitesWork = [],
 }: Omit<HeaderProps, "children">) {
   return (
-    <Box
-      css={{
-        position: "relative",
-        w: "full",
-        display: { base: "none", lg: "flex" },
-      }}
-    >
+    <Box css={{ position: "relative", display: { base: "none", lg: "flex" }, w: "full" }}>
       <Box
         css={{
           display: "flex",
-          w: "full",
           flexDirection: { base: "column", md: "row" },
           gap: { base: "4", lg: "8" },
+          w: "full",
         }}
       >
         <Box
@@ -243,7 +230,7 @@ export function Navigation({
               }}
             />
           ) : (
-            <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
+            <Box as="span" css={{ opacity: 0.5, fontSize: "xs" }}>
               ╭─────────────────╮
               <br />│ ∅ coming soon ∅ │
               <br />
@@ -302,7 +289,7 @@ export function Navigation({
               }}
             />
           ) : (
-            <Box as="span" css={{ fontSize: "xs", opacity: 0.5 }}>
+            <Box as="span" css={{ opacity: 0.5, fontSize: "xs" }}>
               ╭───────────────────╮
               <br />│ ⊹ taking clients ⊹ │
               <br />

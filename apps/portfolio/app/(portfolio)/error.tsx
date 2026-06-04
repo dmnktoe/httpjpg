@@ -43,11 +43,11 @@ export default function PortfolioError({
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            textAlign: "center",
             gap: "6",
+            textAlign: "center",
           }}
         >
-          <AsciiArt label="no signal" css={{ fontSize: "sm", opacity: 0.7 }}>
+          <AsciiArt label="no signal" css={{ opacity: 0.7, fontSize: "sm" }}>
             {ASCII_OFFLINE}
           </AsciiArt>
 
@@ -59,23 +59,16 @@ export default function PortfolioError({
           </Paragraph>
 
           {error.digest && (
-            <Paragraph css={{ fontSize: "sm", opacity: 50, fontFamily: "mono" }}>
+            <Paragraph css={{ opacity: 50, fontFamily: "mono", fontSize: "sm" }}>
               Error ID: {error.digest}
             </Paragraph>
           )}
 
-          <Box
-            css={{
-              display: "flex",
-              gap: "4",
-              flexWrap: "wrap",
-              justifyContent: "center",
-            }}
-          >
+          <Box css={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "4" }}>
             <Button onClick={reset}>↻ Erneut versuchen</Button>
           </Box>
 
-          <Box as="span" css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.35 }}>
+          <Box as="span" css={{ opacity: 0.35, fontFamily: "mono", fontSize: "xs" }}>
             {ASCII_DIVIDER_ARROWS}
           </Box>
 
@@ -83,11 +76,7 @@ export default function PortfolioError({
             <Box
               as="a"
               href="/"
-              css={{
-                textDecoration: "underline",
-                opacity: 80,
-                fontFamily: "mono",
-              }}
+              css={{ opacity: 80, fontFamily: "mono", textDecoration: "underline" }}
             >
               ← Zurück zur Startseite
             </Box>

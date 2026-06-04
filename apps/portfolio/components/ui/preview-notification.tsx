@@ -25,19 +25,19 @@ function PreviewNotificationContent() {
     <Box
       css={{
         position: "fixed",
+        right: 0,
         bottom: 0,
         left: 0,
-        right: 0,
         zIndex: "previewBadge",
-        backgroundColor: "warning.200",
-        color: "black",
-        padding: 3,
         display: "flex",
-        alignItems: "center",
         justifyContent: "center",
+        alignItems: "center",
         gap: 4,
+        padding: 3,
+        color: "black",
         fontSize: "md",
         fontWeight: "medium",
+        backgroundColor: "warning.200",
         boxShadow: "md",
       }}
     >
@@ -46,17 +46,15 @@ function PreviewNotificationContent() {
         as="a"
         href="/api/exit-draft"
         css={{
-          bg: "black",
-          color: "white",
           px: 3,
           py: 1.5,
-          borderRadius: "2xl",
-          textDecoration: "none",
+          color: "white",
           fontSize: "sm",
           fontWeight: "medium",
-          _hover: {
-            opacity: 90,
-          },
+          textDecoration: "none",
+          bg: "black",
+          borderRadius: "2xl",
+          _hover: { opacity: 90 },
         }}
       >
         Beenden

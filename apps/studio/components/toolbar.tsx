@@ -110,24 +110,24 @@ export function Toolbar({
   return (
     <header
       className={css({
-        borderBottom: "1px solid",
-        borderColor: "pageBorder",
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+        gap: 3,
         padding: 3,
         fontFamily: "mono",
         fontSize: "sm",
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 3,
-        alignItems: "center",
+        borderColor: "pageBorder",
+        borderBottom: "1px solid",
       })}
     >
       <span
         className={css({
+          display: "inline-flex",
+          alignItems: "baseline",
+          gap: 1,
           fontFamily: "mono",
           fontSize: "sm",
-          display: "inline-flex",
-          gap: 1,
-          alignItems: "baseline",
         })}
       >
         <span>hello</span>
@@ -164,13 +164,13 @@ export function Toolbar({
               aria-pressed={isActive}
               className={css({
                 padding: "1px 8px",
-                bg: isActive ? "pageFg" : "pageBg",
                 color: isActive ? "pageBg" : "pageFg",
                 fontFamily: "mono",
                 fontSize: "sm",
-                cursor: "pointer",
+                bg: isActive ? "pageFg" : "pageBg",
                 border: "none",
-                _hover: { bg: "pageFg", color: "pageBg" },
+                cursor: "pointer",
+                _hover: { color: "pageBg", bg: "pageFg" },
               })}
             >
               {v.label}
@@ -251,18 +251,18 @@ export function Toolbar({
       {pushEnabled && showPush && (
         <div
           className={css({
-            width: "100%",
             display: "flex",
-            gap: 2,
-            alignItems: "center",
-            borderTop: "1px solid",
-            borderColor: "pageBorder",
-            pt: 2,
-            mt: 1,
             flexWrap: "wrap",
+            alignItems: "center",
+            gap: 2,
+            width: "100%",
+            mt: 1,
+            pt: 2,
+            borderColor: "pageBorder",
+            borderTop: "1px solid",
           })}
         >
-          <label className={css({ display: "flex", gap: 1, alignItems: "center", flex: 1 })}>
+          <label className={css({ display: "flex", flex: 1, alignItems: "center", gap: 1 })}>
             <span className={css({ opacity: 0.6, whiteSpace: "nowrap" })}>Target full_slug</span>
             <input
               type="text"
@@ -272,12 +272,12 @@ export function Toolbar({
               className={css({
                 flex: 1,
                 padding: 1,
-                border: "1px solid",
-                borderColor: "pageBorder",
-                bg: "pageBg",
                 color: "pageFg",
                 fontFamily: "mono",
                 fontSize: "sm",
+                bg: "pageBg",
+                border: "1px solid",
+                borderColor: "pageBorder",
               })}
             />
           </label>
@@ -299,13 +299,13 @@ export function Toolbar({
                   aria-pressed={active}
                   className={css({
                     padding: "1px 8px",
-                    bg: active ? "pageFg" : "pageBg",
                     color: active ? "pageBg" : "pageFg",
                     fontFamily: "mono",
                     fontSize: "sm",
-                    cursor: "pointer",
+                    bg: active ? "pageFg" : "pageBg",
                     border: "none",
-                    _hover: { bg: "pageFg", color: "pageBg" },
+                    cursor: "pointer",
+                    _hover: { color: "pageBg", bg: "pageFg" },
                   })}
                 >
                   {m === "append" ? "Append" : "Replace"}
@@ -315,7 +315,7 @@ export function Toolbar({
           </div>
 
           {mode === "replace" && (
-            <label className={css({ display: "flex", gap: 1, alignItems: "center" })}>
+            <label className={css({ display: "flex", alignItems: "center", gap: 1 })}>
               <span className={css({ opacity: 0.6, whiteSpace: "nowrap" })}>body[N]</span>
               <input
                 type="number"
@@ -328,12 +328,12 @@ export function Toolbar({
                 className={css({
                   width: "50px",
                   padding: 1,
-                  border: "1px solid",
-                  borderColor: "pageBorder",
-                  bg: "pageBg",
                   color: "pageFg",
                   fontFamily: "mono",
                   fontSize: "sm",
+                  bg: "pageBg",
+                  border: "1px solid",
+                  borderColor: "pageBorder",
                 })}
               />
             </label>
@@ -349,17 +349,17 @@ export function Toolbar({
 }
 
 const btn = css({
+  height: "24px",
   padding: "1px 8px",
-  border: "1px solid",
-  borderColor: "pageBorder",
-  bg: "pageBg",
   color: "pageFg",
   fontFamily: "mono",
   fontSize: "sm",
+  bg: "pageBg",
+  border: "1px solid",
+  borderColor: "pageBorder",
   cursor: "pointer",
-  height: "24px",
-  _hover: { bg: "pageFg", color: "pageBg" },
-  _disabled: { cursor: "not-allowed", opacity: 0.5, _hover: { bg: "pageBg", color: "pageFg" } },
+  _hover: { color: "pageBg", bg: "pageFg" },
+  _disabled: { opacity: 0.5, cursor: "not-allowed", _hover: { color: "pageFg", bg: "pageBg" } },
 });
 
 function Divider() {
@@ -388,7 +388,7 @@ function ColField({
 }) {
   return (
     <label
-      className={css({ display: "flex", gap: 1, alignItems: "center" })}
+      className={css({ display: "flex", alignItems: "center", gap: 1 })}
       style={{ opacity: active ? 1 : 0.6 }}
     >
       <span>{label}</span>
@@ -404,12 +404,12 @@ function ColField({
         className={css({
           width: "40px",
           padding: 1,
-          border: "1px solid",
-          borderColor: "pageBorder",
-          bg: "pageBg",
           color: "pageFg",
           fontFamily: "mono",
           fontSize: "sm",
+          bg: "pageBg",
+          border: "1px solid",
+          borderColor: "pageBorder",
         })}
       />
     </label>
@@ -428,19 +428,19 @@ function SelectField({
   onChange(v: string): void;
 }) {
   return (
-    <label className={css({ display: "flex", gap: 1, alignItems: "center" })}>
+    <label className={css({ display: "flex", alignItems: "center", gap: 1 })}>
       <span className={css({ opacity: 0.6 })}>{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={css({
           padding: 1,
-          border: "1px solid",
-          borderColor: "pageBorder",
-          bg: "pageBg",
           color: "pageFg",
           fontFamily: "mono",
           fontSize: "sm",
+          bg: "pageBg",
+          border: "1px solid",
+          borderColor: "pageBorder",
         })}
       >
         {options.map((o) => (

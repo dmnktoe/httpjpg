@@ -40,8 +40,8 @@ export function CookieCategory({
         css={{
           display: "flex",
           alignItems: "flex-start",
-          cursor: required ? "not-allowed" : "pointer",
           opacity: required ? 0.5 : 1,
+          cursor: required ? "not-allowed" : "pointer",
         }}
       >
         <Box
@@ -50,16 +50,10 @@ export function CookieCategory({
           checked={checked}
           disabled={required}
           onChange={onToggle}
-          css={{
-            mt: "0.5",
-            mr: "3",
-            w: "4",
-            h: "4",
-            cursor: required ? "not-allowed" : "pointer",
-          }}
+          css={{ w: "4", h: "4", mt: "0.5", mr: "3", cursor: required ? "not-allowed" : "pointer" }}
         />
         <Box css={{ flex: 1 }}>
-          <Box css={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Box css={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Box as="span" css={{ fontWeight: "bold" }}>
               {checked ? "✓" : "☐"} {label}
               {required && " (Required)"}
@@ -76,28 +70,28 @@ export function CookieCategory({
                 onToggleExpansion();
               }}
               css={{
+                px: "1",
+                opacity: required ? 0.7 : 1,
+                fontSize: "sm",
                 background: "none",
                 border: "none",
                 cursor: "pointer",
-                fontSize: "sm",
-                px: "1",
-                opacity: required ? 0.7 : 1,
               }}
             >
               {expanded ? "▼" : "▶"}
             </Box>
           </Box>
-          <Box as="span" css={{ fontSize: "xs", opacity: 0.7 }}>
+          <Box as="span" css={{ opacity: 0.7, fontSize: "xs" }}>
             {description}
           </Box>
 
           {expanded && (
-            <Box css={{ mt: "2", pl: "2", borderLeft: "2px solid", borderColor: "pageBorder" }}>
+            <Box css={{ mt: "2", pl: "2", borderColor: "pageBorder", borderLeft: "2px solid" }}>
               {vendors.length > 0
                 ? vendors.map((vendor) => (
                     <Box key={vendor.key} css={{ mb: "1.5", fontSize: "xs" }}>
                       <Box css={{ fontWeight: 500 }}>→ {vendor.name}</Box>
-                      <Box css={{ opacity: 0.7, ml: "2" }}>
+                      <Box css={{ ml: "2", opacity: 0.7 }}>
                         {vendor.description}
                         {vendor.privacyPolicy && (
                           <>

@@ -96,10 +96,10 @@ export const LargePadding: Story = {
     children: (
       <Container>
         <Box css={{ textAlign: "center" }}>
-          <Box css={{ fontFamily: "mono", fontSize: "xs", mb: "4", opacity: 0.5 }}>
+          <Box css={{ mb: "4", opacity: 0.5, fontFamily: "mono", fontSize: "xs" }}>
             HERO SECTION
           </Box>
-          <Headline level={1} css={{ fontSize: "3rem", m: 0 }}>
+          <Headline level={1} css={{ m: 0, fontSize: "3rem" }}>
             LARGE SPACING
           </Headline>
           <Paragraph align="center" maxWidth={false} css={{ mt: "6", fontSize: "lg" }}>
@@ -361,7 +361,7 @@ export const FluidContainer: Story = {
             borderRadius: "md",
           }}
         >
-          <Paragraph css={{ fontSize: "sm", opacity: 0.7 }}>
+          <Paragraph css={{ opacity: 0.7, fontSize: "sm" }}>
             The fluid container allows content to use the full available width, perfect for
             full-width layouts or when you want maximum space.
           </Paragraph>

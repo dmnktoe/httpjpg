@@ -104,7 +104,7 @@ export const WithLabels: Story = {
           Add <code>data-cursor="text"</code> attribute to show custom labels.
         </Paragraph>
 
-        <Box css={{ display: "flex", gap: "16px", mb: "32px", flexWrap: "wrap" }}>
+        <Box css={{ display: "flex", flexWrap: "wrap", gap: "16px", mb: "32px" }}>
           <Button data-cursor="CLICK">Primary Action</Button>
           <Button data-cursor="VIEW MORE">Secondary Action</Button>
           <Box
@@ -124,12 +124,7 @@ export const WithLabels: Story = {
 
         <Box
           data-cursor="EXPLORE"
-          css={{
-            p: "32px",
-            bg: "neutral.50",
-            border: "2px solid black",
-            mb: "32px",
-          }}
+          css={{ mb: "32px", p: "32px", bg: "neutral.50", border: "2px solid black" }}
         >
           <Headline level={3}>Interactive Area</Headline>
           <Paragraph>This entire box has a custom cursor label.</Paragraph>
@@ -295,7 +290,7 @@ export const WithImagePreview: Story = {
           </Link>
         </Box>
 
-        <Paragraph css={{ fontSize: "sm", opacity: 0.7 }}>
+        <Paragraph css={{ opacity: 0.7, fontSize: "sm" }}>
           This demonstrates the cursor follow feature used in the header navigation. Each work item
           can have a preview image that appears next to the cursor on hover.
         </Paragraph>
@@ -342,7 +337,7 @@ export const Playground: Story = {
           </Box>
         </Box>
 
-        <Box css={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+        <Box css={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
           <Button data-cursor="PRIMARY">Primary</Button>
           <Button data-cursor="SECONDARY">Secondary</Button>
           <Button data-cursor="TERTIARY">Tertiary</Button>

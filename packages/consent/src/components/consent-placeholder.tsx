@@ -18,19 +18,19 @@ export function ConsentPlaceholder({ vendor, height = "400px", message }: Consen
       css={{
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
         justifyContent: "center",
+        alignItems: "center",
         minHeight: typeof height === "number" ? `${height}px` : height,
         padding: "6",
+        color: "pageMuted",
+        fontFamily: "mono",
+        fontSize: "sm",
+        textAlign: "center",
+        whiteSpace: "pre-line",
         background: "var(--colors-page-muted-bg, rgba(127,127,127,0.06))",
         border: "2px dashed",
         borderColor: "pageBorder",
         borderRadius: "sm",
-        textAlign: "center",
-        fontFamily: "mono",
-        fontSize: "sm",
-        color: "pageMuted",
-        whiteSpace: "pre-line",
       }}
     >
       {text}

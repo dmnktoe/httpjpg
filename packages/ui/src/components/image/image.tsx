@@ -14,13 +14,13 @@ const skeletonClass = css({
   w: "100%",
   h: "100%",
   bg: "linear-gradient(90deg, var(--colors-neutral-200) 0%, var(--colors-neutral-300) 50%, var(--colors-neutral-200) 100%)",
+  backgroundSize: "200% 100%",
+  transition: "opacity 0.4s ease-in-out",
+  animation: "shimmer 1.5s ease-in-out infinite",
+  pointerEvents: "none",
   _pageDark: {
     bg: "linear-gradient(90deg, var(--colors-neutral-800) 0%, var(--colors-neutral-700) 50%, var(--colors-neutral-800) 100%)",
   },
-  backgroundSize: "200% 100%",
-  animation: "shimmer 1.5s ease-in-out infinite",
-  transition: "opacity 0.4s ease-in-out",
-  pointerEvents: "none",
 });
 
 export interface ImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "css"> {
@@ -161,10 +161,10 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
                 inset: 0,
                 width: "100%",
                 height: "100%",
-                objectFit: "cover",
                 filter: "blur(20px)",
                 transform: "scale(1.1)",
                 transition: "opacity 0.3s ease-in-out",
+                objectFit: "cover",
               })}
               style={{ opacity: highResLoaded ? 0 : 1 }}
             />
@@ -185,9 +185,9 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
             fetchPriority={fetchPriority}
             className={cx(
               css({
+                display: "block",
                 width: "100%",
                 height: "100%",
-                display: "block",
                 transition: "opacity 0.3s ease-in-out",
               }),
               className,

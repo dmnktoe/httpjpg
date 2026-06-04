@@ -56,25 +56,25 @@ export const Banners: Story = {
   render: () => (
     <Stack direction="vertical" gap="8">
       <Box>
-        <Paragraph css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.5, mb: "2" }}>
+        <Paragraph css={{ mb: "2", opacity: 0.5, fontFamily: "mono", fontSize: "xs" }}>
           ASCII_404
         </Paragraph>
         <AsciiArt label="404">{ASCII_404}</AsciiArt>
       </Box>
       <Box>
-        <Paragraph css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.5, mb: "2" }}>
+        <Paragraph css={{ mb: "2", opacity: 0.5, fontFamily: "mono", fontSize: "xs" }}>
           ASCII_500
         </Paragraph>
         <AsciiArt label="500">{ASCII_500}</AsciiArt>
       </Box>
       <Box>
-        <Paragraph css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.5, mb: "2" }}>
+        <Paragraph css={{ mb: "2", opacity: 0.5, fontFamily: "mono", fontSize: "xs" }}>
           ASCII_OFFLINE
         </Paragraph>
         <AsciiArt label="offline">{ASCII_OFFLINE}</AsciiArt>
       </Box>
       <Box>
-        <Paragraph css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.5, mb: "2" }}>
+        <Paragraph css={{ mb: "2", opacity: 0.5, fontFamily: "mono", fontSize: "xs" }}>
           ASCII_GHOST
         </Paragraph>
         <AsciiArt label="ghost">{ASCII_GHOST}</AsciiArt>
@@ -100,7 +100,7 @@ export const Dividers: Story = {
         ["ASCII_DIVIDER_MUSIC", ASCII_DIVIDER_MUSIC],
       ].map(([name, value]) => (
         <Box key={name}>
-          <Paragraph css={{ fontFamily: "mono", fontSize: "xs", opacity: 0.5, mb: "1" }}>
+          <Paragraph css={{ mb: "1", opacity: 0.5, fontFamily: "mono", fontSize: "xs" }}>
             {name}
           </Paragraph>
           <AsciiArt inline label={name}>

@@ -94,13 +94,7 @@ export const WithWidgets: Story = {
         }}
       >
         {/* Mock Discord Status */}
-        <Box
-          css={{
-            fontSize: "xs",
-            fontFamily: "mono",
-            opacity: 0.8,
-          }}
-        >
+        <Box css={{ opacity: 0.8, fontFamily: "mono", fontSize: "xs" }}>
           discord: 🟢 <span style={{ color: "#22C55E" }}>online</span> · Playing Spotify
         </Box>
 
@@ -150,7 +144,7 @@ export const CustomContent: Story = {
         }}
       >
         <Paragraph css={{ mb: "4" }}>🎀 ୧ꔛꗃ˖ Custom Footer Content ･ﾟ⋆</Paragraph>
-        <Box css={{ fontSize: "sm", opacity: 0.8 }}>
+        <Box css={{ opacity: 0.8, fontSize: "sm" }}>
           <Link href="/about">About</Link>
           {" · "}
           <Link href="/contact">Contact</Link>
@@ -174,24 +168,17 @@ export const MultiSection: Story = {
     <Footer {...args}>
       <Box
         css={{
-          filter: "drop-shadow(0 35px 35px rgba(0,0,0,0.25))",
           display: "flex",
           flexDirection: { base: "column", md: "row" },
           justifyContent: "center",
           gap: "12",
           textAlign: { base: "center", md: "left" },
+          filter: "drop-shadow(0 35px 35px rgba(0,0,0,0.25))",
         }}
       >
         {/* Navigation */}
         <Box>
-          <Box
-            css={{
-              fontSize: "xs",
-              mb: "4",
-              opacity: 0.5,
-              letterSpacing: "0.15em",
-            }}
-          >
+          <Box css={{ mb: "4", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>
             NAVIGATION
           </Box>
           <Box css={{ fontSize: "sm" }}>
@@ -207,16 +194,7 @@ export const MultiSection: Story = {
 
         {/* Legal */}
         <Box>
-          <Box
-            css={{
-              fontSize: "xs",
-              mb: "4",
-              opacity: 0.5,
-              letterSpacing: "0.15em",
-            }}
-          >
-            LEGAL
-          </Box>
+          <Box css={{ mb: "4", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>LEGAL</Box>
           <Box css={{ fontSize: "sm" }}>
             <Link href="/legal">Legal</Link>
             <br />
@@ -228,16 +206,7 @@ export const MultiSection: Story = {
 
         {/* Social */}
         <Box>
-          <Box
-            css={{
-              fontSize: "xs",
-              mb: "4",
-              opacity: 0.5,
-              letterSpacing: "0.15em",
-            }}
-          >
-            SOCIAL
-          </Box>
+          <Box css={{ mb: "4", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>SOCIAL</Box>
           <Box css={{ fontSize: "sm" }}>
             <Link href="https://instagram.com" isExternal>
               Instagram
@@ -258,7 +227,7 @@ export const MultiSection: Story = {
       <Box css={{ mt: "12", mb: "6" }}>*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚</Box>
 
       {/* Copyright */}
-      <Box css={{ fontSize: "xs", opacity: 0.6 }}>
+      <Box css={{ opacity: 0.6, fontSize: "xs" }}>
         ༺yl33ly httpjpg icon.icon.iconn te3shay༻
         <br />© 2025 httpjpg
       </Box>
@@ -273,7 +242,7 @@ export const Minimal: Story = {
   args: {},
   render: (args) => (
     <Footer {...args} css={{ py: "12", bg: "neutral.50" }}>
-      <Box css={{ fontSize: "sm", opacity: 0.7 }}>⋆.˚ httpjpg × 2025 ･ﾟ⋆</Box>
+      <Box css={{ opacity: 0.7, fontSize: "sm" }}>⋆.˚ httpjpg × 2025 ･ﾟ⋆</Box>
     </Footer>
   ),
 };

@@ -76,7 +76,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
             outlineColor: "primary.500",
             outlineOffset: "2px",
           },
-          _disabled: { cursor: "not-allowed", opacity: 0.5 },
+          _disabled: { opacity: 0.5, cursor: "not-allowed" },
           ...SIZE_STYLES[size],
           ...VARIANT_STYLES[variant],
           ...cssProp,

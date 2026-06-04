@@ -23,13 +23,7 @@ export function WorkCardContent({
 }) {
   return (
     <Box css={{ w: { base: "full", xl: "1/2" } }}>
-      <VStack
-        gap="4"
-        css={{
-          mx: "auto",
-          w: { base: "full", md: "12/12", xl: "full" },
-        }}
-      >
+      <VStack gap="4" css={{ w: { base: "full", md: "12/12", xl: "full" }, mx: "auto" }}>
         {description && (
           <Paragraph
             as="div"

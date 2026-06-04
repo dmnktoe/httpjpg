@@ -16,25 +16,21 @@ export interface OrderedListProps extends Omit<ComponentPropsWithoutRef<"ol">, "
 
 const baseClass = css({
   margin: 0,
-  padding: 0,
   marginTop: "4",
   marginBottom: "4",
+  padding: 0,
   listStyleType: "none",
   counterReset: "ordered-list",
   "& ol": { marginTop: "2", marginBottom: "2" },
-  "& > li": {
-    position: "relative",
-    paddingLeft: "8",
-    counterIncrement: "ordered-list",
-  },
+  "& > li": { position: "relative", paddingLeft: "8", counterIncrement: "ordered-list" },
   "& > li::before": {
     position: "absolute",
-    left: "0",
     top: "0",
+    left: "0",
     opacity: 0.6,
     fontFamily: "mono",
-    fontVariantNumeric: "tabular-nums",
     lineHeight: "inherit",
+    fontVariantNumeric: "tabular-nums",
   },
 });
 

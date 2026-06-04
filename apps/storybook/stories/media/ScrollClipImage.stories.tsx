@@ -49,15 +49,15 @@ type Story = StoryObj<typeof meta>;
 const Spacer = ({ label }: { label: string }) => (
   <Box
     css={{
-      height: "80vh",
       display: "flex",
-      alignItems: "center",
       justifyContent: "center",
+      alignItems: "center",
+      height: "80vh",
+      opacity: 0.4,
       fontFamily: "mono",
       fontSize: "xs",
-      opacity: 0.4,
-      borderTop: "1px dashed",
       borderColor: "neutral.300",
+      borderTop: "1px dashed",
       _pageDark: { borderColor: "neutral.700" },
     }}
   >
@@ -100,7 +100,7 @@ export const Gallery: Story = {
     alt: "",
   },
   render: () => (
-    <Stack direction="vertical" gap="16" css={{ p: 6, maxWidth: "960px", mx: "auto" }}>
+    <Stack direction="vertical" gap="16" css={{ maxWidth: "960px", mx: "auto", p: 6 }}>
       <Spacer label="gallery starts here" />
       <ScrollClipImage
         src={OPTIMIZED_IMAGES.landscape}
@@ -147,7 +147,7 @@ export const Linked: Story = {
     maxScale: 1.12,
   },
   render: (args) => (
-    <Stack direction="vertical" gap="0" css={{ p: 6, maxWidth: "1024px", mx: "auto" }}>
+    <Stack direction="vertical" gap="0" css={{ maxWidth: "1024px", mx: "auto", p: 6 }}>
       <Spacer label="scroll to reveal" />
       <ScrollClipImage {...args} />
       <Spacer label="…" />

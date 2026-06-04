@@ -50,36 +50,22 @@ export function VendorList({
   };
 
   return (
-    <Box
-      css={{
-        fontFamily: "mono",
-        fontSize: "sm",
-        color: "neutral.700",
-      }}
-    >
+    <Box css={{ color: "neutral.700", fontFamily: "mono", fontSize: "sm" }}>
       <Divider variant="ascii" pattern={dividerPattern} spacing="3" />
 
       <Box css={{ mt: "3" }}>
-        <Box
-          css={{
-            fontWeight: 600,
-            mb: "3",
-            fontSize: "sm",
-          }}
-        >
-          ✦ External Services Used:
-        </Box>
+        <Box css={{ mb: "3", fontSize: "sm", fontWeight: 600 }}>✦ External Services Used:</Box>
 
         {Object.entries(vendorsByCategory).map(([category, vendors]) => (
           <Box key={category} css={{ mb: "4" }}>
             <Box
               css={{
-                fontWeight: 600,
-                fontSize: "xs",
-                color: "neutral.600",
                 mb: "2",
-                textTransform: "uppercase",
+                color: "neutral.600",
+                fontSize: "xs",
+                fontWeight: 600,
                 letterSpacing: "0.05em",
+                textTransform: "uppercase",
               }}
             >
               {categoryLabels[category] || category}
@@ -88,23 +74,16 @@ export function VendorList({
             <Box
               as="ul"
               css={{
-                listStyle: "none",
-                p: 0,
-                m: 0,
                 display: "flex",
                 flexDirection: "column",
                 gap: "2",
+                m: 0,
+                p: 0,
+                listStyle: "none",
               }}
             >
               {vendors.map((vendor) => (
-                <Box
-                  as="li"
-                  key={vendor.key}
-                  css={{
-                    pl: "4",
-                    position: "relative",
-                  }}
-                >
+                <Box as="li" key={vendor.key} css={{ position: "relative", pl: "4" }}>
                   <Box
                     as="span"
                     css={{

@@ -9,11 +9,11 @@ export function WorkCardTags({ tags }: { tags: string[] }) {
       gap="2"
       css={{
         flexWrap: "wrap",
+        mt: "2",
+        opacity: 0.7,
         fontFamily: "mono",
         fontSize: "xs",
         letterSpacing: "0.05em",
-        opacity: 0.7,
-        mt: "2",
       }}
     >
       {uniqueTags.map((tag) => (
@@ -21,11 +21,11 @@ export function WorkCardTags({ tags }: { tags: string[] }) {
           key={tag}
           as="span"
           css={{
-            border: "1px solid",
-            borderColor: "neutral.400",
             px: "1.5",
             py: "0.5",
             textTransform: "lowercase",
+            border: "1px solid",
+            borderColor: "neutral.400",
           }}
         >
           #{tag}

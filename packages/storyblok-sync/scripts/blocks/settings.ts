@@ -74,6 +74,7 @@ export const settingsBlocks: BlockDef[] = [
           description: "17–20 digit Discord snowflake; powers the live status widget.",
           tooltip: true,
         }),
+        letterboxd_username: field.text("Letterboxd · Username"),
         custom_cursor_enabled: field.boolean("Custom Cursor", "true"),
         mouse_trail_enabled: field.boolean("Mouse Trail", "true"),
       }),

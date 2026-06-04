@@ -26,6 +26,7 @@ import { PreviewNotification } from "@/components/ui/preview-notification";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { DiscordStatus } from "@/components/widgets/discord-status";
 import { FlagCounter } from "@/components/widgets/flag-counter";
+import { LetterboxdStatus } from "@/components/widgets/letterboxd-status";
 import { NowPlayingWidget } from "@/components/widgets/now-playing-widget";
 import { PSNCard } from "@/components/widgets/psn-card";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
@@ -133,6 +134,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                   }}
                 >
                   <DiscordStatus />
+                  <LetterboxdStatus />
                   <Box
                     css={{
                       display: "flex",

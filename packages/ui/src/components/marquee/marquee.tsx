@@ -1,5 +1,6 @@
 "use client";
 
+import { useReducedMotion } from "framer-motion";
 import { useMemo } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
@@ -43,10 +44,30 @@ export function Marquee({
   pauseDuration = 2,
   css: cssProp,
 }: MarqueeProps) {
+  const prefersReducedMotion = useReducedMotion();
+
   const animationName = useMemo(
     () => `marquee-${hashProps({ speed, direction, repeat, iosStyle, pauseDuration })}`,
     [speed, direction, repeat, iosStyle, pauseDuration],
   );
+
+  // Reduced motion: render the content once, statically, instead of scrolling it.
+  if (prefersReducedMotion) {
+    return (
+      <Box
+        css={{
+          overflow: "hidden",
+          whiteSpace: "nowrap",
+          position: "relative",
+          ...cssProp,
+        }}
+      >
+        <Box as="span" css={{ display: "inline-block" }}>
+          {children}
+        </Box>
+      </Box>
+    );
+  }
 
   const animationDirection = direction === "left" ? "normal" : "reverse";
 

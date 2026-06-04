@@ -1,6 +1,7 @@
 "use client";
 
 import { zIndex } from "@httpjpg/tokens";
+import { useReducedMotion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
@@ -26,8 +27,13 @@ export function CustomCursor({
   const [currentSymbol, setCurrentSymbol] = useState(symbol);
   const [hoverText, setHoverText] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
     const symbols = ["✦", "◆", "✧", "◇", "⬥", "⬦"];
     let symbolIndex = 0;
     let rafId: number | null = null;
@@ -131,9 +137,13 @@ export function CustomCursor({
       window.removeEventListener("mouseover", handleMouseOver);
       window.removeEventListener("mouseout", handleMouseOut);
     };
-  }, [symbol]);
+  }, [symbol, prefersReducedMotion]);
 
   useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
     document.body.style.cursor = "none";
     document.documentElement.style.cursor = "none";
 
@@ -152,7 +162,13 @@ export function CustomCursor({
       document.documentElement.style.cursor = "";
       style.remove();
     };
-  }, []);
+  }, [prefersReducedMotion]);
+
+  // Honour the user's reduced-motion preference: keep the native cursor and skip
+  // the animated custom cursor entirely rather than running rAF loops.
+  if (prefersReducedMotion) {
+    return null;
+  }
 
   return (
     <>

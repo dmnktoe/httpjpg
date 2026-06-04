@@ -6,6 +6,7 @@ export * from "./box/box";
 export * from "./button/button";
 export * from "./callout/callout";
 export * from "./center/center";
+export * from "./checkbox/checkbox";
 export * from "./code-block/code-block";
 export * from "./container/container";
 export * from "./copyright-label/copyright-label";

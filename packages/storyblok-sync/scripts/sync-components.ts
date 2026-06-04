@@ -22,7 +22,7 @@ import { layoutBlocks } from "./blocks/layout";
 import { mediaBlocks } from "./blocks/media";
 import { pageBlocks } from "./blocks/pages";
 import { settingsBlocks } from "./blocks/settings";
-import { type BlockDef, upsertBlock } from "./lib/block";
+import { type BlockDef, fetchComponentIds, upsertBlock } from "./lib/block";
 
 const BLOCKS: BlockDef[] = [
   ...layoutBlocks,
@@ -32,15 +32,13 @@ const BLOCKS: BlockDef[] = [
   ...settingsBlocks,
 ];
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 async function syncComponents(): Promise<void> {
   console.log("🚀 Syncing Storyblok components\n");
   validateEnv();
+  const existingIds = await fetchComponentIds();
   for (const def of BLOCKS) {
     try {
-      await upsertBlock(def);
-      await sleep(500);
+      await upsertBlock(def, existingIds);
     } catch (error) {
       console.error(`❌ ${def.name}:`, error);
     }

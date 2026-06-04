@@ -61,7 +61,6 @@ async function upsertDatasource(datasource: Datasource, entries: DatasourceEntry
           },
         });
       }
-      await sleep(180);
     }
 
     for (const entry of existingEntries.filter((e) => !entries.some((n) => n.name === e.name))) {
@@ -83,7 +82,6 @@ async function upsertDatasource(datasource: Datasource, entries: DatasourceEntry
         value: entry.value,
       },
     });
-    await sleep(180);
   }
 }
 
@@ -112,8 +110,6 @@ function colorDs(): DatasourceWithEntries {
   };
 }
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 async function syncDatasources(): Promise<void> {
   console.log("🚀 Syncing Storyblok datasources\n");
   validateEnv();
@@ -124,7 +120,6 @@ async function syncDatasources(): Promise<void> {
     try {
       await upsertDatasource(datasource, entries);
       console.log(`✅ ${datasource.name} (${entries.length} entries)`);
-      await sleep(500);
     } catch (error) {
       console.error(`❌ ${datasource.name}:`, error);
       process.exit(1);

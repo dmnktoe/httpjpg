@@ -9,9 +9,7 @@ export interface BlockDef {
   icon: string;
   color: string;
   is_root?: boolean;
-  /** Field whose value labels the blok in the editor tree (e.g. `title`). */
   preview_field?: string;
-  /** Template that labels the blok in the editor tree, e.g. `{value} {label}`. */
   preview_tmpl?: string;
   schema: Record<string, StoryblokField>;
 }

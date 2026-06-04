@@ -1,3 +1,4 @@
+// @vitest-environment node
 import type { BlockDef } from "../lib/block";
 import { contentBlocks } from "./content";
 import { layoutBlocks } from "./layout";

@@ -53,11 +53,6 @@ export function captureClientException(
   Sentry.captureException(error, context);
 }
 
-// Wires Next.js App Router navigations into Sentry tracing so `navigation`
-// transactions (and the web vitals they carry) are captured. Re-exported from
-// the app's `instrumentation-client.ts` as the `onRouterTransitionStart` hook.
-// oxlint resolves the non-client types entry of @sentry/nextjs, which omits this
-// client-only export, so the namespace check is a false positive here (tsc is happy).
 // oxlint-disable-next-line import/namespace
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
 

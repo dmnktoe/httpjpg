@@ -84,7 +84,6 @@ export function MouseTrail({
     };
   }, [count, lifetime, prefersReducedMotion]);
 
-  // No trailing particles for users who prefer reduced motion.
   if (prefersReducedMotion) {
     return null;
   }

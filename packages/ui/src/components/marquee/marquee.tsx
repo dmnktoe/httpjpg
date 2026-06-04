@@ -51,7 +51,7 @@ export function Marquee({
     [speed, direction, repeat, iosStyle, pauseDuration],
   );
 
-  // Reduced motion: render the content once, statically, instead of scrolling it.
+  // Reduced motion: render the content statically instead of scrolling it.
   if (prefersReducedMotion) {
     return (
       <Box

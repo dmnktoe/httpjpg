@@ -164,8 +164,7 @@ export function CustomCursor({
     };
   }, [prefersReducedMotion]);
 
-  // Honour the user's reduced-motion preference: keep the native cursor and skip
-  // the animated custom cursor entirely rather than running rAF loops.
+  // Reduced motion: keep the native cursor rather than the animated custom one.
   if (prefersReducedMotion) {
     return null;
   }

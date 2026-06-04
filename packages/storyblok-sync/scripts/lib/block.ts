@@ -16,7 +16,6 @@ export interface BlockDef {
   schema: Record<string, StoryblokField>;
 }
 
-/** Index existing components by name once, so upsertBlock skips a per-blok list fetch. */
 export async function fetchComponentIds(): Promise<Map<string, number>> {
   try {
     const response = await storyblokRequest<{

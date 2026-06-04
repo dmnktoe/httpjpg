@@ -1,6 +1,5 @@
 export const STORYBLOK_API = "https://mapi.storyblok.com/v1";
 
-// Management API allows 6 req/s; keep >=200ms between request starts.
 const MIN_REQUEST_INTERVAL_MS = 200;
 const MAX_RETRIES = 5;
 

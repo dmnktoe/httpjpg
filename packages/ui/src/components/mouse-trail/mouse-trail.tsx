@@ -1,5 +1,6 @@
 "use client";
 
+import { useReducedMotion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
@@ -31,8 +32,13 @@ export function MouseTrail({
 }: MouseTrailProps) {
   const [particles, setParticles] = useState<TrailParticle[]>([]);
   const particleIdRef = useRef(0);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
+    if (prefersReducedMotion) {
+      return;
+    }
+
     let rafId: number;
     let lastTime = Date.now();
 
@@ -76,7 +82,11 @@ export function MouseTrail({
       window.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(rafId);
     };
-  }, [count, lifetime]);
+  }, [count, lifetime, prefersReducedMotion]);
+
+  if (prefersReducedMotion) {
+    return null;
+  }
 
   return (
     <Box

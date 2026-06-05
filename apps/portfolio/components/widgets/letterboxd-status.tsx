@@ -34,10 +34,33 @@ export function LetterboxdStatus() {
     fetchFilms();
   }, []);
 
-  // Reserve the line height while the request is in flight so the footer
-  // doesn't jump when the film pops in; collapse only once we know it's empty.
+  // Hold the footer line with a loading label while the request is in flight so
+  // it doesn't jump when the film pops in; collapse only once we know it's empty.
   if (!film) {
-    return loaded ? null : <Box aria-hidden css={{ minHeight: "5" }} />;
+    if (loaded) {
+      return null;
+    }
+    return (
+      <Box
+        css={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 2,
+          minHeight: "5",
+          opacity: 80,
+          fontFamily: "mono",
+          fontSize: "xs",
+        }}
+      >
+        <Box as="span" css={{ opacity: 60 }}>
+          letterboxd:
+        </Box>
+        <Box as="span" css={{ opacity: 50 }}>
+          loading ...
+        </Box>
+      </Box>
+    );
   }
 
   return (

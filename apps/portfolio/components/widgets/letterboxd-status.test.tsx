@@ -35,11 +35,11 @@ describe("LetterboxdStatus", () => {
     vi.unstubAllGlobals();
   });
 
-  it("reserves the line while loading, then collapses when there is no film", async () => {
+  it("shows a loading label while loading, then collapses when there is no film", async () => {
     mockFetch({ films: [] });
     const { container } = render(<LetterboxdStatus />);
-    // A placeholder holds the footer line in place during the request.
-    expect(container.firstChild).not.toBeNull();
+    // A loading line holds the footer in place during the request.
+    expect(screen.getByText("loading ...")).toBeInTheDocument();
     await waitFor(() => expect(container).toBeEmptyDOMElement());
   });
 

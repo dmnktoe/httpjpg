@@ -14,6 +14,7 @@ function formatRating(rating: number): string {
 
 export function LetterboxdStatus() {
   const [film, setFilm] = useState<LetterboxdFilm | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const fetchFilms = async () => {
@@ -25,14 +26,41 @@ export function LetterboxdStatus() {
         }
       } catch (error) {
         console.error("Failed to fetch Letterboxd films:", error);
+      } finally {
+        setLoaded(true);
       }
     };
 
     fetchFilms();
   }, []);
 
+  // Hold the footer line with a loading label while the request is in flight so
+  // it doesn't jump when the film pops in; collapse only once we know it's empty.
   if (!film) {
-    return null;
+    if (loaded) {
+      return null;
+    }
+    return (
+      <Box
+        css={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 2,
+          minHeight: "5",
+          opacity: 80,
+          fontFamily: "mono",
+          fontSize: "xs",
+        }}
+      >
+        <Box as="span" css={{ opacity: 60 }}>
+          letterboxd:
+        </Box>
+        <Box as="span" css={{ opacity: 50 }}>
+          loading ...
+        </Box>
+      </Box>
+    );
   }
 
   return (
@@ -46,6 +74,7 @@ export function LetterboxdStatus() {
         justifyContent: "center",
         alignItems: "center",
         gap: 2,
+        minHeight: "5",
         color: "inherit",
         opacity: 80,
         fontFamily: "mono",
@@ -102,6 +131,11 @@ export function LetterboxdStatus() {
       {film.year && (
         <Box as="span" css={{ opacity: 50 }}>
           {film.year}
+        </Box>
+      )}
+      {film.liked && (
+        <Box as="span" aria-label="liked" css={{ color: "accent.500", opacity: 80 }}>
+          ♥
         </Box>
       )}
       {film.rating !== null && (

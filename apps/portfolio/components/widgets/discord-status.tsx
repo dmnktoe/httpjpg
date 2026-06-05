@@ -81,8 +81,6 @@ export function DiscordStatus() {
                 borderRadius: "sm",
                 overflow: "hidden",
               }}
-              data-preview-image={activityIcon}
-              data-preview-ratio="1:1"
             >
               <img
                 src={activityIcon}
@@ -106,6 +104,7 @@ export function DiscordStatus() {
               overflow: "hidden",
             }}
             data-preview-image={activityIcon || undefined}
+            data-preview-ratio="1:1"
           >
             {activity}
           </Box>

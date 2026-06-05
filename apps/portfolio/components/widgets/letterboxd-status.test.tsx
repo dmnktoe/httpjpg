@@ -43,7 +43,7 @@ describe("LetterboxdStatus", () => {
     await waitFor(() => expect(container).toBeEmptyDOMElement());
   });
 
-  it("renders the latest film with a poster-ratio preview", async () => {
+  it("renders the latest film with a single poster-ratio preview on the title", async () => {
     mockFetch({ films: [film] });
     render(<LetterboxdStatus />);
 
@@ -51,10 +51,11 @@ describe("LetterboxdStatus", () => {
     expect(title).toHaveAttribute("data-preview-image", film.poster);
     expect(title).toHaveAttribute("data-preview-ratio", "2:3");
 
-    const poster = document.querySelector(
-      `[data-preview-image="${film.poster}"][data-preview-ratio="2:3"] img`,
-    );
-    expect(poster).toHaveAttribute("src", film.poster);
+    // The inline poster thumbnail no longer triggers its own preview, so only
+    // the title carries the preview attributes.
+    const poster = document.querySelector(`img[src="${film.poster}"]`);
+    expect(poster).toBeInTheDocument();
+    expect(poster?.closest("[data-preview-image]")).toBeNull();
 
     const link = screen.getByRole("link");
     expect(link).toHaveAttribute("href", film.url);

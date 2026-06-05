@@ -120,13 +120,14 @@ jobs:
             --release=${{ github.sha }} \
             .next/static
 
-  # ── Bundle analysis (informational, not gated) ─────────────────────
+  # ── Bundle analysis (Codecov, informational, not gated) ────────────
   bundle-analysis:
     name: Bundle Analysis
     runs-on: ubuntu-latest
     needs: [build-packages]
     timeout-minutes: 20
     env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       NEXT_PUBLIC_STORYBLOK_TOKEN: ${{ secrets.NEXT_PUBLIC_STORYBLOK_TOKEN }}
       STORYBLOK_PREVIEW_TOKEN: ${{ secrets.STORYBLOK_PREVIEW_TOKEN }}
       STORYBLOK_PREVIEW_SECRET: ${{ secrets.STORYBLOK_PREVIEW_SECRET }}
@@ -141,14 +142,8 @@ jobs:
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
       - uses: ./.github/actions/setup
-      - name: Analyze portfolio bundle (Turbopack)
-        run: pnpm --filter=@httpjpg/portfolio run analyze:ci
-      - name: Upload bundle analysis
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: bundle-analysis
-          path: apps/portfolio/.next/diagnostics/analyze
-          retention-days: 14
+      - name: Build with bundle stats and upload to Codecov
+        run: pnpm --filter=@httpjpg/portfolio run build:analyze
 
   e2e:
     name: E2E Tests

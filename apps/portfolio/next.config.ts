@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
 
+import { codecovNextJSWebpackPlugin } from "@codecov/nextjs-webpack-plugin";
 import "@httpjpg/env";
 import type { NextConfig } from "next";
 
@@ -51,40 +52,58 @@ async function resolveAppVersion(): Promise<string> {
   }
 }
 
-export default async (): Promise<NextConfig> => ({
-  transpilePackages: [
-    "@httpjpg/ui",
-    "@httpjpg/tokens",
-    "@httpjpg/env",
-    "@httpjpg/storyblok-api",
-    "@httpjpg/storyblok-utils",
-  ],
-
-  env: {
-    NEXT_PUBLIC_APP_VERSION: await resolveAppVersion(),
-  },
-
-  images: {
-    formats: ["image/avif", "image/webp"],
-    remotePatterns: [
-      { protocol: "https", hostname: "a.storyblok.com" },
-      { protocol: "https", hostname: "a2.storyblok.com" },
+export default async (): Promise<NextConfig> => {
+  const config: NextConfig = {
+    transpilePackages: [
+      "@httpjpg/ui",
+      "@httpjpg/tokens",
+      "@httpjpg/env",
+      "@httpjpg/storyblok-api",
+      "@httpjpg/storyblok-utils",
     ],
-  },
 
-  reactStrictMode: true,
-  productionBrowserSourceMaps: true,
-
-  async rewrites() {
-    return [
-      { source: "/draft", destination: "/api/draft" },
-      { source: "/exit-draft", destination: "/api/exit-draft" },
-    ];
-  },
-
-  turbopack: {
-    resolveAlias: {
-      "styled-system": "../../packages/ui/styled-system",
+    env: {
+      NEXT_PUBLIC_APP_VERSION: await resolveAppVersion(),
     },
-  },
-});
+
+    images: {
+      formats: ["image/avif", "image/webp"],
+      remotePatterns: [
+        { protocol: "https", hostname: "a.storyblok.com" },
+        { protocol: "https", hostname: "a2.storyblok.com" },
+      ],
+    },
+
+    reactStrictMode: true,
+    productionBrowserSourceMaps: true,
+
+    async rewrites() {
+      return [
+        { source: "/draft", destination: "/api/draft" },
+        { source: "/exit-draft", destination: "/api/exit-draft" },
+      ];
+    },
+
+    turbopack: {
+      resolveAlias: {
+        "styled-system": "../../packages/ui/styled-system",
+      },
+    },
+  };
+
+  if (process.env.ANALYZE_BUNDLE === "true") {
+    config.webpack = (webpackConfig, options) => {
+      webpackConfig.plugins.push(
+        codecovNextJSWebpackPlugin({
+          enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+          bundleName: "portfolio",
+          uploadToken: process.env.CODECOV_TOKEN,
+          webpack: options.webpack,
+        }),
+      );
+      return webpackConfig;
+    };
+  }
+
+  return config;
+};

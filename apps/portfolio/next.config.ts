@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 
 import { codecovNextJSWebpackPlugin } from "@codecov/nextjs-webpack-plugin";
-import "@httpjpg/env";
+import { env } from "@httpjpg/env";
 import type { NextConfig } from "next";
 
 const GITHUB_REPO = "dmnktoe/httpjpg";
@@ -91,13 +91,13 @@ export default async (): Promise<NextConfig> => {
     },
   };
 
-  if (process.env.ANALYZE_BUNDLE === "true") {
+  if (env.ANALYZE_BUNDLE === "true") {
     config.webpack = (webpackConfig, options) => {
       webpackConfig.plugins.push(
         codecovNextJSWebpackPlugin({
-          enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+          enableBundleAnalysis: env.CODECOV_TOKEN !== undefined,
           bundleName: "portfolio",
-          uploadToken: process.env.CODECOV_TOKEN,
+          uploadToken: env.CODECOV_TOKEN,
           webpack: options.webpack,
         }),
       );

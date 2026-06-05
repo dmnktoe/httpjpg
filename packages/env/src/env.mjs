@@ -45,6 +45,9 @@ export const env = createEnv({
 
     ARCJET_KEY: z.string().optional(),
 
+    CODECOV_TOKEN: z.string().optional(),
+    ANALYZE_BUNDLE: z.enum(["true", "false"]).optional(),
+
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   },
   client: {
@@ -83,6 +86,9 @@ export const env = createEnv({
     DISCORD_USER_ID: process.env.DISCORD_USER_ID,
 
     ARCJET_KEY: process.env.ARCJET_KEY,
+
+    CODECOV_TOKEN: process.env.CODECOV_TOKEN,
+    ANALYZE_BUNDLE: process.env.ANALYZE_BUNDLE,
 
     NODE_ENV: process.env.NODE_ENV,
 

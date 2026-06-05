@@ -1,5 +1,6 @@
 "use client";
 
+import { useReducedMotion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import {
@@ -77,9 +78,8 @@ interface SlideshowVideoSlideProps {
 }
 
 function SlideshowVideoSlide({ videoUrl, videoPoster, aspectRatio }: SlideshowVideoSlideProps) {
-  const VideoComponent = Video;
   return (
-    <VideoComponent
+    <Video
       src={videoUrl}
       poster={videoPoster}
       aspectRatio={aspectRatio}
@@ -157,6 +157,7 @@ export function Slideshow({
   const swiperRef = useRef<SwiperType | null>(null);
   const autoplayTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
 
   const handlePrev = useCallback(() => {
     swiperRef.current?.slidePrev();
@@ -171,13 +172,13 @@ export function Slideshow({
       clearTimeout(autoplayTimerRef.current);
     }
 
-    if (images.length > 1) {
+    if (images.length > 1 && !prefersReducedMotion) {
       autoplayTimerRef.current = setTimeout(() => {
         swiperRef.current?.slideNext();
         startManualAutoplay();
       }, autoplayDelay);
     }
-  }, [autoplayDelay, images.length]);
+  }, [autoplayDelay, images.length, prefersReducedMotion]);
 
   const handleSwiperInit = useCallback(
     (swiper: SwiperType) => {

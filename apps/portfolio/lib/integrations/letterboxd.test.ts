@@ -38,10 +38,44 @@ describe("parseLetterboxdFeed", () => {
       year: "2024",
       rating: 4.5,
       rewatch: false,
+      liked: false,
       watchedDate: "2024-03-05",
       url: "https://letterboxd.com/dom/film/dune-part-two/",
       poster: "https://a.ltrbxd.com/poster.jpg",
     });
+  });
+
+  it("decodes html entities in the film title", () => {
+    const entity = `
+      <item>
+        <link>https://letterboxd.com/dom/film/x/</link>
+        <letterboxd:filmTitle>Johnny &amp; Me - The Teachers&#039; Lounge</letterboxd:filmTitle>
+        <letterboxd:filmYear>2023</letterboxd:filmYear>
+      </item>`;
+    const films = parseLetterboxdFeed(feed(entity));
+    expect(films[0].title).toBe("Johnny & Me - The Teachers' Lounge");
+  });
+
+  it("orders films by watch date, newest first", () => {
+    const older = FILM_ITEM.replace(
+      "<letterboxd:watchedDate>2024-03-05</letterboxd:watchedDate>",
+      "<letterboxd:watchedDate>2020-01-01</letterboxd:watchedDate>",
+    ).replace(
+      "<letterboxd:filmTitle>Dune: Part Two</letterboxd:filmTitle>",
+      "<letterboxd:filmTitle>Old Film</letterboxd:filmTitle>",
+    );
+    // The feed lists the just-logged older film first; we reorder by watch date.
+    const films = parseLetterboxdFeed(feed(older, FILM_ITEM));
+    expect(films.map((film) => film.title)).toEqual(["Dune: Part Two", "Old Film"]);
+  });
+
+  it("marks liked films", () => {
+    const liked = FILM_ITEM.replace(
+      "<letterboxd:rewatch>No</letterboxd:rewatch>",
+      "<letterboxd:rewatch>No</letterboxd:rewatch><letterboxd:memberLike>Yes</letterboxd:memberLike>",
+    );
+    const films = parseLetterboxdFeed(feed(liked));
+    expect(films[0].liked).toBe(true);
   });
 
   it("skips items without a film title (lists, profile noise)", () => {

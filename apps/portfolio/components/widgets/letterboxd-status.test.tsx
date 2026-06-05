@@ -10,6 +10,7 @@ const film: LetterboxdFilm = {
   year: "2001",
   rating: 4.5,
   rewatch: false,
+  liked: false,
   watchedDate: "2026-05-01",
   url: "https://letterboxd.com/user/film/mulholland-drive/",
   poster: "https://example.com/poster.jpg",
@@ -34,10 +35,12 @@ describe("LetterboxdStatus", () => {
     vi.unstubAllGlobals();
   });
 
-  it("renders nothing until a film has loaded", () => {
+  it("reserves the line while loading, then collapses when there is no film", async () => {
     mockFetch({ films: [] });
     const { container } = render(<LetterboxdStatus />);
-    expect(container).toBeEmptyDOMElement();
+    // A placeholder holds the footer line in place during the request.
+    expect(container.firstChild).not.toBeNull();
+    await waitFor(() => expect(container).toBeEmptyDOMElement());
   });
 
   it("renders the latest film with a poster-ratio preview", async () => {
@@ -79,11 +82,17 @@ describe("LetterboxdStatus", () => {
     expect(screen.queryByText(/★/)).not.toBeInTheDocument();
   });
 
+  it("renders the liked heart when the film is liked", async () => {
+    mockFetch({ films: [{ ...film, liked: true }] });
+    render(<LetterboxdStatus />);
+
+    expect(await screen.findByLabelText("liked")).toBeInTheDocument();
+  });
+
   it("renders nothing when the request fails", async () => {
     mockFetch({}, false);
     const { container } = render(<LetterboxdStatus />);
 
-    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalled());
-    expect(container).toBeEmptyDOMElement();
+    await waitFor(() => expect(container).toBeEmptyDOMElement());
   });
 });

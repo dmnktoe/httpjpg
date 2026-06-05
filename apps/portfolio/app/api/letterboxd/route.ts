@@ -43,7 +43,10 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json({ films: result.films });
+    return NextResponse.json(
+      { films: result.films },
+      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
+    );
   } catch (error) {
     console.error("Letterboxd API error:", error);
     captureServerException(error, { tags: { route: "letterboxd" } });

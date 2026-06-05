@@ -51,7 +51,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(result.presence);
+    return NextResponse.json(result.presence, {
+      headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60" },
+    });
   } catch (error) {
     console.error("Discord API error:", error);
     captureServerException(error, { tags: { route: "discord" } });

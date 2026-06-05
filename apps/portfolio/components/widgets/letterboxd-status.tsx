@@ -111,7 +111,7 @@ export function LetterboxdStatus() {
         </Box>
       )}
       {film.liked && (
-        <Box as="span" aria-label="liked" css={{ color: "danger.500", opacity: 80 }}>
+        <Box as="span" aria-label="liked" css={{ color: "accent.500", opacity: 80 }}>
           ♥
         </Box>
       )}

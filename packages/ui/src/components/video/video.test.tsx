@@ -50,4 +50,14 @@ describe("Video", () => {
     const video = container.querySelector("video") as HTMLVideoElement;
     expect(video.muted).toBe(true);
   });
+
+  it("defaults to object-fit contain and honors the objectFit prop", () => {
+    const { container: contained } = render(<Video src="/clip.mp4" controls={false} />);
+    expect(contained.querySelector("video")).toHaveStyle({ objectFit: "contain" });
+
+    const { container: covered } = render(
+      <Video src="/clip.mp4" objectFit="cover" controls={false} />,
+    );
+    expect(covered.querySelector("video")).toHaveStyle({ objectFit: "cover" });
+  });
 });

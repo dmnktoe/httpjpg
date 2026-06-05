@@ -83,6 +83,7 @@ function SlideshowVideoSlide({ videoUrl, videoPoster, aspectRatio }: SlideshowVi
       src={videoUrl}
       poster={videoPoster}
       aspectRatio={aspectRatio}
+      objectFit="cover"
       autoPlay
       muted
       loop

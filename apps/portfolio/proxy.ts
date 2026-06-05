@@ -3,6 +3,13 @@ import { validateStoryblokPreviewToken } from "@httpjpg/storyblok-utils";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+const SECURITY_HEADERS: Record<string, string> = {
+  "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "X-Content-Type-Options": "nosniff",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+};
+
 export async function proxy(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const storyblokParam = searchParams.get("_storyblok");
@@ -27,6 +34,9 @@ export async function proxy(request: NextRequest) {
     "Content-Security-Policy",
     "frame-ancestors 'self' https://app.storyblok.com",
   );
+  for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
+    response.headers.set(name, value);
+  }
 
   if (inEditor) {
     response.headers.set("Cache-Control", "no-store, must-revalidate");

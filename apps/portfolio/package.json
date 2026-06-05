@@ -37,6 +37,7 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
     "@playwright/test": "^1.57.0",
     "@sentry/cli": "^3.0.0",
     "@types/node": "catalog:",

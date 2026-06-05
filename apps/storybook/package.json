@@ -25,6 +25,7 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
+    "@storybook/addon-a11y": "^10.4.2",
     "@storybook/addon-docs": "^10.4.0",
     "@storybook/addon-links": "^10.4.0",
     "@storybook/react": "^10.4.0",

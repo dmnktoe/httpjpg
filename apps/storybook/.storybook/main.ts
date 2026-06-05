@@ -14,7 +14,7 @@ const consentPackagePath = path.resolve(rootPath, "packages/consent");
 
 const config: StorybookConfig = {
   stories: ["../stories/**/*.mdx", "../stories/**/*.stories.@(ts|tsx)"],
-  addons: ["@storybook/addon-docs", "@storybook/addon-links"],
+  addons: ["@storybook/addon-docs", "@storybook/addon-links", "@storybook/addon-a11y"],
   framework: {
     name: "@storybook/react-vite",
     options: {},

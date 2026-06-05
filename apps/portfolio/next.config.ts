@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process";
 
-import "@httpjpg/env";
+import { codecovNextJSWebpackPlugin } from "@codecov/nextjs-webpack-plugin";
+import { env } from "@httpjpg/env";
 import type { NextConfig } from "next";
 
 const GITHUB_REPO = "dmnktoe/httpjpg";
@@ -51,40 +52,58 @@ async function resolveAppVersion(): Promise<string> {
   }
 }
 
-export default async (): Promise<NextConfig> => ({
-  transpilePackages: [
-    "@httpjpg/ui",
-    "@httpjpg/tokens",
-    "@httpjpg/env",
-    "@httpjpg/storyblok-api",
-    "@httpjpg/storyblok-utils",
-  ],
-
-  env: {
-    NEXT_PUBLIC_APP_VERSION: await resolveAppVersion(),
-  },
-
-  images: {
-    formats: ["image/avif", "image/webp"],
-    remotePatterns: [
-      { protocol: "https", hostname: "a.storyblok.com" },
-      { protocol: "https", hostname: "a2.storyblok.com" },
+export default async (): Promise<NextConfig> => {
+  const config: NextConfig = {
+    transpilePackages: [
+      "@httpjpg/ui",
+      "@httpjpg/tokens",
+      "@httpjpg/env",
+      "@httpjpg/storyblok-api",
+      "@httpjpg/storyblok-utils",
     ],
-  },
 
-  reactStrictMode: true,
-  productionBrowserSourceMaps: true,
-
-  async rewrites() {
-    return [
-      { source: "/draft", destination: "/api/draft" },
-      { source: "/exit-draft", destination: "/api/exit-draft" },
-    ];
-  },
-
-  turbopack: {
-    resolveAlias: {
-      "styled-system": "../../packages/ui/styled-system",
+    env: {
+      NEXT_PUBLIC_APP_VERSION: await resolveAppVersion(),
     },
-  },
-});
+
+    images: {
+      formats: ["image/avif", "image/webp"],
+      remotePatterns: [
+        { protocol: "https", hostname: "a.storyblok.com" },
+        { protocol: "https", hostname: "a2.storyblok.com" },
+      ],
+    },
+
+    reactStrictMode: true,
+    productionBrowserSourceMaps: true,
+
+    async rewrites() {
+      return [
+        { source: "/draft", destination: "/api/draft" },
+        { source: "/exit-draft", destination: "/api/exit-draft" },
+      ];
+    },
+
+    turbopack: {
+      resolveAlias: {
+        "styled-system": "../../packages/ui/styled-system",
+      },
+    },
+  };
+
+  if (env.ANALYZE_BUNDLE === "true") {
+    config.webpack = (webpackConfig, options) => {
+      webpackConfig.plugins.push(
+        codecovNextJSWebpackPlugin({
+          enableBundleAnalysis: env.CODECOV_TOKEN !== undefined,
+          bundleName: "portfolio",
+          uploadToken: env.CODECOV_TOKEN,
+          webpack: options.webpack,
+        }),
+      );
+      return webpackConfig;
+    };
+  }
+
+  return config;
+};

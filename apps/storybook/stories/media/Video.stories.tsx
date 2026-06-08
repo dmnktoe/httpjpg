@@ -85,7 +85,7 @@ export const Vimeo: Story = {
  */
 export const Native: Story = {
   args: {
-    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
     source: "native",
     poster: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217",
     aspectRatio: "16/9",
@@ -103,7 +103,7 @@ export const Native: Story = {
  */
 export const NativeWithOverlayCopyright: Story = {
   args: {
-    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
     source: "native",
     poster: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217",
     aspectRatio: "16/9",
@@ -151,7 +151,7 @@ export const UltrawideAspectRatio: Story = {
  */
 export const AutoplayMuted: Story = {
   args: {
-    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
     source: "native",
     poster: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217",
     aspectRatio: "16/9",

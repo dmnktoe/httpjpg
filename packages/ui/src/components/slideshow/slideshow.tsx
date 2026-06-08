@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
+import { useCallback, useMemo, useRef, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import {
   Autoplay,
@@ -10,7 +11,6 @@ import {
   EffectCube,
   EffectFade,
   EffectFlip,
-  Navigation,
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -77,12 +77,12 @@ interface SlideshowVideoSlideProps {
 }
 
 function SlideshowVideoSlide({ videoUrl, videoPoster, aspectRatio }: SlideshowVideoSlideProps) {
-  const VideoComponent = Video;
   return (
-    <VideoComponent
+    <Video
       src={videoUrl}
       poster={videoPoster}
       aspectRatio={aspectRatio}
+      objectFit="cover"
       autoPlay
       muted
       loop
@@ -108,6 +108,16 @@ export interface SlideshowImage {
 
 export type SwiperEffect = "slide" | "fade" | "cube" | "coverflow" | "flip" | "cards" | "creative";
 
+const EFFECT_MODULES: Record<SwiperEffect, typeof EffectFade | undefined> = {
+  slide: undefined,
+  fade: EffectFade,
+  cube: EffectCube,
+  coverflow: EffectCoverflow,
+  flip: EffectFlip,
+  cards: EffectCards,
+  creative: EffectCreative,
+};
+
 export interface SlideshowProps {
   images: SlideshowImage[];
   animation?: AnimationType;
@@ -119,19 +129,9 @@ export interface SlideshowProps {
   showNavigation?: boolean;
   disableBlurOnLoad?: boolean;
   sizes?: string;
-  /** Marks the first slide as the LCP image: eager + `fetchpriority="high"`. */
   priority?: boolean;
-  /**
-   * Layer an `<ImageOverlay>` on every slide. `"random"` picks a different
-   * pattern per slide using the image url as a seed.
-   */
   overlay?: OverlayPattern;
-  /**
-   * Push overlay particles inward by this percentage so they sit on the
-   * slide image instead of around it. @default 0
-   */
   overlayInset?: number;
-  /** Show a `01/04` counter + decorative tape strip in the corner. */
   showCounter?: boolean;
   css?: SystemStyleObject;
 }
@@ -155,8 +155,8 @@ export function Slideshow({
   ...props
 }: SlideshowProps) {
   const swiperRef = useRef<SwiperType | null>(null);
-  const autoplayTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
 
   const handlePrev = useCallback(() => {
     swiperRef.current?.slidePrev();
@@ -166,76 +166,20 @@ export function Slideshow({
     swiperRef.current?.slideNext();
   }, []);
 
-  const startManualAutoplay = useCallback(() => {
-    if (autoplayTimerRef.current) {
-      clearTimeout(autoplayTimerRef.current);
-    }
-
-    if (images.length > 1) {
-      autoplayTimerRef.current = setTimeout(() => {
-        swiperRef.current?.slideNext();
-        startManualAutoplay();
-      }, autoplayDelay);
-    }
-  }, [autoplayDelay, images.length]);
-
-  const handleSwiperInit = useCallback(
-    (swiper: SwiperType) => {
-      swiperRef.current = swiper;
-      startManualAutoplay();
-    },
-    [startManualAutoplay],
-  );
-
-  const handleSlideChange = useCallback(
-    (swiper?: SwiperType) => {
-      if (swiper) {
-        setActiveIndex(swiper.realIndex ?? 0);
-      }
-      startManualAutoplay();
-    },
-    [startManualAutoplay],
-  );
-
-  useEffect(() => {
-    return () => {
-      if (autoplayTimerRef.current) {
-        clearTimeout(autoplayTimerRef.current);
-      }
-    };
+  const handleSwiperInit = useCallback((swiper: SwiperType) => {
+    swiperRef.current = swiper;
   }, []);
 
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden && images.length > 1) {
-        startManualAutoplay();
-      } else if (autoplayTimerRef.current) {
-        clearTimeout(autoplayTimerRef.current);
-      }
-    };
+  const handleSlideChange = useCallback((swiper: SwiperType) => {
+    setActiveIndex(swiper.realIndex ?? 0);
+  }, []);
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [images.length, startManualAutoplay]);
-
-  const EFFECT_MODULES: Record<SwiperEffect, typeof EffectFade | undefined> = {
-    slide: undefined,
-    fade: EffectFade,
-    cube: EffectCube,
-    coverflow: EffectCoverflow,
-    flip: EffectFlip,
-    cards: EffectCards,
-    creative: EffectCreative,
-  };
+  const autoplayEnabled = images.length > 1 && !prefersReducedMotion;
 
   const modules = useMemo(() => {
-    const baseModules = [Navigation, Autoplay];
     const effectModule = EFFECT_MODULES[effect];
-    return effectModule ? [...baseModules, effectModule] : baseModules;
-  }, [effect]);
+    return [...(autoplayEnabled ? [Autoplay] : []), ...(effectModule ? [effectModule] : [])];
+  }, [autoplayEnabled, effect]);
 
   return (
     <Box css={{ position: "relative", overflow: "visible", ...cssProp }} {...props}>
@@ -248,6 +192,7 @@ export function Slideshow({
           onSwiper={handleSwiperInit}
           onSlideChange={handleSlideChange}
           loop={images.length > 1}
+          autoplay={autoplayEnabled ? { delay: autoplayDelay, disableOnInteraction: false } : false}
           fadeEffect={SWIPER_FADE_EFFECT}
           cubeEffect={SWIPER_CUBE_EFFECT}
           coverflowEffect={SWIPER_COVERFLOW_EFFECT}

@@ -1,7 +1,8 @@
 "use client";
 
+import { useReducedMotion } from "framer-motion";
 import type { VideoHTMLAttributes } from "react";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { css, cx } from "styled-system/css";
 import { token } from "styled-system/tokens";
 import type { SystemStyleObject } from "styled-system/types";
@@ -20,8 +21,8 @@ export interface VideoProps extends Omit<VideoHTMLAttributes<HTMLVideoElement>, 
   autoPlay?: boolean;
   loop?: boolean;
   muted?: boolean;
-  /** CSS `aspect-ratio` value (e.g. `"16/9"`, `"1/1"`, `"auto"`). */
   aspectRatio?: string;
+  objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
   copyright?: string;
   copyrightPosition?: CopyrightPosition;
   css?: SystemStyleObject;
@@ -56,6 +57,9 @@ const skeletonClass = css({
   transition: "opacity 0.5s ease-in-out",
   animation: "shimmer 1.5s ease-in-out infinite",
   pointerEvents: "none",
+  "@media (prefers-reduced-motion: reduce)": {
+    animation: "none",
+  },
 });
 
 const mediaClass = css({
@@ -78,6 +82,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       loop = false,
       muted = false,
       aspectRatio = "16/9",
+      objectFit = "contain",
       copyright,
       copyrightPosition = "inline-white",
       className,
@@ -89,13 +94,21 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
   ) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const prefersReducedMotion = useReducedMotion();
+    const shouldAutoPlay = autoPlay && !prefersReducedMotion;
+
+    const handleReady = useCallback(() => setIsLoading(false), []);
 
     useEffect(() => {
       const video = videoRef.current;
-      if (video && video.readyState >= 2) {
+      if (!video) return;
+      // React sets the `muted` DOM property unreliably, which can block
+      // autoplay; assign it imperatively so muted autoplay is honored.
+      video.muted = muted;
+      if (video.readyState >= 2) {
         setIsLoading(false);
       }
-    }, []);
+    }, [muted]);
 
     const inline =
       copyright &&
@@ -105,27 +118,27 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
 
     let media: React.ReactNode;
     if (source === "youtube") {
-      const params = `autoplay=${autoPlay ? 1 : 0}&loop=${loop ? 1 : 0}&mute=${muted ? 1 : 0}&controls=${controls ? 1 : 0}`;
+      const params = `autoplay=${shouldAutoPlay ? 1 : 0}&loop=${loop ? 1 : 0}&mute=${muted ? 1 : 0}&controls=${controls ? 1 : 0}`;
       media = (
         <iframe
           src={`https://www.youtube.com/embed/${getYouTubeId(src)}?${params}`}
           title="YouTube video player"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
-          onLoad={() => setIsLoading(false)}
+          onLoad={handleReady}
           className={cx(mediaClass, className)}
           style={{ opacity: isLoading ? 0 : 1, ...style }}
         />
       );
     } else if (source === "vimeo") {
-      const params = `autoplay=${autoPlay ? 1 : 0}&loop=${loop ? 1 : 0}&muted=${muted ? 1 : 0}&controls=${controls ? 1 : 0}`;
+      const params = `autoplay=${shouldAutoPlay ? 1 : 0}&loop=${loop ? 1 : 0}&muted=${muted ? 1 : 0}&controls=${controls ? 1 : 0}`;
       media = (
         <iframe
           src={`https://player.vimeo.com/video/${getVimeoId(src)}?${params}`}
           title="Vimeo video player"
           allow="autoplay; fullscreen; picture-in-picture"
           allowFullScreen
-          onLoad={() => setIsLoading(false)}
+          onLoad={handleReady}
           className={cx(mediaClass, className)}
           style={{ opacity: isLoading ? 0 : 1, ...style }}
         />
@@ -138,14 +151,16 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
             ref={videoRef}
             src={src}
             poster={poster}
-            autoPlay={autoPlay}
+            autoPlay={shouldAutoPlay}
             loop={loop}
             muted={muted}
             playsInline
             preload="metadata"
-            onLoadedData={() => setIsLoading(false)}
-            className={cx(mediaClass, css({ objectFit: "contain" }), className)}
-            style={{ opacity: isLoading ? 0 : 1, ...style }}
+            onLoadedData={handleReady}
+            onCanPlay={handleReady}
+            onError={handleReady}
+            className={cx(mediaClass, className)}
+            style={{ opacity: isLoading ? 0 : 1, objectFit, ...style }}
             {...props}
           />
           <VideoControls videoRef={videoRef} show={controls} />

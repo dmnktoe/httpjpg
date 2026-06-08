@@ -23,6 +23,8 @@ export interface UseNowPlayingReturn {
   data: NowPlayingData | null;
   isLoading: boolean;
   error: Error | null;
+  /** Machine-readable error reason from the endpoint body (e.g. "premium_missing"). */
+  errorCode: string | null;
   refetch: () => Promise<void>;
 }
 
@@ -34,19 +36,25 @@ export function useNowPlaying({
   const [data, setData] = useState<NowPlayingData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
 
   const fetchNowPlaying = async () => {
     try {
       const response = await fetch(endpoint);
+      const result = await response.json().catch(() => null);
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
+        setErrorCode(result?.error ?? "fetch_error");
+        setError(new Error(result?.message ?? `Failed to fetch: ${response.statusText}`));
+        setData(null);
+        return;
       }
 
-      const result = await response.json();
-      setData(result.data || null);
+      setData(result?.data ?? null);
       setError(null);
+      setErrorCode(null);
     } catch (err) {
+      setErrorCode("network_error");
       setError(err instanceof Error ? err : new Error("Unknown error"));
       setData(null);
     } finally {
@@ -68,6 +76,7 @@ export function useNowPlaying({
     data,
     isLoading,
     error,
+    errorCode,
     refetch: fetchNowPlaying,
   };
 }

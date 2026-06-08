@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
-import { getAccessToken, getCurrentlyPlaying } from "./api";
+import { getAccessToken, getCurrentlyPlaying, SpotifyForbiddenError } from "./api";
 
 global.fetch = vi.fn() as MockedFunction<typeof fetch>;
 
@@ -115,15 +115,16 @@ describe("Spotify API", () => {
       expect(result).toBeNull();
     });
 
-    it("should return null when playback is forbidden (e.g. no Premium)", async () => {
+    it("should throw SpotifyForbiddenError when playback is forbidden (e.g. no Premium)", async () => {
       (global.fetch as MockedFunction<typeof fetch>).mockResolvedValueOnce({
         ok: false,
         status: 403,
         statusText: "Forbidden",
       } as Response);
 
-      const result = await getCurrentlyPlaying("access_token");
-      expect(result).toBeNull();
+      await expect(getCurrentlyPlaying("access_token")).rejects.toBeInstanceOf(
+        SpotifyForbiddenError,
+      );
     });
 
     it("should throw error on API failure", async () => {

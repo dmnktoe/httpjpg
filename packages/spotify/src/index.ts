@@ -1,5 +1,5 @@
 export { type ExtractedColor, extractVibrantColor } from "./extract-color";
-export { getAccessToken, getCurrentlyPlaying } from "./api";
+export { getAccessToken, getCurrentlyPlaying, SpotifyForbiddenError } from "./api";
 export {
   type NowPlayingData,
   type UseNowPlayingOptions,

@@ -192,7 +192,11 @@ export function Slideshow({
           onSwiper={handleSwiperInit}
           onSlideChange={handleSlideChange}
           loop={images.length > 1}
-          autoplay={autoplayEnabled ? { delay: autoplayDelay, disableOnInteraction: false } : false}
+          autoplay={
+            autoplayEnabled
+              ? { delay: autoplayDelay, disableOnInteraction: false, waitForTransition: false }
+              : false
+          }
           fadeEffect={SWIPER_FADE_EFFECT}
           cubeEffect={SWIPER_CUBE_EFFECT}
           coverflowEffect={SWIPER_COVERFLOW_EFFECT}

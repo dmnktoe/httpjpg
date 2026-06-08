@@ -91,6 +91,13 @@ describe("fetchPsnTrophies", () => {
     );
   });
 
+  it("sends a browser User-Agent so the feed doesn't 403", async () => {
+    mockFetch.mockResolvedValueOnce(rssResponse(feed(TROPHY_ITEM)));
+    await fetchPsnTrophies("bullensohn6");
+    const headers = mockFetch.mock.calls[0]?.[1]?.headers as Record<string, string>;
+    expect(headers["User-Agent"]).toMatch(/Mozilla/);
+  });
+
   it("returns parsed trophies on success", async () => {
     mockFetch.mockResolvedValueOnce(rssResponse(feed(TROPHY_ITEM)));
     const result = await fetchPsnTrophies("bullensohn6");

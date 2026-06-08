@@ -40,7 +40,6 @@ export async function GET(request: NextRequest) {
     );
   } catch (error) {
     if (error instanceof SpotifyForbiddenError) {
-      console.warn("Spotify playback forbidden:", error.message);
       return NextResponse.json(
         { error: "premium_missing", message: error.message },
         { status: 403, headers: CORS_HEADERS },

@@ -71,10 +71,12 @@ export const settingsBlocks: BlockDef[] = [
         psn_enabled: field.boolean("PSN · Trophy Card"),
         psn_trophy_enabled: field.boolean("PSN · Latest Trophy"),
         psn_username: field.text("PSN · Username"),
+        discord_enabled: field.boolean("Discord · Live Status", "true"),
         discord_user_id: field.text("Discord · User ID", {
           description: "17–20 digit Discord snowflake; powers the live status widget.",
           tooltip: true,
         }),
+        letterboxd_enabled: field.boolean("Letterboxd · Latest Film", "true"),
         letterboxd_username: field.text("Letterboxd · Username"),
         custom_cursor_enabled: field.boolean("Custom Cursor", "true"),
         mouse_trail_enabled: field.boolean("Mouse Trail", "true"),

@@ -134,8 +134,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                     w: "full",
                   }}
                 >
-                  <DiscordStatus />
-                  <LetterboxdStatus />
+                  {widgetConfig.discordEnabled && <DiscordStatus />}
+                  {widgetConfig.letterboxdEnabled && <LetterboxdStatus />}
                   {widgetConfig.psnTrophyEnabled && <TrophyStatus />}
                   <Box
                     css={{

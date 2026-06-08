@@ -188,9 +188,10 @@ export const ErrorState = {
 };
 
 /**
- * Premium Missing (danger 403)
+ * Premium Missing (403)
  * Shown when the Spotify endpoint returns a 403 with `premium_missing` — the linked
- * account lacks Premium, so playback can't be read. Mirrors the live widget's danger state.
+ * account lacks Premium, so playback can't be read. Red text on the default grey
+ * background, mirroring the live widget.
  */
 export const PremiumMissing = {
   render: () => (
@@ -198,11 +199,11 @@ export const PremiumMissing = {
       <NowPlaying
         title="╳╳ premium missing 🫪 ╳╳"
         artist="⋄ ⋄ ⋄ (spotify(no_premium)) ⋄ ⋄ ⋄"
-        artwork="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ef4444' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='34' font-weight='bold' text-anchor='middle' dy='.35em' fill='white'%3E403%3C/text%3E%3C/svg%3E"
+        artwork="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23a3a3a3' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='34' font-weight='bold' text-anchor='middle' dy='.35em' fill='%23ef4444'%3E403%3C/text%3E%3C/svg%3E"
         isPlaying={false}
         autoExtractColor={false}
-        vibrantColor="rgba(239, 68, 68, 0.9)"
-        textColor="white"
+        vibrantColor="rgba(163, 163, 163, 0.6)"
+        textColor="#ef4444"
       />
       <div
         style={{
@@ -211,13 +212,13 @@ export const PremiumMissing = {
           left: "50%",
           transform: "translateX(-50%)",
           padding: "1rem 1.5rem",
-          background: "rgba(239, 68, 68, 0.95)",
-          color: "white",
+          background: "rgba(163, 163, 163, 0.95)",
+          color: "#ef4444",
           fontFamily: "monospace",
           fontSize: "13px",
           fontWeight: 600,
           borderRadius: "8px",
-          boxShadow: "0 4px 12px rgba(239, 68, 68, 0.4)",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
           border: "2px solid rgba(255, 255, 255, 0.2)",
           display: "flex",
           alignItems: "center",

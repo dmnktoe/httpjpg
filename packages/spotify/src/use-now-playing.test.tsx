@@ -52,6 +52,16 @@ describe("useNowPlaying", () => {
     expect(result.current.data).toBeNull();
   });
 
+  it("falls back to fetch_error for an unknown or missing error code", async () => {
+    mockFetch(500, { error: "something_unexpected" }, false);
+
+    const { result } = renderHook(() => useNowPlaying({ endpoint: "/np", pollInterval: 100000 }));
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.errorCode).toBe("fetch_error");
+    expect(result.current.data).toBeNull();
+  });
+
   it("does not fetch when disabled", () => {
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);

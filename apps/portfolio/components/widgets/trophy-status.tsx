@@ -5,11 +5,6 @@ import { useEffect, useState } from "react";
 
 import type { PsnTrophy } from "@/lib/integrations/psn-trophies";
 
-// The trophy tier maps to a local, pre-pixelated PSN trophy sprite.
-function trophyIcon(type: PsnTrophy["type"]): string {
-  return `/images/trophies/${type}.png`;
-}
-
 export function TrophyStatus() {
   const [trophy, setTrophy] = useState<PsnTrophy | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -61,7 +56,7 @@ export function TrophyStatus() {
     );
   }
 
-  const icon = trophyIcon(trophy.type);
+  const icon = `/images/trophies/${trophy.type}.png`;
 
   return (
     <Box

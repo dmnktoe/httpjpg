@@ -1,6 +1,5 @@
-// PSN has no public trophy API without an authenticated NPSSO token, so we lean
-// on the PSN Trophy Leaders per-member RSS feed — the same authless,
-// RSS-mirrors-the-profile approach the Letterboxd widget uses:
+// PSN has no public trophy API without an authenticated NPSSO token; the PSN
+// Trophy Leaders per-member RSS feed is the authless source:
 // https://psntrophyleaders.com/user/view/<username>/rss
 
 export const TROPHY_TYPES = ["bronze", "silver", "gold", "platinum"] as const;
@@ -78,9 +77,9 @@ function toIsoDate(pubDate: string | null): string | null {
   return Number.isNaN(time) ? null : new Date(time).toISOString();
 }
 
-// Items expose the game/trophy in an HTML <description>; only entries that carry
-// a recognisable trophy tier are kept (the feed has no other item kinds today,
-// but this keeps us defensive against profile noise).
+// Only items with a recognisable trophy tier are kept; the feed is already
+// ordered newest-first by earned date. readTag has decoded the <description>
+// HTML, so the fields pulled out of it don't need decoding again.
 export function parsePsnTrophyFeed(xml: string, limit = DEFAULT_LIMIT): PsnTrophy[] {
   if (limit <= 0) {
     return [];
@@ -89,11 +88,11 @@ export function parsePsnTrophyFeed(xml: string, limit = DEFAULT_LIMIT): PsnTroph
   const trophies: PsnTrophy[] = [];
 
   for (const item of items) {
-    const description = readTag(item, "description");
-    if (!description) {
+    const html = readTag(item, "description");
+    if (!html) {
       continue;
     }
-    const type = readTrophyType(description);
+    const type = readTrophyType(html);
     if (!type) {
       continue;
     }
@@ -101,34 +100,21 @@ export function parsePsnTrophyFeed(xml: string, limit = DEFAULT_LIMIT): PsnTroph
     // "<username> | <Trophy Name>" — the name is everything after the first pipe.
     const title = readTag(item, "title") ?? "";
     const pipe = title.indexOf(" | ");
-    const name = pipe >= 0 ? title.slice(pipe + 3).trim() : title.trim();
-
-    const game =
-      decodeEntities(
-        description.match(/<strong><a[^>]*>([^<]+)<\/a><\/strong>/)?.[1]?.trim() ?? "",
-      ) || name;
-    const platform = description.match(/>(PS\d)<\/font>/)?.[1] ?? null;
-    const requirement = description.match(/color="#666">([^<]*)<\/font>/)?.[1] ?? null;
-    const avatar =
-      description.match(
-        /<img[^>]+src="(https:\/\/static-resource\.np\.community\.playstation\.net\/avatar\/[^"]+)"/,
-      )?.[1] ?? null;
 
     trophies.push({
-      name,
-      game,
-      platform,
+      name: pipe >= 0 ? title.slice(pipe + 3).trim() : title.trim(),
+      game: html.match(/<strong><a[^>]*>([^<]+)<\/a><\/strong>/)?.[1]?.trim() ?? "",
+      platform: html.match(/>(PS\d)<\/font>/)?.[1] ?? null,
       type,
-      description: requirement ? decodeEntities(requirement).trim() : null,
+      description: html.match(/color="#666">([^<]*)<\/font>/)?.[1]?.trim() || null,
       earnedAt: toIsoDate(readTag(item, "pubDate")),
       url: readTag(item, "link") ?? "https://psntrophyleaders.com",
-      avatar,
+      avatar:
+        html.match(
+          /<img[^>]+src="(https:\/\/static-resource\.np\.community\.playstation\.net\/avatar\/[^"]+)"/,
+        )?.[1] ?? null,
     });
   }
-
-  // The feed is ordered newest-first already; re-sort by earned date defensively
-  // so the most recently earned trophy always leads. Undated entries sort last.
-  trophies.sort((a, b) => (b.earnedAt ?? "").localeCompare(a.earnedAt ?? ""));
 
   return trophies.slice(0, limit);
 }

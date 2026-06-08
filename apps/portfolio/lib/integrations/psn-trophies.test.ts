@@ -54,12 +54,9 @@ describe("parsePsnTrophyFeed", () => {
     expect(parsePsnTrophyFeed(feed(platinum))[0].type).toBe("platinum");
   });
 
-  it("orders trophies by earned date, newest first", () => {
-    const older = TROPHY_ITEM.replace(
-      "Mon, 27 Apr 2026 09:23:08 +0000",
-      "Sat, 14 Feb 2026 11:18:01 +0000",
-    ).replace("Stolz der Nation", "First Step");
-    const trophies = parsePsnTrophyFeed(feed(older, TROPHY_ITEM));
+  it("keeps the feed's newest-first order", () => {
+    const older = TROPHY_ITEM.replace("Stolz der Nation", "First Step");
+    const trophies = parsePsnTrophyFeed(feed(TROPHY_ITEM, older));
     expect(trophies.map((t) => t.name)).toEqual(["Stolz der Nation", "First Step"]);
   });
 

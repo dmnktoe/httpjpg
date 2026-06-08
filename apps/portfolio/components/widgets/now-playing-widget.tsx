@@ -11,9 +11,12 @@ import { createPortal } from "react-dom";
 const IDLE_ARTWORK =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23a3a3a3' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='40' text-anchor='middle' dy='.3em' fill='white'%3E♪%3C/text%3E%3C/svg%3E";
 
-// Danger artwork mirroring the Storybook "ErrorState" pattern: red tile with a 500 glyph.
+// Danger artwork mirroring the Storybook "ErrorState" pattern: red tile with a status glyph.
 const ERROR_ARTWORK =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ef4444' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='34' font-weight='bold' text-anchor='middle' dy='.35em' fill='white'%3E500%3C/text%3E%3C/svg%3E";
+
+const PREMIUM_ARTWORK =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ef4444' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='34' font-weight='bold' text-anchor='middle' dy='.35em' fill='white'%3E403%3C/text%3E%3C/svg%3E";
 
 const DANGER_COLOR = "rgba(239, 68, 68, 0.9)"; // @httpjpg/tokens colors.danger.500
 
@@ -36,16 +39,22 @@ function NowPlayingWidgetComponent() {
     trackNowPlayingClick();
   };
 
-  const isPremiumMissing = errorCode === "premium_missing";
+  // 403 → "premium missing"; any other error code → generic "error" (e.g. 500).
+  const errorView =
+    errorCode === "premium_missing"
+      ? { title: "premium missing 🫪", artist: "🫪 spotify · no premium", artwork: PREMIUM_ARTWORK }
+      : errorCode
+        ? { title: "error", artist: "⚠ spotify · error 500", artwork: ERROR_ARTWORK }
+        : null;
 
   const content = (
     <Box css={{ display: "none", md: { display: "block" } }}>
       <button type="button" onClick={handleClick} style={{ all: "unset" }}>
-        {isPremiumMissing ? (
+        {errorView ? (
           <NowPlaying
-            title="premium missing"
-            artist="⚠ spotify · error 500"
-            artwork={ERROR_ARTWORK}
+            title={errorView.title}
+            artist={errorView.artist}
+            artwork={errorView.artwork}
             isPlaying={false}
             autoExtractColor={false}
             vibrantColor={DANGER_COLOR}

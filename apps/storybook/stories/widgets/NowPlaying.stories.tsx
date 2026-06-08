@@ -144,58 +144,15 @@ export const NothingPlaying: Story = {
 };
 
 /**
- * Error State
- * Shows error badge when something goes wrong
+ * Error State (danger 500)
+ * Shown when the Spotify endpoint returns a 500 (or the request otherwise fails).
+ * Mirrors the live widget's generic error state.
  */
 export const ErrorState = {
   render: () => (
     <>
       <NowPlaying
-        title="Error Loading Track"
-        artist="Failed to fetch data"
-        artwork="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ef4444' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='50' text-anchor='middle' dy='.3em' fill='white'%3E⚠%3C/text%3E%3C/svg%3E"
-        isPlaying={false}
-        autoExtractColor={false}
-        vibrantColor="rgba(239, 68, 68, 0.9)"
-        textColor="white"
-      />
-      <div
-        style={{
-          position: "fixed",
-          top: 20,
-          left: "50%",
-          transform: "translateX(-50%)",
-          padding: "1rem 1.5rem",
-          background: "rgba(239, 68, 68, 0.95)",
-          color: "white",
-          fontFamily: "monospace",
-          fontSize: "13px",
-          fontWeight: 600,
-          borderRadius: "8px",
-          boxShadow: "0 4px 12px rgba(239, 68, 68, 0.4)",
-          border: "2px solid rgba(255, 255, 255, 0.2)",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-        }}
-      >
-        <span style={{ fontSize: "18px" }}>⚠️</span>
-        <span>Failed to connect to Spotify API</span>
-      </div>
-    </>
-  ),
-};
-
-/**
- * Premium Missing (danger 500)
- * Shown when the Spotify endpoint returns a 500 with `premium_missing` — the linked
- * account lacks Premium, so playback can't be read. Mirrors the live widget's danger state.
- */
-export const PremiumMissing = {
-  render: () => (
-    <>
-      <NowPlaying
-        title="premium missing"
+        title="error"
         artist="⚠ spotify · error 500"
         artwork="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ef4444' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='34' font-weight='bold' text-anchor='middle' dy='.35em' fill='white'%3E500%3C/text%3E%3C/svg%3E"
         isPlaying={false}
@@ -224,7 +181,51 @@ export const PremiumMissing = {
         }}
       >
         <span style={{ fontSize: "18px" }}>⚠️</span>
-        <span>500 · Spotify Premium missing</span>
+        <span>500 · Failed to connect to Spotify API</span>
+      </div>
+    </>
+  ),
+};
+
+/**
+ * Premium Missing (danger 403)
+ * Shown when the Spotify endpoint returns a 403 with `premium_missing` — the linked
+ * account lacks Premium, so playback can't be read. Mirrors the live widget's danger state.
+ */
+export const PremiumMissing = {
+  render: () => (
+    <>
+      <NowPlaying
+        title="premium missing 🫪"
+        artist="🫪 spotify · no premium"
+        artwork="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ef4444' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='34' font-weight='bold' text-anchor='middle' dy='.35em' fill='white'%3E403%3C/text%3E%3C/svg%3E"
+        isPlaying={false}
+        autoExtractColor={false}
+        vibrantColor="rgba(239, 68, 68, 0.9)"
+        textColor="white"
+      />
+      <div
+        style={{
+          position: "fixed",
+          top: 20,
+          left: "50%",
+          transform: "translateX(-50%)",
+          padding: "1rem 1.5rem",
+          background: "rgba(239, 68, 68, 0.95)",
+          color: "white",
+          fontFamily: "monospace",
+          fontSize: "13px",
+          fontWeight: 600,
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(239, 68, 68, 0.4)",
+          border: "2px solid rgba(255, 255, 255, 0.2)",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
+      >
+        <span style={{ fontSize: "18px" }}>🫪</span>
+        <span>403 · Spotify Premium missing</span>
       </div>
     </>
   ),

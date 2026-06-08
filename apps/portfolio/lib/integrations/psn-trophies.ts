@@ -23,6 +23,15 @@ export type PsnTrophyFetchResult =
 const PSN_TIMEOUT_MS = 5000;
 const DEFAULT_LIMIT = 4;
 
+// psntrophyleaders.com rejects requests without a browser-like User-Agent with a
+// 403, even though the feed itself is public. Mirror a real browser so the
+// authless RSS source keeps working from the server.
+const FEED_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+  Accept: "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
+} as const;
+
 // PSN online IDs are 3–16 chars, start with a letter, then letters/digits/-/_.
 // Validate the CMS value before it reaches the RSS URL.
 const PSN_USERNAME = /^[A-Za-z][\w-]{2,15}$/;
@@ -130,6 +139,7 @@ export async function fetchPsnTrophies(
   try {
     response = await fetch(`https://psntrophyleaders.com/user/view/${username}/rss`, {
       cache: "no-store",
+      headers: FEED_HEADERS,
       signal: controller.signal,
     });
   } catch (error) {

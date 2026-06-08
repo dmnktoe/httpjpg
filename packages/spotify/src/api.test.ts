@@ -115,6 +115,17 @@ describe("Spotify API", () => {
       expect(result).toBeNull();
     });
 
+    it("should return null when playback is forbidden (e.g. no Premium)", async () => {
+      (global.fetch as MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: false,
+        status: 403,
+        statusText: "Forbidden",
+      } as Response);
+
+      const result = await getCurrentlyPlaying("access_token");
+      expect(result).toBeNull();
+    });
+
     it("should throw error on API failure", async () => {
       (global.fetch as MockedFunction<typeof fetch>).mockResolvedValueOnce({
         ok: false,

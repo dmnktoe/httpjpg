@@ -51,7 +51,10 @@ export async function getCurrentlyPlaying(accessToken: string): Promise<SpotifyT
     },
   });
 
-  if (response.status === 204 || response.status === 404) {
+  // 204 No Content / 404 Not Found → nothing is playing.
+  // 403 Forbidden → the account can't expose playback (e.g. no Spotify Premium);
+  // treat it as "nothing playing" rather than a hard error so it doesn't surface in Sentry.
+  if (response.status === 204 || response.status === 404 || response.status === 403) {
     return null;
   }
 

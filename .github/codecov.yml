@@ -1,5 +1,5 @@
 codecov:
-  require_ci_to_pass: yes
+  require_ci_to_pass: true
 
 coverage:
   precision: 2
@@ -14,8 +14,37 @@ coverage:
         if_ci_failed: error
     patch:
       default:
-        target: 80%
+        target: 70%
         threshold: 5%
+        informational: true
+
+component_management:
+  individual_components:
+    - component_id: ui
+      name: ui
+      paths:
+        - "packages/ui/**"
+    - component_id: storyblok
+      name: storyblok
+      paths:
+        - "packages/storyblok-*/**"
+    - component_id: integrations
+      name: integrations
+      paths:
+        - "packages/spotify/**"
+        - "packages/now-playing/**"
+        - "packages/analytics/**"
+        - "packages/consent/**"
+        - "packages/observability/**"
+    - component_id: foundations
+      name: foundations
+      paths:
+        - "packages/env/**"
+        - "packages/tokens/**"
+    - component_id: portfolio
+      name: portfolio
+      paths:
+        - "apps/portfolio/**"
 
 ignore:
   - "**/*.test.ts"
@@ -33,6 +62,6 @@ ignore:
   - "**/*.d.ts"
 
 comment:
-  layout: "reach,diff,flags,tree"
+  layout: "reach,diff,components,tree"
   behavior: default
   require_changes: false

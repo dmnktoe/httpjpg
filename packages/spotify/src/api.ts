@@ -1,15 +1,11 @@
 const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
 const SPOTIFY_NOW_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing";
 
-/**
- * Thrown when Spotify rejects the playback request with 403 — typically because the
- * linked account is missing Premium. Callers can branch on this to surface a danger
- * state without treating it as an unexpected error (e.g. paging Sentry).
- */
+/** Thrown on a 403 from Spotify, typically when the account is missing Premium. */
 export class SpotifyForbiddenError extends Error {
   readonly status = 403;
 
-  constructor(message = "Spotify playback is forbidden — the account is missing Premium") {
+  constructor(message = "Spotify playback is forbidden (missing Premium)") {
     super(message);
     this.name = "SpotifyForbiddenError";
   }
@@ -65,13 +61,10 @@ export async function getCurrentlyPlaying(accessToken: string): Promise<SpotifyT
     },
   });
 
-  // 204 No Content / 404 Not Found → nothing is playing.
   if (response.status === 204 || response.status === 404) {
     return null;
   }
 
-  // 403 Forbidden → the account can't expose playback (e.g. no Spotify Premium).
-  // Signal it distinctly so callers can render a danger state instead of paging Sentry.
   if (response.status === 403) {
     throw new SpotifyForbiddenError();
   }

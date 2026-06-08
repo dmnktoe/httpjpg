@@ -39,8 +39,7 @@ export async function GET(request: NextRequest) {
       },
     );
   } catch (error) {
-    // Missing Premium is an expected account state, not a bug — surface a 403 the
-    // widget can map to a "premium missing" state, and don't page Sentry.
+    // Missing Premium is expected — return 403 for the widget, don't report to Sentry.
     if (error instanceof SpotifyForbiddenError) {
       console.warn("Spotify playback forbidden:", error.message);
       return NextResponse.json(

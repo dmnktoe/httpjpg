@@ -1,6 +1,15 @@
 const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
 const SPOTIFY_NOW_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing";
 
+export class SpotifyForbiddenError extends Error {
+  readonly status = 403;
+
+  constructor(message = "Spotify playback is forbidden (missing Premium)") {
+    super(message);
+    this.name = "SpotifyForbiddenError";
+  }
+}
+
 interface SpotifyTokenResponse {
   access_token: string;
   token_type: string;
@@ -53,6 +62,10 @@ export async function getCurrentlyPlaying(accessToken: string): Promise<SpotifyT
 
   if (response.status === 204 || response.status === 404) {
     return null;
+  }
+
+  if (response.status === 403) {
+    throw new SpotifyForbiddenError();
   }
 
   if (!response.ok) {

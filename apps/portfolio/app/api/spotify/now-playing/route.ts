@@ -1,12 +1,18 @@
 import { env } from "@httpjpg/env";
 import { captureEdgeException } from "@httpjpg/observability/sentry/edge.ts";
-import { getAccessToken, getCurrentlyPlaying } from "@httpjpg/spotify";
+import { getAccessToken, getCurrentlyPlaying, SpotifyForbiddenError } from "@httpjpg/spotify";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { enforceRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "edge";
 export const revalidate = 0;
+
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+} as const;
 
 export async function GET(request: NextRequest) {
   const limited = await enforceRateLimit(request);
@@ -28,25 +34,24 @@ export async function GET(request: NextRequest) {
       {
         headers: {
           "Cache-Control": "public, s-maxage=10, stale-while-revalidate=20",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
+          ...CORS_HEADERS,
         },
       },
     );
   } catch (error) {
+    if (error instanceof SpotifyForbiddenError) {
+      console.warn("Spotify playback forbidden:", error.message);
+      return NextResponse.json(
+        { error: "premium_missing", message: error.message },
+        { status: 403, headers: CORS_HEADERS },
+      );
+    }
+
     console.error("Spotify API error:", error);
     captureEdgeException(error, { route: "spotify/now-playing" });
     return NextResponse.json(
-      { error: "Failed to fetch now playing" },
-      {
-        status: 500,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
-        },
-      },
+      { error: "internal_error", message: "Failed to fetch now playing" },
+      { status: 500, headers: CORS_HEADERS },
     );
   }
 }
@@ -54,10 +59,6 @@ export async function GET(request: NextRequest) {
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
+    headers: CORS_HEADERS,
   });
 }

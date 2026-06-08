@@ -19,9 +19,11 @@
     "colorthief": "^3.0.0"
   },
   "devDependencies": {
+    "@testing-library/react": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "react": "catalog:",
+    "react-dom": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

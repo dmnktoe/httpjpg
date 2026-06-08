@@ -19,10 +19,20 @@ export interface UseNowPlayingOptions {
   enabled?: boolean;
 }
 
+const NOW_PLAYING_ERROR_CODES = [
+  "premium_missing",
+  "internal_error",
+  "network_error",
+  "fetch_error",
+] as const;
+
+export type NowPlayingErrorCode = (typeof NOW_PLAYING_ERROR_CODES)[number];
+
 export interface UseNowPlayingReturn {
   data: NowPlayingData | null;
   isLoading: boolean;
   error: Error | null;
+  errorCode: NowPlayingErrorCode | null;
   refetch: () => Promise<void>;
 }
 
@@ -34,19 +44,25 @@ export function useNowPlaying({
   const [data, setData] = useState<NowPlayingData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [errorCode, setErrorCode] = useState<NowPlayingErrorCode | null>(null);
 
   const fetchNowPlaying = async () => {
     try {
       const response = await fetch(endpoint);
+      const result = await response.json().catch(() => null);
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
+        setErrorCode(toErrorCode(result?.error));
+        setError(new Error(result?.message ?? `Failed to fetch: ${response.statusText}`));
+        setData(null);
+        return;
       }
 
-      const result = await response.json();
-      setData(result.data || null);
+      setData(result?.data ?? null);
       setError(null);
+      setErrorCode(null);
     } catch (err) {
+      setErrorCode("network_error");
       setError(err instanceof Error ? err : new Error("Unknown error"));
       setData(null);
     } finally {
@@ -68,6 +84,13 @@ export function useNowPlaying({
     data,
     isLoading,
     error,
+    errorCode,
     refetch: fetchNowPlaying,
   };
+}
+
+function toErrorCode(value: unknown): NowPlayingErrorCode {
+  return NOW_PLAYING_ERROR_CODES.includes(value as NowPlayingErrorCode)
+    ? (value as NowPlayingErrorCode)
+    : "fetch_error";
 }

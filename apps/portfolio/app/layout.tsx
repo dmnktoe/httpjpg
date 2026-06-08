@@ -29,6 +29,7 @@ import { FlagCounter } from "@/components/widgets/flag-counter";
 import { LetterboxdStatus } from "@/components/widgets/letterboxd-status";
 import { NowPlayingWidget } from "@/components/widgets/now-playing-widget";
 import { PSNCard } from "@/components/widgets/psn-card";
+import { TrophyStatus } from "@/components/widgets/trophy-status";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
 import { config } from "@/lib/config";
 import { getPageTheme } from "@/lib/page-theme";
@@ -135,6 +136,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 >
                   <DiscordStatus />
                   <LetterboxdStatus />
+                  {widgetConfig.psnTrophyEnabled && <TrophyStatus />}
                   <Box
                     css={{
                       display: "flex",

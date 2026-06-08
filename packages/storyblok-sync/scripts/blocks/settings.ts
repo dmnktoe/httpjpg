@@ -69,6 +69,7 @@ export const settingsBlocks: BlockDef[] = [
         spotify_enabled: field.boolean("Spotify · Now Playing", "true"),
         nostalgia_slideshow_enabled: field.boolean("Nostalgia · Slideshow", "true"),
         psn_enabled: field.boolean("PSN · Trophy Card"),
+        psn_trophy_enabled: field.boolean("PSN · Latest Trophy"),
         psn_username: field.text("PSN · Username"),
         discord_user_id: field.text("Discord · User ID", {
           description: "17–20 digit Discord snowflake; powers the live status widget.",

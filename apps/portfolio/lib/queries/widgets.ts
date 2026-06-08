@@ -3,6 +3,7 @@ import { getConfig } from "./config";
 export interface WidgetConfig {
   psnUsername?: string;
   psnEnabled: boolean;
+  psnTrophyEnabled: boolean;
   spotifyEnabled: boolean;
   nostalgiaSlideshowEnabled: boolean;
   customCursorEnabled: boolean;
@@ -14,6 +15,7 @@ export async function getWidgetConfig(): Promise<WidgetConfig> {
   return {
     psnUsername: config?.psn_username,
     psnEnabled: config?.psn_enabled ?? false,
+    psnTrophyEnabled: config?.psn_trophy_enabled ?? false,
     spotifyEnabled: config?.spotify_enabled ?? true,
     nostalgiaSlideshowEnabled: config?.nostalgia_slideshow_enabled ?? false,
     customCursorEnabled: config?.custom_cursor_enabled ?? true,

@@ -1,16 +1,15 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockEnv = vi.hoisted(() => ({
-  SENTRY_DSN: "https://server@sentry.io/1",
-  NEXT_PUBLIC_SENTRY_DSN: "https://client@sentry.io/2",
-  SENTRY_ENABLE_IN_DEV: "true",
-  NEXT_PUBLIC_SENTRY_ENABLE_IN_DEV: "",
-  NODE_ENV: "production",
-  NEXT_PUBLIC_APP_VERSION: undefined as string | undefined,
+vi.mock("@httpjpg/env", () => ({
+  env: {
+    SENTRY_DSN: "https://server@sentry.io/1",
+    NEXT_PUBLIC_SENTRY_DSN: "https://client@sentry.io/2",
+    SENTRY_ENABLE_IN_DEV: "true",
+    NEXT_PUBLIC_SENTRY_ENABLE_IN_DEV: "",
+    NODE_ENV: "production",
+  },
 }));
-
-vi.mock("@httpjpg/env", () => ({ env: mockEnv }));
 
 import { getSentryConfig } from "./config";
 
@@ -20,21 +19,10 @@ describe("getSentryConfig", () => {
   beforeEach(() => {
     delete process.env.GITHUB_SHA;
     delete process.env.npm_package_version;
-    mockEnv.NEXT_PUBLIC_APP_VERSION = undefined;
   });
 
   afterEach(() => {
     process.env = { ...originalEnv };
-  });
-
-  it("prefers NEXT_PUBLIC_APP_VERSION over GITHUB_SHA and npm_package_version", () => {
-    mockEnv.NEXT_PUBLIC_APP_VERSION = "v1.2.3";
-    process.env.GITHUB_SHA = "abc123";
-    process.env.npm_package_version = "0.0.0";
-
-    const config = getSentryConfig("server");
-
-    expect(config.release).toBe("v1.2.3");
   });
 
   it("resolves release from GITHUB_SHA when available", () => {

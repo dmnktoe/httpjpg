@@ -19,11 +19,20 @@ export interface UseNowPlayingOptions {
   enabled?: boolean;
 }
 
+const NOW_PLAYING_ERROR_CODES = [
+  "premium_missing",
+  "internal_error",
+  "network_error",
+  "fetch_error",
+] as const;
+
+export type NowPlayingErrorCode = (typeof NOW_PLAYING_ERROR_CODES)[number];
+
 export interface UseNowPlayingReturn {
   data: NowPlayingData | null;
   isLoading: boolean;
   error: Error | null;
-  errorCode: string | null;
+  errorCode: NowPlayingErrorCode | null;
   refetch: () => Promise<void>;
 }
 
@@ -35,7 +44,7 @@ export function useNowPlaying({
   const [data, setData] = useState<NowPlayingData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [errorCode, setErrorCode] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<NowPlayingErrorCode | null>(null);
 
   const fetchNowPlaying = async () => {
     try {
@@ -43,7 +52,7 @@ export function useNowPlaying({
       const result = await response.json().catch(() => null);
 
       if (!response.ok) {
-        setErrorCode(result?.error ?? "fetch_error");
+        setErrorCode(toErrorCode(result?.error));
         setError(new Error(result?.message ?? `Failed to fetch: ${response.statusText}`));
         setData(null);
         return;
@@ -78,4 +87,10 @@ export function useNowPlaying({
     errorCode,
     refetch: fetchNowPlaying,
   };
+}
+
+function toErrorCode(value: unknown): NowPlayingErrorCode {
+  return NOW_PLAYING_ERROR_CODES.includes(value as NowPlayingErrorCode)
+    ? (value as NowPlayingErrorCode)
+    : "fetch_error";
 }

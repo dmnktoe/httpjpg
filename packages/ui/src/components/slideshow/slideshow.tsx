@@ -129,19 +129,9 @@ export interface SlideshowProps {
   showNavigation?: boolean;
   disableBlurOnLoad?: boolean;
   sizes?: string;
-  /** Marks the first slide as the LCP image: eager + `fetchpriority="high"`. */
   priority?: boolean;
-  /**
-   * Layer an `<ImageOverlay>` on every slide. `"random"` picks a different
-   * pattern per slide using the image url as a seed.
-   */
   overlay?: OverlayPattern;
-  /**
-   * Push overlay particles inward by this percentage so they sit on the
-   * slide image instead of around it. @default 0
-   */
   overlayInset?: number;
-  /** Show a `01/04` counter + decorative tape strip in the corner. */
   showCounter?: boolean;
   css?: SystemStyleObject;
 }

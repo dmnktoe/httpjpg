@@ -21,9 +21,7 @@ export interface VideoProps extends Omit<VideoHTMLAttributes<HTMLVideoElement>, 
   autoPlay?: boolean;
   loop?: boolean;
   muted?: boolean;
-  /** CSS `aspect-ratio` value (e.g. `"16/9"`, `"1/1"`, `"auto"`). */
   aspectRatio?: string;
-  /** CSS `object-fit` for the native video and its poster. @default "contain" */
   objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
   copyright?: string;
   copyrightPosition?: CopyrightPosition;

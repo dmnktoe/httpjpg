@@ -17,6 +17,9 @@ describe("getWidgetConfig", () => {
     await expect(getWidgetConfig()).resolves.toEqual({
       psnUsername: undefined,
       psnEnabled: false,
+      psnTrophyEnabled: false,
+      discordEnabled: true,
+      letterboxdEnabled: true,
       spotifyEnabled: true,
       nostalgiaSlideshowEnabled: false,
       customCursorEnabled: true,
@@ -28,6 +31,9 @@ describe("getWidgetConfig", () => {
     mockGetConfig.mockResolvedValue({
       psn_username: "dmnktoe",
       psn_enabled: true,
+      psn_trophy_enabled: true,
+      discord_enabled: false,
+      letterboxd_enabled: false,
       spotify_enabled: false,
       nostalgia_slideshow_enabled: true,
       custom_cursor_enabled: false,
@@ -37,6 +43,9 @@ describe("getWidgetConfig", () => {
     await expect(getWidgetConfig()).resolves.toEqual({
       psnUsername: "dmnktoe",
       psnEnabled: true,
+      psnTrophyEnabled: true,
+      discordEnabled: false,
+      letterboxdEnabled: false,
       spotifyEnabled: false,
       nostalgiaSlideshowEnabled: true,
       customCursorEnabled: false,

@@ -11,12 +11,6 @@ import { createPortal } from "react-dom";
 const IDLE_ARTWORK =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23a3a3a3' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='40' text-anchor='middle' dy='.3em' fill='white'%3E♪%3C/text%3E%3C/svg%3E";
 
-const ERROR_ARTWORK =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ef4444' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='34' font-weight='bold' text-anchor='middle' dy='.35em' fill='white'%3E500%3C/text%3E%3C/svg%3E";
-
-const PREMIUM_ARTWORK =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23a3a3a3' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='34' font-weight='bold' text-anchor='middle' dy='.35em' fill='%23ef4444'%3E403%3C/text%3E%3C/svg%3E";
-
 const IDLE_COLOR = "rgba(163, 163, 163, 0.6)";
 const DANGER_COLOR = "rgba(239, 68, 68, 0.9)";
 const DANGER_TEXT_COLOR = "#ef4444";
@@ -45,7 +39,6 @@ function NowPlayingWidgetComponent() {
       ? {
           title: "╳╳ premium missing 🫪 ╳╳",
           artist: "⋄ ⋄ ⋄ (spotify(no_premium)) ⋄ ⋄ ⋄",
-          artwork: PREMIUM_ARTWORK,
           vibrantColor: IDLE_COLOR,
           textColor: DANGER_TEXT_COLOR,
         }
@@ -53,7 +46,6 @@ function NowPlayingWidgetComponent() {
         ? {
             title: "╳╳ error 500 ╳╳",
             artist: "⋄ ⋄ ⋄ (spotify(error)) ⋄ ⋄ ⋄",
-            artwork: ERROR_ARTWORK,
             vibrantColor: DANGER_COLOR,
             textColor: "white",
           }
@@ -66,7 +58,6 @@ function NowPlayingWidgetComponent() {
           <NowPlaying
             title={errorView.title}
             artist={errorView.artist}
-            artwork={errorView.artwork}
             isPlaying={false}
             autoExtractColor={false}
             vibrantColor={errorView.vibrantColor}

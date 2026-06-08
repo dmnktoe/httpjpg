@@ -63,6 +63,7 @@ export function NowPlaying({
   const finalTextColor = textColor || extractedColor?.textColor || "white";
   const hasVibrantColor = !!finalVibrantColor && !isExtracting;
   const glowColor = hasVibrantColor ? finalVibrantColor : "rgba(163, 163, 163, 0.6)";
+  const hasArtwork = isLoading || Boolean(artwork);
 
   return (
     <>
@@ -163,40 +164,42 @@ export function NowPlaying({
               isolation: "isolate",
             }}
           >
-            <div
-              style={{
-                width: config.artworkSize,
-                height: config.artworkSize,
-                flexShrink: 0,
-                borderRadius: "9999px",
-                overflow: "hidden",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
-                backgroundImage: isLoading
-                  ? "linear-gradient(90deg, rgba(163, 163, 163, 0.8) 0%, rgba(200, 200, 200, 0.8) 50%, rgba(163, 163, 163, 0.8) 100%)"
-                  : undefined,
-                backgroundSize: "200% 100%",
-                animation: isLoading ? "skeleton-shimmer 2s ease-in-out infinite" : undefined,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {isLoading ? (
-                <span style={{ fontSize: "1.5rem", opacity: 0.5 }}>♪</span>
-              ) : (
-                <img
-                  src={artwork}
-                  alt={`${title} artwork`}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                  draggable={false}
-                />
-              )}
-            </div>
+            {hasArtwork && (
+              <div
+                style={{
+                  width: config.artworkSize,
+                  height: config.artworkSize,
+                  flexShrink: 0,
+                  borderRadius: "9999px",
+                  overflow: "hidden",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+                  backgroundImage: isLoading
+                    ? "linear-gradient(90deg, rgba(163, 163, 163, 0.8) 0%, rgba(200, 200, 200, 0.8) 50%, rgba(163, 163, 163, 0.8) 100%)"
+                    : undefined,
+                  backgroundSize: "200% 100%",
+                  animation: isLoading ? "skeleton-shimmer 2s ease-in-out infinite" : undefined,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {isLoading ? (
+                  <span style={{ fontSize: "1.5rem", opacity: 0.5 }}>♪</span>
+                ) : (
+                  <img
+                    src={artwork}
+                    alt={`${title} artwork`}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                    draggable={false}
+                  />
+                )}
+              </div>
+            )}
 
             <div
               style={{

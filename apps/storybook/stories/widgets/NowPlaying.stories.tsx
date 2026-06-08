@@ -154,7 +154,6 @@ export const ErrorState = {
       <NowPlaying
         title="╳╳ error 500 ╳╳"
         artist="⋄ ⋄ ⋄ (spotify(error)) ⋄ ⋄ ⋄"
-        artwork="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ef4444' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='34' font-weight='bold' text-anchor='middle' dy='.35em' fill='white'%3E500%3C/text%3E%3C/svg%3E"
         isPlaying={false}
         autoExtractColor={false}
         vibrantColor="rgba(239, 68, 68, 0.9)"

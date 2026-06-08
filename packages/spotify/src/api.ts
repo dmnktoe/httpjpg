@@ -1,7 +1,6 @@
 const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
 const SPOTIFY_NOW_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing";
 
-/** Thrown on a 403 from Spotify, typically when the account is missing Premium. */
 export class SpotifyForbiddenError extends Error {
   readonly status = 403;
 

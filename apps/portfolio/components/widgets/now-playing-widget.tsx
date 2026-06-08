@@ -17,7 +17,7 @@ const ERROR_ARTWORK =
 const PREMIUM_ARTWORK =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ef4444' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='34' font-weight='bold' text-anchor='middle' dy='.35em' fill='white'%3E403%3C/text%3E%3C/svg%3E";
 
-const DANGER_COLOR = "rgba(239, 68, 68, 0.9)"; // @httpjpg/tokens colors.danger.500
+const DANGER_COLOR = "rgba(239, 68, 68, 0.9)";
 
 function NowPlayingWidgetComponent() {
   const [mounted, setMounted] = useState(false);
@@ -38,7 +38,6 @@ function NowPlayingWidgetComponent() {
     trackNowPlayingClick();
   };
 
-  // 403 → "premium missing"; any other error → generic "error".
   const errorView =
     errorCode === "premium_missing"
       ? {

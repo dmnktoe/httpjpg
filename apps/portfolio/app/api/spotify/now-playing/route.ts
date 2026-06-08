@@ -39,7 +39,6 @@ export async function GET(request: NextRequest) {
       },
     );
   } catch (error) {
-    // Missing Premium is expected — return 403 for the widget, don't report to Sentry.
     if (error instanceof SpotifyForbiddenError) {
       console.warn("Spotify playback forbidden:", error.message);
       return NextResponse.json(

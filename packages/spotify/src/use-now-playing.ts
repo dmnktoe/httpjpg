@@ -23,7 +23,6 @@ export interface UseNowPlayingReturn {
   data: NowPlayingData | null;
   isLoading: boolean;
   error: Error | null;
-  /** Machine-readable error reason from the endpoint body (e.g. "premium_missing"). */
   errorCode: string | null;
   refetch: () => Promise<void>;
 }

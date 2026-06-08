@@ -23,9 +23,6 @@ export type PsnTrophyFetchResult =
 const PSN_TIMEOUT_MS = 5000;
 const DEFAULT_LIMIT = 4;
 
-// psntrophyleaders.com rejects requests without a browser-like User-Agent with a
-// 403, even though the feed itself is public. Mirror a real browser so the
-// authless RSS source keeps working from the server.
 const FEED_HEADERS = {
   "User-Agent":
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",

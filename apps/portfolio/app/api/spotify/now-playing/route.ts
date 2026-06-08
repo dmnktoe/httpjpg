@@ -40,8 +40,6 @@ export async function GET(request: NextRequest) {
     );
   } catch (error) {
     if (error instanceof SpotifyForbiddenError) {
-      // Expected steady state for a non-Premium account — the widget already
-      // surfaces it from the 403 payload, so don't spam the logs on every poll.
       return NextResponse.json(
         { error: "premium_missing", message: error.message },
         { status: 403, headers: CORS_HEADERS },

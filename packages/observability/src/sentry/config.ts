@@ -16,7 +16,10 @@ export function getSentryConfig(scope: SentryScope): SentryRuntimeConfig {
   const enableInDev = isServer ? env.SENTRY_ENABLE_IN_DEV : env.NEXT_PUBLIC_SENTRY_ENABLE_IN_DEV;
   const environment = isServer ? env.NODE_ENV : process.env.NODE_ENV;
   const release =
-    process.env.GITHUB_SHA?.trim() || process.env.npm_package_version?.trim() || undefined;
+    env.NEXT_PUBLIC_APP_VERSION?.trim() ||
+    process.env.GITHUB_SHA?.trim() ||
+    process.env.npm_package_version?.trim() ||
+    undefined;
   const isProduction = environment === "production";
   return {
     dsn,

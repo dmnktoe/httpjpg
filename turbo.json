@@ -7,7 +7,6 @@
     ".oxlintrc.json",
     "tools/oxlint/**",
     ".oxfmtrc.json",
-    ".oxlintignore",
     ".env",
     ".env.local",
     ".env.production"

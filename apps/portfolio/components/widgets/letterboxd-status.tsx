@@ -80,7 +80,6 @@ export function LetterboxdStatus() {
         fontFamily: "mono",
         fontSize: "xs",
         textDecoration: "none",
-        _hover: { opacity: 100 },
       }}
     >
       <Box as="span" css={{ opacity: 60 }}>
@@ -119,9 +118,6 @@ export function LetterboxdStatus() {
           whiteSpace: "nowrap",
           overflow: "hidden",
         }}
-        data-preview-image={film.poster || undefined}
-        data-preview-ratio="2:3"
-        data-preview-width="70"
       >
         {film.title}
       </Box>

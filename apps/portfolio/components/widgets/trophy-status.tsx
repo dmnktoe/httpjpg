@@ -53,9 +53,6 @@ export function TrophyStatus() {
           fontSize: "xs",
         }}
       >
-        <Box as="span" css={{ opacity: 60 }}>
-          trophy:
-        </Box>
         <Box as="span" css={{ opacity: 50 }}>
           loading ...
         </Box>
@@ -80,12 +77,8 @@ export function TrophyStatus() {
         fontFamily: "mono",
         fontSize: "xs",
         textDecoration: "none",
-        _hover: { opacity: 100 },
       }}
     >
-      <Box as="span" css={{ opacity: 60 }}>
-        trophy:
-      </Box>
       {data?.avatar && (
         <Box
           as="span"

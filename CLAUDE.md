@@ -41,7 +41,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 │   │   ├── components/          # App-specific React components
 │   │   │   ├── providers/       # Consent, Storyblok live, registry init
 │   │   │   ├── ui/              # Layout shell (footer wrapper, theme sync, work-nav)
-│   │   │   └── widgets/         # Discord, PSN, now-playing, flag counter, web vitals
+│   │   │   └── widgets/         # Discord, PSN, now-playing, weather/time, web vitals
 │   │   ├── lib/
 │   │   │   ├── queries/         # Storyblok data fetchers (config, work, widgets, last-updated)
 │   │   │   ├── integrations/    # Third-party API adapters (discord/Lanyard, …)

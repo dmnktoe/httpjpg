@@ -103,8 +103,6 @@ export function DiscordStatus() {
               whiteSpace: "nowrap",
               overflow: "hidden",
             }}
-            data-preview-image={activityIcon || undefined}
-            data-preview-ratio="1:1"
           >
             {activity}
           </Box>

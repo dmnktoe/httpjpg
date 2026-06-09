@@ -33,6 +33,7 @@
       "env": [
         "PANDA_PRODUCTION",
         "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_WEATHER_TIMEZONE",
         "NEXT_PUBLIC_STORYBLOK_TOKEN",
         "NEXT_PUBLIC_STORYBLOK_VERSION",
         "NEXT_PUBLIC_SENTRY_DSN",
@@ -54,7 +55,9 @@
         "SPOTIFY_CLIENT_SECRET",
         "SPOTIFY_REFRESH_TOKEN",
         "DISCORD_USER_ID",
-        "PSN_FEED_PROXY",
+        "PSN_NPSSO",
+        "WEATHER_LATITUDE",
+        "WEATHER_LONGITUDE",
         "ARCJET_KEY"
       ]
     },

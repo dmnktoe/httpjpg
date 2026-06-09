@@ -25,11 +25,11 @@ import { NostalgiaSlideshow } from "@/components/ui/nostalgia-slideshow";
 import { PreviewNotification } from "@/components/ui/preview-notification";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { DiscordStatus } from "@/components/widgets/discord-status";
-import { FlagCounter } from "@/components/widgets/flag-counter";
 import { LetterboxdStatus } from "@/components/widgets/letterboxd-status";
 import { NowPlayingWidget } from "@/components/widgets/now-playing-widget";
 import { PSNCard } from "@/components/widgets/psn-card";
 import { TrophyStatus } from "@/components/widgets/trophy-status";
+import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
 import { config } from "@/lib/config";
 import { getPageTheme } from "@/lib/page-theme";
@@ -137,23 +137,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                   {widgetConfig.discordEnabled && <DiscordStatus />}
                   {widgetConfig.letterboxdEnabled && <LetterboxdStatus />}
                   {widgetConfig.psnTrophyEnabled && <TrophyStatus />}
-                  <Box
-                    css={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "4",
-                      mt: "6",
-                    }}
+                  <WeatherTime />
+                  <AsciiArt
+                    label="signoff"
+                    css={{ my: "5", opacity: 0.3, fontSize: "xs", letterSpacing: "0.2em" }}
                   >
-                    <FlagCounter />
-                    <AsciiArt
-                      label="signoff"
-                      css={{ opacity: 0.3, fontSize: "xs", letterSpacing: "0.2em" }}
-                    >
-                      {ASCII_DIVIDER_WAVE}
-                    </AsciiArt>
-                  </Box>
+                    {ASCII_DIVIDER_WAVE}
+                  </AsciiArt>
                 </Box>
               }
             />

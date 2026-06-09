@@ -1,171 +1,206 @@
-import { beforeEach, type MockedFunction, vi } from "vitest";
+import { beforeEach, vi } from "vitest";
 
-import { fetchPsnTrophies, isPsnUsername, parsePsnTrophyFeed } from "./psn-trophies";
+const psn = vi.hoisted(() => ({
+  exchangeNpssoForCode: vi.fn(async () => "code"),
+  exchangeCodeForAccessToken: vi.fn(async () => ({
+    accessToken: "access",
+    expiresIn: 3600,
+    refreshToken: "refresh",
+    refreshTokenExpiresIn: 100_000,
+  })),
+  exchangeRefreshTokenForAuthTokens: vi.fn(async () => ({
+    accessToken: "access2",
+    expiresIn: 3600,
+    refreshToken: "refresh2",
+    refreshTokenExpiresIn: 100_000,
+  })),
+  getProfileFromAccountId: vi.fn(async () => ({
+    avatars: [{ size: "l", url: "https://avatar.test/l.png" }],
+  })),
+  getUserTitles: vi.fn(),
+  getUserTrophiesEarnedForTitle: vi.fn(),
+  getTitleTrophies: vi.fn(),
+}));
 
-global.fetch = vi.fn() as MockedFunction<typeof fetch>;
-const mockFetch = global.fetch as MockedFunction<typeof fetch>;
+vi.mock("psn-api", () => psn);
 
-function rssResponse(xml: string, ok = true, status = 200): Response {
-  return {
-    ok,
-    status,
-    text: async () => xml,
-  } as Response;
-}
+import { buildTrophy, fetchRecentTrophies, isPsnUsername } from "./psn-trophies";
 
-// Trimmed from a real psntrophyleaders.com feed item.
-const TROPHY_ITEM = `
-  <item>
-    <title><![CDATA[bullensohn6 | Stolz der Nation]]></title>
-    <description><![CDATA[<table cellpadding="5"><tr>
-      <td><a href="https://psntrophyleaders.com/user/view/bullensohn6/battlefield-6-ps5/35"><img src="https://np.sentl.com/images/games/96447344/m/488f5065635.png" width="50"></a><br/><small><strong><font color="#777">Silver</font></strong></small></td>
-      <td width="350"><strong><a href="https://psntrophyleaders.com/user/view/bullensohn6/battlefield-6-ps5">Battlefield&#8482; 6</a></strong> <small>(<font color="#999999">PS5</font>)</small><br/><strong>Stolz der Nation</strong><br/><font color="#666">Get 250 sniper rifle kills as Recon in Multiplayer</font><br/><small><font color="#999">Earned Mon, 27 Apr 2026 05:23:08 -0400</font></small></td>
-      <td><a href="https://psntrophyleaders.com/user/view/bullensohn6"><img src="https://static-resource.np.community.playstation.net/avatar/3RD/30004.png" width="50"/><br/>bullensohn6</a></td>
-    </tr></table>]]></description>
-    <link>http://psntrophyleaders.com/user/view/bullensohn6/battlefield-6-ps5/35</link>
-    <pubDate><![CDATA[Mon, 27 Apr 2026 09:23:08 +0000]]></pubDate>
-  </item>`;
+const TITLE = {
+  npServiceName: "trophy2" as const,
+  npCommunicationId: "NPWR-BF6",
+  trophyTitleName: "Battlefield 6",
+  trophyTitlePlatform: "PS5",
+  trophyTitleIconUrl: "https://image.api.playstation.com/bf6.png",
+  lastUpdatedDateTime: "2026-04-27T09:23:08Z",
+  earnedTrophies: { bronze: 5, silver: 2, gold: 1, platinum: 0 },
+};
 
-function feed(...items: string[]): string {
-  return `<?xml version="1.0"?><rss><channel>${items.join("")}</channel></rss>`;
-}
+const OLDER_TITLE = {
+  ...TITLE,
+  npCommunicationId: "NPWR-OLD",
+  trophyTitleName: "It Takes Two",
+  lastUpdatedDateTime: "2026-01-01T00:00:00Z",
+};
 
-describe("parsePsnTrophyFeed", () => {
-  it("extracts the trophy fields from an item", () => {
-    const trophies = parsePsnTrophyFeed(feed(TROPHY_ITEM));
-    expect(trophies).toHaveLength(1);
-    expect(trophies[0]).toEqual({
+const RECENT_UNEARNED = {
+  ...TITLE,
+  npCommunicationId: "NPWR-FC26",
+  trophyTitleName: "EA SPORTS FC 26",
+  lastUpdatedDateTime: "2026-05-01T00:00:00Z",
+  earnedTrophies: { bronze: 0, silver: 0, gold: 0, platinum: 0 as const },
+};
+
+describe("buildTrophy", () => {
+  it("merges title, earned record, and definition into the widget shape", () => {
+    const trophy = buildTrophy(
+      TITLE,
+      { trophyType: "silver", earnedDateTime: "2026-04-27T09:23:08Z" },
+      {
+        trophyName: "Stolz der Nation",
+        trophyDetail: "Get 250 sniper rifle kills",
+        trophyIconUrl: "https://img/trophy.png",
+      },
+      "bullensohn6",
+    );
+    expect(trophy).toEqual({
       name: "Stolz der Nation",
-      game: "Battlefield™ 6",
+      game: "Battlefield 6",
       platform: "PS5",
       type: "silver",
-      description: "Get 250 sniper rifle kills as Recon in Multiplayer",
-      earnedAt: "2026-04-27T09:23:08.000Z",
-      url: "http://psntrophyleaders.com/user/view/bullensohn6/battlefield-6-ps5/35",
-      avatar: "https://static-resource.np.community.playstation.net/avatar/3RD/30004.png",
+      description: "Get 250 sniper rifle kills",
+      earnedAt: "2026-04-27T09:23:08Z",
+      url: "https://psnprofiles.com/bullensohn6",
+      image: "https://img/trophy.png",
     });
   });
 
-  it("normalises each trophy tier to a lowercase type", () => {
-    const platinum = TROPHY_ITEM.replace(
-      '<font color="#777">Silver</font>',
-      '<font color="#667FB2">Platinum</font>',
+  it("returns null for an unrecognisable trophy tier", () => {
+    expect(
+      buildTrophy(TITLE, { trophyType: "diamond", earnedDateTime: null }, undefined),
+    ).toBeNull();
+  });
+
+  it("keeps only the first platform segment", () => {
+    const trophy = buildTrophy(
+      { ...TITLE, trophyTitlePlatform: "PS4,PSVITA" },
+      { trophyType: "gold", earnedDateTime: null },
+      { trophyName: "x", trophyDetail: null, trophyIconUrl: null },
     );
-    expect(parsePsnTrophyFeed(feed(platinum))[0].type).toBe("platinum");
+    expect(trophy?.platform).toBe("PS4");
   });
 
-  it("keeps the feed's newest-first order", () => {
-    const older = TROPHY_ITEM.replace("Stolz der Nation", "First Step");
-    const trophies = parsePsnTrophyFeed(feed(TROPHY_ITEM, older));
-    expect(trophies.map((t) => t.name)).toEqual(["Stolz der Nation", "First Step"]);
-  });
-
-  it("skips items without a recognisable trophy tier", () => {
-    const noise = `<item><title>random</title><description><![CDATA[<p>no trophy here</p>]]></description><link>x</link></item>`;
-    const trophies = parsePsnTrophyFeed(feed(noise, TROPHY_ITEM));
-    expect(trophies).toHaveLength(1);
-    expect(trophies[0].name).toBe("Stolz der Nation");
-  });
-
-  it("respects the limit", () => {
-    const trophies = parsePsnTrophyFeed(feed(TROPHY_ITEM, TROPHY_ITEM, TROPHY_ITEM), 2);
-    expect(trophies).toHaveLength(2);
-  });
-
-  it("returns nothing for a non-positive limit", () => {
-    expect(parsePsnTrophyFeed(feed(TROPHY_ITEM), 0)).toEqual([]);
+  it("falls back to a generic link without a valid username", () => {
+    const trophy = buildTrophy(TITLE, { trophyType: "bronze", earnedDateTime: null }, undefined);
+    expect(trophy?.url).toBe("https://www.playstation.com");
   });
 });
 
-describe("fetchPsnTrophies", () => {
+describe("fetchRecentTrophies", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("requests the member RSS feed for the given username", async () => {
-    mockFetch.mockResolvedValueOnce(rssResponse(feed(TROPHY_ITEM)));
-    await fetchPsnTrophies("bullensohn6");
-    expect(mockFetch).toHaveBeenCalledWith(
-      "https://psntrophyleaders.com/user/view/bullensohn6/rss",
-      expect.objectContaining({ cache: "no-store" }),
-    );
-  });
+  it("returns recent earned trophies plus the PSN avatar", async () => {
+    psn.getUserTitles.mockResolvedValueOnce({ trophyTitles: [TITLE] });
+    psn.getUserTrophiesEarnedForTitle.mockResolvedValueOnce({
+      trophies: [
+        { trophyId: 1, earned: true, earnedDateTime: "2026-04-20T00:00:00Z", trophyType: "bronze" },
+        { trophyId: 2, earned: true, earnedDateTime: "2026-04-27T09:23:08Z", trophyType: "silver" },
+        { trophyId: 3, earned: false, trophyType: "gold" },
+      ],
+    });
+    psn.getTitleTrophies.mockResolvedValueOnce({
+      trophies: [
+        { trophyId: 1, trophyName: "First Step", trophyDetail: "a", trophyIconUrl: "i1" },
+        { trophyId: 2, trophyName: "Stolz der Nation", trophyDetail: "b", trophyIconUrl: "i2" },
+      ],
+    });
 
-  it("sends a browser User-Agent so the feed doesn't 403", async () => {
-    mockFetch.mockResolvedValueOnce(rssResponse(feed(TROPHY_ITEM)));
-    await fetchPsnTrophies("bullensohn6");
-    const headers = mockFetch.mock.calls[0]?.[1]?.headers as Record<string, string>;
-    expect(headers["User-Agent"]).toMatch(/Mozilla/);
-  });
+    const result = await fetchRecentTrophies("npsso", "bullensohn6");
 
-  it("returns parsed trophies on success", async () => {
-    mockFetch.mockResolvedValueOnce(rssResponse(feed(TROPHY_ITEM)));
-    const result = await fetchPsnTrophies("bullensohn6");
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.trophies[0].name).toBe("Stolz der Nation");
+      expect(result.avatar).toBe("https://avatar.test/l.png");
+      expect(result.trophies.map((trophy) => trophy.name)).toEqual([
+        "Stolz der Nation",
+        "First Step",
+      ]);
+      expect(result.trophies[0].image).toBe("i2");
     }
   });
 
-  it("surfaces a non-200 response as a failure", async () => {
-    mockFetch.mockResolvedValueOnce(rssResponse("", false, 404));
-    const result = await fetchPsnTrophies("ghost");
+  it("orders trophies by earned date across titles", async () => {
+    psn.getUserTitles.mockResolvedValueOnce({ trophyTitles: [TITLE, OLDER_TITLE] });
+    psn.getUserTrophiesEarnedForTitle
+      .mockResolvedValueOnce({
+        trophies: [
+          {
+            trophyId: 2,
+            earned: true,
+            earnedDateTime: "2026-04-27T09:23:08Z",
+            trophyType: "silver",
+          },
+        ],
+      })
+      .mockResolvedValueOnce({
+        trophies: [
+          { trophyId: 9, earned: true, earnedDateTime: "2026-05-10T00:00:00Z", trophyType: "gold" },
+        ],
+      });
+    psn.getTitleTrophies
+      .mockResolvedValueOnce({
+        trophies: [{ trophyId: 2, trophyName: "BF Trophy", trophyIconUrl: "i2" }],
+      })
+      .mockResolvedValueOnce({
+        trophies: [{ trophyId: 9, trophyName: "Old Trophy", trophyIconUrl: "i9" }],
+      });
+
+    const result = await fetchRecentTrophies("npsso");
+
+    expect(result.ok && result.trophies.map((trophy) => trophy.name)).toEqual([
+      "Old Trophy",
+      "BF Trophy",
+    ]);
+  });
+
+  it("skips titles with no earned trophies", async () => {
+    psn.getUserTitles.mockResolvedValueOnce({ trophyTitles: [RECENT_UNEARNED, TITLE] });
+    psn.getUserTrophiesEarnedForTitle.mockResolvedValueOnce({
+      trophies: [
+        { trophyId: 2, earned: true, earnedDateTime: "2026-04-27T09:23:08Z", trophyType: "silver" },
+      ],
+    });
+    psn.getTitleTrophies.mockResolvedValueOnce({
+      trophies: [{ trophyId: 2, trophyName: "Stolz der Nation", trophyIconUrl: "i2" }],
+    });
+
+    const result = await fetchRecentTrophies("npsso");
+
+    expect(psn.getUserTrophiesEarnedForTitle).toHaveBeenCalledTimes(1);
+    expect(psn.getUserTrophiesEarnedForTitle).toHaveBeenCalledWith(
+      { accessToken: expect.any(String) },
+      "me",
+      "NPWR-BF6",
+      "all",
+      expect.objectContaining({ npServiceName: "trophy2" }),
+    );
+    expect(result.ok && result.trophies).toHaveLength(1);
+  });
+
+  it("returns an empty list with the avatar when nothing is earned", async () => {
+    psn.getUserTitles.mockResolvedValueOnce({ trophyTitles: [RECENT_UNEARNED] });
+    const result = await fetchRecentTrophies("npsso");
+    expect(result).toEqual({ ok: true, trophies: [], avatar: "https://avatar.test/l.png" });
+  });
+
+  it("surfaces an API failure", async () => {
+    psn.getUserTitles.mockRejectedValueOnce(new Error("Invalid npsso token"));
+    const result = await fetchRecentTrophies("npsso");
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.status).toBe(404);
-    }
-  });
-
-  it("does not proxy a genuine 404", async () => {
-    mockFetch.mockResolvedValueOnce(rssResponse("", false, 404));
-    await fetchPsnTrophies("ghost");
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-  });
-
-  it("retries through the proxy when the direct request is Cloudflare-blocked", async () => {
-    mockFetch
-      .mockResolvedValueOnce(rssResponse("", false, 403))
-      .mockResolvedValueOnce(rssResponse(feed(TROPHY_ITEM)));
-
-    const result = await fetchPsnTrophies("bullensohn6");
-
-    expect(mockFetch).toHaveBeenCalledTimes(2);
-    const proxyUrl = mockFetch.mock.calls[1]?.[0] as string;
-    expect(proxyUrl).toContain(
-      encodeURIComponent("https://psntrophyleaders.com/user/view/bullensohn6/rss"),
-    );
-    expect(result.ok).toBe(true);
-    if (result.ok) {
-      expect(result.trophies[0].name).toBe("Stolz der Nation");
-    }
-  });
-
-  it("honours a custom proxy template", async () => {
-    mockFetch
-      .mockResolvedValueOnce(rssResponse("", false, 403))
-      .mockResolvedValueOnce(rssResponse(feed(TROPHY_ITEM)));
-
-    await fetchPsnTrophies("bullensohn6", undefined, "https://proxy.test/get?u={url}");
-
-    expect(mockFetch.mock.calls[1]?.[0]).toBe(
-      `https://proxy.test/get?u=${encodeURIComponent("https://psntrophyleaders.com/user/view/bullensohn6/rss")}`,
-    );
-  });
-
-  it("skips the proxy retry when disabled", async () => {
-    mockFetch.mockResolvedValueOnce(rssResponse("", false, 403));
-    const result = await fetchPsnTrophies("bullensohn6", undefined, null);
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(result.ok).toBe(false);
-  });
-
-  it("ignores a proxy template missing the {url} placeholder", async () => {
-    mockFetch.mockResolvedValueOnce(rssResponse("", false, 403));
-    const result = await fetchPsnTrophies("bullensohn6", undefined, "https://proxy.test/get");
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(result.ok).toBe(false);
-    if (!result.ok) {
-      expect(result.status).toBe(403);
+      expect(result.status).toBe(502);
+      expect(result.message).toBe("PSN trophies unavailable");
     }
   });
 });

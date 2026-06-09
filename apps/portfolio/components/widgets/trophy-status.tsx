@@ -110,6 +110,22 @@ export function TrophyStatus() {
   );
 }
 
+function buildTickerKeyframes(name: string, count: number): string {
+  const segment = 100 / count;
+  const hold = segment * 0.72;
+  let stops = "";
+  for (let index = 0; index < count; index++) {
+    const offset = -index * ITEM_HEIGHT;
+    stops += `${(index * segment).toFixed(3)}% { transform: translateY(${offset}px); }`;
+    stops += `${(index * segment + hold).toFixed(3)}% { transform: translateY(${offset}px); }`;
+  }
+  stops += `100% { transform: translateY(${-count * ITEM_HEIGHT}px); }`;
+  return (
+    `@keyframes ${name} { ${stops} }` +
+    `@media (prefers-reduced-motion: reduce) { .${name} { animation: none !important; } }`
+  );
+}
+
 function TrophyTicker({ trophies }: { trophies: PsnTrophy[] }) {
   const animated = trophies.length > 1;
   const items = animated ? [...trophies, trophies[0]] : trophies;
@@ -117,23 +133,13 @@ function TrophyTicker({ trophies }: { trophies: PsnTrophy[] }) {
 
   return (
     <Box css={{ flex: 1, minWidth: 0, overflow: "hidden" }} style={{ height: `${ITEM_HEIGHT}px` }}>
-      {animated && (
-        <style>{`
-          @keyframes ${animationName} {
-            from { transform: translateY(0); }
-            to { transform: translateY(-${trophies.length * ITEM_HEIGHT}px); }
-          }
-          @media (prefers-reduced-motion: reduce) {
-            .${animationName} { animation: none !important; }
-          }
-        `}</style>
-      )}
+      {animated && <style>{buildTickerKeyframes(animationName, trophies.length)}</style>}
       <Box
         className={animationName}
         style={
           animated
             ? {
-                animation: `${animationName} ${trophies.length * SECONDS_PER_ITEM}s steps(${trophies.length}) infinite`,
+                animation: `${animationName} ${trophies.length * SECONDS_PER_ITEM}s linear infinite`,
               }
             : undefined
         }

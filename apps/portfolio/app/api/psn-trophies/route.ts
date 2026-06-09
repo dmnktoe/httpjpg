@@ -4,7 +4,7 @@ import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
 import { NextResponse } from "next/server";
 
-import { fetchPsnTrophies, isPsnUsername } from "@/lib/integrations/psn-trophies";
+import { fetchLatestTrophy, isPsnUsername } from "@/lib/integrations/psn-trophies";
 
 async function resolveUsername(): Promise<string | undefined> {
   try {
@@ -24,20 +24,21 @@ async function resolveUsername(): Promise<string | undefined> {
 
 export async function GET() {
   try {
-    const username = await resolveUsername();
-    if (!username) {
+    if (!env.PSN_NPSSO) {
       return NextResponse.json(
         {
-          error: "PSN username not configured",
-          message: "Set psn_username in Storyblok config",
+          error: "PSN not configured",
+          message: "Set PSN_NPSSO to enable the trophy widget",
         },
         { status: 500 },
       );
     }
 
-    const result = await fetchPsnTrophies(username, undefined, env.PSN_FEED_PROXY || undefined);
+    const username = await resolveUsername();
+
+    const result = await fetchLatestTrophy(env.PSN_NPSSO, username);
     if (!result.ok) {
-      console.warn(`PSN Trophy Leaders RSS error: ${result.status} - ${result.message}`);
+      console.warn(`PSN trophy fetch failed: ${result.status} - ${result.message}`);
       return NextResponse.json(
         { error: "PSN trophies unavailable", message: result.message },
         { status: result.status },

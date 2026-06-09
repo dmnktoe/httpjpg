@@ -43,7 +43,7 @@ export const env = createEnv({
 
     DISCORD_USER_ID: z.string().optional(),
 
-    PSN_FEED_PROXY: z.string().optional(),
+    PSN_NPSSO: z.string().optional(),
 
     ARCJET_KEY: z.string().optional(),
 
@@ -87,7 +87,7 @@ export const env = createEnv({
 
     DISCORD_USER_ID: process.env.DISCORD_USER_ID,
 
-    PSN_FEED_PROXY: process.env.PSN_FEED_PROXY,
+    PSN_NPSSO: process.env.PSN_NPSSO,
 
     ARCJET_KEY: process.env.ARCJET_KEY,
 

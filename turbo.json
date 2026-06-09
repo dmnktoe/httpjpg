@@ -54,7 +54,7 @@
         "SPOTIFY_CLIENT_SECRET",
         "SPOTIFY_REFRESH_TOKEN",
         "DISCORD_USER_ID",
-        "PSN_FEED_PROXY",
+        "PSN_NPSSO",
         "ARCJET_KEY"
       ]
     },

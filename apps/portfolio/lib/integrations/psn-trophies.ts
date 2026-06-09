@@ -2,6 +2,7 @@ import {
   exchangeCodeForAccessToken,
   exchangeNpssoForCode,
   exchangeRefreshTokenForAuthTokens,
+  getProfileFromAccountId,
   getTitleTrophies,
   getUserTitles,
   getUserTrophiesEarnedForTitle,
@@ -20,12 +21,16 @@ export interface PsnTrophy {
   description: string | null;
   earnedAt: string | null;
   url: string;
-  avatar: string | null;
+  image: string | null;
 }
 
 export type PsnTrophyFetchResult =
-  | { ok: true; trophies: PsnTrophy[] }
+  | { ok: true; trophies: PsnTrophy[]; avatar: string | null }
   | { ok: false; status: number; message: string };
+
+const RECENT_LIMIT = 5;
+const TITLE_SCAN = 5;
+const AVATAR_SIZES = ["xl", "l", "m", "s", "xs"];
 
 const PSN_USERNAME = /^[A-Za-z][\w-]{2,15}$/;
 
@@ -53,10 +58,25 @@ function countEarned(counts: {
   return counts.bronze + counts.silver + counts.gold + counts.platinum;
 }
 
+function pickAvatar(avatars?: Array<{ size: string; url: string }>): string | null {
+  if (!avatars?.length) {
+    return null;
+  }
+  for (const size of AVATAR_SIZES) {
+    const match = avatars.find((avatar) => avatar.size === size);
+    if (match) {
+      return match.url;
+    }
+  }
+  return avatars[0].url;
+}
+
 export function buildTrophy(
-  title: Pick<TrophyTitle, "trophyTitleName" | "trophyTitlePlatform" | "trophyTitleIconUrl">,
+  title: Pick<TrophyTitle, "trophyTitleName" | "trophyTitlePlatform">,
   earned: { trophyType?: string; earnedDateTime?: string | null },
-  definition: { trophyName?: string; trophyDetail?: string | null } | undefined,
+  definition:
+    | { trophyName?: string; trophyDetail?: string | null; trophyIconUrl?: string | null }
+    | undefined,
   username?: string,
 ): PsnTrophy | null {
   const type = toTrophyType(earned.trophyType);
@@ -71,7 +91,7 @@ export function buildTrophy(
     description: definition?.trophyDetail ?? null,
     earnedAt: earned.earnedDateTime ?? null,
     url: profileUrl(username),
-    avatar: title.trophyTitleIconUrl ?? null,
+    image: definition?.trophyIconUrl ?? null,
   };
 }
 
@@ -107,40 +127,52 @@ async function authorize(npsso: string): Promise<AuthorizationPayload> {
   return { accessToken: cachedAuth.accessToken };
 }
 
-export async function fetchLatestTrophy(
+export async function fetchRecentTrophies(
   npsso: string,
   username?: string,
 ): Promise<PsnTrophyFetchResult> {
   try {
     const auth = await authorize(npsso);
 
-    const { trophyTitles } = await getUserTitles(auth, "me");
-    const title = trophyTitles
-      .filter((candidate) => countEarned(candidate.earnedTrophies) > 0)
-      .sort((a, b) => b.lastUpdatedDateTime.localeCompare(a.lastUpdatedDateTime))[0];
-    if (!title) {
-      console.warn(`PSN: no title with earned trophies (titles=${trophyTitles.length})`);
-      return { ok: true, trophies: [] };
-    }
-
-    const options = { npServiceName: title.npServiceName };
-    const [earnedResult, definitionResult] = await Promise.all([
-      getUserTrophiesEarnedForTitle(auth, "me", title.npCommunicationId, "all", options),
-      getTitleTrophies(auth, title.npCommunicationId, "all", options),
+    const [{ trophyTitles }, profile] = await Promise.all([
+      getUserTitles(auth, "me"),
+      getProfileFromAccountId(auth, "me").catch(() => null),
     ]);
+    const avatar = pickAvatar(profile?.avatars);
 
-    const latest = earnedResult.trophies
-      .filter((trophy) => trophy.earned && trophy.earnedDateTime)
-      .sort((a, b) => (b.earnedDateTime ?? "").localeCompare(a.earnedDateTime ?? ""))[0];
-    if (!latest) {
-      return { ok: true, trophies: [] };
-    }
+    const titles = trophyTitles
+      .filter((title) => countEarned(title.earnedTrophies) > 0)
+      .sort((a, b) => b.lastUpdatedDateTime.localeCompare(a.lastUpdatedDateTime))
+      .slice(0, TITLE_SCAN);
 
-    const definition = definitionResult.trophies.find(
-      (trophy) => trophy.trophyId === latest.trophyId,
+    const earnedByTitle = await Promise.all(
+      titles.map(async (title) => {
+        const options = { npServiceName: title.npServiceName };
+        const [earnedResult, definitionResult] = await Promise.all([
+          getUserTrophiesEarnedForTitle(auth, "me", title.npCommunicationId, "all", options),
+          getTitleTrophies(auth, title.npCommunicationId, "all", options),
+        ]);
+        const definitions = new Map(
+          definitionResult.trophies.map((trophy) => [trophy.trophyId, trophy]),
+        );
+        return earnedResult.trophies
+          .filter((trophy) => trophy.earned && trophy.earnedDateTime)
+          .map((trophy) => ({
+            title,
+            earned: trophy,
+            definition: definitions.get(trophy.trophyId),
+          }));
+      }),
     );
-    const trophy = buildTrophy(title, latest, definition, username);
-    return { ok: true, trophies: trophy ? [trophy] : [] };
+
+    const trophies = earnedByTitle
+      .flat()
+      .sort((a, b) => (b.earned.earnedDateTime ?? "").localeCompare(a.earned.earnedDateTime ?? ""))
+      .slice(0, RECENT_LIMIT)
+      .map((entry) => buildTrophy(entry.title, entry.earned, entry.definition, username))
+      .filter((trophy): trophy is PsnTrophy => trophy !== null);
+
+    return { ok: true, trophies, avatar };
   } catch (error) {
     cachedAuth = null;
     const message = error instanceof Error ? error.message : "Unknown PSN API error";

@@ -5,8 +5,16 @@ import { useEffect, useState } from "react";
 
 import type { PsnTrophy } from "@/lib/integrations/psn-trophies";
 
+interface TrophyData {
+  trophies: PsnTrophy[];
+  avatar: string | null;
+}
+
+const ITEM_HEIGHT = 20;
+const SECONDS_PER_ITEM = 3;
+
 export function TrophyStatus() {
-  const [trophy, setTrophy] = useState<PsnTrophy | null>(null);
+  const [data, setData] = useState<TrophyData | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -14,8 +22,7 @@ export function TrophyStatus() {
       try {
         const response = await fetch("/api/psn-trophies");
         if (response.ok) {
-          const data = await response.json();
-          setTrophy(data.trophies?.[0] ?? null);
+          setData(await response.json());
         }
       } catch (error) {
         console.error("Failed to fetch PSN trophies:", error);
@@ -27,9 +34,9 @@ export function TrophyStatus() {
     fetchTrophies();
   }, []);
 
-  // Hold the footer line with a loading label while the request is in flight so
-  // it doesn't jump when the trophy pops in; collapse only once we know it's empty.
-  if (!trophy) {
+  const trophies = data?.trophies ?? [];
+
+  if (trophies.length === 0) {
     if (loaded) {
       return null;
     }
@@ -56,12 +63,10 @@ export function TrophyStatus() {
     );
   }
 
-  const icon = `/images/trophies/${trophy.type}.png`;
-
   return (
     <Box
       as="a"
-      href={trophy.url}
+      href={trophies[0].url}
       target="_blank"
       rel="noopener noreferrer"
       css={{
@@ -81,42 +86,84 @@ export function TrophyStatus() {
       <Box as="span" css={{ opacity: 60 }}>
         trophy:
       </Box>
-      {trophy.avatar && (
+      {data?.avatar && (
         <Box
           as="span"
           css={{
             display: "inline-block",
-            width: "3",
-            height: "3",
-            verticalAlign: "middle",
-            borderRadius: "sm",
+            flexShrink: 0,
+            width: "4",
+            height: "4",
+            borderRadius: "full",
             overflow: "hidden",
           }}
         >
           <img
-            src={trophy.avatar}
+            src={data.avatar}
             alt=""
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              display: "block",
-              imageRendering: "pixelated",
-            }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
           />
         </Box>
       )}
+      <TrophyTicker trophies={trophies} />
+    </Box>
+  );
+}
+
+function TrophyTicker({ trophies }: { trophies: PsnTrophy[] }) {
+  const animated = trophies.length > 1;
+  const items = animated ? [...trophies, trophies[0]] : trophies;
+  const animationName = `psn-vticker-${trophies.length}`;
+
+  return (
+    <Box css={{ flex: 1, minWidth: 0, overflow: "hidden" }} style={{ height: `${ITEM_HEIGHT}px` }}>
+      {animated && (
+        <style>{`
+          @keyframes ${animationName} {
+            from { transform: translateY(0); }
+            to { transform: translateY(-${trophies.length * ITEM_HEIGHT}px); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .${animationName} { animation: none !important; }
+          }
+        `}</style>
+      )}
       <Box
-        as="span"
-        css={{
-          display: "inline-block",
-          width: "3.5",
-          height: "3.5",
-          verticalAlign: "middle",
-        }}
+        className={animationName}
+        style={
+          animated
+            ? {
+                animation: `${animationName} ${trophies.length * SECONDS_PER_ITEM}s steps(${trophies.length}) infinite`,
+              }
+            : undefined
+        }
       >
+        {items.map((trophy, index) => (
+          <TrophyTickerItem key={index} trophy={trophy} />
+        ))}
+      </Box>
+    </Box>
+  );
+}
+
+function TrophyTickerItem({ trophy }: { trophy: PsnTrophy }) {
+  return (
+    <Box
+      css={{ display: "flex", alignItems: "center", gap: 1.5, whiteSpace: "nowrap" }}
+      style={{ height: `${ITEM_HEIGHT}px` }}
+    >
+      {trophy.image && (
+        <Box as="span" css={{ display: "inline-block", flexShrink: 0, width: "4", height: "4" }}>
+          <img
+            src={trophy.image}
+            alt=""
+            style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+          />
+        </Box>
+      )}
+      <Box as="span" css={{ display: "inline-block", flexShrink: 0, width: "3.5", height: "3.5" }}>
         <img
-          src={icon}
+          src={`/images/trophies/${trophy.type}.png`}
           alt={`${trophy.type} trophy`}
           style={{
             width: "100%",
@@ -130,14 +177,12 @@ export function TrophyStatus() {
       <Box
         as="span"
         css={{
-          maxWidth: "200px",
+          maxWidth: "180px",
           opacity: 70,
           textOverflow: "ellipsis",
           whiteSpace: "nowrap",
           overflow: "hidden",
         }}
-        data-preview-image={icon}
-        data-preview-ratio="1:1"
       >
         {trophy.name}
       </Box>
@@ -147,7 +192,7 @@ export function TrophyStatus() {
       <Box
         as="span"
         css={{
-          maxWidth: "160px",
+          maxWidth: "140px",
           opacity: 60,
           textOverflow: "ellipsis",
           whiteSpace: "nowrap",
@@ -156,11 +201,6 @@ export function TrophyStatus() {
       >
         {trophy.game}
       </Box>
-      {trophy.platform && (
-        <Box as="span" css={{ opacity: 50 }}>
-          {trophy.platform}
-        </Box>
-      )}
     </Box>
   );
 }

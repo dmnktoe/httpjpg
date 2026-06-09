@@ -4,7 +4,7 @@ import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
 import { NextResponse } from "next/server";
 
-import { fetchLatestTrophy, isPsnUsername } from "@/lib/integrations/psn-trophies";
+import { fetchRecentTrophies, isPsnUsername } from "@/lib/integrations/psn-trophies";
 
 async function resolveUsername(): Promise<string | undefined> {
   try {
@@ -36,7 +36,7 @@ export async function GET() {
 
     const username = await resolveUsername();
 
-    const result = await fetchLatestTrophy(env.PSN_NPSSO, username);
+    const result = await fetchRecentTrophies(env.PSN_NPSSO, username);
     if (!result.ok) {
       console.warn(`PSN trophy fetch failed: ${result.status} - ${result.message}`);
       return NextResponse.json(
@@ -46,7 +46,7 @@ export async function GET() {
     }
 
     return NextResponse.json(
-      { trophies: result.trophies },
+      { trophies: result.trophies, avatar: result.avatar },
       { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
     );
   } catch (error) {

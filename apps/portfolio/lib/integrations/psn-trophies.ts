@@ -170,7 +170,7 @@ export async function fetchPsnTrophies(
   const feedUrl = `https://psntrophyleaders.com/user/view/${username}/rss`;
 
   let result = await requestFeed(feedUrl);
-  if (!result.ok && proxy && BLOCK_STATUSES.has(result.status)) {
+  if (!result.ok && proxy?.includes("{url}") && BLOCK_STATUSES.has(result.status)) {
     result = await requestFeed(proxy.replace("{url}", encodeURIComponent(feedUrl)));
   }
 

@@ -158,6 +158,16 @@ describe("fetchPsnTrophies", () => {
     expect(mockFetch).toHaveBeenCalledTimes(1);
     expect(result.ok).toBe(false);
   });
+
+  it("ignores a proxy template missing the {url} placeholder", async () => {
+    mockFetch.mockResolvedValueOnce(rssResponse("", false, 403));
+    const result = await fetchPsnTrophies("bullensohn6", undefined, "https://proxy.test/get");
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.status).toBe(403);
+    }
+  });
 });
 
 describe("isPsnUsername", () => {

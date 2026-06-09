@@ -122,6 +122,7 @@ export async function fetchLatestTrophy(
       b.lastUpdatedDateTime.localeCompare(a.lastUpdatedDateTime),
     )[0];
     if (!title) {
+      console.warn(`PSN: no titles returned for account (count=${trophyTitles.length})`);
       return { ok: true, trophies: [] };
     }
 
@@ -135,6 +136,11 @@ export async function fetchLatestTrophy(
       .filter((trophy) => trophy.earned && trophy.earnedDateTime)
       .sort((a, b) => (b.earnedDateTime ?? "").localeCompare(a.earnedDateTime ?? ""))[0];
     if (!latest) {
+      console.warn(
+        `PSN: no earned trophy in latest title "${title.trophyTitleName}" ` +
+          `(npServiceName=${title.npServiceName}, returned=${earnedResult.trophies.length}, ` +
+          `earned=${earnedResult.trophies.filter((t) => t.earned).length})`,
+      );
       return { ok: true, trophies: [] };
     }
 

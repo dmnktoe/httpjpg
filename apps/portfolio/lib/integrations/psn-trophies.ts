@@ -116,18 +116,25 @@ async function authorize(npsso: string): Promise<AuthorizationPayload> {
     return { accessToken: cachedAuth.accessToken };
   }
 
-  const tokens =
-    cachedAuth && cachedAuth.refreshTokenExpiresAt > now + AUTH_SKEW_MS
-      ? await exchangeRefreshTokenForAuthTokens(cachedAuth.refreshToken)
-      : await exchangeCodeForAccessToken(await exchangeNpssoForCode(npsso));
+  try {
+    const tokens =
+      cachedAuth && cachedAuth.refreshTokenExpiresAt > now + AUTH_SKEW_MS
+        ? await exchangeRefreshTokenForAuthTokens(cachedAuth.refreshToken)
+        : await exchangeCodeForAccessToken(await exchangeNpssoForCode(npsso));
 
-  cachedAuth = {
-    accessToken: tokens.accessToken,
-    accessTokenExpiresAt: now + tokens.expiresIn * 1000,
-    refreshToken: tokens.refreshToken,
-    refreshTokenExpiresAt: now + tokens.refreshTokenExpiresIn * 1000,
-  };
-  return { accessToken: cachedAuth.accessToken };
+    cachedAuth = {
+      accessToken: tokens.accessToken,
+      accessTokenExpiresAt: now + tokens.expiresIn * 1000,
+      refreshToken: tokens.refreshToken,
+      refreshTokenExpiresAt: now + tokens.refreshTokenExpiresIn * 1000,
+    };
+    return { accessToken: cachedAuth.accessToken };
+  } catch (error) {
+    // Only an exchange/refresh failure means the token is bad — drop it so the
+    // next call re-exchanges the NPSSO from scratch.
+    cachedAuth = null;
+    throw error;
+  }
 }
 
 export async function fetchRecentTrophies(
@@ -180,8 +187,8 @@ export async function fetchRecentTrophies(
 
     return { ok: true, trophies, avatar };
   } catch (error) {
-    cachedAuth = null;
-    const message = error instanceof Error ? error.message : "Unknown PSN API error";
-    return { ok: false, status: 502, message };
+    // Keep the detailed upstream error server-side; return a generic message.
+    console.warn("PSN trophy fetch error:", error);
+    return { ok: false, status: 502, message: "PSN trophies unavailable" };
   }
 }

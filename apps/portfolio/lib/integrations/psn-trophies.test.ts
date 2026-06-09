@@ -200,7 +200,7 @@ describe("fetchRecentTrophies", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.status).toBe(502);
-      expect(result.message).toContain("npsso");
+      expect(result.message).toBe("PSN trophies unavailable");
     }
   });
 });

@@ -51,6 +51,15 @@ function profileUrl(username?: string): string {
     : "https://www.playstation.com";
 }
 
+function countEarned(counts: {
+  bronze: number;
+  silver: number;
+  gold: number;
+  platinum: number;
+}): number {
+  return counts.bronze + counts.silver + counts.gold + counts.platinum;
+}
+
 // Merge a title, the user's earned record, and the trophy definition into the
 // widget's shape. Returns null when the tier is unrecognisable.
 export function buildTrophy(
@@ -118,11 +127,14 @@ export async function fetchLatestTrophy(
     const auth = await authorize(npsso);
 
     const { trophyTitles } = await getUserTitles(auth, "me");
-    const title = [...trophyTitles].sort((a, b) =>
-      b.lastUpdatedDateTime.localeCompare(a.lastUpdatedDateTime),
-    )[0];
+    // The most recently *updated* title isn't necessarily where the last trophy
+    // was earned (a freshly played game with no trophies sorts to the top), so
+    // skip titles with nothing earned before picking the most recent one.
+    const title = trophyTitles
+      .filter((candidate) => countEarned(candidate.earnedTrophies) > 0)
+      .sort((a, b) => b.lastUpdatedDateTime.localeCompare(a.lastUpdatedDateTime))[0];
     if (!title) {
-      console.warn(`PSN: no titles returned for account (count=${trophyTitles.length})`);
+      console.warn(`PSN: no title with earned trophies (titles=${trophyTitles.length})`);
       return { ok: true, trophies: [] };
     }
 
@@ -136,11 +148,6 @@ export async function fetchLatestTrophy(
       .filter((trophy) => trophy.earned && trophy.earnedDateTime)
       .sort((a, b) => (b.earnedDateTime ?? "").localeCompare(a.earnedDateTime ?? ""))[0];
     if (!latest) {
-      console.warn(
-        `PSN: no earned trophy in latest title "${title.trophyTitleName}" ` +
-          `(npServiceName=${title.npServiceName}, returned=${earnedResult.trophies.length}, ` +
-          `earned=${earnedResult.trophies.filter((t) => t.earned).length})`,
-      );
       return { ok: true, trophies: [] };
     }
 

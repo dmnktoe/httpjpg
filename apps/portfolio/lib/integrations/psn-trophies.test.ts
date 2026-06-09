@@ -30,12 +30,22 @@ const TITLE = {
   trophyTitlePlatform: "PS5",
   trophyTitleIconUrl: "https://image.api.playstation.com/bf6.png",
   lastUpdatedDateTime: "2026-04-27T09:23:08Z",
+  earnedTrophies: { bronze: 5, silver: 2, gold: 1, platinum: 0 },
 };
 
 const OLDER_TITLE = {
   ...TITLE,
   npCommunicationId: "NPWR-OLD",
   lastUpdatedDateTime: "2026-01-01T00:00:00Z",
+};
+
+// A freshly played game with no trophies earned yet — sorts newest but must be skipped.
+const RECENT_UNEARNED = {
+  ...TITLE,
+  npCommunicationId: "NPWR-FC26",
+  trophyTitleName: "EA SPORTS FC 26",
+  lastUpdatedDateTime: "2026-05-01T00:00:00Z",
+  earnedTrophies: { bronze: 0, silver: 0, gold: 0, platinum: 0 as const },
 };
 
 describe("buildTrophy", () => {
@@ -119,6 +129,30 @@ describe("fetchLatestTrophy", () => {
         game: "Battlefield 6",
       });
     }
+  });
+
+  it("skips the most recent title when it has no earned trophies", async () => {
+    psn.getUserTitles.mockResolvedValueOnce({ trophyTitles: [RECENT_UNEARNED, TITLE] });
+    psn.getUserTrophiesEarnedForTitle.mockResolvedValueOnce({
+      trophies: [
+        { trophyId: 2, earned: true, earnedDateTime: "2026-04-27T09:23:08Z", trophyType: "silver" },
+      ],
+    });
+    psn.getTitleTrophies.mockResolvedValueOnce({
+      trophies: [{ trophyId: 2, trophyName: "Stolz der Nation", trophyDetail: "b" }],
+    });
+
+    const result = await fetchLatestTrophy("npsso");
+
+    // The freshly played game (FC 26) is skipped for the one with trophies.
+    expect(psn.getUserTrophiesEarnedForTitle).toHaveBeenCalledWith(
+      { accessToken: expect.any(String) },
+      "me",
+      "NPWR-BF6",
+      "all",
+      { npServiceName: "trophy2" },
+    );
+    expect(result.ok && result.trophies[0]?.game).toBe("Battlefield 6");
   });
 
   it("returns an empty list when the account has no titles", async () => {

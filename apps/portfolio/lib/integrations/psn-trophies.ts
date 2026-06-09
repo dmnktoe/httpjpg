@@ -29,14 +29,8 @@ const FEED_HEADERS = {
   Accept: "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
 } as const;
 
-// psntrophyleaders.com sits behind Cloudflare, which 403s datacenter IPs (e.g. a
-// self-hosted server) even with a browser UA, while residential IPs pass. When a
-// direct request is blocked we retry through a public proxy whose egress IP isn't
-// blocked; `{url}` is replaced with the encoded feed URL.
 const DEFAULT_FEED_PROXY = "https://api.allorigins.win/raw?url={url}";
 
-// Statuses Cloudflare returns when it blocks/challenges the request, as opposed
-// to a genuine 404 for a missing or private profile (where the proxy won't help).
 const BLOCK_STATUSES = new Set([403, 429, 503]);
 
 type FeedFetch = { ok: true; xml: string } | { ok: false; status: number; message: string };

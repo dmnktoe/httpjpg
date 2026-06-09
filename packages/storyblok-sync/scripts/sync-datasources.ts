@@ -36,7 +36,7 @@ async function upsertDatasource(datasource: Datasource, entries: DatasourceEntry
   const existing = await getDatasource(datasource.slug);
 
   if (existing) {
-    console.log(`📝 ${datasource.name}`);
+    console.log(`updated ${datasource.name}`);
     await storyblokRequest(`/datasources/${existing.id}`, "PUT", {
       datasource: { name: datasource.name, slug: datasource.slug },
     });
@@ -69,7 +69,7 @@ async function upsertDatasource(datasource: Datasource, entries: DatasourceEntry
     return;
   }
 
-  console.log(`✨ ${datasource.name}`);
+  console.log(`created ${datasource.name}`);
   const response = await storyblokRequest<{ datasource: { id: number } }>("/datasources", "POST", {
     datasource,
   });
@@ -111,7 +111,7 @@ function colorDs(): DatasourceWithEntries {
 }
 
 async function syncDatasources(): Promise<void> {
-  console.log("🚀 Syncing Storyblok datasources\n");
+  console.log("Syncing Storyblok datasources\n");
   validateEnv();
 
   const datasources = [spacingDs(), colorDs()];
@@ -119,17 +119,17 @@ async function syncDatasources(): Promise<void> {
   for (const { datasource, entries } of datasources) {
     try {
       await upsertDatasource(datasource, entries);
-      console.log(`✅ ${datasource.name} (${entries.length} entries)`);
+      console.log(`synced ${datasource.name} (${entries.length} entries)`);
     } catch (error) {
-      console.error(`❌ ${datasource.name}:`, error);
+      console.error(`${datasource.name}:`, error);
       process.exit(1);
     }
   }
 
-  console.log("\n✨ Datasource sync complete");
+  console.log("\nDatasource sync complete");
 }
 
 syncDatasources().catch((error) => {
-  console.error("❌ Sync failed:", error);
+  console.error("Sync failed:", error);
   process.exit(1);
 });

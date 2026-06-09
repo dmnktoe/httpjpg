@@ -33,20 +33,20 @@ const BLOCKS: BlockDef[] = [
 ];
 
 async function syncComponents(): Promise<void> {
-  console.log("🚀 Syncing Storyblok components\n");
+  console.log("Syncing Storyblok components\n");
   validateEnv();
   const existingIds = await fetchComponentIds();
   for (const def of BLOCKS) {
     try {
       await upsertBlock(def, existingIds);
     } catch (error) {
-      console.error(`❌ ${def.name}:`, error);
+      console.error(`${def.name}:`, error);
     }
   }
-  console.log("\n✨ Component sync complete");
+  console.log("\nComponent sync complete");
 }
 
 syncComponents().catch((error) => {
-  console.error("❌ Sync failed:", error);
+  console.error("Sync failed:", error);
   process.exit(1);
 });

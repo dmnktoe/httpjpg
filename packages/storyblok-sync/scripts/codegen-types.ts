@@ -182,12 +182,12 @@ async function main() {
   const output = `${header}\n${interfaces}\n\n${registry}\n`;
   await mkdir(dirname(OUTPUT), { recursive: true });
   await writeFile(OUTPUT, output, "utf8");
-  console.log(`✨ wrote ${ALL_BLOCKS.length} blok types to ${OUTPUT}`);
+  console.log(`wrote ${ALL_BLOCKS.length} blok types to ${OUTPUT}`);
 }
 
 if (process.argv[1] && /codegen-types\.[tj]s$/.test(process.argv[1])) {
   main().catch((error) => {
-    console.error("❌ Codegen failed:", error);
+    console.error("Codegen failed:", error);
     process.exit(1);
   });
 }

@@ -52,7 +52,7 @@ async function syncGroups() {
   const existingByName = new Map((await listGroups()).map((g) => [g.name, g]));
   for (const group of GROUPS) {
     const created = await upsertGroup(group, existingByName);
-    console.log(`✓ ${group.name} (${created.uuid})`);
+    console.log(`synced ${group.name} (${created.uuid})`);
   }
 }
 

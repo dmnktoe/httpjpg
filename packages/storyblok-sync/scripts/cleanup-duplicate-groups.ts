@@ -41,9 +41,9 @@ async function cleanupDuplicateGroups() {
   for (const group of toDelete) {
     try {
       await storyblokRequest(`/component_groups/${group.id}`, "DELETE");
-      console.log(`✓ ${group.name}`);
+      console.log(`deleted ${group.name}`);
     } catch (error) {
-      console.error(`✗ ${group.name}:`, error);
+      console.error(`${group.name}:`, error);
     }
   }
 }

@@ -20,7 +20,7 @@ const REDIRECT_URI = "https://example.com/callback";
 const SCOPES = "user-read-currently-playing user-read-playback-state";
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
-  console.error("❌ Missing SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET");
+  console.error("Missing SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET");
   console.error(
     "\nPlease set them in your environment:\nexport SPOTIFY_CLIENT_ID=xxx\nexport SPOTIFY_CLIENT_SECRET=xxx",
   );
@@ -34,7 +34,7 @@ const authUrl = `https://accounts.spotify.com/authorize?${new URLSearchParams({
   scope: SCOPES,
 })}`;
 
-console.log("\n🎵 Spotify Authorization\n");
+console.log("\nSpotify Authorization\n");
 console.log("1. Open this URL in your browser:\n");
 console.log(authUrl);
 console.log("\n2. Authorize the app");
@@ -52,7 +52,7 @@ rl.question("Authorization Code: ", async (code) => {
   rl.close();
 
   if (!code) {
-    console.error("❌ No code provided");
+    console.error("No code provided");
     process.exit(1);
   }
 
@@ -77,7 +77,7 @@ rl.question("Authorization Code: ", async (code) => {
       throw new Error(data.error_description || data.error);
     }
 
-    console.log("\n✅ Success! Add this to your .env file:\n");
+    console.log("\nSuccess! Add this to your .env file:\n");
     console.log(`SPOTIFY_CLIENT_ID=${CLIENT_ID}`);
     console.log(`SPOTIFY_CLIENT_SECRET=${CLIENT_SECRET}`);
     console.log(`SPOTIFY_REFRESH_TOKEN=${data.refresh_token}`);
@@ -85,7 +85,7 @@ rl.question("Authorization Code: ", async (code) => {
 
     process.exit(0);
   } catch (error) {
-    console.error("\n❌ Error:", error.message);
+    console.error("\nError:", error.message);
     process.exit(1);
   }
 });

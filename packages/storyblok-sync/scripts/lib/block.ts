@@ -62,12 +62,12 @@ export async function upsertBlock(def: BlockDef, existingIds: Map<string, number
   const component = await toStoryblokComponent(def);
   const existingId = existingIds.get(component.name);
   if (existingId) {
-    console.log(`📝 ${component.display_name || component.name}`);
+    console.log(`updated ${component.display_name || component.name}`);
     await storyblokRequest(`/components/${existingId}`, "PUT", {
       component: { ...component, id: existingId },
     });
     return;
   }
-  console.log(`✨ ${component.display_name || component.name}`);
+  console.log(`created ${component.display_name || component.name}`);
   await storyblokRequest("/components", "POST", { component });
 }

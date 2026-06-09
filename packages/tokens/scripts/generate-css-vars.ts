@@ -49,4 +49,4 @@ const outputPath = join(distDir, "tokens.css");
 
 mkdirSync(distDir, { recursive: true });
 writeFileSync(outputPath, cssContent, "utf-8");
-console.log(`✅ Generated CSS variables at ${outputPath}`);
+console.log(`Generated CSS variables at ${outputPath}`);

@@ -39,7 +39,6 @@ const OLDER_TITLE = {
   lastUpdatedDateTime: "2026-01-01T00:00:00Z",
 };
 
-// A freshly played game with no trophies earned yet — sorts newest but must be skipped.
 const RECENT_UNEARNED = {
   ...TITLE,
   npCommunicationId: "NPWR-FC26",
@@ -112,7 +111,6 @@ describe("fetchLatestTrophy", () => {
 
     const result = await fetchLatestTrophy("npsso", "bullensohn6");
 
-    // Picked the most recently updated title.
     expect(psn.getTitleTrophies).toHaveBeenCalledWith(
       { accessToken: "access" },
       "NPWR-BF6",
@@ -144,7 +142,6 @@ describe("fetchLatestTrophy", () => {
 
     const result = await fetchLatestTrophy("npsso");
 
-    // The freshly played game (FC 26) is skipped for the one with trophies.
     expect(psn.getUserTrophiesEarnedForTitle).toHaveBeenCalledWith(
       { accessToken: expect.any(String) },
       "me",

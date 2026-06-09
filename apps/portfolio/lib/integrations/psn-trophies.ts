@@ -1,8 +1,3 @@
-// PSN trophies come from Sony's official trophy API via `psn-api`, authenticated
-// with an NPSSO token (PSN_NPSSO). This avoids the Cloudflare-blocked third-party
-// scrapers entirely and returns first-party data. The NPSSO is exchanged for
-// short-lived auth tokens which are cached and refreshed between requests.
-
 import {
   exchangeCodeForAccessToken,
   exchangeNpssoForCode,
@@ -32,8 +27,6 @@ export type PsnTrophyFetchResult =
   | { ok: true; trophies: PsnTrophy[] }
   | { ok: false; status: number; message: string };
 
-// PSN online IDs are 3–16 chars, start with a letter, then letters/digits/-/_.
-// Validated before it reaches the profile link.
 const PSN_USERNAME = /^[A-Za-z][\w-]{2,15}$/;
 
 export function isPsnUsername(value: unknown): value is string {
@@ -60,8 +53,6 @@ function countEarned(counts: {
   return counts.bronze + counts.silver + counts.gold + counts.platinum;
 }
 
-// Merge a title, the user's earned record, and the trophy definition into the
-// widget's shape. Returns null when the tier is unrecognisable.
 export function buildTrophy(
   title: Pick<TrophyTitle, "trophyTitleName" | "trophyTitlePlatform" | "trophyTitleIconUrl">,
   earned: { trophyType?: string; earnedDateTime?: string | null },
@@ -93,7 +84,6 @@ interface CachedAuth {
 
 let cachedAuth: CachedAuth | null = null;
 
-// Re-auth a minute before expiry so a request never races the boundary.
 const AUTH_SKEW_MS = 60_000;
 
 async function authorize(npsso: string): Promise<AuthorizationPayload> {
@@ -117,8 +107,6 @@ async function authorize(npsso: string): Promise<AuthorizationPayload> {
   return { accessToken: cachedAuth.accessToken };
 }
 
-// The most recently earned trophy lives in the most recently updated title, so
-// only that title's trophy set has to be fetched.
 export async function fetchLatestTrophy(
   npsso: string,
   username?: string,
@@ -127,9 +115,6 @@ export async function fetchLatestTrophy(
     const auth = await authorize(npsso);
 
     const { trophyTitles } = await getUserTitles(auth, "me");
-    // The most recently *updated* title isn't necessarily where the last trophy
-    // was earned (a freshly played game with no trophies sorts to the top), so
-    // skip titles with nothing earned before picking the most recent one.
     const title = trophyTitles
       .filter((candidate) => countEarned(candidate.earnedTrophies) > 0)
       .sort((a, b) => b.lastUpdatedDateTime.localeCompare(a.lastUpdatedDateTime))[0];
@@ -157,7 +142,6 @@ export async function fetchLatestTrophy(
     const trophy = buildTrophy(title, latest, definition, username);
     return { ok: true, trophies: trophy ? [trophy] : [] };
   } catch (error) {
-    // Drop the cached auth so a bad/expired token is re-exchanged next time.
     cachedAuth = null;
     const message = error instanceof Error ? error.message : "Unknown PSN API error";
     return { ok: false, status: 502, message };

@@ -115,6 +115,49 @@ describe("fetchPsnTrophies", () => {
       expect(result.status).toBe(404);
     }
   });
+
+  it("does not proxy a genuine 404", async () => {
+    mockFetch.mockResolvedValueOnce(rssResponse("", false, 404));
+    await fetchPsnTrophies("ghost");
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("retries through the proxy when the direct request is Cloudflare-blocked", async () => {
+    mockFetch
+      .mockResolvedValueOnce(rssResponse("", false, 403))
+      .mockResolvedValueOnce(rssResponse(feed(TROPHY_ITEM)));
+
+    const result = await fetchPsnTrophies("bullensohn6");
+
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    const proxyUrl = mockFetch.mock.calls[1]?.[0] as string;
+    expect(proxyUrl).toContain(
+      encodeURIComponent("https://psntrophyleaders.com/user/view/bullensohn6/rss"),
+    );
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.trophies[0].name).toBe("Stolz der Nation");
+    }
+  });
+
+  it("honours a custom proxy template", async () => {
+    mockFetch
+      .mockResolvedValueOnce(rssResponse("", false, 403))
+      .mockResolvedValueOnce(rssResponse(feed(TROPHY_ITEM)));
+
+    await fetchPsnTrophies("bullensohn6", undefined, "https://proxy.test/get?u={url}");
+
+    expect(mockFetch.mock.calls[1]?.[0]).toBe(
+      `https://proxy.test/get?u=${encodeURIComponent("https://psntrophyleaders.com/user/view/bullensohn6/rss")}`,
+    );
+  });
+
+  it("skips the proxy retry when disabled", async () => {
+    mockFetch.mockResolvedValueOnce(rssResponse("", false, 403));
+    const result = await fetchPsnTrophies("bullensohn6", undefined, null);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(result.ok).toBe(false);
+  });
 });
 
 describe("isPsnUsername", () => {

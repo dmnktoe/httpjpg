@@ -43,6 +43,10 @@ export const env = createEnv({
 
     DISCORD_USER_ID: z.string().optional(),
 
+    // Override the public proxy used to bypass the PSN feed's Cloudflare IP
+    // block. `{url}` is replaced with the encoded target; unset uses the default.
+    PSN_FEED_PROXY: z.string().optional(),
+
     ARCJET_KEY: z.string().optional(),
 
     CODECOV_TOKEN: z.string().optional(),
@@ -84,6 +88,8 @@ export const env = createEnv({
     SPOTIFY_REFRESH_TOKEN: process.env.SPOTIFY_REFRESH_TOKEN,
 
     DISCORD_USER_ID: process.env.DISCORD_USER_ID,
+
+    PSN_FEED_PROXY: process.env.PSN_FEED_PROXY,
 
     ARCJET_KEY: process.env.ARCJET_KEY,
 

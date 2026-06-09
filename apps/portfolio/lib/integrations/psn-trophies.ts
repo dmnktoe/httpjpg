@@ -29,6 +29,12 @@ const FEED_HEADERS = {
   Accept: "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
 } as const;
 
+const DEFAULT_FEED_PROXY = "https://api.allorigins.win/raw?url={url}";
+
+const BLOCK_STATUSES = new Set([403, 429, 503]);
+
+type FeedFetch = { ok: true; xml: string } | { ok: false; status: number; message: string };
+
 // PSN online IDs are 3–16 chars, start with a letter, then letters/digits/-/_.
 // Validate the CMS value before it reaches the RSS URL.
 const PSN_USERNAME = /^[A-Za-z][\w-]{2,15}$/;
@@ -125,16 +131,13 @@ export function parsePsnTrophyFeed(xml: string, limit = DEFAULT_LIMIT): PsnTroph
   return trophies.slice(0, limit);
 }
 
-export async function fetchPsnTrophies(
-  username: string,
-  limit = DEFAULT_LIMIT,
-): Promise<PsnTrophyFetchResult> {
+async function requestFeed(url: string): Promise<FeedFetch> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), PSN_TIMEOUT_MS);
 
   let response: Response;
   try {
-    response = await fetch(`https://psntrophyleaders.com/user/view/${username}/rss`, {
+    response = await fetch(url, {
       cache: "no-store",
       headers: FEED_HEADERS,
       signal: controller.signal,
@@ -156,6 +159,24 @@ export async function fetchPsnTrophies(
     };
   }
 
-  const xml = await response.text();
-  return { ok: true, trophies: parsePsnTrophyFeed(xml, limit) };
+  return { ok: true, xml: await response.text() };
+}
+
+export async function fetchPsnTrophies(
+  username: string,
+  limit = DEFAULT_LIMIT,
+  proxy: string | null = DEFAULT_FEED_PROXY,
+): Promise<PsnTrophyFetchResult> {
+  const feedUrl = `https://psntrophyleaders.com/user/view/${username}/rss`;
+
+  let result = await requestFeed(feedUrl);
+  if (!result.ok && proxy?.includes("{url}") && BLOCK_STATUSES.has(result.status)) {
+    result = await requestFeed(proxy.replace("{url}", encodeURIComponent(feedUrl)));
+  }
+
+  if (!result.ok) {
+    return { ok: false, status: result.status, message: result.message };
+  }
+
+  return { ok: true, trophies: parsePsnTrophyFeed(result.xml, limit) };
 }

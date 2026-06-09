@@ -1,3 +1,4 @@
+import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
@@ -34,7 +35,7 @@ export async function GET() {
       );
     }
 
-    const result = await fetchPsnTrophies(username);
+    const result = await fetchPsnTrophies(username, undefined, env.PSN_FEED_PROXY || undefined);
     if (!result.ok) {
       console.warn(`PSN Trophy Leaders RSS error: ${result.status} - ${result.message}`);
       return NextResponse.json(

@@ -10,9 +10,6 @@ interface TrophyData {
   avatar: string | null;
 }
 
-const ITEM_HEIGHT = 20;
-const SECONDS_PER_ITEM = 3;
-
 export function TrophyStatus() {
   const [data, setData] = useState<TrophyData | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -34,9 +31,9 @@ export function TrophyStatus() {
     fetchTrophies();
   }, []);
 
-  const trophies = data?.trophies ?? [];
+  const trophy = data?.trophies?.[0] ?? null;
 
-  if (trophies.length === 0) {
+  if (!trophy) {
     if (loaded) {
       return null;
     }
@@ -63,7 +60,7 @@ export function TrophyStatus() {
   return (
     <Box
       as="a"
-      href={trophies[0].url}
+      href={trophy.url}
       target="_blank"
       rel="noopener noreferrer"
       css={{
@@ -98,59 +95,6 @@ export function TrophyStatus() {
           />
         </Box>
       )}
-      <TrophyTicker trophies={trophies} />
-    </Box>
-  );
-}
-
-function buildTickerKeyframes(name: string, count: number): string {
-  const segment = 100 / count;
-  const hold = segment * 0.72;
-  let stops = "";
-  for (let index = 0; index < count; index++) {
-    const offset = -index * ITEM_HEIGHT;
-    stops += `${(index * segment).toFixed(3)}% { transform: translateY(${offset}px); }`;
-    stops += `${(index * segment + hold).toFixed(3)}% { transform: translateY(${offset}px); }`;
-  }
-  stops += `100% { transform: translateY(${-count * ITEM_HEIGHT}px); }`;
-  return (
-    `@keyframes ${name} { ${stops} }` +
-    `@media (prefers-reduced-motion: reduce) { .${name} { animation: none !important; } }`
-  );
-}
-
-function TrophyTicker({ trophies }: { trophies: PsnTrophy[] }) {
-  const animated = trophies.length > 1;
-  const items = animated ? [...trophies, trophies[0]] : trophies;
-  const animationName = `psn-vticker-${trophies.length}`;
-
-  return (
-    <Box css={{ flex: 1, minWidth: 0, overflow: "hidden" }} style={{ height: `${ITEM_HEIGHT}px` }}>
-      {animated && <style>{buildTickerKeyframes(animationName, trophies.length)}</style>}
-      <Box
-        className={animationName}
-        style={
-          animated
-            ? {
-                animation: `${animationName} ${trophies.length * SECONDS_PER_ITEM}s linear infinite`,
-              }
-            : undefined
-        }
-      >
-        {items.map((trophy, index) => (
-          <TrophyTickerItem key={index} trophy={trophy} />
-        ))}
-      </Box>
-    </Box>
-  );
-}
-
-function TrophyTickerItem({ trophy }: { trophy: PsnTrophy }) {
-  return (
-    <Box
-      css={{ display: "flex", alignItems: "center", gap: 1.5, whiteSpace: "nowrap" }}
-      style={{ height: `${ITEM_HEIGHT}px` }}
-    >
       {trophy.image && (
         <Box as="span" css={{ display: "inline-block", flexShrink: 0, width: "4", height: "4" }}>
           <img
@@ -176,7 +120,7 @@ function TrophyTickerItem({ trophy }: { trophy: PsnTrophy }) {
       <Box
         as="span"
         css={{
-          maxWidth: "180px",
+          maxWidth: "200px",
           opacity: 70,
           textOverflow: "ellipsis",
           whiteSpace: "nowrap",
@@ -191,7 +135,7 @@ function TrophyTickerItem({ trophy }: { trophy: PsnTrophy }) {
       <Box
         as="span"
         css={{
-          maxWidth: "140px",
+          maxWidth: "160px",
           opacity: 60,
           textOverflow: "ellipsis",
           whiteSpace: "nowrap",

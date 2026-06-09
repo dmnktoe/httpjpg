@@ -183,7 +183,7 @@ describe("fetchRecentTrophies", () => {
       "me",
       "NPWR-BF6",
       "all",
-      { npServiceName: "trophy2" },
+      expect.objectContaining({ npServiceName: "trophy2" }),
     );
     expect(result.ok && result.trophies).toHaveLength(1);
   });

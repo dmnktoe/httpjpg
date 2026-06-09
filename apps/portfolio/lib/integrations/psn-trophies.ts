@@ -32,6 +32,9 @@ const RECENT_LIMIT = 5;
 const TITLE_SCAN = 5;
 const AVATAR_SIZES = ["xl", "l", "m", "s", "xs"];
 
+// Request English trophy and game names regardless of the account's locale.
+const LANGUAGE_HEADERS = { "Accept-Language": "en-US" };
+
 const PSN_USERNAME = /^[A-Za-z][\w-]{2,15}$/;
 
 export function isPsnUsername(value: unknown): value is string {
@@ -135,7 +138,7 @@ export async function fetchRecentTrophies(
     const auth = await authorize(npsso);
 
     const [{ trophyTitles }, profile] = await Promise.all([
-      getUserTitles(auth, "me"),
+      getUserTitles(auth, "me", { headerOverrides: LANGUAGE_HEADERS }),
       getProfileFromAccountId(auth, "me").catch(() => null),
     ]);
     const avatar = pickAvatar(profile?.avatars);
@@ -147,7 +150,10 @@ export async function fetchRecentTrophies(
 
     const earnedByTitle = await Promise.all(
       titles.map(async (title) => {
-        const options = { npServiceName: title.npServiceName };
+        const options = {
+          npServiceName: title.npServiceName,
+          headerOverrides: LANGUAGE_HEADERS,
+        };
         const [earnedResult, definitionResult] = await Promise.all([
           getUserTrophiesEarnedForTitle(auth, "me", title.npCommunicationId, "all", options),
           getTitleTrophies(auth, title.npCommunicationId, "all", options),

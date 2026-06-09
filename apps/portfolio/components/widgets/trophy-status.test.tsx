@@ -52,14 +52,14 @@ describe("TrophyStatus", () => {
     await waitFor(() => expect(container).toBeEmptyDOMElement());
   });
 
-  it("renders the recent trophies as a ticker with their tier sprites", async () => {
+  it("renders only the latest trophy with its tier sprite and image", async () => {
     mockFetch({ trophies: [trophyA, trophyB], avatar: AVATAR });
     render(<TrophyStatus />);
 
-    await screen.findAllByText(trophyA.name);
-    expect(screen.getByText(trophyB.name)).toBeInTheDocument();
+    await screen.findByText(trophyA.name);
+    expect(screen.queryByText(trophyB.name)).not.toBeInTheDocument();
 
-    const sprite = screen.getAllByAltText("platinum trophy")[0];
+    const sprite = screen.getByAltText("platinum trophy");
     expect(sprite).toHaveAttribute("src", "/images/trophies/platinum.png");
     expect(sprite).toHaveStyle({ imageRendering: "pixelated" });
 
@@ -73,7 +73,7 @@ describe("TrophyStatus", () => {
     mockFetch({ trophies: [trophyA, trophyB], avatar: AVATAR });
     render(<TrophyStatus />);
 
-    await screen.findAllByText(trophyA.name);
+    await screen.findByText(trophyA.name);
     expect(document.querySelector(`img[src="${AVATAR}"]`)).toBeInTheDocument();
     expect(document.querySelectorAll("[data-preview-image]")).toHaveLength(0);
   });

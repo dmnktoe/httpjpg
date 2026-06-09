@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { beforeEach, type MockedFunction, vi } from "vitest";
 
-import { fetchWeather, weatherEmoji } from "./weather";
+import { fetchWeather, weatherCondition, weatherEmoji } from "./weather";
 
 global.fetch = vi.fn() as MockedFunction<typeof fetch>;
 const mockFetch = global.fetch as MockedFunction<typeof fetch>;
@@ -26,6 +26,16 @@ describe("weatherEmoji", () => {
   });
 });
 
+describe("weatherCondition", () => {
+  it("spells out the condition for WMO codes", () => {
+    expect(weatherCondition(0)).toBe("clear");
+    expect(weatherCondition(2)).toBe("partly cloudy");
+    expect(weatherCondition(3)).toBe("overcast");
+    expect(weatherCondition(63)).toBe("rain");
+    expect(weatherCondition(95)).toBe("thunderstorm");
+  });
+});
+
 describe("fetchWeather", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -42,7 +52,13 @@ describe("fetchWeather", () => {
       expect.stringContaining("latitude=51.3127&longitude=9.4797"),
       expect.objectContaining({ cache: "no-store" }),
     );
-    expect(result).toEqual({ ok: true, temperature: 18.4, code: 2, emoji: "⛅" });
+    expect(result).toEqual({
+      ok: true,
+      temperature: 18.4,
+      code: 2,
+      emoji: "⛅",
+      condition: "partly cloudy",
+    });
   });
 
   it("surfaces a non-200 response as a failure", async () => {

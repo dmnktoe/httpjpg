@@ -16,7 +16,12 @@ export async function GET() {
     }
 
     return NextResponse.json(
-      { temperature: result.temperature, code: result.code, emoji: result.emoji },
+      {
+        temperature: result.temperature,
+        code: result.code,
+        emoji: result.emoji,
+        condition: result.condition,
+      },
       { headers: { "Cache-Control": "public, s-maxage=900, stale-while-revalidate=1800" } },
     );
   } catch (error) {

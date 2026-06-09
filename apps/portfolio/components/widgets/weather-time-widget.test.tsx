@@ -26,14 +26,15 @@ describe("WeatherTime", () => {
     vi.unstubAllGlobals();
   });
 
-  it("renders a ticking clock and the weather emoji with temperature", async () => {
-    mockFetch({ temperature: 18.4, code: 2, emoji: "⛅" });
+  it("renders a ticking clock, UTC offset, and the weather condition", async () => {
+    mockFetch({ temperature: 18.4, code: 2, emoji: "⛅", condition: "partly cloudy" });
     render(<WeatherTime />);
 
-    const time = await screen.findByText(/^\d{2}:\d{2}:\d{2}$/);
-    expect(time).toHaveAttribute("data-text", time.textContent);
+    await screen.findByText(/^\d{2}:\d{2}:\d{2}$/);
+    expect(screen.getByText(/^UTC[+-]\d+$/)).toBeInTheDocument();
 
     expect(await screen.findByText("⛅")).toBeInTheDocument();
+    expect(screen.getByText("partly cloudy")).toBeInTheDocument();
     expect(screen.getByText("18°")).toBeInTheDocument();
   });
 

@@ -3,6 +3,7 @@ export interface WeatherFetchResult {
   temperature: number;
   code: number;
   emoji: string;
+  condition: string;
 }
 
 export type WeatherResult = WeatherFetchResult | { ok: false; status: number; message: string };
@@ -43,6 +44,43 @@ export function weatherEmoji(code: number): string {
   return "🌡️";
 }
 
+export function weatherCondition(code: number): string {
+  if (code === 0) {
+    return "clear";
+  }
+  if (code === 1) {
+    return "mainly clear";
+  }
+  if (code === 2) {
+    return "partly cloudy";
+  }
+  if (code === 3) {
+    return "overcast";
+  }
+  if (code === 45 || code === 48) {
+    return "fog";
+  }
+  if (code >= 51 && code <= 57) {
+    return "drizzle";
+  }
+  if (code >= 61 && code <= 67) {
+    return "rain";
+  }
+  if (code >= 71 && code <= 77) {
+    return "snow";
+  }
+  if (code >= 80 && code <= 82) {
+    return "rain showers";
+  }
+  if (code === 85 || code === 86) {
+    return "snow showers";
+  }
+  if (code >= 95) {
+    return "thunderstorm";
+  }
+  return "unknown";
+}
+
 export async function fetchWeather(latitude: number, longitude: number): Promise<WeatherResult> {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code`;
 
@@ -72,5 +110,11 @@ export async function fetchWeather(latitude: number, longitude: number): Promise
     return { ok: false, status: 502, message: "Malformed weather response." };
   }
 
-  return { ok: true, temperature, code, emoji: weatherEmoji(code) };
+  return {
+    ok: true,
+    temperature,
+    code,
+    emoji: weatherEmoji(code),
+    condition: weatherCondition(code),
+  };
 }

@@ -32,6 +32,7 @@ import { TrophyStatus } from "@/components/widgets/trophy-status";
 import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
 import { config } from "@/lib/config";
+import { getPageTheme } from "@/lib/page-theme";
 import { getFooterConfig, getNavigation, getSeoDefaults } from "@/lib/queries/config";
 import { getLastUpdated } from "@/lib/queries/last-updated";
 import { getFeatureFlags, getWidgetConfig } from "@/lib/queries/widgets";
@@ -76,6 +77,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: PropsWithChildren) {
+  const theme = await getPageTheme();
   const navigation = await getNavigation();
   const footerConfig = await getFooterConfig();
   const widgetConfig = await getWidgetConfig();
@@ -87,7 +89,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const version = rawVersion ? formatVersion(rawVersion) : undefined;
 
   return (
-    <html lang="de" data-theme="light">
+    <html lang="de" data-theme={theme}>
       <body style={{ margin: 0, padding: 0 }}>
         <ConsoleBanner />
         <ConsentProvider />

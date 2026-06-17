@@ -1,18 +1,3 @@
-/**
- * Deterministic Storyblok CDN mock for E2E.
- *
- * Playwright starts this alongside the app and points the Storyblok client at it
- * via `STORYBLOK_API_ENDPOINT` (see playwright.config.ts), so the suite never
- * depends on live CMS data. It mirrors the subset of the Storyblok CDN API that
- * `@httpjpg/storyblok-api` consumes (`cdn/stories/<slug>`, `cdn/stories`,
- * `cdn/links`, `cdn/spaces/me`). The HTTP body is the *unwrapped* payload
- * (`{ story }` / `{ stories }` / `{ links }`); storyblok-js-client adds the
- * `data` envelope and reads list totals from the `total` / `per-page` headers.
- *
- * Every unknown story slug resolves to a generic page fixture, so any internal
- * link the app renders navigates to a real page (no 404s) — keeping the tests
- * deterministic regardless of what is (or isn't) published.
- */
 import { createServer } from "node:http";
 
 const PORT = Number(process.env.STORYBLOK_MOCK_PORT) || 4000;
@@ -62,19 +47,13 @@ function pageContent(title, text) {
   };
 }
 
-const HOME = baseStory(
-  "home",
-  pageContent(
-    "Welcome to httpjpg",
-    "Deterministic end-to-end fixture content, rendered without any live Storyblok data.",
-  ),
-);
+const HOME = baseStory("home", pageContent("Welcome to httpjpg", "httpjpg portfolio e2e fixture."));
 
 const CONFIG = baseStory("config", {
   _uid: "config",
   component: "config",
-  seo_title: "httpjpg — E2E fixtures",
-  seo_description: "Deterministic E2E fixtures, no live CMS data.",
+  seo_title: "httpjpg",
+  seo_description: "httpjpg portfolio.",
   author_name: "httpjpg",
   author_url: "https://httpjpg.com",
   header_menu: [
@@ -105,14 +84,7 @@ const STORIES = { home: HOME, config: CONFIG };
 
 function getStory(slug) {
   return (
-    STORIES[slug] ??
-    baseStory(
-      slug,
-      pageContent(
-        "Fixture page",
-        `Deterministic fixture page for "${slug}", rendered without live data.`,
-      ),
-    )
+    STORIES[slug] ?? baseStory(slug, pageContent("Fixture page", `httpjpg fixture page: ${slug}.`))
   );
 }
 

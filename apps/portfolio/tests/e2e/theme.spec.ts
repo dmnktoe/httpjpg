@@ -27,8 +27,6 @@ test.describe("theme attribute", () => {
     await targetLink.click();
     await expect(page).not.toHaveURL(beforeUrl);
 
-    const after = await page.locator("html").getAttribute("data-theme");
-    expect(after).not.toBeNull();
-    expect(["light", "dark"]).toContain(after as string);
+    await expect(page.locator("html")).toHaveAttribute("data-theme", /^(light|dark)$/);
   });
 });

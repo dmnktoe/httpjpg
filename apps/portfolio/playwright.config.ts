@@ -1,6 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
 
-/** Port for the local Storyblok fixture server (tests/e2e/storyblok-mock-server.mjs). */
 const STORYBLOK_MOCK_PORT = 4000;
 
 /**
@@ -60,9 +59,6 @@ export default defineConfig({
     // },
   ],
 
-  /* Start the Storyblok fixture server + app server before the tests.
-   * The mock keeps E2E deterministic and free of live CMS data: the app's
-   * Storyblok client is pointed at it via STORYBLOK_API_ENDPOINT. */
   webServer: [
     {
       command: "node ./tests/e2e/storyblok-mock-server.mjs",

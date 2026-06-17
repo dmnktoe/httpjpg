@@ -30,7 +30,6 @@ export const env = createEnv({
     STORYBLOK_REVALIDATE_SECRET: z.string().min(1, "STORYBLOK_REVALIDATE_SECRET is required"),
     STORYBLOK_MANAGEMENT_TOKEN: z.string().optional(),
     STORYBLOK_SPACE_ID: z.string().optional(),
-    // Override the Storyblok CDN base URL (e.g. a local fixture server for E2E).
     STORYBLOK_API_ENDPOINT: z.string().url().optional(),
 
     SENTRY_DSN: z.string().url().optional(),

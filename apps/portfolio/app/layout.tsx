@@ -32,7 +32,6 @@ import { TrophyStatus } from "@/components/widgets/trophy-status";
 import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
 import { config } from "@/lib/config";
-import { getPageTheme } from "@/lib/page-theme";
 import { getFooterConfig, getNavigation, getSeoDefaults } from "@/lib/queries/config";
 import { getLastUpdated } from "@/lib/queries/last-updated";
 import { getFeatureFlags, getWidgetConfig } from "@/lib/queries/widgets";
@@ -83,13 +82,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const flags = await getFeatureFlags();
   const { projectsWork, websitesWork } = await getRecentWork();
   const lastUpdated = flags.lastUpdatedBadgeEnabled ? await getLastUpdated() : undefined;
-  const theme = await getPageTheme();
 
   const rawVersion = env.NEXT_PUBLIC_APP_VERSION;
   const version = rawVersion ? formatVersion(rawVersion) : undefined;
 
   return (
-    <html lang="de" data-theme={theme}>
+    <html lang="de" data-theme="light">
       <body style={{ margin: 0, padding: 0 }}>
         <ConsoleBanner />
         <ConsentProvider />

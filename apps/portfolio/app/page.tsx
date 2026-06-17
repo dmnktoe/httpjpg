@@ -42,8 +42,4 @@ export default async function HomePage({
   );
 }
 
-// Rendered dynamically: the root layout resolves global config via `draftMode()`,
-// so this route must never be statically generated (doing so re-runs the layout in a
-// static context and throws DYNAMIC_SERVER_USAGE). Story data stays cached at the
-// fetch layer (`unstable_cache` + tags).
 export const dynamic = "force-dynamic";

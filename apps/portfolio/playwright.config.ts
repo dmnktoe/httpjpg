@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+/** Port for the local Storyblok fixture server (tests/e2e/storyblok-mock-server.mjs). */
+const STORYBLOK_MOCK_PORT = 4000;
+
 /**
  * Playwright E2E Test Configuration
  * See https://playwright.dev/docs/test-configuration.
@@ -57,18 +60,23 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
-  webServer: process.env.CI
-    ? {
-        command: "pnpm run start",
-        url: "http://localhost:3000",
-        reuseExistingServer: false,
-        timeout: 120 * 1000,
-      }
-    : {
-        command: "pnpm run dev",
-        url: "http://localhost:3000",
-        reuseExistingServer: true,
-        timeout: 120 * 1000,
-      },
+  /* Start the Storyblok fixture server + app server before the tests.
+   * The mock keeps E2E deterministic and free of live CMS data: the app's
+   * Storyblok client is pointed at it via STORYBLOK_API_ENDPOINT. */
+  webServer: [
+    {
+      command: "node ./tests/e2e/storyblok-mock-server.mjs",
+      url: `http://127.0.0.1:${STORYBLOK_MOCK_PORT}/health`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 30 * 1000,
+      env: { STORYBLOK_MOCK_PORT: String(STORYBLOK_MOCK_PORT) },
+    },
+    {
+      command: process.env.CI ? "pnpm run start" : "pnpm run dev",
+      url: "http://localhost:3000",
+      reuseExistingServer: !process.env.CI,
+      timeout: 120 * 1000,
+      env: { STORYBLOK_API_ENDPOINT: `http://127.0.0.1:${STORYBLOK_MOCK_PORT}/v2` },
+    },
+  ],
 });

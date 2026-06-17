@@ -91,6 +91,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="de" data-theme={theme}>
       <body style={{ margin: 0, padding: 0 }}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var d=document.documentElement;if(!d.getAttribute('data-theme'))d.setAttribute('data-theme','light')}catch(e){}})()",
+          }}
+        />
         <ConsoleBanner />
         <ConsentProvider />
         <WebVitalsReporter />

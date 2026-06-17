@@ -158,5 +158,8 @@ export async function generateStaticParams() {
   }
 }
 
-export const revalidate = 3600;
-export const dynamicParams = true;
+// Rendered dynamically: the root layout resolves global config via `draftMode()`,
+// so this route must never be statically generated (doing so re-runs the layout in a
+// static context and throws DYNAMIC_SERVER_USAGE on soft navigation). Story data stays
+// cached at the fetch layer (`unstable_cache` + tags).
+export const dynamic = "force-dynamic";

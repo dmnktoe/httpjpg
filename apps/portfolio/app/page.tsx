@@ -2,9 +2,9 @@ import { fetchStory } from "@httpjpg/storyblok-next";
 import { STORYBLOK_RELATIONS } from "@httpjpg/storyblok-utils";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { draftMode } from "next/headers";
+import { notFound } from "next/navigation";
 
 import { StoryblokLive } from "@/components/providers/storyblok-live";
-import { NotFoundScreen } from "@/components/ui/not-found-screen";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
@@ -25,7 +25,7 @@ export default async function HomePage({
   });
 
   if (!story) {
-    return <NotFoundScreen />;
+    return notFound();
   }
 
   if (isDraft) {
@@ -42,4 +42,8 @@ export default async function HomePage({
   );
 }
 
-export const revalidate = 3600;
+// Rendered dynamically: the root layout resolves global config via `draftMode()`,
+// so this route must never be statically generated (doing so re-runs the layout in a
+// static context and throws DYNAMIC_SERVER_USAGE). Story data stays cached at the
+// fetch layer (`unstable_cache` + tags).
+export const dynamic = "force-dynamic";

@@ -2,9 +2,9 @@ import { fetchStory } from "@httpjpg/storyblok-next";
 import { STORYBLOK_RELATIONS } from "@httpjpg/storyblok-utils";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { draftMode } from "next/headers";
-import { notFound } from "next/navigation";
 
 import { StoryblokLive } from "@/components/providers/storyblok-live";
+import { NotFoundScreen } from "@/components/ui/not-found-screen";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
@@ -25,7 +25,7 @@ export default async function HomePage({
   });
 
   if (!story) {
-    return notFound();
+    return <NotFoundScreen />;
   }
 
   if (isDraft) {

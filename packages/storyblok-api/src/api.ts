@@ -43,6 +43,7 @@ export function getStoryblokApi(config: StoryblokConfig = {}) {
   const client = new StoryblokClient({
     accessToken,
     cache: { clear: "auto", type: "memory" },
+    ...(env.STORYBLOK_API_ENDPOINT ? { endpoint: env.STORYBLOK_API_ENDPOINT } : {}),
   });
 
   async function getStory(params: StoryParams) {

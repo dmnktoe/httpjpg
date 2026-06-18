@@ -1,6 +1,4 @@
 import { env } from "@httpjpg/env";
-import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { imagePreset } from "@httpjpg/storyblok-utils";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import type { Metadata } from "next";
@@ -17,7 +15,6 @@ import { getFeatureFlags } from "@/lib/queries/widgets";
 import { getAdjacentWork, getCachedStory } from "@/lib/queries/work";
 import { generateCreativeWorkSchema, JsonLd } from "@/lib/schema-org";
 import { extractStoryMetadata, toNextMetadata } from "@/lib/seo";
-import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
 interface PageProps {
   params: Promise<{
@@ -44,9 +41,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return toNextMetadata(extractStoryMetadata(story), `/${slug?.join("/") || ""}`);
 }
 
-/**
- * Catch-all route for Storyblok pages: /work/*, /about, /contact, etc.
- */
 export default async function DynamicPage({
   params,
   searchParams,
@@ -142,21 +136,4 @@ export default async function DynamicPage({
   }
 }
 
-export async function generateStaticParams() {
-  try {
-    const { getAllSlugs } = getStoryblokApi();
-    const slugs = await getAllSlugs({ starts_with: "" });
-    return slugs
-      .filter((item) => !item.isFolder && item.slug !== STORYBLOK_SLUGS.HOME)
-      .map((item) => ({
-        slug: item.slug.split("/").filter(Boolean),
-      }));
-  } catch (error) {
-    console.error("Error generating static params:", error);
-    captureServerException(error, { tags: { route: "generateStaticParams" } });
-    return [];
-  }
-}
-
-export const revalidate = 3600;
-export const dynamicParams = true;
+export const dynamic = "force-dynamic";

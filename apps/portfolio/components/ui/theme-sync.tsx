@@ -1,18 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
+
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export interface ThemeSyncProps {
   theme: "light" | "dark";
 }
 
-/**
- * Keeps `<html data-theme>` in sync on client-side navigations.
- * The root layout only renders once per session, so soft nav doesn't
- * reset the attribute by itself.
- */
 export function ThemeSync({ theme }: ThemeSyncProps) {
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
   return null;

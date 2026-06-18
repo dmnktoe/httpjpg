@@ -77,13 +77,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: PropsWithChildren) {
+  const theme = await getPageTheme();
   const navigation = await getNavigation();
   const footerConfig = await getFooterConfig();
   const widgetConfig = await getWidgetConfig();
   const flags = await getFeatureFlags();
   const { projectsWork, websitesWork } = await getRecentWork();
   const lastUpdated = flags.lastUpdatedBadgeEnabled ? await getLastUpdated() : undefined;
-  const theme = await getPageTheme();
 
   const rawVersion = env.NEXT_PUBLIC_APP_VERSION;
   const version = rawVersion ? formatVersion(rawVersion) : undefined;

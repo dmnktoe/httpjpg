@@ -21,6 +21,13 @@ export default defineConfig({
     css: false,
     coverage: {
       provider: "v8",
+      reporter: ["text", "html", "lcov"],
+      thresholds: {
+        statements: 80,
+        branches: 70,
+        functions: 75,
+        lines: 80,
+      },
       include: [
         "packages/*/src/**/*.{js,jsx,ts,tsx,mjs}",
         "apps/portfolio/app/**/*.{js,jsx,ts,tsx}",

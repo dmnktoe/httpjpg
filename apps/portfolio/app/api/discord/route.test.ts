@@ -7,7 +7,7 @@ const { getStory, fetchDiscordPresence, isDiscordUserId, enforceRateLimit } = vi
   getStory: vi.fn(),
   fetchDiscordPresence: vi.fn(),
   isDiscordUserId: vi.fn(() => true),
-  enforceRateLimit: vi.fn(async () => null),
+  enforceRateLimit: vi.fn(async (): Promise<Response | null> => null),
 }));
 
 vi.mock("@httpjpg/storyblok-api", () => ({

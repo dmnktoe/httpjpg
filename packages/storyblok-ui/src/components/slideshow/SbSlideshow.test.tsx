@@ -25,6 +25,7 @@ describe("SbSlideshow", () => {
         }
       />,
     );
-    expect(container.firstChild).not.toBeNull();
+    expect(container.querySelector('img[alt="A"]')).not.toBeNull();
+    expect(container.querySelector('img[alt="B"]')).not.toBeNull();
   });
 });

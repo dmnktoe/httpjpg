@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
 import { SbImage } from "./SbImage";
 
@@ -11,7 +11,7 @@ describe("SbImage", () => {
   });
 
   it("renders an img with resolved alt text", () => {
-    const { container } = render(
+    render(
       <SbImage
         blok={
           {
@@ -23,7 +23,7 @@ describe("SbImage", () => {
         }
       />,
     );
-    expect(container.querySelector("img")).not.toBeNull();
+    expect(screen.getByRole("img", { name: "A photo" })).toBeInTheDocument();
   });
 
   it("renders with a parallax wrapper when parallax is enabled", () => {

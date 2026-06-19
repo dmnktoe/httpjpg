@@ -10,9 +10,12 @@ describe("SbMissing", () => {
 
   it("renders nothing in production", () => {
     const prev = process.env.NODE_ENV;
-    process.env.NODE_ENV = "production";
-    const { container } = render(<SbMissing blok={{ _uid: "1", component: "mystery_blok" }} />);
-    expect(container).toBeEmptyDOMElement();
-    process.env.NODE_ENV = prev;
+    try {
+      process.env.NODE_ENV = "production";
+      const { container } = render(<SbMissing blok={{ _uid: "1", component: "mystery_blok" }} />);
+      expect(container).toBeEmptyDOMElement();
+    } finally {
+      process.env.NODE_ENV = prev;
+    }
   });
 });

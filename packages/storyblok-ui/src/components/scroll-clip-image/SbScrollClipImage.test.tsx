@@ -25,6 +25,8 @@ describe("SbScrollClipImage", () => {
         }
       />,
     );
-    expect(container.querySelector("img")).not.toBeNull();
+    expect(container.querySelector('img[alt="Clip"]')).not.toBeNull();
+    // An optional URL link wraps the image in an anchor.
+    expect(container.querySelector('a[href="https://x.dev"]')).not.toBeNull();
   });
 });

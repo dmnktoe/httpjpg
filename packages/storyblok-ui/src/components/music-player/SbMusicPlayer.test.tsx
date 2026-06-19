@@ -24,7 +24,8 @@ describe("SbMusicPlayer", () => {
         }
       />,
     );
-    expect(container.firstChild).not.toBeNull();
+    // The native mp3 branch renders an <audio> element, not the consent placeholder.
+    expect(container.querySelector("audio")).not.toBeNull();
   });
 
   it("renders a consent placeholder for spotify without consent", () => {
@@ -40,6 +41,8 @@ describe("SbMusicPlayer", () => {
         }
       />,
     );
-    expect(container.firstChild).not.toBeNull();
+    // Without consent the embed is gated behind the placeholder; no player renders.
+    expect(container.querySelector("audio")).toBeNull();
+    expect(container.textContent).toContain("Spotify");
   });
 });

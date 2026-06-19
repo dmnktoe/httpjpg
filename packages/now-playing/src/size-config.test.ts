@@ -2,7 +2,8 @@ import { sizeConfig } from "./size-config";
 
 describe("sizeConfig", () => {
   it("exposes a config for every size", () => {
-    expect(Object.keys(sizeConfig)).toEqual(["sm", "md", "lg"]);
+    expect(Object.keys(sizeConfig)).toEqual(expect.arrayContaining(["sm", "md", "lg"]));
+    expect(Object.keys(sizeConfig)).toHaveLength(3);
   });
 
   it("scales width up with size", () => {

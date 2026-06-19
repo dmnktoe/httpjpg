@@ -26,6 +26,10 @@ beforeEach(() => {
   vi.stubGlobal("Image", FakeImage);
 });
 
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
 describe("extractVibrantColor", () => {
   it("returns rgb/rgba and a white text colour for dark artwork", async () => {
     getColorSync.mockReturnValue({ rgb: () => ({ r: 10, g: 20, b: 30 }), isDark: true });

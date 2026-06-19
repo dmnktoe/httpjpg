@@ -9,6 +9,8 @@ describe("SbSection", () => {
   });
 
   it("renders content bloks", () => {
+    // The Storyblok registry is uninitialised in unit tests, so child bloks
+    // render as empty slots — assert the Section wrapper itself is present.
     const { container } = render(
       <SbSection
         blok={
@@ -20,6 +22,6 @@ describe("SbSection", () => {
         }
       />,
     );
-    expect(container.firstChild).not.toBeNull();
+    expect(container.querySelector("section")).not.toBeNull();
   });
 });

@@ -37,7 +37,7 @@ describe("SbPageWork", () => {
   });
 
   it("ignores non-external links for the preview badge", () => {
-    const { container } = render(
+    render(
       <SbPageWork
         blok={
           {
@@ -48,6 +48,7 @@ describe("SbPageWork", () => {
         }
       />,
     );
-    expect(container.querySelector("a")).toBeNull();
+    // The badge portals into document.body, so assert against the portal target.
+    expect(document.body.querySelector('a[aria-label*="open external preview"]')).toBeNull();
   });
 });

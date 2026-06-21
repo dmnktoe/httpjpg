@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@httpjpg/ui": "workspace:*",
-    "@storyblok/richtext": "^4.0.0",
+    "@storyblok/react": "catalog:",
     "react": "catalog:"
   },
   "devDependencies": {

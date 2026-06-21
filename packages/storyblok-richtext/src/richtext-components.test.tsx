@@ -90,6 +90,30 @@ describe("richTextComponents · links", () => {
     ]);
     expect(screen.getByRole("link", { name: "ext" })).toHaveAttribute("rel", "noopener noreferrer");
   });
+
+  it("drops links with an unsafe URI scheme but keeps their text", () => {
+    renderDoc([
+      {
+        type: "paragraph",
+        content: [text("click", [{ type: "link", attrs: { href: "javascript:alert(1)" } }])],
+      },
+    ]);
+    expect(screen.queryByRole("link")).toBeNull();
+    expect(screen.getByTestId("root")).toHaveTextContent("click");
+  });
+
+  it("allows mailto links", () => {
+    renderDoc([
+      {
+        type: "paragraph",
+        content: [text("mail", [{ type: "link", attrs: { href: "mailto:hi@example.com" } }])],
+      },
+    ]);
+    expect(screen.getByRole("link", { name: "mail" })).toHaveAttribute(
+      "href",
+      "mailto:hi@example.com",
+    );
+  });
 });
 
 describe("richTextComponents · code", () => {

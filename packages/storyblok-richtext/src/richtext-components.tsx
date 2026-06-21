@@ -132,14 +132,39 @@ function EmojiRenderer({ attrs }: SbReactRichTextProps<"emoji">) {
   return <>{emoji ?? null}</>;
 }
 
+// CMS-authored hrefs: block any explicit scheme outside the allowlist so a
+// `javascript:`/`data:` URL can't be emitted. Scheme-less values (relative
+// paths, anchors, bare emails) are allowed through. Control chars are stripped
+// first because browsers ignore them when resolving the scheme.
+const SAFE_SCHEMES = ["http", "https", "mailto", "tel"];
+
+function isSafeHref(href: string): boolean {
+  const cleaned = Array.from(href)
+    .filter((char) => {
+      const code = char.charCodeAt(0);
+      return code > 0x20 && code !== 0x7f;
+    })
+    .join("");
+  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(cleaned);
+  return !scheme || SAFE_SCHEMES.includes(scheme[1].toLowerCase());
+}
+
 function LinkRenderer({ attrs, children }: SbReactRichTextProps<"link">) {
   const href = attrs?.href;
-  if (!href) {
+  if (!href || !isSafeHref(href)) {
     return <>{children}</>;
   }
   const target = attrs?.target === "_blank" || attrs?.target === "_self" ? attrs.target : undefined;
+  // Forward target/rel only when explicitly set; Link spreads our props after
+  // its own external-link defaults, so passing `undefined` would clobber them.
+  const linkProps =
+    target === "_blank"
+      ? { target: "_blank" as const, rel: "noopener noreferrer" }
+      : target === "_self"
+        ? { target: "_self" as const }
+        : {};
   return (
-    <Link href={href} target={target} rel={target === "_blank" ? "noopener noreferrer" : undefined}>
+    <Link href={href} {...linkProps}>
       {children}
     </Link>
   );

@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@storyblok/react':
-      specifier: ^6.1.7
-      version: 6.1.10
+      specifier: ^7.0.0
+      version: 7.0.0
     '@testing-library/jest-dom':
       specifier: ^6.9.1
       version: 6.9.1
@@ -157,7 +157,7 @@ importers:
         version: 16.2.7(next@16.2.7(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       '@storyblok/react':
         specifier: 'catalog:'
-        version: 6.1.10(next@16.2.7(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 7.0.0(next@16.2.7(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       next:
         specifier: 'catalog:'
         version: 16.2.7(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -485,8 +485,8 @@ importers:
         specifier: workspace:*
         version: link:../ui
       '@storyblok/richtext':
-        specifier: ^4.0.0
-        version: 4.3.4
+        specifier: ^5.0.0
+        version: 5.0.0
       react:
         specifier: 'catalog:'
         version: 19.2.7
@@ -533,7 +533,7 @@ importers:
         version: link:../ui
       '@storyblok/react':
         specifier: 'catalog:'
-        version: 6.1.10(next@16.2.7(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 7.0.0(next@16.2.7(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     devDependencies:
       '@testing-library/jest-dom':
         specifier: 'catalog:'
@@ -3032,11 +3032,11 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@storyblok/js@5.1.9':
-    resolution: {integrity: sha512-rHpNZBlB3HJbJtTN3rz1RtObV6/MIxYwi3dQpdZlTsNFs3MfyVF8L5n3mz52DMbIV5G00a0yyMi1jYLsUWxrAw==}
+  '@storyblok/js@6.0.0':
+    resolution: {integrity: sha512-4lkfwVkQvSacE2g0d9FLihT0aF1SmFLVaQBYLk9DZDjrqoMmZDeslGR+B8u4NO3DQZWOp6+UTgkejwDEWSFBww==}
 
-  '@storyblok/react@6.1.10':
-    resolution: {integrity: sha512-Rg2n0m2VDD1r3zJX+q9JdnJdc17N0/ccrBoZsY7f2ZxFrMBBPO0L4JnwP+2/bUILLi9zQ9fBlZpCJw/GwcMqxA==}
+  '@storyblok/react@7.0.0':
+    resolution: {integrity: sha512-/zI81Pgvj8WZl5BJVH5imaUWXskBJIyiENruvTH46Uy9uOOF6e80bjpoPA3GLkbCf66pnyhDvd3xsy+dirvXFg==}
     peerDependencies:
       next: ^13 || ^14 || ^15 || ^16
       react: ^17 || ^18 || ^19
@@ -3045,8 +3045,8 @@ packages:
       next:
         optional: true
 
-  '@storyblok/richtext@4.3.4':
-    resolution: {integrity: sha512-/8aMnfcvY0wclPzeltSc5s9IGxBOkGD/ehF2WCCyGapkXj77to1OCwXklEcblk/dFFx+9jhsYl1ORY/2Fnll9A==}
+  '@storyblok/richtext@5.0.0':
+    resolution: {integrity: sha512-y+wRfvY6dtwa2Q2BPVEWcOvUQO6Ckb5Jzb9kNGmD92UUVy/9oUpKrPjTpVOq5t8iK2+V8rUnojE384wjXMQR2A==}
 
   '@storybook/addon-docs@10.4.2':
     resolution: {integrity: sha512-CtW1O4xSKZPNtpWgpfp4yB/x4pj/of+3MvlEDfErSlr3Hp3QmEa2pCLaecR08H5LJqJFlt1PtG0UrIynTvgW9w==}
@@ -3233,13 +3233,6 @@ packages:
     peerDependencies:
       '@tiptap/core': 3.25.0
 
-  '@tiptap/extension-details@3.25.0':
-    resolution: {integrity: sha512-w+iUjTRD1uyZHM70TeH3Dn2Pe6Q6V40Ay8K/rN/q6zcAwq07QbeE8/l9b6JpvTnalpS8uVpoiGKwvnwvUcv5pA==}
-    peerDependencies:
-      '@tiptap/core': 3.25.0
-      '@tiptap/extension-text-style': 3.25.0
-      '@tiptap/pm': 3.25.0
-
   '@tiptap/extension-document@3.25.0':
     resolution: {integrity: sha512-YEENTItTHdOiIAemTDej2HsbMvq4IlrgQ7obR89Kyaxs2oE4gYw0GPA3gjHfuJnv2VHMQqFn7K37nlyuiABhHw==}
     peerDependencies:
@@ -3322,11 +3315,6 @@ packages:
     peerDependencies:
       '@tiptap/core': 3.25.0
       '@tiptap/pm': 3.25.0
-
-  '@tiptap/extension-text-align@3.25.0':
-    resolution: {integrity: sha512-/VcaNtcljC4O7hOVTwwekgwef+hiAIwnx/xErYme9oHTeLjlGsN9ZKLRQxcW7kjT9A1SSD/hPGNvQSkQJ2jh3w==}
-    peerDependencies:
-      '@tiptap/core': 3.25.0
 
   '@tiptap/extension-text-style@3.25.0':
     resolution: {integrity: sha512-Oq0Gqa44tl2hEPhtriNyBlFBV2ZAk/1iYBqbUTW4qe0pkoe34yTZN7VQQ47RPZnGR7J3ddh8n67kM/9zoy4f8w==}
@@ -5397,6 +5385,9 @@ packages:
 
   storyblok-js-client@7.6.0:
     resolution: {integrity: sha512-crf8erfOQOwkmjBISYTwWPfQafmOj4qM1NO387sK+yf/NejwHM9z7gLLKqY/sOQXFnH/R39p8HLOX0qO/0BtnA==}
+
+  storyblok-js-client@7.6.1:
+    resolution: {integrity: sha512-vwViT+Rehe6o0INeNL4KbdO00j/QCqrD/Dubvl9JLZtufmptJyT7DzXC9HQg//9JfyAYmfaizf4CH5Rrrgvtwg==}
 
   storybook@10.4.2:
     resolution: {integrity: sha512-5Ax5vbHxFgMBGGhQDm75Rrumm/HZC4ICFhMcJaM0UlqnC/4FKj/IaZtImZFupknyiiyUEcWHPQFA2kX3/VSv1A==}
@@ -7861,17 +7852,18 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@storyblok/js@5.1.9':
+  '@storyblok/js@6.0.0':
     dependencies:
-      '@storyblok/richtext': 4.3.4
-      storyblok-js-client: 7.6.0
+      '@storyblok/richtext': 5.0.0
+      storyblok-js-client: 7.6.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  '@storyblok/react@6.1.10(next@16.2.7(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@storyblok/react@7.0.0(next@16.2.7(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@storyblok/js': 5.1.9
+      '@storyblok/js': 6.0.0
+      '@storyblok/richtext': 5.0.0
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
     optionalDependencies:
@@ -7880,14 +7872,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@storyblok/richtext@4.3.4':
+  '@storyblok/richtext@5.0.0':
     dependencies:
       '@tiptap/core': 3.25.0(@tiptap/pm@3.25.0)
       '@tiptap/extension-blockquote': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))
       '@tiptap/extension-bold': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))
       '@tiptap/extension-code': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))
       '@tiptap/extension-code-block': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))(@tiptap/pm@3.25.0)
-      '@tiptap/extension-details': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))(@tiptap/extension-text-style@3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0)))(@tiptap/pm@3.25.0)
       '@tiptap/extension-document': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))
       '@tiptap/extension-emoji': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))(@tiptap/pm@3.25.0)(@tiptap/suggestion@3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))(@tiptap/pm@3.25.0))(emojibase@17.0.0)
       '@tiptap/extension-hard-break': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))
@@ -7904,7 +7895,6 @@ snapshots:
       '@tiptap/extension-superscript': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))(@tiptap/pm@3.25.0)
       '@tiptap/extension-table': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))(@tiptap/pm@3.25.0)
       '@tiptap/extension-text': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))
-      '@tiptap/extension-text-align': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))
       '@tiptap/extension-text-style': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))
       '@tiptap/extension-underline': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))
       '@tiptap/html': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))(@tiptap/pm@3.25.0)(happy-dom@20.10.1)
@@ -7913,7 +7903,6 @@ snapshots:
       emojibase: 17.0.0
       happy-dom: 20.10.1
       markdown-it: 14.2.0
-      storyblok-js-client: 7.6.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -8093,12 +8082,6 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.25.0(@tiptap/pm@3.25.0)
 
-  '@tiptap/extension-details@3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))(@tiptap/extension-text-style@3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0)))(@tiptap/pm@3.25.0)':
-    dependencies:
-      '@tiptap/core': 3.25.0(@tiptap/pm@3.25.0)
-      '@tiptap/extension-text-style': 3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))
-      '@tiptap/pm': 3.25.0
-
   '@tiptap/extension-document@3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))':
     dependencies:
       '@tiptap/core': 3.25.0(@tiptap/pm@3.25.0)
@@ -8172,10 +8155,6 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.25.0(@tiptap/pm@3.25.0)
       '@tiptap/pm': 3.25.0
-
-  '@tiptap/extension-text-align@3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))':
-    dependencies:
-      '@tiptap/core': 3.25.0(@tiptap/pm@3.25.0)
 
   '@tiptap/extension-text-style@3.25.0(@tiptap/core@3.25.0(@tiptap/pm@3.25.0))':
     dependencies:
@@ -10430,6 +10409,8 @@ snapshots:
   std-env@4.1.0: {}
 
   storyblok-js-client@7.6.0: {}
+
+  storyblok-js-client@7.6.1: {}
 
   storybook@10.4.2(@testing-library/dom@10.4.1)(@types/react@19.2.16)(prettier@3.2.5)(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:

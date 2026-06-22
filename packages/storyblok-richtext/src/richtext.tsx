@@ -6,8 +6,6 @@ import { richTextComponents } from "./richtext-components";
 
 export type ISbRichtext = SbRichTextDoc;
 
-// `optimizeImage` is left off so the custom `image` renderer owns asset handling
-// (copyright label, aspect ratio) instead of emitting a bare optimized `<img>`.
 const renderRichText = createRichTextRenderer({ components: richTextComponents });
 
 export function renderStoryblokRichText(data?: ISbRichtext | null): ReactNode {

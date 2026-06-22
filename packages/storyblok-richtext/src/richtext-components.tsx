@@ -17,8 +17,6 @@ function ParagraphRenderer({ children }: SbReactRichTextProps<"paragraph">) {
 
 function HeadingRenderer({ attrs, children }: SbReactRichTextProps<"heading">) {
   const level = attrs?.level ?? 1;
-  // Headline only styles levels 1–3; render deeper headings at the level-3
-  // scale while keeping the semantic `h4`–`h6` tag for accessibility.
   const headlineLevel = (level <= 3 ? level : 3) as 1 | 2 | 3;
   const tag = level > 3 ? (`h${level}` as "h4" | "h5" | "h6") : undefined;
   return (
@@ -106,8 +104,6 @@ function ImageRenderer({ attrs }: SbReactRichTextProps<"image">) {
   );
 }
 
-// Emoji is glyph-sized and inline; rendering it through the block Image wrapper
-// blows it up to 16:9 and nests a <div> inside <p>, breaking hydration.
 function EmojiRenderer({ attrs }: SbReactRichTextProps<"emoji">) {
   const fallbackImage = attrs?.fallbackImage;
   const name = attrs?.name;
@@ -132,10 +128,6 @@ function EmojiRenderer({ attrs }: SbReactRichTextProps<"emoji">) {
   return <>{emoji ?? null}</>;
 }
 
-// CMS-authored hrefs: block any explicit scheme outside the allowlist so a
-// `javascript:`/`data:` URL can't be emitted. Scheme-less values (relative
-// paths, anchors, bare emails) are allowed through. Control chars are stripped
-// first because browsers ignore them when resolving the scheme.
 const SAFE_SCHEMES = ["http", "https", "mailto", "tel"];
 
 function isSafeHref(href: string): boolean {
@@ -155,8 +147,6 @@ function LinkRenderer({ attrs, children }: SbReactRichTextProps<"link">) {
     return <>{children}</>;
   }
   const target = attrs?.target === "_blank" || attrs?.target === "_self" ? attrs.target : undefined;
-  // Forward target/rel only when explicitly set; Link spreads our props after
-  // its own external-link defaults, so passing `undefined` would clobber them.
   const linkProps =
     target === "_blank"
       ? { target: "_blank" as const, rel: "noopener noreferrer" }
@@ -188,11 +178,6 @@ function InlineCodeRenderer({ children }: SbReactRichTextProps<"code">) {
   );
 }
 
-/**
- * Maps Storyblok richtext node and mark types to `@httpjpg/ui` primitives.
- * Types not listed here fall back to the v5 SDK's default tag rendering
- * (e.g. `bold` → `<strong>`, `italic` → `<em>`).
- */
 export const richTextComponents: SbReactRichTextComponentMap = {
   paragraph: ParagraphRenderer,
   heading: HeadingRenderer,

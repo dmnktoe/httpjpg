@@ -211,7 +211,7 @@ jobs:
             exit 0
           fi
           BASE="${{ github.event.pull_request.base.sha }}"
-          if git diff --name-only "$BASE"...HEAD | grep -qE '^(apps/storybook|packages/(ui|tokens|now-playing|spotify))/'; then
+          if git diff --name-only "$BASE"...HEAD | grep -qE '^(apps/storybook|packages/(ui|tokens|now-playing|spotify|consent|storyblok-richtext|storyblok-ui|storyblok-utils))/'; then
             echo "relevant=true" >> "$GITHUB_OUTPUT"
           else
             echo "relevant=false" >> "$GITHUB_OUTPUT"

@@ -117,6 +117,12 @@
       "addLabels": ["ci"]
     },
     {
+      "description": "No standalone digest-bump PRs for GitHub Actions — SHA pins stay and refresh on version bumps, so we don't get a duplicate 'digest' PR next to every version PR",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["digest"],
+      "enabled": false
+    },
+    {
       "matchManagers": ["dockerfile", "docker-compose"],
       "addLabels": ["docker"]
     },

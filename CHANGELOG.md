@@ -4,23 +4,49 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.2.1] - 2026-06-04
+## [2.2.0] - 2026-07-03
+
+### Added
+
+- **Widgets**: a PlayStation "latest trophy" footer widget — surfaces the most recently earned trophy (tier sprite, game, platform) from Sony's first-party trophy API (`psn-api`, authenticated with an `PSN_NPSSO` token exchanged for cached short-lived auth tokens). Gated behind a `psn_trophy_enabled` Storyblok config flag, and the Discord and Letterboxd footer widgets are now flag-gated too.
+- **Security**: baseline security headers on every document response in the edge proxy — `Strict-Transport-Security`, `Referrer-Policy`, `X-Content-Type-Options`, and `Permissions-Policy` — alongside the existing CSP `frame-ancestors` directive. `X-Frame-Options` is intentionally omitted so CSP remains the single source of framing policy and keeps the Storyblok Visual Editor able to embed the site.
+- **Now-playing**: the widget now surfaces Spotify Premium-missing and error states — a typed `SpotifyForbiddenError` on 403, an `errorCode` exposed by `useNowPlaying`, and a red "danger" 403/500 artwork state — with matching Storybook stories.
+- **UI**: `Video` gains an `objectFit` prop and the Slideshow/Video loading path is hardened — the skeleton resolves on `canplay`/`error` (not just `loadeddata`) so a slow or failed source falls back to the poster, muted autoplay is set imperatively, and `prefers-reduced-motion` is respected (no video or carousel autoplay, paused shimmer). First `Video` tests added.
+
+### Changed
+
+- **Storyblok-richtext**: migrated rich-text rendering to `@storyblok/react` v7 / `@storyblok/richtext` v5. The `richTextResolver<ReactNode>` + tag-keyed `tagRenderers` map is replaced by `createRichTextRenderer` and a node/mark-keyed `components` map, the custom Tiptap image/inline-code extensions are dropped (v5 carries `copyright` natively and treats inline code as a distinct `code` mark), and the v5 `emoji` node is handled inline. The public API (`StoryblokRichText`, `renderStoryblokRichText`, `StoryblokRichTextProps`) is unchanged.
+- **Letterboxd**: films are ordered by watched date (newest first) instead of raw feed order, HTML entities in titles are decoded (e.g. `Johnny & Me`), and member likes surface a heart in the widget.
 
 ### Fixed
 
-- **UI**: `ImagePreview` no longer hardcodes a 16:9 aspect ratio — it reads the existing `data-preview-ratio` attribute (falling back to 16:9) and an optional `data-preview-width` override, so the Letterboxd poster preview (2:3, sized to 70px → 105px tall) is no longer stretched or oversized.
+- **Portfolio**: added a root `not-found.tsx` boundary so the home route renders the branded 404 (instead of Next.js's default) when the home story is unpublished or fails to load, and as a global fallback for any unmatched URL routed through the root layout.
+- **Widgets**: each footer widget now triggers a single hover preview at one size (1:1 for Discord, 2:3 for Letterboxd) instead of two conflicting previews from the thumbnail and the name.
+- **Observability**: the Sentry release now resolves from the build-time `NEXT_PUBLIC_APP_VERSION` (git tag / GitHub release / commit SHA) instead of the unmaintained `npm_package_version` `0.0.0` placeholder, so releases report meaningfully.
+- **Spotify**: a 403 (e.g. no Premium) is treated as "nothing playing" rather than throwing, and forbidden playback is no longer logged on every poll.
 
 ### Performance
 
-- **Storyblok-sync**: reduced request load during sync to stay under the Storyblok Management API rate limit.
+- **API**: CDN cache headers (`public`, `s-maxage` + `stale-while-revalidate`) added to the Discord (30s window) and Letterboxd (5min window) routes, mirroring the Spotify now-playing pattern, so repeat hits are served from the CDN edge instead of always reaching the origin. Error and unconfigured responses stay uncached.
 
 ### Tooling
 
-- **Tests**: coverage for the previously-untested portfolio `components/ui` layout components (console-banner, custom-cursor-wrapper, nostalgia-slideshow, preview-notification, scroll-to-top, theme-sync, work-nav) and the `LetterboxdStatus` widget.
-- **CI**: JUnit test results uploaded to Codecov Test Analytics (via a dedicated `test:ci` script so the reporter flags reach vitest) for run times, failure rates, and flaky-test detection.
-- **CI**: the merge gate is now self-maintaining — a single `contains(needs.*.result, …)` guard covers every dependency automatically, and the aggregate job was renamed to "All checks passed".
+- **Tests**: Vitest coverage thresholds (statements/lines 80%, functions 75%, branches 70%) with html/lcov reporters, plus IntersectionObserver / ResizeObserver / matchMedia stubs in the global setup so UI components mount cleanly under jsdom. New tests fill the lowest-covered areas — every `Sb*` blok and helper in storyblok-ui, storyblok-utils (media/plain-text/presets/preview/responsive), now-playing, spotify color extraction, and ui card/filter/spotify-id.
+- **CI**: Codecov bundle analysis wired via Next 16's Turbopack-native `experimental-analyze` and `@codecov/nextjs-webpack-plugin`, with a non-gating CI job uploading the report per PR.
+- **CI**: Codecov config tuned for the monorepo — per-package component breakdown (ui, storyblok, integrations, foundations, portfolio), a softened informational patch target, and a components-based comment layout.
+- **Chore**: sorted the root config files.
 
-## [2.2.0] - 2026-06-04
+### Dependencies
+
+- `@storyblok/react` `6` → `7` (pulls richtext v5 + `@storyblok/js` 6).
+- Node.js updated to `22.23.1`.
+- `pnpm` updated to `10.34.4`.
+- Panda CSS updated to `1.11.3`.
+- `sharp` updated to `^0.35.0`.
+- linting & formatting (oxlint + oxfmt) updated — oxfmt `^0.57.0`, group `^0.55.0`.
+- type definitions, `codecov/codecov-action` v7, `actions/checkout` v7, `pnpm/action-setup` and `chromaui/action` digests updated, plus lock file maintenance.
+
+## [2.1.1] - 2026-06-04
 
 ### Added
 
@@ -35,11 +61,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - **UI**: focus is trapped inside the mobile menu dialog while it is open.
 - **UI**: cursor, mouse trail, and marquee now respect `prefers-reduced-motion`.
 - **Portfolio**: the CMS-sourced discord user id is validated before the external Lanyard call.
+- **UI**: `ImagePreview` no longer hardcodes a 16:9 aspect ratio — it reads the existing `data-preview-ratio` attribute (falling back to 16:9) and an optional `data-preview-width` override, so the Letterboxd poster preview (2:3, sized to 70px → 105px tall) is no longer stretched or oversized.
+
+### Performance
+
+- **Storyblok-sync**: reduced request load during sync to stay under the Storyblok Management API rate limit.
 
 ### Tooling
 
 - **CodeRabbit**: a lean CodeRabbit review config.
-- **Tests**: coverage for the storyblok api, next cache, and richtext layers.
+- **Tests**: coverage for the storyblok api, next cache, and richtext layers, plus the previously-untested portfolio `components/ui` layout components (console-banner, custom-cursor-wrapper, nostalgia-slideshow, preview-notification, scroll-to-top, theme-sync, work-nav) and the `LetterboxdStatus` widget.
+- **CI**: JUnit test results uploaded to Codecov Test Analytics (via a dedicated `test:ci` script so the reporter flags reach vitest) for run times, failure rates, and flaky-test detection.
+- **CI**: the merge gate is now self-maintaining — a single `contains(needs.*.result, …)` guard covers every dependency automatically, and the aggregate job was renamed to "All checks passed".
 
 ### Dependencies
 

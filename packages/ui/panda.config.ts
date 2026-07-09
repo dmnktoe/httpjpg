@@ -174,6 +174,14 @@ export default defineConfig({
     "input, button, textarea, select": { font: "inherit" },
     "p, h1, h2, h3, h4, h5, h6": { overflowWrap: "break-word" },
     "header a, header button": { pointerEvents: "auto" },
+    /**
+     * Text-marker selektion — brutalistischer Highlighter.
+     * Flacher Lime-Akzent + hartes Schwarz, kein Fade, keine Rundung.
+     * Ein Wert für beide Themes: schwarz-auf-Lime kontrastiert sowohl auf
+     * weißem (light) als auch schwarzem (dark) Untergrund maximal.
+     */
+    "::selection": { bg: "accent.300", color: "black", textShadow: "none" },
+    "::-moz-selection": { bg: "accent.300", color: "black", textShadow: "none" },
   },
 
   theme: {

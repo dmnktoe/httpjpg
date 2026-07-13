@@ -167,6 +167,43 @@ describe("richTextComponents · images", () => {
     expect(screen.getByAltText("logo")).toHaveStyle({ display: "inline-block" });
   });
 
+  it("lays consecutive badges out in a single row, dropping hard breaks", () => {
+    const { container } = renderDoc([
+      {
+        type: "paragraph",
+        content: [
+          { type: "image", attrs: { src: "https://img.shields.io/badge/version", alt: "Version" } },
+          { type: "hard_break" },
+          {
+            type: "image",
+            attrs: { src: "https://img.shields.io/badge/downloads", alt: "Downloads" },
+          },
+          { type: "hard_break" },
+          { type: "image", attrs: { src: "https://img.shields.io/badge/macos", alt: "macOS" } },
+        ],
+      },
+    ]);
+    const imgs = container.querySelectorAll("img");
+    expect(imgs).toHaveLength(3);
+    expect(container.querySelector("br")).toBeNull();
+    // All three badges share one parent row → they sit side by side.
+    expect(imgs[0].parentElement).toBe(imgs[1].parentElement);
+    expect(imgs[1].parentElement).toBe(imgs[2].parentElement);
+  });
+
+  it("keeps a mixed image-and-text paragraph as a normal paragraph", () => {
+    const { container } = renderDoc([
+      {
+        type: "paragraph",
+        content: [
+          { type: "text", text: "see " },
+          { type: "image", attrs: { src: "https://img.shields.io/badge/v", alt: "v" } },
+        ],
+      },
+    ]);
+    expect(container.querySelector("p")).toHaveTextContent("see");
+  });
+
   it("keeps images inside a paragraph as phrasing content (no div nested in p)", () => {
     const { container } = renderDoc([
       {

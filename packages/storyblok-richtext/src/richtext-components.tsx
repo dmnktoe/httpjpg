@@ -8,95 +8,9 @@ import {
   Paragraph,
   UnorderedList,
 } from "@httpjpg/ui";
-import type {
-  SbReactRichTextComponentMap,
-  SbReactRichTextProps,
-  SbRichTextNode,
-} from "@storyblok/react/rsc";
+import type { SbReactRichTextComponentMap, SbReactRichTextProps } from "@storyblok/react/rsc";
 
-const BADGE_HOSTS = ["img.shields.io", "shields.io", "badgen.net", "badge.fury.io"];
-
-function isBadge(src: string): boolean {
-  return BADGE_HOSTS.some((host) => src.includes(host)) || src.endsWith(".svg");
-}
-
-interface BadgeImageProps {
-  src: string;
-  alt: string;
-  title?: string;
-}
-
-function BadgeImage({ src, alt, title }: BadgeImageProps) {
-  return (
-    <img
-      src={src}
-      alt={alt}
-      title={title}
-      loading="lazy"
-      style={{
-        display: "inline-block",
-        height: "1.5em",
-        width: "auto",
-        maxWidth: "100%",
-        verticalAlign: "middle",
-      }}
-    />
-  );
-}
-
-interface BadgeItem extends BadgeImageProps {
-  key: string;
-}
-
-function badgeParagraph(content?: SbRichTextNode[]): BadgeItem[] | null {
-  if (!content?.length) {
-    return null;
-  }
-  const badges: BadgeItem[] = [];
-  for (const node of content) {
-    if (node.type === "hard_break") {
-      continue;
-    }
-    if (node.type === "text" && !node.text.trim()) {
-      continue;
-    }
-    if (node.type === "image" && node.attrs?.src && isBadge(node.attrs.src)) {
-      const { src, alt, title, meta_data } = node.attrs;
-      badges.push({
-        src,
-        alt: alt ?? meta_data?.alt ?? "",
-        title: title ?? meta_data?.title ?? undefined,
-        key: node._key ?? `badge-${badges.length}`,
-      });
-      continue;
-    }
-    return null;
-  }
-  return badges.length ? badges : null;
-}
-
-function ParagraphRenderer({ content, children }: SbReactRichTextProps<"paragraph">) {
-  const badges = badgeParagraph(content);
-  if (badges) {
-    return (
-      <Box
-        as="span"
-        css={{
-          display: "inline-flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          gap: "2",
-          mr: "2",
-          mb: "2",
-          verticalAlign: "middle",
-        }}
-      >
-        {badges.map((badge) => (
-          <BadgeImage key={badge.key} src={badge.src} alt={badge.alt} title={badge.title} />
-        ))}
-      </Box>
-    );
-  }
+function ParagraphRenderer({ children }: SbReactRichTextProps<"paragraph">) {
   return <Paragraph spacing>{children}</Paragraph>;
 }
 
@@ -173,10 +87,6 @@ function ImageRenderer({ attrs }: SbReactRichTextProps<"image">) {
   }
   const alt = attrs?.alt ?? attrs?.meta_data?.alt ?? "";
   const title = attrs?.title ?? attrs?.meta_data?.title ?? undefined;
-
-  if (isBadge(src)) {
-    return <BadgeImage src={src} alt={alt} title={title} />;
-  }
 
   return (
     <img

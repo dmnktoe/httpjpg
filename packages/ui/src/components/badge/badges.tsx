@@ -57,7 +57,7 @@ export function Badges({
     >
       {items.map((item, index) => (
         <Badge
-          key={item.href ?? `${item.src}-${index}`}
+          key={`${item.src}-${index}`}
           src={item.src}
           alt={item.alt}
           href={item.href}

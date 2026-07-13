@@ -179,7 +179,6 @@ describe("richTextComponents · images", () => {
     ]);
     const paragraph = container.querySelector("p");
     expect(paragraph).not.toBeNull();
-    // Invalid `<div>`-in-`<p>` is what triggers the hydration crash — there must be none.
     expect(paragraph?.querySelector("div")).toBeNull();
     expect(paragraph?.querySelectorAll("img")).toHaveLength(2);
   });

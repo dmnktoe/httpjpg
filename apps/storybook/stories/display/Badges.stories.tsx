@@ -1,21 +1,21 @@
 import { Badge, BadgeGroup, Badges } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-const BLT_BADGES = [
+const BADGES = [
   {
-    src: "https://img.shields.io/github/v/release/dmnktoe/blt?label=Version&color=D20515&labelColor=1D1D1B",
-    alt: "Version",
-    href: "https://github.com/dmnktoe/blt/releases/latest",
+    src: "https://img.shields.io/badge/version-1.0.0-blue",
+    alt: "Version 1.0.0",
+    href: "https://github.com/dmnktoe/httpjpg/releases",
   },
   {
-    src: "https://img.shields.io/github/downloads/dmnktoe/blt/total?label=Downloads&color=D20515&labelColor=1D1D1B",
-    alt: "Downloads",
-    href: "https://github.com/dmnktoe/blt/releases",
+    src: "https://img.shields.io/badge/license-MIT-green",
+    alt: "License MIT",
+    href: "https://github.com/dmnktoe/httpjpg/blob/main/LICENSE",
   },
   {
-    src: "https://img.shields.io/badge/macOS-13%2B-D20515?logo=apple&labelColor=1D1D1B",
-    alt: "macOS 13+",
-    href: "https://dmnktoe.github.io/blt/",
+    src: "https://img.shields.io/badge/PRs-welcome-brightgreen",
+    alt: "PRs welcome",
+    href: "https://github.com/dmnktoe/httpjpg",
   },
 ];
 
@@ -54,13 +54,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {
   args: {
-    items: BLT_BADGES,
+    items: BADGES,
   },
 };
 
 export const Taller: Story = {
   args: {
-    items: BLT_BADGES,
+    items: BADGES,
     height: "28px",
     gap: "3",
   },
@@ -68,7 +68,7 @@ export const Taller: Story = {
 
 export const Wrapping: Story = {
   args: {
-    items: [...BLT_BADGES, ...BLT_BADGES, ...BLT_BADGES],
+    items: [...BADGES, ...BADGES, ...BADGES],
   },
   parameters: {
     docs: { description: { story: "Badges wrap onto new lines when the row runs out of space." } },
@@ -76,7 +76,7 @@ export const Wrapping: Story = {
 };
 
 export const Inline: Story = {
-  args: { items: BLT_BADGES, inline: true },
+  args: { items: BADGES, inline: true },
   render: (args) => (
     <p style={{ maxWidth: "60ch", lineHeight: 1.7 }}>
       A project shipped with pride <Badges {...args} /> and it keeps flowing with the sentence.
@@ -92,7 +92,7 @@ export const Inline: Story = {
 };
 
 export const SingleBadge: StoryObj<typeof Badge> = {
-  render: () => <Badge src={BLT_BADGES[0].src} alt="Version" href={BLT_BADGES[0].href} />,
+  render: () => <Badge src={BADGES[0].src} alt={BADGES[0].alt} href={BADGES[0].href} />,
   parameters: {
     docs: {
       description: { story: "The `Badge` primitive renders a single external badge image." },
@@ -103,7 +103,7 @@ export const SingleBadge: StoryObj<typeof Badge> = {
 export const ComposedGroup: StoryObj<typeof BadgeGroup> = {
   render: () => (
     <BadgeGroup gap="4" justify="center">
-      {BLT_BADGES.map((badge) => (
+      {BADGES.map((badge) => (
         <Badge key={badge.alt} src={badge.src} alt={badge.alt} href={badge.href} />
       ))}
     </BadgeGroup>

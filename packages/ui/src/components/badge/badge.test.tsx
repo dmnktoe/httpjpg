@@ -4,7 +4,7 @@ import { Badge } from "./badge";
 import { BadgeGroup } from "./badge-group";
 import { Badges } from "./badges";
 
-const SHIELD = "https://img.shields.io/github/v/release/dmnktoe/blt";
+const SHIELD = "https://img.shields.io/badge/version-1.0.0-blue";
 
 describe("Badge", () => {
   it("renders an image with src and alt", () => {
@@ -31,9 +31,9 @@ describe("Badge", () => {
   });
 
   it("wraps in an external link that opens in a new tab", () => {
-    render(<Badge src={SHIELD} alt="Version" href="https://github.com/dmnktoe/blt/releases" />);
+    render(<Badge src={SHIELD} alt="Version" href="https://github.com/dmnktoe/httpjpg/releases" />);
     const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", "https://github.com/dmnktoe/blt/releases");
+    expect(link).toHaveAttribute("href", "https://github.com/dmnktoe/httpjpg/releases");
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
     expect(link).toContainElement(screen.getByAltText("Version"));
@@ -95,7 +95,7 @@ describe("BadgeGroup", () => {
 describe("Badges", () => {
   const items = [
     { src: `${SHIELD}?1`, alt: "Version" },
-    { src: `${SHIELD}?2`, alt: "Downloads", href: "https://github.com/dmnktoe/blt/releases" },
+    { src: `${SHIELD}?2`, alt: "Downloads", href: "https://github.com/dmnktoe/httpjpg/releases" },
     { src: `${SHIELD}?3`, alt: "macOS" },
   ];
 
@@ -113,7 +113,7 @@ describe("Badges", () => {
     render(<Badges items={items} />);
     const links = screen.getAllByRole("link");
     expect(links).toHaveLength(1);
-    expect(links[0]).toHaveAttribute("href", "https://github.com/dmnktoe/blt/releases");
+    expect(links[0]).toHaveAttribute("href", "https://github.com/dmnktoe/httpjpg/releases");
   });
 
   it("applies a shared height to every badge", () => {

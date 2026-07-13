@@ -42,7 +42,7 @@ describe("SbBadges", () => {
                 component: "badge_item",
                 src: SHIELD,
                 alt: "Version",
-                href: "https://github.com/dmnktoe/blt/releases",
+                href: "https://github.com/dmnktoe/httpjpg/releases",
               },
             ],
           } as never
@@ -51,7 +51,7 @@ describe("SbBadges", () => {
     );
     expect(screen.getByRole("link")).toHaveAttribute(
       "href",
-      "https://github.com/dmnktoe/blt/releases",
+      "https://github.com/dmnktoe/httpjpg/releases",
     );
   });
 

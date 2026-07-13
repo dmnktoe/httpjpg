@@ -143,8 +143,44 @@ describe("richTextComponents · images", () => {
     expect(img).toHaveAttribute("draggable", "false");
   });
 
-  it("renders a regular image through the block Image component", () => {
+  it("renders a regular image as a responsive block img at natural ratio", () => {
     renderDoc([{ type: "image", attrs: { src: "/photo.jpg", alt: "a photo" } }]);
-    expect(screen.getByAltText("a photo")).toBeInTheDocument();
+    const img = screen.getByAltText("a photo");
+    expect(img.tagName).toBe("IMG");
+    expect(img).toHaveStyle({ display: "block", maxWidth: "100%", height: "auto" });
+    expect(img).not.toHaveStyle({ objectFit: "cover" });
+  });
+
+  it("renders a shield badge inline at natural size", () => {
+    renderDoc([
+      {
+        type: "image",
+        attrs: { src: "https://img.shields.io/github/v/release/dmnktoe/blt", alt: "Version" },
+      },
+    ]);
+    const img = screen.getByAltText("Version");
+    expect(img).toHaveStyle({ display: "inline-block", height: "1.5em", width: "auto" });
+  });
+
+  it("treats any .svg source as an inline badge", () => {
+    renderDoc([{ type: "image", attrs: { src: "https://example.com/logo.svg", alt: "logo" } }]);
+    expect(screen.getByAltText("logo")).toHaveStyle({ display: "inline-block" });
+  });
+
+  it("keeps images inside a paragraph as phrasing content (no div nested in p)", () => {
+    const { container } = renderDoc([
+      {
+        type: "paragraph",
+        content: [
+          { type: "image", attrs: { src: "https://img.shields.io/badge/x", alt: "badge" } },
+          { type: "image", attrs: { src: "/screenshot.png", alt: "shot" } },
+        ],
+      },
+    ]);
+    const paragraph = container.querySelector("p");
+    expect(paragraph).not.toBeNull();
+    // Invalid `<div>`-in-`<p>` is what triggers the hydration crash — there must be none.
+    expect(paragraph?.querySelector("div")).toBeNull();
+    expect(paragraph?.querySelectorAll("img")).toHaveLength(2);
   });
 });

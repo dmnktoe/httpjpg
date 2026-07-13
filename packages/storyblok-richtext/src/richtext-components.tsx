@@ -2,7 +2,6 @@ import {
   Box,
   Divider,
   Headline,
-  Image,
   Link,
   ListItem,
   OrderedList,
@@ -81,6 +80,19 @@ function CodeBlockRenderer({ children }: SbReactRichTextProps<"code_block">) {
   );
 }
 
+const BADGE_HOSTS = ["img.shields.io", "shields.io", "badgen.net", "badge.fury.io"];
+
+/** Shield-style status badges are tiny SVGs — render them inline at natural size. */
+function isBadge(src: string): boolean {
+  return BADGE_HOSTS.some((host) => src.includes(host)) || src.endsWith(".svg");
+}
+
+/**
+ * Richtext images render as phrasing-content `<img>` (never a block wrapper): a
+ * Storyblok richtext image can be nested inside a paragraph, and a block `<div>`
+ * inside the resulting `<p>` is invalid HTML that breaks hydration (React #418).
+ * Badges stay inline at natural size; everything else is a responsive block image.
+ */
 function ImageRenderer({ attrs }: SbReactRichTextProps<"image">) {
   const src = attrs?.src ?? "";
   if (!src) {
@@ -88,19 +100,38 @@ function ImageRenderer({ attrs }: SbReactRichTextProps<"image">) {
   }
   const alt = attrs?.alt ?? attrs?.meta_data?.alt ?? "";
   const title = attrs?.title ?? attrs?.meta_data?.title ?? undefined;
-  const copyright = attrs?.copyright ?? attrs?.meta_data?.copyright ?? undefined;
-  return (
-    <Box css={{ my: "6" }}>
-      <Image
+
+  if (isBadge(src)) {
+    return (
+      <img
         src={src}
         alt={alt}
-        title={title ?? undefined}
-        copyright={copyright ?? undefined}
-        copyrightPosition="below"
-        aspectRatio="16/9"
-        objectFit="cover"
+        title={title}
+        loading="lazy"
+        style={{
+          display: "inline-block",
+          height: "1.5em",
+          width: "auto",
+          maxWidth: "100%",
+          verticalAlign: "middle",
+        }}
       />
-    </Box>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      title={title}
+      loading="lazy"
+      style={{
+        display: "block",
+        maxWidth: "100%",
+        height: "auto",
+        margin: "1.5rem auto",
+      }}
+    />
   );
 }
 

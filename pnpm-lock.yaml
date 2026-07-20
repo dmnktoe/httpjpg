@@ -597,8 +597,8 @@ importers:
         specifier: ^16.0.0
         version: 16.2.6(@babel/core@7.28.5)(@opentelemetry/api@1.9.1)(@playwright/test@1.57.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       swiper:
-        specifier: ^12.0.3
-        version: 12.1.2
+        specifier: ^14.0.0
+        version: 14.0.6
     devDependencies:
       '@httpjpg/storyblok-utils':
         specifier: workspace:*
@@ -5548,8 +5548,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  swiper@12.1.2:
-    resolution: {integrity: sha512-4gILrI3vXZqoZh71I1PALqukCFgk+gpOwe1tOvz5uE9kHtl2gTDzmYflYCwWvR4LOvCrJi6UEEU+gnuW5BtkgQ==}
+  swiper@14.0.6:
+    resolution: {integrity: sha512-ArptjmcZMBvpLCbvzSKuqvQpjjITCbZdymiGOrbZQffQ3ZSjgpvMByXX0WZBUt+FV4PPIumdYfZ9ZdBbFsdH6g==}
     engines: {node: '>= 4.7.0'}
 
   symbol-tree@3.2.4:
@@ -10799,7 +10799,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  swiper@12.1.2: {}
+  swiper@14.0.6: {}
 
   symbol-tree@3.2.4: {}
 

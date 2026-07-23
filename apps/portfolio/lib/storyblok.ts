@@ -54,6 +54,8 @@ const components = {
   section: SbSection,
   slideshow: SbSlideshow,
   stats: SbStats,
+  // Legacy alias: old stories may still contain "text" bloks; the schema was
+  // replaced by "paragraph" and no longer exists in storyblok-sync.
   text: SbParagraph,
   video: SbVideo,
   work: SbPageWork,
@@ -64,7 +66,7 @@ const components = {
 let initialized = false;
 
 // Imported from both server and client entries so the registry exists on both.
-export function initStoryblok() {
+function initStoryblok() {
   if (initialized) {
     return;
   }

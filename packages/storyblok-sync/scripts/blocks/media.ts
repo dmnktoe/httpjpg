@@ -197,7 +197,6 @@ export const mediaBlocks: BlockDef[] = [
           { name: "Spotify", value: "spotify" },
           { name: "SoundCloud", value: "soundcloud" },
           { name: "MP3", value: "mp3" },
-          { name: "Custom", value: "custom" },
         ],
         { default_value: "spotify" },
       ),

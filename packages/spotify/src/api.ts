@@ -26,11 +26,62 @@ interface SpotifyTrack {
   trackUrl?: string;
 }
 
+// Refresh a minute early so a token can't expire mid-request.
+const TOKEN_EXPIRY_MARGIN_MS = 60_000;
+
+interface CachedAccessToken {
+  key: string;
+  value: string;
+  expiresAt: number;
+}
+
+let cachedToken: CachedAccessToken | null = null;
+let pendingToken: { key: string; promise: Promise<string> } | null = null;
+
+/** Test hook / credential rotation: drop the cached access token. */
+export function clearAccessTokenCache(): void {
+  cachedToken = null;
+  pendingToken = null;
+}
+
 export async function getAccessToken(
   clientId: string,
   clientSecret: string,
   refreshToken: string,
 ): Promise<string> {
+  const key = `${clientId}:${refreshToken}`;
+
+  if (cachedToken?.key === key && Date.now() < cachedToken.expiresAt) {
+    return cachedToken.value;
+  }
+  if (pendingToken?.key === key) {
+    return pendingToken.promise;
+  }
+
+  const promise = requestAccessToken(clientId, clientSecret, refreshToken)
+    .then((data) => {
+      cachedToken = {
+        key,
+        value: data.access_token,
+        // A missing/invalid expires_in yields NaN, which never satisfies the
+        // cache check above — the token is used once and refetched next call.
+        expiresAt: Date.now() + data.expires_in * 1000 - TOKEN_EXPIRY_MARGIN_MS,
+      };
+      return data.access_token;
+    })
+    .finally(() => {
+      pendingToken = null;
+    });
+
+  pendingToken = { key, promise };
+  return promise;
+}
+
+async function requestAccessToken(
+  clientId: string,
+  clientSecret: string,
+  refreshToken: string,
+): Promise<SpotifyTokenResponse> {
   const basic = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
   const response = await fetch(SPOTIFY_TOKEN_URL, {
@@ -49,8 +100,7 @@ export async function getAccessToken(
     throw new Error(`Failed to get access token: ${response.statusText}`);
   }
 
-  const data: SpotifyTokenResponse = await response.json();
-  return data.access_token;
+  return response.json();
 }
 
 export async function getCurrentlyPlaying(accessToken: string): Promise<SpotifyTrack | null> {

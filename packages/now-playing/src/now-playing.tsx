@@ -49,14 +49,27 @@ export function NowPlaying({
     setCurrentArtwork(artwork);
     setIsExtracting(true);
 
+    // A late resolve (or the settle timeout) must not write state after
+    // unmount or after the artwork changed again.
+    let cancelled = false;
+    let settleTimeout: ReturnType<typeof setTimeout> | undefined;
+
     extractVibrantColor(artwork).then((color) => {
+      if (cancelled) {
+        return;
+      }
       if (color) {
         setExtractedColor(color);
-        setTimeout(() => setIsExtracting(false), 100);
+        settleTimeout = setTimeout(() => setIsExtracting(false), 100);
       } else {
         setIsExtracting(false);
       }
     });
+
+    return () => {
+      cancelled = true;
+      clearTimeout(settleTimeout);
+    };
   }, [artwork, currentArtwork, autoExtractColor, vibrantColor]);
 
   const finalVibrantColor = vibrantColor || extractedColor?.rgba;

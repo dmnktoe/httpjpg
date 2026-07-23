@@ -81,7 +81,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [portfolio, storybook]
+        app: [portfolio, storybook, studio]
     env:
       NEXT_PUBLIC_STORYBLOK_TOKEN: ${{ secrets.NEXT_PUBLIC_STORYBLOK_TOKEN }}
       STORYBLOK_PREVIEW_TOKEN: ${{ secrets.STORYBLOK_PREVIEW_TOKEN }}

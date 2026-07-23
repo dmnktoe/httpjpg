@@ -14,33 +14,24 @@ export interface BlockDef {
   schema: Record<string, StoryblokField>;
 }
 
+// Must fail loudly: an empty map on a transient error would make upsertBlock
+// POST (create) components that already exist, producing duplicates.
 export async function fetchComponentIds(): Promise<Map<string, number>> {
-  try {
-    const response = await storyblokRequest<{
-      components: Array<{ id: number; name: string }>;
-    }>("/components");
-    return new Map((response.components ?? []).map((c) => [c.name, c.id]));
-  } catch {
-    return new Map();
-  }
+  const response = await storyblokRequest<{
+    components: Array<{ id: number; name: string }>;
+  }>("/components");
+  return new Map((response.components ?? []).map((c) => [c.name, c.id]));
 }
 
-const groupCache = new Map<string, string | undefined>();
+let groupsPromise: Promise<Map<string, string>> | undefined;
 
 async function getGroupUuid(name: string): Promise<string | undefined> {
-  if (groupCache.has(name)) {
-    return groupCache.get(name);
-  }
-  try {
-    const response = await storyblokRequest<{
-      component_groups: Array<{ uuid: string; name: string }>;
-    }>("/component_groups");
-    const uuid = response.component_groups?.find((g) => g.name === name)?.uuid;
-    groupCache.set(name, uuid);
-    return uuid;
-  } catch {
-    return undefined;
-  }
+  groupsPromise ??= storyblokRequest<{
+    component_groups: Array<{ uuid: string; name: string }>;
+  }>("/component_groups").then(
+    (response) => new Map((response.component_groups ?? []).map((g) => [g.name, g.uuid])),
+  );
+  return (await groupsPromise).get(name);
 }
 
 async function toStoryblokComponent(def: BlockDef): Promise<StoryblokComponent> {

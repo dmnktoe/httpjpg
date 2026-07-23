@@ -1,3 +1,5 @@
+import { formatYear as uiFormatYear } from "@httpjpg/ui";
+
 export const OG_IMAGE_WIDTH = 280;
 export const OG_IMAGE_HEIGHT = 210;
 export const OG_ASCII_COLS = 115;
@@ -34,12 +36,9 @@ export function toOgAsciiSampleUrl(filename: string): string | null {
   return safe && `${safe}/m/400x150/filters:format(jpg):grayscale()`;
 }
 
+/** OG rendering wants a plain string — delegate to the shared helper. */
 export function formatYear(date: string | undefined): string {
-  if (!date) {
-    return "";
-  }
-  const d = new Date(date);
-  return Number.isNaN(d.getTime()) ? "" : d.getUTCFullYear().toString();
+  return uiFormatYear(date) ?? "";
 }
 
 export function pickTitleSize(title: string): number {

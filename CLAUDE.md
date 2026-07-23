@@ -52,7 +52,8 @@ When generating or updating code: read neighboring files first, prefer the exist
 │   │   │   └── storyblok-slugs.ts
 │   │   ├── proxy.ts             # Edge middleware: preview-token validation, CSP, x-pathname
 │   │   └── instrumentation.ts   # Sentry boot for server + edge
-│   └── storybook/               # Storybook for @httpjpg/ui component dev/docs
+│   ├── storybook/               # Storybook for @httpjpg/ui component dev/docs
+│   └── studio/                  # Dev-only drag-and-drop grid editor for Storyblok bloks
 │
 ├── packages/
 │   ├── analytics/               # Google Analytics gtag wrapper
@@ -82,6 +83,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 
 - **`@httpjpg/portfolio`** — the deployed Next.js site. Owns all routes, app-specific widgets, data-fetching queries, SEO, schema-org, and integrations.
 - **`@httpjpg/storybook`** — Storybook host for documenting and developing `@httpjpg/ui` and `@httpjpg/now-playing` components in isolation. Not deployed.
+- **`@httpjpg/studio`** — dev-only "Grid Studio" (port 3001): visually composes `grid`/`grid_item` bloks with real `@httpjpg/ui` components and pushes the JSON to Storyblok via the Management API. All API routes 404 outside development; not deployed.
 
 #### Foundations (no workspace deps)
 

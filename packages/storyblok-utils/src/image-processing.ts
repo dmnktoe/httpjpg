@@ -15,7 +15,9 @@ export function getProcessedImage(imageSrc = "", crop = "", focus = "", filters 
     return imageSrc;
   }
 
-  const [width, height] = crop.split("x");
+  // Crop may carry a trailing mode segment ("1200x630/smart") — the focal
+  // filter needs the bare dimensions, not the mode.
+  const [width, height] = crop.split("/")[0].split("x");
 
   let params = "/m";
   let imageFilters = "/filters:quality(75)";

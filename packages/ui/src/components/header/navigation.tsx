@@ -207,6 +207,7 @@ export function Navigation({
                     variant="projects"
                     href={work.isExternal ? work.slug : `/work/${work.slug}`}
                     isExternal={work.isExternal}
+                    showExternalIcon={work.isExternal}
                     data-preview-image={previewImage}
                     css={{
                       ...WORK_LINK_FLEX,

@@ -14,7 +14,7 @@ export const MOCK_IMAGES = {
     "https://a.storyblok.com/f/281211/5000x2400/92dcf912ab/outlet-store_slideshow-3.jpg",
 } as const;
 
-export function getOptimizedImageUrl(
+function getOptimizedImageUrl(
   baseUrl: string,
   options: {
     width?: number;
@@ -54,7 +54,7 @@ export const OPTIMIZED_IMAGES = {
   }),
 } as const;
 
-export const MOCK_WORK_ITEMS = [
+const MOCK_WORK_ITEMS = [
   {
     id: "1",
     title: "Outlet Store",
@@ -122,13 +122,6 @@ function toHeaderWork(items: typeof MOCK_WORK_ITEMS, tag: string) {
 
 export const MOCK_HEADER_PROJECTS_WORK = toHeaderWork(MOCK_WORK_ITEMS, "Projects");
 export const MOCK_HEADER_WEBSITES_WORK = toHeaderWork(MOCK_WORK_ITEMS, "Websites");
-
-export const MOCK_NAV_ITEMS = [
-  { href: "/", label: "Home" },
-  { href: "/work", label: "Work" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-] as const;
 
 export const MOCK_RICHTEXT = {
   simple: {
@@ -314,9 +307,4 @@ export const MOCK_RICHTEXT = {
       },
     ],
   },
-} as const;
-
-export const MOCK_VIDEOS = {
-  youtube: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  vimeo: "https://vimeo.com/123456789",
 } as const;

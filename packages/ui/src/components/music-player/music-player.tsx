@@ -11,7 +11,7 @@ import { VStack } from "../stack/stack";
 import { MP3Player } from "./mp3-player";
 import { getSpotifyId } from "./spotify-id";
 
-export type MusicSource = "spotify" | "soundcloud" | "mp3" | "custom";
+export type MusicSource = "spotify" | "soundcloud" | "mp3";
 
 export type SpotifySize = "compact" | "normal";
 

@@ -1,3 +1,7 @@
 export function formatYear(date?: string): string | null {
-  return date ? new Date(date).getFullYear().toString() : null;
+  if (!date) {
+    return null;
+  }
+  const parsed = new Date(date);
+  return Number.isNaN(parsed.getTime()) ? null : parsed.getUTCFullYear().toString();
 }

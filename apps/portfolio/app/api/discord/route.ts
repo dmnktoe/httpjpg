@@ -6,8 +6,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import { fetchDiscordPresence, isDiscordUserId } from "@/lib/integrations/discord";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
-// The DISCORD_USER_ID env var is declared in env.mjs but not consulted here;
-// the source of truth is the Storyblok config story.
 async function resolveUserId(): Promise<string | undefined> {
   try {
     const story = await getStoryblokApi().getStory({ slug: "config" });
@@ -36,7 +34,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Discord User ID not configured",
-          message: "Set discord_user_id in Storyblok config or DISCORD_USER_ID in .env",
+          message: "Set discord_user_id in the Storyblok config story",
         },
         { status: 500 },
       );

@@ -68,10 +68,6 @@ export function hasVendorConsent(vendor: ExternalVendor): boolean {
   return consent[EXTERNAL_VENDORS[vendor].category] === true;
 }
 
-export function hasMediaConsent(): boolean {
-  return getConsent()?.media === true;
-}
-
 /** Decoded consent cookie value, or null. */
 export function readConsentCookie(): string | null {
   if (typeof document === "undefined") {

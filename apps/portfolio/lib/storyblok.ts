@@ -54,7 +54,6 @@ const components = {
   section: SbSection,
   slideshow: SbSlideshow,
   stats: SbStats,
-  text: SbParagraph,
   video: SbVideo,
   work: SbPageWork,
   work_card: SbWorkCard,
@@ -64,7 +63,7 @@ const components = {
 let initialized = false;
 
 // Imported from both server and client entries so the registry exists on both.
-export function initStoryblok() {
+function initStoryblok() {
   if (initialized) {
     return;
   }

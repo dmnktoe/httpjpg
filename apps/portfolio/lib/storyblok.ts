@@ -54,8 +54,6 @@ const components = {
   section: SbSection,
   slideshow: SbSlideshow,
   stats: SbStats,
-  // legacy alias for old "text" bloks; schema is now "paragraph"
-  text: SbParagraph,
   video: SbVideo,
   work: SbPageWork,
   work_card: SbWorkCard,

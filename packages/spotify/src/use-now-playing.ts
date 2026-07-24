@@ -50,8 +50,6 @@ export function useNowPlaying({
       return;
     }
 
-    // In-flight responses may land after unmount or an endpoint change;
-    // `ignore` keeps them from writing stale state.
     let ignore = false;
 
     async function fetchNowPlaying() {

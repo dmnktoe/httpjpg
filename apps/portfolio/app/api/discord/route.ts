@@ -6,7 +6,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import { fetchDiscordPresence, isDiscordUserId } from "@/lib/integrations/discord";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
-// The Storyblok config story is the single source of truth for the user id.
 async function resolveUserId(): Promise<string | undefined> {
   try {
     const story = await getStoryblokApi().getStory({ slug: "config" });

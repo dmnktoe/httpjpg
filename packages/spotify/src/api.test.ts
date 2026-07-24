@@ -97,7 +97,6 @@ describe("Spotify API", () => {
           } as Response);
 
         await getAccessToken("client_id", "client_secret", "refresh_token");
-        // Jump past expires_in minus the refresh margin.
         vi.advanceTimersByTime(3600 * 1000);
 
         const token = await getAccessToken("client_id", "client_secret", "refresh_token");

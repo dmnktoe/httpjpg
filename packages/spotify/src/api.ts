@@ -26,7 +26,6 @@ interface SpotifyTrack {
   trackUrl?: string;
 }
 
-// Refresh a minute early so a token can't expire mid-request.
 const TOKEN_EXPIRY_MARGIN_MS = 60_000;
 
 interface CachedAccessToken {
@@ -38,7 +37,6 @@ interface CachedAccessToken {
 let cachedToken: CachedAccessToken | null = null;
 let pendingToken: { key: string; promise: Promise<string> } | null = null;
 
-/** Test hook / credential rotation: drop the cached access token. */
 export function clearAccessTokenCache(): void {
   cachedToken = null;
   pendingToken = null;
@@ -63,8 +61,6 @@ export async function getAccessToken(
       cachedToken = {
         key,
         value: data.access_token,
-        // A missing/invalid expires_in yields NaN, which never satisfies the
-        // cache check above — the token is used once and refetched next call.
         expiresAt: Date.now() + data.expires_in * 1000 - TOKEN_EXPIRY_MARGIN_MS,
       };
       return data.access_token;

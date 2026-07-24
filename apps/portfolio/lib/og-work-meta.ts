@@ -36,7 +36,6 @@ export function toOgAsciiSampleUrl(filename: string): string | null {
   return safe && `${safe}/m/400x150/filters:format(jpg):grayscale()`;
 }
 
-/** OG rendering wants a plain string — delegate to the shared helper. */
 export function formatYear(date: string | undefined): string {
   return uiFormatYear(date) ?? "";
 }

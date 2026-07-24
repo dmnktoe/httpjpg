@@ -14,8 +14,6 @@ export interface BlockDef {
   schema: Record<string, StoryblokField>;
 }
 
-// Must fail loudly: an empty map on a transient error would make upsertBlock
-// POST (create) components that already exist, producing duplicates.
 export async function fetchComponentIds(): Promise<Map<string, number>> {
   const response = await storyblokRequest<{
     components: Array<{ id: number; name: string }>;

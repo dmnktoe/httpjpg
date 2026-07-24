@@ -54,8 +54,7 @@ const components = {
   section: SbSection,
   slideshow: SbSlideshow,
   stats: SbStats,
-  // Legacy alias: old stories may still contain "text" bloks; the schema was
-  // replaced by "paragraph" and no longer exists in storyblok-sync.
+  // legacy alias for old "text" bloks; schema is now "paragraph"
   text: SbParagraph,
   video: SbVideo,
   work: SbPageWork,

@@ -44,16 +44,10 @@ function toNavItem(item: MenuLink): NavItem | null {
   return { name: item.label, href, isExternal };
 }
 
-const FALLBACK_NAVIGATION: NavItem[] = [
-  { name: "Home", href: "/", isExternal: false },
-  { name: "CV", href: "/cv", isExternal: false },
-  { name: "Feed", href: "/work/feed.xml", isExternal: false },
-];
-
 export async function getNavigation(): Promise<NavItem[]> {
   const config = await getConfig();
   if (!config?.header_menu?.length) {
-    return FALLBACK_NAVIGATION;
+    return [];
   }
   return config.header_menu.map(toNavItem).filter((item): item is NavItem => item !== null);
 }

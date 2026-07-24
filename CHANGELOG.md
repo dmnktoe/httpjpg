@@ -9,7 +9,6 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 ### Fixed
 
 - **Storyblok-utils**: `getProcessedImage` no longer leaks the crop mode into the focal filter — a crop like `1200x630/smart` produced an invalid `focal(…:1200x630/smart)` coordinate for any story with a focal point set, silently degrading Open Graph and RSS images. Regression test added.
-- **Portfolio**: the fallback navigation's Feed entry points at `/work/feed.xml` instead of the 404ing `/feed-xml_html`.
 - **Portfolio**: the branded ASCII 404 screen actually renders now. It lived at the `(portfolio)` group boundary, where the `[...slug]` catch-all's own plain `not-found` boundary always shadowed it; the branded screen moved into the catch-all boundary and the shadowed file is gone.
 - **Storyblok-sync**: component and group lookups fail loudly instead of swallowing errors — a transient Management API failure used to make `upsertBlock` re-create (duplicate) every existing component. Group UUIDs are fetched once per run instead of once per group name.
 - **UI**: `formatYear` guards invalid dates (no more `"NaN"`) and uses UTC so date-only strings can't shift a year across timezones; the drifted duplicate in `og-work-meta` now delegates to the shared helper. External projects in the header nav show the external-link icon, matching the websites column.
@@ -23,6 +22,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ### Removed
 
+- **Portfolio**: the guessed fallback navigation (`Home`/`CV`/`Feed`, with a `/feed-xml_html` link that 404ed and a `/cv` link that only resolved if such a story happened to exist). The header menu now mirrors the Storyblok config exactly — when the config story is unpublished or the menu is empty, no menu links render and the header's built-in home link keeps the site navigable.
 - Dead code across the workspace, each confirmed unused by a repo-wide reference audit: the orphaned `@httpjpg/ui` `styles/global` module and subpath, `getAllSlugs` (storyblok-api), `hasMediaConsent` plus the `OPEN_COOKIE_SETTINGS_EVENT` re-export and `./banner` subpath (consent), the `./google`/`./umami` subpath barrels (analytics), the root and `./sentry` barrels (observability), the unregistered `SbCaption` re-export and `FooterConfig` alias (storyblok-ui), `OverlayPatternName`, the phantom `ImagePreview` `height` prop and `useNowPlaying`'s `refetch` (ui/spotify), unused Storybook option arrays, fixtures and the `addon-links` addon, unused Studio option constants, the dead Spotify OAuth callback route, the unused `config.ui` theme block, and the legacy `text` blok registry alias.
 - **Env**: `DISCORD_USER_ID` (the Storyblok config story is the source of truth) and the CI-only `SENTRY_AUTH_TOKEN`/`SENTRY_ORG`/`SENTRY_PROJECT` dropped from the runtime env contract, `turbo.json`, and `.env.example`.
 - **Music player**: the no-op `custom` source removed from the UI type, the CMS schema, and Storybook — it rendered nothing; run `sync:components` to update the space.

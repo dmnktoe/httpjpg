@@ -10,10 +10,12 @@ import { Box } from "../box/box";
 import { Divider, type DividerProps } from "../divider/divider";
 import { VStack } from "../stack/stack";
 import { WorkCard, type WorkCardProps, type WorkCardVariant } from "../work-card/work-card";
+import { compactSpacing } from "./lib";
 import { WorkTagFilter } from "./work-tag-filter";
 
 export interface WorkListProps {
   works: WorkCardProps[];
+  /** Gap from `md` up; below that it is halved so mobile doesn't stretch out. */
   gap?: string | number;
   /** `1` = stacked, anything else switches to grid. Drives the per-card `sizes` hint. */
   columns?: number;
@@ -79,6 +81,12 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
     const isStacked = columns === 1 && !columnsMd && !columnsLg;
     const sizes = sizesFromColumns(columns, columnsMd, columnsLg);
     const listScopeId = `work-list-${useId().replace(/:/g, "")}`;
+    const responsiveGap = { base: compactSpacing(gap), md: gap };
+    const dividerSpacing = dividerProps?.spacing ?? DEFAULT_DIVIDER_SPACING;
+    const responsiveDividerSpacing = {
+      base: compactSpacing(dividerSpacing),
+      md: dividerSpacing,
+    };
 
     const cards = works.map((work, index) => {
       const cardProps: WorkCardProps = {
@@ -93,7 +101,15 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
           <VStack key={work.slug || index} gap={0}>
             <WorkCard {...cardProps} />
             {showDividers && index < works.length - 1 && (
-              <Divider orientation="horizontal" {...dividerProps} />
+              <Divider
+                orientation="horizontal"
+                {...dividerProps}
+                css={{
+                  mt: responsiveDividerSpacing,
+                  mb: responsiveDividerSpacing,
+                  ...dividerProps?.css,
+                }}
+              />
             )}
           </VStack>
         );
@@ -110,7 +126,7 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
         <Box ref={ref} css={cssProp} {...props}>
           {header}
           {filterBar}
-          <VStack data-work-list={listScopeId} gap={gap} align="stretch">
+          <VStack data-work-list={listScopeId} align="stretch" css={{ gap: responsiveGap }}>
             {cards}
           </VStack>
           {footer}
@@ -131,7 +147,7 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
               md: columnsMd ? gridTemplate(columnsMd) : undefined,
               lg: columnsLg ? gridTemplate(columnsLg) : undefined,
             },
-            gap,
+            gap: responsiveGap,
           }}
         >
           {cards}
@@ -141,6 +157,9 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
     );
   },
 );
+
+/** Mirrors the `spacing` default of `<Divider>`. */
+const DEFAULT_DIVIDER_SPACING = "4";
 
 const GRID_TEMPLATES: Record<number, string> = {
   1: "repeat(1, 1fr)",

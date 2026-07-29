@@ -54,7 +54,6 @@ const components = {
   section: SbSection,
   slideshow: SbSlideshow,
   stats: SbStats,
-  text: SbParagraph,
   video: SbVideo,
   work: SbPageWork,
   work_card: SbWorkCard,
@@ -64,16 +63,18 @@ const components = {
 let initialized = false;
 
 // Imported from both server and client entries so the registry exists on both.
-export function initStoryblok() {
+function initStoryblok() {
   if (initialized) {
     return;
   }
-  const registry =
-    process.env.NODE_ENV === "development" ? { ...components, _fallback: SbMissing } : components;
+  const isDev = process.env.NODE_ENV === "development";
   storyblokInit({
     accessToken: env.NEXT_PUBLIC_STORYBLOK_TOKEN,
     use: [apiPlugin],
-    components: registry,
+    components,
+    // v7 wires fallbacks via these options; a `_fallback` registry key is ignored.
+    enableFallbackComponent: isDev,
+    ...(isDev && { customFallbackComponent: SbMissing }),
     apiOptions: { region: "eu" },
     bridge: true,
   });

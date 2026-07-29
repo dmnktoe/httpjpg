@@ -52,11 +52,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 │   │   │   └── storyblok-slugs.ts
 │   │   ├── proxy.ts             # Edge middleware: preview-token validation, CSP, x-pathname
 │   │   └── instrumentation.ts   # Sentry boot for server + edge
-│   ├── storybook/               # Storybook for @httpjpg/ui component dev/docs
-│   └── ios/                     # Native SwiftUI app (own toolchain — see apps/ios/README.md)
-│       ├── Httpjpg/             # App shell (@main, Info.plist, assets)
-│       ├── HttpjpgKit/          # SPM package: DesignSystem, StoryblokContent, PortfolioFeature
-│       └── Config/              # xcconfig build settings (secrets git-ignored)
+│   └── storybook/               # Storybook for @httpjpg/ui component dev/docs
 │
 ├── packages/
 │   ├── analytics/               # Google Analytics gtag wrapper
@@ -86,7 +82,12 @@ When generating or updating code: read neighboring files first, prefer the exist
 
 - **`@httpjpg/portfolio`** — the deployed Next.js site. Owns all routes, app-specific widgets, data-fetching queries, SEO, schema-org, and integrations.
 - **`@httpjpg/storybook`** — Storybook host for documenting and developing `@httpjpg/ui` and `@httpjpg/now-playing` components in isolation. Not deployed.
-- **`apps/ios`** — native SwiftUI reader for the same Storyblok space, built on [`storyblok/storyblok-swift`](https://github.com/storyblok/storyblok-swift). Outside the pnpm/Turbo graph (no `package.json`, Xcode + SwiftPM instead). Its three Swift targets mirror the web layering: `DesignSystem` ↔ `tokens` + `ui`, `StoryblokContent` ↔ the four `storyblok-*` packages, `PortfolioFeature` ↔ `apps/portfolio`. Swift code follows the Swift API Design Guidelines rather than the TypeScript conventions below, but keeps the structural rules: one exported component per file, `Sb`-prefixed blok renderers matching CMS component names 1:1. **When you add or rename a Storyblok blok, update `PortfolioBlok` and `BlokView.swift` too** — see the checklist in `apps/ios/README.md`.
+#### Companion repository
+
+The native iOS app lives in [`dmnktoe/httpjpg-ios`](https://github.com/dmnktoe/httpjpg-ios), not here — it has its own toolchain (Xcode + SwiftPM, no `package.json`) and nothing in this workspace builds or imports it. Two things still cross the boundary, and both are this repo's responsibility to keep intact:
+
+- **Blok schemas.** The app's Swift decoder dispatches on the same component names `packages/storyblok-sync/scripts/blocks/*.ts` pushes. **When you add or rename a blok here, the app needs a matching case** — its CI runs a check against a checkout of this repo and fails when the two drift, so the breakage surfaces there, not here.
+- **Universal links.** `apps/portfolio/app/api/apple-app-site-association/route.ts` authorises the app to open `httpjpg.com` links. It is built from `APPLE_TEAM_ID` plus `config.ios.bundleId`; changing the app's bundle id means changing it here too, and nothing will warn you — the links just quietly start opening in Safari.
 
 #### Foundations (no workspace deps)
 

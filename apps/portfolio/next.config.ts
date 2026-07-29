@@ -81,16 +81,11 @@ export default async (): Promise<NextConfig> => {
       return [
         { source: "/draft", destination: "/api/draft" },
         { source: "/exit-draft", destination: "/api/exit-draft" },
-      ];
-    },
-
-    async headers() {
-      return [
+        // Apple insists on this exact path; the handler builds the file from
+        // APPLE_TEAM_ID so the team id never gets hardcoded into the repo.
         {
-          // Apple fetches this without an extension and expects JSON — the
-          // static file itself lives in public/.well-known/.
           source: "/.well-known/apple-app-site-association",
-          headers: [{ key: "Content-Type", value: "application/json" }],
+          destination: "/api/apple-app-site-association",
         },
       ];
     },

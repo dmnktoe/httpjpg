@@ -15,7 +15,8 @@ export function getProcessedImage(imageSrc = "", crop = "", focus = "", filters 
     return imageSrc;
   }
 
-  const [width, height] = crop.split("x");
+  const [cropSize] = crop.split("/");
+  const [width, height] = cropSize.split("x");
 
   let params = "/m";
   let imageFilters = "/filters:quality(75)";

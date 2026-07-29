@@ -5,7 +5,6 @@ export interface AppConfig {
     defaultTheme: "light" | "dark";
   };
   ios: {
-    /** Bundle id of the companion app in dmnktoe/httpjpg-ios. */
     bundleId: string;
   };
 }

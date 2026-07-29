@@ -49,11 +49,6 @@ export const env = createEnv({
     WEATHER_LATITUDE: z.coerce.number().default(51.3127),
     WEATHER_LONGITUDE: z.coerce.number().default(9.4797),
 
-    // Apple Developer team id, used to build the app id the AASA file claims.
-    // Not a secret — it is served publicly in that very file — but it is
-    // deployment config, and hardcoding it would make every fork claim this
-    // app. Optional: without it the AASA route 404s rather than publishing an
-    // association nobody can satisfy.
     APPLE_TEAM_ID: z
       .string()
       .regex(/^[A-Z0-9]{10}$/, "APPLE_TEAM_ID must be the 10-character Apple team id")

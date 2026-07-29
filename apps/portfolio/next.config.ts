@@ -81,8 +81,6 @@ export default async (): Promise<NextConfig> => {
       return [
         { source: "/draft", destination: "/api/draft" },
         { source: "/exit-draft", destination: "/api/exit-draft" },
-        // Apple insists on this exact path; the handler builds the file from
-        // APPLE_TEAM_ID so the team id never gets hardcoded into the repo.
         {
           source: "/.well-known/apple-app-site-association",
           destination: "/api/apple-app-site-association",

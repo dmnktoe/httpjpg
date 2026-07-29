@@ -38,7 +38,7 @@ export function MobileMenuWorkSection({
                 variant={variant}
                 href={href}
                 isExternal={work.isExternal}
-                showExternalIcon={variant === "websites" && work.isExternal}
+                showExternalIcon={work.isExternal}
                 onClick={onItemClick}
                 data-preview-image={work.imageUrl}
                 css={{

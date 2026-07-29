@@ -84,6 +84,17 @@ export default async (): Promise<NextConfig> => {
       ];
     },
 
+    async headers() {
+      return [
+        {
+          // Apple fetches this without an extension and expects JSON — the
+          // static file itself lives in public/.well-known/.
+          source: "/.well-known/apple-app-site-association",
+          headers: [{ key: "Content-Type", value: "application/json" }],
+        },
+      ];
+    },
+
     turbopack: {
       resolveAlias: {
         "styled-system": "../../packages/ui/styled-system",

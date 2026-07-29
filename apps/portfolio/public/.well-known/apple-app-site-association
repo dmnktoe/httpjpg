@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID.com.httpjpg.portfolio"],
+        "components": [
+          { "/": "/work/*", "comment": "Work stories open in the iOS app" },
+          { "/": "/*", "exclude": true, "comment": "Everything else stays in the browser until the app handles more" }
+        ]
+      }
+    ]
+  }
+}

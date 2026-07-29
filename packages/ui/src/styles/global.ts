@@ -21,8 +21,15 @@ export const globalStyles = `
   }
 
   ::selection {
-    background-color: var(--colors-primary-200);
-    color: var(--colors-neutral-900);
+    background-color: var(--colors-accent-300);
+    color: var(--colors-black);
+    text-shadow: none;
+  }
+
+  ::-moz-selection {
+    background-color: var(--colors-accent-300);
+    color: var(--colors-black);
+    text-shadow: none;
   }
 `;
 

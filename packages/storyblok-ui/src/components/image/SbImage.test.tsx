@@ -10,6 +10,24 @@ describe("SbImage", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it("renders no caption for an empty richtext document", () => {
+    const { container } = render(
+      <SbImage
+        blok={
+          {
+            _uid: "5",
+            component: "image",
+            image: { filename, alt: "A photo" },
+            caption: { type: "doc", content: [] },
+            overlay: "none",
+          } as never
+        }
+      />,
+    );
+    expect(screen.getByRole("img", { name: "A photo" })).toBeInTheDocument();
+    expect(container.textContent).toBe("");
+  });
+
   it("renders an img with resolved alt text", () => {
     render(
       <SbImage

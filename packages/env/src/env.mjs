@@ -49,11 +49,6 @@ export const env = createEnv({
     WEATHER_LATITUDE: z.coerce.number().default(51.3127),
     WEATHER_LONGITUDE: z.coerce.number().default(9.4797),
 
-    APPLE_TEAM_ID: z
-      .string()
-      .regex(/^[A-Z0-9]{10}$/, "APPLE_TEAM_ID must be the 10-character Apple team id")
-      .optional(),
-
     ARCJET_KEY: z.string().optional(),
 
     CODECOV_TOKEN: z.string().optional(),
@@ -103,8 +98,6 @@ export const env = createEnv({
 
     WEATHER_LATITUDE: process.env.WEATHER_LATITUDE,
     WEATHER_LONGITUDE: process.env.WEATHER_LONGITUDE,
-
-    APPLE_TEAM_ID: process.env.APPLE_TEAM_ID,
 
     ARCJET_KEY: process.env.ARCJET_KEY,
 

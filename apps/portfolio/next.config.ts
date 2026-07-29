@@ -81,10 +81,6 @@ export default async (): Promise<NextConfig> => {
       return [
         { source: "/draft", destination: "/api/draft" },
         { source: "/exit-draft", destination: "/api/exit-draft" },
-        {
-          source: "/.well-known/apple-app-site-association",
-          destination: "/api/apple-app-site-association",
-        },
       ];
     },
 

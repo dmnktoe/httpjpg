@@ -82,12 +82,10 @@ When generating or updating code: read neighboring files first, prefer the exist
 
 - **`@httpjpg/portfolio`** — the deployed Next.js site. Owns all routes, app-specific widgets, data-fetching queries, SEO, schema-org, and integrations.
 - **`@httpjpg/storybook`** — Storybook host for documenting and developing `@httpjpg/ui` and `@httpjpg/now-playing` components in isolation. Not deployed.
+
 #### Companion repository
 
-The native iOS app lives in [`dmnktoe/httpjpg-ios`](https://github.com/dmnktoe/httpjpg-ios), not here — it has its own toolchain (Xcode + SwiftPM, no `package.json`) and nothing in this workspace builds or imports it. Two things still cross the boundary, and both are this repo's responsibility to keep intact:
-
-- **Blok schemas.** The app's Swift decoder dispatches on the same component names `packages/storyblok-sync/scripts/blocks/*.ts` pushes. **When you add or rename a blok here, the app needs a matching case** — its CI runs a check against a checkout of this repo and fails when the two drift, so the breakage surfaces there, not here.
-- **Universal links.** `apps/portfolio/app/api/apple-app-site-association/route.ts` authorises the app to open `httpjpg.com` links. It is built from `APPLE_TEAM_ID` plus `config.ios.bundleId`; changing the app's bundle id means changing it here too, and nothing will warn you — the links just quietly start opening in Safari.
+The native iOS app lives in [`dmnktoe/httpjpg-ios`](https://github.com/dmnktoe/httpjpg-ios), not here — it has its own toolchain (Xcode + SwiftPM, no `package.json`), and nothing in this workspace builds, imports or serves anything for it. One thing still crosses the boundary: the app's Swift decoder dispatches on the same component names `packages/storyblok-sync/scripts/blocks/*.ts` pushes. **When you add or rename a blok here, the app needs a matching case** — its CI runs a check against a checkout of this repo and fails when the two drift, so the breakage surfaces there, not here.
 
 #### Foundations (no workspace deps)
 

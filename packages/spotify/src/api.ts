@@ -10,6 +10,15 @@ export class SpotifyForbiddenError extends Error {
   }
 }
 
+export class SpotifyUnauthorizedError extends Error {
+  readonly status = 401;
+
+  constructor(message = "Spotify access token was rejected") {
+    super(message);
+    this.name = "SpotifyUnauthorizedError";
+  }
+}
+
 interface SpotifyTokenResponse {
   access_token: string;
   token_type: string;
@@ -26,11 +35,62 @@ interface SpotifyTrack {
   trackUrl?: string;
 }
 
+const TOKEN_EXPIRY_MARGIN_MS = 60_000;
+
+interface CachedAccessToken {
+  key: string;
+  value: string;
+  expiresAt: number;
+}
+
+let cachedToken: CachedAccessToken | null = null;
+let pendingToken: { key: string; promise: Promise<string> } | null = null;
+
+export function clearAccessTokenCache(): void {
+  cachedToken = null;
+  pendingToken = null;
+}
+
 export async function getAccessToken(
   clientId: string,
   clientSecret: string,
   refreshToken: string,
 ): Promise<string> {
+  const key = `${clientId}:${refreshToken}`;
+
+  if (cachedToken?.key === key && Date.now() < cachedToken.expiresAt) {
+    return cachedToken.value;
+  }
+  if (pendingToken?.key === key) {
+    return pendingToken.promise;
+  }
+
+  const promise = requestAccessToken(clientId, clientSecret, refreshToken)
+    .then((data) => {
+      if (Number.isFinite(data.expires_in)) {
+        cachedToken = {
+          key,
+          value: data.access_token,
+          expiresAt: Date.now() + data.expires_in * 1000 - TOKEN_EXPIRY_MARGIN_MS,
+        };
+      }
+      return data.access_token;
+    })
+    .finally(() => {
+      if (pendingToken?.promise === promise) {
+        pendingToken = null;
+      }
+    });
+
+  pendingToken = { key, promise };
+  return promise;
+}
+
+async function requestAccessToken(
+  clientId: string,
+  clientSecret: string,
+  refreshToken: string,
+): Promise<SpotifyTokenResponse> {
   const basic = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
   const response = await fetch(SPOTIFY_TOKEN_URL, {
@@ -49,8 +109,7 @@ export async function getAccessToken(
     throw new Error(`Failed to get access token: ${response.statusText}`);
   }
 
-  const data: SpotifyTokenResponse = await response.json();
-  return data.access_token;
+  return response.json();
 }
 
 export async function getCurrentlyPlaying(accessToken: string): Promise<SpotifyTrack | null> {
@@ -62,6 +121,10 @@ export async function getCurrentlyPlaying(accessToken: string): Promise<SpotifyT
 
   if (response.status === 204 || response.status === 404) {
     return null;
+  }
+
+  if (response.status === 401) {
+    throw new SpotifyUnauthorizedError();
   }
 
   if (response.status === 403) {

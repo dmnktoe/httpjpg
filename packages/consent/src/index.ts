@@ -2,15 +2,7 @@ export { ConsentPlaceholder } from "./components/consent-placeholder";
 export { CookieBanner } from "./components/cookie-banner";
 export { CookieCenter } from "./components/cookie-center";
 export { VendorList } from "./components/vendor-list";
-export {
-  clearConsent,
-  getConsent,
-  hasConsent,
-  hasMediaConsent,
-  hasVendorConsent,
-  setConsent,
-} from "./consent";
-export { OPEN_COOKIE_SETTINGS_EVENT } from "@httpjpg/ui";
+export { clearConsent, getConsent, hasConsent, hasVendorConsent, setConsent } from "./consent";
 export { CONSENT_CHANGE_EVENT } from "./events";
 export type { ConsentCategory, ConsentState, ExternalVendor, VendorInfo } from "./types";
 export {

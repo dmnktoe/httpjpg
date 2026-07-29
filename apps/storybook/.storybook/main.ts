@@ -14,7 +14,7 @@ const consentPackagePath = path.resolve(rootPath, "packages/consent");
 
 const config: StorybookConfig = {
   stories: ["../stories/**/*.mdx", "../stories/**/*.stories.@(ts|tsx)"],
-  addons: ["@storybook/addon-docs", "@storybook/addon-links"],
+  addons: ["@storybook/addon-docs"],
   framework: {
     name: "@storybook/react-vite",
     options: {},
@@ -33,10 +33,6 @@ const config: StorybookConfig = {
           "@httpjpg/ui": path.resolve(uiPackagePath, "src"),
           "@httpjpg/tokens/dist/tokens.css": path.resolve(tokensPackagePath, "dist/tokens.css"),
           "@httpjpg/tokens": path.resolve(tokensPackagePath, "src"),
-          "@httpjpg/consent/banner": path.resolve(
-            consentPackagePath,
-            "src/components/cookie-banner.tsx",
-          ),
           "@httpjpg/consent": path.resolve(consentPackagePath, "src"),
           "styled-system": path.resolve(uiPackagePath, "styled-system"),
           // Mock Next.js Link for Storybook

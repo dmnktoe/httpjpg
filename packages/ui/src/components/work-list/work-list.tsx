@@ -15,7 +15,6 @@ import { WorkTagFilter } from "./work-tag-filter";
 
 export interface WorkListProps {
   works: WorkCardProps[];
-  /** Gap from `md` up; below that it is halved so mobile doesn't stretch out. */
   gap?: string | number;
   /** `1` = stacked, anything else switches to grid. Drives the per-card `sizes` hint. */
   columns?: number;
@@ -158,7 +157,6 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
   },
 );
 
-/** Mirrors the `spacing` default of `<Divider>`. */
 const DEFAULT_DIVIDER_SPACING = "4";
 
 const GRID_TEMPLATES: Record<number, string> = {

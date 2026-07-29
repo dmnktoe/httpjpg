@@ -47,11 +47,9 @@ describe("fetchComponentIds", () => {
     expect(ids.size).toBe(0);
   });
 
-  it("returns an empty map when the request fails", async () => {
+  it("fails loudly when the request fails so upsert can't create duplicates", async () => {
     mockRequest.mockRejectedValueOnce(new Error("boom"));
 
-    const ids = await fetchComponentIds();
-
-    expect(ids.size).toBe(0);
+    await expect(fetchComponentIds()).rejects.toThrow("boom");
   });
 });

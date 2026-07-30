@@ -62,8 +62,6 @@ export async function OPTIONS() {
   });
 }
 
-// A cached access token can be revoked before its nominal expiry; on a 401,
-// drop the cache and retry once with a freshly minted token.
 async function fetchNowPlayingWithRetry() {
   const accessToken = await getSpotifyAccessToken();
   try {

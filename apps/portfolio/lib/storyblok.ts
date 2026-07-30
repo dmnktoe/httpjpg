@@ -72,7 +72,6 @@ function initStoryblok() {
     accessToken: env.NEXT_PUBLIC_STORYBLOK_TOKEN,
     use: [apiPlugin],
     components,
-    // v7 wires fallbacks via these options; a `_fallback` registry key is ignored.
     enableFallbackComponent: isDev,
     ...(isDev && { customFallbackComponent: SbMissing }),
     apiOptions: { region: "eu" },

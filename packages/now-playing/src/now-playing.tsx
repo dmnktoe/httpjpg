@@ -35,8 +35,6 @@ export function NowPlaying({
   const nodeRef = useRef<HTMLDivElement>(null);
 
   const [extractedColor, setExtractedColor] = useState<ExtractedColor | null>(null);
-  // Ref, not state: a state write here would re-trigger the effect and its
-  // cleanup would cancel the in-flight extraction before it ever resolves.
   const lastArtworkRef = useRef<string>("");
   const [isExtracting, setIsExtracting] = useState(false);
 

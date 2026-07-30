@@ -11,9 +11,6 @@ interface ResolvedUserId {
   configUnavailable: boolean;
 }
 
-// Distinguishes "config story has no usable id" from "config story could not
-// be loaded at all" so the error response doesn't blame the CMS content for
-// an API failure.
 async function resolveUserId(): Promise<ResolvedUserId> {
   try {
     const story = await getStoryblokApi().getStory({ slug: "config" });

@@ -39,8 +39,6 @@ async function fetchGroupUuids(): Promise<Map<string, string>> {
 async function getGroupUuid(name: string): Promise<string | undefined> {
   if (!groupsPromise) {
     groupsPromise = fetchGroupUuids();
-    // A rejected promise must not be cached, or every later call fails
-    // without ever retrying the request.
     groupsPromise.catch(() => {
       groupsPromise = undefined;
     });

@@ -15,7 +15,7 @@ import { WorkTagFilter } from "./work-tag-filter";
 
 export interface WorkListProps {
   works: WorkCardProps[];
-  gap?: string | number;
+  gap?: string | number | ResponsiveSpacing;
   /** `1` = stacked, anything else switches to grid. Drives the per-card `sizes` hint. */
   columns?: number;
   columnsMd?: number;
@@ -24,7 +24,8 @@ export interface WorkListProps {
   variant?: WorkCardVariant;
   /** Honored only in stacked mode. */
   showDividers?: boolean;
-  dividerProps?: Omit<DividerProps, "orientation">;
+  dividerSpacing?: string | number | ResponsiveSpacing;
+  dividerProps?: Omit<DividerProps, "orientation" | "spacing">;
   showTagFilter?: boolean;
   header?: ReactNode;
   footer?: ReactNode;
@@ -54,6 +55,7 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
       columnsLg,
       variant,
       showDividers = false,
+      dividerSpacing = DEFAULT_DIVIDER_SPACING,
       dividerProps,
       showTagFilter = false,
       header,
@@ -80,12 +82,8 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
     const isStacked = columns === 1 && !columnsMd && !columnsLg;
     const sizes = sizesFromColumns(columns, columnsMd, columnsLg);
     const listScopeId = `work-list-${useId().replace(/:/g, "")}`;
-    const responsiveGap = { base: compactSpacing(gap), md: gap };
-    const dividerSpacing = dividerProps?.spacing ?? DEFAULT_DIVIDER_SPACING;
-    const responsiveDividerSpacing = {
-      base: compactSpacing(dividerSpacing),
-      md: dividerSpacing,
-    };
+    const responsiveGap = spacingRhythm(gap);
+    const responsiveDividerSpacing = spacingRhythm(dividerSpacing);
 
     const cards = works.map((work, index) => {
       const cardProps: WorkCardProps = {
@@ -170,6 +168,23 @@ const GRID_TEMPLATES: Record<number, string> = {
 
 function gridTemplate(n: number): string {
   return GRID_TEMPLATES[n] ?? GRID_TEMPLATES[1];
+}
+
+function spacingRhythm(value: string | number | ResponsiveSpacing): ResponsiveSpacing {
+  if (typeof value !== "object") {
+    return { base: compactSpacing(value), md: value };
+  }
+  if (value.base !== undefined) {
+    return value;
+  }
+  const authored = value.md ?? value.lg;
+  return authored === undefined ? value : { ...value, base: compactSpacing(authored) };
+}
+
+export interface ResponsiveSpacing {
+  base?: string | number;
+  md?: string | number;
+  lg?: string | number;
 }
 
 WorkList.displayName = "WorkList";

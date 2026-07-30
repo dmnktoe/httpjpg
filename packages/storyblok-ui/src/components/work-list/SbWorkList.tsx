@@ -4,7 +4,7 @@ import type { SbWorkListData } from "@httpjpg/storyblok-utils";
 import { WorkList } from "@httpjpg/ui";
 import { memo, useEffect, useRef, useState } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, responsive, spacingCss } from "../../lib/use-blok";
 import { parseCols, resolveStories, toWorkCardProps, type WorkStory } from "./lib";
 
 export interface SbWorkListProps {
@@ -32,20 +32,20 @@ export const SbWorkList = memo(function SbWorkList({ blok }: SbWorkListProps) {
     <WorkList
       {...editableAttrs(blok)}
       works={stories.map(toWorkCardProps)}
-      gap={blok.gap}
+      gap={responsive(blok.gap, blok.gapMd, blok.gapLg)}
       columns={columns}
       columnsMd={columnsMd}
       columnsLg={columnsLg}
       variant={blok.variant}
       showDividers={blok.showDividers}
       showTagFilter={blok.enableTagFilter}
+      dividerSpacing={responsive(blok.dividerSpacing, blok.dividerSpacingMd, blok.dividerSpacingLg)}
       dividerProps={
         blok.showDividers
           ? {
               variant: blok.dividerVariant,
               pattern: blok.dividerPattern,
               color: blok.dividerColor,
-              spacing: blok.dividerSpacing,
             }
           : undefined
       }

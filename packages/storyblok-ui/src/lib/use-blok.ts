@@ -7,7 +7,11 @@ export type { BlokSpacing };
 const AXES = ["mt", "mb", "ml", "mr", "pt", "pb", "pl", "pr"] as const;
 type Axis = (typeof AXES)[number];
 
-function responsive(base: string | undefined, md: string | undefined, lg: string | undefined) {
+export function responsive(
+  base: string | undefined,
+  md: string | undefined,
+  lg: string | undefined,
+) {
   if (!base && !md && !lg) {
     return undefined;
   }

@@ -246,6 +246,8 @@ export const contentBlocks: BlockDef[] = [
     schema: withSpacing({
       work: field.stories("Work Items", "work/"),
       gap: field.datasource("Item Gap", "spacing-options"),
+      gapMd: field.datasource("Item Gap (Tablet)", "spacing-options"),
+      gapLg: field.datasource("Item Gap (Desktop)", "spacing-options"),
       ...tabbed("Layout", "layout", {
         columns: field.options(
           "Columns",
@@ -300,6 +302,8 @@ export const contentBlocks: BlockDef[] = [
         }),
         dividerColor: field.datasource("Divider Color", "color-options"),
         dividerSpacing: field.datasource("Divider Spacing", "spacing-options"),
+        dividerSpacingMd: field.datasource("Divider Spacing (Tablet)", "spacing-options"),
+        dividerSpacingLg: field.datasource("Divider Spacing (Desktop)", "spacing-options"),
       }),
     }),
   },

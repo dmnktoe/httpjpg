@@ -230,10 +230,10 @@ export const WithSolidDividers: Story = {
     works: sampleWorks,
     gap: 16,
     showDividers: true,
+    dividerSpacing: 12,
     dividerProps: {
       variant: "solid",
       color: "neutral.300",
-      spacing: 12,
     },
   },
 };
@@ -246,11 +246,11 @@ export const WithDashedDividers: Story = {
     works: sampleWorks,
     gap: 16,
     showDividers: true,
+    dividerSpacing: 12,
     dividerProps: {
       variant: "dashed",
       color: "neutral.400",
       thickness: "2px",
-      spacing: 12,
     },
   },
 };
@@ -263,11 +263,11 @@ export const WithASCIIDividers: Story = {
     works: sampleWorks,
     gap: 16,
     showDividers: true,
+    dividerSpacing: 12,
     dividerProps: {
       variant: "ascii",
       pattern: "*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚",
       color: "neutral.500",
-      spacing: 12,
     },
   },
 };
@@ -289,11 +289,11 @@ export const WithCustomPattern: Story = {
     works: sampleWorks.slice(0, 3),
     gap: 16,
     showDividers: true,
+    dividerSpacing: 16,
     dividerProps: {
       variant: "ascii",
       pattern: "· · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·",
       color: "neutral.600",
-      spacing: 16,
     },
   },
 };

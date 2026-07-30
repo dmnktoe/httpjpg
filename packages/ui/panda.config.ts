@@ -174,6 +174,8 @@ export default defineConfig({
     "input, button, textarea, select": { font: "inherit" },
     "p, h1, h2, h3, h4, h5, h6": { overflowWrap: "break-word" },
     "header a, header button": { pointerEvents: "auto" },
+    "::selection": { bg: "accent.300", color: "black", textShadow: "none" },
+    "::-moz-selection": { bg: "accent.300", color: "black", textShadow: "none" },
   },
 
   theme: {

@@ -38,17 +38,16 @@ interface SpotifyTrack {
 const TOKEN_EXPIRY_MARGIN_MS = 60_000;
 
 interface CachedAccessToken {
-  key: string;
   value: string;
   expiresAt: number;
 }
 
-let cachedToken: CachedAccessToken | null = null;
-let pendingToken: { key: string; promise: Promise<string> } | null = null;
+const cachedTokens = new Map<string, CachedAccessToken>();
+const pendingTokens = new Map<string, Promise<string>>();
 
 export function clearAccessTokenCache(): void {
-  cachedToken = null;
-  pendingToken = null;
+  cachedTokens.clear();
+  pendingTokens.clear();
 }
 
 export async function getAccessToken(
@@ -58,31 +57,30 @@ export async function getAccessToken(
 ): Promise<string> {
   const key = `${clientId}:${refreshToken}`;
 
-  if (cachedToken?.key === key && Date.now() < cachedToken.expiresAt) {
-    return cachedToken.value;
+  const cached = cachedTokens.get(key);
+  if (cached && Date.now() < cached.expiresAt) {
+    return cached.value;
   }
-  if (pendingToken?.key === key) {
-    return pendingToken.promise;
+  const pending = pendingTokens.get(key);
+  if (pending) {
+    return pending;
   }
 
   const promise = requestAccessToken(clientId, clientSecret, refreshToken)
     .then((data) => {
       if (Number.isFinite(data.expires_in)) {
-        cachedToken = {
-          key,
+        cachedTokens.set(key, {
           value: data.access_token,
           expiresAt: Date.now() + data.expires_in * 1000 - TOKEN_EXPIRY_MARGIN_MS,
-        };
+        });
       }
       return data.access_token;
     })
     .finally(() => {
-      if (pendingToken?.promise === promise) {
-        pendingToken = null;
-      }
+      pendingTokens.delete(key);
     });
 
-  pendingToken = { key, promise };
+  pendingTokens.set(key, promise);
   return promise;
 }
 

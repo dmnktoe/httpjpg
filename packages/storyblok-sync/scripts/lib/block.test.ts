@@ -39,12 +39,10 @@ describe("fetchComponentIds", () => {
     expect(mockRequest).toHaveBeenCalledWith("/components");
   });
 
-  it("returns an empty map when the response has no components", async () => {
+  it("rejects a malformed response instead of treating it as empty", async () => {
     mockRequest.mockResolvedValueOnce({});
 
-    const ids = await fetchComponentIds();
-
-    expect(ids.size).toBe(0);
+    await expect(fetchComponentIds()).rejects.toThrow("Malformed /components response");
   });
 
   it("fails loudly when the request fails so upsert can't create duplicates", async () => {

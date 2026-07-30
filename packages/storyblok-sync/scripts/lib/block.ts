@@ -18,17 +18,33 @@ export async function fetchComponentIds(): Promise<Map<string, number>> {
   const response = await storyblokRequest<{
     components: Array<{ id: number; name: string }>;
   }>("/components");
-  return new Map((response.components ?? []).map((c) => [c.name, c.id]));
+  if (!Array.isArray(response.components)) {
+    throw new Error("Malformed /components response: expected a components array");
+  }
+  return new Map(response.components.map((c) => [c.name, c.id]));
 }
 
 let groupsPromise: Promise<Map<string, string>> | undefined;
 
-async function getGroupUuid(name: string): Promise<string | undefined> {
-  groupsPromise ??= storyblokRequest<{
+async function fetchGroupUuids(): Promise<Map<string, string>> {
+  const response = await storyblokRequest<{
     component_groups: Array<{ uuid: string; name: string }>;
-  }>("/component_groups").then(
-    (response) => new Map((response.component_groups ?? []).map((g) => [g.name, g.uuid])),
-  );
+  }>("/component_groups");
+  if (!Array.isArray(response.component_groups)) {
+    throw new Error("Malformed /component_groups response: expected a component_groups array");
+  }
+  return new Map(response.component_groups.map((g) => [g.name, g.uuid]));
+}
+
+async function getGroupUuid(name: string): Promise<string | undefined> {
+  if (!groupsPromise) {
+    groupsPromise = fetchGroupUuids();
+    // A rejected promise must not be cached, or every later call fails
+    // without ever retrying the request.
+    groupsPromise.catch(() => {
+      groupsPromise = undefined;
+    });
+  }
   return (await groupsPromise).get(name);
 }
 

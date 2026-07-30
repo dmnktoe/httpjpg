@@ -1,21 +1,39 @@
-import { spacing } from "@httpjpg/tokens";
+const DIVIDER_ATTR = "data-work-divider";
 
-export function compactSpacing(value: string | number): string | number {
-  const step = Number(value);
-  if (!Number.isFinite(step) || !SPACING_STEPS.includes(step)) {
-    return value;
-  }
+export function applyTagFilter(scope: Element, active: string | null): void {
+  const nodes = [...scope.querySelectorAll<HTMLElement>(`[data-tags], [${DIVIDER_ATTR}]`)];
+  const isVisible = nodes.map((node) => {
+    if (isDivider(node)) {
+      return false;
+    }
+    const tags = (node.dataset.tags || "").split(",").map((tag) => tag.trim());
+    return !active || tags.includes(active);
+  });
 
-  const halved = step / 2;
-  let snapped = SPACING_STEPS[0];
-  for (const candidate of SPACING_STEPS) {
-    if (candidate <= halved) {
-      snapped = candidate;
+  let previousCardVisible = false;
+  const showsDivider = nodes.map((node, index) => {
+    if (!isDivider(node)) {
+      previousCardVisible = isVisible[index];
+      return false;
+    }
+    return previousCardVisible;
+  });
+
+  let laterCardVisible = false;
+  for (let index = nodes.length - 1; index >= 0; index--) {
+    if (isDivider(nodes[index])) {
+      showsDivider[index] = showsDivider[index] && laterCardVisible;
+    } else if (isVisible[index]) {
+      laterCardVisible = true;
     }
   }
-  return snapped;
+
+  nodes.forEach((node, index) => {
+    const visible = isDivider(node) ? showsDivider[index] : isVisible[index];
+    node.style.display = visible ? "" : "none";
+  });
 }
 
-const SPACING_STEPS = Object.keys(spacing)
-  .map(Number)
-  .sort((a, b) => a - b);
+function isDivider(node: HTMLElement): boolean {
+  return node.hasAttribute(DIVIDER_ATTR);
+}

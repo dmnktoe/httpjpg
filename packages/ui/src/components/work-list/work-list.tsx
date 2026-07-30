@@ -10,7 +10,6 @@ import { Box } from "../box/box";
 import { Divider, type DividerProps } from "../divider/divider";
 import { VStack } from "../stack/stack";
 import { WorkCard, type WorkCardProps, type WorkCardVariant } from "../work-card/work-card";
-import { compactSpacing } from "./lib";
 import { WorkTagFilter } from "./work-tag-filter";
 
 export interface WorkListProps {
@@ -23,8 +22,8 @@ export interface WorkListProps {
   /** Per-card variant unless the card sets its own. */
   variant?: WorkCardVariant;
   /** Honored only in stacked mode. */
+  /** Applies on both sides of a divider, so stacked items sit `2 × gap` apart. */
   showDividers?: boolean;
-  dividerSpacing?: string | number | ResponsiveSpacing;
   dividerProps?: Omit<DividerProps, "orientation" | "spacing">;
   showTagFilter?: boolean;
   header?: ReactNode;
@@ -55,7 +54,6 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
       columnsLg,
       variant,
       showDividers = false,
-      dividerSpacing = DEFAULT_DIVIDER_SPACING,
       dividerProps,
       showTagFilter = false,
       header,
@@ -82,36 +80,31 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
     const isStacked = columns === 1 && !columnsMd && !columnsLg;
     const sizes = sizesFromColumns(columns, columnsMd, columnsLg);
     const listScopeId = `work-list-${useId().replace(/:/g, "")}`;
-    const responsiveGap = spacingRhythm(gap);
-    const responsiveDividerSpacing = spacingRhythm(dividerSpacing);
+    const cards = works.flatMap((work, index) => {
+      const key = work.slug || index;
+      const card = (
+        <WorkCard
+          key={key}
+          {...work}
+          variant={work.variant ?? variant}
+          priority={work.priority ?? index === 0}
+          sizes={work.sizes ?? sizes}
+        />
+      );
 
-    const cards = works.map((work, index) => {
-      const cardProps: WorkCardProps = {
-        ...work,
-        variant: work.variant ?? variant,
-        priority: work.priority ?? index === 0,
-        sizes: work.sizes ?? sizes,
-      };
-
-      if (isStacked) {
-        return (
-          <VStack key={work.slug || index} gap={0}>
-            <WorkCard {...cardProps} />
-            {showDividers && index < works.length - 1 && (
-              <Divider
-                orientation="horizontal"
-                {...dividerProps}
-                css={{
-                  mt: responsiveDividerSpacing,
-                  mb: responsiveDividerSpacing,
-                  ...dividerProps?.css,
-                }}
-              />
-            )}
-          </VStack>
-        );
+      if (!isStacked || !showDividers || index === works.length - 1) {
+        return [card];
       }
-      return <WorkCard key={work.slug || index} {...cardProps} />;
+      return [
+        card,
+        <Divider
+          key={`divider-${key}`}
+          data-work-divider=""
+          orientation="horizontal"
+          spacing={0}
+          {...dividerProps}
+        />,
+      ];
     });
 
     const filterBar = showTagFilter ? (
@@ -123,7 +116,7 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
         <Box ref={ref} css={cssProp} {...props}>
           {header}
           {filterBar}
-          <VStack data-work-list={listScopeId} align="stretch" css={{ gap: responsiveGap }}>
+          <VStack data-work-list={listScopeId} align="stretch" css={{ gap }}>
             {cards}
           </VStack>
           {footer}
@@ -144,7 +137,7 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
               md: columnsMd ? gridTemplate(columnsMd) : undefined,
               lg: columnsLg ? gridTemplate(columnsLg) : undefined,
             },
-            gap: responsiveGap,
+            gap,
           }}
         >
           {cards}
@@ -154,8 +147,6 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
     );
   },
 );
-
-const DEFAULT_DIVIDER_SPACING = "4";
 
 const GRID_TEMPLATES: Record<number, string> = {
   1: "repeat(1, 1fr)",
@@ -168,17 +159,6 @@ const GRID_TEMPLATES: Record<number, string> = {
 
 function gridTemplate(n: number): string {
   return GRID_TEMPLATES[n] ?? GRID_TEMPLATES[1];
-}
-
-function spacingRhythm(value: string | number | ResponsiveSpacing): ResponsiveSpacing {
-  if (typeof value !== "object") {
-    return { base: compactSpacing(value), md: value };
-  }
-  if (value.base !== undefined) {
-    return value;
-  }
-  const authored = value.md ?? value.lg;
-  return authored === undefined ? value : { ...value, base: compactSpacing(authored) };
 }
 
 export interface ResponsiveSpacing {

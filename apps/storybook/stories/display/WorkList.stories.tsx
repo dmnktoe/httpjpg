@@ -230,7 +230,6 @@ export const WithSolidDividers: Story = {
     works: sampleWorks,
     gap: 16,
     showDividers: true,
-    dividerSpacing: 12,
     dividerProps: {
       variant: "solid",
       color: "neutral.300",
@@ -246,7 +245,6 @@ export const WithDashedDividers: Story = {
     works: sampleWorks,
     gap: 16,
     showDividers: true,
-    dividerSpacing: 12,
     dividerProps: {
       variant: "dashed",
       color: "neutral.400",
@@ -263,7 +261,6 @@ export const WithASCIIDividers: Story = {
     works: sampleWorks,
     gap: 16,
     showDividers: true,
-    dividerSpacing: 12,
     dividerProps: {
       variant: "ascii",
       pattern: "*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚",
@@ -289,7 +286,6 @@ export const WithCustomPattern: Story = {
     works: sampleWorks.slice(0, 3),
     gap: 16,
     showDividers: true,
-    dividerSpacing: 16,
     dividerProps: {
       variant: "ascii",
       pattern: "· · · · · · · · · · · · · · · · · · · · · · · · · · · · · ·",

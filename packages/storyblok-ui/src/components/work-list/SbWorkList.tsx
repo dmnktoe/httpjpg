@@ -39,7 +39,6 @@ export const SbWorkList = memo(function SbWorkList({ blok }: SbWorkListProps) {
       variant={blok.variant}
       showDividers={blok.showDividers}
       showTagFilter={blok.enableTagFilter}
-      dividerSpacing={responsive(blok.dividerSpacing, blok.dividerSpacingMd, blok.dividerSpacingLg)}
       dividerProps={
         blok.showDividers
           ? {

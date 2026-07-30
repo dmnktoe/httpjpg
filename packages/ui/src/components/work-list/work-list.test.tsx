@@ -60,34 +60,34 @@ describe("WorkList", () => {
       return container.querySelector("[data-work-list]")?.className ?? "";
     }
 
-    it("compacts a single gap value for mobile and keeps it from md up", () => {
+    it("applies a single gap value at every breakpoint", () => {
       const classes = listClasses(<WorkList works={works} gap={24} />);
-      expect(classes).toContain("gap_12");
-      expect(classes).toContain("md:gap_24");
+      expect(classes).toContain("gap_24");
+      expect(classes).not.toContain("md:gap_");
     });
 
-    it("uses an authored breakpoint cascade verbatim", () => {
+    it("applies an authored breakpoint cascade", () => {
       const classes = listClasses(<WorkList works={works} gap={{ base: 4, md: 16, lg: 24 }} />);
       expect(classes).toContain("gap_4");
       expect(classes).toContain("md:gap_16");
       expect(classes).toContain("lg:gap_24");
     });
 
-    it("derives a mobile gap when only a larger breakpoint is authored", () => {
-      const classes = listClasses(<WorkList works={works} gap={{ lg: 24 }} />);
-      expect(classes).toContain("gap_12");
-      expect(classes).toContain("lg:gap_24");
+    it("renders dividers as list siblings so the gap applies on both sides", () => {
+      const { container } = render(<WorkList works={works} gap={4} showDividers />);
+      const list = container.querySelector("[data-work-list]");
+      const children = [...(list?.children ?? [])];
+      expect(children).toHaveLength(3);
+      expect(children[1].hasAttribute("data-work-divider")).toBe(true);
+      expect(children[1].className).toContain("mt_0");
+      expect(children[1].className).toContain("mb_0");
     });
 
-    it("compacts the divider spacing for mobile", () => {
-      const { container } = render(
-        <WorkList works={works} showDividers dividerSpacing={20} gap={4} />,
-      );
-      const divider = container.querySelector("[data-work-list] > div > div:last-child");
-      expect(divider?.className).toContain("mt_10");
-      expect(divider?.className).toContain("md:mt_20");
-      expect(divider?.className).toContain("mb_10");
-      expect(divider?.className).toContain("md:mb_20");
+    it("does not render a trailing divider", () => {
+      const { container } = render(<WorkList works={works} gap={4} showDividers />);
+      const list = container.querySelector("[data-work-list]");
+      expect(list?.lastElementChild?.hasAttribute("data-work-divider")).toBe(false);
+      expect(container.querySelectorAll("[data-work-divider]")).toHaveLength(1);
     });
   });
 });

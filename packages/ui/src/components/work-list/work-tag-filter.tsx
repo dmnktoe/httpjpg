@@ -5,6 +5,7 @@ import { css } from "styled-system/css";
 
 import { Box } from "../box/box";
 import { HStack } from "../stack/stack";
+import { applyTagFilter } from "./lib";
 
 export interface WorkTagFilterProps {
   scopeSelector?: string;
@@ -54,12 +55,7 @@ export function WorkTagFilter({ scopeSelector = "[data-work-list]" }: WorkTagFil
     if (!scope) {
       return;
     }
-    const cards = scope.querySelectorAll<HTMLElement>("[data-tags]");
-    cards.forEach((card) => {
-      const cardTags = (card.dataset.tags || "").split(",").map((t) => t.trim());
-      const visible = !active || cardTags.includes(active);
-      card.style.display = visible ? "" : "none";
-    });
+    applyTagFilter(scope, active);
   }, [active, scopeSelector]);
 
   const clear = useCallback(() => setActive(null), []);

@@ -6,7 +6,6 @@ import {
   Button,
   Center,
   Headline,
-  Link,
   Paragraph,
   VStack,
 } from "@httpjpg/ui";
@@ -30,11 +29,9 @@ export default function PortfolioNotFound() {
             {ASCII_DIVIDER_DOTS}
           </Box>
         </Box>
-        <Box>
-          <Link href="/">
-            <Button size="sm">↳ Back to Home</Button>
-          </Link>
-        </Box>
+        <Button href="/" size="sm">
+          ↳ Back to Home
+        </Button>
       </VStack>
     </Center>
   );

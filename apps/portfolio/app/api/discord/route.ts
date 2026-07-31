@@ -6,21 +6,27 @@ import { type NextRequest, NextResponse } from "next/server";
 import { fetchDiscordPresence, isDiscordUserId } from "@/lib/integrations/discord";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
-// The DISCORD_USER_ID env var is declared in env.mjs but not consulted here;
-// the source of truth is the Storyblok config story.
-async function resolveUserId(): Promise<string | undefined> {
+interface ResolvedUserId {
+  userId?: string;
+  configUnavailable: boolean;
+}
+
+async function resolveUserId(): Promise<ResolvedUserId> {
   try {
     const story = await getStoryblokApi().getStory({ slug: "config" });
-    const config = story?.content as SbConfigStory | undefined;
+    if (!story) {
+      return { configUnavailable: true };
+    }
+    const config = story.content as SbConfigStory | undefined;
     const userId = config?.discord_user_id;
     if (userId && !isDiscordUserId(userId)) {
       console.warn("Ignoring malformed discord_user_id from Storyblok config");
-      return undefined;
+      return { configUnavailable: false };
     }
-    return userId;
+    return { userId, configUnavailable: false };
   } catch (error) {
     console.warn("Failed to fetch Discord config from Storyblok:", error);
-    return undefined;
+    return { configUnavailable: true };
   }
 }
 
@@ -31,12 +37,21 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const userId = await resolveUserId();
+    const { userId, configUnavailable } = await resolveUserId();
+    if (configUnavailable) {
+      return NextResponse.json(
+        {
+          error: "Config unavailable",
+          message: "Could not load the Storyblok config story",
+        },
+        { status: 503 },
+      );
+    }
     if (!userId) {
       return NextResponse.json(
         {
           error: "Discord User ID not configured",
-          message: "Set discord_user_id in Storyblok config or DISCORD_USER_ID in .env",
+          message: "Set discord_user_id in the Storyblok config story",
         },
         { status: 500 },
       );

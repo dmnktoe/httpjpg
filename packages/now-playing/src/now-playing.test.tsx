@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 
 import { NowPlaying } from "./now-playing";
 
@@ -42,5 +42,23 @@ describe("NowPlaying", () => {
       <NowPlaying title="t" artist="a" size="lg" autoExtractColor={false} />,
     );
     expect(container.querySelector('[data-draggable="true"]')).not.toBeNull();
+  });
+
+  it("applies the extracted vibrant color when auto extraction is enabled", async () => {
+    const { extractVibrantColor } = await import("@httpjpg/spotify");
+    vi.mocked(extractVibrantColor).mockResolvedValueOnce({
+      rgb: "rgb(10, 20, 30)",
+      rgba: "rgba(10, 20, 30, 0.9)",
+      textColor: "black",
+    });
+
+    const { container } = render(
+      <NowPlaying title="t" artist="a" artwork="https://img.test/vibrant.jpg" autoExtractColor />,
+    );
+
+    expect(extractVibrantColor).toHaveBeenCalledWith("https://img.test/vibrant.jpg");
+    await waitFor(() => {
+      expect(container.innerHTML).toContain("rgba(10, 20, 30, 0.9)");
+    });
   });
 });

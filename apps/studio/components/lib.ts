@@ -148,8 +148,6 @@ export const ALIGN_SELF_OPTIONS = [EMPTY_OPTION, ...labelize(CMS_OPTIONS.alignIt
 
 export const JUSTIFY_SELF_OPTIONS = [EMPTY_OPTION, ...labelize(CMS_OPTIONS.justifyItems)];
 
-export const TEXT_ALIGN_OPTIONS = [EMPTY_OPTION, ...labelize(CMS_OPTIONS.textAlign)];
-
 export const SPACING_OPTIONS = [
   EMPTY_OPTION,
   ...CMS_OPTIONS.spacing.map((key) => ({
@@ -165,11 +163,6 @@ export const GRID_SPAN_OPTIONS = [
     label: v === "full" ? "Full" : v,
   })),
 ];
-
-export const GRID_COLUMN_OPTIONS = CMS_OPTIONS.gridColumn.map((v) => ({
-  value: v,
-  label: v === "auto" ? "Auto" : v,
-}));
 
 function uuid(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {

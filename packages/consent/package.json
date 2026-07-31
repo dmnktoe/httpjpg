@@ -6,9 +6,6 @@
   "exports": {
     ".": {
       "import": "./src/index.ts"
-    },
-    "./banner": {
-      "import": "./src/components/cookie-banner.tsx"
     }
   },
   "scripts": {

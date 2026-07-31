@@ -11,7 +11,7 @@ const meta: Meta<typeof MusicPlayer> = {
   argTypes: {
     source: {
       control: "select",
-      options: ["mp3", "spotify", "soundcloud", "custom"] as const,
+      options: ["mp3", "spotify", "soundcloud"] as const,
       description: "Music source type",
       table: { defaultValue: { summary: "mp3" } },
     },

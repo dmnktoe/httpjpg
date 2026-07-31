@@ -7,7 +7,7 @@
  * 1. Set environment variables:
  *    SPOTIFY_CLIENT_ID=your_client_id
  *    SPOTIFY_CLIENT_SECRET=your_client_secret
- * 2. Run: node scripts/get-spotify-token.js
+ * 2. Run: node scripts/get-spotify-token.cjs
  * 3. Follow the authorization URL
  * 4. Copy the refresh token to your .env file
  */

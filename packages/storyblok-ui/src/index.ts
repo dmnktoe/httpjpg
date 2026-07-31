@@ -1,7 +1,6 @@
 export { SbAccordion, type SbAccordionProps } from "./components/accordion/SbAccordion";
 export { SbButton, type SbButtonProps } from "./components/button/SbButton";
 export { SbCallout, type SbCalloutProps } from "./components/callout/SbCallout";
-export { SbCaption, type SbCaptionProps } from "./components/caption/SbCaption";
 export { SbCodeBlock, type SbCodeBlockProps } from "./components/code-block/SbCodeBlock";
 export { SbContainer, type SbContainerProps } from "./components/container/SbContainer";
 export { SbDivider, type SbDividerProps } from "./components/divider/SbDivider";
@@ -24,7 +23,7 @@ export {
   type SbScrollClipImageProps,
 } from "./components/scroll-clip-image/SbScrollClipImage";
 export { SbSection, type SbSectionProps } from "./components/section/SbSection";
-export type { FooterConfig, MenuLink, SbConfigStory } from "./components/settings/SbSettings";
+export type { MenuLink, SbConfigStory } from "./components/settings/SbSettings";
 export { SbSlideshow, type SbSlideshowProps } from "./components/slideshow/SbSlideshow";
 export { SbStats, type SbStatsProps } from "./components/stats/SbStats";
 export { SbVideo, type SbVideoProps } from "./components/video/SbVideo";

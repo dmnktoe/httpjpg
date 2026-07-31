@@ -142,7 +142,13 @@ export function Navigation({
         >
           <Box css={{ lineHeight: "snug" }}>
             <Box as="span" css={{ fontWeight: "bold" }}>
-              ⇝HE𝓁𝓁O www.httpjpg.com
+              ⇝HE𝓁𝓁O{" "}
+              <Link
+                href="/"
+                css={{ color: "inherit", textDecoration: "underline", _hover: { opacity: 0.7 } }}
+              >
+                www.httpjpg.com
+              </Link>
             </Box>
             <br />
             <Box as="span" css={{ textAlign: "justify" }}>
@@ -207,6 +213,7 @@ export function Navigation({
                     variant="projects"
                     href={work.isExternal ? work.slug : `/work/${work.slug}`}
                     isExternal={work.isExternal}
+                    showExternalIcon={work.isExternal}
                     data-preview-image={previewImage}
                     css={{
                       ...WORK_LINK_FLEX,

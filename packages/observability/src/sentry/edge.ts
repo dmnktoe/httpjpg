@@ -4,7 +4,7 @@ import { getSentryConfig } from "./config";
 
 export function initSentryEdge() {
   const { dsn, environment, release, isProduction, isEnabled } = getSentryConfig("edge");
-  if (!isEnabled) {
+  if (!dsn || !isEnabled || Sentry.getClient()) {
     return;
   }
   Sentry.init({

@@ -25,4 +25,8 @@ describe("imagePreset", () => {
   it("threads a focus point through the transform", () => {
     expect(imagePreset.og(filename, "100x100:101x101")).toContain("focal(");
   });
+
+  it("strips the crop mode from the focal filter dimensions", () => {
+    expect(imagePreset.og(filename, "100x100:101x101")).toContain("focal(100x100:1200x630)");
+  });
 });

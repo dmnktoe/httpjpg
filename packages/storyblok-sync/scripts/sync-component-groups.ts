@@ -13,14 +13,13 @@ import { type ComponentGroup, storyblokRequest, validateEnv } from "../src/index
 type RemoteGroup = ComponentGroup & { id: number; uuid: string };
 
 async function listGroups(): Promise<RemoteGroup[]> {
-  try {
-    const response = await storyblokRequest<{
-      component_groups: RemoteGroup[];
-    }>("/component_groups");
-    return response.component_groups || [];
-  } catch {
-    return [];
+  const response = await storyblokRequest<{
+    component_groups: RemoteGroup[];
+  }>("/component_groups");
+  if (!Array.isArray(response.component_groups)) {
+    throw new Error("Malformed /component_groups response: expected a component_groups array");
   }
+  return response.component_groups;
 }
 
 async function upsertGroup(

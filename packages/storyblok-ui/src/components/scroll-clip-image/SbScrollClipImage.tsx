@@ -73,7 +73,7 @@ export const SbScrollClipImage = memo(function SbScrollClipImage({ blok }: SbScr
         copyrightPosition={copyrightPosition}
         fetchPriority={fetchPriority}
       />
-      {caption && <SbCaption data={caption as SbCaptionProps["data"]} />}
+      {!!caption?.content?.length && <SbCaption data={caption as SbCaptionProps["data"]} />}
     </Box>
   );
 });

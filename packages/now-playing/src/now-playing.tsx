@@ -35,29 +35,40 @@ export function NowPlaying({
   const nodeRef = useRef<HTMLDivElement>(null);
 
   const [extractedColor, setExtractedColor] = useState<ExtractedColor | null>(null);
-  const [currentArtwork, setCurrentArtwork] = useState<string>("");
+  const lastArtworkRef = useRef<string>("");
   const [isExtracting, setIsExtracting] = useState(false);
 
   useEffect(() => {
     if (!autoExtractColor || vibrantColor || !artwork) {
       return;
     }
-    if (artwork === currentArtwork) {
+    if (artwork === lastArtworkRef.current) {
       return;
     }
 
-    setCurrentArtwork(artwork);
+    lastArtworkRef.current = artwork;
     setIsExtracting(true);
 
+    let cancelled = false;
+    let settleTimeout: ReturnType<typeof setTimeout> | undefined;
+
     extractVibrantColor(artwork).then((color) => {
+      if (cancelled) {
+        return;
+      }
       if (color) {
         setExtractedColor(color);
-        setTimeout(() => setIsExtracting(false), 100);
+        settleTimeout = setTimeout(() => setIsExtracting(false), 100);
       } else {
         setIsExtracting(false);
       }
     });
-  }, [artwork, currentArtwork, autoExtractColor, vibrantColor]);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(settleTimeout);
+    };
+  }, [artwork, autoExtractColor, vibrantColor]);
 
   const finalVibrantColor = vibrantColor || extractedColor?.rgba;
   const finalTextColor = textColor || extractedColor?.textColor || "white";

@@ -22,10 +22,6 @@
       "types": "./src/components/index.ts",
       "import": "./src/components/index.ts"
     },
-    "./styles/global": {
-      "types": "./src/styles/global.ts",
-      "import": "./src/styles/global.ts"
-    },
     "./css": {
       "types": "./styled-system/css/index.d.ts",
       "import": "./styled-system/css/index.mjs"

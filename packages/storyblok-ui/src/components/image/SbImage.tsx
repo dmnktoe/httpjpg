@@ -92,7 +92,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
           <ImageOverlay pattern={overlay} seed={image.filename} color="currentColor" />
         )}
       </Box>
-      {caption && <SbCaption data={caption as SbCaptionProps["data"]} />}
+      {!!caption?.content?.length && <SbCaption data={caption as SbCaptionProps["data"]} />}
     </Box>
   );
 });

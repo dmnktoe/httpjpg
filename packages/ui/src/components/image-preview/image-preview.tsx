@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from "react";
 
 export interface ImagePreviewProps {
   width?: number;
-  height?: number;
   offset?: { x: number; y: number };
 }
 
@@ -24,10 +23,7 @@ function parseRatio(value: string | null): number {
   return w / h;
 }
 
-export function ImagePreview({
-  width = 100,
-  offset = { x: 5, y: 5 },
-}: Omit<ImagePreviewProps, "height">) {
+export function ImagePreview({ width = 100, offset = { x: 5, y: 5 } }: ImagePreviewProps) {
   const [previewImage, setPreviewImage] = useState("");
   const [ratio, setRatio] = useState(DEFAULT_RATIO);
   const [previewWidth, setPreviewWidth] = useState(width);

@@ -1,13 +1,20 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
-import { getAccessToken, getCurrentlyPlaying, SpotifyForbiddenError } from "./api";
+import {
+  clearAccessTokenCache,
+  getAccessToken,
+  getCurrentlyPlaying,
+  SpotifyForbiddenError,
+  SpotifyUnauthorizedError,
+} from "./api";
 
 global.fetch = vi.fn() as MockedFunction<typeof fetch>;
 
 describe("Spotify API", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    clearAccessTokenCache();
   });
 
   describe("getAccessToken", () => {
@@ -62,6 +69,100 @@ describe("Spotify API", () => {
 
       expect(headers.Authorization).toContain("Basic ");
     });
+
+    it("should reuse a cached token until it expires", async () => {
+      (global.fetch as MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ access_token: "cached_token", expires_in: 3600 }),
+      } as Response);
+
+      const first = await getAccessToken("client_id", "client_secret", "refresh_token");
+      const second = await getAccessToken("client_id", "client_secret", "refresh_token");
+
+      expect(first).toBe("cached_token");
+      expect(second).toBe("cached_token");
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it("should refetch once the cached token is about to expire", async () => {
+      vi.useFakeTimers();
+      try {
+        (global.fetch as MockedFunction<typeof fetch>)
+          .mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ access_token: "first_token", expires_in: 3600 }),
+          } as Response)
+          .mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ access_token: "second_token", expires_in: 3600 }),
+          } as Response);
+
+        await getAccessToken("client_id", "client_secret", "refresh_token");
+        vi.advanceTimersByTime(3600 * 1000);
+
+        const token = await getAccessToken("client_id", "client_secret", "refresh_token");
+
+        expect(token).toBe("second_token");
+        expect(global.fetch).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should dedupe concurrent requests into one token fetch", async () => {
+      (global.fetch as MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ access_token: "shared_token", expires_in: 3600 }),
+      } as Response);
+
+      const [a, b] = await Promise.all([
+        getAccessToken("client_id", "client_secret", "refresh_token"),
+        getAccessToken("client_id", "client_secret", "refresh_token"),
+      ]);
+
+      expect(a).toBe("shared_token");
+      expect(b).toBe("shared_token");
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not serve a cached token to different credentials", async () => {
+      (global.fetch as MockedFunction<typeof fetch>)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ access_token: "token_a", expires_in: 3600 }),
+        } as Response)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ access_token: "token_b", expires_in: 3600 }),
+        } as Response);
+
+      const a = await getAccessToken("id_a", "secret_a", "refresh_a");
+      const b = await getAccessToken("id_b", "secret_b", "refresh_b");
+
+      expect(a).toBe("token_a");
+      expect(b).toBe("token_b");
+      expect(global.fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it("should not cache failures", async () => {
+      (global.fetch as MockedFunction<typeof fetch>)
+        .mockResolvedValueOnce({
+          ok: false,
+          statusText: "Unauthorized",
+        } as Response)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ access_token: "recovered_token", expires_in: 3600 }),
+        } as Response);
+
+      await expect(getAccessToken("client_id", "client_secret", "refresh_token")).rejects.toThrow(
+        "Failed to get access token: Unauthorized",
+      );
+      const token = await getAccessToken("client_id", "client_secret", "refresh_token");
+
+      expect(token).toBe("recovered_token");
+      expect(global.fetch).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe("getCurrentlyPlaying", () => {
@@ -115,6 +216,18 @@ describe("Spotify API", () => {
       expect(result).toBeNull();
     });
 
+    it("should throw SpotifyUnauthorizedError when the token is rejected", async () => {
+      (global.fetch as MockedFunction<typeof fetch>).mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        statusText: "Unauthorized",
+      } as Response);
+
+      await expect(getCurrentlyPlaying("access_token")).rejects.toBeInstanceOf(
+        SpotifyUnauthorizedError,
+      );
+    });
+
     it("should throw SpotifyForbiddenError when playback is forbidden (e.g. no Premium)", async () => {
       (global.fetch as MockedFunction<typeof fetch>).mockResolvedValueOnce({
         ok: false,
@@ -130,12 +243,12 @@ describe("Spotify API", () => {
     it("should throw error on API failure", async () => {
       (global.fetch as MockedFunction<typeof fetch>).mockResolvedValueOnce({
         ok: false,
-        status: 401,
-        statusText: "Unauthorized",
+        status: 500,
+        statusText: "Internal Server Error",
       } as Response);
 
       await expect(getCurrentlyPlaying("access_token")).rejects.toThrow(
-        "Failed to fetch now playing: Unauthorized",
+        "Failed to fetch now playing: Internal Server Error",
       );
     });
 

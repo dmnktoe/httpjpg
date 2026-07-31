@@ -5,7 +5,7 @@ import { Marquee } from "./marquee";
 const { mockReducedMotion } = vi.hoisted(() => ({
   mockReducedMotion: vi.fn<() => boolean | null>(),
 }));
-vi.mock("framer-motion", () => ({ useReducedMotion: () => mockReducedMotion() }));
+vi.mock("motion/react", () => ({ useReducedMotion: () => mockReducedMotion() }));
 
 describe("Marquee", () => {
   it("scrolls the content (repeated copies + keyframes) by default", () => {

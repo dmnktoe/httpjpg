@@ -1,6 +1,6 @@
 "use client";
 
-import { m, useInView, useReducedMotion } from "framer-motion";
+import { m, useInView, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
 import { useRef } from "react";
 import type { SystemStyleObject } from "styled-system/types";

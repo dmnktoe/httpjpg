@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "motion/react";
 import { useMemo } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 

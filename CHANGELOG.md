@@ -4,6 +4,56 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-08-08
+
+### Added
+
+- **UI / Storyblok-ui**: a badge primitive and a matching CMS blok. `Badge` renders a single external badge image (a shields.io SVG, say) at its natural size with a configurable height and an optional link; `BadgeGroup` lays badges out in a wrapping row; `Badges` takes an `items` array and renders the whole row in one call. The `badges` blok (holding `badge_item` children) exposes vertical alignment, row alignment and badge height on top of the standard spacing tab, and is allowed inside `section`. Documented in Storybook under `Display/Badges`.
+- **UI**: a brutalist text-selection marker — selected text now carries the site's own highlight treatment instead of the browser default.
+
+### Fixed
+
+- **Storyblok-richtext**: images inside a richtext field no longer break hydration. A richtext image can be nested in a paragraph, and the old renderer wrapped it in a block `<div>` — invalid inside the resulting `<p>`, which the browser reparents, producing a React #418 hydration error. Images render as phrasing-content `<img>` now, and keep their natural aspect ratio instead of being forced into a 16:9 crop.
+
+- **Storyblok-utils**: `getProcessedImage` no longer leaks the crop mode into the focal filter — a crop like `1200x630/smart` produced an invalid `focal(…:1200x630/smart)` coordinate for any story with a focal point set, silently degrading Open Graph and RSS images. Regression test added.
+- **Portfolio**: the branded ASCII 404 screen actually renders now. It lived at the `(portfolio)` group boundary, where the `[...slug]` catch-all's own plain `not-found` boundary always shadowed it; the branded screen moved into the catch-all boundary and the shadowed file is gone.
+- **Storyblok-sync**: component and group lookups fail loudly instead of swallowing errors — a transient Management API failure used to make `upsertBlock` re-create (duplicate) every existing component, and `sync-component-groups` had the same duplicate-creating swallow. Group UUIDs are fetched once per run instead of once per group name, `sync-components` exits non-zero when any block fails instead of reporting success, and malformed list responses are rejected instead of being treated as empty (which also created duplicates).
+- **UI**: `formatYear` guards invalid dates (no more `"NaN"`) and uses UTC so date-only strings can't shift a year across timezones; the drifted duplicate in `og-work-meta` now delegates to the shared helper. External projects show the external-link icon in both the desktop nav and the mobile menu, matching the websites column, and the desktop header's `www.httpjpg.com` text is now an actual home link (previously the only `/` link in the header was mobile-only).
+- **Portfolio**: the dev-mode fallback for unknown bloks works again — `@storyblok/react` v7 ignores a `_fallback` registry key, so `SbMissing` is now wired via `enableFallbackComponent`/`customFallbackComponent`.
+- **Spotify / Now-playing**: `useNowPlaying` ignores in-flight responses after unmount or an endpoint change, and `NowPlaying` cancels color extraction and its settle timeout on cleanup — no more stale state or setState-after-unmount warnings.
+- **Portfolio**: the Discord API route returns a distinct 503 when the Storyblok config story cannot be loaded, instead of blaming the CMS content for a fetch failure.
+- **Observability**: server and edge Sentry init guard like the client — skipped without a DSN, when disabled, or when a client is already initialized.
+
+### Changed
+
+- **CMS**: image widths use an even 10%-step scale (`10%` … `100%`) instead of the previous hand-picked `5/25/33/50/65/75/100`. The old scale mixed quarters, thirds and one-off values, so the editor offered uneven jumps. Values outside the new scale are dropped rather than aliased: any story still holding `5%`, `25%`, `33%`, `65%` or `75%` loses that width and falls back to the layout default, so re-check those images after syncing.
+- **Storyblok-ui**: `SbImage` and `SbScrollClipImage` render their caption only when the richtext document has content, matching `SbVideo`.
+- **UI**: the work-card description clamp uses Panda's `lineClamp` utility instead of a hand-rolled `-webkit-box` style that needed an `as any` cast.
+
+### Removed
+
+- **Portfolio**: the guessed fallback navigation (`Home`/`CV`/`Feed`, with a `/feed-xml_html` link that 404ed and a `/cv` link that only resolved if such a story happened to exist). The header menu now mirrors the Storyblok config exactly — when the config story is unpublished or the menu is empty, no menu links render and the header's built-in home link keeps the site navigable.
+- Dead code across the workspace, each confirmed unused by a repo-wide reference audit: the orphaned `@httpjpg/ui` `styles/global` module and subpath, `getAllSlugs` (storyblok-api), `hasMediaConsent` plus the `OPEN_COOKIE_SETTINGS_EVENT` re-export and `./banner` subpath (consent), the `./google`/`./umami` subpath barrels (analytics), the root and `./sentry` barrels (observability), the unregistered `SbCaption` re-export and `FooterConfig` alias (storyblok-ui), `OverlayPatternName`, the phantom `ImagePreview` `height` prop and `useNowPlaying`'s `refetch` (ui/spotify), unused Storybook option arrays, fixtures and the `addon-links` addon, unused Studio option constants, the dead Spotify OAuth callback route, the unused `config.ui` theme block, and the legacy `text` blok registry alias.
+- **Env**: `DISCORD_USER_ID` (the Storyblok config story is the source of truth) and the CI-only `SENTRY_AUTH_TOKEN`/`SENTRY_ORG`/`SENTRY_PROJECT` dropped from the runtime env contract, `turbo.json`, and `.env.example`.
+- **Music player**: the no-op `custom` source removed from the UI type, the CMS schema, and Storybook — it rendered nothing; run `sync:components` to update the space.
+
+### Performance
+
+- **Spotify**: the API access token is cached per credential set until shortly before `expires_in` (with in-flight request dedupe), cutting the ~10s now-playing poll from two Spotify requests to one; failures are never cached, and a 401 on a cached token drops the cache and retries once with a fresh token so a revoked token can't pin the widget to errors.
+
+### Tooling
+
+- **CI**: `apps/studio` joins the `build-apps` matrix — it was typechecked and linted but never built, so `next build` regressions shipped uncaught.
+- **Docs**: `apps/studio` documented in the CLAUDE.md architecture overview.
+
+### Dependencies
+
+- **Runtime**: `framer-motion` replaced by its successor package `motion`; Swiper migrated to v14; `sharp` to ^0.35.
+- **Build & styling**: Panda CSS to v1.12, `oxfmt` to ^0.61, Node.js to 22.23.2, pnpm to 10.34.5.
+- **Testing**: jsdom to v30 and `@testing-library/jest-dom` to v7. Note that jsdom 30 resolves `em` to `px` in `getComputedStyle`, so assertions comparing a declared `em` value against `toHaveStyle` need to read the inline style instead.
+- **CI actions**: `actions/checkout` v7, `actions/setup-node` v7, `actions/cache` v6, `codecov/codecov-action` v7, `chromaui/action` v18 and `chromatic` v18; Renovate no longer opens standalone digest-bump PRs for GitHub Actions.
+- Lockfile maintenance and type-definition refreshes across the workspace.
+
 ## [2.2.0] - 2026-07-03
 
 ### Added

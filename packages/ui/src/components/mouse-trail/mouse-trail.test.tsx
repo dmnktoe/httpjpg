@@ -5,7 +5,7 @@ import { MouseTrail } from "./mouse-trail";
 const { mockReducedMotion } = vi.hoisted(() => ({
   mockReducedMotion: vi.fn<() => boolean | null>(),
 }));
-vi.mock("framer-motion", () => ({ useReducedMotion: () => mockReducedMotion() }));
+vi.mock("motion/react", () => ({ useReducedMotion: () => mockReducedMotion() }));
 
 describe("MouseTrail", () => {
   it("renders the trail overlay by default", () => {

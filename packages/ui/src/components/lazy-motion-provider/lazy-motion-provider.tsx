@@ -1,6 +1,6 @@
 "use client";
 
-import { domMax, LazyMotion } from "framer-motion";
+import { domMax, LazyMotion } from "motion/react";
 import type { ReactNode } from "react";
 
 export interface LazyMotionProviderProps {

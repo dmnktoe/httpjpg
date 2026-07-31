@@ -1,7 +1,7 @@
 "use client";
 
 import { zIndex } from "@httpjpg/tokens";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 

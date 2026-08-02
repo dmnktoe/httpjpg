@@ -61,6 +61,6 @@ export function sizesFromWidths(w: BlokWidth): string {
   return parts.join(", ");
 }
 
-export function editableAttrs<T extends { _uid: string }>(blok: T) {
+export function editableAttrs<T extends { _uid: string; _editable?: string }>(blok: T) {
   return storyblokEditable(blok) || {};
 }

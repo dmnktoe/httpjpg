@@ -177,6 +177,7 @@ export function Canvas({
         className={css({ marginX: "auto" })}
         style={{ maxWidth: maxWidth ? `${maxWidth}px` : undefined }}
       >
+        {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
         <div
           ref={containerRef}
           role="application"

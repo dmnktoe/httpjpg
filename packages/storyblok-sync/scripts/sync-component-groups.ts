@@ -6,7 +6,9 @@ import { fileURLToPath } from "node:url";
 import { config } from "dotenv";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-config({ path: resolve(__dirname, "../../../.env.local") });
+config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
+
+import { done, fail } from "@httpjpg/cli-style";
 
 import { type ComponentGroup, storyblokRequest, validateEnv } from "../src/index";
 
@@ -51,11 +53,10 @@ async function syncGroups() {
   const existingByName = new Map((await listGroups()).map((g) => [g.name, g]));
   for (const group of GROUPS) {
     const created = await upsertGroup(group, existingByName);
-    console.log(`✓ ${group.name} (${created.uuid})`);
+    done(`${group.name} · ${created.uuid}`);
   }
 }
 
 syncGroups().catch((error) => {
-  console.error("Sync failed:", error);
-  process.exit(1);
+  fail(`sync failed · ${error}`);
 });

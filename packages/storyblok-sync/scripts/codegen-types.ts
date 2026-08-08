@@ -4,6 +4,8 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { done, fail } from "@httpjpg/cli-style";
+
 import type { StoryblokField } from "../src/index";
 import { contentBlocks } from "./blocks/content";
 import { layoutBlocks } from "./blocks/layout";
@@ -182,12 +184,11 @@ async function main() {
   const output = `${header}\n${interfaces}\n\n${registry}\n`;
   await mkdir(dirname(OUTPUT), { recursive: true });
   await writeFile(OUTPUT, output, "utf8");
-  console.log(`✨ wrote ${ALL_BLOCKS.length} blok types to ${OUTPUT}`);
+  done(`wrote ${ALL_BLOCKS.length} blok types · ${OUTPUT}`);
 }
 
 if (process.argv[1] && /codegen-types\.[tj]s$/.test(process.argv[1])) {
   main().catch((error) => {
-    console.error("❌ Codegen failed:", error);
-    process.exit(1);
+    fail(`codegen failed · ${error}`);
   });
 }

@@ -1,3 +1,5 @@
+import { done, step } from "@httpjpg/cli-style";
+
 import { type StoryblokComponent, type StoryblokField, storyblokRequest } from "../../src/index";
 
 export type Group = "Layout" | "Content" | "Media" | "Pages" | "Settings";
@@ -65,12 +67,12 @@ export async function upsertBlock(def: BlockDef, existingIds: Map<string, number
   const component = await toStoryblokComponent(def);
   const existingId = existingIds.get(component.name);
   if (existingId) {
-    console.log(`📝 ${component.display_name || component.name}`);
+    step(component.display_name || component.name);
     await storyblokRequest(`/components/${existingId}`, "PUT", {
       component: { ...component, id: existingId },
     });
     return;
   }
-  console.log(`✨ ${component.display_name || component.name}`);
+  done(component.display_name || component.name);
   await storyblokRequest("/components", "POST", { component });
 }

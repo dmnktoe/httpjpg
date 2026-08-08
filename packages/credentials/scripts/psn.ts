@@ -8,10 +8,11 @@ import { config } from "dotenv";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
 
+import { banner, done, fail, heading, step, warn } from "@httpjpg/cli-style";
 // oxlint-disable-next-line import/default
 import psnApi from "psn-api";
 
-import { ask, done, fail, hasFlag, heading, readOption, reportSecret, warn } from "./lib/cli";
+import { ask, hasFlag, readOption, reportSecret } from "./lib/cli";
 import { parseNpsso } from "./lib/npsso";
 
 const { exchangeCodeForAccessToken, exchangeNpssoForCode, getProfileFromAccountId, getUserTitles } =
@@ -33,49 +34,50 @@ async function diagnoseRejection(): Promise<string> {
       redirect: "manual",
     });
     if (response.status >= 300 && response.status < 400) {
-      return "Sony's auth endpoint is reachable, so the NPSSO itself is expired or malformed.";
+      return "sony is reachable · the npsso itself is expired or malformed";
     }
-    return `Sony's auth endpoint answered ${response.status} instead of a redirect — a network or proxy is interfering, so the NPSSO may well be fine.`;
+    return `sony answered ${response.status} instead of a redirect · a network or proxy is interfering, the npsso may be fine`;
   } catch (error) {
-    return `Could not reach Sony at all (${(error as Error).message}) — check the network before blaming the NPSSO.`;
+    return `sony unreachable (${(error as Error).message}) · check the network before blaming the npsso`;
   }
 }
 
 async function resolveNpsso(argv: string[]): Promise<string> {
   const fromFlag = readOption(argv, "npsso");
   if (fromFlag) {
-    return parseNpsso(fromFlag) ?? fail("Could not read an NPSSO out of --npsso.");
+    return parseNpsso(fromFlag) ?? fail("could not read an npsso out of --npsso");
   }
 
   if (hasFlag(argv, "check")) {
     return (
-      process.env.PSN_NPSSO ??
-      fail("--check needs PSN_NPSSO to be set in .env.local or the environment.")
+      process.env.PSN_NPSSO ?? fail("--check needs PSN_NPSSO in .env.local or the environment")
     );
   }
 
-  console.log(`Sign in to PlayStation, then open:\n  ${SSO_COOKIE_URL}\n`);
-  console.log('Paste the value below — the bare cookie or the whole {"npsso":"…"} body.\n');
-  const answer = await ask("NPSSO: ");
-  return parseNpsso(answer) ?? fail("That did not look like an NPSSO value.");
+  banner("psn · npsso");
+  step("sign in to playstation, then open:");
+  console.log(`    ${SSO_COOKIE_URL}\n`);
+  step('paste the bare cookie, or the whole {"npsso":"…"} body\n');
+  const answer = await ask("npsso");
+  return parseNpsso(answer) ?? fail("that did not look like an npsso value");
 }
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const npsso = await resolveNpsso(argv);
 
-  heading("Verifying against PSN");
+  heading("verifying against psn");
 
   const accessCode = await exchangeNpssoForCode(npsso).catch(async () => {
     const diagnosis = await diagnoseRejection();
     return fail(
-      `PSN would not issue an access code.\n   ${diagnosis}\n   Fresh cookie: ${SSO_COOKIE_URL}`,
+      `psn would not issue an access code\n    ${diagnosis}\n    fresh cookie · ${SSO_COOKIE_URL}`,
     );
   });
 
   const tokens = await exchangeCodeForAccessToken(accessCode);
   if (!tokens?.accessToken) {
-    fail("PSN returned no access token for that NPSSO.");
+    fail("psn returned no access token for that npsso");
   }
 
   const auth = { accessToken: tokens.accessToken };
@@ -83,23 +85,24 @@ async function main(): Promise<void> {
   const titles = await getUserTitles(auth, "me").catch(() => null);
 
   if (profile) {
-    done(`Authenticated as ${profile.onlineId}${profile.isPlus ? " (PS Plus)" : ""}`);
+    done(`${profile.onlineId}${profile.isPlus ? " · ps plus" : ""}`);
   } else {
-    warn("Token works, but the profile lookup failed — the widget avatar may stay empty.");
+    warn("token works, profile lookup failed · the widget avatar may stay empty");
   }
 
   if (titles) {
-    done(`Trophy library reachable: ${titles.trophyTitles.length} titles`);
+    done(`trophy library · ${titles.trophyTitles.length} titles`);
   } else {
-    warn("Token works, but the trophy list could not be read.");
+    warn("token works, trophy list unreadable");
   }
 
   const expiresOn = new Date(Date.now() + NPSSO_LIFETIME_DAYS * 86_400_000);
-  console.log(`\nNPSSO cookies last about ${NPSSO_LIFETIME_DAYS} days.`);
-  console.log(`If minted today, expect this one to lapse around ${formatDate(expiresOn)}.`);
+  step(
+    `~${NPSSO_LIFETIME_DAYS} day lifetime · if minted today, lapses around ${formatDate(expiresOn)}`,
+  );
 
   if (hasFlag(argv, "check")) {
-    done("PSN_NPSSO is valid — nothing to do.");
+    done("psn_npsso is valid · nothing to do");
     return;
   }
 

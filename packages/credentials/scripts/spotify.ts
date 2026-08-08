@@ -11,7 +11,9 @@ import { config } from "dotenv";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
 
-import { ask, done, fail, hasFlag, heading, reportSecret, warn } from "./lib/cli";
+import { banner, done, fail, heading, primary, step, warn } from "@httpjpg/cli-style";
+
+import { ask, hasFlag, reportSecret } from "./lib/cli";
 
 const AUTHORIZE_URL = "https://accounts.spotify.com/authorize";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
@@ -58,7 +60,7 @@ function listenOnLoopback(): Promise<Server> {
       rejectPromise(
         error.code === "EADDRINUSE"
           ? new Error(
-              `Port ${REDIRECT_PORT} is already in use — free it and retry, the redirect URI is registered on that port`,
+              `port ${REDIRECT_PORT} is already in use · free it and retry, the redirect uri is registered on that port`,
             )
           : error,
       );
@@ -125,7 +127,7 @@ function awaitCallback(server: Server, expectedState: string): Promise<string> {
 
     const timer = setTimeout(() => {
       server.close();
-      rejectPromise(new Error(`No callback within ${CALLBACK_TIMEOUT_MS / 60_000} minutes`));
+      rejectPromise(new Error(`no callback within ${CALLBACK_TIMEOUT_MS / 60_000} minutes`));
     }, CALLBACK_TIMEOUT_MS);
 
     server.on("error", (error) => {
@@ -170,7 +172,7 @@ async function exchangeCode(code: string, clientId: string, clientSecret: string
   );
 
   if (status !== 200 || !payload?.refresh_token) {
-    fail(`Token exchange failed — ${describeTokenFailure(status, payload, raw)}`);
+    fail(`token exchange failed · ${describeTokenFailure(status, payload, raw)}`);
   }
   return payload.refresh_token;
 }
@@ -187,17 +189,20 @@ async function reportAccount(accessToken: string | undefined): Promise<void> {
       return;
     }
     const profile = (await response.json()) as { display_name?: string; id?: string };
-    done(`Authorized as ${profile.display_name ?? profile.id ?? "unknown account"}`);
+    done(`authorized as ${profile.display_name ?? profile.id ?? "unknown account"}`);
   } catch {}
 }
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
-  const clientId = process.env.SPOTIFY_CLIENT_ID || (await ask("SPOTIFY_CLIENT_ID: "));
-  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET || (await ask("SPOTIFY_CLIENT_SECRET: "));
+
+  banner("spotify · refresh token");
+
+  const clientId = process.env.SPOTIFY_CLIENT_ID || (await ask("client id"));
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET || (await ask("client secret"));
 
   if (!clientId || !clientSecret) {
-    fail("Both SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET are required.");
+    fail("both SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET are required");
   }
 
   const server = await listenOnLoopback().catch((error: Error) => fail(error.message));
@@ -212,10 +217,11 @@ async function main(): Promise<void> {
     show_dialog: "true",
   })}`;
 
-  heading("Spotify authorization");
-  console.log(`Listening on ${REDIRECT_URI}`);
-  console.log(`This exact URI must be registered under Dashboard → Settings → Redirect URIs.\n`);
-  console.log(`Opening the consent screen. If nothing happens, visit:\n  ${authorizeUrl}\n`);
+  heading("authorization");
+  step(`listening on ${REDIRECT_URI}`);
+  step("this exact uri must be registered under dashboard → settings → redirect uris");
+  step("opening the consent screen · if nothing happens, visit:");
+  console.log(`\n    ${primary(authorizeUrl)}\n`);
   openBrowser(authorizeUrl);
 
   const code = await awaitCallback(server, state).catch((error: Error) => fail(error.message));
@@ -228,7 +234,7 @@ async function main(): Promise<void> {
   );
   if (verification.status !== 200) {
     warn(
-      `Minted, but the refresh grant came back ${describeTokenFailure(verification.status, verification.payload, verification.raw)}`,
+      `minted, but the refresh grant came back ${describeTokenFailure(verification.status, verification.payload, verification.raw)}`,
     );
   } else {
     await reportAccount(verification.payload?.access_token);

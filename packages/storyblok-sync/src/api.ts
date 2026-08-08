@@ -1,3 +1,4 @@
+import { fail } from "@httpjpg/cli-style";
 export const STORYBLOK_API = "https://mapi.storyblok.com/v1";
 
 const MIN_REQUEST_INTERVAL_MS = 200;
@@ -28,12 +29,10 @@ export function getEnv() {
 export function validateEnv(): void {
   const { token, spaceId } = getEnv();
   if (!token) {
-    console.error("Missing STORYBLOK_MANAGEMENT_TOKEN env var");
-    process.exit(1);
+    fail("missing STORYBLOK_MANAGEMENT_TOKEN env var");
   }
   if (!spaceId) {
-    console.error("Missing STORYBLOK_SPACE_ID env var");
-    process.exit(1);
+    fail("missing STORYBLOK_SPACE_ID env var");
   }
 }
 

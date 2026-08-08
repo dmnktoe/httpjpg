@@ -3,25 +3,14 @@ import { dirname, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 
+import { accent, ASCII_ARROW, done, fail, heading, outro, step, warn } from "@httpjpg/cli-style";
+
 const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 export const ENV_FILE = resolve(PACKAGE_ROOT, "../../.env.local");
 
-export function heading(title: string): void {
-  console.log(`\n${title}\n${"─".repeat(title.length)}`);
-}
-
-export function done(message: string): void {
-  console.log(`✅ ${message}`);
-}
-
-export function warn(message: string): void {
-  console.warn(`⚠️  ${message}`);
-}
-
-export function fail(message: string): never {
-  console.error(`❌ ${message}`);
-  process.exit(1);
+export function prompt(label: string): string {
+  return `  ${accent(ASCII_ARROW)} ${label} · `;
 }
 
 export function readOption(argv: string[], flag: string): string | undefined {
@@ -37,15 +26,13 @@ export function hasFlag(argv: string[], flag: string): boolean {
   return argv.includes(`--${flag}`);
 }
 
-export async function ask(question: string): Promise<string> {
+export async function ask(label: string): Promise<string> {
   if (!process.stdin.isTTY) {
-    fail(
-      `Needed "${question.replace(/:\s*$/, "")}" but stdin is not a terminal — set it in .env.local or the environment.`,
-    );
+    fail(`needed "${label}" but stdin is not a terminal · set it in .env.local or the environment`);
   }
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   try {
-    return (await rl.question(question)).trim();
+    return (await rl.question(prompt(label))).trim();
   } finally {
     rl.close();
   }
@@ -67,15 +54,17 @@ export function writeEnvVar(file: string, key: string, value: string): "updated"
 }
 
 export function reportSecret(key: string, value: string, shouldWrite: boolean): void {
-  heading(key);
-  console.log(`${key}="${value}"\n`);
+  heading(key.toLowerCase());
+  console.log(`\n  ${key}="${value}"\n`);
 
   if (!shouldWrite) {
-    console.log(`Re-run with --write to put it into ${ENV_FILE} for you.`);
+    step("re-run with --write to drop it into .env.local");
+    outro();
     return;
   }
 
   const action = writeEnvVar(ENV_FILE, key, value);
-  done(`${action === "updated" ? "Updated" : "Added"} ${key} in ${ENV_FILE}`);
-  warn("Remember to update the same value in your hosting provider's env settings.");
+  done(`${action} · ${ENV_FILE}`);
+  warn("production reads its own env — paste it into the host too");
+  outro();
 }

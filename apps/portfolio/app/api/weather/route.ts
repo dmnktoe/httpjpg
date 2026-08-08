@@ -21,6 +21,7 @@ export async function GET() {
         code: result.code,
         emoji: result.emoji,
         condition: result.condition,
+        isDay: result.isDay,
       },
       { headers: { "Cache-Control": "public, s-maxage=900, stale-while-revalidate=1800" } },
     );

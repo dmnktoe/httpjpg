@@ -38,6 +38,20 @@ describe("weatherEmoji", () => {
     expect(weatherEmoji(86)).toBe("🌨️");
     expect(weatherEmoji(99)).toBe("⛈️");
   });
+
+  it("swaps the sun for a moon after dark", () => {
+    expect(weatherEmoji(0, false)).toBe("🌙");
+    expect(weatherEmoji(1, false)).toBe("🌙");
+    expect(weatherEmoji(2, false)).toBe("☁️");
+    expect(weatherEmoji(51, false)).toBe("🌧️");
+    expect(weatherEmoji(57, false)).toBe("🌧️");
+  });
+
+  it("keeps the sunless emojis identical at night", () => {
+    for (const code of [3, 45, 48, 61, 67, 71, 77, 80, 82, 85, 86, 95, 99, 4]) {
+      expect(weatherEmoji(code, false)).toBe(weatherEmoji(code, true));
+    }
+  });
 });
 
 describe("weatherCondition", () => {
@@ -75,7 +89,7 @@ describe("fetchWeather", () => {
 
   it("returns the current temperature and emoji", async () => {
     mockFetch.mockResolvedValueOnce(
-      weatherResponse({ current: { temperature_2m: 18.4, weather_code: 2 } }),
+      weatherResponse({ current: { temperature_2m: 18.4, weather_code: 2, is_day: 1 } }),
     );
 
     const result = await fetchWeather(51.3127, 9.4797);
@@ -84,13 +98,45 @@ describe("fetchWeather", () => {
       expect.stringContaining("latitude=51.3127&longitude=9.4797"),
       expect.objectContaining({ cache: "no-store" }),
     );
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.stringContaining("current=temperature_2m,weather_code,is_day"),
+      expect.anything(),
+    );
     expect(result).toEqual({
       ok: true,
       temperature: 18.4,
       code: 2,
       emoji: "⛅",
       condition: "partly cloudy",
+      isDay: true,
     });
+  });
+
+  it("picks the night emoji when the API reports darkness", async () => {
+    mockFetch.mockResolvedValueOnce(
+      weatherResponse({ current: { temperature_2m: 12, weather_code: 0, is_day: 0 } }),
+    );
+
+    const result = await fetchWeather(51.3127, 9.4797);
+
+    expect(result).toEqual({
+      ok: true,
+      temperature: 12,
+      code: 0,
+      emoji: "🌙",
+      condition: "clear",
+      isDay: false,
+    });
+  });
+
+  it("assumes daylight when is_day is missing", async () => {
+    mockFetch.mockResolvedValueOnce(
+      weatherResponse({ current: { temperature_2m: 12, weather_code: 0 } }),
+    );
+
+    const result = await fetchWeather(51.3127, 9.4797);
+
+    expect(result).toMatchObject({ ok: true, emoji: "☀️", isDay: true });
   });
 
   it("surfaces a non-200 response as a failure", async () => {

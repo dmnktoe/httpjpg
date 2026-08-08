@@ -1,7 +1,3 @@
-/**
- * Accept whatever the user pasted: the bare cookie, or the whole
- * `{"npsso":"…"}` body that Sony's ssocookie endpoint renders in the browser.
- */
 export function parseNpsso(input: string): string | null {
   const trimmed = input.trim().replace(/^["']|["']$/g, "");
   if (!trimmed) {

@@ -38,8 +38,6 @@ export async function GET() {
 
     const result = await fetchRecentTrophies(env.PSN_NPSSO, username);
     if (!result.ok) {
-      // fetchRecentTrophies resolves rather than throws, so the catch below
-      // never sees these — report here or they stay invisible in Sentry.
       if (result.reportable) {
         console.warn(`PSN trophy fetch failed (${result.reason}): ${result.message}`, result.error);
         captureServerException(result.error, {

@@ -1,17 +1,5 @@
 #!/usr/bin/env tsx
 
-/**
- * Verify — and optionally store — the `PSN_NPSSO` behind the trophy widget.
- *
- * Sony has no API that mints an NPSSO; it only falls out of a logged-in browser
- * session. So this script does the half that can be automated: it exchanges the
- * cookie exactly the way the widget does and tells you whether it actually
- * works, before a deploy finds out for you.
- *
- *   pnpm --filter @httpjpg/credentials psn [--npsso <value>] [--write]
- *   pnpm --filter @httpjpg/credentials psn --check   # test the current env value
- */
-
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -20,10 +8,6 @@ import { config } from "dotenv";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
 
-// psn-api ships a dual build whose CJS half defeats Node's named-export
-// detection, so under tsx a named import throws at load and only the interop
-// default object carries the functions. Next.js bundles the ESM half and is
-// unaffected, which is why the app can import the same names directly.
 // oxlint-disable-next-line import/default
 import psnApi from "psn-api";
 
@@ -36,19 +20,12 @@ const { exchangeCodeForAccessToken, exchangeNpssoForCode, getProfileFromAccountI
 const SSO_COOKIE_URL = "https://ca.account.sony.com/api/v1/ssocookie";
 const AUTHORIZE_URL = "https://ca.account.sony.com/api/authz/v3/oauth/authorize";
 
-// Sony issues NPSSO cookies with a ~60 day life and offers no way to read the
-// real expiry back, so this is a projection, not a promise.
 const NPSSO_LIFETIME_DAYS = 60;
 
 function formatDate(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-/**
- * psn-api reports "is your NPSSO valid?" for anything that is not a redirect,
- * so a blocking proxy looks identical to an expired cookie. Re-run the same
- * request with a throwaway value to find out which one it actually was.
- */
 async function diagnoseRejection(): Promise<string> {
   try {
     const response = await fetch(`${AUTHORIZE_URL}?response_type=code`, {
@@ -97,8 +74,6 @@ async function main(): Promise<void> {
   });
 
   const tokens = await exchangeCodeForAccessToken(accessCode);
-  // psn-api resolves with undefined fields instead of throwing when Sony
-  // rejects the grant, so an unchecked payload would look like a pass.
   if (!tokens?.accessToken) {
     fail("PSN returned no access token for that NPSSO.");
   }

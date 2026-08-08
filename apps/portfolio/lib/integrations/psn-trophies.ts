@@ -52,7 +52,6 @@ const RECENT_LIMIT = 5;
 const TITLE_SCAN = 5;
 const AVATAR_SIZES = ["xl", "l", "m", "s", "xs"];
 
-// Request English trophy and game names regardless of the account's locale.
 const LANGUAGE_HEADERS = { "Accept-Language": "en-US" };
 
 const PSN_USERNAME = /^[A-Za-z][\w-]{2,15}$/;
@@ -138,9 +137,6 @@ let authBlockedUntil = 0;
 const AUTH_SKEW_MS = 60_000;
 const AUTH_COOLDOWN_MS = 5 * 60_000;
 
-// psn-api resolves both token exchanges with undefined fields instead of
-// throwing when Sony rejects the grant, so an unchecked payload caches an
-// undefined access token behind a NaN expiry and every later call 401s.
 function toAuthTokens(payload: unknown, source: string): PsnAuthTokens {
   const tokens = payload as Partial<PsnAuthTokens> | null | undefined;
   if (!tokens?.accessToken || !Number.isFinite(tokens.expiresIn)) {
@@ -166,15 +162,12 @@ async function exchangeNpsso(npsso: string): Promise<PsnAuthTokens> {
     if (error instanceof PsnAuthError) {
       throw error;
     }
-    // psn-api throws a bare Error here when Sony refuses to hand back an access
-    // code, which in practice means the NPSSO is expired (they last ~60 days).
     throw new PsnAuthError("PSN rejected the NPSSO token — it is expired or malformed", {
       cause: error,
     });
   }
 }
 
-/** Test-only escape hatch for the module-level auth cache. */
 export function resetPsnAuthCache(): void {
   cachedAuth = null;
   authBlockedUntil = 0;
@@ -187,8 +180,6 @@ async function authorize(npsso: string): Promise<AuthorizationPayload> {
     return { accessToken: cachedAuth.accessToken };
   }
 
-  // A rejected NPSSO fails identically on every retry, so stop replaying it at
-  // Sony's auth endpoint once per page view until the cooldown lapses.
   if (now < authBlockedUntil) {
     throw new PsnAuthError("PSN credentials were rejected recently — retrying later", {
       replayed: true,
@@ -200,12 +191,9 @@ async function authorize(npsso: string): Promise<AuthorizationPayload> {
       ? cachedAuth.refreshToken
       : null;
 
-  // Never let a stale entry outlive a failed exchange.
   cachedAuth = null;
 
   try {
-    // A refused refresh is recoverable — fall back to a full NPSSO exchange in
-    // the same request instead of failing it and retrying on the next one.
     const refreshed = refreshToken
       ? await exchangeRefreshTokenForAuthTokens(refreshToken)
           .then((tokens) => toAuthTokens(tokens, "token refresh"))
@@ -217,8 +205,6 @@ async function authorize(npsso: string): Promise<AuthorizationPayload> {
       accessToken: tokens.accessToken,
       accessTokenExpiresAt: now + tokens.expiresIn * 1000,
       refreshToken: tokens.refreshToken ?? "",
-      // Without a usable refresh token, expire it immediately so the next
-      // renewal goes through the NPSSO exchange rather than sending "".
       refreshTokenExpiresAt: tokens.refreshTokenExpiresIn
         ? now + tokens.refreshTokenExpiresIn * 1000
         : 0,
@@ -282,8 +268,6 @@ export async function fetchRecentTrophies(
 
     return { ok: true, trophies, avatar };
   } catch (error) {
-    // Keep the detailed cause server-side; the route answers with a generic
-    // body and reports anything worth seeing to Sentry.
     const isAuthFailure = error instanceof PsnAuthError;
     return {
       ok: false,

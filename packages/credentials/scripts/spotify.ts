@@ -1,20 +1,5 @@
 #!/usr/bin/env tsx
 
-/**
- * Mint a `SPOTIFY_REFRESH_TOKEN` for the now-playing widget.
- *
- * Spotify only hands out a refresh token through the authorization-code flow,
- * which needs a real browser round-trip. The script opens the consent screen,
- * catches the redirect on a throwaway loopback server, and trades the code in.
- *
- *   pnpm --filter @httpjpg/credentials spotify [--write] [--port <n>]
- *
- * Register `http://127.0.0.1:8888/callback` under Dashboard → your app →
- * Settings → Redirect URIs. The docs also allow a portless loopback literal
- * that would match any port, but the dashboard rejects it as insecure — see
- * the README before reaching for `--port 0`.
- */
-
 import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { createServer, type Server } from "node:http";
@@ -32,7 +17,6 @@ const AUTHORIZE_URL = "https://accounts.spotify.com/authorize";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
 const PROFILE_URL = "https://api.spotify.com/v1/me";
 
-// The widget only reads what is playing right now; keep the grant that narrow.
 const SCOPES = ["user-read-currently-playing", "user-read-playback-state"];
 
 const DEFAULT_PORT = 8888;
@@ -55,7 +39,6 @@ function openBrowser(url: string): void {
   const command =
     process.platform === "darwin" ? "open" : process.platform === "win32" ? "start" : "xdg-open";
   try {
-    // Detached and unref'd so a missing opener can never hold the CLI open.
     const child = spawn(command, [url], {
       stdio: "ignore",
       detached: true,
@@ -63,16 +46,9 @@ function openBrowser(url: string): void {
     });
     child.on("error", () => {});
     child.unref();
-  } catch {
-    // Opening a browser is a convenience; the URL is printed either way.
-  }
+  } catch {}
 }
 
-/**
- * Bind the loopback interface and report the port actually taken. Passing 0
- * hands the choice to the OS, which only pays off once Spotify's dashboard
- * accepts the portless registration that a random port needs to match.
- */
 function listenOnLoopback(requestedPort: number): Promise<{ server: Server; port: number }> {
   return new Promise((resolvePromise, rejectPromise) => {
     const server = createServer();
@@ -97,9 +73,6 @@ function listenOnLoopback(requestedPort: number): Promise<{ server: Server; port
   });
 }
 
-/**
- * Serve exactly one redirect and resolve with the authorization code.
- */
 function awaitCallback(server: Server, port: number, expectedState: string): Promise<string> {
   return new Promise((resolvePromise, rejectPromise) => {
     server.on("request", (request, response) => {
@@ -132,7 +105,6 @@ function awaitCallback(server: Server, port: number, expectedState: string): Pro
         );
         return;
       }
-      // A mismatched state means the redirect did not come from our request.
       if (state !== expectedState) {
         settle(
           browserPage("State mismatch", "You can close this tab."),
@@ -168,10 +140,6 @@ function awaitCallback(server: Server, port: number, expectedState: string): Pro
   });
 }
 
-/**
- * Post to the token endpoint. A proxy or gateway in front of Spotify answers
- * with HTML rather than JSON, so never hand the body straight to JSON.parse.
- */
 async function requestToken(
   body: Record<string, string>,
   clientId: string,
@@ -230,16 +198,12 @@ async function reportAccount(accessToken: string | undefined): Promise<void> {
     }
     const profile = (await response.json()) as { display_name?: string; id?: string };
     done(`Authorized as ${profile.display_name ?? profile.id ?? "unknown account"}`);
-  } catch {
-    // Confirming the account is a nicety, never a reason to fail the mint.
-  }
+  } catch {}
 }
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const requestedPort = Number(readOption(argv, "port") ?? DEFAULT_PORT);
-  // 0 is legal: it means "any free port", which only works because Spotify lets
-  // a portless loopback registration receive any port.
   if (!Number.isInteger(requestedPort) || requestedPort < 0 || requestedPort > 65_535) {
     fail(`Invalid --port "${readOption(argv, "port")}"`);
   }
@@ -251,7 +215,6 @@ async function main(): Promise<void> {
     fail("Both SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET are required.");
   }
 
-  // Bind before building the URL — with --port 0 the port is not known until now.
   const { server, port } = await listenOnLoopback(requestedPort).catch((error: Error) =>
     fail(error.message),
   );
@@ -270,7 +233,6 @@ async function main(): Promise<void> {
     redirect_uri: redirectUri,
     scope: SCOPES.join(" "),
     state,
-    // Force the consent screen so re-running always yields a fresh token.
     show_dialog: "true",
   })}`;
 
@@ -285,7 +247,6 @@ async function main(): Promise<void> {
   );
   const refreshToken = await exchangeCode(code, redirectUri, clientId, clientSecret);
 
-  // Spend it once immediately: a refresh token that cannot refresh is worthless.
   const verification = await requestToken(
     { grant_type: "refresh_token", refresh_token: refreshToken },
     clientId,

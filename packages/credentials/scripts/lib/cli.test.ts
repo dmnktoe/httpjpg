@@ -19,7 +19,6 @@ function tempEnvFile(contents?: string): string {
 
 describe("ENV_FILE", () => {
   it("points at the repo-root .env.local the scripts actually load", () => {
-    // An off-by-one here writes secrets to a file nothing reads, silently.
     const repoRoot = resolve(__dirname, "../../../..");
     expect(ENV_FILE).toBe(join(repoRoot, ".env.local"));
     expect(existsSync(join(repoRoot, "pnpm-workspace.yaml"))).toBe(true);

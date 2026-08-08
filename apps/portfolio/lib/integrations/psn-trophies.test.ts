@@ -213,9 +213,6 @@ describe("fetchRecentTrophies", () => {
   });
 });
 
-// psn-api's types promise a populated payload, but a grant Sony rejects
-// deserialises to undefined fields without throwing — the mismatch this suite
-// pins down.
 const REJECTED_GRANT = {
   accessToken: undefined,
   expiresIn: undefined,
@@ -231,8 +228,6 @@ const REJECTED_GRANT = {
 describe("fetchRecentTrophies auth handling", () => {
   beforeEach(() => {
     resetPsnAuthCache();
-    // mockReset (not clearAllMocks) so a persistent implementation set by one
-    // test can't leak into the next.
     psn.exchangeNpssoForCode.mockReset().mockResolvedValue("code");
     psn.exchangeCodeForAccessToken.mockReset().mockResolvedValue({
       accessToken: "access",
@@ -274,7 +269,6 @@ describe("fetchRecentTrophies auth handling", () => {
     if (!result.ok) {
       expect(result.reason).toBe("auth");
     }
-    // The unusable payload must not be cached as a live session.
     expect(psn.getUserTitles).not.toHaveBeenCalled();
   });
 
@@ -286,7 +280,6 @@ describe("fetchRecentTrophies auth handling", () => {
 
     expect(psn.exchangeNpssoForCode).toHaveBeenCalledTimes(1);
     expect(first.ok === false && first.reportable).toBe(true);
-    // The replay is still a failure, but not a fresh one worth alerting on.
     expect(second.ok === false && second.reason).toBe("auth");
     expect(second.ok === false && second.reportable).toBe(false);
   });
@@ -300,7 +293,6 @@ describe("fetchRecentTrophies auth handling", () => {
     });
     await fetchRecentTrophies("npsso");
 
-    // Sony refuses the refresh: psn-api resolves with undefined fields.
     psn.exchangeRefreshTokenForAuthTokens.mockResolvedValueOnce(REJECTED_GRANT);
 
     const result = await fetchRecentTrophies("npsso");

@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import {
   Autoplay,
@@ -83,18 +83,67 @@ interface SlideshowVideoSlideProps {
   videoUrl: string;
   videoPoster?: string;
   aspectRatio: string;
+  /** Play the clip once, from the top, instead of looping in the background. */
+  holdUntilEnded: boolean;
+  isActive: boolean;
+  /** Called when the clip finished, errored, or refused to start. */
+  onFinished: () => void;
 }
 
-function SlideshowVideoSlide({ videoUrl, videoPoster, aspectRatio }: SlideshowVideoSlideProps) {
+function SlideshowVideoSlide({
+  videoUrl,
+  videoPoster,
+  aspectRatio,
+  holdUntilEnded,
+  isActive,
+  onFinished,
+}: SlideshowVideoSlideProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !holdUntilEnded) {
+      return;
+    }
+    if (!isActive) {
+      video.pause();
+      video.currentTime = 0;
+      return;
+    }
+
+    let isDone = false;
+    const finish = () => {
+      if (isDone) {
+        return;
+      }
+      isDone = true;
+      onFinished();
+    };
+
+    video.addEventListener("ended", finish);
+    video.addEventListener("error", finish);
+    video.currentTime = 0;
+    // Playback can be refused (low-power mode, missing user gesture). Release
+    // the slideshow instead of parking it on a clip that never fires `ended`.
+    video.play?.()?.catch(finish);
+
+    return () => {
+      isDone = true;
+      video.removeEventListener("ended", finish);
+      video.removeEventListener("error", finish);
+    };
+  }, [holdUntilEnded, isActive, onFinished]);
+
   return (
     <Video
       src={videoUrl}
       poster={videoPoster}
       aspectRatio={aspectRatio}
       objectFit="cover"
-      autoPlay
+      mediaRef={videoRef}
+      autoPlay={!holdUntilEnded || isActive}
       muted
-      loop
+      loop={!holdUntilEnded}
       controls={false}
       css={{
         w: "full",
@@ -142,6 +191,12 @@ export interface SlideshowProps {
   overlay?: OverlayPattern;
   overlayInset?: number;
   showCounter?: boolean;
+  /**
+   * Pause autoplay on video slides and advance only once the clip played
+   * through. Ignored for single-slide shows and under reduced motion.
+   * @default true
+   */
+  waitForVideo?: boolean;
   css?: SystemStyleObject;
 }
 
@@ -160,6 +215,7 @@ export function Slideshow({
   overlay = "none",
   overlayInset = 0,
   showCounter = false,
+  waitForVideo = true,
   css: cssProp,
   ...props
 }: SlideshowProps) {
@@ -175,15 +231,45 @@ export function Slideshow({
     swiperRef.current?.slideNext();
   }, []);
 
-  const handleSwiperInit = useCallback((swiper: SwiperType) => {
-    swiperRef.current = swiper;
-  }, []);
-
   const handleSlideChange = useCallback((swiper: SwiperType) => {
     setActiveIndex(swiper.realIndex ?? 0);
   }, []);
 
   const autoplayEnabled = images.length > 1 && !prefersReducedMotion;
+  const holdForVideo = waitForVideo && autoplayEnabled;
+  const isVideoSlideActive = Boolean(images[activeIndex]?.videoUrl);
+
+  /** Autoplay is the timer between slides; a playing clip owns that timer. */
+  const syncAutoplay = useCallback(
+    (swiper: SwiperType | null, isVideoSlide: boolean) => {
+      const autoplay = swiper?.autoplay;
+      if (!autoplay || !holdForVideo) {
+        return;
+      }
+      if (isVideoSlide) {
+        autoplay.stop();
+      } else if (!autoplay.running) {
+        autoplay.start();
+      }
+    },
+    [holdForVideo],
+  );
+
+  const handleSwiperInit = useCallback(
+    (swiper: SwiperType) => {
+      swiperRef.current = swiper;
+      syncAutoplay(swiper, Boolean(images[swiper.realIndex ?? 0]?.videoUrl));
+    },
+    [images, syncAutoplay],
+  );
+
+  useEffect(() => {
+    syncAutoplay(swiperRef.current, isVideoSlideActive);
+  }, [isVideoSlideActive, syncAutoplay]);
+
+  const handleVideoFinished = useCallback(() => {
+    swiperRef.current?.slideNext();
+  }, []);
 
   const modules = useMemo(() => {
     const effectModule = EFFECT_MODULES[effect];
@@ -228,6 +314,9 @@ export function Slideshow({
                       videoUrl={image.videoUrl}
                       videoPoster={image.videoPoster}
                       aspectRatio={aspectRatio}
+                      holdUntilEnded={holdForVideo}
+                      isActive={activeIndex === index}
+                      onFinished={handleVideoFinished}
                     />
                     {image.copyright && (
                       <CopyrightLabel

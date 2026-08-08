@@ -38,9 +38,14 @@ export async function GET() {
 
     const result = await fetchRecentTrophies(env.PSN_NPSSO, username);
     if (!result.ok) {
-      console.warn(`PSN trophy fetch failed: ${result.status} - ${result.message}`);
+      if (result.reportable) {
+        console.warn(`PSN trophy fetch failed (${result.reason}): ${result.message}`, result.error);
+        captureServerException(result.error, {
+          tags: { route: "psn-trophies", reason: result.reason },
+        });
+      }
       return NextResponse.json(
-        { error: "PSN trophies unavailable", message: result.message },
+        { error: "PSN trophies unavailable", reason: result.reason },
         { status: result.status },
       );
     }

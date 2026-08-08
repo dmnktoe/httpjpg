@@ -8,6 +8,8 @@
     "dev:storybook": "turbo run dev --filter=@httpjpg/storybook...",
     "dev:studio": "turbo run dev --filter=@httpjpg/studio...",
     "dev:https": "turbo run dev:https --filter=@httpjpg/portfolio... --filter=@httpjpg/storybook...",
+    "creds:spotify": "pnpm --filter @httpjpg/credentials spotify",
+    "creds:psn": "pnpm --filter @httpjpg/credentials psn",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",

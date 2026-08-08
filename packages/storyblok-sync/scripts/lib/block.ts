@@ -1,4 +1,4 @@
-import { done, step } from "@httpjpg/cli-style";
+import { done, step } from "@httpjpg/terminal";
 
 import { type StoryblokComponent, type StoryblokField, storyblokRequest } from "../../src/index";
 

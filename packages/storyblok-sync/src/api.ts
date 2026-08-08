@@ -1,4 +1,4 @@
-import { fail } from "@httpjpg/cli-style";
+import { fail } from "@httpjpg/terminal";
 export const STORYBLOK_API = "https://mapi.storyblok.com/v1";
 
 const MIN_REQUEST_INTERVAL_MS = 200;

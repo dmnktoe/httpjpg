@@ -1,5 +1,5 @@
 {
-  "name": "@httpjpg/cli-style",
+  "name": "@httpjpg/terminal",
   "version": "0.0.0",
   "private": true,
   "description": "Shared terminal output style for the repo's dev CLIs",

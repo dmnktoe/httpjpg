@@ -4,7 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { done, fail } from "@httpjpg/cli-style";
+import { done, fail } from "@httpjpg/terminal";
 
 import type { StoryblokField } from "../src/index";
 import { contentBlocks } from "./blocks/content";

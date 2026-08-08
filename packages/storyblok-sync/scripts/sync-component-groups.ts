@@ -8,7 +8,7 @@ import { config } from "dotenv";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
 
-import { done, fail } from "@httpjpg/cli-style";
+import { done, fail } from "@httpjpg/terminal";
 
 import { type ComponentGroup, storyblokRequest, validateEnv } from "../src/index";
 

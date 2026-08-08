@@ -8,7 +8,7 @@ import { config } from "dotenv";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
 
-import { banner, done, fail, heading, step, warn } from "@httpjpg/cli-style";
+import { banner, done, fail, heading, step, warn } from "@httpjpg/terminal";
 // oxlint-disable-next-line import/default
 import psnApi from "psn-api";
 

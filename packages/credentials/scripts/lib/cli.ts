@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 
-import { accent, ASCII_ARROW, done, fail, heading, outro, step, warn } from "@httpjpg/cli-style";
+import { accent, ASCII_ARROW, done, fail, heading, outro, step, warn } from "@httpjpg/terminal";
 
 const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 

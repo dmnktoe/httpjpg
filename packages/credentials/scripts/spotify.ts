@@ -11,7 +11,7 @@ import { config } from "dotenv";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
 
-import { banner, done, fail, heading, primary, step, warn } from "@httpjpg/cli-style";
+import { banner, done, fail, heading, primary, step, warn } from "@httpjpg/terminal";
 
 import { ask, hasFlag, reportSecret } from "./lib/cli";
 

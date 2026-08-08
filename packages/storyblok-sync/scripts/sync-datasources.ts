@@ -8,8 +8,8 @@ import { config } from "dotenv";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
 
-import { banner, done, fail, outro, step } from "@httpjpg/cli-style";
 import { CMS_OPTIONS } from "@httpjpg/storyblok-utils";
+import { banner, done, fail, outro, step } from "@httpjpg/terminal";
 import { spacing } from "@httpjpg/tokens";
 
 import { type Datasource, type DatasourceEntry, storyblokRequest, validateEnv } from "../src/index";

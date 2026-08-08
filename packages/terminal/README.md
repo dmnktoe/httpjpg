@@ -1,8 +1,8 @@
-# ⇝cli-style
+# ⇝terminal
 
 **ascii · truecolor · dev-only**
 
-Shared terminal voice for the repo's dev CLIs, so `creds:psn` and `sync:components`
+Shared voice for the repo's dev CLIs, so `creds:psn` and `sync:components`
 read as the same tool. Dev-only — nothing here ships to the browser.
 
 Colours are derived from `@httpjpg/tokens`, the same source Panda consumes, so a
@@ -13,7 +13,7 @@ palette change reaches the terminal too. Nothing is hardcoded.
 ## output
 
 ```ts
-import { banner, heading, step, done, warn, fail, outro } from "@httpjpg/cli-style";
+import { banner, heading, step, done, warn, fail, outro } from "@httpjpg/terminal";
 
 banner("psn · npsso");
 heading("verifying");
@@ -42,7 +42,7 @@ Colour is off automatically when stdout is not a TTY, when `NO_COLOR` is set, or
 under `TERM=dumb` — piping or redirecting output yields clean text.
 
 ```ts
-import { accent, primary, success, warning, danger, muted, bold, dim } from "@httpjpg/cli-style";
+import { accent, primary, success, warning, danger, muted, bold, dim } from "@httpjpg/terminal";
 ```
 
 ## house rules

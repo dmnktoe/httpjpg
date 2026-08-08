@@ -393,6 +393,10 @@ pnpm format:check
 - Commit messages follow Conventional Commits (`commitlint` runs on `commit-msg`).
 - No console.log in shipped code paths; `console.error` / `console.warn` are acceptable for genuine error reporting that complements Sentry.
 
+### Releases
+
+Automated by release-please — see `.github/RELEASING.md`. Never hand-edit the root `package.json` version, `.release-please-manifest.json`, or the newest `CHANGELOG.md` section outside of an open `chore(release):` PR; the tooling owns all three. The commit type you pick decides both the changelog section and the version bump, so it matters: `feat` is the only type that bumps the minor version, and every other conventional type bumps the patch version.
+
 ### Adding dependencies
 
 - Use `pnpm add` from the **specific package directory**, not the root.

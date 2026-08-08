@@ -16,6 +16,7 @@ const Configuration: UserConfig = {
         "test", // Adding or updating tests
         "build", // Build system or external dependencies
         "ci", // CI/CD changes
+        "deps", // Dependency updates (Renovate) — surfaces as "Dependencies" in the changelog
         "chore", // Other changes (maintenance, etc)
         "revert", // Revert previous commit
       ],

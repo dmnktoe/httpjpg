@@ -82,6 +82,12 @@ const STATS_ALIGN_OPTIONS = [
   { name: "Center", value: "center" },
 ];
 
+const BADGE_ALIGN_OPTIONS = [
+  { name: "Start", value: "start" },
+  { name: "Center", value: "center" },
+  { name: "End", value: "end" },
+];
+
 export const contentBlocks: BlockDef[] = [
   {
     name: "headline",
@@ -474,6 +480,44 @@ export const contentBlocks: BlockDef[] = [
       columns: field.options("Columns", STATS_COLUMN_OPTIONS, { default_value: "3" }),
       variant: field.options("Variant", STATS_VARIANT_OPTIONS, { default_value: "default" }),
       align: field.options("Align", STATS_ALIGN_OPTIONS, { default_value: "left" }),
+    }),
+  },
+  {
+    name: "badge_item",
+    display_name: "Badge",
+    group: "Content",
+    icon: "block-buildin",
+    color: "#48bb78",
+    preview_field: "alt",
+    schema: {
+      src: field.text("Image URL", {
+        required: true,
+        description: "Direct URL to the badge image, e.g. a shields.io SVG.",
+        tooltip: true,
+      }),
+      alt: field.text("Alt Text", { required: true, translatable: true }),
+      href: field.text("Link URL", {
+        description: "Optional — makes the badge clickable. External URLs open in a new tab.",
+        tooltip: true,
+      }),
+      title: field.text("Title (hover tooltip)", { translatable: true }),
+    },
+  },
+  {
+    name: "badges",
+    display_name: "Badges",
+    group: "Content",
+    icon: "block-buildin",
+    color: "#48bb78",
+    schema: withSpacing({
+      items: field.bloks("Items", { required: true, whitelist: ["badge_item"] }),
+      align: field.options("Vertical Align", BADGE_ALIGN_OPTIONS, { default_value: "center" }),
+      justify: field.options("Row Alignment", BADGE_ALIGN_OPTIONS, { default_value: "start" }),
+      height: field.text("Badge Height", {
+        default_value: "1.5em",
+        description: "CSS height for every badge; width scales to keep the aspect ratio.",
+        tooltip: true,
+      }),
     }),
   },
 ];

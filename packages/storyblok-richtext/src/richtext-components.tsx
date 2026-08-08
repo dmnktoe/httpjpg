@@ -2,7 +2,6 @@ import {
   Box,
   Divider,
   Headline,
-  Image,
   Link,
   ListItem,
   OrderedList,
@@ -88,19 +87,20 @@ function ImageRenderer({ attrs }: SbReactRichTextProps<"image">) {
   }
   const alt = attrs?.alt ?? attrs?.meta_data?.alt ?? "";
   const title = attrs?.title ?? attrs?.meta_data?.title ?? undefined;
-  const copyright = attrs?.copyright ?? attrs?.meta_data?.copyright ?? undefined;
+
   return (
-    <Box css={{ my: "6" }}>
-      <Image
-        src={src}
-        alt={alt}
-        title={title ?? undefined}
-        copyright={copyright ?? undefined}
-        copyrightPosition="below"
-        aspectRatio="16/9"
-        objectFit="cover"
-      />
-    </Box>
+    <img
+      src={src}
+      alt={alt}
+      title={title}
+      loading="lazy"
+      style={{
+        display: "block",
+        maxWidth: "100%",
+        height: "auto",
+        margin: "1.5rem auto",
+      }}
+    />
   );
 }
 

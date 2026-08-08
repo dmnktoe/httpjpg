@@ -40,6 +40,7 @@ export const layoutBlocks: BlockDef[] = [
           "callout",
           "code_block",
           "stats",
+          "badges",
         ],
       }),
       bgColor: field.datasource("Background Color", "color-options"),

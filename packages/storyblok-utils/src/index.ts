@@ -2,6 +2,8 @@ export type {
   BlokSpacing,
   SbAccordionData,
   SbAccordionItemData,
+  SbBadgeItemData,
+  SbBadgesData,
   SbBlok,
   SbBlokName,
   SbBlokRegistry,

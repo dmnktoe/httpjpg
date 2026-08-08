@@ -2,6 +2,7 @@ import { env } from "@httpjpg/env";
 import {
   apiPlugin,
   SbAccordion,
+  SbBadges,
   SbButton,
   SbCallout,
   SbCodeBlock,
@@ -33,6 +34,7 @@ import {
 
 const components = {
   accordion: SbAccordion,
+  badges: SbBadges,
   button: SbButton,
   callout: SbCallout,
   code_block: SbCodeBlock,

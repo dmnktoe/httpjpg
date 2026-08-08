@@ -5,8 +5,13 @@ vi.mock("@httpjpg/ui", () => ({
   CustomCursor: (props: { size: number; symbol: string }) => (
     <div data-testid="custom-cursor" data-size={props.size} data-symbol={props.symbol} />
   ),
-  MouseTrail: (props: { character: string; count: number }) => (
-    <div data-testid="mouse-trail" data-character={props.character} data-count={props.count} />
+  MouseTrail: (props: { character: string; count: number; color?: string }) => (
+    <div
+      data-testid="mouse-trail"
+      data-character={props.character}
+      data-count={props.count}
+      data-color={props.color ?? ""}
+    />
   ),
 }));
 
@@ -36,6 +41,12 @@ describe("CustomCursorWrapper", () => {
 
     expect(screen.queryByTestId("custom-cursor")).toBeNull();
     expect(screen.getByTestId("mouse-trail")).toHaveAttribute("data-character", "✧");
+  });
+
+  it("leaves the trail color to the page theme", () => {
+    render(<CustomCursorWrapper cursorEnabled={false} trailEnabled />);
+
+    expect(screen.getByTestId("mouse-trail")).toHaveAttribute("data-color", "");
   });
 
   it("renders both when enabled", () => {

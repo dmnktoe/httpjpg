@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1](https://github.com/dmnktoe/httpjpg/compare/v2.3.0...v2.3.1) (2026-08-08)
+
+
+### Tooling
+
+* automate release management with release-please ([#195](https://github.com/dmnktoe/httpjpg/issues/195)) ([14bd2ae](https://github.com/dmnktoe/httpjpg/commit/14bd2ae1b6a099e60259da9da9f450ca6b299aed))
+
 ## [2.3.0] - 2026-08-08
 
 ### Added

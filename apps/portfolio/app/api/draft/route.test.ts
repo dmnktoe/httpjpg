@@ -3,23 +3,23 @@ vi.mock("@httpjpg/env", () => ({
   env: { STORYBLOK_PREVIEW_SECRET: "topsecret" },
 }));
 
-vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
-  captureServerException: vi.fn(),
-}));
-
 const { enable } = vi.hoisted(() => ({ enable: vi.fn() }));
 
 vi.mock("next/headers", () => ({
   draftMode: vi.fn(async () => ({ enable })),
 }));
 
-import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { NextRequest } from "next/server";
 
 import { GET } from "./route";
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 describe("GET /api/draft", () => {
@@ -28,10 +28,10 @@ describe("GET /api/draft", () => {
     expect(response.status).toBe(400);
   });
 
-  it("rejects an invalid secret and reports it", async () => {
+  it("rejects an invalid secret with a warning rather than an exception", async () => {
     const response = await GET(new NextRequest("http://localhost/api/draft?secret=wrong"));
     expect(response.status).toBe(401);
-    expect(captureServerException).toHaveBeenCalledOnce();
+    expect(console.warn).toHaveBeenCalledOnce();
   });
 
   it("enables draft mode and redirects to the slug with forwarded params", async () => {

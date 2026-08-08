@@ -1,3 +1,5 @@
+import { fetchWithTimeout } from "./http";
+
 export interface WeatherFetchResult {
   ok: true;
   temperature: number;
@@ -8,8 +10,6 @@ export interface WeatherFetchResult {
 }
 
 export type WeatherResult = WeatherFetchResult | { ok: false; status: number; message: string };
-
-const WEATHER_TIMEOUT_MS = 5000;
 
 export function weatherEmoji(code: number, isDay = true): string {
   if (code === 0) {
@@ -88,26 +88,12 @@ export function weatherCondition(code: number): string {
 export async function fetchWeather(latitude: number, longitude: number): Promise<WeatherResult> {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,is_day`;
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), WEATHER_TIMEOUT_MS);
-
-  let response: Response;
-  try {
-    response = await fetch(url, { cache: "no-store", signal: controller.signal });
-  } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") {
-      return { ok: false, status: 504, message: "Weather request timed out." };
-    }
-    throw error;
-  } finally {
-    clearTimeout(timeout);
+  const result = await fetchWithTimeout(url, { label: "Weather" });
+  if (!result.ok) {
+    return result;
   }
 
-  if (!response.ok) {
-    return { ok: false, status: response.status, message: `Status ${response.status}.` };
-  }
-
-  const data = await response.json();
+  const data = await result.response.json();
   const code = Number(data?.current?.weather_code);
   const temperature = Number(data?.current?.temperature_2m);
   if (Number.isNaN(code) || Number.isNaN(temperature)) {

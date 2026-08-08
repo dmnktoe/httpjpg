@@ -15,7 +15,7 @@ line, so it is safe to re-run.
 ```bash
 pnpm creds:spotify           # print the token
 pnpm creds:spotify --write   # ...and store it in .env.local
-pnpm creds:spotify --port 9000
+pnpm creds:spotify --port 0  # let the OS pick a free port
 ```
 
 Refresh tokens only come out of Spotify's authorization-code flow, so the script
@@ -23,15 +23,23 @@ opens the consent screen, catches the redirect on a throwaway loopback server,
 and trades the code in. It then spends the token once to prove it actually
 refreshes, and prints which account authorized.
 
-**One-time setup:** register the redirect URI verbatim under Dashboard → your
-app → Settings → Redirect URIs:
+**One-time setup:** register a redirect URI under Dashboard → your app →
+Settings → Redirect URIs. Spotify treats loopback literals specially — a
+registration without a port accepts any port, which is the one to prefer:
 
 ```
-http://127.0.0.1:8888/callback
+http://127.0.0.1/callback        # portless: works with any --port, including 0
+http://127.0.0.1:8888/callback   # exact: only works on the default port
 ```
 
-Spotify rejects `localhost` for loopback redirects — it has to be the IP. If you
-run with `--port`, register that port instead.
+Two rules Spotify enforces on the redirect URI, both of which the script already
+satisfies: `localhost` is rejected, so it has to be the IP literal, and non-HTTPS
+is only permitted for loopback addresses.
+
+The script prints the URI it is listening on before opening the browser, so a
+mismatch is visible before you authorize rather than after. If the default port
+is taken, `--port 0` sidesteps it — that only works with the portless
+registration, since the port is not known until the server has bound.
 
 `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` are read from `.env.local`, or
 prompted for if missing.

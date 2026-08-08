@@ -7,15 +7,16 @@
  * which needs a real browser round-trip. The script opens the consent screen,
  * catches the redirect on a throwaway loopback server, and trades the code in.
  *
- *   pnpm --filter @httpjpg/credentials spotify [--write] [--port 8888]
+ *   pnpm --filter @httpjpg/credentials spotify [--write] [--port <n>]
  *
- * The redirect URI below must be registered verbatim under
- * Dashboard → your app → Settings → Redirect URIs.
+ * The redirect URI must be registered under Dashboard → your app → Settings →
+ * Redirect URIs. Spotify accepts a loopback literal registered without a port
+ * on any port, so `http://127.0.0.1/callback` covers every --port including 0.
  */
 
 import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { createServer } from "node:http";
+import { createServer, type Server } from "node:http";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -67,11 +68,38 @@ function openBrowser(url: string): void {
 }
 
 /**
+ * Bind the loopback interface and report the port actually taken. Passing 0
+ * hands the choice to the OS — Spotify allows a loopback redirect registered
+ * without a port to arrive on any port, so there is no need to guess a free one.
+ */
+function listenOnLoopback(requestedPort: number): Promise<{ server: Server; port: number }> {
+  return new Promise((resolvePromise, rejectPromise) => {
+    const server = createServer();
+
+    server.once("error", (error: NodeJS.ErrnoException) => {
+      rejectPromise(
+        error.code === "EADDRINUSE"
+          ? new Error(`Port ${requestedPort} is already in use — retry with --port 0`)
+          : error,
+      );
+    });
+
+    server.listen(requestedPort, "127.0.0.1", () => {
+      const address = server.address();
+      resolvePromise({
+        server,
+        port: typeof address === "object" && address ? address.port : requestedPort,
+      });
+    });
+  });
+}
+
+/**
  * Serve exactly one redirect and resolve with the authorization code.
  */
-function awaitCallback(port: number, expectedState: string): Promise<string> {
+function awaitCallback(server: Server, port: number, expectedState: string): Promise<string> {
   return new Promise((resolvePromise, rejectPromise) => {
-    const server = createServer((request, response) => {
+    server.on("request", (request, response) => {
       const url = new URL(request.url ?? "/", `http://127.0.0.1:${port}`);
       if (url.pathname !== "/callback") {
         response.writeHead(404).end();
@@ -130,16 +158,10 @@ function awaitCallback(port: number, expectedState: string): Promise<string> {
       rejectPromise(new Error(`No callback within ${CALLBACK_TIMEOUT_MS / 60_000} minutes`));
     }, CALLBACK_TIMEOUT_MS);
 
-    server.on("error", (error: NodeJS.ErrnoException) => {
+    server.on("error", (error) => {
       clearTimeout(timer);
-      rejectPromise(
-        error.code === "EADDRINUSE"
-          ? new Error(`Port ${port} is already in use — retry with --port <other>`)
-          : error,
-      );
+      rejectPromise(error);
     });
-
-    server.listen(port, "127.0.0.1");
   });
 }
 
@@ -212,18 +234,25 @@ async function reportAccount(accessToken: string | undefined): Promise<void> {
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
-  const port = Number(readOption(argv, "port") ?? DEFAULT_PORT);
-  if (!Number.isInteger(port) || port < 1 || port > 65_535) {
+  const requestedPort = Number(readOption(argv, "port") ?? DEFAULT_PORT);
+  // 0 is legal: it means "any free port", which only works because Spotify lets
+  // a portless loopback registration receive any port.
+  if (!Number.isInteger(requestedPort) || requestedPort < 0 || requestedPort > 65_535) {
     fail(`Invalid --port "${readOption(argv, "port")}"`);
   }
 
-  const redirectUri = `http://127.0.0.1:${port}/callback`;
   const clientId = process.env.SPOTIFY_CLIENT_ID || (await ask("SPOTIFY_CLIENT_ID: "));
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET || (await ask("SPOTIFY_CLIENT_SECRET: "));
 
   if (!clientId || !clientSecret) {
     fail("Both SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET are required.");
   }
+
+  // Bind before building the URL — with --port 0 the port is not known until now.
+  const { server, port } = await listenOnLoopback(requestedPort).catch((error: Error) =>
+    fail(error.message),
+  );
+  const redirectUri = `http://127.0.0.1:${port}/callback`;
 
   const state = randomUUID();
   const authorizeUrl = `${AUTHORIZE_URL}?${new URLSearchParams({
@@ -237,11 +266,16 @@ async function main(): Promise<void> {
   })}`;
 
   heading("Spotify authorization");
-  console.log(`Redirect URI (must be registered in the dashboard):\n  ${redirectUri}\n`);
+  console.log(`Listening on ${redirectUri}`);
+  console.log(
+    `Register either http://127.0.0.1/callback (portless, accepts any port)\nor ${redirectUri} exactly, under Dashboard → Settings → Redirect URIs.\n`,
+  );
   console.log(`Opening the consent screen. If nothing happens, visit:\n  ${authorizeUrl}\n`);
   openBrowser(authorizeUrl);
 
-  const code = await awaitCallback(port, state).catch((error: Error) => fail(error.message));
+  const code = await awaitCallback(server, port, state).catch((error: Error) =>
+    fail(error.message),
+  );
   const refreshToken = await exchangeCode(code, redirectUri, clientId, clientSecret);
 
   // Spend it once immediately: a refresh token that cannot refresh is worthless.

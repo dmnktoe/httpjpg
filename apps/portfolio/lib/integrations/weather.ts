@@ -4,18 +4,22 @@ export interface WeatherFetchResult {
   code: number;
   emoji: string;
   condition: string;
+  isDay: boolean;
 }
 
 export type WeatherResult = WeatherFetchResult | { ok: false; status: number; message: string };
 
 const WEATHER_TIMEOUT_MS = 5000;
 
-export function weatherEmoji(code: number): string {
+export function weatherEmoji(code: number, isDay = true): string {
   if (code === 0) {
-    return "☀️";
+    return isDay ? "☀️" : "🌙";
   }
-  if (code === 1 || code === 2) {
-    return "⛅";
+  if (code === 1) {
+    return isDay ? "⛅" : "🌙";
+  }
+  if (code === 2) {
+    return isDay ? "⛅" : "☁️";
   }
   if (code === 3) {
     return "☁️";
@@ -24,7 +28,7 @@ export function weatherEmoji(code: number): string {
     return "🌫️";
   }
   if (code >= 51 && code <= 57) {
-    return "🌦️";
+    return isDay ? "🌦️" : "🌧️";
   }
   if (code >= 61 && code <= 67) {
     return "🌧️";
@@ -82,7 +86,7 @@ export function weatherCondition(code: number): string {
 }
 
 export async function fetchWeather(latitude: number, longitude: number): Promise<WeatherResult> {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,is_day`;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), WEATHER_TIMEOUT_MS);
@@ -110,11 +114,16 @@ export async function fetchWeather(latitude: number, longitude: number): Promise
     return { ok: false, status: 502, message: "Malformed weather response." };
   }
 
+  // Open-Meteo reports is_day as 1/0 for the queried coordinates. Assume daylight when
+  // the field is absent so a partial payload never turns a sunny afternoon into a moon.
+  const isDay = Number(data?.current?.is_day) !== 0;
+
   return {
     ok: true,
     temperature,
     code,
-    emoji: weatherEmoji(code),
+    emoji: weatherEmoji(code, isDay),
     condition: weatherCondition(code),
+    isDay,
   };
 }

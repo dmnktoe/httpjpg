@@ -22,7 +22,7 @@ permissions:
   actions: read
 
 jobs:
-  # ── Skip the pipeline on release PRs (see .github/RELEASING.md) ─────
+  # ── Skip the pipeline on release PRs (see CLAUDE.md → Releases) ─────
   guard:
     name: Guard
     runs-on: ubuntu-latest

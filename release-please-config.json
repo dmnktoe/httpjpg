@@ -8,9 +8,10 @@
   "draft": false,
   "prerelease": false,
   "pull-request-title-pattern": "chore(release): ${version}",
+  "group-pull-request-title-pattern": "chore(release): ${version}",
   "label": "release,autorelease: pending",
   "release-label": "release,autorelease: tagged",
-  "pull-request-header": "*ੈ✩‧₊˚ **release** ‧₊˚✩ੈ*\n\nVersion bump + changelog, derived from the conventional commits on `main`. Nothing here is final: **edit `CHANGELOG.md` in this PR** to turn the generated one-liners into the prose this changelog is written in, then merge.\n\nCI is skipped on purpose — every commit listed below already passed the full pipeline on `main`, and this PR only touches `package.json` and `CHANGELOG.md`.\n\nMerging tags `v${version}`, publishes the GitHub Release, and cuts the matching Sentry release.",
+  "pull-request-header": "*ੈ✩‧₊˚ **release** ‧₊˚✩ੈ*\n\nVersion bump + changelog, derived from the conventional commits on `main`. Nothing here is final: **edit `CHANGELOG.md` in this PR** to turn the generated one-liners into the prose this changelog is written in, then merge.\n\nCI is skipped on purpose — every commit listed below already passed the full pipeline on `main`, and this PR only touches `package.json` and `CHANGELOG.md`.\n\nMerging this PR tags the release, publishes it on GitHub, and cuts the matching Sentry release.",
   "pull-request-footer": "---\n\nThe changelog is regenerated whenever a new commit lands on `main`, which discards manual edits — so curate late and merge promptly. `### Removed` has no commit type behind it; add it by hand when a release drops something.",
   "changelog-sections": [
     { "type": "feat", "section": "Added" },

@@ -34,7 +34,7 @@
     "husky": "^9.1.7",
     "jsdom": "catalog:",
     "lint-staged": "^17.0.0",
-    "oxfmt": "^0.58.0",
+    "oxfmt": "^0.61.0",
     "oxlint": "^1.64.0",
     "turbo": "^2.6.0",
     "typescript": "catalog:",
@@ -52,5 +52,5 @@
   "engines": {
     "node": ">=22.12"
   },
-  "packageManager": "pnpm@10.34.4"
+  "packageManager": "pnpm@10.34.5"
 }

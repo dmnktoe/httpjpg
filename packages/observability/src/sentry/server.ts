@@ -4,6 +4,9 @@ import { getSentryConfig } from "./config";
 
 export function initSentryServer() {
   const { dsn, environment, release, isProduction, isEnabled } = getSentryConfig("server");
+  if (!dsn || !isEnabled || Sentry.getClient()) {
+    return;
+  }
   Sentry.init({
     dsn,
     environment,

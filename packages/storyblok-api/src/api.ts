@@ -92,27 +92,5 @@ export function getStoryblokApi(config: StoryblokConfig = {}) {
     }
   }
 
-  async function getAllSlugs(params: { starts_with?: string } = {}) {
-    const version = draftMode ? "draft" : env.NEXT_PUBLIC_STORYBLOK_VERSION;
-    try {
-      const response = await client.get("cdn/links", {
-        version,
-        starts_with: params.starts_with,
-      });
-      const links = response.data.links;
-      if (!links) {
-        return [];
-      }
-      return Object.values(links).map((link) => ({
-        slug: link.slug ?? "",
-        id: link.id,
-        isFolder: link.is_folder ?? false,
-      }));
-    } catch (error) {
-      console.error("Error fetching slugs", error);
-      return [];
-    }
-  }
-
-  return { client, getStory, getStories, getAllSlugs };
+  return { client, getStory, getStories };
 }

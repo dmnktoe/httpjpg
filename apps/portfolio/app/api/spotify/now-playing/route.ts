@@ -1,6 +1,12 @@
 import { env } from "@httpjpg/env";
 import { captureEdgeException } from "@httpjpg/observability/sentry/edge.ts";
-import { getAccessToken, getCurrentlyPlaying, SpotifyForbiddenError } from "@httpjpg/spotify";
+import {
+  clearAccessTokenCache,
+  getAccessToken,
+  getCurrentlyPlaying,
+  SpotifyForbiddenError,
+  SpotifyUnauthorizedError,
+} from "@httpjpg/spotify";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { enforceRateLimit } from "@/lib/rate-limit";
@@ -21,13 +27,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const accessToken = await getAccessToken(
-      env.SPOTIFY_CLIENT_ID,
-      env.SPOTIFY_CLIENT_SECRET,
-      env.SPOTIFY_REFRESH_TOKEN,
-    );
-
-    const nowPlaying = await getCurrentlyPlaying(accessToken);
+    const nowPlaying = await fetchNowPlayingWithRetry();
 
     return NextResponse.json(
       { data: nowPlaying },
@@ -60,4 +60,25 @@ export async function OPTIONS() {
     status: 200,
     headers: CORS_HEADERS,
   });
+}
+
+async function fetchNowPlayingWithRetry() {
+  const accessToken = await getSpotifyAccessToken();
+  try {
+    return await getCurrentlyPlaying(accessToken);
+  } catch (error) {
+    if (!(error instanceof SpotifyUnauthorizedError)) {
+      throw error;
+    }
+    clearAccessTokenCache();
+    return getCurrentlyPlaying(await getSpotifyAccessToken());
+  }
+}
+
+function getSpotifyAccessToken() {
+  return getAccessToken(
+    env.SPOTIFY_CLIENT_ID,
+    env.SPOTIFY_CLIENT_SECRET,
+    env.SPOTIFY_REFRESH_TOKEN,
+  );
 }

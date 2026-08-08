@@ -36,12 +36,17 @@ async function syncComponents(): Promise<void> {
   console.log("🚀 Syncing Storyblok components\n");
   validateEnv();
   const existingIds = await fetchComponentIds();
+  const failed: string[] = [];
   for (const def of BLOCKS) {
     try {
       await upsertBlock(def, existingIds);
     } catch (error) {
       console.error(`❌ ${def.name}:`, error);
+      failed.push(def.name);
     }
+  }
+  if (failed.length > 0) {
+    throw new Error(`${failed.length} component(s) failed to sync: ${failed.join(", ")}`);
   }
   console.log("\n✨ Component sync complete");
 }

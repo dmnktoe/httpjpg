@@ -142,5 +142,3 @@ export function pickPattern(seed: string | undefined): Exclude<OverlayPattern, "
   }
   return PATTERN_ROTATION[hash % PATTERN_ROTATION.length];
 }
-
-export type OverlayPatternName = keyof typeof OVERLAY_PATTERNS;

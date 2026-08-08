@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "motion/react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 import {
@@ -20,7 +20,16 @@ import "swiper/css/effect-coverflow";
 import "swiper/css/effect-flip";
 import "swiper/css/effect-cards";
 import "swiper/css/effect-creative";
-import type { Swiper as SwiperType } from "swiper/types";
+import type {
+  CardsEffectOptions,
+  CoverflowEffectOptions,
+  CreativeEffectOptions,
+  CubeEffectOptions,
+  FadeEffectOptions,
+  FlipEffectOptions,
+  Swiper as SwiperType,
+  SwiperModule,
+} from "swiper/types";
 
 import { AnimateInView, type AnimationType } from "../animate-in-view/animate-in-view";
 import { ASCII_TAPE } from "../ascii-art/banners";
@@ -32,18 +41,18 @@ import { Image } from "../image/image";
 import { HStack } from "../stack/stack";
 import { Video } from "../video/video";
 
-const SWIPER_FADE_EFFECT = {
+const SWIPER_FADE_EFFECT: FadeEffectOptions = {
   crossFade: true,
 };
 
-const SWIPER_CUBE_EFFECT = {
+const SWIPER_CUBE_EFFECT: CubeEffectOptions = {
   shadow: true,
   slideShadows: true,
   shadowOffset: 20,
   shadowScale: 0.94,
 };
 
-const SWIPER_COVERFLOW_EFFECT = {
+const SWIPER_COVERFLOW_EFFECT: CoverflowEffectOptions = {
   rotate: 50,
   stretch: 0,
   depth: 100,
@@ -51,16 +60,16 @@ const SWIPER_COVERFLOW_EFFECT = {
   slideShadows: true,
 };
 
-const SWIPER_FLIP_EFFECT = {
+const SWIPER_FLIP_EFFECT: FlipEffectOptions = {
   slideShadows: true,
   limitRotation: true,
 };
 
-const SWIPER_CARDS_EFFECT = {
+const SWIPER_CARDS_EFFECT: CardsEffectOptions = {
   slideShadows: true,
 };
 
-const SWIPER_CREATIVE_EFFECT = {
+const SWIPER_CREATIVE_EFFECT: CreativeEffectOptions = {
   prev: {
     shadow: true,
     translate: ["-20%", 0, -1],
@@ -108,7 +117,7 @@ export interface SlideshowImage {
 
 export type SwiperEffect = "slide" | "fade" | "cube" | "coverflow" | "flip" | "cards" | "creative";
 
-const EFFECT_MODULES: Record<SwiperEffect, typeof EffectFade | undefined> = {
+const EFFECT_MODULES: Record<SwiperEffect, SwiperModule | undefined> = {
   slide: undefined,
   fade: EffectFade,
   cube: EffectCube,

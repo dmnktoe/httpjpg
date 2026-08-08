@@ -5,7 +5,7 @@ import { CustomCursor } from "./custom-cursor";
 const { mockReducedMotion } = vi.hoisted(() => ({
   mockReducedMotion: vi.fn<() => boolean | null>(),
 }));
-vi.mock("framer-motion", () => ({ useReducedMotion: () => mockReducedMotion() }));
+vi.mock("motion/react", () => ({ useReducedMotion: () => mockReducedMotion() }));
 
 describe("CustomCursor", () => {
   afterEach(() => {

@@ -22,10 +22,6 @@
       "types": "./src/components/index.ts",
       "import": "./src/components/index.ts"
     },
-    "./styles/global": {
-      "types": "./src/styles/global.ts",
-      "import": "./src/styles/global.ts"
-    },
     "./css": {
       "types": "./styled-system/css/index.d.ts",
       "import": "./styled-system/css/index.mjs"
@@ -53,12 +49,12 @@
   },
   "dependencies": {
     "@httpjpg/tokens": "workspace:*",
-    "framer-motion": "^12.23.24",
-    "swiper": "^12.0.3"
+    "motion": "^12.23.24",
+    "swiper": "^14.0.0"
   },
   "devDependencies": {
     "@httpjpg/storyblok-utils": "workspace:*",
-    "@pandacss/dev": "1.11.3",
+    "@pandacss/dev": "1.12.0",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/node": "catalog:",

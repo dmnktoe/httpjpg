@@ -4,12 +4,6 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": {
-      "import": "./src/index.ts"
-    },
-    "./sentry": {
-      "import": "./src/sentry/index.ts"
-    },
     "./sentry/*.ts": {
       "import": "./src/sentry/*.ts"
     }

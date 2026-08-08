@@ -33,7 +33,6 @@ export interface UseNowPlayingReturn {
   isLoading: boolean;
   error: Error | null;
   errorCode: NowPlayingErrorCode | null;
-  refetch: () => Promise<void>;
 }
 
 export function useNowPlaying({
@@ -46,38 +45,51 @@ export function useNowPlaying({
   const [error, setError] = useState<Error | null>(null);
   const [errorCode, setErrorCode] = useState<NowPlayingErrorCode | null>(null);
 
-  const fetchNowPlaying = async () => {
-    try {
-      const response = await fetch(endpoint);
-      const result = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        setErrorCode(toErrorCode(result?.error));
-        setError(new Error(result?.message ?? `Failed to fetch: ${response.statusText}`));
-        setData(null);
-        return;
-      }
-
-      setData(result?.data ?? null);
-      setError(null);
-      setErrorCode(null);
-    } catch (err) {
-      setErrorCode("network_error");
-      setError(err instanceof Error ? err : new Error("Unknown error"));
-      setData(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
     if (!enabled) {
       return;
     }
 
+    let ignore = false;
+
+    async function fetchNowPlaying() {
+      try {
+        const response = await fetch(endpoint);
+        const result = await response.json().catch(() => null);
+        if (ignore) {
+          return;
+        }
+
+        if (!response.ok) {
+          setErrorCode(toErrorCode(result?.error));
+          setError(new Error(result?.message ?? `Failed to fetch: ${response.statusText}`));
+          setData(null);
+          return;
+        }
+
+        setData(result?.data ?? null);
+        setError(null);
+        setErrorCode(null);
+      } catch (err) {
+        if (ignore) {
+          return;
+        }
+        setErrorCode("network_error");
+        setError(err instanceof Error ? err : new Error("Unknown error"));
+        setData(null);
+      } finally {
+        if (!ignore) {
+          setIsLoading(false);
+        }
+      }
+    }
+
     fetchNowPlaying();
     const interval = setInterval(fetchNowPlaying, pollInterval);
-    return () => clearInterval(interval);
+    return () => {
+      ignore = true;
+      clearInterval(interval);
+    };
   }, [endpoint, pollInterval, enabled]);
 
   return {
@@ -85,7 +97,6 @@ export function useNowPlaying({
     isLoading,
     error,
     errorCode,
-    refetch: fetchNowPlaying,
   };
 }
 

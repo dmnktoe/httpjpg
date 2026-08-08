@@ -52,7 +52,8 @@ When generating or updating code: read neighboring files first, prefer the exist
 │   │   │   └── storyblok-slugs.ts
 │   │   ├── proxy.ts             # Edge middleware: preview-token validation, CSP, x-pathname
 │   │   └── instrumentation.ts   # Sentry boot for server + edge
-│   └── storybook/               # Storybook for @httpjpg/ui component dev/docs
+│   ├── storybook/               # Storybook for @httpjpg/ui component dev/docs
+│   └── studio/                  # Dev-only drag-and-drop grid editor for Storyblok bloks
 │
 ├── packages/
 │   ├── analytics/               # Google Analytics gtag wrapper
@@ -82,6 +83,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 
 - **`@httpjpg/portfolio`** — the deployed Next.js site. Owns all routes, app-specific widgets, data-fetching queries, SEO, schema-org, and integrations.
 - **`@httpjpg/storybook`** — Storybook host for documenting and developing `@httpjpg/ui` and `@httpjpg/now-playing` components in isolation. Not deployed.
+- **`@httpjpg/studio`** — dev-only "Grid Studio" (port 3001): visually composes `grid`/`grid_item` bloks with real `@httpjpg/ui` components and pushes the JSON to Storyblok via the Management API. All API routes 404 outside development; not deployed.
 
 #### Foundations (no workspace deps)
 
@@ -105,7 +107,7 @@ storyblok-utils  ←  storyblok-api    storyblok-richtext  ←  storyblok-ui
 ```
 
 - **`@httpjpg/storyblok-utils`** — framework-agnostic leaf. Owns Storyblok runtime types (`StoryblokStory`, `StoryblokImage`, `StoryblokLink`, `StoryblokRichText`, `StoryblokVideoAsset`, `StoryMetadata`, `StoryblokBlokData`, `StoryblokApiResponse`), `CMS_OPTIONS` (the design-token contract Storyblok emits), image processing/presets, plain-text extraction from richtext, preview-token validation, and `STORYBLOK_RELATIONS`.
-- **`@httpjpg/storyblok-api`** — raw CDN client (`getStoryblokApi()`). No Next.js coupling, works in edge workers and scripts. Returns `{ client, getStory, getStories, getAllSlugs }`.
+- **`@httpjpg/storyblok-api`** — raw CDN client (`getStoryblokApi()`). No Next.js coupling, works in edge workers and scripts. Returns `{ client, getStory, getStories }`.
 - **`@httpjpg/storyblok-next`** — Next.js cache layer on top. Owns `fetchStory()` (uses `unstable_cache` with `STORY(slug)` + `STORIES` tags, 1 h revalidate, draft mode bypass) and `CACHE_TAGS`. Apps import from here when they need cached fetches.
 - **`@httpjpg/storyblok-richtext`** — renders a Storyblok richtext document to React via the `@storyblok/react` v5 renderer (`createRichTextRenderer`) with a `components` map keyed by node/mark type that maps onto `@httpjpg/ui` primitives.
 - **`@httpjpg/storyblok-ui`** — `Sb*` blok components (e.g. `SbPage`, `SbWorkList`, `SbImage`, `SbMusicPlayer`) that consume `@httpjpg/ui` primitives and the `BlokSpacing` schema. Re-exports the runtime types from `storyblok-utils` for app convenience and exposes `storyblokInit` / `apiPlugin`.
@@ -218,7 +220,7 @@ export const formatYear = (date?: string) =>
 | Components & types         | PascalCase                       | `WorkCard`, `NavItem`, `BlokSpacing`   |
 | Hooks                      | camelCase, `use` prefix          | `useNowPlaying`, `useVibrantColor`     |
 | Variables / regular fns    | camelCase                        | `formatYear`, `isLoading`              |
-| Module-scope const data    | SCREAMING_SNAKE_CASE             | `FALLBACK_NAVIGATION`, `STATUS_COLORS` |
+| Module-scope const data    | SCREAMING_SNAKE_CASE             | `STORYBLOK_RELATIONS`, `STATUS_COLORS` |
 | Module-scope const handles | camelCase                        | `tagRenderers`, `sizeConfig`           |
 | Props interface            | `<Component>Props`               | `WorkCardProps`, `SbButtonProps`       |
 | Boolean variables          | `is*` / `has*` / `can*`          | `isPlaying`, `hasVibrantColor`         |

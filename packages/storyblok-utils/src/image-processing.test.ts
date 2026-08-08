@@ -24,6 +24,13 @@ describe("Image Processing", () => {
       expect(result).toBe(`${baseUrl}/m/600x400/filters:quality(75):focal(300x200:600x400)`);
     });
 
+    it("should strip a crop mode segment from the focal dimensions", () => {
+      const result = getProcessedImage(baseUrl, "1200x630/smart", "100x100:101x101");
+      expect(result).toBe(
+        `${baseUrl}/m/1200x630/smart/filters:quality(75):focal(100x100:1200x630)`,
+      );
+    });
+
     it("should append additional filters", () => {
       const result = getProcessedImage(baseUrl, "600x400", "", "blur(10):grayscale()");
       expect(result).toBe(`${baseUrl}/m/600x400/filters:quality(75):blur(10):grayscale()`);

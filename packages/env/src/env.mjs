@@ -33,16 +33,11 @@ export const env = createEnv({
     STORYBLOK_API_ENDPOINT: z.string().url().optional(),
 
     SENTRY_DSN: z.string().url().optional(),
-    SENTRY_AUTH_TOKEN: z.string().optional(),
-    SENTRY_ORG: z.string().optional(),
-    SENTRY_PROJECT: z.string().optional(),
     SENTRY_ENABLE_IN_DEV: boolFromString,
 
     SPOTIFY_CLIENT_ID: z.string().min(1, "SPOTIFY_CLIENT_ID is required"),
     SPOTIFY_CLIENT_SECRET: z.string().min(1, "SPOTIFY_CLIENT_SECRET is required"),
     SPOTIFY_REFRESH_TOKEN: z.string().min(1, "SPOTIFY_REFRESH_TOKEN is required"),
-
-    DISCORD_USER_ID: z.string().optional(),
 
     PSN_NPSSO: z.string().optional(),
 
@@ -83,16 +78,11 @@ export const env = createEnv({
     STORYBLOK_API_ENDPOINT: process.env.STORYBLOK_API_ENDPOINT,
 
     SENTRY_DSN: process.env.SENTRY_DSN,
-    SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
-    SENTRY_ORG: process.env.SENTRY_ORG,
-    SENTRY_PROJECT: process.env.SENTRY_PROJECT,
     SENTRY_ENABLE_IN_DEV: process.env.SENTRY_ENABLE_IN_DEV,
 
     SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
     SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
     SPOTIFY_REFRESH_TOKEN: process.env.SPOTIFY_REFRESH_TOKEN,
-
-    DISCORD_USER_ID: process.env.DISCORD_USER_ID,
 
     PSN_NPSSO: process.env.PSN_NPSSO,
 

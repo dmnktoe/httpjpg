@@ -32,8 +32,8 @@ describe("widthCss", () => {
   });
 
   it("returns a responsive width object across breakpoints", () => {
-    expect(widthCss({ width: "100%", widthMd: "50%", widthLg: "33%" })).toEqual({
-      width: { base: "100%", md: "50%", lg: "33%" },
+    expect(widthCss({ width: "100%", widthMd: "50%", widthLg: "30%" })).toEqual({
+      width: { base: "100%", md: "50%", lg: "30%" },
     });
   });
 });
@@ -44,8 +44,8 @@ describe("sizesFromWidths", () => {
   });
 
   it("converts percentages to vw and orders breakpoints largest-first", () => {
-    expect(sizesFromWidths({ width: "100%", widthMd: "50%", widthLg: "33%" })).toBe(
-      "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw",
+    expect(sizesFromWidths({ width: "100%", widthMd: "50%", widthLg: "30%" })).toBe(
+      "(min-width: 1024px) 30vw, (min-width: 768px) 50vw, 100vw",
     );
   });
 });

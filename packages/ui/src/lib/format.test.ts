@@ -16,5 +16,17 @@ describe("formatYear", () => {
 
   it("returns null for an invalid date", () => {
     expect(formatYear("not a date")).toBeNull();
+    expect(formatYear("2027-13-45 00:00")).toBeNull();
+  });
+
+  it("keeps the authored year for wall-clock datetimes", () => {
+    expect(formatYear("2027-01-01 00:00")).toBe("2027");
+    expect(formatYear("2027-01-01T00:00")).toBe("2027");
+    expect(formatYear("2027-01-01 00:00:00")).toBe("2027");
+  });
+
+  it("respects an explicit timezone offset", () => {
+    expect(formatYear("2027-01-01T00:00:00Z")).toBe("2027");
+    expect(formatYear("2027-01-01T00:00:00+01:00")).toBe("2026");
   });
 });

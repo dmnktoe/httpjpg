@@ -24,7 +24,13 @@ const psn = vi.hoisted(() => ({
 
 vi.mock("psn-api", () => psn);
 
-import { buildTrophy, fetchRecentTrophies, isPsnUsername } from "./psn-trophies";
+import {
+  buildTrophy,
+  fetchRecentTrophies,
+  isPsnUsername,
+  PsnAuthError,
+  resetPsnAuthCache,
+} from "./psn-trophies";
 
 const TITLE = {
   npServiceName: "trophy2" as const,
@@ -200,8 +206,107 @@ describe("fetchRecentTrophies", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.status).toBe(502);
+      expect(result.reason).toBe("upstream");
+      expect(result.reportable).toBe(true);
       expect(result.message).toBe("PSN trophies unavailable");
     }
+  });
+});
+
+// psn-api's types promise a populated payload, but a grant Sony rejects
+// deserialises to undefined fields without throwing — the mismatch this suite
+// pins down.
+const REJECTED_GRANT = {
+  accessToken: undefined,
+  expiresIn: undefined,
+  refreshToken: undefined,
+  refreshTokenExpiresIn: undefined,
+} as unknown as {
+  accessToken: string;
+  expiresIn: number;
+  refreshToken: string;
+  refreshTokenExpiresIn: number;
+};
+
+describe("fetchRecentTrophies auth handling", () => {
+  beforeEach(() => {
+    resetPsnAuthCache();
+    // mockReset (not clearAllMocks) so a persistent implementation set by one
+    // test can't leak into the next.
+    psn.exchangeNpssoForCode.mockReset().mockResolvedValue("code");
+    psn.exchangeCodeForAccessToken.mockReset().mockResolvedValue({
+      accessToken: "access",
+      expiresIn: 3600,
+      refreshToken: "refresh",
+      refreshTokenExpiresIn: 100_000,
+    });
+    psn.exchangeRefreshTokenForAuthTokens.mockReset().mockResolvedValue({
+      accessToken: "access2",
+      expiresIn: 3600,
+      refreshToken: "refresh2",
+      refreshTokenExpiresIn: 100_000,
+    });
+    psn.getProfileFromAccountId.mockReset().mockResolvedValue({ avatars: [] });
+    psn.getUserTitles.mockReset().mockResolvedValue({ trophyTitles: [] });
+  });
+
+  it("reports an expired NPSSO as an auth failure instead of a generic one", async () => {
+    psn.exchangeNpssoForCode.mockRejectedValueOnce(
+      new Error("There was a problem retrieving your PSN access code."),
+    );
+
+    const result = await fetchRecentTrophies("expired-npsso");
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.status).toBe(503);
+      expect(result.reason).toBe("auth");
+      expect(result.error).toBeInstanceOf(PsnAuthError);
+    }
+  });
+
+  it("treats a token exchange that resolves without an access token as an auth failure", async () => {
+    psn.exchangeCodeForAccessToken.mockResolvedValueOnce(REJECTED_GRANT);
+
+    const result = await fetchRecentTrophies("npsso");
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toBe("auth");
+    }
+    // The unusable payload must not be cached as a live session.
+    expect(psn.getUserTitles).not.toHaveBeenCalled();
+  });
+
+  it("stops replaying a rejected NPSSO at Sony until the cooldown lapses", async () => {
+    psn.exchangeNpssoForCode.mockRejectedValue(new Error("bad npsso"));
+
+    const first = await fetchRecentTrophies("expired-npsso");
+    const second = await fetchRecentTrophies("expired-npsso");
+
+    expect(psn.exchangeNpssoForCode).toHaveBeenCalledTimes(1);
+    expect(first.ok === false && first.reportable).toBe(true);
+    // The replay is still a failure, but not a fresh one worth alerting on.
+    expect(second.ok === false && second.reason).toBe("auth");
+    expect(second.ok === false && second.reportable).toBe(false);
+  });
+
+  it("falls back to a full NPSSO exchange when the refresh token is refused", async () => {
+    psn.exchangeCodeForAccessToken.mockResolvedValueOnce({
+      accessToken: "access",
+      expiresIn: 0,
+      refreshToken: "refresh",
+      refreshTokenExpiresIn: 100_000,
+    });
+    await fetchRecentTrophies("npsso");
+
+    // Sony refuses the refresh: psn-api resolves with undefined fields.
+    psn.exchangeRefreshTokenForAuthTokens.mockResolvedValueOnce(REJECTED_GRANT);
+
+    const result = await fetchRecentTrophies("npsso");
+
+    expect(result.ok).toBe(true);
+    expect(psn.exchangeNpssoForCode).toHaveBeenCalledTimes(2);
   });
 });
 

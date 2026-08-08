@@ -393,6 +393,40 @@ pnpm format:check
 - Commit messages follow Conventional Commits (`commitlint` runs on `commit-msg`).
 - No console.log in shipped code paths; `console.error` / `console.warn` are acceptable for genuine error reporting that complements Sentry.
 
+### Releases
+
+Automated by release-please (`.github/workflows/release.yml`, `release-please-config.json`, `.release-please-manifest.json`). One version for the whole repo — the root `package.json` — because nothing is published to npm and every workspace package stays `private` at `0.0.0`.
+
+**Never hand-edit** the root `package.json` version, `.release-please-manifest.json`, or the newest `CHANGELOG.md` section outside of an open `chore(release):` PR. The tooling owns all three.
+
+The loop: a conventional commit lands on `main` → release-please opens or updates one `chore(release): <version>` PR with the version bump and a generated changelog section → **a human curates that PR** (the generated entries are commit subjects; this changelog is written in prose) → merging it tags `v<version>`, publishes the GitHub Release, and cuts the matching Sentry release. Nothing ships until that PR is merged, and leaving it open is safe.
+
+Curate late: release-please regenerates the changelog whenever a new commit lands on `main`, discarding manual edits. `### Removed` has no commit type behind it — add it by hand.
+
+The commit type decides both the changelog section and the bump:
+
+| Type                             | Section      | Version bump |
+| -------------------------------- | ------------ | ------------ |
+| `feat`                           | Added        | minor        |
+| `fix`                            | Fixed        | patch        |
+| `refactor`, `style`, `revert`    | Changed      | patch        |
+| `perf`                           | Performance  | patch        |
+| `build`, `ci`, `docs`, `test`    | Tooling      | patch        |
+| `deps`                           | Dependencies | patch        |
+| `chore`                          | _hidden_     | patch        |
+| any type with `BREAKING CHANGE:` | ⚠ BREAKING   | major        |
+
+**Every** conventional commit bumps at least the patch version — `hidden: true` only keeps `chore` out of the changelog, it does not stop the bump. A Renovate-only week therefore leaves an open release PR at `x.y.z+1`; whether that is worth shipping is a human call. Renovate commits as `deps:` (`:semanticCommitTypeAll(deps)`) so dependency updates land under Dependencies instead of vanishing into the hidden `chore` section.
+
+To override the computed version, put `Release-As: 3.0.0` in a commit body (an empty commit works).
+
+Two things that follow from this and are easy to trip over:
+
+- `ci.yml`'s `guard` job skips the pipeline for `release-please--*` branches — the release PR only touches `package.json` and `CHANGELOG.md`, and its commits already passed on `main`. The jobs are skipped individually rather than the workflow being filtered out with `paths-ignore` or `[skip ci]`, because a required status check that is never created leaves the PR blocked forever while a skipped one counts as passed.
+- `resolveAppVersion()` in `apps/portfolio/next.config.ts` resolves the env var, then `git describe --tags`, then the latest GitHub Release, then a commit SHA. The deploy build sets no env var, so it lands on the tag — the same name the `sentry-release` job uploads sourcemaps under, which is what makes production stack traces symbolicate. CI's `main` builds keep using `github.sha`.
+
+`RELEASE_PLEASE_TOKEN` is optional (a PAT with `contents: write` + `pull-requests: write`, for real PR authorship) and falls back to `GITHUB_TOKEN`. The Sentry job degrades to a warning when `SENTRY_AUTH_TOKEN` / `SENTRY_ORG` / `SENTRY_PROJECT` are missing, and its `set-commits --auto` step is `continue-on-error` because it needs Sentry's GitHub integration connected.
+
 ### Adding dependencies
 
 - Use `pnpm add` from the **specific package directory**, not the root.

@@ -1,0 +1,121 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  # ── Release PR on every push, tag + GitHub Release when it merges ───
+  release-please:
+    name: Release PR / Tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  # ── Sentry release for the freshly cut tag ──────────────────────────
+  sentry-release:
+    name: Sentry Release
+    needs: [release-please]
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+      RELEASE_VERSION: ${{ needs.release-please.outputs.tag_name }}
+      NEXT_PUBLIC_APP_VERSION: ${{ needs.release-please.outputs.tag_name }}
+      NEXT_PUBLIC_APP_URL: https://httpjpg.com
+      NEXT_PUBLIC_STORYBLOK_VERSION: published
+      NEXT_PUBLIC_STORYBLOK_TOKEN: ${{ secrets.NEXT_PUBLIC_STORYBLOK_TOKEN }}
+      STORYBLOK_PREVIEW_TOKEN: ${{ secrets.STORYBLOK_PREVIEW_TOKEN }}
+      STORYBLOK_PREVIEW_SECRET: ${{ secrets.STORYBLOK_PREVIEW_SECRET }}
+      STORYBLOK_REVALIDATE_SECRET: ${{ secrets.STORYBLOK_REVALIDATE_SECRET }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+      SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+      SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+      ARCJET_KEY: ${{ secrets.ARCJET_KEY }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+    steps:
+      - name: Check Sentry credentials
+        id: preflight
+        run: |
+          if [[ -z "$SENTRY_AUTH_TOKEN" || -z "$SENTRY_ORG" || -z "$SENTRY_PROJECT" ]]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Sentry secrets missing — skipping the Sentry release for ${RELEASE_VERSION}."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        if: steps.preflight.outputs.configured == 'true'
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+
+      - uses: ./.github/actions/setup
+        if: steps.preflight.outputs.configured == 'true'
+
+      - name: Build portfolio at ${{ needs.release-please.outputs.tag_name }}
+        if: steps.preflight.outputs.configured == 'true'
+        run: pnpm run build --filter=@httpjpg/portfolio
+
+      - name: Create Sentry release
+        if: steps.preflight.outputs.configured == 'true'
+        run: pnpm --filter=@httpjpg/portfolio exec sentry-cli releases new "$RELEASE_VERSION"
+
+      - name: Upload sourcemaps
+        if: steps.preflight.outputs.configured == 'true'
+        run: |
+          pnpm --filter=@httpjpg/portfolio exec sentry-cli sourcemaps upload \
+            --release="$RELEASE_VERSION" \
+            .next/static
+
+      - name: Associate commits
+        if: steps.preflight.outputs.configured == 'true'
+        continue-on-error: true
+        run: |
+          pnpm --filter=@httpjpg/portfolio exec sentry-cli releases set-commits \
+            "$RELEASE_VERSION" --auto --ignore-missing
+
+      - name: Finalize Sentry release
+        if: steps.preflight.outputs.configured == 'true'
+        run: pnpm --filter=@httpjpg/portfolio exec sentry-cli releases finalize "$RELEASE_VERSION"
+
+      - name: Write summary
+        if: always()
+        run: |
+          {
+            echo "## Release ${RELEASE_VERSION}"
+            echo ""
+            if [[ "${{ steps.preflight.outputs.configured }}" == "true" ]]; then
+              echo "Sentry release \`${RELEASE_VERSION}\` created and finalized."
+            else
+              echo "Sentry release skipped — credentials not configured."
+            fi
+            echo ""
+            echo "https://github.com/${{ github.repository }}/releases/tag/${RELEASE_VERSION}"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -24,9 +24,29 @@ export interface PsnTrophy {
   image: string | null;
 }
 
+export type PsnFailureReason = "auth" | "upstream";
+
 export type PsnTrophyFetchResult =
   | { ok: true; trophies: PsnTrophy[]; avatar: string | null }
-  | { ok: false; status: number; message: string };
+  | {
+      ok: false;
+      status: number;
+      reason: PsnFailureReason;
+      message: string;
+      error: unknown;
+      reportable: boolean;
+    };
+
+export class PsnAuthError extends Error {
+  readonly status = 503;
+  readonly replayed: boolean;
+
+  constructor(message: string, options?: { cause?: unknown; replayed?: boolean }) {
+    super(message, { cause: options?.cause });
+    this.name = "PsnAuthError";
+    this.replayed = options?.replayed ?? false;
+  }
+}
 
 const RECENT_LIMIT = 5;
 const TITLE_SCAN = 5;
@@ -105,9 +125,60 @@ interface CachedAuth {
   refreshTokenExpiresAt: number;
 }
 
+interface PsnAuthTokens {
+  accessToken: string;
+  expiresIn: number;
+  refreshToken?: string;
+  refreshTokenExpiresIn?: number;
+}
+
 let cachedAuth: CachedAuth | null = null;
+let authBlockedUntil = 0;
 
 const AUTH_SKEW_MS = 60_000;
+const AUTH_COOLDOWN_MS = 5 * 60_000;
+
+// psn-api resolves both token exchanges with undefined fields instead of
+// throwing when Sony rejects the grant, so an unchecked payload caches an
+// undefined access token behind a NaN expiry and every later call 401s.
+function toAuthTokens(payload: unknown, source: string): PsnAuthTokens {
+  const tokens = payload as Partial<PsnAuthTokens> | null | undefined;
+  if (!tokens?.accessToken || !Number.isFinite(tokens.expiresIn)) {
+    throw new PsnAuthError(`PSN ${source} returned no usable access token`);
+  }
+  return {
+    accessToken: tokens.accessToken,
+    expiresIn: tokens.expiresIn as number,
+    refreshToken: tokens.refreshToken,
+    refreshTokenExpiresIn: Number.isFinite(tokens.refreshTokenExpiresIn)
+      ? tokens.refreshTokenExpiresIn
+      : undefined,
+  };
+}
+
+async function exchangeNpsso(npsso: string): Promise<PsnAuthTokens> {
+  try {
+    return toAuthTokens(
+      await exchangeCodeForAccessToken(await exchangeNpssoForCode(npsso)),
+      "code exchange",
+    );
+  } catch (error) {
+    if (error instanceof PsnAuthError) {
+      throw error;
+    }
+    // psn-api throws a bare Error here when Sony refuses to hand back an access
+    // code, which in practice means the NPSSO is expired (they last ~60 days).
+    throw new PsnAuthError("PSN rejected the NPSSO token — it is expired or malformed", {
+      cause: error,
+    });
+  }
+}
+
+/** Test-only escape hatch for the module-level auth cache. */
+export function resetPsnAuthCache(): void {
+  cachedAuth = null;
+  authBlockedUntil = 0;
+}
 
 async function authorize(npsso: string): Promise<AuthorizationPayload> {
   const now = Date.now();
@@ -116,23 +187,47 @@ async function authorize(npsso: string): Promise<AuthorizationPayload> {
     return { accessToken: cachedAuth.accessToken };
   }
 
+  // A rejected NPSSO fails identically on every retry, so stop replaying it at
+  // Sony's auth endpoint once per page view until the cooldown lapses.
+  if (now < authBlockedUntil) {
+    throw new PsnAuthError("PSN credentials were rejected recently — retrying later", {
+      replayed: true,
+    });
+  }
+
+  const refreshToken =
+    cachedAuth && cachedAuth.refreshTokenExpiresAt > now + AUTH_SKEW_MS
+      ? cachedAuth.refreshToken
+      : null;
+
+  // Never let a stale entry outlive a failed exchange.
+  cachedAuth = null;
+
   try {
-    const tokens =
-      cachedAuth && cachedAuth.refreshTokenExpiresAt > now + AUTH_SKEW_MS
-        ? await exchangeRefreshTokenForAuthTokens(cachedAuth.refreshToken)
-        : await exchangeCodeForAccessToken(await exchangeNpssoForCode(npsso));
+    // A refused refresh is recoverable — fall back to a full NPSSO exchange in
+    // the same request instead of failing it and retrying on the next one.
+    const refreshed = refreshToken
+      ? await exchangeRefreshTokenForAuthTokens(refreshToken)
+          .then((tokens) => toAuthTokens(tokens, "token refresh"))
+          .catch(() => null)
+      : null;
+    const tokens = refreshed ?? (await exchangeNpsso(npsso));
 
     cachedAuth = {
       accessToken: tokens.accessToken,
       accessTokenExpiresAt: now + tokens.expiresIn * 1000,
-      refreshToken: tokens.refreshToken,
-      refreshTokenExpiresAt: now + tokens.refreshTokenExpiresIn * 1000,
+      refreshToken: tokens.refreshToken ?? "",
+      // Without a usable refresh token, expire it immediately so the next
+      // renewal goes through the NPSSO exchange rather than sending "".
+      refreshTokenExpiresAt: tokens.refreshTokenExpiresIn
+        ? now + tokens.refreshTokenExpiresIn * 1000
+        : 0,
     };
     return { accessToken: cachedAuth.accessToken };
   } catch (error) {
-    // Only an exchange/refresh failure means the token is bad — drop it so the
-    // next call re-exchanges the NPSSO from scratch.
-    cachedAuth = null;
+    if (error instanceof PsnAuthError) {
+      authBlockedUntil = now + AUTH_COOLDOWN_MS;
+    }
     throw error;
   }
 }
@@ -187,8 +282,18 @@ export async function fetchRecentTrophies(
 
     return { ok: true, trophies, avatar };
   } catch (error) {
-    // Keep the detailed upstream error server-side; return a generic message.
-    console.warn("PSN trophy fetch error:", error);
-    return { ok: false, status: 502, message: "PSN trophies unavailable" };
+    // Keep the detailed cause server-side; the route answers with a generic
+    // body and reports anything worth seeing to Sentry.
+    const isAuthFailure = error instanceof PsnAuthError;
+    return {
+      ok: false,
+      status: isAuthFailure ? 503 : 502,
+      reason: isAuthFailure ? "auth" : "upstream",
+      message: isAuthFailure
+        ? "PSN credentials rejected — set a fresh PSN_NPSSO"
+        : "PSN trophies unavailable",
+      error,
+      reportable: !(isAuthFailure && (error as PsnAuthError).replayed),
+    };
   }
 }

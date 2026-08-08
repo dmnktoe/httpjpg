@@ -7,6 +7,19 @@ import type { SystemStyleObject } from "styled-system/types";
 
 import { isExternalLink } from "../../lib/is-external-link";
 
+const SAFE_SCHEMES = ["http", "https", "mailto", "tel"];
+
+function isSafeHref(href: string): boolean {
+  const cleaned = Array.from(href)
+    .filter((char) => {
+      const code = char.charCodeAt(0);
+      return code > 0x20 && code !== 0x7f;
+    })
+    .join("");
+  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(cleaned);
+  return !scheme || SAFE_SCHEMES.includes(scheme[1].toLowerCase());
+}
+
 export interface BadgeProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "css" | "height"> {
   /** Badge image URL, e.g. a shields.io SVG. */
   src: string;
@@ -43,7 +56,7 @@ export const Badge = forwardRef<HTMLImageElement, BadgeProps>(function Badge(
     />
   );
 
-  if (!href) {
+  if (!href || !isSafeHref(href)) {
     return image;
   }
 

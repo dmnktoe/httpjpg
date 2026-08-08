@@ -46,6 +46,12 @@ describe("Badge", () => {
     expect(link).not.toHaveAttribute("target");
   });
 
+  it("drops an href with an unsafe URI scheme but still renders the badge", () => {
+    render(<Badge src={SHIELD} alt="Version" href="javascript:alert(1)" />);
+    expect(screen.queryByRole("link")).toBeNull();
+    expect(screen.getByAltText("Version")).toBeInTheDocument();
+  });
+
   it("forwards extra image attributes", () => {
     render(<Badge src={SHIELD} alt="Version" data-testid="badge" title="latest release" />);
     const img = screen.getByTestId("badge");

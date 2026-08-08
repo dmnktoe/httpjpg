@@ -5,16 +5,14 @@ import { forwardRef } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
-const ALIGN = { start: "flex-start", center: "center", end: "flex-end" } as const;
-
 export interface BadgeGroupProps extends Omit<HTMLAttributes<HTMLElement>, "css"> {
   children: ReactNode;
   /** Space between badges. @default "2" */
   gap?: string | number;
   /** Cross-axis alignment of badges with differing heights. @default "center" */
-  align?: keyof typeof ALIGN;
+  align?: "start" | "center" | "end";
   /** Main-axis distribution of the row. @default "start" */
-  justify?: keyof typeof ALIGN;
+  justify?: "start" | "center" | "end";
   /** Wrap onto multiple lines when the row overflows. @default true */
   wrap?: boolean;
   /**
@@ -43,8 +41,8 @@ export const BadgeGroup = forwardRef<HTMLElement, BadgeGroupProps>(function Badg
     css({
       display: inline ? "inline-flex" : "flex",
       flexWrap: wrap ? "wrap" : "nowrap",
-      alignItems: ALIGN[align],
-      justifyContent: ALIGN[justify],
+      alignItems: align,
+      justifyContent: justify,
       gap,
       verticalAlign: "middle",
       ...cssProp,

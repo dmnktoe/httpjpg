@@ -1,20 +1,14 @@
 #!/usr/bin/env tsx
 
-/**
- * Sync Storyblok component schemas, declaratively.
- *
- * Block schemas live in `./blocks/<group>.ts`. Field builders + the unified
- * Spacing tab live in `./lib`. Datasource slugs map 1:1 to entries generated
- * by `sync-datasources.ts` from `@httpjpg/storyblok-utils` `CMS_OPTIONS`.
- */
-
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { config } from "dotenv";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-config({ path: resolve(__dirname, "../../../.env.local") });
+config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
+
+import { banner, fail, outro, warn } from "@httpjpg/terminal";
 
 import { validateEnv } from "../src/index";
 import { contentBlocks } from "./blocks/content";
@@ -33,7 +27,7 @@ const BLOCKS: BlockDef[] = [
 ];
 
 async function syncComponents(): Promise<void> {
-  console.log("🚀 Syncing Storyblok components\n");
+  banner("storyblok · components");
   validateEnv();
   const existingIds = await fetchComponentIds();
   const failed: string[] = [];
@@ -41,17 +35,16 @@ async function syncComponents(): Promise<void> {
     try {
       await upsertBlock(def, existingIds);
     } catch (error) {
-      console.error(`❌ ${def.name}:`, error);
+      warn(`${def.name} · ${error}`);
       failed.push(def.name);
     }
   }
   if (failed.length > 0) {
     throw new Error(`${failed.length} component(s) failed to sync: ${failed.join(", ")}`);
   }
-  console.log("\n✨ Component sync complete");
+  outro("component sync complete");
 }
 
 syncComponents().catch((error) => {
-  console.error("❌ Sync failed:", error);
-  process.exit(1);
+  fail(`sync failed · ${error}`);
 });

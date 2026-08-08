@@ -1,22 +1,15 @@
 #!/usr/bin/env tsx
 
-/**
- * Sync Storyblok datasources from `@httpjpg/storyblok-utils` `CMS_OPTIONS`.
- *
- * `value` of every entry is the canonical token a Storyblok-UI wrapper
- * consumes at runtime. Add new options to `CMS_OPTIONS`, run this script,
- * and a Panda rebuild — the new value is then available everywhere.
- */
-
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { config } from "dotenv";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-config({ path: resolve(__dirname, "../../../.env.local") });
+config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
 
 import { CMS_OPTIONS } from "@httpjpg/storyblok-utils";
+import { banner, done, fail, outro, step } from "@httpjpg/terminal";
 import { spacing } from "@httpjpg/tokens";
 
 import { type Datasource, type DatasourceEntry, storyblokRequest, validateEnv } from "../src/index";
@@ -36,7 +29,7 @@ async function upsertDatasource(datasource: Datasource, entries: DatasourceEntry
   const existing = await getDatasource(datasource.slug);
 
   if (existing) {
-    console.log(`📝 ${datasource.name}`);
+    step(datasource.name);
     await storyblokRequest(`/datasources/${existing.id}`, "PUT", {
       datasource: { name: datasource.name, slug: datasource.slug },
     });
@@ -69,7 +62,7 @@ async function upsertDatasource(datasource: Datasource, entries: DatasourceEntry
     return;
   }
 
-  console.log(`✨ ${datasource.name}`);
+  done(datasource.name);
   const response = await storyblokRequest<{ datasource: { id: number } }>("/datasources", "POST", {
     datasource,
   });
@@ -111,7 +104,7 @@ function colorDs(): DatasourceWithEntries {
 }
 
 async function syncDatasources(): Promise<void> {
-  console.log("🚀 Syncing Storyblok datasources\n");
+  banner("storyblok · datasources");
   validateEnv();
 
   const datasources = [spacingDs(), colorDs()];
@@ -119,17 +112,15 @@ async function syncDatasources(): Promise<void> {
   for (const { datasource, entries } of datasources) {
     try {
       await upsertDatasource(datasource, entries);
-      console.log(`✅ ${datasource.name} (${entries.length} entries)`);
+      done(`${datasource.name} · ${entries.length} entries`);
     } catch (error) {
-      console.error(`❌ ${datasource.name}:`, error);
-      process.exit(1);
+      fail(`${datasource.name} · ${error}`);
     }
   }
 
-  console.log("\n✨ Datasource sync complete");
+  outro("datasource sync complete");
 }
 
 syncDatasources().catch((error) => {
-  console.error("❌ Sync failed:", error);
-  process.exit(1);
+  fail(`sync failed · ${error}`);
 });

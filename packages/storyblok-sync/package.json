@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@httpjpg/storyblok-utils": "workspace:*",
+    "@httpjpg/terminal": "workspace:*",
     "@httpjpg/tokens": "workspace:*",
     "dotenv": "catalog:"
   },

@@ -6,7 +6,9 @@ import { fileURLToPath } from "node:url";
 import { config } from "dotenv";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-config({ path: resolve(__dirname, "../../../.env.local") });
+config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
+
+import { done, fail, heading, step, warn } from "@httpjpg/terminal";
 
 import { storyblokRequest, validateEnv } from "../src/index";
 
@@ -28,27 +30,26 @@ async function cleanupDuplicateGroups() {
 
   const toDelete = allGroups.filter((g) => !CANONICAL_GROUPS.includes(g.name));
   if (toDelete.length === 0) {
-    console.log("No duplicate groups found.");
+    done("no duplicate groups found");
     return;
   }
 
-  console.log(`Deleting ${toDelete.length} non-canonical groups:`);
+  heading(`deleting ${toDelete.length} non-canonical groups`);
   for (const group of toDelete) {
-    console.log(`  - ${group.name} (${group.id})`);
+    step(`${group.name} · ${group.id}`);
   }
   await new Promise((resolve) => setTimeout(resolve, 3000));
 
   for (const group of toDelete) {
     try {
       await storyblokRequest(`/component_groups/${group.id}`, "DELETE");
-      console.log(`✓ ${group.name}`);
+      done(group.name);
     } catch (error) {
-      console.error(`✗ ${group.name}:`, error);
+      warn(`${group.name} · ${error}`);
     }
   }
 }
 
 cleanupDuplicateGroups().catch((error) => {
-  console.error("Cleanup failed:", error);
-  process.exit(1);
+  fail(`cleanup failed · ${error}`);
 });

@@ -5,11 +5,9 @@ on:
     branches:
       - main
 
-# Default to read-only; the release job opts into the writes it needs.
 permissions:
   contents: read
 
-# Never let two release runs groom the same PR or race on the same tag.
 concurrency:
   group: release
   cancel-in-progress: false
@@ -32,21 +30,11 @@ jobs:
         id: release
         uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
-          # A PAT gives the release PR a real author and keeps the option of
-          # running CI on it open — events raised by GITHUB_TOKEN cannot
-          # trigger other workflows. The fallback keeps this workflow working
-          # before the secret exists.
           token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
   # ── Sentry release for the freshly cut tag ──────────────────────────
-  #
-  # CI uploads sourcemaps for every main SHA, so main-branch errors resolve
-  # against a commit. This job does the same for the released version, which
-  # is what production actually reports: the deploy build has no
-  # NEXT_PUBLIC_APP_VERSION set, so `resolveAppVersion()` in next.config.ts
-  # falls back to `git describe --tags` and yields this very tag.
   sentry-release:
     name: Sentry Release
     needs: [release-please]
@@ -57,8 +45,6 @@ jobs:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
       SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-      # Baking the tag in means the client bundle, the Sentry release name and
-      # the uploaded sourcemaps all agree on one string.
       RELEASE_VERSION: ${{ needs.release-please.outputs.tag_name }}
       NEXT_PUBLIC_APP_VERSION: ${{ needs.release-please.outputs.tag_name }}
       NEXT_PUBLIC_APP_URL: https://httpjpg.com
@@ -108,9 +94,6 @@ jobs:
             --release="$RELEASE_VERSION" \
             .next/static
 
-      # Needs the Sentry GitHub integration to be connected to this repo.
-      # Without it `--auto` has nothing to resolve, which is not worth failing
-      # a release over — the release and its sourcemaps are already in place.
       - name: Associate commits
         if: steps.preflight.outputs.configured == 'true'
         continue-on-error: true

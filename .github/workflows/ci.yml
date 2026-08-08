@@ -22,14 +22,7 @@ permissions:
   actions: read
 
 jobs:
-  # ── Should this PR run the pipeline at all? ─────────────────────────
-  #
-  # release-please PRs only bump the version in package.json and rewrite
-  # CHANGELOG.md — every commit they describe already passed this pipeline on
-  # main. Skipping keeps the release fast and stops it burning a Chromatic
-  # snapshot build. The jobs are skipped individually rather than the workflow
-  # being filtered out, because a required status check that never gets created
-  # leaves the PR blocked forever, whereas a skipped one counts as passed.
+  # ── Skip the pipeline on release PRs (see .github/RELEASING.md) ─────
   guard:
     name: Guard
     runs-on: ubuntu-latest

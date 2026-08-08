@@ -11,7 +11,7 @@ import { config } from "dotenv";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
 
-import { ask, done, fail, hasFlag, heading, readOption, reportSecret, warn } from "./lib/cli";
+import { ask, done, fail, hasFlag, heading, reportSecret, warn } from "./lib/cli";
 
 const AUTHORIZE_URL = "https://accounts.spotify.com/authorize";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
@@ -19,7 +19,8 @@ const PROFILE_URL = "https://api.spotify.com/v1/me";
 
 const SCOPES = ["user-read-currently-playing", "user-read-playback-state"];
 
-const DEFAULT_PORT = 8888;
+const REDIRECT_PORT = 8888;
+const REDIRECT_URI = `http://127.0.0.1:${REDIRECT_PORT}/callback`;
 const CALLBACK_TIMEOUT_MS = 5 * 60_000;
 
 interface SpotifyTokenResponse {
@@ -49,7 +50,7 @@ function openBrowser(url: string): void {
   } catch {}
 }
 
-function listenOnLoopback(requestedPort: number): Promise<{ server: Server; port: number }> {
+function listenOnLoopback(): Promise<Server> {
   return new Promise((resolvePromise, rejectPromise) => {
     const server = createServer();
 
@@ -57,26 +58,20 @@ function listenOnLoopback(requestedPort: number): Promise<{ server: Server; port
       rejectPromise(
         error.code === "EADDRINUSE"
           ? new Error(
-              `Port ${requestedPort} is already in use — free it, or register another port in the dashboard and pass it with --port`,
+              `Port ${REDIRECT_PORT} is already in use — free it and retry, the redirect URI is registered on that port`,
             )
           : error,
       );
     });
 
-    server.listen(requestedPort, "127.0.0.1", () => {
-      const address = server.address();
-      resolvePromise({
-        server,
-        port: typeof address === "object" && address ? address.port : requestedPort,
-      });
-    });
+    server.listen(REDIRECT_PORT, "127.0.0.1", () => resolvePromise(server));
   });
 }
 
-function awaitCallback(server: Server, port: number, expectedState: string): Promise<string> {
+function awaitCallback(server: Server, expectedState: string): Promise<string> {
   return new Promise((resolvePromise, rejectPromise) => {
     server.on("request", (request, response) => {
-      const url = new URL(request.url ?? "/", `http://127.0.0.1:${port}`);
+      const url = new URL(request.url ?? "/", REDIRECT_URI);
       if (url.pathname !== "/callback") {
         response.writeHead(404).end();
         return;
@@ -167,14 +162,9 @@ function describeTokenFailure(status: number, payload: SpotifyTokenResponse | nu
   return `${status}: ${detail || "empty response"}`;
 }
 
-async function exchangeCode(
-  code: string,
-  redirectUri: string,
-  clientId: string,
-  clientSecret: string,
-): Promise<string> {
+async function exchangeCode(code: string, clientId: string, clientSecret: string): Promise<string> {
   const { status, payload, raw } = await requestToken(
-    { grant_type: "authorization_code", code, redirect_uri: redirectUri },
+    { grant_type: "authorization_code", code, redirect_uri: REDIRECT_URI },
     clientId,
     clientSecret,
   );
@@ -203,11 +193,6 @@ async function reportAccount(accessToken: string | undefined): Promise<void> {
 
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
-  const requestedPort = Number(readOption(argv, "port") ?? DEFAULT_PORT);
-  if (!Number.isInteger(requestedPort) || requestedPort < 0 || requestedPort > 65_535) {
-    fail(`Invalid --port "${readOption(argv, "port")}"`);
-  }
-
   const clientId = process.env.SPOTIFY_CLIENT_ID || (await ask("SPOTIFY_CLIENT_ID: "));
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET || (await ask("SPOTIFY_CLIENT_SECRET: "));
 
@@ -215,37 +200,26 @@ async function main(): Promise<void> {
     fail("Both SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET are required.");
   }
 
-  const { server, port } = await listenOnLoopback(requestedPort).catch((error: Error) =>
-    fail(error.message),
-  );
-  const redirectUri = `http://127.0.0.1:${port}/callback`;
-
-  if (requestedPort === 0) {
-    warn(
-      "--port 0 needs a portless redirect URI, which the dashboard currently rejects as insecure.\n   Expect this to fail unless Spotify has fixed that validator.",
-    );
-  }
+  const server = await listenOnLoopback().catch((error: Error) => fail(error.message));
 
   const state = randomUUID();
   const authorizeUrl = `${AUTHORIZE_URL}?${new URLSearchParams({
     client_id: clientId,
     response_type: "code",
-    redirect_uri: redirectUri,
+    redirect_uri: REDIRECT_URI,
     scope: SCOPES.join(" "),
     state,
     show_dialog: "true",
   })}`;
 
   heading("Spotify authorization");
-  console.log(`Listening on ${redirectUri}`);
+  console.log(`Listening on ${REDIRECT_URI}`);
   console.log(`This exact URI must be registered under Dashboard → Settings → Redirect URIs.\n`);
   console.log(`Opening the consent screen. If nothing happens, visit:\n  ${authorizeUrl}\n`);
   openBrowser(authorizeUrl);
 
-  const code = await awaitCallback(server, port, state).catch((error: Error) =>
-    fail(error.message),
-  );
-  const refreshToken = await exchangeCode(code, redirectUri, clientId, clientSecret);
+  const code = await awaitCallback(server, state).catch((error: Error) => fail(error.message));
+  const refreshToken = await exchangeCode(code, clientId, clientSecret);
 
   const verification = await requestToken(
     { grant_type: "refresh_token", refresh_token: refreshToken },

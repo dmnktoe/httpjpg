@@ -4,7 +4,25 @@ import { env } from "@httpjpg/env";
 import { Box } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 
-const TIMEZONE = env.NEXT_PUBLIC_WEATHER_TIMEZONE;
+const HOME_TIMEZONE = "Europe/Berlin";
+
+// The clock reads as "what time it is here", so it stays pinned to the site's home zone
+// for every visitor. Intl throws a RangeError on an empty or unknown zone and would take
+// the widget down with it; an unset zone silently resolves to the visitor's own. Both
+// fall back to the home zone rather than leaking whichever timezone the browser sits in.
+function resolveTimezone(timezone: string | undefined): string {
+  if (!timezone) {
+    return HOME_TIMEZONE;
+  }
+  try {
+    new Intl.DateTimeFormat("en-GB", { timeZone: timezone });
+    return timezone;
+  } catch {
+    return HOME_TIMEZONE;
+  }
+}
+
+const TIMEZONE = resolveTimezone(env.NEXT_PUBLIC_WEATHER_TIMEZONE);
 
 function formatTime(): string {
   return new Intl.DateTimeFormat("en-GB", {

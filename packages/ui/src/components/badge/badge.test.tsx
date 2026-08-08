@@ -17,12 +17,13 @@ describe("Badge", () => {
 
   it("renders at the default height", () => {
     render(<Badge src={SHIELD} alt="Version" />);
-    expect(screen.getByAltText("Version")).toHaveStyle({ height: "1.5em" });
+    // Assert the declared value, not the computed one — jsdom resolves em to px.
+    expect(screen.getByAltText<HTMLImageElement>("Version").style.height).toBe("1.5em");
   });
 
   it("accepts a custom height", () => {
     render(<Badge src={SHIELD} alt="Version" height="28px" />);
-    expect(screen.getByAltText("Version")).toHaveStyle({ height: "28px" });
+    expect(screen.getByAltText<HTMLImageElement>("Version").style.height).toBe("28px");
   });
 
   it("renders no link when href is omitted", () => {

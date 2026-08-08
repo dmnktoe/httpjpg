@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0](https://github.com/dmnktoe/httpjpg/compare/v2.3.2...v2.4.0) (2026-08-08)
+
+
+### Added
+
+* **terminal:** unify dev CLI output across the repo ([#207](https://github.com/dmnktoe/httpjpg/issues/207)) ([0ae5f88](https://github.com/dmnktoe/httpjpg/commit/0ae5f883c1f5f1b44904835bdb22b503a538fbf7))
+
+
+### Fixed
+
+* **psn:** surface rejected credentials, and add CLIs to renew them ([#206](https://github.com/dmnktoe/httpjpg/issues/206)) ([51adb5a](https://github.com/dmnktoe/httpjpg/commit/51adb5a870d8f8c9c1cecd63bcfb8ae64ca8784f))
+
+
+### Tooling
+
+* raise coverage thresholds to 85% and cover four e2e contracts ([#208](https://github.com/dmnktoe/httpjpg/issues/208)) ([baa07ab](https://github.com/dmnktoe/httpjpg/commit/baa07abe0445e698852d5cd74c23453a52fa8e4b))
+
+
+### Dependencies
+
+* update actions/create-github-app-token action to v3 ([#202](https://github.com/dmnktoe/httpjpg/issues/202)) ([5327f1d](https://github.com/dmnktoe/httpjpg/commit/5327f1d4921cce4b26f603a3470ee76a53ea1bf0))
+
 ## [2.3.2](https://github.com/dmnktoe/httpjpg/compare/v2.3.1...v2.3.2) (2026-08-08)
 
 ### Fixed

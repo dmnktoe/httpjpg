@@ -1,13 +1,5 @@
 #!/usr/bin/env tsx
 
-/**
- * Sync Storyblok datasources from `@httpjpg/storyblok-utils` `CMS_OPTIONS`.
- *
- * `value` of every entry is the canonical token a Storyblok-UI wrapper
- * consumes at runtime. Add new options to `CMS_OPTIONS`, run this script,
- * and a Panda rebuild — the new value is then available everywhere.
- */
-
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 

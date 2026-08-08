@@ -6,28 +6,24 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [2.3.2](https://github.com/dmnktoe/httpjpg/compare/v2.3.1...v2.3.2) (2026-08-08)
 
-
 ### Fixed
 
-* let release-please tag merged release PRs ([#203](https://github.com/dmnktoe/httpjpg/issues/203)) ([a6b2ecd](https://github.com/dmnktoe/httpjpg/commit/a6b2ecd0944b7a696752bf1d907078e4268664b9))
+- let release-please tag merged release PRs ([#203](https://github.com/dmnktoe/httpjpg/issues/203)) ([a6b2ecd](https://github.com/dmnktoe/httpjpg/commit/a6b2ecd0944b7a696752bf1d907078e4268664b9))
 
 ## [2.3.1](https://github.com/dmnktoe/httpjpg/compare/v2.3.0...v2.3.1) (2026-08-08)
 
-
 ### Fixed
 
-* **ui:** keep authored year for Storyblok wall-clock datetimes ([#197](https://github.com/dmnktoe/httpjpg/issues/197)) ([b73e966](https://github.com/dmnktoe/httpjpg/commit/b73e9666cf49dc250a41361313af3bbc2a6f37bb))
-
+- **ui:** keep authored year for Storyblok wall-clock datetimes ([#197](https://github.com/dmnktoe/httpjpg/issues/197)) ([b73e966](https://github.com/dmnktoe/httpjpg/commit/b73e9666cf49dc250a41361313af3bbc2a6f37bb))
 
 ### Tooling
 
-* automate release management with release-please ([#195](https://github.com/dmnktoe/httpjpg/issues/195)) ([14bd2ae](https://github.com/dmnktoe/httpjpg/commit/14bd2ae1b6a099e60259da9da9f450ca6b299aed))
-* fix the release PR title, header and author identity ([#201](https://github.com/dmnktoe/httpjpg/issues/201)) ([3803c79](https://github.com/dmnktoe/httpjpg/commit/3803c7919fa5ac369ec8a8f7b15947a7340b7a3f))
-
+- automate release management with release-please ([#195](https://github.com/dmnktoe/httpjpg/issues/195)) ([14bd2ae](https://github.com/dmnktoe/httpjpg/commit/14bd2ae1b6a099e60259da9da9f450ca6b299aed))
+- fix the release PR title, header and author identity ([#201](https://github.com/dmnktoe/httpjpg/issues/201)) ([3803c79](https://github.com/dmnktoe/httpjpg/commit/3803c7919fa5ac369ec8a8f7b15947a7340b7a3f))
 
 ### Dependencies
 
-* **deps:** update dependency oxfmt to ^0.62.0 ([#191](https://github.com/dmnktoe/httpjpg/issues/191)) ([3a2c64b](https://github.com/dmnktoe/httpjpg/commit/3a2c64bc87ed5bba2664f60458973cad3d08421e))
+- **deps:** update dependency oxfmt to ^0.62.0 ([#191](https://github.com/dmnktoe/httpjpg/issues/191)) ([3a2c64b](https://github.com/dmnktoe/httpjpg/commit/3a2c64bc87ed5bba2664f60458973cad3d08421e))
 
 ## [2.3.0] - 2026-08-08
 

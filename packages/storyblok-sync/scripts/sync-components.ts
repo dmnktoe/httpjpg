@@ -1,13 +1,5 @@
 #!/usr/bin/env tsx
 
-/**
- * Sync Storyblok component schemas, declaratively.
- *
- * Block schemas live in `./blocks/<group>.ts`. Field builders + the unified
- * Spacing tab live in `./lib`. Datasource slugs map 1:1 to entries generated
- * by `sync-datasources.ts` from `@httpjpg/storyblok-utils` `CMS_OPTIONS`.
- */
-
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 

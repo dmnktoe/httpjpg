@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.1](https://github.com/dmnktoe/httpjpg/compare/v2.4.0...v2.4.1) (2026-08-08)
+
+
+### Fixed
+
+* **draft:** stop paging Sentry for rejected preview secrets ([#209](https://github.com/dmnktoe/httpjpg/issues/209)) ([dae2f2f](https://github.com/dmnktoe/httpjpg/commit/dae2f2f76b24cdb741830807773760f1233e3b02))
+* **weather:** show night emojis after dark ([#211](https://github.com/dmnktoe/httpjpg/issues/211)) ([3440f7f](https://github.com/dmnktoe/httpjpg/commit/3440f7fe04ca09c7497cd5cc157dfee7cd88e4fe))
+
 ## [2.4.0](https://github.com/dmnktoe/httpjpg/compare/v2.3.2...v2.4.0) (2026-08-08)
 
 

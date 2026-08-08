@@ -9,9 +9,10 @@
  *
  *   pnpm --filter @httpjpg/credentials spotify [--write] [--port <n>]
  *
- * The redirect URI must be registered under Dashboard → your app → Settings →
- * Redirect URIs. Spotify accepts a loopback literal registered without a port
- * on any port, so `http://127.0.0.1/callback` covers every --port including 0.
+ * Register `http://127.0.0.1:8888/callback` under Dashboard → your app →
+ * Settings → Redirect URIs. The docs also allow a portless loopback literal
+ * that would match any port, but the dashboard rejects it as insecure — see
+ * the README before reaching for `--port 0`.
  */
 
 import { spawn } from "node:child_process";
@@ -69,8 +70,8 @@ function openBrowser(url: string): void {
 
 /**
  * Bind the loopback interface and report the port actually taken. Passing 0
- * hands the choice to the OS — Spotify allows a loopback redirect registered
- * without a port to arrive on any port, so there is no need to guess a free one.
+ * hands the choice to the OS, which only pays off once Spotify's dashboard
+ * accepts the portless registration that a random port needs to match.
  */
 function listenOnLoopback(requestedPort: number): Promise<{ server: Server; port: number }> {
   return new Promise((resolvePromise, rejectPromise) => {
@@ -79,7 +80,9 @@ function listenOnLoopback(requestedPort: number): Promise<{ server: Server; port
     server.once("error", (error: NodeJS.ErrnoException) => {
       rejectPromise(
         error.code === "EADDRINUSE"
-          ? new Error(`Port ${requestedPort} is already in use — retry with --port 0`)
+          ? new Error(
+              `Port ${requestedPort} is already in use — free it, or register another port in the dashboard and pass it with --port`,
+            )
           : error,
       );
     });
@@ -254,6 +257,12 @@ async function main(): Promise<void> {
   );
   const redirectUri = `http://127.0.0.1:${port}/callback`;
 
+  if (requestedPort === 0) {
+    warn(
+      "--port 0 needs a portless redirect URI, which the dashboard currently rejects as insecure.\n   Expect this to fail unless Spotify has fixed that validator.",
+    );
+  }
+
   const state = randomUUID();
   const authorizeUrl = `${AUTHORIZE_URL}?${new URLSearchParams({
     client_id: clientId,
@@ -267,9 +276,7 @@ async function main(): Promise<void> {
 
   heading("Spotify authorization");
   console.log(`Listening on ${redirectUri}`);
-  console.log(
-    `Register either http://127.0.0.1/callback (portless, accepts any port)\nor ${redirectUri} exactly, under Dashboard → Settings → Redirect URIs.\n`,
-  );
+  console.log(`This exact URI must be registered under Dashboard → Settings → Redirect URIs.\n`);
   console.log(`Opening the consent screen. If nothing happens, visit:\n  ${authorizeUrl}\n`);
   openBrowser(authorizeUrl);
 

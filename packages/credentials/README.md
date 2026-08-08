@@ -23,23 +23,32 @@ opens the consent screen, catches the redirect on a throwaway loopback server,
 and trades the code in. It then spends the token once to prove it actually
 refreshes, and prints which account authorized.
 
-**One-time setup:** register a redirect URI under Dashboard → your app →
-Settings → Redirect URIs. Spotify treats loopback literals specially — a
-registration without a port accepts any port, which is the one to prefer:
+**One-time setup:** register this redirect URI under Dashboard → your app →
+Settings → Redirect URIs — with the port, matching the script's default:
 
 ```
-http://127.0.0.1/callback        # portless: works with any --port, including 0
-http://127.0.0.1:8888/callback   # exact: only works on the default port
+http://127.0.0.1:8888/callback
 ```
 
-Two rules Spotify enforces on the redirect URI, both of which the script already
-satisfies: `localhost` is rejected, so it has to be the IP literal, and non-HTTPS
-is only permitted for loopback addresses.
+Two rules Spotify enforces, both of which the script already satisfies:
+`localhost` is rejected, so it has to be the IP literal, and plain HTTP is only
+permitted for loopback addresses.
 
 The script prints the URI it is listening on before opening the browser, so a
-mismatch is visible before you authorize rather than after. If the default port
-is taken, `--port 0` sidesteps it — that only works with the portless
-registration, since the port is not known until the server has bound.
+mismatch is visible before you authorize rather than after.
+
+### On `--port 0`
+
+The docs say a loopback URI registered _without_ a port accepts any port, which
+is what `--port 0` is built for. The dashboard does not honour that — it rejects
+`http://127.0.0.1/callback` as "not secure", a
+[long-standing discrepancy](https://community.spotify.com/t5/Spotify-for-Developers/Loopback-redirect-URI-incorrectly-considered-insecure/td-p/6936119)
+between the documented rule and the validator.
+
+So `--port 0` is unusable in practice today and the script warns when you pass
+it. If the default port is busy, register the alternative port explicitly and
+pass it with `--port`. Keep this in mind if Spotify ever fixes the validator —
+the flag is already wired up for it.
 
 `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` are read from `.env.local`, or
 prompted for if missing.

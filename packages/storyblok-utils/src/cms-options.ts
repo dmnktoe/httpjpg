@@ -96,7 +96,18 @@ const gridSpanScale = [
 ] as const;
 const aspectRatioScale = ["16/9", "4/3", "1/1", "3/4", "9/16", "21/9"] as const;
 const widthScale = ["sm", "md", "lg", "xl", "2xl", "fluid"] as const;
-const imageWidthScale = ["5%", "25%", "33%", "50%", "65%", "75%", "100%"] as const;
+const imageWidthScale = [
+  "10%",
+  "20%",
+  "30%",
+  "40%",
+  "50%",
+  "60%",
+  "70%",
+  "80%",
+  "90%",
+  "100%",
+] as const;
 const proseMaxWidthScale = ["none", "45ch", "65ch", "80ch", "100ch"] as const;
 const alignItemsScale = ["start", "center", "end", "stretch", "baseline"] as const;
 const justifyItemsScale = ["start", "center", "end", "stretch"] as const;

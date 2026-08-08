@@ -93,16 +93,47 @@ describe("GET /api/psn-trophies", () => {
     expect(fetchRecentTrophies).toHaveBeenCalledWith("npsso-token", undefined);
   });
 
-  it("propagates the upstream status when the trophy fetch fails", async () => {
+  it("propagates the upstream status and reason when the trophy fetch fails", async () => {
     getStory.mockResolvedValueOnce({ content: {} });
-    fetchRecentTrophies.mockResolvedValueOnce({ ok: false, status: 429, message: "rate limited" });
+    fetchRecentTrophies.mockResolvedValueOnce({
+      ok: false,
+      status: 429,
+      reason: "upstream",
+      message: "rate limited",
+      reportable: false,
+    });
 
     const response = await GET();
 
     expect(response.status).toBe(429);
     await expect(response.json()).resolves.toEqual({
       error: "PSN trophies unavailable",
-      message: "rate limited",
+      reason: "upstream",
+    });
+    expect(captureServerException).not.toHaveBeenCalled();
+  });
+
+  it("reports a reportable failure to Sentry tagged with its reason", async () => {
+    const error = new Error("NPSSO rejected");
+    getStory.mockResolvedValueOnce({ content: {} });
+    fetchRecentTrophies.mockResolvedValueOnce({
+      ok: false,
+      status: 503,
+      reason: "auth",
+      message: "NPSSO rejected",
+      error,
+      reportable: true,
+    });
+
+    const response = await GET();
+
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({
+      error: "PSN trophies unavailable",
+      reason: "auth",
+    });
+    expect(captureServerException).toHaveBeenCalledWith(error, {
+      tags: { route: "psn-trophies", reason: "auth" },
     });
   });
 

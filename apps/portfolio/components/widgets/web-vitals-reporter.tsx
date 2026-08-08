@@ -3,9 +3,7 @@
 import { trackWebVital } from "@httpjpg/analytics";
 import { useReportWebVitals } from "next/web-vitals";
 
-type VitalName = "CLS" | "FCP" | "LCP" | "TTFB" | "INP";
-
-const TRACKED: ReadonlySet<VitalName> = new Set(["CLS", "FCP", "LCP", "TTFB", "INP"]);
+import { isVitalName } from "@/lib/web-vitals";
 
 interface VitalMetricLike {
   name: string;
@@ -14,11 +12,11 @@ interface VitalMetricLike {
 
 export function WebVitalsReporter() {
   useReportWebVitals((metric: VitalMetricLike) => {
-    if (!TRACKED.has(metric.name as VitalName)) {
+    if (!isVitalName(metric.name)) {
       return;
     }
 
-    trackWebVital(metric.name as VitalName, metric.value);
+    trackWebVital(metric.name, metric.value);
   });
 
   return null;

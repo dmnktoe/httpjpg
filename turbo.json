@@ -41,6 +41,8 @@
         "NEXT_PUBLIC_GA_MEASUREMENT_ID",
         "NEXT_PUBLIC_UMAMI_ID",
         "NEXT_PUBLIC_UMAMI_SRC",
+        "NEXT_PUBLIC_BUILD_TIME",
+        "NEXT_PUBLIC_COMMIT_SHA",
         "STORYBLOK_PREVIEW_TOKEN",
         "STORYBLOK_PREVIEW_SECRET",
         "STORYBLOK_REVALIDATE_SECRET",
@@ -54,6 +56,9 @@
         "PSN_NPSSO",
         "WEATHER_LATITUDE",
         "WEATHER_LONGITUDE",
+        "UMAMI_API_URL",
+        "UMAMI_API_KEY",
+        "UMAMI_STATS_SINCE",
         "ARCJET_KEY"
       ]
     },

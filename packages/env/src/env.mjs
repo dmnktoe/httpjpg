@@ -44,6 +44,10 @@ export const env = createEnv({
     WEATHER_LATITUDE: z.coerce.number().default(51.3127),
     WEATHER_LONGITUDE: z.coerce.number().default(9.4797),
 
+    UMAMI_API_URL: z.string().url().default("https://api.umami.is/v1"),
+    UMAMI_API_KEY: z.string().optional(),
+    UMAMI_STATS_SINCE: z.string().default("2024-01-01"),
+
     ARCJET_KEY: z.string().optional(),
 
     CODECOV_TOKEN: z.string().optional(),
@@ -66,6 +70,8 @@ export const env = createEnv({
     NEXT_PUBLIC_UMAMI_SRC: z.string().url().default("https://cloud.umami.is/script.js"),
 
     NEXT_PUBLIC_APP_VERSION: z.string().optional(),
+    NEXT_PUBLIC_BUILD_TIME: z.string().optional(),
+    NEXT_PUBLIC_COMMIT_SHA: z.string().optional(),
 
     NEXT_PUBLIC_WEATHER_TIMEZONE: z.string().default("Europe/Berlin"),
   },
@@ -89,6 +95,10 @@ export const env = createEnv({
     WEATHER_LATITUDE: process.env.WEATHER_LATITUDE,
     WEATHER_LONGITUDE: process.env.WEATHER_LONGITUDE,
 
+    UMAMI_API_URL: process.env.UMAMI_API_URL,
+    UMAMI_API_KEY: process.env.UMAMI_API_KEY,
+    UMAMI_STATS_SINCE: process.env.UMAMI_STATS_SINCE,
+
     ARCJET_KEY: process.env.ARCJET_KEY,
 
     CODECOV_TOKEN: process.env.CODECOV_TOKEN,
@@ -110,6 +120,8 @@ export const env = createEnv({
     NEXT_PUBLIC_UMAMI_SRC: process.env.NEXT_PUBLIC_UMAMI_SRC,
 
     NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,
+    NEXT_PUBLIC_BUILD_TIME: process.env.NEXT_PUBLIC_BUILD_TIME,
+    NEXT_PUBLIC_COMMIT_SHA: process.env.NEXT_PUBLIC_COMMIT_SHA,
 
     NEXT_PUBLIC_WEATHER_TIMEZONE: process.env.NEXT_PUBLIC_WEATHER_TIMEZONE,
   },

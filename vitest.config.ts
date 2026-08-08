@@ -23,10 +23,10 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html", "lcov"],
       thresholds: {
-        statements: 80,
-        branches: 70,
-        functions: 75,
-        lines: 80,
+        statements: 85,
+        branches: 85,
+        functions: 85,
+        lines: 85,
       },
       include: [
         "packages/*/src/**/*.{js,jsx,ts,tsx,mjs}",

@@ -28,6 +28,8 @@
     { "type": "chore", "section": "Chores", "hidden": true }
   ],
   "packages": {
-    ".": {}
+    ".": {
+      "package-name": ""
+    }
   }
 }

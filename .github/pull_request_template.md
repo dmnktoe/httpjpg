@@ -1,18 +1,8 @@
-<!--
-Title follows Conventional Commits — it becomes the squash commit and drives
-the changelog section + version bump (see CLAUDE.md → Releases).
-e.g. feat(ui): add marquee variant · fix(psn): handle expired credentials
--->
-
 ## What & why
-
-<!-- One or two sentences: what changes, and what problem it solves. Link the issue if there is one. -->
 
 Closes #
 
 ## Change type
-
-<!-- Matches the commit type in the title. Tick exactly one. -->
 
 - [ ] `feat` — new feature (minor bump, → Added)
 - [ ] `fix` — bug fix (patch, → Fixed)
@@ -25,11 +15,7 @@ Closes #
 
 ## Scope
 
-<!-- Which workspaces this touches, e.g. apps/portfolio, packages/ui, packages/storyblok-ui. -->
-
 ## Screenshots / recordings
-
-<!-- Required for anything visual. Before ↔ after, light + dark if the change touches semantic tokens. -->
 
 ## Checklist
 
@@ -46,8 +32,6 @@ Closes #
 
 ## Storyblok / CMS
 
-<!-- Delete this section if the change does not touch the CMS contract. -->
-
 - [ ] Schema added or updated in `packages/storyblok-sync/scripts/blocks/*`
 - [ ] `sync:components` (and `sync:datasources` for new `CMS_OPTIONS`) run against Storyblok
 - [ ] `Sb*` component added under `packages/storyblok-ui/src/components/<kebab>/` and exported explicitly from `src/index.ts`
@@ -56,8 +40,3 @@ Closes #
 - [ ] Cache tags / revalidation adjusted if the content shape changed
 
 ## Notes for reviewers
-
-<!--
-Anything worth flagging: a convention you matched but would change, a follow-up
-you deliberately left out, a risky area to look at first.
--->

@@ -393,6 +393,19 @@ pnpm format:check
 - Commit messages follow Conventional Commits (`commitlint` runs on `commit-msg`).
 - No console.log in shipped code paths; `console.error` / `console.warn` are acceptable for genuine error reporting that complements Sentry.
 
+### Pull requests
+
+`.github/pull_request_template.md` is the body every PR starts from. Fill it in, don't rewrite it.
+
+- **Title = the squash commit.** Conventional Commits, same rules `commitlint` enforces on `commit-msg`. It drives the changelog section and the version bump — see Releases below.
+- **Change type** ticks exactly one box, matching the type in the title.
+- **Screenshots** are expected for anything visual; light *and* dark when the change touches semantic tokens.
+- **Checklist** mirrors the CI gate (`lint` → `type-check` → `test` → `build` → `e2e`) plus the conventions in this file. Tick what you did; strike through what genuinely doesn't apply rather than leaving it ambiguous.
+- **Storyblok / CMS section** is conditional — delete it when the change doesn't touch the CMS contract, otherwise walk the five steps from "When you add a new blok" above.
+- **Notes for reviewers** is where a better pattern you deliberately didn't adopt gets surfaced (rule 4 in *When in Doubt*).
+
+The template carries no HTML comments. Section headings alone say what belongs where; leaving a section empty reads as "nothing to report", so remove the heading instead if it doesn't apply.
+
 ### Releases
 
 Automated by release-please (`.github/workflows/release.yml`, `release-please-config.json`, `.release-please-manifest.json`). One version for the whole repo — the root `package.json` — because nothing is published to npm and every workspace package stays `private` at `0.0.0`.

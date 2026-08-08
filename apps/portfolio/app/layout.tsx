@@ -36,6 +36,7 @@ import { VisitorCounter } from "@/components/widgets/visitor-counter";
 import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
+import { XStatus } from "@/components/widgets/x-status";
 import { config } from "@/lib/config";
 import { getPageTheme } from "@/lib/page-theme";
 import { getFooterConfig, getNavigation, getSeoDefaults } from "@/lib/queries/config";
@@ -140,6 +141,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                   {widgetConfig.discordEnabled && <DiscordStatus />}
                   {widgetConfig.letterboxdEnabled && <LetterboxdStatus />}
                   {widgetConfig.discogsEnabled && <DiscogsStatus />}
+                  {widgetConfig.xEnabled && <XStatus />}
                   {widgetConfig.mastodonEnabled && <MastodonStatus />}
                   {widgetConfig.psnTrophyEnabled && <TrophyStatus />}
                   <WeatherTime />

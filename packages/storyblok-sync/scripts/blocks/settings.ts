@@ -80,6 +80,11 @@ export const settingsBlocks: BlockDef[] = [
         letterboxd_username: field.text("Letterboxd · Username"),
         discogs_enabled: field.boolean("Discogs · Latest Record"),
         discogs_username: field.text("Discogs · Username"),
+        x_enabled: field.boolean("X · Latest Post"),
+        x_username: field.text("X · Username", {
+          description: "Handle without @, e.g. dmnktoe. Needs TWEETAPI_KEY to be set.",
+          tooltip: true,
+        }),
         mastodon_enabled: field.boolean("Mastodon · Latest Post"),
         mastodon_handle: field.text("Mastodon · Handle", {
           description: "Full handle including the instance, e.g. @dmnk@mastodon.social.",

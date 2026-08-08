@@ -44,6 +44,9 @@ export const env = createEnv({
     WEATHER_LATITUDE: z.coerce.number().default(51.3127),
     WEATHER_LONGITUDE: z.coerce.number().default(9.4797),
 
+    TWEETAPI_API_URL: z.string().url().default("https://api.tweetapi.com/tw-v2"),
+    TWEETAPI_KEY: z.string().optional(),
+
     UMAMI_API_URL: z.string().url().default("https://api.umami.is/v1"),
     UMAMI_API_KEY: z.string().optional(),
     UMAMI_STATS_SINCE: z.string().default("2024-01-01"),
@@ -94,6 +97,9 @@ export const env = createEnv({
 
     WEATHER_LATITUDE: process.env.WEATHER_LATITUDE,
     WEATHER_LONGITUDE: process.env.WEATHER_LONGITUDE,
+
+    TWEETAPI_API_URL: process.env.TWEETAPI_API_URL,
+    TWEETAPI_KEY: process.env.TWEETAPI_KEY,
 
     UMAMI_API_URL: process.env.UMAMI_API_URL,
     UMAMI_API_KEY: process.env.UMAMI_API_KEY,

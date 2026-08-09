@@ -40,13 +40,13 @@
     "sharp": "^0.35.0"
   },
   "devDependencies": {
-    "@codecov/nextjs-webpack-plugin": "^2.0.1",
+    "@codecov/nextjs-webpack-plugin": "2.0.1",
     "@playwright/test": "^1.57.0",
-    "@sentry/cli": "^3.0.0",
+    "@sentry/cli": "3.6.2",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "schema-dts": "^2.0.0",
+    "schema-dts": "2.0.0",
     "typescript": "catalog:"
   }
 }

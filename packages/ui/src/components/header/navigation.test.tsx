@@ -14,6 +14,12 @@ const nav: NavItem[] = [
   { name: "about", href: "/about" },
 ];
 
+function spinners(container: HTMLElement): Element[] {
+  return Array.from(container.querySelectorAll('span[aria-hidden="true"]')).filter((element) =>
+    ["|", "/", "-", "\\"].includes(element.textContent ?? ""),
+  );
+}
+
 function makeWork(count: number, prefix: string): WorkItem[] {
   return Array.from({ length: count }, (_, i) => ({
     id: `${prefix}-${i}`,
@@ -109,16 +115,94 @@ describe("Navigation", () => {
     );
 
     const favicons = Array.from(container.querySelectorAll("img")).filter((img) =>
-      img.getAttribute("src")?.includes("google.com/s2/favicons"),
+      img.getAttribute("src")?.startsWith("/api/favicon"),
     );
 
     expect(favicons).toHaveLength(1);
     expect(favicons[0]).toHaveAttribute(
       "src",
-      "https://www.google.com/s2/favicons?domain=github.com&sz=16",
+      "/api/favicon?url=https%3A%2F%2Fgithub.com%2Fdmnktoe&sz=16",
     );
     expect(favicons[0]).toHaveAttribute("width", "14");
     expect(favicons[0]).toHaveAttribute("height", "14");
+  });
+
+  it("spins an ascii frame until the favicon resolves", () => {
+    const { container } = render(
+      <Navigation
+        nav={[{ name: "github", href: "https://github.com/dmnktoe", isExternal: true }]}
+        projectsWork={[]}
+        websitesWork={[]}
+      />,
+    );
+
+    expect(spinners(container)).toHaveLength(1);
+
+    fireEvent.load(container.querySelector('img[src^="/api/favicon"]')!);
+
+    expect(spinners(container)).toHaveLength(0);
+  });
+
+  it("settles an image that finished before hydration", () => {
+    const complete = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, "complete");
+    const naturalWidth = Object.getOwnPropertyDescriptor(
+      HTMLImageElement.prototype,
+      "naturalWidth",
+    );
+    Object.defineProperty(HTMLImageElement.prototype, "complete", {
+      configurable: true,
+      get: () => true,
+    });
+    Object.defineProperty(HTMLImageElement.prototype, "naturalWidth", {
+      configurable: true,
+      get: () => 16,
+    });
+
+    try {
+      const { container } = render(
+        <Navigation
+          nav={[{ name: "github", href: "https://github.com/dmnktoe", isExternal: true }]}
+          projectsWork={[]}
+          websitesWork={[]}
+        />,
+      );
+
+      expect(spinners(container)).toHaveLength(0);
+      expect(container.querySelector('img[src^="/api/favicon"]')).toBeInTheDocument();
+    } finally {
+      Object.defineProperty(HTMLImageElement.prototype, "complete", complete!);
+      Object.defineProperty(HTMLImageElement.prototype, "naturalWidth", naturalWidth!);
+    }
+  });
+
+  it("keeps the hidden image eager, since a lazy one in a display:none slot never loads", () => {
+    const { container } = render(
+      <Navigation
+        nav={[{ name: "github", href: "https://github.com/dmnktoe", isExternal: true }]}
+        projectsWork={[]}
+        websitesWork={[]}
+      />,
+    );
+
+    expect(container.querySelector('img[src^="/api/favicon"]')).not.toHaveAttribute(
+      "loading",
+      "lazy",
+    );
+  });
+
+  it("drops the spinner and the image when the favicon fails", () => {
+    const { container } = render(
+      <Navigation
+        nav={[{ name: "github", href: "https://github.com/dmnktoe", isExternal: true }]}
+        projectsWork={[]}
+        websitesWork={[]}
+      />,
+    );
+
+    fireEvent.error(container.querySelector('img[src^="/api/favicon"]')!);
+
+    expect(spinners(container)).toHaveLength(0);
+    expect(container.querySelector('img[src^="/api/favicon"]')).toBeNull();
   });
 
   it("renders favicons for external work items in the recent work columns", () => {
@@ -147,11 +231,11 @@ describe("Navigation", () => {
 
     const sources = Array.from(container.querySelectorAll("img"))
       .map((img) => img.getAttribute("src") ?? "")
-      .filter((src) => src.includes("google.com/s2/favicons"));
+      .filter((src) => src.startsWith("/api/favicon"));
 
     expect(sources).toEqual([
-      "https://www.google.com/s2/favicons?domain=dribbble.com&sz=16",
-      "https://www.google.com/s2/favicons?domain=acme.com&sz=16",
+      "/api/favicon?url=https%3A%2F%2Fdribbble.com%2Fdmnktoe&sz=16",
+      "/api/favicon?url=https%3A%2F%2Facme.com%2F&sz=16",
     ]);
   });
 
@@ -205,9 +289,9 @@ describe("Navigation", () => {
 
     const sources = Array.from(container.querySelectorAll("img"))
       .map((img) => img.getAttribute("src") ?? "")
-      .filter((src) => src.includes("google.com/s2/favicons"));
+      .filter((src) => src.startsWith("/api/favicon"));
 
-    expect(sources).toEqual(["https://www.google.com/s2/favicons?domain=acme.com&sz=16"]);
+    expect(sources).toEqual(["/api/favicon?url=https%3A%2F%2Facme.com%2Flaunch&sz=16"]);
   });
 
   it("expands personal and client columns independently", () => {

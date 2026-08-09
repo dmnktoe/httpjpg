@@ -14,27 +14,27 @@
   "vulnerabilityAlerts": { "labels": ["security"] },
   "packageRules": [
     {
-      "description": "Keep the ranges, move the floor. 'replace' only rewrites a range when the new version falls outside it, so an in-range release (next 16.3.0 inside ^16.0.7) produced no diff and no PR. This also overrides the :pinDevDependencies that config:best-practices pulls in — packageRules beat top-level config, so it has to live here.",
+      "description": "Keep ranges, move the floor, so an in-range release still surfaces as a PR",
       "matchPackageNames": ["*"],
       "rangeStrategy": "bump"
     },
     {
-      "description": "Peers and engines keep their ranges — a peer range is a compatibility statement, not an install instruction",
+      "description": "Peers and engines keep their ranges",
       "matchDepTypes": ["engines", "peerDependencies"],
       "rangeStrategy": "replace"
     },
     {
-      "description": "All dev tooling lands in one PR",
+      "description": "Dev tooling lands in one PR",
       "matchDepTypes": ["devDependencies"],
       "groupName": "dev dependencies"
     },
     {
-      "description": "React and Next move in lockstep, types included. Declared after the devDependencies rule so it wins for @types/react.",
+      "description": "React and Next move in lockstep, types included",
       "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom", "next", "@next/**"],
       "groupName": "react + next"
     },
     {
-      "description": "CI actions in one PR — grouping keeps the digest refresh in the same branch as the version bump instead of opening a second PR next to it",
+      "description": "CI actions move together",
       "matchManagers": ["github-actions"],
       "groupName": "github actions",
       "addLabels": ["ci"]

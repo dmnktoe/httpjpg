@@ -75,7 +75,12 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
         }}
         {...props}
       >
-        <Box css={{ zIndex: "docked", overflow: "visible" }}>
+        {/* `isolation` rather than a `zIndex`, on this box only. It still caps the
+            slide overlay and copyright label so they cannot paint over the title, but
+            it keeps the box in the in-flow paint order — a flex item with a z-index
+            forms a stacking context even while static, and one around the title would
+            trap its blend in an empty group. */}
+        <Box css={{ overflow: "visible", isolation: "isolate" }}>
           <Slideshow
             speed={0}
             animation="sharpen"
@@ -87,7 +92,7 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
           />
         </Box>
 
-        <Box css={{ zIndex: "docked" }}>
+        <Box>
           <Box
             css={{
               display: "flex",

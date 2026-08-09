@@ -2,6 +2,13 @@ import { CommandPalette, type CommandPaletteResult } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState } from "react";
 
+/** Inline so the strip renders identically offline and in CI snapshots. */
+function swatch(fill: string): string {
+  return `data:image/svg+xml;utf8,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56"><rect width="56" height="56" fill="${fill}"/></svg>`,
+  )}`;
+}
+
 const RESULTS: CommandPaletteResult[] = [
   {
     id: "1",
@@ -9,6 +16,10 @@ const RESULTS: CommandPaletteResult[] = [
     href: "/work/brutalist-portfolio",
     kind: "work",
     excerpt: "A stark, type-led site driven by Storyblok and Next.js.",
+    media: [
+      { id: "1a", kind: "image", thumb: swatch("#111111"), label: "Home page" },
+      { id: "1b", kind: "image", thumb: swatch("#3b3b3b"), label: "Work index" },
+    ],
   },
   {
     id: "2",
@@ -16,12 +27,17 @@ const RESULTS: CommandPaletteResult[] = [
     href: "/work/poster-series",
     kind: "work",
     excerpt: "Risograph posters printed in two spot colours.",
+    media: [
+      { id: "2a", kind: "image", thumb: swatch("#d94f2b"), label: "Poster 01" },
+      { id: "2b", kind: "audio", thumb: "", label: "mega mashup — te3shay" },
+    ],
   },
   {
     id: "3",
     title: "Nostalgia Slideshow",
     href: "/work/nostalgia-slideshow",
     kind: "work",
+    media: [{ id: "3a", kind: "video", thumb: swatch("#2b6cd9"), label: "Loop still" }],
   },
   {
     id: "4",
@@ -136,6 +152,18 @@ export const Searching: Story = {
     query: "brutal",
     results: [],
     status: "searching",
+  },
+};
+
+/**
+ * Media strip: one thumbnail per matching page before a second from any of
+ * them, so an image-heavy page cannot crowd the others out. Tracks without
+ * artwork keep their slot as a glyph tile.
+ */
+export const MediaStrip: Story = {
+  args: {
+    query: "poster",
+    results: RESULTS,
   },
 };
 

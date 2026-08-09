@@ -1,3 +1,12 @@
+/** A thumbnail a story shows, surfaced in the palette's media strip. */
+export interface SearchMedia {
+  id: string;
+  kind: "image" | "video" | "audio";
+  /** Thumbnail URL. Empty for a track whose artwork the editor left blank. */
+  thumb: string;
+  label: string;
+}
+
 export interface SearchDocument {
   id: string;
   /** Site-relative href, e.g. `/work/some-project`. */
@@ -7,6 +16,7 @@ export interface SearchDocument {
   tags: string[];
   excerpt: string;
   date?: string;
+  media?: SearchMedia[];
 }
 
 export interface SearchResult extends SearchDocument {

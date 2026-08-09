@@ -43,7 +43,7 @@ export { extractPlainText } from "./extract-plain-text";
 export { imagePreset } from "./image-presets";
 export { getResponsiveImage } from "./image-processing";
 export type { ResponsiveImage, ResponsiveImageOptions } from "./image-processing";
-export { firstImageFilename, toSlideshowImage } from "./media-utils";
+export { firstImageFilename, isVideoAsset, toSlideshowImage } from "./media-utils";
 export { validateStoryblokPreviewToken } from "./preview";
 export type {
   StoryblokApiResponse,

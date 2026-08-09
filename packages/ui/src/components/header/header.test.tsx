@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 
 const mockPathname = vi.fn<() => string>(() => "/");
 vi.mock("next/navigation", () => ({ usePathname: () => mockPathname() }));
@@ -19,9 +19,13 @@ interface MediaQueryStub {
 }
 
 let mediaQuery: MediaQueryStub;
+let scrollTo: ReturnType<typeof vi.fn>;
 
 beforeEach(() => {
   mockPathname.mockReturnValue("/");
+  scrollTo = vi.fn();
+  vi.stubGlobal("scrollTo", scrollTo);
+  vi.stubGlobal("scrollY", 0);
   mediaQuery = {
     matches: false,
     media: "(min-width: 1024px)",
@@ -36,8 +40,11 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  // Unmount before the stubs go away: releasing the scroll lock calls
+  // window.scrollTo, which jsdom only implements as a warning.
+  cleanup();
   vi.unstubAllGlobals();
-  document.body.style.overflow = "";
+  document.body.removeAttribute("style");
 });
 
 function openMenu() {
@@ -70,16 +77,20 @@ describe("Header", () => {
     expect(document.body.style.overflow).toBe("");
   });
 
-  it("opens the mobile menu and locks body scroll", () => {
+  it("opens the mobile menu and pins the body so iOS cannot pan the page", () => {
+    vi.stubGlobal("scrollY", 240);
     render(<Header nav={NAV} />);
 
     openMenu();
 
     expect(screen.getByLabelText("Close menu")).toBeInTheDocument();
     expect(document.body.style.overflow).toBe("hidden");
+    expect(document.body.style.position).toBe("fixed");
+    expect(document.body.style.top).toBe("-240px");
   });
 
-  it("closes the mobile menu again on a second press", () => {
+  it("closes the mobile menu again on a second press and restores the scroll offset", () => {
+    vi.stubGlobal("scrollY", 240);
     render(<Header nav={NAV} />);
 
     openMenu();
@@ -87,6 +98,9 @@ describe("Header", () => {
 
     expect(screen.getByLabelText("Open menu")).toBeInTheDocument();
     expect(document.body.style.overflow).toBe("");
+    expect(document.body.style.position).toBe("");
+    expect(document.body.style.top).toBe("");
+    expect(scrollTo).toHaveBeenCalledWith(0, 240);
   });
 
   it("closes the mobile menu when the route changes", () => {
@@ -141,6 +155,7 @@ describe("Header", () => {
     unmount();
 
     expect(document.body.style.overflow).toBe("");
+    expect(document.body.style.position).toBe("");
   });
 
   it("passes the work lists down to the navigation", () => {

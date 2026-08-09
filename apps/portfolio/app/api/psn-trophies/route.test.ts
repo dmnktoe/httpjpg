@@ -3,17 +3,22 @@ const mockEnv = vi.hoisted(() => ({ PSN_NPSSO: "npsso-token" as string | undefin
 
 vi.mock("@httpjpg/env", () => ({ env: mockEnv }));
 
+vi.mock("next/headers", () => ({
+  draftMode: vi.fn(async () => ({ isEnabled: false })),
+}));
+
 vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
-const { getStory, fetchRecentTrophies, isPsnUsername } = vi.hoisted(() => ({
+const { getStory, getStoryblokApi, fetchRecentTrophies, isPsnUsername } = vi.hoisted(() => ({
   getStory: vi.fn(),
+  getStoryblokApi: vi.fn(),
   fetchRecentTrophies: vi.fn(),
   isPsnUsername: vi.fn(() => true),
 }));
 
-vi.mock("@httpjpg/storyblok-api", () => ({ getStoryblokApi: () => ({ getStory }) }));
+vi.mock("@httpjpg/storyblok-api", () => ({ getStoryblokApi }));
 
 vi.mock("@/lib/integrations/psn-trophies", () => ({ fetchRecentTrophies, isPsnUsername }));
 
@@ -23,6 +28,7 @@ import { GET } from "./route";
 
 beforeEach(() => {
   vi.clearAllMocks();
+  getStoryblokApi.mockReturnValue({ getStory });
   mockEnv.PSN_NPSSO = "npsso-token";
   isPsnUsername.mockReturnValue(true);
   vi.spyOn(console, "warn").mockImplementation(() => {});
@@ -34,12 +40,12 @@ afterEach(() => {
 });
 
 describe("GET /api/psn-trophies", () => {
-  it("returns 500 when PSN_NPSSO is not configured", async () => {
+  it("returns 501 when PSN_NPSSO is not configured", async () => {
     mockEnv.PSN_NPSSO = undefined;
 
     const response = await GET();
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({ error: "PSN not configured" });
     expect(fetchRecentTrophies).not.toHaveBeenCalled();
   });
@@ -146,5 +152,15 @@ describe("GET /api/psn-trophies", () => {
     expect(response.status).toBe(500);
     await expect(response.json()).resolves.toEqual({ error: "Failed to fetch PSN trophies" });
     expect(captureServerException).toHaveBeenCalledOnce();
+  });
+
+  it("reads the config through the request's draft mode", async () => {
+    const { draftMode } = await import("next/headers");
+    vi.mocked(draftMode).mockResolvedValueOnce({ isEnabled: true } as never);
+    getStory.mockResolvedValueOnce({ content: { psn_username: "dmnktoe" } });
+
+    await GET();
+
+    expect(getStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
   });
 });

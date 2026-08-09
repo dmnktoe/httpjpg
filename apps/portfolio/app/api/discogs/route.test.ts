@@ -1,17 +1,20 @@
 // @vitest-environment node
+vi.mock("next/headers", () => ({
+  draftMode: vi.fn(async () => ({ isEnabled: false })),
+}));
+
 vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
-const { getStory, fetchDiscogsCollection, isDiscogsUsername } = vi.hoisted(() => ({
+const { getStory, getStoryblokApi, fetchDiscogsCollection, isDiscogsUsername } = vi.hoisted(() => ({
   getStory: vi.fn(),
+  getStoryblokApi: vi.fn(),
   fetchDiscogsCollection: vi.fn(),
   isDiscogsUsername: vi.fn(() => true),
 }));
 
-vi.mock("@httpjpg/storyblok-api", () => ({
-  getStoryblokApi: () => ({ getStory }),
-}));
+vi.mock("@httpjpg/storyblok-api", () => ({ getStoryblokApi }));
 
 vi.mock("@/lib/integrations/discogs", () => ({ fetchDiscogsCollection, isDiscogsUsername }));
 
@@ -21,6 +24,7 @@ import { GET } from "./route";
 
 beforeEach(() => {
   vi.clearAllMocks();
+  getStoryblokApi.mockReturnValue({ getStory });
   isDiscogsUsername.mockReturnValue(true);
 });
 
@@ -49,12 +53,12 @@ describe("GET /api/discogs", () => {
     expect(response.headers.get("Cache-Control")).toContain("s-maxage=900");
   });
 
-  it("returns 500 when no username is configured", async () => {
+  it("returns 501 when no username is configured", async () => {
     getStory.mockResolvedValueOnce({ content: {} });
 
     const response = await GET();
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({
       error: "Discogs username not configured",
     });
@@ -66,16 +70,16 @@ describe("GET /api/discogs", () => {
 
     const response = await GET();
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(501);
     expect(fetchDiscogsCollection).not.toHaveBeenCalled();
   });
 
-  it("returns 500 when the config story cannot be read", async () => {
+  it("returns 501 when the config story cannot be read", async () => {
     getStory.mockRejectedValueOnce(new Error("storyblok down"));
 
     const response = await GET();
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(501);
   });
 
   it("propagates the upstream status when the collection fetch fails", async () => {
@@ -96,5 +100,15 @@ describe("GET /api/discogs", () => {
 
     expect(response.status).toBe(500);
     expect(captureServerException).toHaveBeenCalledOnce();
+  });
+
+  it("reads the config through the request's draft mode", async () => {
+    const { draftMode } = await import("next/headers");
+    vi.mocked(draftMode).mockResolvedValueOnce({ isEnabled: true } as never);
+    getStory.mockResolvedValueOnce({ content: { discogs_username: "user" } });
+
+    await GET();
+
+    expect(getStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
   });
 });

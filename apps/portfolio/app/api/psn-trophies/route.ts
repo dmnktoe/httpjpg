@@ -2,13 +2,17 @@ import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
+import { draftMode } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { fetchRecentTrophies, isPsnUsername } from "@/lib/integrations/psn-trophies";
 
 async function resolveUsername(): Promise<string | undefined> {
   try {
-    const story = await getStoryblokApi().getStory({ slug: "config" });
+    const { isEnabled } = await draftMode();
+    const story = await getStoryblokApi({ draftMode: isEnabled }).getStory({
+      slug: "config",
+    });
     const config = story?.content as SbConfigStory | undefined;
     const username = config?.psn_username;
     if (username && !isPsnUsername(username)) {
@@ -30,7 +34,7 @@ export async function GET() {
           error: "PSN not configured",
           message: "Set PSN_NPSSO to enable the trophy widget",
         },
-        { status: 500 },
+        { status: 501 },
       );
     }
 

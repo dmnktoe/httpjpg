@@ -1,6 +1,7 @@
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
+import { draftMode } from "next/headers";
 import { NextResponse } from "next/server";
 
 import {
@@ -11,7 +12,10 @@ import {
 
 async function resolveHandle(): Promise<MastodonHandle | null> {
   try {
-    const story = await getStoryblokApi().getStory({ slug: "config" });
+    const { isEnabled } = await draftMode();
+    const story = await getStoryblokApi({ draftMode: isEnabled }).getStory({
+      slug: "config",
+    });
     const config = story?.content as SbConfigStory | undefined;
     const raw = config?.mastodon_handle;
     if (!raw) {
@@ -37,7 +41,7 @@ export async function GET() {
           error: "Mastodon handle not configured",
           message: "Set mastodon_handle in Storyblok config, e.g. @user@mastodon.social",
         },
-        { status: 500 },
+        { status: 501 },
       );
     }
 

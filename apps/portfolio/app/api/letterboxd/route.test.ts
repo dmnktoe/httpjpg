@@ -1,17 +1,22 @@
 // @vitest-environment node
+vi.mock("next/headers", () => ({
+  draftMode: vi.fn(async () => ({ isEnabled: false })),
+}));
+
 vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
-const { getStory, fetchLetterboxdFilms, isLetterboxdUsername } = vi.hoisted(() => ({
-  getStory: vi.fn(),
-  fetchLetterboxdFilms: vi.fn(),
-  isLetterboxdUsername: vi.fn(() => true),
-}));
+const { getStory, getStoryblokApi, fetchLetterboxdFilms, isLetterboxdUsername } = vi.hoisted(
+  () => ({
+    getStory: vi.fn(),
+    getStoryblokApi: vi.fn(),
+    fetchLetterboxdFilms: vi.fn(),
+    isLetterboxdUsername: vi.fn(() => true),
+  }),
+);
 
-vi.mock("@httpjpg/storyblok-api", () => ({
-  getStoryblokApi: () => ({ getStory }),
-}));
+vi.mock("@httpjpg/storyblok-api", () => ({ getStoryblokApi }));
 
 vi.mock("@/lib/integrations/letterboxd", () => ({ fetchLetterboxdFilms, isLetterboxdUsername }));
 
@@ -21,6 +26,7 @@ import { GET } from "./route";
 
 beforeEach(() => {
   vi.clearAllMocks();
+  getStoryblokApi.mockReturnValue({ getStory });
   isLetterboxdUsername.mockReturnValue(true);
 });
 
@@ -35,12 +41,12 @@ describe("GET /api/letterboxd", () => {
     await expect(response.json()).resolves.toEqual({ films: [{ title: "Dune" }] });
   });
 
-  it("returns 500 when no username is configured", async () => {
+  it("returns 501 when no username is configured", async () => {
     getStory.mockResolvedValueOnce({ content: {} });
 
     const response = await GET();
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({
       error: "Letterboxd username not configured",
     });
@@ -52,7 +58,7 @@ describe("GET /api/letterboxd", () => {
 
     const response = await GET();
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(501);
   });
 
   it("propagates the upstream status when the RSS fetch fails", async () => {
@@ -72,5 +78,15 @@ describe("GET /api/letterboxd", () => {
 
     expect(response.status).toBe(500);
     expect(captureServerException).toHaveBeenCalledOnce();
+  });
+
+  it("reads the config through the request's draft mode", async () => {
+    const { draftMode } = await import("next/headers");
+    vi.mocked(draftMode).mockResolvedValueOnce({ isEnabled: true } as never);
+    getStory.mockResolvedValueOnce({ content: { letterboxd_username: "user" } });
+
+    await GET();
+
+    expect(getStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
   });
 });

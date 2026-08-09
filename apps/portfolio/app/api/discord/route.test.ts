@@ -1,18 +1,22 @@
 // @vitest-environment node
+vi.mock("next/headers", () => ({
+  draftMode: vi.fn(async () => ({ isEnabled: false })),
+}));
+
 vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
-const { getStory, fetchDiscordPresence, isDiscordUserId, enforceRateLimit } = vi.hoisted(() => ({
-  getStory: vi.fn(),
-  fetchDiscordPresence: vi.fn(),
-  isDiscordUserId: vi.fn(() => true),
-  enforceRateLimit: vi.fn(async (): Promise<Response | null> => null),
-}));
+const { getStory, getStoryblokApi, fetchDiscordPresence, isDiscordUserId, enforceRateLimit } =
+  vi.hoisted(() => ({
+    getStory: vi.fn(),
+    getStoryblokApi: vi.fn(),
+    fetchDiscordPresence: vi.fn(),
+    isDiscordUserId: vi.fn(() => true),
+    enforceRateLimit: vi.fn(async (): Promise<Response | null> => null),
+  }));
 
-vi.mock("@httpjpg/storyblok-api", () => ({
-  getStoryblokApi: () => ({ getStory }),
-}));
+vi.mock("@httpjpg/storyblok-api", () => ({ getStoryblokApi }));
 
 vi.mock("@/lib/integrations/discord", () => ({ fetchDiscordPresence, isDiscordUserId }));
 vi.mock("@/lib/rate-limit", () => ({ enforceRateLimit }));
@@ -25,6 +29,7 @@ const request = {} as NextRequest;
 
 beforeEach(() => {
   vi.clearAllMocks();
+  getStoryblokApi.mockReturnValue({ getStory });
   isDiscordUserId.mockReturnValue(true);
 });
 
@@ -39,12 +44,12 @@ describe("GET /api/discord", () => {
     await expect(response.json()).resolves.toEqual({ status: "online" });
   });
 
-  it("returns 500 when no user id is configured", async () => {
+  it("returns 501 when no user id is configured", async () => {
     getStory.mockResolvedValueOnce({ content: {} });
 
     const response = await GET(request);
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({
       error: "Discord User ID not configured",
     });
@@ -67,5 +72,15 @@ describe("GET /api/discord", () => {
 
     expect(response.status).toBe(429);
     expect(getStory).not.toHaveBeenCalled();
+  });
+
+  it("reads the config through the request's draft mode", async () => {
+    const { draftMode } = await import("next/headers");
+    vi.mocked(draftMode).mockResolvedValueOnce({ isEnabled: true } as never);
+    getStory.mockResolvedValueOnce({ content: { discord_user_id: "123" } });
+
+    await GET(request);
+
+    expect(getStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
   });
 });

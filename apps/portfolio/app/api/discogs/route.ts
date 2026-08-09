@@ -1,13 +1,17 @@
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
+import { draftMode } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { fetchDiscogsCollection, isDiscogsUsername } from "@/lib/integrations/discogs";
 
 async function resolveUsername(): Promise<string | undefined> {
   try {
-    const story = await getStoryblokApi().getStory({ slug: "config" });
+    const { isEnabled } = await draftMode();
+    const story = await getStoryblokApi({ draftMode: isEnabled }).getStory({
+      slug: "config",
+    });
     const config = story?.content as SbConfigStory | undefined;
     const username = config?.discogs_username;
     if (username && !isDiscogsUsername(username)) {
@@ -30,7 +34,7 @@ export async function GET() {
           error: "Discogs username not configured",
           message: "Set discogs_username in Storyblok config",
         },
-        { status: 500 },
+        { status: 501 },
       );
     }
 

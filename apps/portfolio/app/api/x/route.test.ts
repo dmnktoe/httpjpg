@@ -8,20 +8,25 @@ const { env } = vi.hoisted(() => ({
 
 vi.mock("@httpjpg/env", () => ({ env }));
 
+vi.mock("next/headers", () => ({
+  draftMode: vi.fn(async () => ({ isEnabled: false })),
+}));
+
 vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
-const { getStory, fetchXTimeline, isXUsername, enforceRateLimit } = vi.hoisted(() => ({
-  getStory: vi.fn(),
-  fetchXTimeline: vi.fn(),
-  isXUsername: vi.fn(() => true),
-  enforceRateLimit: vi.fn(async (): Promise<Response | null> => null),
-}));
+const { getStory, getStoryblokApi, fetchXTimeline, isXUsername, enforceRateLimit } = vi.hoisted(
+  () => ({
+    getStory: vi.fn(),
+    getStoryblokApi: vi.fn(),
+    fetchXTimeline: vi.fn(),
+    isXUsername: vi.fn(() => true),
+    enforceRateLimit: vi.fn(async (): Promise<Response | null> => null),
+  }),
+);
 
-vi.mock("@httpjpg/storyblok-api", () => ({
-  getStoryblokApi: () => ({ getStory }),
-}));
+vi.mock("@httpjpg/storyblok-api", () => ({ getStoryblokApi }));
 
 vi.mock("@/lib/integrations/x-posts", () => ({ fetchXTimeline, isXUsername }));
 vi.mock("@/lib/rate-limit", () => ({ enforceRateLimit }));
@@ -35,6 +40,7 @@ const request = {} as NextRequest;
 
 beforeEach(() => {
   vi.clearAllMocks();
+  getStoryblokApi.mockReturnValue({ getStory });
   env.TWEETAPI_KEY = "secret";
   isXUsername.mockReturnValue(true);
   enforceRateLimit.mockResolvedValue(null);
@@ -93,12 +99,12 @@ describe("GET /api/x", () => {
     expect(getStory).not.toHaveBeenCalled();
   });
 
-  it("returns 500 when no username is configured", async () => {
+  it("returns 501 when no username is configured", async () => {
     getStory.mockResolvedValueOnce({ content: {} });
 
     const response = await GET(request);
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({
       error: "X username not configured",
     });
@@ -110,16 +116,16 @@ describe("GET /api/x", () => {
 
     const response = await GET(request);
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(501);
     expect(fetchXTimeline).not.toHaveBeenCalled();
   });
 
-  it("returns 500 when the config story cannot be read", async () => {
+  it("returns 501 when the config story cannot be read", async () => {
     getStory.mockRejectedValueOnce(new Error("storyblok down"));
 
     const response = await GET(request);
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(501);
   });
 
   it("propagates a rate limit from TweetAPI", async () => {
@@ -140,5 +146,15 @@ describe("GET /api/x", () => {
 
     expect(response.status).toBe(500);
     expect(captureServerException).toHaveBeenCalledOnce();
+  });
+
+  it("reads the config through the request's draft mode", async () => {
+    const { draftMode } = await import("next/headers");
+    vi.mocked(draftMode).mockResolvedValueOnce({ isEnabled: true } as never);
+    getStory.mockResolvedValueOnce({ content: { x_username: "dmnktoe" } });
+
+    await GET(request);
+
+    expect(getStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
   });
 });

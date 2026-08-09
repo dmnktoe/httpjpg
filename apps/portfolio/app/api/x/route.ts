@@ -2,6 +2,7 @@ import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
+import { draftMode } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { fetchXTimeline, isXUsername } from "@/lib/integrations/x-posts";
@@ -9,7 +10,10 @@ import { enforceRateLimit } from "@/lib/rate-limit";
 
 async function resolveUsername(): Promise<string | undefined> {
   try {
-    const story = await getStoryblokApi().getStory({ slug: "config" });
+    const { isEnabled } = await draftMode();
+    const story = await getStoryblokApi({ draftMode: isEnabled }).getStory({
+      slug: "config",
+    });
     const config = story?.content as SbConfigStory | undefined;
     const username = config?.x_username;
     if (username && !isXUsername(username)) {
@@ -45,7 +49,7 @@ export async function GET(request: NextRequest) {
           error: "X username not configured",
           message: "Set x_username in Storyblok config",
         },
-        { status: 500 },
+        { status: 501 },
       );
     }
 

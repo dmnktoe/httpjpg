@@ -1,6 +1,7 @@
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
+import { draftMode } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { fetchDiscordPresence, isDiscordUserId } from "@/lib/integrations/discord";
@@ -13,7 +14,10 @@ interface ResolvedUserId {
 
 async function resolveUserId(): Promise<ResolvedUserId> {
   try {
-    const story = await getStoryblokApi().getStory({ slug: "config" });
+    const { isEnabled } = await draftMode();
+    const story = await getStoryblokApi({ draftMode: isEnabled }).getStory({
+      slug: "config",
+    });
     if (!story) {
       return { configUnavailable: true };
     }
@@ -53,7 +57,7 @@ export async function GET(request: NextRequest) {
           error: "Discord User ID not configured",
           message: "Set discord_user_id in the Storyblok config story",
         },
-        { status: 500 },
+        { status: 501 },
       );
     }
 

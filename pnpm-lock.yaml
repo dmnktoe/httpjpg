@@ -31,7 +31,7 @@ catalogs:
       specifier: ^4.1.6
       version: 4.1.10
     dotenv:
-      specifier: ^17.2.3
+      specifier: ^17.4.2
       version: 17.4.2
     jsdom:
       specifier: ^30.0.0

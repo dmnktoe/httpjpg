@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { token } from "styled-system/tokens";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
+import { ShimmeringText } from "../shimmering-text/shimmering-text";
 
 /** Dispatched on `window` to ask the command palette to open. */
 export const OPEN_SEARCH_EVENT = "openSearch";
@@ -67,7 +69,28 @@ export function SearchTrigger({ onTrigger, label = "search", css: cssProp }: Sea
       <Box as="span" aria-hidden="true">
         •&nbsp;
       </Box>
-      {modifier ? `${modifier}+𝙆` : label}
+      {modifier ? (
+        <Box
+          as="span"
+          css={{
+            display: "inline-block",
+            animation: "fadeInUp 150ms ease-out",
+            _motionReduce: { animation: "none" },
+          }}
+        >
+          <ShimmeringText
+            text={`${modifier}+𝙆`}
+            repeat={false}
+            startOnView={false}
+            duration={1.2}
+            delay={0.15}
+            color={token.var("colors.primary.500")}
+            shimmerColor={token.var("colors.primary.200")}
+          />
+        </Box>
+      ) : (
+        label
+      )}
     </Box>
   );
 }

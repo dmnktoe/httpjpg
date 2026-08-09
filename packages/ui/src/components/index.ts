@@ -43,6 +43,7 @@ export * from "./paragraph/paragraph";
 export * from "./scroll-clip-image/scroll-clip-image";
 export * from "./search-trigger/search-trigger";
 export * from "./section/section";
+export * from "./shimmering-text/shimmering-text";
 export * from "./slideshow/slideshow";
 export * from "./stack/stack";
 export * from "./stats/stats";

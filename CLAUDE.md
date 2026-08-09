@@ -94,7 +94,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 
 #### Core UI
 
-- **`@httpjpg/ui`** — component library built on Panda CSS. Exports primitives (`Box`, `Stack`, `Grid`, `Container`), typography (`Headline`, `Paragraph`), media (`Image`, `Video`, `Slideshow`), navigation (`Header`, `Footer`, `Link`, `NavLink`), interactive widgets (`MusicPlayer`, `CustomCursor`, `MouseTrail`, `WorkCard`, `WorkList`), and structural pieces (`Page`, `Section`, `Divider`). Owns `panda.config.ts` and the generated `styled-system/`. The runtime `src/lib/` only contains format and external-link helpers; build-time helpers live in `panda.helpers.ts` next to the panda config.
+- **`@httpjpg/ui`** — component library built on Panda CSS. Exports primitives (`Box`, `Stack`, `Grid`, `Container`), typography (`Headline`, `Paragraph`), media (`Image`, `Video`, `Slideshow`), navigation (`Header`, `Footer`, `Link`, `NavLink`), interactive widgets (`MusicPlayer`, `CustomCursor`, `MouseTrail`, `WorkCard`, `WorkList`, `CommandPalette`, `SearchTrigger`), and structural pieces (`Page`, `Section`, `Divider`, `ShimmeringText`). Owns `panda.config.ts` and the generated `styled-system/`. The runtime `src/lib/` holds format, external-link, and scroll-lock helpers; build-time helpers live in `panda.helpers.ts` next to the panda config.
 
 #### Storyblok stack (layered)
 

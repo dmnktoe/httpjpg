@@ -1,5 +1,7 @@
 import { lookup } from "node:dns/promises";
 
+import { decodeEntities } from "./html";
+
 export interface FaviconAsset {
   ok: true;
   body: Uint8Array<ArrayBuffer>;
@@ -188,14 +190,6 @@ export function sniffContentType(bytes: Uint8Array): string | null {
   return null;
 }
 
-function decodeHtmlEntities(value: string): string {
-  return value
-    .replace(/&amp;/g, "&")
-    .replace(/&#x2f;/gi, "/")
-    .replace(/&quot;/g, '"')
-    .replace(/&#0?39;/g, "'");
-}
-
 function readAttribute(tag: string, name: string): string {
   const match = tag.match(
     new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'\`=<>]+))`, "i"),
@@ -222,7 +216,7 @@ export function extractIconCandidates(html: string): IconCandidate[] {
       continue;
     }
     candidates.push({
-      href: decodeHtmlEntities(href),
+      href: decodeEntities(href),
       rel,
       sizes: readAttribute(tag, "sizes").toLowerCase(),
     });

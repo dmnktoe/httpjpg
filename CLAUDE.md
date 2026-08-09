@@ -361,6 +361,19 @@ The command palette (`⌘K` / `Ctrl+K`) is one feature with two halves, and they
 
 ---
 
+## Page-wide Audio
+
+Audio outlives a page change, the way the iOS app's `AudioPlayerModel` does.
+
+- **One engine, mounted once.** `AudioPlayerProvider` in `@httpjpg/ui` owns the site's only `<audio>` element and sits in `app/layout.tsx`. App Router keeps the root layout mounted across client navigations — that, and nothing else, is what keeps a track playing. Never mount a second one, and never move it into a route segment.
+- **The seam is a context, not a prop.** `useAudioPlayer()` returns `null` outside the provider, mirroring the `\.playAudioTrack` environment key on iOS, so `MusicPlayer` and friends stay renderable in Storybook and tests without an engine behind them.
+- **Bloks hand tracks over, they don't play them.** With a provider mounted, a `music_player` blok in mp3 mode renders `AudioTrackRow` — metadata plus one button that calls `play()`. Without one it falls back to the self-contained `MP3Player`. The Spotify and SoundCloud embeds bring their own transport and stay out of the queue.
+- **The queue is the page, snapshotted.** Every mounted mp3 blok registers itself through `useAudioQueueEntry`; `play()` freezes that registry into the queue it walks, so next/prev keep working after the bloks that supplied them unmount.
+- **Controls live in the header.** `MiniPlayerSlot` renders the 16px spinning record and prev/play/next right behind the `SearchTrigger`, in both the mobile block and `Navigation`. It renders nothing until something is loaded — the nav copy is untouched for visitors who never press play. `MiniPlayer` itself is presentational and fully controlled, same split as `CommandPalette` / `AskWidget`.
+- **`navigator.mediaSession`** carries the metadata and the lock-screen transport, the web counterpart of the app's `MPRemoteCommandCenter` wiring.
+
+---
+
 ## Env, Config, Observability
 
 - **Env access** — always `import { env } from "@httpjpg/env"`. Never `process.env.FOO` outside `env.mjs` (the one exception is `NODE_ENV` checks, which the t3-oss layer also exposes).

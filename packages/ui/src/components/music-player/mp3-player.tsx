@@ -5,6 +5,7 @@ import { css } from "styled-system/css";
 
 import { Box } from "../box/box";
 import { VStack } from "../stack/stack";
+import { formatTime } from "./lib";
 
 export interface MP3PlayerProps {
   src: string;
@@ -14,12 +15,6 @@ export interface MP3PlayerProps {
   autoPlay?: boolean;
   showArtwork?: boolean;
   showInfo?: boolean;
-}
-
-function formatTime(time: number): string {
-  const minutes = Math.floor(time / 60);
-  const seconds = Math.floor(time % 60);
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
 export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(

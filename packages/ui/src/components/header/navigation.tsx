@@ -7,6 +7,7 @@ import { getFaviconUrl } from "../../lib/favicon-url";
 import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
 import { Link } from "../link/link";
+import { MiniPlayerSlot } from "../music-player/mini-player-slot";
 import { NavLink } from "../nav-link/nav-link";
 import { SearchTrigger } from "../search-trigger/search-trigger";
 import type { HeaderProps } from "./header";
@@ -232,6 +233,7 @@ export function Navigation({
                   <SearchTrigger />
                 </>
               )}
+              <MiniPlayerSlot />
             </Box>
             <br />
             <Link

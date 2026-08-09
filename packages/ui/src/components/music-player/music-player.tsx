@@ -1,13 +1,15 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { ASCII_DIVIDER_MUSIC } from "../ascii-art/banners";
 import { Box } from "../box/box";
 import { VStack } from "../stack/stack";
+import { useAudioPlayer, useAudioQueueEntry } from "./audio-player-context";
+import { AudioTrackRow } from "./audio-track-row";
 import { MP3Player } from "./mp3-player";
 import { getSpotifyId } from "./spotify-id";
 
@@ -53,6 +55,23 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
     ref,
   ) => {
     const [embedUrl, setEmbedUrl] = useState("");
+    const player = useAudioPlayer();
+    const track = useMemo(() => ({ src, title, artist, artwork }), [src, title, artist, artwork]);
+    // mp3 is the only source the site itself plays; the embeds bring their own
+    // transport, so only mp3 joins the page queue.
+    const isQueued = source === "mp3" && Boolean(player);
+    const isActive = player?.track?.src === src;
+    const hasAutoPlayed = useRef(false);
+
+    useAudioQueueEntry(isQueued ? track : null);
+
+    useEffect(() => {
+      if (!autoPlay || !isQueued || hasAutoPlayed.current) {
+        return;
+      }
+      hasAutoPlayed.current = true;
+      player?.play(track);
+    }, [autoPlay, isQueued, player, track]);
 
     useEffect(() => {
       if (source === "spotify") {
@@ -111,6 +130,26 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
       }
 
       if (source === "mp3") {
+        // With a page-wide player mounted the blok hands its track over instead
+        // of opening a second audio element, so playback outlives this page.
+        if (player) {
+          return (
+            <AudioTrackRow
+              title={title}
+              artist={artist}
+              artwork={artwork}
+              showArtwork={showArtwork}
+              showInfo={showInfo}
+              isActive={Boolean(isActive)}
+              isPlaying={player.isPlaying}
+              currentTime={isActive ? player.currentTime : 0}
+              duration={isActive ? player.duration : 0}
+              onToggle={() => (isActive ? player.toggle() : player.play(track))}
+              onSeek={player.seek}
+            />
+          );
+        }
+
         return (
           <MP3Player
             src={src}

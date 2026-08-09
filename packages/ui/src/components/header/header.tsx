@@ -8,6 +8,7 @@ import { useBodyScrollLock } from "../../lib/use-body-scroll-lock";
 import { Box } from "../box/box";
 import { Container } from "../container/container";
 import { Link } from "../link/link";
+import { MiniPlayerSlot } from "../music-player/mini-player-slot";
 import { SearchTrigger } from "../search-trigger/search-trigger";
 import { MobileMenuButton } from "./mobile-menu-button";
 import { MobileMenuContent } from "./mobile-menu-content";
@@ -121,6 +122,7 @@ export function Header({
                   <SearchTrigger />
                 </>
               )}
+              <MiniPlayerSlot />
             </Box>
           </Box>
 

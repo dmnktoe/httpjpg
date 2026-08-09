@@ -1,6 +1,6 @@
 import { act, fireEvent, render, waitFor } from "@testing-library/react";
 
-import { Slideshow, type SlideshowImage } from "./slideshow";
+import { Slideshow, type SlideshowImage, VIDEO_START_TIMEOUT_MS } from "./slideshow";
 
 const CLIP_A = "https://a.storyblok.com/f/1/clip-a.mp4";
 const CLIP_B = "https://a.storyblok.com/f/1/clip-b.mp4";
@@ -98,6 +98,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
@@ -268,6 +269,31 @@ describe("Slideshow video failure modes", () => {
     fireEvent.error(videoFor(container, CLIP_A));
 
     await expectSlide(container, "02");
+  });
+
+  it("moves on when the clip request neither loads nor fails", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const { container } = renderSlideshow([VIDEO_A, IMAGE_A], { autoplayDelay: NO_AUTOPLAY });
+
+    await expectStuckOn(container, "01");
+    await act(async () => {
+      vi.advanceTimersByTime(VIDEO_START_TIMEOUT_MS);
+    });
+
+    await expectSlide(container, "02");
+  });
+
+  it("does not hold a second time for a clip that already failed", async () => {
+    const { container, getByLabelText } = renderSlideshow([VIDEO_A, IMAGE_A, IMAGE_B], {
+      autoplayDelay: NO_AUTOPLAY,
+    });
+
+    fireEvent.error(videoFor(container, CLIP_A));
+    await expectSlide(container, "02");
+
+    fireEvent.click(getByLabelText("Previous slide"));
+
+    await waitFor(() => expect(activeSlide(container)).not.toBe("01"));
   });
 
   it("advances only once when a clip both errors and ends", async () => {

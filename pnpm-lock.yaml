@@ -34,7 +34,7 @@ catalogs:
       specifier: ^17.4.2
       version: 17.4.2
     jsdom:
-      specifier: ^30.0.0
+      specifier: ^30.0.1
       version: 30.0.1
     next:
       specifier: ^16.3.0

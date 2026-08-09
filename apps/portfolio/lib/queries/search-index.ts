@@ -3,6 +3,7 @@ import { CACHE_TAGS } from "@httpjpg/storyblok-next";
 import { unstable_cache } from "next/cache";
 
 import type { SearchDocument } from "../search/ranking";
+import { collectStoryMedia } from "../search/story-media";
 import { collectStoryText } from "../search/story-text";
 import { STORYBLOK_SLUGS } from "../storyblok-slugs";
 
@@ -51,6 +52,7 @@ function toSearchDocument(story: IndexableStory): SearchDocument {
     tags: story.tag_list ?? [],
     excerpt: collectStoryText(story.content),
     date: story.content?.date,
+    media: collectStoryMedia(story.content),
   };
 }
 

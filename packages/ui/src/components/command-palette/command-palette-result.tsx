@@ -3,6 +3,7 @@
 import type { MouseEvent } from "react";
 
 import { Box } from "../box/box";
+import type { CommandPaletteMediaItem } from "./command-palette-media";
 
 export interface CommandPaletteResult {
   id: string;
@@ -10,6 +11,8 @@ export interface CommandPaletteResult {
   href: string;
   kind: "work" | "page";
   excerpt?: string;
+  /** Thumbnails from the page, shown in the palette's media strip. */
+  media?: CommandPaletteMediaItem[];
 }
 
 interface CommandPaletteResultItemProps {

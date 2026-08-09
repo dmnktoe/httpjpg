@@ -11,6 +11,9 @@ const TEXT_KEYS = new Set([
   "alt",
   "quote",
   "value",
+  // Track credits: a music player's title already lands via `title`, and
+  // searching a page by the artist on it should work the same way.
+  "artist",
 ]);
 
 /** Bounds the walk so a cyclic payload cannot hang a build. */

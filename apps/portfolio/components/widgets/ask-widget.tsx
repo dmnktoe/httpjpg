@@ -2,6 +2,7 @@
 
 import {
   CommandPalette,
+  type CommandPaletteMediaItem,
   type CommandPaletteResult,
   type CommandPaletteStatus,
   OPEN_SEARCH_EVENT,
@@ -26,6 +27,7 @@ interface SearchResponse {
     href: string;
     kind: "work" | "page";
     excerpt?: string;
+    media?: CommandPaletteMediaItem[];
   }>;
   suggestions?: string[];
 }

@@ -11,10 +11,11 @@ import { Box } from "../box/box";
 import { Button } from "../button/button";
 import { CommandPaletteAnswer, type CommandPaletteSource } from "./command-palette-answer";
 import { CommandPaletteInput } from "./command-palette-input";
+import { CommandPaletteMedia, type CommandPaletteMediaItem } from "./command-palette-media";
 import { type CommandPaletteResult, CommandPaletteResultItem } from "./command-palette-result";
 import { CommandPaletteSuggestions } from "./command-palette-suggestions";
 
-export type { CommandPaletteResult, CommandPaletteSource };
+export type { CommandPaletteMediaItem, CommandPaletteResult, CommandPaletteSource };
 
 /** Wide enough for a three-sentence answer, narrow enough to stay scannable. */
 const MAX_WIDTH = "640px";
@@ -219,6 +220,8 @@ export function CommandPalette({
             />
 
             <CommandPaletteSuggestions suggestions={suggestions} onSelect={onQueryChange} />
+
+            <CommandPaletteMedia results={results} onSelect={onSelect} />
 
             {hasAnswer && (
               <CommandPaletteAnswer

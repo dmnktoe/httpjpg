@@ -78,8 +78,32 @@ describe("getSearchIndex", () => {
         tags: ["Projects"],
         excerpt: "Demo Project A stark site",
         date: "2026-01-01",
+        media: [],
       },
     ]);
+  });
+
+  it("carries the story's thumbnails into the document", async () => {
+    mockStories([
+      story({
+        content: {
+          component: "work",
+          title: "Demo Project",
+          body: [
+            {
+              component: "image",
+              _uid: "image-1",
+              alt: "Print run",
+              image: { filename: "https://a.storyblok.com/f/1/2x2/abc/print.jpeg" },
+            },
+          ],
+        },
+      }),
+    ]);
+
+    const [document] = await getSearchIndex();
+
+    expect(document.media).toMatchObject([{ kind: "image", label: "Print run" }]);
   });
 
   it("marks non-work stories as pages", async () => {

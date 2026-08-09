@@ -2,11 +2,6 @@
 
 import { useEffect } from "react";
 
-// `overflow: hidden` on <body> is not a scroll lock on iOS Safari — the visual
-// viewport keeps panning, so the page (and the sticky header with it) still
-// scrolls behind a fixed overlay. Pinning the body with `position: fixed` at a
-// negative offset is the variant that holds everywhere; the scroll position is
-// captured on lock and restored on release so the page does not jump to the top.
 export function useBodyScrollLock(isLocked: boolean) {
   useEffect(() => {
     if (!isLocked) {
@@ -34,8 +29,6 @@ export function useBodyScrollLock(isLocked: boolean) {
     body.style.width = "100%";
     body.style.overflow = "hidden";
     body.style.overscrollBehavior = "none";
-    // Taking the body out of flow removes the classic scrollbar on pointer
-    // platforms; pad the gap so the layout underneath does not shift.
     if (scrollbarWidth > 0) {
       body.style.paddingRight = `${scrollbarWidth}px`;
     }

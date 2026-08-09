@@ -167,8 +167,6 @@ export function MobileMenuContent({
               lineHeight: "snug",
               overflowX: "hidden",
               overflowY: "auto",
-              // Keep a flick at either end of the panel from chaining out to
-              // the page behind it.
               overscrollBehavior: "contain",
             }}
           >

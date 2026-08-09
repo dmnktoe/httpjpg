@@ -40,8 +40,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  // Unmount before the stubs go away: releasing the scroll lock calls
-  // window.scrollTo, which jsdom only implements as a warning.
   cleanup();
   vi.unstubAllGlobals();
   document.body.removeAttribute("style");

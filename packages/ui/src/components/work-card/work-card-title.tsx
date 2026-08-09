@@ -41,6 +41,7 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
           size="1.25em"
           css={{
             display: "inline-block",
+            my: "-0.625em",
             mr: "2",
             verticalAlign: "middle",
             transform: "rotate(90deg)",

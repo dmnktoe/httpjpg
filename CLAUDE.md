@@ -392,7 +392,6 @@ pnpm format:check
 - Lint and format must be clean before committing (`lint-staged` enforces it via Husky `pre-commit`).
 - Commit messages follow Conventional Commits (`commitlint` runs on `commit-msg`).
 - No console.log in shipped code paths; `console.error` / `console.warn` are acceptable for genuine error reporting that complements Sentry.
-- PRs use `.github/pull_request_template.md`. Fill in the headings that apply, delete the ones that don't; the PR title is the squash commit and follows the same Conventional Commits rules.
 
 ### Releases
 

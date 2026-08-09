@@ -66,20 +66,12 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
           gap: "2",
           w: "full",
           containerType: "inline-size",
-          // Backdrop for the title's `mixBlendMode` — it blends against this group, so
-          // the group has to be isolated and opaque, otherwise the headline blends
-          // against transparency and renders plain white.
           isolation: "isolate",
           bg: "pageBg",
           ...cssProp,
         }}
         {...props}
       >
-        {/* `isolation` rather than a `zIndex`, on this box only. It still caps the
-            slide overlay and copyright label so they cannot paint over the title, but
-            it keeps the box in the in-flow paint order — a flex item with a z-index
-            forms a stacking context even while static, and one around the title would
-            trap its blend in an empty group. */}
         <Box css={{ overflow: "visible", isolation: "isolate" }}>
           <Slideshow
             speed={0}

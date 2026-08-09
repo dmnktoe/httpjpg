@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import type { VideoHTMLAttributes } from "react";
+import type { RefObject, VideoHTMLAttributes } from "react";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { css, cx } from "styled-system/css";
 import { token } from "styled-system/tokens";
@@ -25,6 +25,7 @@ export interface VideoProps extends Omit<VideoHTMLAttributes<HTMLVideoElement>, 
   objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
   copyright?: string;
   copyrightPosition?: CopyrightPosition;
+  mediaRef?: RefObject<HTMLVideoElement | null>;
   css?: SystemStyleObject;
 }
 
@@ -85,6 +86,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       objectFit = "contain",
       copyright,
       copyrightPosition = "inline-white",
+      mediaRef,
       className,
       style,
       css: cssProp,
@@ -92,7 +94,8 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
     },
     ref,
   ) => {
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const ownVideoRef = useRef<HTMLVideoElement>(null);
+    const videoRef = mediaRef ?? ownVideoRef;
     const [isLoading, setIsLoading] = useState(true);
     const prefersReducedMotion = useReducedMotion();
     const shouldAutoPlay = autoPlay && !prefersReducedMotion;

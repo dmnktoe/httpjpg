@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { createRef } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { Video } from "./video";
@@ -75,6 +76,30 @@ describe("Video", () => {
     expect(container.querySelector("video")).toHaveStyle({ opacity: "1" });
 
     readyState.mockRestore();
+  });
+
+  it("exposes the underlying media element through mediaRef", () => {
+    const mediaRef = createRef<HTMLVideoElement>();
+
+    const { container } = render(<Video src="/clip.mp4" controls={false} mediaRef={mediaRef} />);
+
+    expect(mediaRef.current).toBe(container.querySelector("video"));
+  });
+
+  it("keeps its own controls working when mediaRef is passed", () => {
+    const mediaRef = createRef<HTMLVideoElement>();
+
+    render(<Video src="/clip.mp4" mediaRef={mediaRef} />);
+
+    expect(screen.getByLabelText("Seek")).toBeInTheDocument();
+  });
+
+  it("does not leak mediaRef onto the video element", () => {
+    const mediaRef = createRef<HTMLVideoElement>();
+
+    const { container } = render(<Video src="/clip.mp4" controls={false} mediaRef={mediaRef} />);
+
+    expect(container.querySelector("video")).not.toHaveAttribute("mediaRef");
   });
 
   describe("youtube", () => {

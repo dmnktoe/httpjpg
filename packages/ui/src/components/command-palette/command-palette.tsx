@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { css } from "styled-system/css";
 
-import { lockBodyScroll } from "../../lib/scroll-lock";
+import { useBodyScrollLock } from "../../lib/use-body-scroll-lock";
 import { Box } from "../box/box";
 import { Button } from "../button/button";
 import { CommandPaletteAnswer, type CommandPaletteSource } from "./command-palette-answer";
@@ -70,6 +70,8 @@ export function CommandPalette({
   const dialogRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
+  useBodyScrollLock(open);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -89,13 +91,6 @@ export function CommandPalette({
       previouslyFocused?.focus?.();
     };
   }, [open, isMounted]);
-
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-    return lockBodyScroll();
-  }, [open]);
 
   if (!isMounted) {
     return null;

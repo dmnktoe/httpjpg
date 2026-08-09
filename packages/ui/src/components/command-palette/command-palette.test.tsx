@@ -312,6 +312,7 @@ describe("CommandPalette body scroll", () => {
         onAsk={vi.fn()}
       />,
     );
+    expect(document.body.style.position).toBe("fixed");
     expect(document.body.style.overflow).toBe("hidden");
 
     rerender(
@@ -326,7 +327,7 @@ describe("CommandPalette body scroll", () => {
       />,
     );
 
-    expect(document.body.style.overflow).toBe("");
+    expect(document.body.style.position).toBe("");
   });
 });
 

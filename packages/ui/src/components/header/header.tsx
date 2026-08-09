@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
+import { useBodyScrollLock } from "../../lib/use-body-scroll-lock";
 import { Box } from "../box/box";
 import { Container } from "../container/container";
 import { Link } from "../link/link";
@@ -11,7 +12,6 @@ import { SearchTrigger } from "../search-trigger/search-trigger";
 import { MobileMenuButton } from "./mobile-menu-button";
 import { MobileMenuContent } from "./mobile-menu-content";
 import { Navigation } from "./navigation";
-import { useBodyScrollLock } from "./use-body-scroll-lock";
 
 export interface NavItem {
   name: string;

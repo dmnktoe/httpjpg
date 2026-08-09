@@ -3,18 +3,6 @@
 import { Box } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 
-interface VisitorStats {
-  pageviews: number;
-  visitors: number;
-}
-
-const COUNTER_DIGITS = 6;
-
-function padCount(value: number): string {
-  const safe = Number.isFinite(value) ? Math.max(0, Math.trunc(value)) : 0;
-  return safe.toString().padStart(COUNTER_DIGITS, "0");
-}
-
 export function VisitorCounter() {
   const [stats, setStats] = useState<VisitorStats | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -104,4 +92,16 @@ export function VisitorCounter() {
       </Box>
     </Box>
   );
+}
+
+function padCount(value: number): string {
+  const safe = Number.isFinite(value) ? Math.max(0, Math.trunc(value)) : 0;
+  return safe.toString().padStart(COUNTER_DIGITS, "0");
+}
+
+const COUNTER_DIGITS = 6;
+
+interface VisitorStats {
+  pageviews: number;
+  visitors: number;
 }

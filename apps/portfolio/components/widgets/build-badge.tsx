@@ -6,8 +6,6 @@ import { useEffect, useState } from "react";
 import { config } from "@/lib/config";
 import { formatRelativeTime } from "@/lib/relative-time";
 
-const SHORT_SHA_LENGTH = 7;
-
 export interface BuildBadgeProps {
   version?: string;
   buildTime?: string;
@@ -90,3 +88,5 @@ export function BuildBadge({ version, buildTime, commitSha }: BuildBadgeProps) {
     </Box>
   );
 }
+
+const SHORT_SHA_LENGTH = 7;

@@ -13,30 +13,18 @@ import {
   type VitalRating,
 } from "@/lib/web-vitals";
 
-const SHOWN: readonly VitalName[] = ["LCP", "CLS", "TTFB"];
-
-const RATING_COLORS: Record<VitalRating, string> = {
-  [VITAL_RATINGS.good]: "success.500",
-  [VITAL_RATINGS.improve]: "warning.500",
-  [VITAL_RATINGS.poor]: "danger.500",
-};
-
-interface VitalMetricLike {
-  name: string;
-  value: number;
-}
-
 export function WebVitalsBadge() {
   const [vitals, setVitals] = useState<Partial<Record<VitalName, number>>>({});
 
   useReportWebVitals((metric: VitalMetricLike) => {
-    if (!isVitalName(metric.name) || !SHOWN.includes(metric.name)) {
+    const name = metric.name;
+    if (!isVitalName(name) || !SHOWN_VITALS.includes(name)) {
       return;
     }
-    setVitals((current) => ({ ...current, [metric.name as VitalName]: metric.value }));
+    setVitals((current) => ({ ...current, [name]: metric.value }));
   });
 
-  const measured = SHOWN.filter((name) => vitals[name] !== undefined);
+  const measured = SHOWN_VITALS.filter((name) => vitals[name] !== undefined);
   if (measured.length === 0) {
     return null;
   }
@@ -77,4 +65,17 @@ export function WebVitalsBadge() {
       })}
     </Box>
   );
+}
+
+const SHOWN_VITALS: readonly VitalName[] = ["LCP", "CLS", "TTFB"];
+
+const RATING_COLORS: Record<VitalRating, string> = {
+  [VITAL_RATINGS.good]: "success.500",
+  [VITAL_RATINGS.improve]: "warning.500",
+  [VITAL_RATINGS.poor]: "danger.500",
+};
+
+interface VitalMetricLike {
+  name: string;
+  value: number;
 }

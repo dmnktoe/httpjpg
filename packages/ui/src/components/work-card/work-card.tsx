@@ -66,6 +66,11 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
           gap: "2",
           w: "full",
           containerType: "inline-size",
+          // Backdrop for the title's `mixBlendMode` — it blends against this group, so
+          // the group has to be isolated and opaque, otherwise the headline blends
+          // against transparency and renders plain white.
+          isolation: "isolate",
+          bg: "pageBg",
           ...cssProp,
         }}
         {...props}

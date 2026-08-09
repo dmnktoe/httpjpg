@@ -114,7 +114,13 @@ export function Header({
             </Link>
             <br />
             <Box as="span" css={{ opacity: 0.7, fontSize: "2xs" }}>
-              ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ꠹ρᧁ! 🎀 {showSearch && <SearchTrigger />}
+              ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ꠹ρᧁ! 🎀
+              {showSearch && (
+                <>
+                  {" • "}
+                  <SearchTrigger />
+                </>
+              )}
             </Box>
           </Box>
 

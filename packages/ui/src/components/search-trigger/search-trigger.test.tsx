@@ -67,6 +67,13 @@ describe("SearchTrigger", () => {
     expect(screen.getByRole("button")).not.toHaveTextContent("𝙆");
   });
 
+  it("never shows the label and the shortcut in turn", async () => {
+    render(<SearchTrigger label="search" />);
+
+    await waitFor(() => expect(screen.getByRole("button")).toHaveTextContent("𝙆"));
+    expect(screen.getByRole("button")).not.toHaveTextContent("search");
+  });
+
   it("accepts a custom touch label", async () => {
     mockPointer(true);
     render(<SearchTrigger label="search or ask" />);

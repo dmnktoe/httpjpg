@@ -25,14 +25,19 @@ export interface SearchTriggerProps {
 }
 
 export function SearchTrigger({ onTrigger, label = "search", css: cssProp }: SearchTriggerProps) {
-  const [modifier, setModifier] = useState<string>();
+  // Undefined means "not resolved yet", and renders nothing at all. The label
+  // and the shortcut are two different final states, so showing either one
+  // before the platform is known would swap the text under the reader's eyes.
+  const [caption, setCaption] = useState<string>();
 
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) {
+      setCaption(label);
       return;
     }
-    setModifier(/mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent) ? "⌘" : "^");
-  }, []);
+    const modifier = /mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent) ? "⌘" : "^";
+    setCaption(`${modifier}+𝙆`);
+  }, [label]);
 
   const handleClick = useCallback(() => {
     if (onTrigger) {
@@ -41,6 +46,10 @@ export function SearchTrigger({ onTrigger, label = "search", css: cssProp }: Sea
     }
     window.dispatchEvent(new CustomEvent(OPEN_SEARCH_EVENT));
   }, [onTrigger]);
+
+  if (!caption) {
+    return null;
+  }
 
   return (
     <Box
@@ -58,39 +67,26 @@ export function SearchTrigger({ onTrigger, label = "search", css: cssProp }: Sea
         border: "none",
         cursor: "pointer",
         pointerEvents: "auto",
-        textDecoration: "underline",
-        textDecorationThickness: "1px",
-        textUnderlineOffset: "2px",
-        _hover: { textDecorationStyle: "wavy" },
+        // Undecorated until hovered, like the nav links either side of it. The
+        // bullet separator stays outside the button, so it keeps the body text
+        // colour and the hover underline does not run through it.
+        textDecoration: "none",
+        animation: "fadeInUp 150ms ease-out",
+        _motionReduce: { animation: "none" },
+        _hover: { textDecoration: "underline" },
         _focusVisible: { outline: "2px solid", outlineColor: "primary.500", outlineOffset: "2px" },
         ...cssProp,
       }}
     >
-      <Box as="span" aria-hidden="true">
-        •&nbsp;
-      </Box>
-      {modifier ? (
-        <Box
-          as="span"
-          css={{
-            display: "inline-block",
-            animation: "fadeInUp 150ms ease-out",
-            _motionReduce: { animation: "none" },
-          }}
-        >
-          <ShimmeringText
-            text={`${modifier}+𝙆`}
-            repeat={false}
-            startOnView={false}
-            duration={1.2}
-            delay={0.15}
-            color={token.var("colors.primary.500")}
-            shimmerColor={token.var("colors.primary.200")}
-          />
-        </Box>
-      ) : (
-        label
-      )}
+      <ShimmeringText
+        text={caption}
+        repeat={false}
+        startOnView={false}
+        duration={1.2}
+        delay={0.15}
+        color={token.var("colors.primary.500")}
+        shimmerColor={token.var("colors.primary.200")}
+      />
     </Box>
   );
 }

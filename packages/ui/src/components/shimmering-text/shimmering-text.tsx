@@ -30,7 +30,9 @@ export interface ShimmeringTextProps {
 }
 
 const shimmerStyles = css({
-  display: "inline-block",
+  // Inline, not inline-block: an inline-block breaks a surrounding underline
+  // and knocks the baseline out of the line of text it sits in.
+  display: "inline",
   color: "transparent",
   backgroundSize: "250% 100%, auto",
   backgroundRepeat: "no-repeat, padding-box",

@@ -225,8 +225,13 @@ export function Navigation({
               </span>
             ))}
             <Box as="span" css={{ textAlign: "justify" }}>
-              —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷))){" "}
-              {showSearch && <SearchTrigger />}
+              —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷)))
+              {showSearch && (
+                <>
+                  {" • "}
+                  <SearchTrigger />
+                </>
+              )}
             </Box>
             <br />
             <Link

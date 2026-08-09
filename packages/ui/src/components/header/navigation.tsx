@@ -42,7 +42,6 @@ function Favicon({ href }: { href: string }) {
         aria-hidden="true"
         width={14}
         height={14}
-        loading="lazy"
         onLoad={() => setState("loaded")}
         onError={() => setState("failed")}
         css={state === "loaded" ? FAVICON_STYLES : HIDDEN_FAVICON_STYLES}

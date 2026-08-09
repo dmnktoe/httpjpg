@@ -143,6 +143,21 @@ describe("Navigation", () => {
     expect(spinners(container)).toHaveLength(0);
   });
 
+  it("keeps the hidden image eager, since a lazy one in a display:none slot never loads", () => {
+    const { container } = render(
+      <Navigation
+        nav={[{ name: "github", href: "https://github.com/dmnktoe", isExternal: true }]}
+        projectsWork={[]}
+        websitesWork={[]}
+      />,
+    );
+
+    expect(container.querySelector('img[src^="/api/favicon"]')).not.toHaveAttribute(
+      "loading",
+      "lazy",
+    );
+  });
+
   it("drops the spinner and the image when the favicon fails", () => {
     const { container } = render(
       <Navigation

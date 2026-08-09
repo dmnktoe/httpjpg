@@ -4,132 +4,45 @@
     "config:best-practices",
     ":semanticCommitTypeAll(deps)",
     ":semanticCommitScopeDisabled",
-    ":pinAllExceptPeerDependencies",
     ":enablePreCommit"
   ],
   "timezone": "Europe/Berlin",
   "assignees": ["dmnktoe"],
   "reviewers": ["dmnktoe"],
   "labels": ["dependencies"],
-  "prHourlyLimit": 4,
-  "prConcurrentLimit": 12,
   "dependencyDashboard": false,
-  "lockFileMaintenance": { "enabled": true },
-  "vulnerabilityAlerts": {
-    "labels": ["security", "priority:high"],
-    "assignees": ["dmnktoe"]
-  },
+  "vulnerabilityAlerts": { "labels": ["security"] },
   "packageRules": [
     {
-      "description": "Production deps get individual PRs, dev deps are grouped",
-      "matchDepTypes": ["dependencies", "peerDependencies", "optionalDependencies"],
-      "addLabels": ["deps:prod"]
+      "description": "Keep ranges, move the floor, so an in-range release still surfaces as a PR",
+      "matchPackageNames": ["*"],
+      "rangeStrategy": "bump"
     },
     {
-      "description": "All dev deps land in one PR by default",
-      "groupName": "dev-dependencies",
+      "description": "Peers and engines keep their ranges",
+      "matchDepTypes": ["engines", "peerDependencies"],
+      "rangeStrategy": "replace"
+    },
+    {
+      "description": "Dev tooling lands in one PR",
       "matchDepTypes": ["devDependencies"],
-      "addLabels": ["deps:dev"]
+      "groupName": "dev dependencies"
     },
     {
-      "description": "Type definitions get their own group",
-      "groupName": "type definitions",
-      "matchPackageNames": ["@types/**"],
-      "addLabels": ["deps:dev", "deps:types"]
+      "description": "React and Next move in lockstep, types included",
+      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom", "next", "@next/**"],
+      "groupName": "react + next"
     },
     {
-      "description": "Test tooling gets its own group",
-      "groupName": "test tooling",
-      "matchPackageNames": [
-        "vitest",
-        "@vitest/**",
-        "playwright",
-        "@playwright/test",
-        "@testing-library/**",
-        "jsdom",
-        "happy-dom"
-      ],
-      "addLabels": ["deps:dev", "deps:test"]
-    },
-    {
-      "description": "Storyblok SDK + client move together",
-      "groupName": "storyblok",
-      "matchPackageNames": ["@storyblok/**", "storyblok-js-client"],
-      "addLabels": ["storyblok"]
-    },
-    {
-      "description": "React core moves in lockstep",
-      "groupName": "react",
-      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
-      "addLabels": ["react"]
-    },
-    {
-      "description": "Panda CSS toolchain",
-      "groupName": "panda css",
-      "matchPackageNames": ["@pandacss/**"],
-      "addLabels": ["panda"]
-    },
-    {
-      "description": "Lint + format toolchain moves together",
-      "groupName": "linting & formatting",
-      "matchPackageNames": ["oxlint", "oxfmt"],
-      "addLabels": ["deps:dev", "tooling"]
-    },
-    {
-      "description": "Build toolchain moves together",
-      "groupName": "build tooling",
-      "matchPackageNames": ["turbo", "typescript"],
-      "addLabels": ["deps:dev", "tooling"]
-    },
-    {
-      "description": "Next.js",
-      "groupName": "next.js",
-      "matchPackageNames": ["next"],
-      "addLabels": ["next"]
-    },
-    {
-      "description": "Majors and 0.x bumps need a human",
-      "matchUpdateTypes": ["major"],
-      "addLabels": ["breaking", "manual-review"],
-      "prPriority": 5
-    },
-    {
-      "matchCurrentVersion": "/^0\\./",
-      "matchUpdateTypes": ["major", "minor"],
-      "addLabels": ["manual-review"]
-    },
-    {
-      "description": "Workspace scoping",
-      "matchFileNames": ["apps/portfolio/**"],
-      "addLabels": ["app:portfolio"]
-    },
-    {
-      "matchFileNames": ["apps/storybook/**"],
-      "addLabels": ["app:storybook"]
-    },
-    {
-      "matchFileNames": ["packages/**"],
-      "addLabels": ["packages"]
-    },
-    {
-      "description": "CI / Docker tooling",
+      "description": "CI actions move together",
       "matchManagers": ["github-actions"],
+      "groupName": "github actions",
       "addLabels": ["ci"]
     },
     {
-      "description": "No standalone digest-bump PRs for GitHub Actions — SHA pins stay and refresh on version bumps, so we don't get a duplicate 'digest' PR next to every version PR",
-      "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["digest"],
-      "enabled": false
-    },
-    {
-      "matchManagers": ["dockerfile", "docker-compose"],
-      "addLabels": ["docker"]
-    },
-    {
-      "description": "Toolchain pins need a human (Node engine, pnpm)",
-      "matchDepNames": ["node", "pnpm"],
-      "addLabels": ["tooling", "manual-review"]
+      "description": "Majors need a human",
+      "matchUpdateTypes": ["major"],
+      "addLabels": ["manual-review"]
     }
   ]
 }

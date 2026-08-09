@@ -66,13 +66,11 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
           gap: "2",
           w: "full",
           containerType: "inline-size",
-          isolation: "isolate",
-          bg: "pageBg",
           ...cssProp,
         }}
         {...props}
       >
-        <Box css={{ overflow: "visible", isolation: "isolate" }}>
+        <Box css={{ zIndex: "docked", overflow: "visible" }}>
           <Slideshow
             speed={0}
             animation="sharpen"
@@ -84,7 +82,7 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
           />
         </Box>
 
-        <Box>
+        <Box css={{ zIndex: "docked" }}>
           <Box
             css={{
               display: "flex",

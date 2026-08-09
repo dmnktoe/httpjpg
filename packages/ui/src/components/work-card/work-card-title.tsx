@@ -11,9 +11,13 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
         // The headline is pulled up into the slideshow (see `mt` below). Blending it
         // against the card's backdrop keeps those overlapping pixels readable on any
         // slide. White + `difference` resolves to `pageFg` over the flat `pageBg`, so
-        // the non-overlapping part looks unchanged in both page themes.
-        color: "white",
-        mixBlendMode: "difference",
+        // the non-overlapping part looks unchanged in both page themes. Both
+        // declarations stay behind the `@supports` gate — on its own `color: white`
+        // would paint the headline white-on-white.
+        "@supports (mix-blend-mode: difference)": {
+          color: "white",
+          mixBlendMode: "difference",
+        },
       }}
     >
       <Box

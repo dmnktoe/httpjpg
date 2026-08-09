@@ -13,8 +13,9 @@ import type { HeaderProps } from "./header";
 const INITIAL_WORK_COUNT = 5;
 
 function Favicon({ href }: { href: string }) {
+  const [hasFailed, setHasFailed] = useState(false);
   const src = getFaviconUrl(href);
-  if (!src) return null;
+  if (!src || hasFailed) return null;
   return (
     <Box
       as="img"
@@ -24,6 +25,7 @@ function Favicon({ href }: { href: string }) {
       width={14}
       height={14}
       loading="lazy"
+      onError={() => setHasFailed(true)}
       css={{
         display: { base: "none", md: "inline-block" },
         flexShrink: 0,

@@ -109,13 +109,13 @@ describe("Navigation", () => {
     );
 
     const favicons = Array.from(container.querySelectorAll("img")).filter((img) =>
-      img.getAttribute("src")?.includes("google.com/s2/favicons"),
+      img.getAttribute("src")?.startsWith("/api/favicon"),
     );
 
     expect(favicons).toHaveLength(1);
     expect(favicons[0]).toHaveAttribute(
       "src",
-      "https://www.google.com/s2/favicons?domain=github.com&sz=16",
+      "/api/favicon?url=https%3A%2F%2Fgithub.com%2Fdmnktoe&sz=16",
     );
     expect(favicons[0]).toHaveAttribute("width", "14");
     expect(favicons[0]).toHaveAttribute("height", "14");
@@ -147,11 +147,11 @@ describe("Navigation", () => {
 
     const sources = Array.from(container.querySelectorAll("img"))
       .map((img) => img.getAttribute("src") ?? "")
-      .filter((src) => src.includes("google.com/s2/favicons"));
+      .filter((src) => src.startsWith("/api/favicon"));
 
     expect(sources).toEqual([
-      "https://www.google.com/s2/favicons?domain=dribbble.com&sz=16",
-      "https://www.google.com/s2/favicons?domain=acme.com&sz=16",
+      "/api/favicon?url=https%3A%2F%2Fdribbble.com%2Fdmnktoe&sz=16",
+      "/api/favicon?url=https%3A%2F%2Facme.com%2F&sz=16",
     ]);
   });
 
@@ -205,9 +205,9 @@ describe("Navigation", () => {
 
     const sources = Array.from(container.querySelectorAll("img"))
       .map((img) => img.getAttribute("src") ?? "")
-      .filter((src) => src.includes("google.com/s2/favicons"));
+      .filter((src) => src.startsWith("/api/favicon"));
 
-    expect(sources).toEqual(["https://www.google.com/s2/favicons?domain=acme.com&sz=16"]);
+    expect(sources).toEqual(["/api/favicon?url=https%3A%2F%2Facme.com%2Flaunch&sz=16"]);
   });
 
   it("expands personal and client columns independently", () => {

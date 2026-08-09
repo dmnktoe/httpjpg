@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@codecov/nextjs-webpack-plugin": "^2.0.1",
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "1.62.1",
     "@sentry/cli": "^3.0.0",
     "@types/node": "catalog:",
     "@types/react": "catalog:",

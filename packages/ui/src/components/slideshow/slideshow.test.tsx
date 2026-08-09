@@ -296,6 +296,19 @@ describe("Slideshow video failure modes", () => {
     await waitFor(() => expect(activeSlide(container)).not.toBe("01"));
   });
 
+  it("settles rather than spinning when every slide is an unplayable clip", async () => {
+    const { container } = renderSlideshow([VIDEO_A, VIDEO_B], { autoplayDelay: NO_AUTOPLAY });
+
+    fireEvent.error(videoFor(container, CLIP_A));
+    await expectSlide(container, "02");
+    fireEvent.error(videoFor(container, CLIP_B));
+    await expectSlide(container, "01");
+
+    // Nothing is left to skip to, so the carousel comes to rest on the slide
+    // it landed on rather than handing itself from one dead clip to the next.
+    await expectStuckOn(container, "01");
+  });
+
   it("remembers a failed clip by its source, not by its position", async () => {
     const { container, rerender } = render(
       <Slideshow

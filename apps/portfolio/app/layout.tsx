@@ -24,6 +24,7 @@ import { CustomCursorWrapper } from "@/components/ui/custom-cursor-wrapper";
 import { NostalgiaSlideshow } from "@/components/ui/nostalgia-slideshow";
 import { PreviewNotification } from "@/components/ui/preview-notification";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
+import { AskWidget } from "@/components/widgets/ask-widget";
 import { BuildBadge } from "@/components/widgets/build-badge";
 import { DiscogsStatus } from "@/components/widgets/discogs-status";
 import { DiscordStatus } from "@/components/widgets/discord-status";
@@ -109,8 +110,14 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             {widgetConfig.nostalgiaSlideshowEnabled && <NostalgiaSlideshow />}
             {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
             {widgetConfig.psnEnabled && <PSNCard username={widgetConfig.psnUsername} />}
+            {widgetConfig.askEnabled && <AskWidget askEnabled={Boolean(env.GROQ_API_KEY)} />}
             <PreviewNotification />
-            <Header nav={navigation} projectsWork={projectsWork} websitesWork={websitesWork} />
+            <Header
+              nav={navigation}
+              projectsWork={projectsWork}
+              websitesWork={websitesWork}
+              showSearch={widgetConfig.askEnabled}
+            />
             <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
               {children}
             </Box>

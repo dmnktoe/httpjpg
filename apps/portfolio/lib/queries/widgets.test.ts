@@ -24,6 +24,7 @@ describe("getWidgetConfig", () => {
       xEnabled: false,
       spotifyEnabled: true,
       nostalgiaSlideshowEnabled: false,
+      askEnabled: true,
       customCursorEnabled: true,
       mouseTrailEnabled: true,
     });
@@ -40,6 +41,7 @@ describe("getWidgetConfig", () => {
       x_enabled: true,
       spotify_enabled: false,
       nostalgia_slideshow_enabled: true,
+      ask_enabled: false,
       custom_cursor_enabled: false,
       mouse_trail_enabled: false,
     } as never);
@@ -54,6 +56,7 @@ describe("getWidgetConfig", () => {
       xEnabled: true,
       spotifyEnabled: false,
       nostalgiaSlideshowEnabled: true,
+      askEnabled: false,
       customCursorEnabled: false,
       mouseTrailEnabled: false,
     });

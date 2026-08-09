@@ -47,6 +47,9 @@ export const env = createEnv({
     TWEETAPI_API_URL: z.string().url().default("https://api.tweetapi.com/tw-v2"),
     TWEETAPI_KEY: z.string().optional(),
 
+    GROQ_API_KEY: z.string().optional(),
+    GROQ_MODEL: z.enum(["openai/gpt-oss-20b", "openai/gpt-oss-120b"]).default("openai/gpt-oss-20b"),
+
     ARCJET_KEY: z.string().optional(),
 
     CODECOV_TOKEN: z.string().optional(),
@@ -96,6 +99,9 @@ export const env = createEnv({
 
     TWEETAPI_API_URL: process.env.TWEETAPI_API_URL,
     TWEETAPI_KEY: process.env.TWEETAPI_KEY,
+
+    GROQ_API_KEY: process.env.GROQ_API_KEY,
+    GROQ_MODEL: process.env.GROQ_MODEL,
 
     ARCJET_KEY: process.env.ARCJET_KEY,
 

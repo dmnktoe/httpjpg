@@ -4,13 +4,14 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
+import { useBodyScrollLock } from "../../lib/use-body-scroll-lock";
 import { Box } from "../box/box";
 import { Container } from "../container/container";
 import { Link } from "../link/link";
+import { SearchTrigger } from "../search-trigger/search-trigger";
 import { MobileMenuButton } from "./mobile-menu-button";
 import { MobileMenuContent } from "./mobile-menu-content";
 import { Navigation } from "./navigation";
-import { useBodyScrollLock } from "./use-body-scroll-lock";
 
 export interface NavItem {
   name: string;
@@ -33,10 +34,18 @@ export interface HeaderProps {
   nav: NavItem[];
   projectsWork?: WorkItem[];
   websitesWork?: WorkItem[];
+  /** Renders the search trigger next to the nav. @default false */
+  showSearch?: boolean;
   children?: ReactNode;
 }
 
-export function Header({ nav, projectsWork = [], websitesWork = [], children }: HeaderProps) {
+export function Header({
+  nav,
+  projectsWork = [],
+  websitesWork = [],
+  showSearch = false,
+  children,
+}: HeaderProps) {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const pathname = usePathname();
 
@@ -106,10 +115,21 @@ export function Header({ nav, projectsWork = [], websitesWork = [], children }: 
             <br />
             <Box as="span" css={{ opacity: 0.7, fontSize: "2xs" }}>
               ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ꠹ρᧁ! 🎀
+              {showSearch && (
+                <>
+                  {" • "}
+                  <SearchTrigger />
+                </>
+              )}
             </Box>
           </Box>
 
-          <Navigation nav={nav} projectsWork={projectsWork} websitesWork={websitesWork} />
+          <Navigation
+            nav={nav}
+            projectsWork={projectsWork}
+            websitesWork={websitesWork}
+            showSearch={showSearch}
+          />
           <MobileMenuButton isOpen={mobileMenuIsOpen} setIsOpen={setMobileMenuIsOpen} />
         </Box>
       </Container>

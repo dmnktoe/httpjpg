@@ -23,6 +23,7 @@ export const zIndex = {
   tooltip: 300,
   mobileMenuButton: 320,
   previewImage: 340,
+  commandPalette: 350,
   cookieBanner: 360,
   mouseEffects: 380,
   cursor: 400,

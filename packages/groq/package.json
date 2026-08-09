@@ -1,0 +1,23 @@
+{
+  "name": "@httpjpg/groq",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Groq chat-completions client with streaming support",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

@@ -11,6 +11,7 @@ export type IconName =
   | "arrow-down"
   | "arrow-left"
   | "arrow-right"
+  | "close"
   | "play"
   | "pause"
   | "volume"
@@ -34,6 +35,9 @@ const icons: Record<IconName, ReactElement> = {
   ),
   "arrow-right": (
     <path d="m21.71 5.29 10 10a1 1 0 0 1 0 1.41l-10 10-1.41-1.41L28.59 17H0v-2h28.59l-8.29-8.29z" />
+  ),
+  close: (
+    <path d="M25.41 8.01 24 6.59 16 14.59 8 6.59 6.59 8.01 14.59 16.01 6.59 24.01 8 25.42 16 17.42 24 25.42 25.41 24.01 17.41 16.01z" />
   ),
   play: <path d="M8 5v14l11-7z" />,
   pause: (

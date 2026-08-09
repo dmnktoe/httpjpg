@@ -22,13 +22,22 @@ export function CommandPaletteAnswer({
   errorMessage,
 }: CommandPaletteAnswerProps) {
   return (
-    <Box css={{ px: "4", py: "3", borderColor: "pageBorder", borderBottom: "1px solid" }}>
+    <Box
+      css={{
+        px: "4",
+        py: "3",
+        borderColor: "pageBorder",
+        borderBottom: "1px solid",
+        borderLeft: "3px solid",
+        borderLeftColor: "primary.500",
+      }}
+    >
       <Box
         as="span"
         css={{
           display: "block",
           mb: "2",
-          opacity: 0.4,
+          color: "accentFg",
           fontFamily: "mono",
           fontSize: "sm",
           letterSpacing: "wide",
@@ -44,8 +53,6 @@ export function CommandPaletteAnswer({
         </Box>
       ) : (
         <Box
-          // Assertive would interrupt on every token; polite lets a screen
-          // reader read the answer once it settles.
           aria-live="polite"
           aria-busy={isStreaming}
           css={{
@@ -64,7 +71,7 @@ export function CommandPaletteAnswer({
                 display: "inline-block",
                 w: "2",
                 ml: "1",
-                bg: "pageFg",
+                bg: "primary.500",
                 animation: "caretBlink 1s steps(1, end) infinite",
               }}
             >
@@ -82,12 +89,12 @@ export function CommandPaletteAnswer({
             alignItems: "center",
             gap: "2",
             mt: "3",
-            opacity: 0.7,
+            color: "primary.500",
             fontFamily: "mono",
             fontSize: "sm",
           }}
         >
-          <Box as="span" css={{ opacity: 0.6, textTransform: "uppercase" }}>
+          <Box as="span" css={{ color: "accentFg", opacity: 0.8, textTransform: "uppercase" }}>
             sources
           </Box>
           {sources.map((source, index) => (

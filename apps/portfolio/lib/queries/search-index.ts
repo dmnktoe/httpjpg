@@ -22,7 +22,7 @@ interface IndexableStory {
   } & Record<string, unknown>;
 }
 
-/** Stories that exist for configuration, not for reading. */
+/** Configuration stories, not readable pages. */
 const EXCLUDED_SLUGS = new Set<string>([STORYBLOK_SLUGS.CONFIG]);
 
 function toHref(story: IndexableStory): string {
@@ -50,13 +50,7 @@ function toSearchDocument(story: IndexableStory): SearchDocument {
   };
 }
 
-/**
- * The published content the palette searches and the ask endpoint grounds on.
- *
- * One cached snapshot serves both, so a question and a search over the same
- * words see the same corpus. Shares the `STORIES` tag, so a Storyblok publish
- * webhook drops it along with the rest of the story caches.
- */
+/** The published corpus both search and the ask endpoint read. */
 export async function getSearchIndex(): Promise<SearchDocument[]> {
   const buildIndex = async (): Promise<SearchDocument[]> => {
     try {

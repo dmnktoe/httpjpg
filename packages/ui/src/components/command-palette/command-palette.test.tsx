@@ -282,6 +282,54 @@ describe("CommandPalette", () => {
   });
 });
 
+describe("CommandPalette clear button", () => {
+  it("is hidden while the query is empty", () => {
+    setup({ query: "", results: [] });
+
+    expect(screen.queryByRole("button", { name: "Clear search" })).not.toBeInTheDocument();
+  });
+
+  it("empties the query and returns focus to the input", () => {
+    const props = setup();
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear search" }));
+
+    expect(props.onQueryChange).toHaveBeenCalledWith("");
+    expect(document.activeElement).toBe(screen.getByRole("combobox"));
+  });
+});
+
+describe("CommandPalette body scroll", () => {
+  it("freezes the page while open and restores it on close", () => {
+    const { rerender } = render(
+      <CommandPalette
+        open
+        query="poster"
+        results={RESULTS}
+        onQueryChange={vi.fn()}
+        onClose={vi.fn()}
+        onSelect={vi.fn()}
+        onAsk={vi.fn()}
+      />,
+    );
+    expect(document.body.style.overflow).toBe("hidden");
+
+    rerender(
+      <CommandPalette
+        open={false}
+        query="poster"
+        results={RESULTS}
+        onQueryChange={vi.fn()}
+        onClose={vi.fn()}
+        onSelect={vi.fn()}
+        onAsk={vi.fn()}
+      />,
+    );
+
+    expect(document.body.style.overflow).toBe("");
+  });
+});
+
 describe("CommandPalette suggestions", () => {
   it("renders nothing when there are no suggestions", () => {
     setup();

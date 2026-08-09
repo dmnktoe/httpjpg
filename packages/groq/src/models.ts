@@ -1,13 +1,6 @@
-/**
- * Groq-hosted models this repo is willing to call. Groq rotates its catalogue
- * faster than a dependency bump cycle, so the map is deliberately small: the
- * two chat models the site actually uses, plus a default the env layer falls
- * back to when `GROQ_MODEL` is unset.
- */
+/** Groq-hosted chat models this repo calls. */
 export const GROQ_MODELS = {
-  /** Fast, cheap, good enough for grounded Q&A over a handful of excerpts. */
   instant: "llama-3.1-8b-instant",
-  /** Slower and more capable — kept for answers that need real synthesis. */
   versatile: "llama-3.3-70b-versatile",
 } as const;
 

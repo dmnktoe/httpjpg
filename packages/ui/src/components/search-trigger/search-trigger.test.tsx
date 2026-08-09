@@ -61,16 +61,24 @@ describe("SearchTrigger", () => {
   });
 
   it("advertises the shortcut on a device with a keyboard", async () => {
-    render(<SearchTrigger />);
+    const { container } = render(<SearchTrigger />);
 
-    await waitFor(() => expect(screen.getByText(/⌘K|\^K/)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(container.querySelector("[data-badge]")).toHaveTextContent(/^(⌘|\^)K$/),
+    );
   });
 
-  it("hides the shortcut hint on touch devices", async () => {
+  it("falls back to a magnifier on touch devices, where there is no keyboard", async () => {
     mockPointer(true);
-    render(<SearchTrigger />);
+    const { container } = render(<SearchTrigger />);
 
     await waitFor(() => expect(screen.getByRole("button")).toBeInTheDocument());
-    expect(screen.queryByText(/⌘K|\^K/)).not.toBeInTheDocument();
+    expect(container.querySelector("[data-badge]")).toHaveTextContent("⌕");
+  });
+
+  it("keeps the label readable to assistive tech even when visually hidden", () => {
+    render(<SearchTrigger />);
+
+    expect(screen.getByRole("button")).toHaveAccessibleName("Open search");
   });
 });

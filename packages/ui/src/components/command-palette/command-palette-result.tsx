@@ -31,14 +31,10 @@ export function CommandPaletteResultItem({
     <Box
       as="li"
       id={optionId}
-      // A native <option> only lives inside <select>, which cannot hold this
-      // markup — the ARIA listbox pattern is the accessible route here.
       // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
       role="option"
       aria-selected={isActive}
       onMouseEnter={onHover}
-      // Keyboard activation is owned by the input's Enter handler, so this only
-      // needs to answer the pointer. `onMouseDown` beats the input's blur.
       onMouseDown={(event: MouseEvent) => {
         event.preventDefault();
         onSelect(result);
@@ -49,8 +45,10 @@ export function CommandPaletteResultItem({
         gap: "3",
         px: "4",
         py: "2",
-        color: isActive ? "pageBg" : "pageFg",
-        bg: isActive ? "pageFg" : "transparent",
+        color: isActive ? "white" : "pageFg",
+        bg: isActive ? "primary.500" : "transparent",
+        borderLeft: "3px solid",
+        borderLeftColor: isActive ? "accent.400" : "transparent",
         cursor: "pointer",
       }}
     >
@@ -59,7 +57,8 @@ export function CommandPaletteResultItem({
         css={{
           flexShrink: 0,
           w: "14",
-          opacity: 0.5,
+          color: isActive ? "accent.300" : "accentFg",
+          opacity: isActive ? 1 : 0.85,
           fontFamily: "mono",
           fontSize: "sm",
           letterSpacing: "wide",

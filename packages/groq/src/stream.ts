@@ -9,14 +9,7 @@ interface StreamChunk {
 
 const SSE_DONE = "[DONE]";
 
-/**
- * Turn a Groq SSE response body into the sequence of content deltas.
- *
- * The transport splits events on blank lines, but a network chunk can land
- * anywhere — mid-JSON, mid-line — so events are buffered until a terminator
- * arrives rather than parsed per chunk. Malformed payloads are skipped instead
- * of throwing: one bad frame should not truncate an otherwise good answer.
- */
+/** Turn a Groq SSE response body into its content deltas. Bad frames are skipped. */
 export async function* parseSseStream(
   body: ReadableStream<Uint8Array>,
 ): AsyncGenerator<string, void, undefined> {
@@ -49,7 +42,6 @@ export async function* parseSseStream(
       }
     }
 
-    // A final event without its trailing blank line still carries content.
     const trailing = readEvent(buffer);
     if (trailing && trailing !== SSE_DONE) {
       yield trailing;
@@ -59,10 +51,7 @@ export async function* parseSseStream(
   }
 }
 
-/**
- * Extract the content delta from one SSE event, or the `[DONE]` sentinel.
- * Returns an empty string for keep-alives, comments, and unparseable frames.
- */
+/** Content delta of one event, the `[DONE]` sentinel, or "" for anything else. */
 function readEvent(event: string): string {
   const payload = event
     .split("\n")

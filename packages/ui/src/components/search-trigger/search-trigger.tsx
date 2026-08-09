@@ -22,15 +22,13 @@ export interface SearchTriggerProps {
 }
 
 export function SearchTrigger({ onTrigger, label = "search", css: cssProp }: SearchTriggerProps) {
-  const [shortcut, setShortcut] = useState<string>();
+  const [modifier, setModifier] = useState<string>();
 
-  // Rendered after mount and only where a keyboard exists: advertising ⌘K to a
-  // phone is a lie, and picking the glyph on the server would hydrate wrong.
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) {
       return;
     }
-    setShortcut(/mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent) ? "⌘K" : "^K");
+    setModifier(/mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent) ? "⌘" : "^");
   }, []);
 
   const handleClick = useCallback(() => {
@@ -53,30 +51,63 @@ export function SearchTrigger({ onTrigger, label = "search", css: cssProp }: Sea
         flexShrink: 0,
         alignItems: "center",
         gap: "2",
-        minH: "12",
-        px: "3",
+        p: "0",
         color: "pageFg",
         fontFamily: "mono",
         fontSize: "sm",
         bg: "transparent",
-        border: "1px solid",
-        borderColor: "pageBorder",
+        border: "none",
         cursor: "pointer",
         pointerEvents: "auto",
-        _hover: { color: "pageBg", bg: "pageFg" },
-        _focusVisible: { outline: "2px solid", outlineColor: "primary.500", outlineOffset: "2px" },
+        _hover: {
+          "& [data-badge]": { color: "primary.500", bg: "accent.400" },
+          "& [data-label]": { textDecorationStyle: "wavy" },
+        },
+        _focusVisible: {
+          outline: "2px solid",
+          outlineColor: "primary.500",
+          outlineOffset: "3px",
+        },
         ...cssProp,
       }}
     >
-      <Box as="span" aria-hidden="true" css={{ opacity: 0.6 }}>
-        &gt;
+      <Box
+        data-badge
+        aria-hidden="true"
+        css={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "0.5",
+          minW: "7",
+          h: "7",
+          px: "1.5",
+          color: "white",
+          fontFamily: "mono",
+          fontSize: "sm",
+          fontWeight: "bold",
+          lineHeight: "none",
+          bg: "primary.500",
+          boxShadow: "2px 2px 0 0 #A3E635",
+          transition: "background 120ms ease-out, color 120ms ease-out",
+        }}
+      >
+        {modifier ?? "⌕"}
+        {modifier && <Box as="span">K</Box>}
       </Box>
-      {label}
-      {shortcut && (
-        <Box as="kbd" aria-hidden="true" css={{ opacity: 0.5, fontFamily: "mono" }}>
-          {shortcut}
-        </Box>
-      )}
+      <Box
+        as="span"
+        data-label
+        css={{
+          display: { base: "none", md: "inline" },
+          textDecoration: "underline",
+          textDecorationColor: "primary.500",
+          textDecorationThickness: "1px",
+          textUnderlineOffset: "3px",
+        }}
+      >
+        {label}
+      </Box>
     </Box>
   );
 }

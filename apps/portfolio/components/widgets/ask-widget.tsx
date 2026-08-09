@@ -41,8 +41,6 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
   const [status, setStatus] = useState<CommandPaletteStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  // One controller per in-flight request kind, so a new keystroke cancels the
-  // previous search and a new question cancels the previous answer.
   const searchAbort = useRef<AbortController>(null);
   const askAbort = useRef<AbortController>(null);
 
@@ -64,16 +62,12 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // The header button is rendered by the Header, which sits in a different
-  // subtree; it asks for the palette over the window the same way the footer's
-  // cookie-settings button asks for the consent center.
   useEffect(() => {
     const handleOpen = () => setIsOpen(true);
     window.addEventListener(OPEN_SEARCH_EVENT, handleOpen);
     return () => window.removeEventListener(OPEN_SEARCH_EVENT, handleOpen);
   }, []);
 
-  // Abort anything still running when the widget unmounts.
   useEffect(() => {
     return () => {
       searchAbort.current?.abort();
@@ -196,7 +190,6 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
 
   const handleQueryChange = useCallback((value: string) => {
     setQuery(value);
-    // A new query invalidates the answer that belonged to the old one.
     askAbort.current?.abort();
     setAnswer("");
     setSources([]);

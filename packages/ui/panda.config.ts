@@ -237,6 +237,9 @@ export default defineConfig({
           pageBorder: {
             value: { base: "{colors.neutral.300}", _pageDark: "{colors.neutral.700}" },
           },
+          accentFg: {
+            value: { base: "{colors.accent.700}", _pageDark: "{colors.accent.400}" },
+          },
         },
       },
       breakpoints: {

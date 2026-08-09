@@ -1,8 +1,4 @@
-/**
- * Thrown for any non-2xx response from Groq. Carries the upstream status so
- * route handlers can decide between "retry later" (429/5xx) and "this request
- * was wrong" (4xx) without re-parsing the body.
- */
+/** Thrown for any non-2xx response from Groq. */
 export class GroqApiError extends Error {
   readonly status: number;
 
@@ -12,7 +8,7 @@ export class GroqApiError extends Error {
     this.status = status;
   }
 
-  /** Upstream rate limit or outage — the caller may usefully try again. */
+  /** Rate limit or outage — worth retrying. */
   get isTransient(): boolean {
     return this.status === 429 || this.status >= 500;
   }

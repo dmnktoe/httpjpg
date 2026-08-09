@@ -13,16 +13,10 @@ const SYSTEM_PROMPT = [
   "- Reply in the language the question was asked in.",
 ].join("\n");
 
-/** Hard cap on question length, so an oversized paste cannot run up a bill. */
+/** Hard cap on question length. */
 export const MAX_QUESTION_LENGTH = 500;
 
-/**
- * Build the grounded chat messages for a question.
- *
- * Sources are numbered so the model can cite them and the widget can map a
- * citation back to a link. Excerpts are truncated per source rather than
- * globally: a long first project should not starve the rest of the context.
- */
+/** Build the grounded chat messages. Sources are numbered so the model can cite them. */
 export function buildAskMessages(question: string, sources: SearchDocument[]): GroqMessage[] {
   const context = sources
     .map((source, index) => {

@@ -54,9 +54,6 @@ export function createGroqClient(options: GroqClientOptions): GroqClient {
       throw new GroqNotConfiguredError();
     }
 
-    // Two independent reasons to give up: the caller aborted (user navigated
-    // away, widget closed) or Groq is taking too long. `AbortSignal.any` folds
-    // both into the one signal `fetch` accepts.
     const timeout = AbortSignal.timeout(completionOptions.timeoutMs ?? DEFAULT_TIMEOUT_MS);
     const signal = completionOptions.signal
       ? AbortSignal.any([completionOptions.signal, timeout])
@@ -113,8 +110,6 @@ async function readErrorMessage(response: Response): Promise<string> {
     if (body?.error?.message) {
       return body.error.message;
     }
-  } catch {
-    // Ignore — handled by the fallback below.
-  }
+  } catch {}
   return response.statusText || `Groq request failed with status ${response.status}`;
 }

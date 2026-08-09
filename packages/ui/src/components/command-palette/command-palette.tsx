@@ -5,6 +5,7 @@ import type { KeyboardEvent, MouseEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { lockBodyScroll } from "../../lib/scroll-lock";
 import { Box } from "../box/box";
 import { CommandPaletteAnswer, type CommandPaletteSource } from "./command-palette-answer";
 import { CommandPaletteInput } from "./command-palette-input";
@@ -66,20 +67,11 @@ export function CommandPalette({
     setIsMounted(true);
   }, []);
 
-  // A new result set invalidates the old highlight position. Keyed on the ids
-  // rather than the array: the parent rebuilds the array on every render, and
-  // depending on its identity would reset the highlight mid-keyboard-navigation.
   const resultKey = results.map((result) => result.id).join("|");
   useEffect(() => {
     setActiveIndex(0);
   }, [resultKey]);
 
-  // Take focus on open and hand it back on close, so dismissing the palette
-  // returns the caret to the header button that summoned it rather than the
-  // top of the document.
-  // Depends on isMounted too: the first render returns null while the portal
-  // waits for the client, so the input does not exist yet on a palette that is
-  // mounted already open.
   useEffect(() => {
     if (!open || !isMounted) {
       return;
@@ -91,16 +83,11 @@ export function CommandPalette({
     };
   }, [open, isMounted]);
 
-  // The palette covers the page, so the page behind it must not scroll away.
   useEffect(() => {
-    if (!open || typeof document === "undefined") {
+    if (!open) {
       return;
     }
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previous;
-    };
+    return lockBodyScroll();
   }, [open]);
 
   if (!open || !isMounted) {
@@ -111,9 +98,6 @@ export function CommandPalette({
   const isStreaming = status === "answering";
   const canAsk = askEnabled && query.trim().length > 0;
 
-  // Escape and Tab are handled for the whole dialog, not just the input: focus
-  // can sit on a suggestion chip, a source link, or the ask button, and the
-  // palette still has to dismiss and still has to keep Tab inside itself.
   const handleDialogKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Escape") {
       event.preventDefault();
@@ -153,8 +137,6 @@ export function CommandPalette({
     }
     if (event.key === "Enter") {
       event.preventDefault();
-      // Cmd/Ctrl+Enter asks even when a result is highlighted, so the keyboard
-      // can reach both actions without leaving the input.
       const forceAsk = event.metaKey || event.ctrlKey;
       const active = results[activeIndex];
       if (!forceAsk && active) {
@@ -169,23 +151,21 @@ export function CommandPalette({
 
   const palette = (
     <Box
-      // Clicking the backdrop dismisses; the dialog below stops propagation.
       onMouseDown={onClose}
       css={{
         position: "fixed",
         inset: "0",
-        zIndex: zIndex.modal,
+        zIndex: zIndex.commandPalette,
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
         px: "4",
         pt: { base: "16", md: "24" },
-        bg: "rgba(0, 0, 0, 0.6)",
+        bg: "rgba(23, 37, 84, 0.35)",
+        backdropFilter: "blur(10px) saturate(130%)",
       }}
     >
       <Box
-        // A native <dialog> would need showModal() and its own top-layer focus
-        // trap; this is portalled and controlled, so the role carries it.
         // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
         role="dialog"
         aria-modal="true"
@@ -199,8 +179,9 @@ export function CommandPalette({
           maxH: "70dvh",
           color: "pageFg",
           bg: "pageBg",
-          border: "1px solid",
-          borderColor: "pageFg",
+          border: "2px solid",
+          borderColor: "primary.500",
+          boxShadow: "8px 8px 0 0 rgba(59, 130, 246, 0.35)",
           overflowY: "auto",
         }}
       >
@@ -210,6 +191,10 @@ export function CommandPalette({
           inputRef={inputRef}
           activeDescendantId={results[activeIndex] ? optionId(activeIndex) : undefined}
           onChange={onQueryChange}
+          onClear={() => {
+            onQueryChange("");
+            inputRef.current?.focus();
+          }}
           onKeyDown={handleKeyDown}
         />
 
@@ -278,11 +263,11 @@ function CommandPaletteFooter({
         py: "2",
         fontFamily: "mono",
         fontSize: "sm",
-        borderColor: "pageBorder",
-        borderTop: "1px solid",
+        borderColor: "primary.500",
+        borderTop: "2px solid",
       }}
     >
-      <Box as="span" css={{ opacity: 0.5 }}>
+      <Box as="span" css={{ color: "pageMuted" }}>
         {statusLabel(status, query, resultCount)}
       </Box>
       {canAsk && (
@@ -294,16 +279,22 @@ function CommandPaletteFooter({
             onAsk(query.trim());
           }}
           css={{
-            px: "2",
-            py: "0.5",
-            color: "pageFg",
+            px: "3",
+            py: "1",
+            color: "white",
             fontFamily: "mono",
             fontSize: "sm",
-            bg: "transparent",
-            border: "1px solid",
-            borderColor: "pageFg",
+            fontWeight: "bold",
+            bg: "primary.500",
+            border: "2px solid",
+            borderColor: "primary.500",
             cursor: "pointer",
-            _hover: { color: "pageBg", bg: "pageFg" },
+            _hover: { color: "primary.500", bg: "transparent" },
+            _focusVisible: {
+              outline: "2px solid",
+              outlineColor: "accent.400",
+              outlineOffset: "2px",
+            },
           }}
         >
           ask ⌘↵

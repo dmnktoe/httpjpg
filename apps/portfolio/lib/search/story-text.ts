@@ -1,10 +1,6 @@
 import { extractPlainText } from "@httpjpg/storyblok-utils";
 
-/**
- * Content keys worth indexing. An allowlist rather than "every string": a
- * Storyblok blok is mostly plumbing (uuids, colors, spacing tokens, asset
- * filenames), and indexing that noise makes every query match everything.
- */
+/** Indexable text keys. An allowlist keeps blok plumbing out of the index. */
 const TEXT_KEYS = new Set([
   "title",
   "headline",
@@ -17,7 +13,7 @@ const TEXT_KEYS = new Set([
   "value",
 ]);
 
-/** Bloks nest deeply; this bounds the walk so a cyclic payload cannot hang a build. */
+/** Bounds the walk so a cyclic payload cannot hang a build. */
 const MAX_DEPTH = 8;
 
 interface RichTextDoc {
@@ -29,12 +25,7 @@ function isRichTextDoc(value: unknown): value is RichTextDoc {
   return typeof value === "object" && value !== null && (value as { type?: string }).type === "doc";
 }
 
-/**
- * Flatten a Storyblok story's content into a single searchable string.
- *
- * Walks nested bloks and rich-text documents, collecting only allowlisted text
- * fields, then collapses whitespace so scoring sees consistent tokens.
- */
+/** Flatten a story's content into one searchable string. */
 export function collectStoryText(content: unknown, maxLength = 1200): string {
   const parts: string[] = [];
 

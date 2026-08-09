@@ -38,8 +38,6 @@ export async function GET(request: NextRequest) {
         results: rankDocuments(documents, query, limit),
         suggestions: suggestCompletions(documents, query),
       },
-      // Short shared cache: the index only changes on publish, and repeated
-      // keystrokes across visitors hit the same handful of prefixes.
       { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
     );
   } catch (error) {

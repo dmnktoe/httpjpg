@@ -13,10 +13,7 @@ export interface SearchResult extends SearchDocument {
   score: number;
 }
 
-/**
- * Field weights. Titles and tags are authored deliberately, body text is not,
- * so a body hit alone should never outrank a title hit.
- */
+/** Field weights: a body hit alone must never outrank a title hit. */
 const WEIGHT = {
   titleExact: 100,
   titlePrefix: 14,
@@ -63,7 +60,6 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
     let hit = false;
 
     if (title.includes(token)) {
-      // A token that starts a word in the title beats one buried mid-word.
       score += title.startsWith(token) ? WEIGHT.titlePrefix : WEIGHT.titleToken;
       hit = true;
     }
@@ -81,8 +77,6 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
     }
   }
 
-  // Reward documents that satisfy the whole query over ones that catch a single
-  // common word, so "brutalist portfolio site" ranks the full match first.
   if (tokens.length > 1 && matched === tokens.length) {
     score += WEIGHT.allTokens;
   }
@@ -90,12 +84,7 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
   return score;
 }
 
-/**
- * Rank documents against a free-text query, most relevant first.
- *
- * Ties break on recency then title so results are stable across requests —
- * an unstable order makes the palette flicker as the user types.
- */
+/** Rank documents by relevance. Ties break on recency, then title, for stability. */
 export function rankDocuments(
   documents: SearchDocument[],
   query: string,
@@ -119,13 +108,7 @@ export function rankDocuments(
     .slice(0, limit);
 }
 
-/**
- * Type-ahead completions drawn from titles and tags.
- *
- * Deliberately not an AI call: suggestions fire on every keystroke, so they run
- * against the in-memory index and stay free and instant. Matching is on the raw
- * (possibly partial) query, since the user is mid-word.
- */
+/** Type-ahead completions from titles and tags. Index-only, never a model call. */
 export function suggestCompletions(
   documents: SearchDocument[],
   query: string,
@@ -147,7 +130,6 @@ export function suggestCompletions(
     if (!target.includes(normalized) || target === normalized) {
       return;
     }
-    // Prefix matches read as genuine completions; substring matches are weaker.
     const rank = weight + (target.startsWith(normalized) ? 10 : 0);
     const key = value.toLowerCase();
     if (rank > (candidates.get(key) ?? -1)) {
@@ -162,8 +144,6 @@ export function suggestCompletions(
     }
   }
 
-  // The map is keyed lowercase for dedupe, but the palette shows the phrase, so
-  // recover the authored casing from the first document that produced it.
   const authored = new Map<string, string>();
   for (const document of documents) {
     for (const phrase of [document.title, ...document.tags]) {

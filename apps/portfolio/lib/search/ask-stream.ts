@@ -27,18 +27,11 @@ function toEvent(line: string): AskEvent | null {
     if (parsed.type === "error") {
       return { type: "error", error: (parsed as AskErrorEvent).error || "ai_failed" };
     }
-  } catch {
-    // A truncated or malformed line is dropped rather than killing the stream.
-  }
+  } catch {}
   return null;
 }
 
-/**
- * Read the `/api/ask` NDJSON body as a sequence of typed events.
- *
- * Lines are buffered until a newline arrives, because one network chunk can
- * split a JSON object across reads.
- */
+/** Read the `/api/ask` NDJSON body as typed events. */
 export async function* readAskStream(
   body: ReadableStream<Uint8Array>,
 ): AsyncGenerator<AskEvent, void, undefined> {

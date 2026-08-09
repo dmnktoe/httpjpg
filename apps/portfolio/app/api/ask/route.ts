@@ -8,14 +8,14 @@ import { enforceRateLimit } from "@/lib/rate-limit";
 import { buildAskMessages, MAX_QUESTION_LENGTH } from "@/lib/search/prompt";
 import { rankDocuments } from "@/lib/search/ranking";
 
-/** Enough context to answer without pushing the prompt (and the bill) up. */
+/** Sources per answer. */
 const MAX_SOURCES = 5;
 
 interface AskBody {
   question?: unknown;
 }
 
-/** The slim source shape the widget renders as citation links. */
+/** Slim source shape the widget renders as citation links. */
 interface AskSource {
   title: string;
   href: string;
@@ -66,9 +66,6 @@ export async function POST(request: NextRequest) {
   const client = createGroqClient({ apiKey: env.GROQ_API_KEY, model: env.GROQ_MODEL });
   const encoder = new TextEncoder();
 
-  // NDJSON rather than SSE: the sources have to reach the widget before the
-  // first token so it can render citation links while the answer types in, and
-  // one JSON object per line is the cheapest framing that carries both.
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       const send = (payload: unknown) => {
@@ -82,8 +79,6 @@ export async function POST(request: NextRequest) {
           send({ type: "delta", text: delta });
         }
       } catch (error) {
-        // The stream already has a 200 status and partial content, so a failure
-        // here can only be reported in-band. The widget shows it as an error.
         if (request.signal.aborted) {
           controller.close();
           return;

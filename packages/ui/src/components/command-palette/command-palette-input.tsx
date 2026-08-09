@@ -10,6 +10,7 @@ interface CommandPaletteInputProps {
   inputRef: RefObject<HTMLInputElement | null>;
   activeDescendantId?: string;
   onChange: (value: string) => void;
+  onClear: () => void;
   onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -19,6 +20,7 @@ export function CommandPaletteInput({
   inputRef,
   activeDescendantId,
   onChange,
+  onClear,
   onKeyDown,
 }: CommandPaletteInputProps) {
   return (
@@ -29,11 +31,15 @@ export function CommandPaletteInput({
         gap: "3",
         px: "4",
         py: "3",
-        borderColor: "pageBorder",
-        borderBottom: "1px solid",
+        borderColor: "primary.500",
+        borderBottom: "2px solid",
       }}
     >
-      <Box as="span" aria-hidden="true" css={{ opacity: 0.5, fontFamily: "mono", fontSize: "sm" }}>
+      <Box
+        as="span"
+        aria-hidden="true"
+        css={{ color: "accentFg", fontFamily: "mono", fontSize: "md", fontWeight: "bold" }}
+      >
         &gt;
       </Box>
       <Box
@@ -42,8 +48,6 @@ export function CommandPaletteInput({
         type="text"
         value={value}
         placeholder={placeholder}
-        // This *is* the input the rule asks for; ARIA 1.2 puts `combobox` on it
-        // to bind the text field to the listbox below.
         // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
         role="combobox"
         aria-expanded="true"
@@ -56,25 +60,55 @@ export function CommandPaletteInput({
         onKeyDown={onKeyDown}
         css={{
           flex: "1",
+          minW: 0,
           color: "pageFg",
           fontFamily: "mono",
           fontSize: "md",
           bg: "transparent",
           border: "none",
           outline: "none",
-          _placeholder: { color: "pageFg", opacity: 0.4 },
+          caretColor: "primary.500",
+          _placeholder: { color: "pageMuted", opacity: 0.7 },
         }}
       />
+      {value && (
+        <Box
+          as="button"
+          type="button"
+          onClick={onClear}
+          aria-label="Clear search"
+          css={{
+            display: "flex",
+            flexShrink: 0,
+            justifyContent: "center",
+            alignItems: "center",
+            w: "6",
+            h: "6",
+            color: "pageMuted",
+            fontFamily: "mono",
+            fontSize: "md",
+            lineHeight: "none",
+            bg: "transparent",
+            border: "none",
+            cursor: "pointer",
+            _hover: { color: "pageBg", bg: "primary.500" },
+            _focusVisible: { outline: "2px solid", outlineColor: "primary.500" },
+          }}
+        >
+          ×
+        </Box>
+      )}
       <Box
         as="kbd"
         css={{
+          flexShrink: 0,
           px: "1.5",
           py: "0.5",
-          opacity: 0.6,
+          color: "primary.500",
           fontFamily: "mono",
           fontSize: "sm",
           border: "1px solid",
-          borderColor: "pageBorder",
+          borderColor: "primary.500",
         }}
       >
         ESC

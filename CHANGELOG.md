@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.2](https://github.com/dmnktoe/httpjpg/compare/v2.4.1...v2.4.2) (2026-08-09)
+
+
+### Fixed
+
+* **ui:** keep the mouse trail visible on dark pages ([#214](https://github.com/dmnktoe/httpjpg/issues/214)) ([8b41ad6](https://github.com/dmnktoe/httpjpg/commit/8b41ad646c2f9d9983cb8b1b5f1de18e632b7370))
+* **weather:** keep the clock pinned to the site's home timezone ([#212](https://github.com/dmnktoe/httpjpg/issues/212)) ([a8b7324](https://github.com/dmnktoe/httpjpg/commit/a8b7324839ec9532a7d02ddcbc644b1d63669145))
+
+
+### Tooling
+
+* add a pull request template ([#215](https://github.com/dmnktoe/httpjpg/issues/215)) ([13d0a9e](https://github.com/dmnktoe/httpjpg/commit/13d0a9e866ea6f006dc39d24ac2730040ddd3ebc))
+
 ## [2.4.1](https://github.com/dmnktoe/httpjpg/compare/v2.4.0...v2.4.1) (2026-08-08)
 
 

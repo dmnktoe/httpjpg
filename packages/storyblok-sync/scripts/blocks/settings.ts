@@ -85,12 +85,6 @@ export const settingsBlocks: BlockDef[] = [
           description: "Handle without @, e.g. dmnktoe. Needs TWEETAPI_KEY to be set.",
           tooltip: true,
         }),
-        mastodon_enabled: field.boolean("Mastodon · Latest Post"),
-        mastodon_handle: field.text("Mastodon · Handle", {
-          description: "Full handle including the instance, e.g. @dmnk@mastodon.social.",
-          tooltip: true,
-        }),
-        umami_counter_enabled: field.boolean("Umami · Visitor Counter"),
         custom_cursor_enabled: field.boolean("Custom Cursor", "true"),
         mouse_trail_enabled: field.boolean("Mouse Trail", "true"),
       }),

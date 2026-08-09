@@ -47,10 +47,6 @@ export const env = createEnv({
     TWEETAPI_API_URL: z.string().url().default("https://api.tweetapi.com/tw-v2"),
     TWEETAPI_KEY: z.string().optional(),
 
-    UMAMI_API_URL: z.string().url().default("https://api.umami.is/v1"),
-    UMAMI_API_KEY: z.string().optional(),
-    UMAMI_STATS_SINCE: z.string().default("2024-01-01"),
-
     ARCJET_KEY: z.string().optional(),
 
     CODECOV_TOKEN: z.string().optional(),
@@ -100,10 +96,6 @@ export const env = createEnv({
 
     TWEETAPI_API_URL: process.env.TWEETAPI_API_URL,
     TWEETAPI_KEY: process.env.TWEETAPI_KEY,
-
-    UMAMI_API_URL: process.env.UMAMI_API_URL,
-    UMAMI_API_KEY: process.env.UMAMI_API_KEY,
-    UMAMI_STATS_SINCE: process.env.UMAMI_STATS_SINCE,
 
     ARCJET_KEY: process.env.ARCJET_KEY,
 

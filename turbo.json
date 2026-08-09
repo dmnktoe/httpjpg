@@ -58,9 +58,6 @@
         "WEATHER_LONGITUDE",
         "TWEETAPI_API_URL",
         "TWEETAPI_KEY",
-        "UMAMI_API_URL",
-        "UMAMI_API_KEY",
-        "UMAMI_STATS_SINCE",
         "ARCJET_KEY"
       ]
     },

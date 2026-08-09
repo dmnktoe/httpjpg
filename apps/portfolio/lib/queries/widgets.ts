@@ -8,8 +8,6 @@ export interface WidgetConfig {
   letterboxdEnabled: boolean;
   discogsEnabled: boolean;
   xEnabled: boolean;
-  mastodonEnabled: boolean;
-  umamiCounterEnabled: boolean;
   spotifyEnabled: boolean;
   nostalgiaSlideshowEnabled: boolean;
   customCursorEnabled: boolean;
@@ -26,8 +24,6 @@ export async function getWidgetConfig(): Promise<WidgetConfig> {
     letterboxdEnabled: config?.letterboxd_enabled ?? true,
     discogsEnabled: config?.discogs_enabled ?? false,
     xEnabled: config?.x_enabled ?? false,
-    mastodonEnabled: config?.mastodon_enabled ?? false,
-    umamiCounterEnabled: config?.umami_counter_enabled ?? false,
     spotifyEnabled: config?.spotify_enabled ?? true,
     nostalgiaSlideshowEnabled: config?.nostalgia_slideshow_enabled ?? false,
     customCursorEnabled: config?.custom_cursor_enabled ?? true,

@@ -28,11 +28,9 @@ import { BuildBadge } from "@/components/widgets/build-badge";
 import { DiscogsStatus } from "@/components/widgets/discogs-status";
 import { DiscordStatus } from "@/components/widgets/discord-status";
 import { LetterboxdStatus } from "@/components/widgets/letterboxd-status";
-import { MastodonStatus } from "@/components/widgets/mastodon-status";
 import { NowPlayingWidget } from "@/components/widgets/now-playing-widget";
 import { PSNCard } from "@/components/widgets/psn-card";
 import { TrophyStatus } from "@/components/widgets/trophy-status";
-import { VisitorCounter } from "@/components/widgets/visitor-counter";
 import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
@@ -142,10 +140,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                   {widgetConfig.letterboxdEnabled && <LetterboxdStatus />}
                   {widgetConfig.discogsEnabled && <DiscogsStatus />}
                   {widgetConfig.xEnabled && <XStatus />}
-                  {widgetConfig.mastodonEnabled && <MastodonStatus />}
                   {widgetConfig.psnTrophyEnabled && <TrophyStatus />}
                   <WeatherTime />
-                  {widgetConfig.umamiCounterEnabled && <VisitorCounter />}
                   {flags.webVitalsBadgeEnabled && <WebVitalsBadge />}
                   {flags.buildBadgeEnabled && (
                     <BuildBadge

@@ -1,4 +1,4 @@
-// Lanyard: https://github.com/Phineas/lanyard
+import { fetchWithTimeout } from "./http";
 
 interface LanyardAsset {
   small_image?: string;
@@ -48,8 +48,6 @@ export interface DiscordPresenceSummary {
   avatar: string | null;
 }
 
-// Discord IDs are snowflakes (17–20 digit numeric strings); validate CMS values
-// before they reach the Lanyard request path.
 const DISCORD_SNOWFLAKE = /^\d{17,20}$/;
 
 export function isDiscordUserId(value: unknown): value is string {
@@ -62,8 +60,6 @@ function formatPlaytime(elapsedMs: number): string {
   return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
 }
 
-// Discord asset refs come as `mp:external/...`, a full URL, or a bare hash
-// that needs the application_id to resolve through the app-assets CDN.
 function buildIconUrl(image: string, applicationId: string | undefined): string | null {
   if (image.startsWith("mp:external/")) {
     return `https://media.discordapp.net/external/${image.replace("mp:external/", "")}`;
@@ -77,8 +73,6 @@ function buildIconUrl(image: string, applicationId: string | undefined): string 
   return `https://cdn.discordapp.com/app-assets/${applicationId}/${image}.png`;
 }
 
-// Game (type 0) wins over custom status (type 4). Spotify is excluded —
-// the now-playing widget owns that surface.
 function extractActivity(activities: LanyardActivity[]): {
   label: string | null;
   details: ActivitySummary | null;
@@ -120,37 +114,19 @@ export type LanyardFetchResult =
   | { ok: true; presence: DiscordPresenceSummary }
   | { ok: false; status: number; message: string };
 
-const LANYARD_TIMEOUT_MS = 5000;
-
-// 404 from Lanyard means the user hasn't joined their Discord bot.
 export async function fetchDiscordPresence(userId: string): Promise<LanyardFetchResult> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), LANYARD_TIMEOUT_MS);
-
-  let response: Response;
-  try {
-    response = await fetch(`https://api.lanyard.rest/v1/users/${encodeURIComponent(userId)}`, {
-      cache: "no-store",
-      signal: controller.signal,
-    });
-  } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") {
-      return { ok: false, status: 504, message: "Lanyard request timed out." };
-    }
-    throw error;
-  } finally {
-    clearTimeout(timeout);
+  const result = await fetchWithTimeout(
+    `https://api.lanyard.rest/v1/users/${encodeURIComponent(userId)}`,
+    {
+      label: "Lanyard",
+      hint: "Join discord.gg/lanyard to enable live status.",
+    },
+  );
+  if (!result.ok) {
+    return result;
   }
 
-  if (!response.ok) {
-    return {
-      ok: false,
-      status: response.status,
-      message: `Status ${response.status}. Join discord.gg/lanyard to enable live status.`,
-    };
-  }
-
-  const body = (await response.json()) as { data?: LanyardPresence };
+  const body = (await result.response.json()) as { data?: LanyardPresence };
   const presence = body?.data;
   if (!presence) {
     return { ok: false, status: 502, message: "Unexpected response from Lanyard API." };

@@ -44,6 +44,7 @@ export * from "./section/section";
 export * from "./slideshow/slideshow";
 export * from "./stack/stack";
 export * from "./stats/stats";
+export * from "./tooltip/tooltip";
 export * from "./video/video";
 export * from "./work-card/work-card";
 export * from "./work-list/work-list";

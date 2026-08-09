@@ -1,0 +1,100 @@
+"use client";
+
+import { Box } from "@httpjpg/ui";
+import { useReportWebVitals } from "next/web-vitals";
+import { useCallback, useState } from "react";
+
+import {
+  formatVital,
+  isVitalName,
+  rateVital,
+  VITAL_RATINGS,
+  type VitalName,
+  type VitalRating,
+} from "@/lib/web-vitals";
+
+export function WebVitalsBadge() {
+  const [vitals, setVitals] = useState<Partial<Record<VitalName, number>>>({});
+
+  // useReportWebVitals keys its effect on the callback and never unsubscribes,
+  // so a fresh closure each render would stack another set of web-vitals
+  // observers on every state update.
+  const reportVital = useCallback((metric: VitalMetricLike) => {
+    const name = metric.name;
+    if (!isVitalName(name) || !SHOWN_VITALS.includes(name)) {
+      return;
+    }
+    setVitals((current) =>
+      current[name] === metric.value ? current : { ...current, [name]: metric.value },
+    );
+  }, []);
+
+  useReportWebVitals(reportVital);
+
+  const measured = SHOWN_VITALS.filter((name) => vitals[name] !== undefined);
+
+  return (
+    <Box
+      css={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 2,
+        minHeight: "5",
+        opacity: 80,
+        fontFamily: "mono",
+        fontSize: "xs",
+      }}
+    >
+      <Box as="span" css={{ opacity: 60 }}>
+        vitals:
+      </Box>
+      {measured.length === 0 && (
+        <Box as="span" css={{ opacity: 50 }}>
+          loading ...
+        </Box>
+      )}
+      {measured.map((name, index) => {
+        const value = vitals[name] as number;
+        return (
+          <Box
+            key={name}
+            as="span"
+            css={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 1,
+              animation: "fadeInUp 150ms ease-out",
+              _motionReduce: { animation: "none" },
+            }}
+          >
+            {index > 0 && (
+              <Box as="span" css={{ mr: 1, opacity: 40 }}>
+                ·
+              </Box>
+            )}
+            <Box as="span" css={{ opacity: 50 }}>
+              {name}
+            </Box>
+            <Box as="span" css={{ color: RATING_COLORS[rateVital(name, value)], opacity: 80 }}>
+              {formatVital(name, value)}
+            </Box>
+          </Box>
+        );
+      })}
+    </Box>
+  );
+}
+
+const SHOWN_VITALS: readonly VitalName[] = ["LCP", "CLS", "TTFB"];
+
+const RATING_COLORS: Record<VitalRating, string> = {
+  [VITAL_RATINGS.good]: "success.500",
+  [VITAL_RATINGS.improve]: "warning.500",
+  [VITAL_RATINGS.poor]: "danger.500",
+};
+
+interface VitalMetricLike {
+  name: string;
+  value: number;
+}

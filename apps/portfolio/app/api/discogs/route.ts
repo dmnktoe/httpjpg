@@ -5,7 +5,7 @@ import { draftMode } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { widgetCacheHeaders } from "@/lib/cache-headers";
-import { fetchLetterboxdFilms, isLetterboxdUsername } from "@/lib/integrations/letterboxd";
+import { fetchDiscogsCollection, isDiscogsUsername } from "@/lib/integrations/discogs";
 
 async function resolveUsername(isDraft: boolean): Promise<string | undefined> {
   try {
@@ -13,14 +13,14 @@ async function resolveUsername(isDraft: boolean): Promise<string | undefined> {
       slug: "config",
     });
     const config = story?.content as SbConfigStory | undefined;
-    const username = config?.letterboxd_username;
-    if (username && !isLetterboxdUsername(username)) {
-      console.warn("Ignoring malformed letterboxd_username from Storyblok config");
+    const username = config?.discogs_username;
+    if (username && !isDiscogsUsername(username)) {
+      console.warn("Ignoring malformed discogs_username from Storyblok config");
       return undefined;
     }
     return username;
   } catch (error) {
-    console.warn("Failed to fetch Letterboxd config from Storyblok:", error);
+    console.warn("Failed to fetch Discogs config from Storyblok:", error);
     return undefined;
   }
 }
@@ -32,29 +32,29 @@ export async function GET() {
     if (!username) {
       return NextResponse.json(
         {
-          error: "Letterboxd username not configured",
-          message: "Set letterboxd_username in Storyblok config",
+          error: "Discogs username not configured",
+          message: "Set discogs_username in Storyblok config",
         },
         { status: 501 },
       );
     }
 
-    const result = await fetchLetterboxdFilms(username);
+    const result = await fetchDiscogsCollection(username);
     if (!result.ok) {
-      console.warn(`Letterboxd RSS error: ${result.status} - ${result.message}`);
+      console.warn(`Discogs API error: ${result.status} - ${result.message}`);
       return NextResponse.json(
-        { error: "Letterboxd unavailable", message: result.message },
+        { error: "Discogs unavailable", message: result.message },
         { status: result.status },
       );
     }
 
     return NextResponse.json(
-      { films: result.films },
-      { headers: widgetCacheHeaders(isDraft, 300) },
+      { releases: result.releases },
+      { headers: widgetCacheHeaders(isDraft, 900) },
     );
   } catch (error) {
-    console.error("Letterboxd API error:", error);
-    captureServerException(error, { tags: { route: "letterboxd" } });
-    return NextResponse.json({ error: "Failed to fetch Letterboxd films" }, { status: 500 });
+    console.error("Discogs API error:", error);
+    captureServerException(error, { tags: { route: "discogs" } });
+    return NextResponse.json({ error: "Failed to fetch Discogs collection" }, { status: 500 });
   }
 }

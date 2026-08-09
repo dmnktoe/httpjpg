@@ -20,6 +20,8 @@ describe("getWidgetConfig", () => {
       psnTrophyEnabled: false,
       discordEnabled: true,
       letterboxdEnabled: true,
+      discogsEnabled: false,
+      xEnabled: false,
       spotifyEnabled: true,
       nostalgiaSlideshowEnabled: false,
       customCursorEnabled: true,
@@ -34,6 +36,8 @@ describe("getWidgetConfig", () => {
       psn_trophy_enabled: true,
       discord_enabled: false,
       letterboxd_enabled: false,
+      discogs_enabled: true,
+      x_enabled: true,
       spotify_enabled: false,
       nostalgia_slideshow_enabled: true,
       custom_cursor_enabled: false,
@@ -46,6 +50,8 @@ describe("getWidgetConfig", () => {
       psnTrophyEnabled: true,
       discordEnabled: false,
       letterboxdEnabled: false,
+      discogsEnabled: true,
+      xEnabled: true,
       spotifyEnabled: false,
       nostalgiaSlideshowEnabled: true,
       customCursorEnabled: false,
@@ -59,23 +65,29 @@ describe("getFeatureFlags", () => {
     vi.clearAllMocks();
   });
 
-  it("enables every flag by default when no config exists", async () => {
+  it("keeps the established flags on and the opt-in badges off when no config exists", async () => {
     mockGetConfig.mockResolvedValue(null);
     await expect(getFeatureFlags()).resolves.toEqual({
       lastUpdatedBadgeEnabled: true,
+      webVitalsBadgeEnabled: false,
+      buildBadgeEnabled: false,
       prevNextWorkEnabled: true,
       rssFeedEnabled: true,
     });
   });
 
-  it("honors explicit false flags from the config", async () => {
+  it("honors explicit flags from the config", async () => {
     mockGetConfig.mockResolvedValue({
       last_updated_badge_enabled: false,
+      web_vitals_badge_enabled: true,
+      build_badge_enabled: true,
       prev_next_work_enabled: false,
       rss_feed_enabled: false,
     } as never);
     await expect(getFeatureFlags()).resolves.toEqual({
       lastUpdatedBadgeEnabled: false,
+      webVitalsBadgeEnabled: true,
+      buildBadgeEnabled: true,
       prevNextWorkEnabled: false,
       rssFeedEnabled: false,
     });

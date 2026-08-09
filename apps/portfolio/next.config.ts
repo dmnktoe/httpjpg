@@ -52,6 +52,22 @@ async function resolveAppVersion(): Promise<string> {
   }
 }
 
+function resolveCommitSha(): string {
+  const fromCi =
+    process.env.GITHUB_SHA ?? process.env.SOURCE_COMMIT ?? process.env.COOLIFY_GIT_COMMIT_SHA;
+  if (fromCi) {
+    return fromCi;
+  }
+  try {
+    return execSync("git rev-parse HEAD", {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return "";
+  }
+}
+
 export default async (): Promise<NextConfig> => {
   const config: NextConfig = {
     transpilePackages: [
@@ -64,6 +80,8 @@ export default async (): Promise<NextConfig> => {
 
     env: {
       NEXT_PUBLIC_APP_VERSION: await resolveAppVersion(),
+      NEXT_PUBLIC_BUILD_TIME: new Date().toISOString(),
+      NEXT_PUBLIC_COMMIT_SHA: resolveCommitSha(),
     },
 
     images: {

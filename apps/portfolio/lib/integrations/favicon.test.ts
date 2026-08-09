@@ -40,6 +40,33 @@ function binaryResponse(bytes: Uint8Array, url = "https://example.com/favicon.ic
   } as unknown as Response;
 }
 
+// Mirrors a real page: a small <head> followed by an app shell far past the
+// byte cap, delivered in chunks.
+function streamedHtmlResponse(head: string, tailBytes: number): Response {
+  const chunks = [new TextEncoder().encode(head)];
+  for (let sent = 0; sent < tailBytes; sent += 64 * 1024) {
+    chunks.push(new TextEncoder().encode("x".repeat(64 * 1024)));
+  }
+  let index = 0;
+
+  return {
+    ok: true,
+    status: 200,
+    url: "https://example.com/",
+    headers: new Headers({ "content-type": "text/html" }),
+    body: {
+      getReader: () => ({
+        read: async () =>
+          index < chunks.length ? { done: false, value: chunks[index++] } : { done: true },
+        cancel: async () => undefined,
+      }),
+    },
+    arrayBuffer: async () => {
+      throw new Error("should stream instead of buffering");
+    },
+  } as unknown as Response;
+}
+
 function notFoundResponse(url = "https://example.com/favicon.ico"): Response {
   return {
     ok: false,
@@ -194,6 +221,22 @@ describe("fetchFavicon", () => {
     expect(mockFetch.mock.calls[1][0]).toMatchObject({
       href: "https://dmnktoe.github.io/buli-tabelle/favicon.ico",
     });
+  });
+
+  it("reads the head of a page that dwarfs the byte cap", async () => {
+    mockFetch
+      .mockResolvedValueOnce(
+        streamedHtmlResponse(
+          `<head><link rel="icon" href="/declared.png"></head>`,
+          2 * 1024 * 1024,
+        ),
+      )
+      .mockResolvedValueOnce(binaryResponse(PNG));
+
+    const result = await fetchFavicon("https://example.com/");
+
+    expect(result).toMatchObject({ ok: true });
+    expect(mockFetch.mock.calls[1][0]).toMatchObject({ href: "https://example.com/declared.png" });
   });
 
   it("skips candidates that answer with a non-image body", async () => {

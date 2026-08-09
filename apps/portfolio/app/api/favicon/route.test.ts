@@ -35,7 +35,37 @@ describe("GET /api/favicon", () => {
     expect(response.headers.get("Content-Type")).toBe("image/png");
     expect(response.headers.get("Cache-Control")).toContain("s-maxage=604800");
     expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
+    expect(response.headers.get("X-Favicon-Status")).toBe("hit");
     await expect(response.arrayBuffer()).resolves.toHaveProperty("byteLength", 4);
+  });
+
+  it("leaves the length and CSP off inert image types", async () => {
+    fetchFavicon.mockResolvedValueOnce({
+      ok: true,
+      body: Uint8Array.from([0x89, 0x50, 0x4e, 0x47]),
+      contentType: "image/png",
+      source: "x",
+    });
+
+    const response = await GET(request("?url=https%3A%2F%2Fexample.com%2F"));
+
+    // A stale Content-Length truncates the icon into a broken image once the
+    // server re-encodes the body.
+    expect(response.headers.get("Content-Length")).toBeNull();
+    expect(response.headers.get("Content-Security-Policy")).toBeNull();
+  });
+
+  it("locks down SVG icons, which would otherwise run as a same-origin document", async () => {
+    fetchFavicon.mockResolvedValueOnce({
+      ok: true,
+      body: new TextEncoder().encode("<svg/>"),
+      contentType: "image/svg+xml",
+      source: "x",
+    });
+
+    const response = await GET(request("?url=https%3A%2F%2Fexample.com%2F"));
+
+    expect(response.headers.get("Content-Security-Policy")).toContain("default-src 'none'");
   });
 
   it("passes the requested size through, clamped to a sane range", async () => {

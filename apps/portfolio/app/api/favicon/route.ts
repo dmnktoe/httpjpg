@@ -52,16 +52,23 @@ export async function GET(request: NextRequest) {
       return placeholderResponse(200, result.status === 400 ? "invalid-url" : "not-found");
     }
 
-    return new NextResponse(result.body, {
-      status: 200,
-      headers: {
-        "Content-Type": result.contentType,
-        "Content-Length": String(result.body.byteLength),
-        "Cache-Control": SUCCESS_CACHE,
-        "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
-        "X-Content-Type-Options": "nosniff",
-      },
+    const headers = new Headers({
+      "Content-Type": result.contentType,
+      "Cache-Control": SUCCESS_CACHE,
+      "X-Content-Type-Options": "nosniff",
+      "X-Favicon-Status": "hit",
     });
+
+    // An SVG opened directly would run as a document on our own origin, so lock
+    // that one content type down. The other formats are inert and a CSP on them
+    // only risks upsetting how the browser decodes the response.
+    if (result.contentType === "image/svg+xml") {
+      headers.set("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'");
+    }
+
+    // No explicit Content-Length: the dev server may re-encode the body, and a
+    // stale length truncates every icon into a broken image.
+    return new NextResponse(result.body, { status: 200, headers });
   } catch (error) {
     console.error("Favicon proxy error:", error);
     captureServerException(error, { tags: { route: "favicon" } });

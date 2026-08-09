@@ -325,6 +325,42 @@ async function fetchIcon(iconUrl: string): Promise<FaviconAsset | null> {
   return { ok: true, body, contentType, source: url.href };
 }
 
+// Only the <head> carries icon links, and app shells like github.com or
+// instagram.com ship far more markup than a byte cap would ever allow — so read
+// the stream until </head> shows up instead of buffering the whole document and
+// giving up on the big pages that need this most.
+async function readHtmlHead(response: Response): Promise<string | null> {
+  const reader = response.body?.getReader();
+  if (!reader) {
+    const bytes = await readLimited(response, MAX_HTML_BYTES);
+    return bytes ? new TextDecoder().decode(bytes) : null;
+  }
+
+  const decoder = new TextDecoder();
+  let html = "";
+  let read = 0;
+
+  try {
+    while (read < MAX_HTML_BYTES) {
+      const { done, value } = await reader.read();
+      if (done) {
+        break;
+      }
+      read += value.byteLength;
+      html += decoder.decode(value, { stream: true });
+      if (/<\/head>/i.test(html)) {
+        break;
+      }
+    }
+  } catch {
+    return html || null;
+  } finally {
+    await reader.cancel().catch(() => {});
+  }
+
+  return html || null;
+}
+
 async function fetchPageIconHrefs(pageUrl: URL, size: number): Promise<string[]> {
   const response = await safeFetch(pageUrl, "text/html,application/xhtml+xml");
   if (!response?.ok) {
@@ -336,8 +372,8 @@ async function fetchPageIconHrefs(pageUrl: URL, size: number): Promise<string[]>
     return [];
   }
 
-  const body = await readLimited(response, MAX_HTML_BYTES);
-  if (!body) {
+  const html = await readHtmlHead(response);
+  if (!html) {
     return [];
   }
 
@@ -345,7 +381,7 @@ async function fetchPageIconHrefs(pageUrl: URL, size: number): Promise<string[]>
   // URL we actually walked to instead.
   const base = isHttpUrl(response.url) ?? pageUrl;
 
-  return rankCandidates(extractIconCandidates(new TextDecoder().decode(body)), size)
+  return rankCandidates(extractIconCandidates(html), size)
     .map((candidate) => {
       if (candidate.href.startsWith("data:")) {
         return candidate.href;

@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0](https://github.com/dmnktoe/httpjpg/compare/v2.4.2...v3.0.0) (2026-08-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **widgets:** the /api/mastodon and /api/umami routes are gone, and the mastodon_enabled, mastodon_handle and umami_counter_enabled fields should be dropped from the Storyblok config blok on the next sync.
+
+### Added
+
+* **slideshow:** let video slides play through before advancing ([#216](https://github.com/dmnktoe/httpjpg/issues/216)) ([dcd57ac](https://github.com/dmnktoe/httpjpg/commit/dcd57acd52bd0441df6b3c8b9832161681606b4e))
+* **widgets:** add four footer widgets and an ASCII tooltip ([#218](https://github.com/dmnktoe/httpjpg/issues/218)) ([fc91155](https://github.com/dmnktoe/httpjpg/commit/fc91155c8ca78783bbb891fec1abf2f0d3953b13))
+
 ## [2.4.2](https://github.com/dmnktoe/httpjpg/compare/v2.4.1...v2.4.2) (2026-08-09)
 
 

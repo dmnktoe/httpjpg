@@ -207,3 +207,30 @@ export const StreamingAnswer: Story = {
     return <StreamingDemo />;
   },
 };
+
+/**
+ * Toggle `open` in the controls to watch the enter and exit run: the backdrop
+ * fades its blur in while the dialog lifts and scales up, and both leave faster
+ * than they arrive. Reduced motion keeps the fade and drops the movement.
+ */
+export const OpenClose: Story = {
+  args: {
+    query: "poster",
+    results: RESULTS,
+    suggestions: ["Poster Series", "Print"],
+  },
+  render: (args) => {
+    const ToggleDemo = () => {
+      const [open, setOpen] = useState(true);
+
+      useEffect(() => {
+        const interval = setInterval(() => setOpen((current) => !current), 2200);
+        return () => clearInterval(interval);
+      }, []);
+
+      return <CommandPalette {...args} open={open} onClose={() => setOpen(false)} />;
+    };
+
+    return <ToggleDemo />;
+  },
+};

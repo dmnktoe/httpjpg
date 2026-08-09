@@ -1,8 +1,10 @@
 "use client";
 
+import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import type { KeyboardEvent, MouseEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { css } from "styled-system/css";
 
 import { lockBodyScroll } from "../../lib/scroll-lock";
 import { Box } from "../box/box";
@@ -19,6 +21,10 @@ const MAX_WIDTH = "640px";
 
 /** Tab stops the trap cycles between. Result rows are reached with the arrows. */
 const FOCUSABLE_SELECTOR = 'a[href], button, input, [tabindex]:not([tabindex="-1"])';
+
+/** Enter is a touch slower than exit, so dismissing feels immediate. */
+const ENTER_TRANSITION = { duration: 0.18, ease: [0.16, 1, 0.3, 1] } as const;
+const EXIT_TRANSITION = { duration: 0.12, ease: "easeIn" } as const;
 
 /** `answering` keeps the caret blinking; `error` swaps the answer for a message. */
 export type CommandPaletteStatus = "idle" | "searching" | "answering" | "error";
@@ -62,6 +68,7 @@ export function CommandPalette({
   const [isMounted, setIsMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     setIsMounted(true);
@@ -90,7 +97,7 @@ export function CommandPalette({
     return lockBodyScroll();
   }, [open]);
 
-  if (!open || !isMounted) {
+  if (!isMounted) {
     return null;
   }
 
@@ -149,90 +156,111 @@ export function CommandPalette({
     }
   };
 
+  // Reduced motion keeps the fade — it carries no movement — but drops the
+  // lift and the scale, which are the parts that read as motion.
+  const dialogEnter = prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 };
+  const dialogFrom = prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -8, scale: 0.98 };
+  const dialogExit = prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -4, scale: 0.99 };
+
   const palette = (
-    <Box
-      onMouseDown={onClose}
-      css={{
-        position: "fixed",
-        inset: "0",
-        zIndex: "commandPalette",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        px: "4",
-        pt: { base: "16", md: "24" },
-        bg: "rgba(0, 0, 0, 0.2)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-      }}
-    >
-      <Box
-        // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
-        role="dialog"
-        aria-modal="true"
-        aria-label="Search and ask"
-        ref={dialogRef}
-        onKeyDown={handleDialogKeyDown}
-        onMouseDown={(event: MouseEvent) => event.stopPropagation()}
-        css={{
-          w: "full",
-          maxW: MAX_WIDTH,
-          maxH: "70dvh",
-          color: "pageFg",
-          bg: "pageBg",
-          border: "1px solid",
-          borderColor: "pageBorder",
-          boxShadow: "0 24px 60px -12px rgba(0, 0, 0, 0.35)",
-          overflowY: "auto",
-        }}
-      >
-        <CommandPaletteInput
-          value={query}
-          placeholder={placeholder}
-          inputRef={inputRef}
-          activeDescendantId={results[activeIndex] ? optionId(activeIndex) : undefined}
-          onChange={onQueryChange}
-          onClear={() => {
-            onQueryChange("");
-            inputRef.current?.focus();
-          }}
-          onKeyDown={handleKeyDown}
-        />
-
-        <CommandPaletteSuggestions suggestions={suggestions} onSelect={onQueryChange} />
-
-        {hasAnswer && (
-          <CommandPaletteAnswer
-            answer={answer}
-            sources={sources}
-            isStreaming={isStreaming}
-            errorMessage={status === "error" ? (errorMessage ?? "The answer failed.") : undefined}
-          />
-        )}
-
-        {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role */}
-        <Box as="ul" id="command-palette-results" role="listbox" aria-label="Search results">
-          {results.map((result, index) => (
-            <CommandPaletteResultItem
-              key={result.id}
-              result={result}
-              isActive={index === activeIndex}
-              optionId={optionId(index)}
-              onSelect={onSelect}
-              onHover={() => setActiveIndex(index)}
+    <AnimatePresence>
+      {open && (
+        <m.div
+          key="command-palette-backdrop"
+          onMouseDown={onClose}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: EXIT_TRANSITION }}
+          transition={ENTER_TRANSITION}
+          style={{ WebkitBackdropFilter: "blur(12px)" }}
+          className={css({
+            position: "fixed",
+            inset: "0",
+            zIndex: "commandPalette",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "flex-start",
+            px: "4",
+            pt: { base: "16", md: "24" },
+            bg: "rgba(0, 0, 0, 0.2)",
+            backdropFilter: "blur(12px)",
+          })}
+        >
+          <m.div
+            // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+            role="dialog"
+            aria-modal="true"
+            aria-label="Search and ask"
+            ref={dialogRef}
+            onKeyDown={handleDialogKeyDown}
+            onMouseDown={(event: MouseEvent) => event.stopPropagation()}
+            initial={dialogFrom}
+            animate={dialogEnter}
+            exit={{ ...dialogExit, transition: EXIT_TRANSITION }}
+            transition={ENTER_TRANSITION}
+            className={css({
+              w: "full",
+              maxW: MAX_WIDTH,
+              maxH: "70dvh",
+              color: "pageFg",
+              bg: "pageBg",
+              border: "1px solid",
+              borderColor: "pageBorder",
+              boxShadow: "0 24px 60px -12px rgba(0, 0, 0, 0.35)",
+              overflowY: "auto",
+            })}
+          >
+            <CommandPaletteInput
+              value={query}
+              placeholder={placeholder}
+              inputRef={inputRef}
+              activeDescendantId={results[activeIndex] ? optionId(activeIndex) : undefined}
+              onChange={onQueryChange}
+              onClear={() => {
+                onQueryChange("");
+                inputRef.current?.focus();
+              }}
+              onKeyDown={handleKeyDown}
             />
-          ))}
-        </Box>
 
-        <CommandPaletteFooter
-          query={query}
-          status={status}
-          resultCount={results.length}
-          canAsk={canAsk}
-          onAsk={onAsk}
-        />
-      </Box>
-    </Box>
+            <CommandPaletteSuggestions suggestions={suggestions} onSelect={onQueryChange} />
+
+            {hasAnswer && (
+              <CommandPaletteAnswer
+                answer={answer}
+                sources={sources}
+                isStreaming={isStreaming}
+                errorMessage={
+                  status === "error" ? (errorMessage ?? "The answer failed.") : undefined
+                }
+              />
+            )}
+
+            {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role */}
+            <Box as="ul" id="command-palette-results" role="listbox" aria-label="Search results">
+              {results.map((result, index) => (
+                <CommandPaletteResultItem
+                  key={result.id}
+                  result={result}
+                  isActive={index === activeIndex}
+                  optionId={optionId(index)}
+                  onSelect={onSelect}
+                  onHover={() => setActiveIndex(index)}
+                />
+              ))}
+            </Box>
+
+            <CommandPaletteFooter
+              query={query}
+              status={status}
+              resultCount={results.length}
+              canAsk={canAsk}
+              onAsk={onAsk}
+            />
+          </m.div>
+        </m.div>
+      )}
+    </AnimatePresence>
   );
 
   return createPortal(palette, document.body);

@@ -131,15 +131,11 @@ describe("XStatus", () => {
     mockFetch({ profile, posts: [{ ...post, isQuote: true, hasMedia: true }] });
     render(<XStatus />);
 
-    // Every trailing span here is a single unbreakable token, so nothing wraps
-    // today — these pins keep it that way if one ever gains a space, the way
-    // the discogs format did.
     expect(await screen.findByText("Hello world")).toHaveClass("min-w_0");
     expect(screen.getByText("(1.2K)")).toHaveClass("flex-sh_0");
     expect(screen.getByLabelText("quote post")).toHaveClass("flex-sh_0");
     expect(screen.getByLabelText("has media")).toHaveClass("flex-sh_0");
 
-    // The tooltip wrapper, not the avatar span, is the flex item in this row.
     const avatar = document.querySelector(`img[src="${profile.avatar}"]`) as HTMLElement;
     expect(avatar.parentElement?.parentElement).toHaveClass("flex-sh_0");
   });

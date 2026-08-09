@@ -106,9 +106,6 @@ export function DiscogsStatus() {
           />
         </Box>
       )}
-      {/* The only span allowed to shrink — minWidth 0 lets it ellipsize instead
-          of forcing the fixed spans below their content width, which is what
-          made the format wrap onto a second line on narrow viewports. */}
       <Box
         as="span"
         css={{

@@ -55,8 +55,6 @@ describe("DiscogsStatus", () => {
     mockFetch({ releases: [{ ...release, format: 'Vinyl 12"' }] });
     render(<DiscogsStatus />);
 
-    // On narrow viewports every span shrinks; without these the multi-word
-    // format broke onto a second line and doubled the row height.
     expect(await screen.findByText("DJ Shadow — Endtroducing.....")).toHaveClass("min-w_0");
     expect(screen.getByText('Vinyl 12"')).toHaveClass("flex-sh_0", "white-space_nowrap");
     expect(screen.getByText("1996")).toHaveClass("flex-sh_0");

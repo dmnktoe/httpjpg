@@ -92,8 +92,6 @@ export function XStatus() {
         x:
       </Box>
       {profile.avatar && (
-        // Tooltip renders the wrapper that acts as the flex item here, so the
-        // pin has to sit on it rather than on the avatar span alone.
         <Tooltip label={`@${profile.username}`} css={{ flexShrink: 0 }}>
           <Box
             as="span"
@@ -127,8 +125,6 @@ export function XStatus() {
       <Box as="span" css={{ flexShrink: 0, opacity: 40 }}>
         •
       </Box>
-      {/* The only span allowed to shrink — minWidth 0 lets the post ellipsize
-          instead of squeezing the fixed spans below their content width. */}
       <Box
         as="span"
         css={{

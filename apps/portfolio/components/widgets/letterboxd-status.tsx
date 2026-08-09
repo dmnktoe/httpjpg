@@ -111,8 +111,6 @@ export function LetterboxdStatus() {
           />
         </Box>
       )}
-      {/* The only span allowed to shrink — minWidth 0 lets it ellipsize instead
-          of squeezing the fixed spans below their content width. */}
       <Box
         as="span"
         css={{

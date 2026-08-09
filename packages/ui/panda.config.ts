@@ -201,6 +201,10 @@ export default defineConfig({
           "0%, 49%": { opacity: "1" },
           "50%, 100%": { opacity: "0" },
         },
+        spin: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
       },
       tokens: {
         colors: toPandaTokens(colors),

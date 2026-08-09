@@ -1,7 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 
 import { ASCII_DIVIDER_MUSIC } from "../ascii-art/banners";
+import { AudioPlayerProvider } from "./audio-player-provider";
 import { MusicPlayer } from "./music-player";
 
 function iframe() {
@@ -93,6 +94,52 @@ describe("MusicPlayer", () => {
       );
 
       expect(iframe()).toHaveAttribute("title", "Night Drive");
+    });
+  });
+
+  describe("with a page-wide player", () => {
+    function renderInProvider(ui: React.ReactNode) {
+      return render(<AudioPlayerProvider>{ui}</AudioPlayerProvider>);
+    }
+
+    beforeEach(() => {
+      vi.spyOn(window.HTMLMediaElement.prototype, "play").mockImplementation(async () => {});
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("hands the track over instead of opening a second audio element", () => {
+      renderInProvider(<MusicPlayer src="/track.mp3" title="Night Drive" artist="Nova" />);
+
+      // The provider's element is the only one — the blok opens none of its own.
+      expect(document.querySelectorAll("audio")).toHaveLength(1);
+      expect(screen.getByRole("button", { name: "Play" })).toHaveTextContent("▸ PLAY");
+      expect(screen.getByText("Nova")).toBeInTheDocument();
+    });
+
+    it("starts the shared player from the blok", () => {
+      renderInProvider(<MusicPlayer src="/track.mp3" title="Night Drive" />);
+
+      fireEvent.click(screen.getByRole("button", { name: "Play" }));
+
+      expect(document.querySelector("audio")).toHaveAttribute("src", "/track.mp3");
+    });
+
+    it("starts on its own when it is set to autoplay", () => {
+      const play = vi.spyOn(window.HTMLMediaElement.prototype, "play");
+      renderInProvider(<MusicPlayer src="/track.mp3" autoPlay />);
+
+      expect(play).toHaveBeenCalledOnce();
+      expect(document.querySelector("audio")).toHaveAttribute("src", "/track.mp3");
+    });
+
+    it("leaves the embeds to their own transport", () => {
+      renderInProvider(<MusicPlayer source="spotify" src="spotify:track:abc123" />);
+
+      expect(iframe()).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "Play" })).not.toBeInTheDocument();
     });
   });
 

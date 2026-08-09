@@ -127,6 +127,19 @@ describe("XStatus", () => {
     expect(screen.queryByLabelText("has media")).not.toBeInTheDocument();
   });
 
+  it("keeps the line unbreakable, letting only the post ellipsize", async () => {
+    mockFetch({ profile, posts: [{ ...post, isQuote: true, hasMedia: true }] });
+    render(<XStatus />);
+
+    expect(await screen.findByText("Hello world")).toHaveClass("min-w_0");
+    expect(screen.getByText("(1.2K)")).toHaveClass("flex-sh_0");
+    expect(screen.getByLabelText("quote post")).toHaveClass("flex-sh_0");
+    expect(screen.getByLabelText("has media")).toHaveClass("flex-sh_0");
+
+    const avatar = document.querySelector(`img[src="${profile.avatar}"]`) as HTMLElement;
+    expect(avatar.parentElement?.parentElement).toHaveClass("flex-sh_0");
+  });
+
   it("collapses when the payload carries a post but no profile", async () => {
     mockFetch({ posts: [post] });
     const { container } = render(<XStatus />);

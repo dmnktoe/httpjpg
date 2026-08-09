@@ -86,6 +86,16 @@ describe("LetterboxdStatus", () => {
     expect(await screen.findByLabelText("liked")).toBeInTheDocument();
   });
 
+  it("keeps the line unbreakable, letting only the title ellipsize", async () => {
+    mockFetch({ films: [{ ...film, liked: true }] });
+    render(<LetterboxdStatus />);
+
+    expect(await screen.findByText(film.title)).toHaveClass("min-w_0");
+    expect(screen.getByText("★★★★½")).toHaveClass("flex-sh_0", "white-space_nowrap");
+    expect(screen.getByText("2001")).toHaveClass("flex-sh_0");
+    expect(screen.getByLabelText("liked")).toHaveClass("flex-sh_0");
+  });
+
   it("renders nothing when the request fails", async () => {
     mockFetch({}, false);
     const { container } = render(<LetterboxdStatus />);

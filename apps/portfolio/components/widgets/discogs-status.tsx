@@ -74,6 +74,7 @@ export function DiscogsStatus() {
         justifyContent: "center",
         alignItems: "center",
         gap: 2,
+        maxWidth: "full",
         minHeight: "5",
         color: "inherit",
         opacity: 80,
@@ -82,7 +83,7 @@ export function DiscogsStatus() {
         textDecoration: "none",
       }}
     >
-      <Box as="span" css={{ opacity: 60 }}>
+      <Box as="span" css={{ flexShrink: 0, opacity: 60 }}>
         discogs:
       </Box>
       {release.thumb && (
@@ -90,6 +91,7 @@ export function DiscogsStatus() {
           as="span"
           css={{
             display: "inline-block",
+            flexShrink: 0,
             width: "3",
             height: "auto",
             verticalAlign: "middle",
@@ -107,6 +109,7 @@ export function DiscogsStatus() {
       <Box
         as="span"
         css={{
+          minWidth: "0",
           maxWidth: "240px",
           opacity: 70,
           textOverflow: "ellipsis",
@@ -117,16 +120,16 @@ export function DiscogsStatus() {
         {release.artist} — {release.title}
       </Box>
       {release.year && (
-        <Box as="span" css={{ opacity: 50 }}>
+        <Box as="span" css={{ flexShrink: 0, opacity: 50 }}>
           {release.year}
         </Box>
       )}
       {release.format && (
         <>
-          <Box as="span" css={{ opacity: 40 }}>
+          <Box as="span" css={{ flexShrink: 0, opacity: 40 }}>
             ·
           </Box>
-          <Box as="span" css={{ opacity: 50 }}>
+          <Box as="span" css={{ flexShrink: 0, opacity: 50, whiteSpace: "nowrap" }}>
             {release.format}
           </Box>
         </>

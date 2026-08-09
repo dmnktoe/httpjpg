@@ -357,6 +357,7 @@ The command palette (`⌘K` / `Ctrl+K`) is one feature with two halves, and they
 - **AI is optional.** No `GROQ_API_KEY` means `/api/ask` answers 503 and the palette hides the ask affordance; search, autocomplete, and navigation keep working. Never make search depend on the model.
 - **Answers are grounded.** `buildAskMessages()` in `lib/search/prompt.ts` owns the system prompt and numbers the sources for citation. Prompts live in the app, never in `@httpjpg/groq`.
 - **UI split.** `CommandPalette` in `@httpjpg/ui` is presentational and fully controlled (hence its Storybook stories); `AskWidget` in `components/widgets/` owns fetching, debouncing, and aborts. Keep that line — the palette must stay storyable without a network.
+- **Opening it.** `⌘K` / `Ctrl+K`, or the header's `SearchTrigger`. The trigger lives in a different subtree from the widget, so it dispatches the `OPEN_SEARCH_EVENT` window event and `AskWidget` listens — the same arrangement as the Footer's `OPEN_COOKIE_SETTINGS_EVENT`. Never make the trigger keyboard-only: touch visitors have no other way in.
 
 ---
 

@@ -1,3 +1,4 @@
+import { OPEN_SEARCH_EVENT } from "@httpjpg/ui";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -81,6 +82,23 @@ describe("AskWidget", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
     openPalette();
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("opens when the header trigger asks it to", () => {
+    render(<AskWidget />);
+
+    fireEvent(window, new CustomEvent(OPEN_SEARCH_EVENT));
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("stays open when the trigger fires again", () => {
+    render(<AskWidget />);
+
+    fireEvent(window, new CustomEvent(OPEN_SEARCH_EVENT));
+    fireEvent(window, new CustomEvent(OPEN_SEARCH_EVENT));
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });

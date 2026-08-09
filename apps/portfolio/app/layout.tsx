@@ -112,7 +112,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             {widgetConfig.psnEnabled && <PSNCard username={widgetConfig.psnUsername} />}
             {widgetConfig.askEnabled && <AskWidget askEnabled={Boolean(env.GROQ_API_KEY)} />}
             <PreviewNotification />
-            <Header nav={navigation} projectsWork={projectsWork} websitesWork={websitesWork} />
+            <Header
+              nav={navigation}
+              projectsWork={projectsWork}
+              websitesWork={websitesWork}
+              showSearch={widgetConfig.askEnabled}
+            />
             <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
               {children}
             </Box>

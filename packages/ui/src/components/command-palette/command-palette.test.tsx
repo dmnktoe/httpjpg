@@ -117,6 +117,74 @@ describe("CommandPalette", () => {
     expect(props.onClose).toHaveBeenCalled();
   });
 
+  it("closes on Escape when focus sits outside the input", () => {
+    const props = setup({ suggestions: ["Poster Series"] });
+
+    fireEvent.keyDown(screen.getByRole("button", { name: "Poster Series" }), { key: "Escape" });
+
+    expect(props.onClose).toHaveBeenCalled();
+  });
+
+  it("keeps Tab inside the dialog, wrapping both ways", () => {
+    setup({ suggestions: ["Poster Series"] });
+    const dialog = screen.getByRole("dialog");
+    const stops = Array.from(dialog.querySelectorAll("a[href], button, input"));
+    const first = stops[0] as HTMLElement;
+    const last = stops[stops.length - 1] as HTMLElement;
+
+    last.focus();
+    fireEvent.keyDown(dialog, { key: "Tab" });
+    expect(document.activeElement).toBe(first);
+
+    fireEvent.keyDown(dialog, { key: "Tab", shiftKey: true });
+    expect(document.activeElement).toBe(last);
+  });
+
+  it("leaves Tab alone in the middle of the dialog", () => {
+    setup({ suggestions: ["Poster Series"] });
+    const dialog = screen.getByRole("dialog");
+    const suggestion = screen.getByRole("button", { name: "Poster Series" });
+
+    suggestion.focus();
+    fireEvent.keyDown(dialog, { key: "Tab" });
+
+    expect(document.activeElement).toBe(suggestion);
+  });
+
+  it("focuses the input on open and restores focus on close", () => {
+    const trigger = document.createElement("button");
+    document.body.append(trigger);
+    trigger.focus();
+
+    const { rerender } = render(
+      <CommandPalette
+        open
+        query="poster"
+        results={RESULTS}
+        onQueryChange={vi.fn()}
+        onClose={vi.fn()}
+        onSelect={vi.fn()}
+        onAsk={vi.fn()}
+      />,
+    );
+    expect(document.activeElement).toBe(screen.getByRole("combobox"));
+
+    rerender(
+      <CommandPalette
+        open={false}
+        query="poster"
+        results={RESULTS}
+        onQueryChange={vi.fn()}
+        onClose={vi.fn()}
+        onSelect={vi.fn()}
+        onAsk={vi.fn()}
+      />,
+    );
+
+    expect(document.activeElement).toBe(trigger);
+    trigger.remove();
+  });
+
   it("closes when the backdrop is clicked but not the dialog", () => {
     const props = setup();
 

@@ -16,6 +16,9 @@ export type { CommandPaletteResult, CommandPaletteSource };
 /** Wide enough for a three-sentence answer, narrow enough to stay scannable. */
 const MAX_WIDTH = "640px";
 
+/** Tab stops the trap cycles between. Result rows are reached with the arrows. */
+const FOCUSABLE_SELECTOR = 'a[href], button, input, [tabindex]:not([tabindex="-1"])';
+
 /** `answering` keeps the caret blinking; `error` swaps the answer for a message. */
 export type CommandPaletteStatus = "idle" | "searching" | "answering" | "error";
 
@@ -57,6 +60,7 @@ export function CommandPalette({
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -70,11 +74,22 @@ export function CommandPalette({
     setActiveIndex(0);
   }, [resultKey]);
 
+  // Take focus on open and hand it back on close, so dismissing the palette
+  // returns the caret to the header button that summoned it rather than the
+  // top of the document.
+  // Depends on isMounted too: the first render returns null while the portal
+  // waits for the client, so the input does not exist yet on a palette that is
+  // mounted already open.
   useEffect(() => {
-    if (open) {
-      inputRef.current?.focus();
+    if (!open || !isMounted) {
+      return;
     }
-  }, [open]);
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    inputRef.current?.focus();
+    return () => {
+      previouslyFocused?.focus?.();
+    };
+  }, [open, isMounted]);
 
   // The palette covers the page, so the page behind it must not scroll away.
   useEffect(() => {
@@ -96,12 +111,36 @@ export function CommandPalette({
   const isStreaming = status === "answering";
   const canAsk = askEnabled && query.trim().length > 0;
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+  // Escape and Tab are handled for the whole dialog, not just the input: focus
+  // can sit on a suggestion chip, a source link, or the ask button, and the
+  // palette still has to dismiss and still has to keep Tab inside itself.
+  const handleDialogKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Escape") {
       event.preventDefault();
       onClose();
       return;
     }
+    if (event.key !== "Tab" || !dialogRef.current) {
+      return;
+    }
+    const focusable = dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (!first || !last) {
+      return;
+    }
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+      return;
+    }
+    if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "ArrowDown" && results.length > 0) {
       event.preventDefault();
       setActiveIndex((index) => (index + 1) % results.length);
@@ -151,6 +190,8 @@ export function CommandPalette({
         role="dialog"
         aria-modal="true"
         aria-label="Search and ask"
+        ref={dialogRef}
+        onKeyDown={handleDialogKeyDown}
         onMouseDown={(event: MouseEvent) => event.stopPropagation()}
         css={{
           w: "full",

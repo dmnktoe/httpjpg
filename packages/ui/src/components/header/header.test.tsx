@@ -168,4 +168,16 @@ describe("Header", () => {
     expect(screen.getAllByText("Alpha").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Beta").length).toBeGreaterThan(0);
   });
+
+  it("hides the search trigger by default", () => {
+    render(<Header nav={NAV} />);
+
+    expect(screen.queryByRole("button", { name: "Open search" })).not.toBeInTheDocument();
+  });
+
+  it("renders the search trigger when asked to", () => {
+    render(<Header nav={NAV} showSearch />);
+
+    expect(screen.getByRole("button", { name: "Open search" })).toBeInTheDocument();
+  });
 });

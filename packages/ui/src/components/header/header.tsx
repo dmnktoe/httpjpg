@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Box } from "../box/box";
 import { Container } from "../container/container";
 import { Link } from "../link/link";
+import { SearchTrigger } from "../search-trigger/search-trigger";
 import { MobileMenuButton } from "./mobile-menu-button";
 import { MobileMenuContent } from "./mobile-menu-content";
 import { Navigation } from "./navigation";
@@ -33,10 +34,18 @@ export interface HeaderProps {
   nav: NavItem[];
   projectsWork?: WorkItem[];
   websitesWork?: WorkItem[];
+  /** Renders the search trigger next to the nav. @default false */
+  showSearch?: boolean;
   children?: ReactNode;
 }
 
-export function Header({ nav, projectsWork = [], websitesWork = [], children }: HeaderProps) {
+export function Header({
+  nav,
+  projectsWork = [],
+  websitesWork = [],
+  showSearch = false,
+  children,
+}: HeaderProps) {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const pathname = usePathname();
 
@@ -110,6 +119,7 @@ export function Header({ nav, projectsWork = [], websitesWork = [], children }: 
           </Box>
 
           <Navigation nav={nav} projectsWork={projectsWork} websitesWork={websitesWork} />
+          {showSearch && <SearchTrigger css={{ ml: "auto" }} />}
           <MobileMenuButton isOpen={mobileMenuIsOpen} setIsOpen={setMobileMenuIsOpen} />
         </Box>
       </Container>

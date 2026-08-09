@@ -1,6 +1,11 @@
 "use client";
 
-import { CommandPalette, type CommandPaletteResult, type CommandPaletteStatus } from "@httpjpg/ui";
+import {
+  CommandPalette,
+  type CommandPaletteResult,
+  type CommandPaletteStatus,
+  OPEN_SEARCH_EVENT,
+} from "@httpjpg/ui";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -57,6 +62,15 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // The header button is rendered by the Header, which sits in a different
+  // subtree; it asks for the palette over the window the same way the footer's
+  // cookie-settings button asks for the consent center.
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener(OPEN_SEARCH_EVENT, handleOpen);
+    return () => window.removeEventListener(OPEN_SEARCH_EVENT, handleOpen);
   }, []);
 
   // Abort anything still running when the widget unmounts.

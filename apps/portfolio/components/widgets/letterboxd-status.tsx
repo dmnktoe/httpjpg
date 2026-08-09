@@ -74,6 +74,7 @@ export function LetterboxdStatus() {
         justifyContent: "center",
         alignItems: "center",
         gap: 2,
+        maxWidth: "full",
         minHeight: "5",
         color: "inherit",
         opacity: 80,
@@ -82,7 +83,7 @@ export function LetterboxdStatus() {
         textDecoration: "none",
       }}
     >
-      <Box as="span" css={{ opacity: 60 }}>
+      <Box as="span" css={{ flexShrink: 0, opacity: 60 }}>
         letterboxd:
       </Box>
       {film.poster && (
@@ -90,6 +91,7 @@ export function LetterboxdStatus() {
           as="span"
           css={{
             display: "inline-block",
+            flexShrink: 0,
             width: "3",
             height: "auto",
             verticalAlign: "middle",
@@ -109,9 +111,12 @@ export function LetterboxdStatus() {
           />
         </Box>
       )}
+      {/* The only span allowed to shrink — minWidth 0 lets it ellipsize instead
+          of squeezing the fixed spans below their content width. */}
       <Box
         as="span"
         css={{
+          minWidth: "0",
           maxWidth: "200px",
           opacity: 70,
           textOverflow: "ellipsis",
@@ -122,21 +127,21 @@ export function LetterboxdStatus() {
         {film.title}
       </Box>
       {film.year && (
-        <Box as="span" css={{ opacity: 50 }}>
+        <Box as="span" css={{ flexShrink: 0, opacity: 50 }}>
           {film.year}
         </Box>
       )}
       {film.liked && (
-        <Box as="span" aria-label="liked" css={{ color: "accent.500", opacity: 80 }}>
+        <Box as="span" aria-label="liked" css={{ flexShrink: 0, color: "accent.500", opacity: 80 }}>
           ♥
         </Box>
       )}
       {film.rating !== null && (
         <>
-          <Box as="span" css={{ opacity: 50 }}>
+          <Box as="span" css={{ flexShrink: 0, opacity: 50 }}>
             ·
           </Box>
-          <Box as="span" css={{ opacity: 70 }}>
+          <Box as="span" css={{ flexShrink: 0, opacity: 70, whiteSpace: "nowrap" }}>
             {formatRating(film.rating)}
           </Box>
         </>

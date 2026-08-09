@@ -79,6 +79,7 @@ export function XStatus() {
         justifyContent: "center",
         alignItems: "center",
         gap: 2,
+        maxWidth: "full",
         minHeight: "5",
         color: "inherit",
         opacity: 80,
@@ -87,15 +88,18 @@ export function XStatus() {
         textDecoration: "none",
       }}
     >
-      <Box as="span" css={{ opacity: 60 }}>
+      <Box as="span" css={{ flexShrink: 0, opacity: 60 }}>
         x:
       </Box>
       {profile.avatar && (
-        <Tooltip label={`@${profile.username}`}>
+        // Tooltip renders the wrapper that acts as the flex item here, so the
+        // pin has to sit on it rather than on the avatar span alone.
+        <Tooltip label={`@${profile.username}`} css={{ flexShrink: 0 }}>
           <Box
             as="span"
             css={{
               display: "inline-block",
+              flexShrink: 0,
               width: "3",
               height: "3",
               verticalAlign: "middle",
@@ -112,16 +116,23 @@ export function XStatus() {
         </Tooltip>
       )}
       {profile.followerCount !== null && (
-        <Box as="span" aria-label={`${profile.followerCount} followers`} css={{ opacity: 50 }}>
+        <Box
+          as="span"
+          aria-label={`${profile.followerCount} followers`}
+          css={{ flexShrink: 0, opacity: 50 }}
+        >
           ({formatFollowerCount(profile.followerCount)})
         </Box>
       )}
-      <Box as="span" css={{ opacity: 40 }}>
+      <Box as="span" css={{ flexShrink: 0, opacity: 40 }}>
         •
       </Box>
+      {/* The only span allowed to shrink — minWidth 0 lets the post ellipsize
+          instead of squeezing the fixed spans below their content width. */}
       <Box
         as="span"
         css={{
+          minWidth: "0",
           maxWidth: "260px",
           opacity: 70,
           textOverflow: "ellipsis",
@@ -132,12 +143,12 @@ export function XStatus() {
         {post.text}
       </Box>
       {post.isQuote && (
-        <Box as="span" aria-label="quote post" css={{ opacity: 40 }}>
+        <Box as="span" aria-label="quote post" css={{ flexShrink: 0, opacity: 40 }}>
           ❝
         </Box>
       )}
       {post.hasMedia && (
-        <Box as="span" aria-label="has media" css={{ opacity: 50 }}>
+        <Box as="span" aria-label="has media" css={{ flexShrink: 0, opacity: 50 }}>
           ▣
         </Box>
       )}

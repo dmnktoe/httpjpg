@@ -2,10 +2,12 @@ import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 let reportCallback: ((metric: Record<string, unknown>) => void) | undefined;
+const registeredCallbacks: Array<(metric: Record<string, unknown>) => void> = [];
 
 vi.mock("next/web-vitals", () => ({
   useReportWebVitals: vi.fn((cb: (metric: Record<string, unknown>) => void) => {
     reportCallback = cb;
+    registeredCallbacks.push(cb);
   }),
 }));
 
@@ -21,6 +23,7 @@ describe("WebVitalsBadge", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     reportCallback = undefined;
+    registeredCallbacks.length = 0;
   });
 
   afterEach(() => {
@@ -80,5 +83,15 @@ describe("WebVitalsBadge", () => {
 
     expect(screen.getByText("0.2")).toBeInTheDocument();
     expect(screen.queryByText("0.05")).not.toBeInTheDocument();
+  });
+
+  it("keeps one stable callback across re-renders so observers are not stacked", () => {
+    render(<WebVitalsBadge />);
+
+    report({ name: "TTFB", value: 42 });
+    report({ name: "LCP", value: 340 });
+    report({ name: "CLS", value: 0.05 });
+
+    expect(new Set(registeredCallbacks).size).toBe(1);
   });
 });

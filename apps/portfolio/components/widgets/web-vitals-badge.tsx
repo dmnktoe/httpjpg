@@ -2,7 +2,7 @@
 
 import { Box } from "@httpjpg/ui";
 import { useReportWebVitals } from "next/web-vitals";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import {
   formatVital,
@@ -16,13 +16,20 @@ import {
 export function WebVitalsBadge() {
   const [vitals, setVitals] = useState<Partial<Record<VitalName, number>>>({});
 
-  useReportWebVitals((metric: VitalMetricLike) => {
+  // useReportWebVitals keys its effect on the callback and never unsubscribes,
+  // so a fresh closure each render would stack another set of web-vitals
+  // observers on every state update.
+  const reportVital = useCallback((metric: VitalMetricLike) => {
     const name = metric.name;
     if (!isVitalName(name) || !SHOWN_VITALS.includes(name)) {
       return;
     }
-    setVitals((current) => ({ ...current, [name]: metric.value }));
-  });
+    setVitals((current) =>
+      current[name] === metric.value ? current : { ...current, [name]: metric.value },
+    );
+  }, []);
+
+  useReportWebVitals(reportVital);
 
   const measured = SHOWN_VITALS.filter((name) => vitals[name] !== undefined);
 

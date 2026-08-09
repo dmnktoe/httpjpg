@@ -1,23 +1,40 @@
-## What & why
+# ⇝pull request
+
+*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚
+
+## what & why
+
+<!-- One or two sentences. What changes, and what it fixes or unlocks. -->
 
 Closes #
 
-## Change type
+## scope
 
-- [ ] `feat` — new feature (minor bump, → Added)
-- [ ] `fix` — bug fix (patch, → Fixed)
-- [ ] `refactor` / `style` / `revert` (patch, → Changed)
-- [ ] `perf` (patch, → Performance)
-- [ ] `build` / `ci` / `docs` / `test` (patch, → Tooling)
-- [ ] `deps` (patch, → Dependencies)
-- [ ] `chore` (patch, hidden from the changelog)
-- [ ] Contains a `BREAKING CHANGE:` footer (major)
+<!-- Which workspaces does this touch? e.g. `apps/portfolio`, `@httpjpg/ui`, `@httpjpg/storyblok-ui` -->
 
-## Scope
+## change type
 
-## Screenshots / recordings
+<!-- Pick one. It decides the changelog section and the version bump. -->
 
-## Checklist
+- [ ] `feat` — new feature · **Added** · minor
+- [ ] `fix` — bug fix · **Fixed** · patch
+- [ ] `refactor` / `style` / `revert` · **Changed** · patch
+- [ ] `perf` — faster or leaner · **Performance** · patch
+- [ ] `build` / `ci` / `docs` / `test` · **Tooling** · patch
+- [ ] `deps` — dependency bump · **Dependencies** · patch
+- [ ] `chore` — hidden from the changelog · patch
+- [ ] carries a `BREAKING CHANGE:` footer · **⚠ BREAKING** · major
+
+## screenshots / recordings
+
+<!-- Before / after for anything visual. Drag files in here, or delete the section. -->
+
+---
+
+<details>
+<summary><b>checklist</b> — every pull request</summary>
+
+<br/>
 
 - [ ] `pnpm lint`, `pnpm type-check`, `pnpm test` and `pnpm build` pass locally
 - [ ] Follows the conventions in `CLAUDE.md` — I read a neighbouring file before inventing a pattern
@@ -30,7 +47,12 @@ Closes #
 - [ ] No `console.log` in shipped paths; errors reported through `@httpjpg/observability`
 - [ ] Did **not** hand-edit the root `package.json` version, `.release-please-manifest.json` or `CHANGELOG.md`
 
-## Storyblok / CMS
+</details>
+
+<details>
+<summary><b>storyblok / cms</b> — only if a blok or schema moved</summary>
+
+<br/>
 
 - [ ] Schema added or updated in `packages/storyblok-sync/scripts/blocks/*`
 - [ ] `sync:components` (and `sync:datasources` for new `CMS_OPTIONS`) run against Storyblok
@@ -39,4 +61,10 @@ Closes #
 - [ ] `editableAttrs(blok)` spread on the root element, spacing handled via `BlokSpacing` / `spacingCss()`
 - [ ] Cache tags / revalidation adjusted if the content shape changed
 
-## Notes for reviewers
+</details>
+
+---
+
+## notes for reviewers
+
+<!-- Anything unresolved, any trade-off you made on purpose, anything to look at first. -->

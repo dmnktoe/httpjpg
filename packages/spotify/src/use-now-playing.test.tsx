@@ -57,6 +57,47 @@ describe("useNowPlaying", () => {
     vi.useRealTimers();
   });
 
+  it("skips a tick while a request is still in flight", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("fetch", vi.fn().mockReturnValue(new Promise(() => {})));
+
+    renderHook(() => useNowPlaying({ endpoint: "/np", pollInterval: 1000 }));
+
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(fetch).toHaveBeenCalledOnce();
+
+    vi.useRealTimers();
+  });
+
+  it("ignores a response that lands after polling stopped", async () => {
+    vi.useFakeTimers();
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        statusText: "",
+        json: async () => ({ data: null, unavailable: "premium_missing" }),
+      })
+      .mockResolvedValue({
+        ok: true,
+        status: 200,
+        statusText: "",
+        json: async () => ({ data: { title: "Late", isPlaying: true } }),
+      });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { result } = renderHook(() => useNowPlaying({ endpoint: "/np", pollInterval: 1000 }));
+
+    await vi.waitFor(() => expect(result.current.errorCode).toBe("premium_missing"));
+    await vi.advanceTimersByTimeAsync(5000);
+
+    expect(result.current.errorCode).toBe("premium_missing");
+    expect(result.current.data).toBeNull();
+
+    vi.useRealTimers();
+  });
+
   it("gives up after repeated failures instead of polling forever", async () => {
     vi.useFakeTimers();
     mockFetch(500, { error: "internal_error" }, false);

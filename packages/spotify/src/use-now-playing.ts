@@ -56,6 +56,7 @@ export function useNowPlaying({
 
     let ignore = false;
     let stopped = false;
+    let isFetching = false;
     let consecutiveErrors = 0;
     let interval: ReturnType<typeof setInterval> | undefined;
 
@@ -79,10 +80,15 @@ export function useNowPlaying({
     }
 
     async function fetchNowPlaying() {
+      if (stopped || isFetching) {
+        return;
+      }
+
+      isFetching = true;
       try {
         const response = await fetch(endpoint);
         const result = await response.json().catch(() => null);
-        if (ignore) {
+        if (ignore || stopped) {
           return;
         }
 
@@ -107,11 +113,12 @@ export function useNowPlaying({
         setError(null);
         setErrorCode(null);
       } catch (err) {
-        if (ignore) {
+        if (ignore || stopped) {
           return;
         }
         applyError("network_error", err instanceof Error ? err : new Error("Unknown error"));
       } finally {
+        isFetching = false;
         if (!ignore) {
           setIsLoading(false);
         }

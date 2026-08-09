@@ -93,7 +93,7 @@ export function MiniPlayer({
         aria-label={isPlaying ? "Pause" : "Play"}
         css={CONTROL_STYLES}
       >
-        {isPlaying ? "∥" : "▸"}
+        {isPlaying ? "▮▮" : "▸"}
       </Box>
       <Box
         as="button"
@@ -132,6 +132,8 @@ const CONTROL_STYLES = {
   p: "0",
   color: "primary.500",
   font: "inherit",
+  // Keeps the two bars of the pause glyph from fusing into one block.
+  letterSpacing: "wider",
   lineHeight: "1",
   bg: "transparent",
   border: "none",

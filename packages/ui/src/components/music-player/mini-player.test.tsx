@@ -54,7 +54,7 @@ describe("MiniPlayer", () => {
         onPrevious={vi.fn()}
       />,
     );
-    expect(screen.getByRole("button", { name: "Pause" })).toHaveTextContent("∥");
+    expect(screen.getByRole("button", { name: "Pause" })).toHaveTextContent("▮▮");
   });
 
   it("calls back for every transport control", () => {

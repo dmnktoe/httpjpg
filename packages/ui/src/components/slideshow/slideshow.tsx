@@ -162,6 +162,13 @@ export interface SlideshowImage {
 
 export type SwiperEffect = "slide" | "fade" | "cube" | "coverflow" | "flip" | "cards" | "creative";
 
+const PRELOAD_RADIUS = 1;
+
+function isNearActive(index: number, activeIndex: number, total: number): boolean {
+  const distance = Math.abs(index - activeIndex);
+  return Math.min(distance, total - distance) <= PRELOAD_RADIUS;
+}
+
 const EFFECT_MODULES: Record<SwiperEffect, SwiperModule | undefined> = {
   slide: undefined,
   fade: EffectFade,
@@ -211,8 +218,30 @@ export function Slideshow({
   ...props
 }: SlideshowProps) {
   const swiperRef = useRef<SwiperType | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isNearViewport, setIsNearViewport] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setIsNearViewport(true);
+            observer.disconnect();
+          }
+        }
+      },
+      { rootMargin: "400px" },
+    );
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
 
   const handlePrev = useCallback(() => {
     swiperRef.current?.slidePrev();
@@ -267,7 +296,7 @@ export function Slideshow({
   }, [autoplayEnabled, effect]);
 
   return (
-    <Box css={{ position: "relative", overflow: "visible", ...cssProp }} {...props}>
+    <Box ref={rootRef} css={{ position: "relative", overflow: "visible", ...cssProp }} {...props}>
       <AnimateInView animation={animation} delay={animationDelay}>
         <Swiper
           modules={modules}
@@ -326,7 +355,12 @@ export function Slideshow({
                     copyright={image.copyright}
                     copyrightPosition={image.copyrightPosition || "inline-white"}
                     blurOnLoad={!disableBlurOnLoad}
-                    loading={priority && index === 0 ? "eager" : "lazy"}
+                    loading={
+                      (priority && index === 0) ||
+                      (isNearViewport && isNearActive(index, activeIndex, images.length))
+                        ? "eager"
+                        : "lazy"
+                    }
                     fetchPriority={priority && index === 0 ? "high" : "auto"}
                   />
                 )}

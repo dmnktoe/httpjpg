@@ -1,4 +1,4 @@
-import type { SbSlideshowData } from "@httpjpg/storyblok-utils";
+import { type SbSlideshowData, toSlideshowImage } from "@httpjpg/storyblok-utils";
 import { Box, Slideshow } from "@httpjpg/ui";
 import { memo } from "react";
 
@@ -30,12 +30,7 @@ export const SbSlideshow = memo(function SbSlideshow({ blok }: SbSlideshowProps)
   return (
     <Box {...editable} css={spacingCss(blok)}>
       <Slideshow
-        images={images.map((img) => ({
-          url: img.filename,
-          alt: img.alt || img.title || "",
-          copyright: img.copyright,
-          focus: img.focus,
-        }))}
+        images={images.map((img) => toSlideshowImage(img, ""))}
         aspectRatio={aspectRatio}
         effect={effect}
         autoplayDelay={autoplayDelay}

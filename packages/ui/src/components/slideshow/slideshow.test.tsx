@@ -23,8 +23,6 @@ interface ObserverStub {
   disconnect: ReturnType<typeof vi.fn>;
 }
 
-// Captures the observer instances created during a render so tests can drive
-// the in-view transition by hand.
 function stubIntersectionObserver(): ObserverStub[] {
   const instances: ObserverStub[] = [];
 
@@ -359,7 +357,6 @@ describe("Slideshow preloading", () => {
 
     expect(loadingFor(container, "Photo 0")).toBe("eager");
     expect(loadingFor(container, "Photo 1")).toBe("eager");
-    // The loop makes the last slide the one "before" the first.
     expect(loadingFor(container, "Photo 4")).toBe("eager");
     expect(loadingFor(container, "Photo 2")).toBe("lazy");
     expect(loadingFor(container, "Photo 3")).toBe("lazy");

@@ -162,13 +162,8 @@ export interface SlideshowImage {
 
 export type SwiperEffect = "slide" | "fade" | "cube" | "coverflow" | "flip" | "cards" | "creative";
 
-/** How many slides either side of the active one are fetched up front. */
 const PRELOAD_RADIUS = 1;
 
-/**
- * Distance measured around the ring, because the slideshow loops — from the last
- * slide the "next" one is index 0.
- */
 function isNearActive(index: number, activeIndex: number, total: number): boolean {
   const distance = Math.abs(index - activeIndex);
   return Math.min(distance, total - distance) <= PRELOAD_RADIUS;
@@ -228,8 +223,6 @@ export function Slideshow({
   const [isNearViewport, setIsNearViewport] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
-  // Preloading only pays off for a slideshow the visitor can actually reach — a
-  // card further down the list should stay fully lazy until it comes up.
   useEffect(() => {
     const root = rootRef.current;
     if (!root) {

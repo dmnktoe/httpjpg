@@ -127,8 +127,6 @@ describe("Image", () => {
     );
     const image = screen.getByAltText("skeleton");
 
-    // Withholding srcSet here would make the browser fetch the largest `src`
-    // candidate first and the right-sized one second.
     expect(image).toHaveAttribute("srcset", "/photo-400.jpg 400w");
     expect(image).toHaveAttribute("sizes", "100vw");
     expect(observers).toHaveLength(0);
@@ -144,8 +142,6 @@ describe("Image", () => {
 
     render(<Image src="/photo.jpg" alt="hydrated" blurOnLoad />);
 
-    // The load event fired before React could attach `onLoad`; without the
-    // `complete` fallback the image would stay at opacity 0 forever.
     expect(screen.getByAltText("hydrated")).toHaveStyle({ opacity: "1" });
 
     complete.mockRestore();

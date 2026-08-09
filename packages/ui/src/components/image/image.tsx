@@ -34,7 +34,6 @@ export interface ImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "c
   blurDataURL?: string;
   /** Set `"high"` on the LCP image. */
   fetchPriority?: "auto" | "high" | "low";
-  /** Only gated on `isInView` when a `blurDataURL` placeholder has to win the first paint. */
   srcSet?: string;
   sizes?: string;
   css?: SystemStyleObject;
@@ -62,10 +61,6 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
     },
     ref,
   ) => {
-    // Holding `srcSet` back until the element scrolls in only buys something when
-    // there is a `blurDataURL` to paint meanwhile. Without one it just makes the
-    // browser fetch the (largest) `src` candidate first and the right-sized one
-    // second — two downloads, the slow one blocking.
     const usesPlaceholder = blurOnLoad && Boolean(blurDataURL);
     const [isInView, setIsInView] = useState(!usesPlaceholder);
     const [highResLoaded, setHighResLoaded] = useState(false);
@@ -96,7 +91,6 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       return () => observer.disconnect();
     }, [usesPlaceholder]);
 
-    /** Catches loads that finished before React attached `onLoad` (hydration, bfcache, memory cache). */
     useEffect(() => {
       if (!isInView) {
         return;

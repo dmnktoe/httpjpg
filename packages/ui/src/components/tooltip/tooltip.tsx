@@ -1,17 +1,27 @@
 "use client";
 
-import { type KeyboardEvent, type ReactNode, useId, useState } from "react";
+import {
+  Children,
+  cloneElement,
+  type HTMLAttributes,
+  type KeyboardEvent,
+  type ReactElement,
+  useId,
+  useState,
+} from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
+
+type TriggerProps = HTMLAttributes<HTMLElement> & { tabIndex?: number };
 
 export type TooltipPlacement = "top" | "bottom";
 
 export interface TooltipProps {
   /** Text rendered inside the ASCII frame. Kept to a single line. */
   label: string;
-  /** The element the tooltip describes. */
-  children: ReactNode;
+  /** The single element the tooltip describes. It becomes the trigger. */
+  children: ReactElement<TriggerProps>;
   placement?: TooltipPlacement;
   /** Keeps the trigger interactive but never reveals the bubble. */
   disabled?: boolean;
@@ -37,6 +47,7 @@ export function Tooltip({
   };
 
   const isVisible = isOpen && !disabled;
+  const trigger = Children.only(children);
   const tail = placement === "top" ? "v" : "^";
 
   const frame = (
@@ -63,13 +74,6 @@ export function Tooltip({
     <Box
       as="span"
       className={className}
-      tabIndex={disabled ? undefined : 0}
-      aria-describedby={isVisible ? tooltipId : undefined}
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
-      onFocus={() => setIsOpen(true)}
-      onBlur={() => setIsOpen(false)}
-      onKeyDown={handleKeyDown}
       css={{
         display: "inline-flex",
         position: "relative",
@@ -77,7 +81,15 @@ export function Tooltip({
         ...cssProp,
       }}
     >
-      {children}
+      {cloneElement(trigger, {
+        "aria-describedby": isVisible ? tooltipId : undefined,
+        tabIndex: trigger.props.tabIndex ?? 0,
+        onMouseEnter: () => setIsOpen(true),
+        onMouseLeave: () => setIsOpen(false),
+        onFocus: () => setIsOpen(true),
+        onBlur: () => setIsOpen(false),
+        onKeyDown: handleKeyDown,
+      })}
       <Box
         as="span"
         id={tooltipId}

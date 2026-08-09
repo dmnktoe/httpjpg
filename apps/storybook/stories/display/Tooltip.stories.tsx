@@ -31,7 +31,7 @@ export const Playground: Story = {
 };
 
 export const Placements: Story = {
-  args: { label: "@dmnktoe", children: null },
+  args: { label: "@dmnktoe", children: <span>trigger</span> },
   render: (args) => (
     <Box css={{ display: "flex", gap: "12", py: "12" }}>
       {PLACEMENTS.map((placement) => (
@@ -46,7 +46,7 @@ export const Placements: Story = {
 };
 
 export const OnAnAvatar: Story = {
-  args: { label: "@dmnktoe", children: null },
+  args: { label: "@dmnktoe", children: <span>trigger</span> },
   render: (args) => (
     <Box css={{ py: "12" }}>
       <Tooltip {...args}>

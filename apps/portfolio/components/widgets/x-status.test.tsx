@@ -75,12 +75,15 @@ describe("XStatus", () => {
 
     await screen.findByText("Hello world");
     const avatar = document.querySelector(`img[src="${profile.avatar}"]`) as HTMLElement;
-    const trigger = avatar.closest("[aria-describedby], span")?.parentElement as HTMLElement;
+    const trigger = avatar.parentElement as HTMLElement;
 
     expect(screen.getByRole("tooltip", { hidden: true }).textContent).toContain("@dmnktoe");
+    expect(trigger).toHaveAttribute("tabindex", "0");
 
     fireEvent.mouseEnter(trigger);
+
     expect(screen.getByRole("tooltip")).toHaveAttribute("aria-hidden", "false");
+    expect(trigger.getAttribute("aria-describedby")).toBe(screen.getByRole("tooltip").id);
   });
 
   it("labels the follower count with the exact number for screen readers", async () => {

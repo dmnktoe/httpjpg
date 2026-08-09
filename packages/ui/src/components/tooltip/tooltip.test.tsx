@@ -47,7 +47,7 @@ describe("Tooltip", () => {
         <span>avatar</span>
       </Tooltip>,
     );
-    const trigger = screen.getByText("avatar").parentElement as HTMLElement;
+    const trigger = screen.getByText("avatar");
 
     fireEvent.mouseEnter(trigger);
     expect(screen.getByRole("tooltip")).toHaveAttribute("aria-hidden", "false");
@@ -74,7 +74,7 @@ describe("Tooltip", () => {
         <button type="button">avatar</button>
       </Tooltip>,
     );
-    const trigger = screen.getByRole("button").parentElement as HTMLElement;
+    const trigger = screen.getByRole("button");
 
     expect(trigger).not.toHaveAttribute("aria-describedby");
 
@@ -83,14 +83,41 @@ describe("Tooltip", () => {
     expect(trigger.getAttribute("aria-describedby")).toBe(screen.getByRole("tooltip").id);
   });
 
-  it("is reachable by keyboard so the description has a focusable owner", () => {
+  it("makes a non-focusable child reachable rather than adding a second tab stop", () => {
     render(
       <Tooltip label="@dmnktoe">
         <span>avatar</span>
       </Tooltip>,
     );
 
-    expect(screen.getByText("avatar").parentElement).toHaveAttribute("tabindex", "0");
+    const trigger = screen.getByText("avatar");
+    expect(trigger).toHaveAttribute("tabindex", "0");
+    expect(trigger.parentElement).not.toHaveAttribute("tabindex");
+  });
+
+  it("keeps a focusable child's own tabIndex", () => {
+    render(
+      <Tooltip label="@dmnktoe">
+        <button type="button" tabIndex={-1}>
+          avatar
+        </button>
+      </Tooltip>,
+    );
+
+    expect(screen.getByRole("button", { hidden: true })).toHaveAttribute("tabindex", "-1");
+  });
+
+  it("describes the focused element itself, not a wrapper", () => {
+    render(
+      <Tooltip label="@dmnktoe">
+        <button type="button">avatar</button>
+      </Tooltip>,
+    );
+    const button = screen.getByRole("button");
+
+    fireEvent.focus(button);
+
+    expect(button.getAttribute("aria-describedby")).toBe(screen.getByRole("tooltip").id);
   });
 
   it("dismisses on Escape", () => {
@@ -99,7 +126,7 @@ describe("Tooltip", () => {
         <button type="button">avatar</button>
       </Tooltip>,
     );
-    const trigger = screen.getByRole("button").parentElement as HTMLElement;
+    const trigger = screen.getByRole("button");
 
     fireEvent.mouseEnter(trigger);
     fireEvent.keyDown(trigger, { key: "Escape" });
@@ -113,7 +140,7 @@ describe("Tooltip", () => {
         <button type="button">avatar</button>
       </Tooltip>,
     );
-    const trigger = screen.getByRole("button").parentElement as HTMLElement;
+    const trigger = screen.getByRole("button");
 
     fireEvent.mouseEnter(trigger);
 

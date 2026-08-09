@@ -4,7 +4,6 @@
     "config:best-practices",
     ":semanticCommitTypeAll(deps)",
     ":semanticCommitScopeDisabled",
-    ":pinAllExceptPeerDependencies",
     ":enablePreCommit"
   ],
   "timezone": "Europe/Berlin",
@@ -20,6 +19,16 @@
     "assignees": ["dmnktoe"]
   },
   "packageRules": [
+    {
+      "description": "Keep semver ranges, but move the floor so in-range updates still produce a manifest diff and therefore a PR. 'replace' hid them (next 16.3.0 sat inside ^16.0.7 and was never proposed); 'pin' surfaced them but rewrote every range in the repo. This is the middle. Also overrides the :pinDevDependencies that config:best-practices pulls in.",
+      "matchPackageNames": ["*"],
+      "rangeStrategy": "bump"
+    },
+    {
+      "description": "Peers and engines keep their ranges — consumers own the resolution",
+      "matchDepTypes": ["engines", "peerDependencies"],
+      "rangeStrategy": "replace"
+    },
     {
       "description": "Production deps get individual PRs, dev deps are grouped",
       "matchDepTypes": ["dependencies", "peerDependencies", "optionalDependencies"],

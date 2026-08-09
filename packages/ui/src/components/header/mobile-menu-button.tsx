@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-
 import { Box } from "../box/box";
 
 interface MobileMenuButtonProps {
@@ -10,17 +8,6 @@ interface MobileMenuButtonProps {
 }
 
 export function MobileMenuButton({ isOpen, setIsOpen }: MobileMenuButtonProps) {
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
-
   return (
     <Box
       css={{

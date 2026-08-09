@@ -10,6 +10,7 @@ import { Link } from "../link/link";
 import { MobileMenuButton } from "./mobile-menu-button";
 import { MobileMenuContent } from "./mobile-menu-content";
 import { Navigation } from "./navigation";
+import { useBodyScrollLock } from "./use-body-scroll-lock";
 
 export interface NavItem {
   name: string;
@@ -38,6 +39,8 @@ export interface HeaderProps {
 export function Header({ nav, projectsWork = [], websitesWork = [], children }: HeaderProps) {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
   const pathname = usePathname();
+
+  useBodyScrollLock(mobileMenuIsOpen);
 
   useEffect(() => {
     setMobileMenuIsOpen(false);

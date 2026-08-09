@@ -167,6 +167,7 @@ export function MobileMenuContent({
               lineHeight: "snug",
               overflowX: "hidden",
               overflowY: "auto",
+              overscrollBehavior: "contain",
             }}
           >
             <MobileMenuNavRibbon nav={nav} onItemClick={handleMenuItemClick} />

@@ -96,10 +96,10 @@ importers:
         specifier: ^17.0.0
         version: 17.3.0
       oxfmt:
-        specifier: ^0.62.0
+        specifier: 0.62.0
         version: 0.62.0
       oxlint:
-        specifier: ^1.64.0
+        specifier: 1.76.0
         version: 1.76.0
       turbo:
         specifier: ^2.6.0

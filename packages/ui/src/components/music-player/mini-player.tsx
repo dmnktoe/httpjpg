@@ -57,7 +57,10 @@ export function MiniPlayer({
         // statically and cannot follow a function call. The record only turns
         // from the breakpoint the desktop nav takes over at — on the phone it
         // sits still next to the copy.
-        animation: { base: "none", lg: "spin 3s linear infinite" },
+        animationName: { base: "none", lg: "spin" },
+        animationDuration: "3s",
+        animationTimingFunction: "linear",
+        animationIterationCount: "infinite",
         animationPlayState: isPlaying ? "running" : "paused",
         _motionReduce: { animation: "none" },
       }}

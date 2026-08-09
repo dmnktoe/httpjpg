@@ -296,6 +296,34 @@ describe("Slideshow video failure modes", () => {
     await waitFor(() => expect(activeSlide(container)).not.toBe("01"));
   });
 
+  it("remembers a failed clip by its source, not by its position", async () => {
+    const { container, rerender } = render(
+      <Slideshow
+        images={[VIDEO_A, VIDEO_B, IMAGE_A]}
+        showCounter
+        speed={0}
+        autoplayDelay={NO_AUTOPLAY}
+      />,
+    );
+
+    fireEvent.error(videoFor(container, CLIP_A));
+    await expectSlide(container, "02");
+
+    // Same clips, swapped around. The slide being shown now carries the failed
+    // CLIP_A and has to be passed over; remembering the position instead would
+    // have named the healthy CLIP_B and held here.
+    rerender(
+      <Slideshow
+        images={[VIDEO_B, VIDEO_A, IMAGE_A]}
+        showCounter
+        speed={0}
+        autoplayDelay={NO_AUTOPLAY}
+      />,
+    );
+
+    await expectSlide(container, "03");
+  });
+
   it("advances only once when a clip both errors and ends", async () => {
     const { container } = renderSlideshow([VIDEO_A, IMAGE_A, IMAGE_B], {
       autoplayDelay: NO_AUTOPLAY,

@@ -20,11 +20,17 @@ interface LockedStyles {
 // would restore a scroll position captured after the body was already fixed.
 let lockCount = 0;
 let previous: LockedStyles | null = null;
-let lockedScrollY = 0;
+// Where the page was when the lock went on, and where it is being held right
+// now. They differ only while the document is too short to reach the captured
+// offset; keeping both means a rotation that shortens the page can be undone
+// by one that lengthens it again.
+let capturedScrollY = 0;
+let heldScrollY = 0;
 
 function freeze() {
   const { body, documentElement: html } = document;
-  lockedScrollY = window.scrollY;
+  capturedScrollY = window.scrollY;
+  heldScrollY = capturedScrollY;
   previous = {
     htmlOverflow: html.style.overflow,
     htmlOverscrollBehavior: html.style.overscrollBehavior,
@@ -40,11 +46,17 @@ function freeze() {
   html.style.overscrollBehavior = "none";
 
   body.style.position = "fixed";
-  body.style.top = `${-lockedScrollY}px`;
+  body.style.top = `${-heldScrollY}px`;
   body.style.left = "0";
   body.style.right = "0";
   body.style.width = "100%";
   body.style.overscrollBehavior = "none";
+
+  // Bound to the lock rather than to each holder: the listener is one shared
+  // function, so a second holder's `addEventListener` is a no-op and the first
+  // holder's cleanup would take the only registration with it.
+  window.addEventListener("resize", reclamp);
+  window.addEventListener("orientationchange", reclamp);
 }
 
 function reclamp() {
@@ -52,17 +64,20 @@ function reclamp() {
     return;
   }
   const maxScrollY = Math.max(0, document.body.scrollHeight - window.innerHeight);
-  if (lockedScrollY <= maxScrollY) {
+  const next = Math.min(capturedScrollY, maxScrollY);
+  if (next === heldScrollY) {
     return;
   }
-  lockedScrollY = maxScrollY;
-  document.body.style.top = `${-lockedScrollY}px`;
+  heldScrollY = next;
+  document.body.style.top = `${-heldScrollY}px`;
 }
 
 function thaw() {
   if (!previous) {
     return;
   }
+  window.removeEventListener("resize", reclamp);
+  window.removeEventListener("orientationchange", reclamp);
   const { body, documentElement: html } = document;
   html.style.overflow = previous.htmlOverflow;
   html.style.overscrollBehavior = previous.htmlOverscrollBehavior;
@@ -73,7 +88,7 @@ function thaw() {
   body.style.width = previous.bodyWidth;
   body.style.overscrollBehavior = previous.bodyOverscrollBehavior;
   previous = null;
-  window.scrollTo(0, lockedScrollY);
+  window.scrollTo(0, heldScrollY);
 }
 
 /** Freeze background scrolling while an overlay is open. */
@@ -88,12 +103,7 @@ export function useBodyScrollLock(isLocked: boolean) {
     }
     lockCount += 1;
 
-    window.addEventListener("resize", reclamp);
-    window.addEventListener("orientationchange", reclamp);
-
     return () => {
-      window.removeEventListener("resize", reclamp);
-      window.removeEventListener("orientationchange", reclamp);
       lockCount -= 1;
       if (lockCount === 0) {
         thaw();

@@ -87,18 +87,16 @@ const SWIPER_CREATIVE_EFFECT: CreativeEffectOptions = {
 export const VIDEO_START_TIMEOUT_MS = 8000;
 
 interface SlideshowVideoSlideProps {
-  index: number;
   videoUrl: string;
   videoPoster?: string;
   aspectRatio: string;
   holdUntilEnded: boolean;
   isActive: boolean;
   onFinished: () => void;
-  onUnplayable: (index: number) => void;
+  onUnplayable: (videoUrl: string) => void;
 }
 
 function SlideshowVideoSlide({
-  index,
   videoUrl,
   videoPoster,
   aspectRatio,
@@ -134,7 +132,7 @@ function SlideshowVideoSlide({
       if (isDone) {
         return;
       }
-      onUnplayable(index);
+      onUnplayable(videoUrl);
       finish();
     };
     const cancelTimeout = () => clearTimeout(startTimer);
@@ -154,7 +152,7 @@ function SlideshowVideoSlide({
       video.removeEventListener("error", giveUp);
       video.removeEventListener("playing", cancelTimeout);
     };
-  }, [holdUntilEnded, index, isActive, onFinished, onUnplayable]);
+  }, [holdUntilEnded, isActive, onFinished, onUnplayable, videoUrl]);
 
   return (
     <Video
@@ -247,7 +245,9 @@ export function Slideshow({
   const rootRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isNearViewport, setIsNearViewport] = useState(false);
-  const [unplayableVideos, setUnplayableVideos] = useState<ReadonlySet<number>>(() => new Set());
+  // Keyed by source rather than by position: the Visual Editor reorders and
+  // deletes slides, and an index remembered across that names a different one.
+  const [unplayableVideos, setUnplayableVideos] = useState<ReadonlySet<string>>(() => new Set());
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
@@ -284,8 +284,8 @@ export function Slideshow({
 
   const autoplayEnabled = images.length > 1 && !prefersReducedMotion;
   const holdForVideo = waitForVideo && autoplayEnabled;
-  const isVideoSlideActive =
-    Boolean(images[activeIndex]?.videoUrl) && !unplayableVideos.has(activeIndex);
+  const activeVideoUrl = images[activeIndex]?.videoUrl;
+  const isVideoSlideActive = Boolean(activeVideoUrl) && !unplayableVideos.has(activeVideoUrl ?? "");
 
   const syncAutoplay = useCallback(
     (swiper: SwiperType | null, isVideoSlide: boolean) => {
@@ -318,26 +318,28 @@ export function Slideshow({
     swiperRef.current?.slideNext();
   }, []);
 
-  const handleVideoUnplayable = useCallback((index: number) => {
+  const handleVideoUnplayable = useCallback((videoUrl: string) => {
     setUnplayableVideos((current) => {
-      if (current.has(index)) {
+      if (current.has(videoUrl)) {
         return current;
       }
       const next = new Set(current);
-      next.add(index);
+      next.add(videoUrl);
       return next;
     });
   }, []);
 
   // A clip that already failed once is not worth a second wait, and its slide
   // renders as an empty frame, so pass straight over it on the next lap.
-  const hasPlayableSlide = images.length > unplayableVideos.size;
+  const hasPlayableSlide = images.some(
+    (image) => !image.videoUrl || !unplayableVideos.has(image.videoUrl),
+  );
   useEffect(() => {
-    if (!hasPlayableSlide || !unplayableVideos.has(activeIndex)) {
+    if (!hasPlayableSlide || !activeVideoUrl || !unplayableVideos.has(activeVideoUrl)) {
       return;
     }
     swiperRef.current?.slideNext();
-  }, [activeIndex, hasPlayableSlide, unplayableVideos]);
+  }, [activeVideoUrl, hasPlayableSlide, unplayableVideos]);
 
   const modules = useMemo(() => {
     const effectModule = EFFECT_MODULES[effect];
@@ -379,11 +381,10 @@ export function Slideshow({
                 {image.videoUrl ? (
                   <>
                     <SlideshowVideoSlide
-                      index={index}
                       videoUrl={image.videoUrl}
                       videoPoster={image.videoPoster}
                       aspectRatio={aspectRatio}
-                      holdUntilEnded={holdForVideo && !unplayableVideos.has(index)}
+                      holdUntilEnded={holdForVideo && !unplayableVideos.has(image.videoUrl)}
                       isActive={activeIndex === index}
                       onFinished={handleVideoFinished}
                       onUnplayable={handleVideoUnplayable}

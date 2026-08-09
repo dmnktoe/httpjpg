@@ -109,6 +109,50 @@ describe("useBodyScrollLock", () => {
     window.scrollY = 0;
   });
 
+  it("keeps re-clamping while a second overlay still holds the lock", () => {
+    window.scrollY = 2000;
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    const scrollHeight = vi
+      .spyOn(document.body, "scrollHeight", "get")
+      .mockReturnValue(window.innerHeight + 500);
+
+    const menu = renderHook(() => useBodyScrollLock(true));
+    const palette = renderHook(() => useBodyScrollLock(true));
+
+    menu.unmount();
+    window.dispatchEvent(new Event("resize"));
+
+    expect(document.body.style.top).toBe("-500px");
+
+    palette.unmount();
+    scrollHeight.mockRestore();
+    scrollTo.mockRestore();
+    window.scrollY = 0;
+  });
+
+  it("lifts the held offset again once the document has room for it", () => {
+    window.scrollY = 2000;
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    const scrollHeight = vi
+      .spyOn(document.body, "scrollHeight", "get")
+      .mockReturnValue(window.innerHeight + 500);
+
+    const { unmount } = renderHook(() => useBodyScrollLock(true));
+    window.dispatchEvent(new Event("resize"));
+    expect(document.body.style.top).toBe("-500px");
+
+    scrollHeight.mockReturnValue(window.innerHeight + 3000);
+    window.dispatchEvent(new Event("resize"));
+
+    expect(document.body.style.top).toBe("-2000px");
+
+    unmount();
+    expect(scrollTo).toHaveBeenCalledWith(0, 2000);
+    scrollHeight.mockRestore();
+    scrollTo.mockRestore();
+    window.scrollY = 0;
+  });
+
   it("restores whatever the page had set before the first lock", () => {
     document.documentElement.style.overflow = "scroll";
     document.body.style.position = "relative";

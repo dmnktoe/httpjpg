@@ -25,7 +25,6 @@ export interface VideoProps extends Omit<VideoHTMLAttributes<HTMLVideoElement>, 
   objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
   copyright?: string;
   copyrightPosition?: CopyrightPosition;
-  /** Exposes the underlying `<video>` element; native sources only. */
   mediaRef?: RefObject<HTMLVideoElement | null>;
   css?: SystemStyleObject;
 }

@@ -83,10 +83,8 @@ interface SlideshowVideoSlideProps {
   videoUrl: string;
   videoPoster?: string;
   aspectRatio: string;
-  /** Play the clip once, from the top, instead of looping in the background. */
   holdUntilEnded: boolean;
   isActive: boolean;
-  /** Called when the clip finished, errored, or refused to start. */
   onFinished: () => void;
 }
 
@@ -123,8 +121,6 @@ function SlideshowVideoSlide({
     video.addEventListener("ended", finish);
     video.addEventListener("error", finish);
     video.currentTime = 0;
-    // Playback can be refused (low-power mode, missing user gesture). Release
-    // the slideshow instead of parking it on a clip that never fires `ended`.
     video.play?.()?.catch(finish);
 
     return () => {
@@ -191,11 +187,6 @@ export interface SlideshowProps {
   overlay?: OverlayPattern;
   overlayInset?: number;
   showCounter?: boolean;
-  /**
-   * Pause autoplay on video slides and advance only once the clip played
-   * through. Ignored for single-slide shows and under reduced motion.
-   * @default true
-   */
   waitForVideo?: boolean;
   css?: SystemStyleObject;
 }
@@ -239,7 +230,6 @@ export function Slideshow({
   const holdForVideo = waitForVideo && autoplayEnabled;
   const isVideoSlideActive = Boolean(images[activeIndex]?.videoUrl);
 
-  /** Autoplay is the timer between slides; a playing clip owns that timer. */
   const syncAutoplay = useCallback(
     (swiper: SwiperType | null, isVideoSlide: boolean) => {
       const autoplay = swiper?.autoplay;

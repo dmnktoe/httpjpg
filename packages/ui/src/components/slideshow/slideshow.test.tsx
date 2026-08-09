@@ -10,11 +10,8 @@ const VIDEO_B: SlideshowImage = { url: "", alt: "Clip B", videoUrl: CLIP_B };
 const IMAGE_A: SlideshowImage = { url: "https://a.storyblok.com/f/1/a.jpg", alt: "Photo A" };
 const IMAGE_B: SlideshowImage = { url: "https://a.storyblok.com/f/1/b.jpg", alt: "Photo B" };
 
-/** Short enough to observe several autoplay ticks inside a test timeout. */
 const AUTOPLAY_DELAY = 40;
-/** Comfortably longer than a tick, so "did not advance" means it never will. */
 const SETTLE = 250;
-/** Autoplay effectively off, so only the clip itself can advance the show. */
 const NO_AUTOPLAY = 100_000;
 
 let playedSources: string[];
@@ -30,7 +27,6 @@ function renderSlideshow(
   );
 }
 
-/** Counter reads `NN/NN`; the first pair is the 1-based active slide. */
 function activeSlide(container: HTMLElement): string {
   return container.textContent?.slice(0, 2) ?? "";
 }
@@ -47,11 +43,6 @@ async function expectSlide(container: HTMLElement, slide: string) {
   await waitFor(() => expect(activeSlide(container)).toBe(slide));
 }
 
-/**
- * Asserts the slideshow is parked: it never leaves `slide` within SETTLE.
- * jsdom fires no transition events, so Swiper only re-arms its autoplay timer
- * after a slide change — every "stuck" assertion is preceded by one.
- */
 async function expectStuckOn(container: HTMLElement, slide: string) {
   await expect(
     waitFor(() => expect(activeSlide(container)).not.toBe(slide), { timeout: SETTLE }),
@@ -256,8 +247,6 @@ describe("Slideshow video failure modes", () => {
     });
 
     const video = videoFor(container, CLIP_A);
-    // Dispatched in one batch: React re-renders after the act block, so both
-    // events still reach the same listener pair.
     act(() => {
       video.dispatchEvent(new Event("error"));
       video.dispatchEvent(new Event("ended"));

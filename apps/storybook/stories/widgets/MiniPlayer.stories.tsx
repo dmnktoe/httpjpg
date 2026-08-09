@@ -12,6 +12,9 @@ const meta: Meta<typeof MiniPlayer> = {
     title: { control: "text", description: "Track title" },
     artist: { control: "text", description: "Artist name" },
     artwork: { control: "text", description: "Artwork URL shown on the spinning record" },
+    href: { control: "text", description: "Source url the record links to" },
+    currentTime: { control: "number", description: "Elapsed seconds" },
+    duration: { control: "number", description: "Track length in seconds; 0 renders -:--" },
     isPlaying: { control: "boolean", description: "Spins the record and flips the play control" },
     hasNext: { control: "boolean", description: "Enables the next control" },
     hasPrevious: { control: "boolean", description: "Enables the previous control" },
@@ -20,6 +23,8 @@ const meta: Meta<typeof MiniPlayer> = {
     title: "Night Drive",
     artist: "Nova",
     isPlaying: true,
+    currentTime: 65,
+    duration: 185,
     hasNext: true,
     hasPrevious: true,
   },
@@ -42,6 +47,13 @@ export const Paused: Story = {
 };
 
 /**
+ * Before the metadata lands there is no clock to show yet.
+ */
+export const UnknownLength: Story = {
+  args: { currentTime: 0, duration: 0 },
+};
+
+/**
  * A single track on the page — both ends of the queue are disabled.
  */
 export const SingleTrack: Story = {
@@ -53,6 +65,7 @@ export const SingleTrack: Story = {
  */
 export const WithArtwork: Story = {
   args: {
+    href: "/audio/night-drive.mp3",
     artwork:
       "https://a.storyblok.com/f/292817/1000x1000/0f2e0b0c8a/placeholder.jpg/m/64x64/filters:format(webp)",
   },

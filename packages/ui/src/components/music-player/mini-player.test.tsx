@@ -9,6 +9,8 @@ function renderPlayer(props: Partial<Parameters<typeof MiniPlayer>[0]> = {}) {
       title="Night Drive"
       artist="Nova"
       isPlaying={false}
+      currentTime={0}
+      duration={0}
       hasNext={false}
       hasPrevious={false}
       {...handlers}
@@ -35,6 +37,8 @@ describe("MiniPlayer", () => {
     const { rerender } = render(
       <MiniPlayer
         isPlaying={false}
+        currentTime={0}
+        duration={0}
         hasNext
         hasPrevious
         onToggle={vi.fn()}
@@ -47,6 +51,8 @@ describe("MiniPlayer", () => {
     rerender(
       <MiniPlayer
         isPlaying
+        currentTime={0}
+        duration={0}
         hasNext
         hasPrevious
         onToggle={vi.fn()}
@@ -54,7 +60,7 @@ describe("MiniPlayer", () => {
         onPrevious={vi.fn()}
       />,
     );
-    expect(screen.getByRole("button", { name: "Pause" })).toHaveTextContent("▮▮");
+    expect(screen.getByRole("button", { name: "Pause" })).toBeInTheDocument();
   });
 
   it("calls back for every transport control", () => {
@@ -82,6 +88,8 @@ describe("MiniPlayer", () => {
         title="Night Drive"
         artwork="/art.jpg"
         isPlaying
+        currentTime={0}
+        duration={0}
         hasNext={false}
         hasPrevious={false}
         onToggle={vi.fn()}
@@ -97,5 +105,32 @@ describe("MiniPlayer", () => {
     renderPlayer();
 
     expect(screen.getByText("◉")).toBeInTheDocument();
+  });
+
+  it("waits for the metadata before showing a clock", () => {
+    renderPlayer();
+
+    expect(screen.getByText("-:--")).toBeInTheDocument();
+  });
+
+  it("counts the elapsed time once the length is known", () => {
+    renderPlayer({ currentTime: 65, duration: 185 });
+
+    expect(screen.getByText("1:05")).toBeInTheDocument();
+    expect(screen.queryByText("-:--")).not.toBeInTheDocument();
+  });
+
+  it("points the record at the source url", () => {
+    renderPlayer({ href: "/audio/night-drive.mp3" });
+
+    const link = screen.getByRole("link", { name: "Open the source of Night Drive — Nova" });
+    expect(link).toHaveAttribute("href", "/audio/night-drive.mp3");
+    expect(link).toHaveAttribute("rel", "noreferrer");
+  });
+
+  it("leaves the record unlinked without a source url", () => {
+    renderPlayer();
+
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
   });
 });

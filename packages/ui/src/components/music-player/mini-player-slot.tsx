@@ -22,7 +22,10 @@ export function MiniPlayerSlot() {
         title={player.track.title}
         artist={player.track.artist}
         artwork={player.track.artwork}
+        href={player.track.src}
         isPlaying={player.isPlaying}
+        currentTime={player.currentTime}
+        duration={player.duration}
         hasNext={player.hasNext}
         hasPrevious={player.hasPrevious}
         onToggle={player.toggle}

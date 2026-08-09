@@ -104,6 +104,47 @@ describe("MiniPlayer", () => {
     expect(container.querySelector("img")).toHaveAttribute("src", "/art.jpg");
   });
 
+  it("stops the record once playback stops", () => {
+    const { rerender } = render(
+      <MiniPlayer
+        title="Night Drive"
+        isPlaying
+        currentTime={0}
+        duration={0}
+        hasNext={false}
+        hasPrevious={false}
+        onToggle={vi.fn()}
+        onNext={vi.fn()}
+        onPrevious={vi.fn()}
+        onStop={vi.fn()}
+      />,
+    );
+
+    const record = screen.getByText("◉").parentElement;
+    expect(record).toHaveClass("anim-ps_running");
+
+    rerender(
+      <MiniPlayer
+        title="Night Drive"
+        isPlaying={false}
+        currentTime={0}
+        duration={0}
+        hasNext={false}
+        hasPrevious={false}
+        onToggle={vi.fn()}
+        onNext={vi.fn()}
+        onPrevious={vi.fn()}
+        onStop={vi.fn()}
+      />,
+    );
+
+    expect(record).toHaveClass("anim-ps_paused");
+    const shorthands = (record?.className ?? "")
+      .split(" ")
+      .filter((name) => /(?:^|:)anim_/.test(name) && !name.startsWith("motionReduce:"));
+    expect(shorthands).toEqual([]);
+  });
+
   it("falls back to a record glyph without artwork", () => {
     renderPlayer();
 

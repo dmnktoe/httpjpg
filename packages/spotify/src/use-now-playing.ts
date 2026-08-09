@@ -28,6 +28,10 @@ const NOW_PLAYING_ERROR_CODES = [
 
 export type NowPlayingErrorCode = (typeof NOW_PLAYING_ERROR_CODES)[number];
 
+const TERMINAL_ERROR_CODES: readonly NowPlayingErrorCode[] = ["premium_missing"];
+
+const MAX_CONSECUTIVE_ERRORS = 5;
+
 export interface UseNowPlayingReturn {
   data: NowPlayingData | null;
   isLoading: boolean;
@@ -51,33 +55,70 @@ export function useNowPlaying({
     }
 
     let ignore = false;
+    let stopped = false;
+    let isFetching = false;
+    let consecutiveErrors = 0;
+    let interval: ReturnType<typeof setInterval> | undefined;
+
+    function stopPolling() {
+      stopped = true;
+      if (interval !== undefined) {
+        clearInterval(interval);
+        interval = undefined;
+      }
+    }
+
+    function applyError(code: NowPlayingErrorCode, reason: Error) {
+      setErrorCode(code);
+      setError(reason);
+      setData(null);
+
+      consecutiveErrors += 1;
+      if (TERMINAL_ERROR_CODES.includes(code) || consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
+        stopPolling();
+      }
+    }
 
     async function fetchNowPlaying() {
+      if (stopped || isFetching) {
+        return;
+      }
+
+      isFetching = true;
       try {
         const response = await fetch(endpoint);
         const result = await response.json().catch(() => null);
-        if (ignore) {
+        if (ignore || stopped) {
           return;
         }
 
         if (!response.ok) {
-          setErrorCode(toErrorCode(result?.error));
-          setError(new Error(result?.message ?? `Failed to fetch: ${response.statusText}`));
-          setData(null);
+          applyError(
+            toErrorCode(result?.error),
+            new Error(result?.message ?? `Failed to fetch: ${response.statusText}`),
+          );
           return;
         }
 
+        if (result?.unavailable) {
+          applyError(
+            toErrorCode(result.unavailable),
+            new Error(result?.message ?? "Now playing is unavailable"),
+          );
+          return;
+        }
+
+        consecutiveErrors = 0;
         setData(result?.data ?? null);
         setError(null);
         setErrorCode(null);
       } catch (err) {
-        if (ignore) {
+        if (ignore || stopped) {
           return;
         }
-        setErrorCode("network_error");
-        setError(err instanceof Error ? err : new Error("Unknown error"));
-        setData(null);
+        applyError("network_error", err instanceof Error ? err : new Error("Unknown error"));
       } finally {
+        isFetching = false;
         if (!ignore) {
           setIsLoading(false);
         }
@@ -85,10 +126,12 @@ export function useNowPlaying({
     }
 
     fetchNowPlaying();
-    const interval = setInterval(fetchNowPlaying, pollInterval);
+    if (!stopped) {
+      interval = setInterval(fetchNowPlaying, pollInterval);
+    }
     return () => {
       ignore = true;
-      clearInterval(interval);
+      stopPolling();
     };
   }, [endpoint, pollInterval, enabled]);
 

@@ -53,14 +53,25 @@ describe("GET /api/spotify/now-playing", () => {
     expect(captureEdgeException).not.toHaveBeenCalled();
   });
 
-  it("maps a missing Premium account to a 403 without reporting to Sentry", async () => {
+  it("answers a missing Premium account with a 200 and no Sentry report", async () => {
     getCurrentlyPlaying.mockRejectedValueOnce(new SpotifyForbiddenError());
 
     const response = await GET(request);
 
-    expect(response.status).toBe(403);
-    await expect(response.json()).resolves.toMatchObject({ error: "premium_missing" });
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      data: null,
+      unavailable: "premium_missing",
+    });
     expect(captureEdgeException).not.toHaveBeenCalled();
+  });
+
+  it("caches the premium-missing answer so polling stops hitting Spotify", async () => {
+    getCurrentlyPlaying.mockRejectedValueOnce(new SpotifyForbiddenError());
+
+    const response = await GET(request);
+
+    expect(response.headers.get("Cache-Control")).toContain("s-maxage=600");
   });
 
   it("reports unexpected errors and returns a 500", async () => {

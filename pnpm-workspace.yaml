@@ -21,7 +21,7 @@ catalog:
   "@types/react": ^19.2.7
   "@types/react-dom": ^19.2.3
   "@vitejs/plugin-react": ^6.0.2
-  "@vitest/coverage-v8": ^4.1.6
+  "@vitest/coverage-v8": ^4.1.10
   dotenv: ^17.4.2
   jsdom: ^30.0.0
   next: ^16.0.7
@@ -29,4 +29,4 @@ catalog:
   react-dom: ^19.2.1
   tsx: ^4.21.0
   typescript: ^6.0.3
-  vitest: ^4.1.6
+  vitest: ^4.1.10

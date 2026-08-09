@@ -178,6 +178,7 @@ export function CommandPalette({
             alignItems: "flex-start",
             px: "4",
             pt: { base: "16", md: "24" },
+            pb: { base: "4", md: "24" },
             bg: "rgba(0, 0, 0, 0.2)",
             backdropFilter: "blur(12px)",
           })}
@@ -197,13 +198,14 @@ export function CommandPalette({
             className={css({
               w: "full",
               maxW: MAX_WIDTH,
-              maxH: "70dvh",
+              maxH: "min(70dvh, 100%)",
               color: "pageFg",
               bg: "pageBg",
               border: "1px solid",
               borderColor: "pageBorder",
               boxShadow: "0 24px 60px -12px rgba(0, 0, 0, 0.35)",
               overflowY: "auto",
+              overscrollBehavior: "contain",
             })}
           >
             <CommandPaletteInput

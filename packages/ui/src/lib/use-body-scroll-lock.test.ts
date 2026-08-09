@@ -2,17 +2,18 @@ import { renderHook } from "@testing-library/react";
 
 import { useBodyScrollLock } from "./use-body-scroll-lock";
 
-function clearBodyStyles() {
+function clearInlineStyles() {
   document.body.removeAttribute("style");
+  document.documentElement.removeAttribute("style");
 }
 
 beforeEach(() => {
-  clearBodyStyles();
+  clearInlineStyles();
   window.scrollTo(0, 0);
 });
 
 afterEach(() => {
-  clearBodyStyles();
+  clearInlineStyles();
 });
 
 describe("useBodyScrollLock", () => {
@@ -20,16 +21,27 @@ describe("useBodyScrollLock", () => {
     renderHook(() => useBodyScrollLock(false));
 
     expect(document.body.style.position).toBe("");
+    expect(document.documentElement.style.overflow).toBe("");
   });
 
   it("takes the body out of flow, which is what actually stops the page", () => {
     renderHook(() => useBodyScrollLock(true));
 
-    // `overflow: hidden` alone cannot work: globals.css sets overflow-x on
-    // <html>, so the body's overflow never reaches the viewport.
     expect(document.body.style.position).toBe("fixed");
-    expect(document.body.style.overflow).toBe("hidden");
-    expect(document.body.style.overscrollBehavior).toBe("none");
+    expect(document.body.style.width).toBe("100%");
+  });
+
+  it("locks the viewport from the root element, where it propagates", () => {
+    renderHook(() => useBodyScrollLock(true));
+
+    expect(document.documentElement.style.overflow).toBe("hidden");
+    expect(document.documentElement.style.overscrollBehavior).toBe("none");
+  });
+
+  it("leaves the body a normal box so sticky descendants keep their anchor", () => {
+    renderHook(() => useBodyScrollLock(true));
+
+    expect(document.body.style.overflow).toBe("");
   });
 
   it("holds the page at its scroll offset and restores it on release", () => {
@@ -42,6 +54,7 @@ describe("useBodyScrollLock", () => {
     unmount();
 
     expect(document.body.style.position).toBe("");
+    expect(document.documentElement.style.overflow).toBe("");
     expect(scrollTo).toHaveBeenCalledWith(0, 420);
     scrollTo.mockRestore();
     window.scrollY = 0;
@@ -74,12 +87,80 @@ describe("useBodyScrollLock", () => {
     scrollTo.mockRestore();
   });
 
+  it("pulls the held offset back into the document after a rotation", () => {
+    window.scrollY = 2000;
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    const scrollHeight = vi
+      .spyOn(document.body, "scrollHeight", "get")
+      .mockReturnValue(window.innerHeight + 500);
+
+    const { unmount } = renderHook(() => useBodyScrollLock(true));
+    expect(document.body.style.top).toBe("-2000px");
+
+    window.dispatchEvent(new Event("orientationchange"));
+
+    expect(document.body.style.top).toBe("-500px");
+
+    unmount();
+    expect(scrollTo).toHaveBeenCalledWith(0, 500);
+
+    scrollHeight.mockRestore();
+    scrollTo.mockRestore();
+    window.scrollY = 0;
+  });
+
+  it("keeps re-clamping while a second overlay still holds the lock", () => {
+    window.scrollY = 2000;
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    const scrollHeight = vi
+      .spyOn(document.body, "scrollHeight", "get")
+      .mockReturnValue(window.innerHeight + 500);
+
+    const menu = renderHook(() => useBodyScrollLock(true));
+    const palette = renderHook(() => useBodyScrollLock(true));
+
+    menu.unmount();
+    window.dispatchEvent(new Event("resize"));
+
+    expect(document.body.style.top).toBe("-500px");
+
+    palette.unmount();
+    scrollHeight.mockRestore();
+    scrollTo.mockRestore();
+    window.scrollY = 0;
+  });
+
+  it("lifts the held offset again once the document has room for it", () => {
+    window.scrollY = 2000;
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    const scrollHeight = vi
+      .spyOn(document.body, "scrollHeight", "get")
+      .mockReturnValue(window.innerHeight + 500);
+
+    const { unmount } = renderHook(() => useBodyScrollLock(true));
+    window.dispatchEvent(new Event("resize"));
+    expect(document.body.style.top).toBe("-500px");
+
+    scrollHeight.mockReturnValue(window.innerHeight + 3000);
+    window.dispatchEvent(new Event("resize"));
+
+    expect(document.body.style.top).toBe("-2000px");
+
+    unmount();
+    expect(scrollTo).toHaveBeenCalledWith(0, 2000);
+    scrollHeight.mockRestore();
+    scrollTo.mockRestore();
+    window.scrollY = 0;
+  });
+
   it("restores whatever the page had set before the first lock", () => {
-    document.body.style.overflow = "scroll";
+    document.documentElement.style.overflow = "scroll";
+    document.body.style.position = "relative";
 
     const { unmount } = renderHook(() => useBodyScrollLock(true));
     unmount();
 
-    expect(document.body.style.overflow).toBe("scroll");
+    expect(document.documentElement.style.overflow).toBe("scroll");
+    expect(document.body.style.position).toBe("relative");
   });
 });

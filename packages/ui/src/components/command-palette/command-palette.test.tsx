@@ -313,7 +313,7 @@ describe("CommandPalette body scroll", () => {
       />,
     );
     expect(document.body.style.position).toBe("fixed");
-    expect(document.body.style.overflow).toBe("hidden");
+    expect(document.documentElement.style.overflow).toBe("hidden");
 
     rerender(
       <CommandPalette

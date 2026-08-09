@@ -79,6 +79,13 @@ const SWIPER_CREATIVE_EFFECT: CreativeEffectOptions = {
   },
 };
 
+/**
+ * How long a held clip may take to start before the carousel moves on. A clip
+ * whose request never resolves fires neither `ended` nor `error`, and holding
+ * for it forever leaves the visitor on an empty frame.
+ */
+export const VIDEO_START_TIMEOUT_MS = 8000;
+
 interface SlideshowVideoSlideProps {
   videoUrl: string;
   videoPoster?: string;
@@ -86,6 +93,7 @@ interface SlideshowVideoSlideProps {
   holdUntilEnded: boolean;
   isActive: boolean;
   onFinished: () => void;
+  onUnplayable: (videoUrl: string) => void;
 }
 
 function SlideshowVideoSlide({
@@ -95,6 +103,7 @@ function SlideshowVideoSlide({
   holdUntilEnded,
   isActive,
   onFinished,
+  onUnplayable,
 }: SlideshowVideoSlideProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -110,25 +119,40 @@ function SlideshowVideoSlide({
     }
 
     let isDone = false;
+    let startTimer: ReturnType<typeof setTimeout>;
     const finish = () => {
       if (isDone) {
         return;
       }
       isDone = true;
+      clearTimeout(startTimer);
       onFinished();
     };
+    const giveUp = () => {
+      if (isDone) {
+        return;
+      }
+      onUnplayable(videoUrl);
+      finish();
+    };
+    const cancelTimeout = () => clearTimeout(startTimer);
+
+    startTimer = setTimeout(giveUp, VIDEO_START_TIMEOUT_MS);
 
     video.addEventListener("ended", finish);
-    video.addEventListener("error", finish);
+    video.addEventListener("error", giveUp);
+    video.addEventListener("playing", cancelTimeout);
     video.currentTime = 0;
-    video.play?.()?.catch(finish);
+    video.play?.()?.catch(giveUp);
 
     return () => {
       isDone = true;
+      clearTimeout(startTimer);
       video.removeEventListener("ended", finish);
-      video.removeEventListener("error", finish);
+      video.removeEventListener("error", giveUp);
+      video.removeEventListener("playing", cancelTimeout);
     };
-  }, [holdUntilEnded, isActive, onFinished]);
+  }, [holdUntilEnded, isActive, onFinished, onUnplayable, videoUrl]);
 
   return (
     <Video
@@ -221,6 +245,9 @@ export function Slideshow({
   const rootRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isNearViewport, setIsNearViewport] = useState(false);
+  // Keyed by source rather than by position: the Visual Editor reorders and
+  // deletes slides, and an index remembered across that names a different one.
+  const [unplayableVideos, setUnplayableVideos] = useState<ReadonlySet<string>>(() => new Set());
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
@@ -257,7 +284,8 @@ export function Slideshow({
 
   const autoplayEnabled = images.length > 1 && !prefersReducedMotion;
   const holdForVideo = waitForVideo && autoplayEnabled;
-  const isVideoSlideActive = Boolean(images[activeIndex]?.videoUrl);
+  const activeVideoUrl = images[activeIndex]?.videoUrl;
+  const isVideoSlideActive = Boolean(activeVideoUrl) && !unplayableVideos.has(activeVideoUrl ?? "");
 
   const syncAutoplay = useCallback(
     (swiper: SwiperType | null, isVideoSlide: boolean) => {
@@ -289,6 +317,29 @@ export function Slideshow({
   const handleVideoFinished = useCallback(() => {
     swiperRef.current?.slideNext();
   }, []);
+
+  const handleVideoUnplayable = useCallback((videoUrl: string) => {
+    setUnplayableVideos((current) => {
+      if (current.has(videoUrl)) {
+        return current;
+      }
+      const next = new Set(current);
+      next.add(videoUrl);
+      return next;
+    });
+  }, []);
+
+  // A clip that already failed once is not worth a second wait, and its slide
+  // renders as an empty frame, so pass straight over it on the next lap.
+  const hasPlayableSlide = images.some(
+    (image) => !image.videoUrl || !unplayableVideos.has(image.videoUrl),
+  );
+  useEffect(() => {
+    if (!hasPlayableSlide || !activeVideoUrl || !unplayableVideos.has(activeVideoUrl)) {
+      return;
+    }
+    swiperRef.current?.slideNext();
+  }, [activeVideoUrl, hasPlayableSlide, unplayableVideos]);
 
   const modules = useMemo(() => {
     const effectModule = EFFECT_MODULES[effect];
@@ -333,9 +384,10 @@ export function Slideshow({
                       videoUrl={image.videoUrl}
                       videoPoster={image.videoPoster}
                       aspectRatio={aspectRatio}
-                      holdUntilEnded={holdForVideo}
+                      holdUntilEnded={holdForVideo && !unplayableVideos.has(image.videoUrl)}
                       isActive={activeIndex === index}
                       onFinished={handleVideoFinished}
+                      onUnplayable={handleVideoUnplayable}
                     />
                     {image.copyright && (
                       <CopyrightLabel

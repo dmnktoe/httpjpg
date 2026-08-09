@@ -72,7 +72,7 @@ describe("Header", () => {
     render(<Header nav={NAV} />);
 
     expect(screen.getByLabelText("Open menu")).toBeInTheDocument();
-    expect(document.body.style.overflow).toBe("");
+    expect(document.documentElement.style.overflow).toBe("");
   });
 
   it("opens the mobile menu and pins the body so iOS cannot pan the page", () => {
@@ -82,7 +82,7 @@ describe("Header", () => {
     openMenu();
 
     expect(screen.getByLabelText("Close menu")).toBeInTheDocument();
-    expect(document.body.style.overflow).toBe("hidden");
+    expect(document.documentElement.style.overflow).toBe("hidden");
     expect(document.body.style.position).toBe("fixed");
     expect(document.body.style.top).toBe("-240px");
   });
@@ -95,7 +95,7 @@ describe("Header", () => {
     fireEvent.click(screen.getByLabelText("Close menu"));
 
     expect(screen.getByLabelText("Open menu")).toBeInTheDocument();
-    expect(document.body.style.overflow).toBe("");
+    expect(document.documentElement.style.overflow).toBe("");
     expect(document.body.style.position).toBe("");
     expect(document.body.style.top).toBe("");
     expect(scrollTo).toHaveBeenCalledWith(0, 240);
@@ -152,7 +152,7 @@ describe("Header", () => {
 
     unmount();
 
-    expect(document.body.style.overflow).toBe("");
+    expect(document.documentElement.style.overflow).toBe("");
     expect(document.body.style.position).toBe("");
   });
 

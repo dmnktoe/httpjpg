@@ -79,6 +79,15 @@ describe("parseSseStream", () => {
     expect(deltas).toEqual([]);
   });
 
+  it("splits events delimited by CRLF as well as LF", async () => {
+    const crlf = (content: string) =>
+      `data: ${JSON.stringify({ choices: [{ delta: { content } }] })}\r\n\r\n`;
+
+    const deltas = await collect(toStream([crlf("one"), crlf("two"), "data: [DONE]\r\n\r\n"]));
+
+    expect(deltas).toEqual(["one", "two"]);
+  });
+
   it("returns nothing for an empty stream", async () => {
     const deltas = await collect(toStream([]));
 

@@ -47,10 +47,8 @@ export function CommandPaletteSuggestions({
           key={suggestion}
           as="button"
           type="button"
-          onMouseDown={(event: MouseEvent) => {
-            event.preventDefault();
-            onSelect(suggestion);
-          }}
+          onMouseDown={(event: MouseEvent) => event.preventDefault()}
+          onClick={() => onSelect(suggestion)}
           css={{
             px: "2",
             py: "0.5",

@@ -1,7 +1,7 @@
 /** Groq-hosted chat models this repo calls. */
 export const GROQ_MODELS = {
-  instant: "llama-3.1-8b-instant",
-  versatile: "llama-3.3-70b-versatile",
+  instant: "openai/gpt-oss-20b",
+  versatile: "openai/gpt-oss-120b",
 } as const;
 
 export type GroqModel = (typeof GROQ_MODELS)[keyof typeof GROQ_MODELS];

@@ -22,6 +22,11 @@ interface IndexableStory {
   } & Record<string, unknown>;
 }
 
+const PER_PAGE = 100;
+
+/** Backstop against a paging bug walking the CDN forever. */
+const MAX_PAGES = 20;
+
 /** Configuration stories, not readable pages. */
 const EXCLUDED_SLUGS = new Set<string>([STORYBLOK_SLUGS.CONFIG]);
 
@@ -54,12 +59,27 @@ function toSearchDocument(story: IndexableStory): SearchDocument {
 export async function getSearchIndex(): Promise<SearchDocument[]> {
   const buildIndex = async (): Promise<SearchDocument[]> => {
     try {
-      const response = await getStoryblokApi({ draftMode: false }).getStories({
-        per_page: 100,
-        version: "published",
-      });
+      const api = getStoryblokApi({ draftMode: false });
+      const stories: IndexableStory[] = [];
 
-      return ((response.stories ?? []) as IndexableStory[])
+      // Paginated rather than capped at one page: a silent truncation would
+      // simply drop later work out of search with nothing to show for it.
+      for (let page = 1; page <= MAX_PAGES; page += 1) {
+        const response = await api.getStories({
+          per_page: PER_PAGE,
+          page,
+          version: "published",
+        });
+        stories.push(...((response.stories ?? []) as IndexableStory[]));
+
+        const perPage = response.perPage || PER_PAGE;
+        const total = response.total ?? stories.length;
+        if (stories.length >= total || page * perPage >= total) {
+          break;
+        }
+      }
+
+      return stories
         .filter((story) => !EXCLUDED_SLUGS.has(story.full_slug || story.slug))
         .map(toSearchDocument)
         .filter((document) => Boolean(document.title));

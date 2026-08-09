@@ -298,10 +298,10 @@ function CommandPaletteFooter({
       {canAsk && (
         <Button
           size="sm"
-          onMouseDown={(event: MouseEvent) => {
-            event.preventDefault();
-            onAsk(query.trim());
-          }}
+          // mousedown only guards the input's focus; Enter and Space dispatch
+          // click, so the action itself has to hang off onClick.
+          onMouseDown={(event: MouseEvent) => event.preventDefault()}
+          onClick={() => onAsk(query.trim())}
           css={{ flexShrink: 0, fontFamily: "mono" }}
         >
           ask ⌘↵

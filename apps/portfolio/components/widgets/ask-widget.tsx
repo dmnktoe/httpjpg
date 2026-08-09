@@ -109,11 +109,16 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
           throw new Error(`Search failed with ${response.status}`);
         }
         const data = (await response.json()) as SearchResponse;
+        // A superseded search must not write its results, and must not report
+        // "idle" over a stream that started after it did.
+        if (controller.signal.aborted || searchAbort.current !== controller) {
+          return;
+        }
         setResults(data.results ?? []);
         setSuggestions(data.suggestions ?? []);
         setStatus("idle");
       } catch (error) {
-        if (controller.signal.aborted) {
+        if (controller.signal.aborted || searchAbort.current !== controller) {
           return;
         }
         console.error("Search request failed:", error);
@@ -142,6 +147,10 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
   );
 
   const handleAsk = useCallback(async (question: string) => {
+    // Cmd+Enter can fire while a debounced search is still in flight, and its
+    // late "idle" would make a streaming answer look finished.
+    searchAbort.current?.abort();
+
     const controller = new AbortController();
     askAbort.current?.abort();
     askAbort.current = controller;

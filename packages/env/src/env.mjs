@@ -48,9 +48,7 @@ export const env = createEnv({
     TWEETAPI_KEY: z.string().optional(),
 
     GROQ_API_KEY: z.string().optional(),
-    GROQ_MODEL: z
-      .enum(["llama-3.1-8b-instant", "llama-3.3-70b-versatile"])
-      .default("llama-3.1-8b-instant"),
+    GROQ_MODEL: z.enum(["openai/gpt-oss-20b", "openai/gpt-oss-120b"]).default("openai/gpt-oss-20b"),
 
     ARCJET_KEY: z.string().optional(),
 

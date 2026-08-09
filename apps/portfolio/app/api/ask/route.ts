@@ -15,6 +15,9 @@ interface AskBody {
   question?: unknown;
 }
 
+const NO_MATCH_ANSWER =
+  "I could not find anything about that on this site. Try a different wording, or browse the work list.";
+
 /** Slim source shape the widget renders as citation links. */
 interface AskSource {
   title: string;
@@ -63,6 +66,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "retrieval_failed" }, { status: 500 });
   }
 
+  // With nothing retrieved the model can only say it does not know, so say it
+  // here instead: no request, no bill, no room to invent a source.
+  if (sources.length === 0) {
+    return ndjson([
+      { type: "sources", sources },
+      { type: "delta", text: NO_MATCH_ANSWER },
+    ]);
+  }
+
   const client = createGroqClient({ apiKey: env.GROQ_API_KEY, model: env.GROQ_MODEL });
   const encoder = new TextEncoder();
 
@@ -96,7 +108,18 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  return new Response(stream, {
+  return ndjsonResponse(stream);
+}
+
+/** Sends a fixed set of NDJSON events, for answers that need no model call. */
+function ndjson(events: unknown[]): Response {
+  const encoder = new TextEncoder();
+  const body = events.map((event) => `${JSON.stringify(event)}\n`).join("");
+  return ndjsonResponse(encoder.encode(body));
+}
+
+function ndjsonResponse(body: BodyInit): Response {
+  return new Response(body, {
     headers: {
       "Content-Type": "application/x-ndjson; charset=utf-8",
       "Cache-Control": "no-store",

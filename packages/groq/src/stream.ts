@@ -25,10 +25,10 @@ export async function* parseSseStream(
       }
       buffer += decoder.decode(value, { stream: true });
 
-      let boundary = buffer.indexOf("\n\n");
-      while (boundary !== -1) {
-        const event = buffer.slice(0, boundary);
-        buffer = buffer.slice(boundary + 2);
+      let boundary = findBoundary(buffer);
+      while (boundary) {
+        const event = buffer.slice(0, boundary.index);
+        buffer = buffer.slice(boundary.index + boundary.length);
 
         const content = readEvent(event);
         if (content === SSE_DONE) {
@@ -38,7 +38,7 @@ export async function* parseSseStream(
           yield content;
         }
 
-        boundary = buffer.indexOf("\n\n");
+        boundary = findBoundary(buffer);
       }
     }
 
@@ -51,10 +51,20 @@ export async function* parseSseStream(
   }
 }
 
+/** SSE separates events with a blank line, which may be LF or CRLF. */
+function findBoundary(buffer: string): { index: number; length: number } | null {
+  const lf = buffer.indexOf("\n\n");
+  const crlf = buffer.indexOf("\r\n\r\n");
+  if (crlf !== -1 && (lf === -1 || crlf < lf)) {
+    return { index: crlf, length: 4 };
+  }
+  return lf === -1 ? null : { index: lf, length: 2 };
+}
+
 /** Content delta of one event, the `[DONE]` sentinel, or "" for anything else. */
 function readEvent(event: string): string {
   const payload = event
-    .split("\n")
+    .split(/\r?\n/)
     .filter((line) => line.startsWith("data:"))
     .map((line) => line.slice(5).trim())
     .join("");

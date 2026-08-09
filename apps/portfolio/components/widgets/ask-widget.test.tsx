@@ -203,7 +203,7 @@ describe("AskWidget", () => {
     await type("what is this?");
     await waitFor(() => expect(screen.getByRole("button", { name: /ask/i })).toBeInTheDocument());
 
-    fireEvent.mouseDown(screen.getByRole("button", { name: /ask/i }));
+    fireEvent.click(screen.getByRole("button", { name: /ask/i }));
 
     await waitFor(() => expect(screen.getByText("It is a portfolio.")).toBeInTheDocument());
     expect(screen.getByRole("link", { name: /Brutalist Portfolio/ })).toBeInTheDocument();
@@ -216,7 +216,7 @@ describe("AskWidget", () => {
     await type("what is this?");
     await waitFor(() => expect(screen.getByRole("button", { name: /ask/i })).toBeInTheDocument());
 
-    fireEvent.mouseDown(screen.getByRole("button", { name: /ask/i }));
+    fireEvent.click(screen.getByRole("button", { name: /ask/i }));
 
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/busy/i));
   });
@@ -228,7 +228,7 @@ describe("AskWidget", () => {
     await type("what is this?");
     await waitFor(() => expect(screen.getByRole("button", { name: /ask/i })).toBeInTheDocument());
 
-    fireEvent.mouseDown(screen.getByRole("button", { name: /ask/i }));
+    fireEvent.click(screen.getByRole("button", { name: /ask/i }));
 
     await waitFor(() =>
       expect(screen.getByRole("alert")).toHaveTextContent(/not available on this deployment/i),
@@ -242,7 +242,7 @@ describe("AskWidget", () => {
     await type("what is this?");
     await waitFor(() => expect(screen.getByRole("button", { name: /ask/i })).toBeInTheDocument());
 
-    fireEvent.mouseDown(screen.getByRole("button", { name: /ask/i }));
+    fireEvent.click(screen.getByRole("button", { name: /ask/i }));
 
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/answer failed/i));
   });
@@ -253,7 +253,7 @@ describe("AskWidget", () => {
     openPalette();
     await type("what is this?");
     await waitFor(() => expect(screen.getByRole("button", { name: /ask/i })).toBeInTheDocument());
-    fireEvent.mouseDown(screen.getByRole("button", { name: /ask/i }));
+    fireEvent.click(screen.getByRole("button", { name: /ask/i }));
     await waitFor(() => expect(screen.getByText("old answer")).toBeInTheDocument());
 
     await type("something else");

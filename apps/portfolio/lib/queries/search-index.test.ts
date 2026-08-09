@@ -27,7 +27,7 @@ import { getSearchIndex } from "./search-index";
 const mockGetStoryblokApi = vi.mocked(getStoryblokApi);
 
 function mockStories(stories: unknown[]) {
-  const getStories = vi.fn().mockResolvedValue({ stories });
+  const getStories = vi.fn().mockResolvedValue({ stories, total: stories.length, perPage: 100 });
   mockGetStoryblokApi.mockReturnValue({ getStories } as never);
   return getStories;
 }
@@ -56,7 +56,7 @@ describe("getSearchIndex", () => {
     await getSearchIndex();
 
     expect(mockGetStoryblokApi).toHaveBeenCalledWith({ draftMode: false });
-    expect(getStories).toHaveBeenCalledWith({ per_page: 100, version: "published" });
+    expect(getStories).toHaveBeenCalledWith({ per_page: 100, page: 1, version: "published" });
   });
 
   it("maps a work story to a search document", async () => {
@@ -144,7 +144,42 @@ describe("getSearchIndex", () => {
     expect((await getSearchIndex())[0]?.title).toBe("Fallback Name");
   });
 
-  it("returns an empty index and reports to Sentry when Storyblok fails", async () => {
+  it("walks every page of a multi-page space", async () => {
+    const page1 = Array.from({ length: 100 }, (_item, index) =>
+      story({ uuid: `a${index}`, full_slug: `work/a${index}` }),
+    );
+    const page2 = [story({ uuid: "b1", full_slug: "work/b1" })];
+    const getStories = vi
+      .fn()
+      .mockResolvedValueOnce({ stories: page1, total: 101, perPage: 100 })
+      .mockResolvedValueOnce({ stories: page2, total: 101, perPage: 100 });
+    mockGetStoryblokApi.mockReturnValue({ getStories } as never);
+
+    const documents = await getSearchIndex();
+
+    expect(getStories).toHaveBeenCalledTimes(2);
+    expect(getStories).toHaveBeenLastCalledWith({ per_page: 100, page: 2, version: "published" });
+    expect(documents).toHaveLength(101);
+  });
+
+  it("stops after a single page when the space fits in one", async () => {
+    const getStories = mockStories([story()]);
+
+    await getSearchIndex();
+
+    expect(getStories).toHaveBeenCalledTimes(1);
+  });
+
+  // getStories swallows its own fetch errors and returns an empty page, so an
+  // outage reaches us as an empty index rather than a rejection.
+  it("yields an empty index when Storyblok returns nothing", async () => {
+    const getStories = vi.fn().mockResolvedValue({ stories: [], total: 0, perPage: 100 });
+    mockGetStoryblokApi.mockReturnValue({ getStories } as never);
+
+    await expect(getSearchIndex()).resolves.toEqual([]);
+  });
+
+  it("reports an unexpected failure to Sentry", async () => {
     const getStories = vi.fn().mockRejectedValue(new Error("storyblok down"));
     mockGetStoryblokApi.mockReturnValue({ getStories } as never);
 

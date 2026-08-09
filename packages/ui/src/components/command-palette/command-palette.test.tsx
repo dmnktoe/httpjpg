@@ -276,7 +276,7 @@ describe("CommandPalette", () => {
   it("asks when the footer button is pressed", () => {
     const props = setup();
 
-    fireEvent.mouseDown(screen.getByRole("button", { name: /ask/i }));
+    fireEvent.click(screen.getByRole("button", { name: /ask/i }));
 
     expect(props.onAsk).toHaveBeenCalledWith("poster");
   });
@@ -348,7 +348,7 @@ describe("CommandPalette suggestions", () => {
   it("applies a suggestion as the new query", () => {
     const props = setup({ suggestions: ["Poster Series"] });
 
-    fireEvent.mouseDown(screen.getByRole("button", { name: "Poster Series" }));
+    fireEvent.click(screen.getByRole("button", { name: "Poster Series" }));
 
     expect(props.onQueryChange).toHaveBeenCalledWith("Poster Series");
   });

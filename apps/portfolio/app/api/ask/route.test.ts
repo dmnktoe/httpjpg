@@ -3,7 +3,7 @@
 import { beforeEach, vi } from "vitest";
 
 const { envObj, mockStream } = vi.hoisted(() => ({
-  envObj: { GROQ_API_KEY: "test-key" as string | undefined, GROQ_MODEL: "llama-3.1-8b-instant" },
+  envObj: { GROQ_API_KEY: "test-key" as string | undefined, GROQ_MODEL: "openai/gpt-oss-20b" },
   mockStream: vi.fn(),
 }));
 
@@ -115,20 +115,23 @@ describe("POST /api/ask", () => {
   });
 
   it("passes the configured model to the client", async () => {
-    await POST(post({ question: "hi there" }));
+    await POST(post({ question: "brutalist portfolio" }));
 
     expect(mockCreateGroqClient).toHaveBeenCalledWith({
       apiKey: "test-key",
-      model: "llama-3.1-8b-instant",
+      model: "openai/gpt-oss-20b",
     });
   });
 
-  it("still answers when nothing in the index matches", async () => {
+  it("answers a zero-match question itself, without calling the model", async () => {
     mockGetSearchIndex.mockResolvedValue([]);
 
     const lines = await readLines(await POST(post({ question: "kubernetes?" })));
 
     expect(lines[0]).toEqual({ type: "sources", sources: [] });
+    expect(lines[1]).toMatchObject({ type: "delta" });
+    expect(String(lines[1]?.text)).toMatch(/could not find anything/i);
+    expect(mockStream).not.toHaveBeenCalled();
   });
 
   it("returns 503 when no API key is configured", async () => {
@@ -188,7 +191,7 @@ describe("POST /api/ask", () => {
       throw new GroqApiError(429, "rate limited");
     });
 
-    const lines = await readLines(await POST(post({ question: "hello there" })));
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio" })));
 
     expect(lines.at(-1)).toEqual({ type: "error", error: "ai_busy" });
     expect(captureServerException).toHaveBeenCalledWith(expect.any(Error), {
@@ -203,7 +206,7 @@ describe("POST /api/ask", () => {
       throw new GroqApiError(400, "bad request");
     });
 
-    const lines = await readLines(await POST(post({ question: "hello there" })));
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio" })));
 
     expect(lines.at(-1)).toEqual({ type: "error", error: "ai_failed" });
   });
@@ -217,7 +220,7 @@ describe("POST /api/ask", () => {
     });
 
     const lines = await readLines(
-      await POST(post({ question: "hello there" }, { signal: controller.signal })),
+      await POST(post({ question: "brutalist portfolio" }, { signal: controller.signal })),
     );
 
     expect(lines.at(-1)).toEqual({ type: "delta", text: "partial" });

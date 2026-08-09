@@ -22,7 +22,7 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
           letterSpacing: "tighter",
           textAlign: { base: "left", md: "justify" },
           textWrap: "balance",
-          mt: "-0.60em",
+          mt: "-0.78em",
           ...(variant === "compact"
             ? { fontSize: "clamp(1.75rem, 8cqi, 5rem)" }
             : variant === "featured"
@@ -30,8 +30,7 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
               : {
                   fontSize: {
                     base: "clamp(1.5rem, 7cqi, 3rem)",
-                    md: "clamp(1.75rem, 14cqi, 5rem)",
-                    lg: "clamp(1.75rem, 17cqi, 5rem)",
+                    md: "clamp(1.75rem, 14cqi, 4rem)",
                   },
                 }),
         }}

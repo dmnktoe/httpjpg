@@ -34,7 +34,7 @@ export interface ImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "c
   blurDataURL?: string;
   /** Set `"high"` on the LCP image. */
   fetchPriority?: "auto" | "high" | "low";
-  /** `srcSet`/`sizes` are gated on `isInView` so the blur placeholder wins the first paint. */
+  /** Only gated on `isInView` when a `blurDataURL` placeholder has to win the first paint. */
   srcSet?: string;
   sizes?: string;
   css?: SystemStyleObject;
@@ -62,15 +62,19 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
     },
     ref,
   ) => {
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [isInView, setIsInView] = useState(!blurOnLoad);
+    // Holding `srcSet` back until the element scrolls in only buys something when
+    // there is a `blurDataURL` to paint meanwhile. Without one it just makes the
+    // browser fetch the (largest) `src` candidate first and the right-sized one
+    // second — two downloads, the slow one blocking.
+    const usesPlaceholder = blurOnLoad && Boolean(blurDataURL);
+    const [isInView, setIsInView] = useState(!usesPlaceholder);
     const [highResLoaded, setHighResLoaded] = useState(false);
     const imgRef = useRef<HTMLImageElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const currentSrcRef = useRef<string>("");
 
     useEffect(() => {
-      if (!blurOnLoad) {
+      if (!usesPlaceholder) {
         return;
       }
       const container = containerRef.current;
@@ -90,28 +94,27 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       );
       observer.observe(container);
       return () => observer.disconnect();
-    }, [blurOnLoad]);
+    }, [usesPlaceholder]);
 
+    /** Catches loads that finished before React attached `onLoad` (hydration, bfcache, memory cache). */
     useEffect(() => {
       if (!isInView) {
         return;
       }
       const img = imgRef.current;
-      if (img?.complete && img.naturalHeight !== 0 && img.src === src) {
-        setIsLoaded(true);
+      if (img?.complete && img.naturalHeight !== 0) {
         setHighResLoaded(true);
       }
-    }, [isInView, src]);
+    }, [isInView, src, srcSet]);
 
     if (!src) {
       return null;
     }
 
     const handleLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-      if (blurOnLoad && currentSrcRef.current === src) {
+      if (currentSrcRef.current === src) {
         setHighResLoaded(true);
       }
-      setIsLoaded(true);
       onLoad?.(e);
     };
 
@@ -195,13 +198,10 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
             style={{
               objectFit,
               ...style,
-              opacity: blurOnLoad && !highResLoaded ? 0 : isLoaded ? 1 : 1,
+              opacity: blurOnLoad && !highResLoaded ? 0 : 1,
             }}
             onLoad={handleLoad}
-            onError={() => {
-              setIsLoaded(true);
-              setHighResLoaded(true);
-            }}
+            onError={() => setHighResLoaded(true)}
             {...props}
           />
 

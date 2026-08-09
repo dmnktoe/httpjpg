@@ -114,6 +114,44 @@ describe("Image", () => {
     expect(screen.getByAltText("no-srcset")).not.toHaveAttribute("sizes");
   });
 
+  it("emits srcSet without waiting for an intersection when there is no blur placeholder", () => {
+    const observers = stubIntersectionObserver();
+    render(
+      <Image
+        src="/photo.jpg"
+        alt="skeleton"
+        srcSet="/photo-400.jpg 400w"
+        sizes="100vw"
+        blurOnLoad
+      />,
+    );
+    const image = screen.getByAltText("skeleton");
+
+    // Withholding srcSet here would make the browser fetch the largest `src`
+    // candidate first and the right-sized one second.
+    expect(image).toHaveAttribute("srcset", "/photo-400.jpg 400w");
+    expect(image).toHaveAttribute("sizes", "100vw");
+    expect(observers).toHaveLength(0);
+  });
+
+  it("reveals a cached image without an intersection when there is no blur placeholder", () => {
+    const complete = vi
+      .spyOn(window.HTMLImageElement.prototype, "complete", "get")
+      .mockReturnValue(true);
+    const naturalHeight = vi
+      .spyOn(window.HTMLImageElement.prototype, "naturalHeight", "get")
+      .mockReturnValue(100);
+
+    render(<Image src="/photo.jpg" alt="hydrated" blurOnLoad />);
+
+    // The load event fired before React could attach `onLoad`; without the
+    // `complete` fallback the image would stay at opacity 0 forever.
+    expect(screen.getByAltText("hydrated")).toHaveStyle({ opacity: "1" });
+
+    complete.mockRestore();
+    naturalHeight.mockRestore();
+  });
+
   it("calls the caller's onLoad handler", () => {
     const onLoad = vi.fn();
     render(<Image src="/photo.jpg" alt="loaded" onLoad={onLoad} />);

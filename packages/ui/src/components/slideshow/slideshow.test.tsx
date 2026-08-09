@@ -18,6 +18,36 @@ let playedSources: string[];
 let pausedSources: string[];
 let isPlaybackRefused: boolean;
 
+interface ObserverStub {
+  callback: IntersectionObserverCallback;
+  disconnect: ReturnType<typeof vi.fn>;
+}
+
+// Captures the observer instances created during a render so tests can drive
+// the in-view transition by hand.
+function stubIntersectionObserver(): ObserverStub[] {
+  const instances: ObserverStub[] = [];
+
+  class Stub {
+    callback: IntersectionObserverCallback;
+    observe = vi.fn();
+    unobserve = vi.fn();
+    disconnect = vi.fn();
+    takeRecords = () => [];
+    root = null;
+    rootMargin = "";
+    thresholds: ReadonlyArray<number> = [];
+
+    constructor(callback: IntersectionObserverCallback) {
+      this.callback = callback;
+      instances.push(this);
+    }
+  }
+
+  vi.stubGlobal("IntersectionObserver", Stub);
+  return instances;
+}
+
 function renderSlideshow(
   images: SlideshowImage[],
   props?: Partial<Parameters<typeof Slideshow>[0]>,
@@ -71,6 +101,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
 
 describe("Slideshow autoplay", () => {
@@ -276,5 +307,74 @@ describe("Slideshow waitForVideo opt-outs", () => {
 
     expect(playedSources).toHaveLength(0);
     expect(pausedSources).toHaveLength(0);
+  });
+});
+
+describe("Slideshow preloading", () => {
+  function photos(count: number): SlideshowImage[] {
+    return Array.from({ length: count }, (_, i) => ({
+      url: `https://a.storyblok.com/f/1/photo-${i}.jpg`,
+      alt: `Photo ${i}`,
+    }));
+  }
+
+  function loadingFor(container: HTMLElement, alt: string): string | null {
+    return container.querySelector(`img[alt="${alt}"]`)?.getAttribute("loading") ?? null;
+  }
+
+  function enterViewport(observers: ObserverStub[]) {
+    act(() => {
+      for (const observer of observers) {
+        observer.callback(
+          [{ isIntersecting: true } as IntersectionObserverEntry],
+          observer as unknown as IntersectionObserver,
+        );
+      }
+    });
+  }
+
+  it("keeps every slide lazy while the slideshow is out of view", () => {
+    stubIntersectionObserver();
+    const { container } = renderSlideshow(photos(5), { autoplayDelay: NO_AUTOPLAY });
+
+    expect(loadingFor(container, "Photo 1")).toBe("lazy");
+    expect(loadingFor(container, "Photo 4")).toBe("lazy");
+  });
+
+  it("keeps the priority slide eager even out of view", () => {
+    stubIntersectionObserver();
+    const { container } = renderSlideshow(photos(5), {
+      autoplayDelay: NO_AUTOPLAY,
+      priority: true,
+    });
+
+    expect(loadingFor(container, "Photo 0")).toBe("eager");
+  });
+
+  it("preloads the slides on either side of the active one once in view", () => {
+    const observers = stubIntersectionObserver();
+    const { container } = renderSlideshow(photos(5), { autoplayDelay: NO_AUTOPLAY });
+
+    enterViewport(observers);
+
+    expect(loadingFor(container, "Photo 0")).toBe("eager");
+    expect(loadingFor(container, "Photo 1")).toBe("eager");
+    // The loop makes the last slide the one "before" the first.
+    expect(loadingFor(container, "Photo 4")).toBe("eager");
+    expect(loadingFor(container, "Photo 2")).toBe("lazy");
+    expect(loadingFor(container, "Photo 3")).toBe("lazy");
+  });
+
+  it("moves the preload window along as the user clicks through", async () => {
+    const observers = stubIntersectionObserver();
+    const { container, getByLabelText } = renderSlideshow(photos(5), {
+      autoplayDelay: NO_AUTOPLAY,
+    });
+
+    enterViewport(observers);
+    fireEvent.click(getByLabelText("Next slide"));
+    await expectSlide(container, "02");
+
+    expect(loadingFor(container, "Photo 2")).toBe("eager");
   });
 });

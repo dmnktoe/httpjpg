@@ -25,9 +25,6 @@ export function WebVitalsBadge() {
   });
 
   const measured = SHOWN_VITALS.filter((name) => vitals[name] !== undefined);
-  if (measured.length === 0) {
-    return null;
-  }
 
   return (
     <Box
@@ -45,10 +42,25 @@ export function WebVitalsBadge() {
       <Box as="span" css={{ opacity: 60 }}>
         vitals:
       </Box>
+      {measured.length === 0 && (
+        <Box as="span" css={{ opacity: 50 }}>
+          loading ...
+        </Box>
+      )}
       {measured.map((name, index) => {
         const value = vitals[name] as number;
         return (
-          <Box key={name} as="span" css={{ display: "inline-flex", alignItems: "center", gap: 1 }}>
+          <Box
+            key={name}
+            as="span"
+            css={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 1,
+              animation: "fadeInUp 150ms ease-out",
+              _motionReduce: { animation: "none" },
+            }}
+          >
             {index > 0 && (
               <Box as="span" css={{ mr: 1, opacity: 40 }}>
                 ·

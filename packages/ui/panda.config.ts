@@ -193,6 +193,10 @@ export default defineConfig({
           "0%, 100%": { opacity: "0.2" },
           "50%": { opacity: "0.55" },
         },
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(2px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       tokens: {
         colors: toPandaTokens(colors),

@@ -27,18 +27,20 @@ describe("WebVitalsBadge", () => {
     cleanup();
   });
 
-  it("renders nothing before the first metric arrives", () => {
-    const { container } = render(<WebVitalsBadge />);
+  it("holds the row with a loading label before the first metric arrives", () => {
+    render(<WebVitalsBadge />);
 
-    expect(container).toBeEmptyDOMElement();
+    expect(screen.getByText("vitals:")).toBeInTheDocument();
+    expect(screen.getByText("loading ...")).toBeInTheDocument();
   });
 
-  it("shows a metric once it is reported", () => {
+  it("swaps the loading label for the metric once it is reported", () => {
     render(<WebVitalsBadge />);
 
     report({ name: "LCP", value: 340 });
 
     expect(screen.getByText("vitals:")).toBeInTheDocument();
+    expect(screen.queryByText("loading ...")).not.toBeInTheDocument();
     expect(screen.getByText("LCP")).toBeInTheDocument();
     expect(screen.getByText("340ms")).toBeInTheDocument();
   });
@@ -63,11 +65,11 @@ describe("WebVitalsBadge", () => {
   });
 
   it("ignores metric names that are not core vitals", () => {
-    const { container } = render(<WebVitalsBadge />);
+    render(<WebVitalsBadge />);
 
     report({ name: "CUSTOM_METRIC", value: 999 });
 
-    expect(container).toBeEmptyDOMElement();
+    expect(screen.getByText("loading ...")).toBeInTheDocument();
   });
 
   it("replaces an earlier value when the metric is reported again", () => {

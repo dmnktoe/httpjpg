@@ -16,6 +16,7 @@ interface IconCandidate {
 }
 
 const FAVICON_TIMEOUT_MS = 5000;
+const FAVICON_BUDGET_MS = 8000;
 const MAX_HTML_BYTES = 256 * 1024;
 const MAX_ICON_BYTES = 512 * 1024;
 const MAX_REDIRECTS = 3;
@@ -117,11 +118,12 @@ async function isPublicHost(hostname: string): Promise<boolean> {
   }
 }
 
-async function safeFetch(target: URL, accept: string): Promise<Response | null> {
+async function safeFetch(target: URL, accept: string, deadline: number): Promise<Response | null> {
   let url = target;
 
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
-    if (!(await isPublicHost(url.hostname))) {
+    const remaining = Math.min(deadline - Date.now(), FAVICON_TIMEOUT_MS);
+    if (remaining <= 0 || !(await isPublicHost(url.hostname))) {
       return null;
     }
 
@@ -130,7 +132,7 @@ async function safeFetch(target: URL, accept: string): Promise<Response | null> 
       response = await fetch(url, {
         redirect: "manual",
         cache: "no-store",
-        signal: AbortSignal.timeout(FAVICON_TIMEOUT_MS),
+        signal: AbortSignal.timeout(remaining),
         headers: { Accept: accept, "User-Agent": USER_AGENT },
       });
     } catch {
@@ -287,7 +289,7 @@ function decodeDataUrl(href: string): FaviconAsset | null {
   }
 }
 
-async function fetchIcon(iconUrl: string): Promise<FaviconAsset | null> {
+async function fetchIcon(iconUrl: string, deadline: number): Promise<FaviconAsset | null> {
   if (iconUrl.startsWith("data:")) {
     return decodeDataUrl(iconUrl);
   }
@@ -297,7 +299,7 @@ async function fetchIcon(iconUrl: string): Promise<FaviconAsset | null> {
     return null;
   }
 
-  const response = await safeFetch(url, "image/*,*/*;q=0.8");
+  const response = await safeFetch(url, "image/*,*/*;q=0.8", deadline);
   if (!response?.ok) {
     return null;
   }
@@ -347,8 +349,8 @@ async function readHtmlHead(response: Response): Promise<string | null> {
   return html || null;
 }
 
-async function fetchPageIconHrefs(pageUrl: URL, size: number): Promise<string[]> {
-  const response = await safeFetch(pageUrl, "text/html,application/xhtml+xml");
+async function fetchPageIconHrefs(pageUrl: URL, size: number, deadline: number): Promise<string[]> {
+  const response = await safeFetch(pageUrl, "text/html,application/xhtml+xml", deadline);
   if (!response?.ok) {
     return [];
   }
@@ -385,14 +387,18 @@ export async function fetchFavicon(rawUrl: string, size = 16): Promise<FaviconRe
     return { ok: false, status: 400, message: "Unsupported favicon URL." };
   }
 
-  const declared = await fetchPageIconHrefs(pageUrl, size);
+  const deadline = Date.now() + FAVICON_BUDGET_MS;
+  const declared = await fetchPageIconHrefs(pageUrl, size, deadline);
   const candidates = [...new Set([...declared, ...fallbackIconUrls(pageUrl)])].slice(
     0,
     MAX_CANDIDATES,
   );
 
   for (const candidate of candidates) {
-    const asset = await fetchIcon(candidate);
+    if (Date.now() >= deadline) {
+      break;
+    }
+    const asset = await fetchIcon(candidate, deadline);
     if (asset) {
       return asset;
     }

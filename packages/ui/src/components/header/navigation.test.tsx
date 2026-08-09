@@ -143,6 +143,38 @@ describe("Navigation", () => {
     expect(spinners(container)).toHaveLength(0);
   });
 
+  it("settles an image that finished before hydration", () => {
+    const complete = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, "complete");
+    const naturalWidth = Object.getOwnPropertyDescriptor(
+      HTMLImageElement.prototype,
+      "naturalWidth",
+    );
+    Object.defineProperty(HTMLImageElement.prototype, "complete", {
+      configurable: true,
+      get: () => true,
+    });
+    Object.defineProperty(HTMLImageElement.prototype, "naturalWidth", {
+      configurable: true,
+      get: () => 16,
+    });
+
+    try {
+      const { container } = render(
+        <Navigation
+          nav={[{ name: "github", href: "https://github.com/dmnktoe", isExternal: true }]}
+          projectsWork={[]}
+          websitesWork={[]}
+        />,
+      );
+
+      expect(spinners(container)).toHaveLength(0);
+      expect(container.querySelector('img[src^="/api/favicon"]')).toBeInTheDocument();
+    } finally {
+      Object.defineProperty(HTMLImageElement.prototype, "complete", complete!);
+      Object.defineProperty(HTMLImageElement.prototype, "naturalWidth", naturalWidth!);
+    }
+  });
+
   it("keeps the hidden image eager, since a lazy one in a display:none slot never loads", () => {
     const { container } = render(
       <Navigation

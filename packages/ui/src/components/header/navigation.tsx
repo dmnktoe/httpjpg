@@ -26,6 +26,13 @@ function Favicon({ href }: { href: string }) {
     return () => clearInterval(timer);
   }, [src, state]);
 
+  // An image that finished before hydration fired its load event into nothing.
+  const settleFromDom = (node: HTMLImageElement | null) => {
+    if (node?.complete) {
+      setState(node.naturalWidth > 0 ? "loaded" : "failed");
+    }
+  };
+
   if (!src || state === "failed") return null;
 
   return (
@@ -37,6 +44,7 @@ function Favicon({ href }: { href: string }) {
       )}
       <Box
         as="img"
+        ref={settleFromDom}
         src={src}
         alt=""
         aria-hidden="true"

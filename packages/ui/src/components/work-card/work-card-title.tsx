@@ -30,7 +30,8 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
               : {
                   fontSize: {
                     base: "clamp(1.5rem, 7cqi, 3rem)",
-                    md: "clamp(1.75rem, 9cqi, 5rem)",
+                    md: "clamp(1.75rem, 14cqi, 5rem)",
+                    lg: "clamp(1.75rem, 17cqi, 5rem)",
                   },
                 }),
         }}

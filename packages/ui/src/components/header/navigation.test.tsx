@@ -14,6 +14,12 @@ const nav: NavItem[] = [
   { name: "about", href: "/about" },
 ];
 
+function spinners(container: HTMLElement): Element[] {
+  return Array.from(container.querySelectorAll('span[aria-hidden="true"]')).filter((element) =>
+    ["|", "/", "-", "\\"].includes(element.textContent ?? ""),
+  );
+}
+
 function makeWork(count: number, prefix: string): WorkItem[] {
   return Array.from({ length: count }, (_, i) => ({
     id: `${prefix}-${i}`,
@@ -119,6 +125,37 @@ describe("Navigation", () => {
     );
     expect(favicons[0]).toHaveAttribute("width", "14");
     expect(favicons[0]).toHaveAttribute("height", "14");
+  });
+
+  it("spins an ascii frame until the favicon resolves", () => {
+    const { container } = render(
+      <Navigation
+        nav={[{ name: "github", href: "https://github.com/dmnktoe", isExternal: true }]}
+        projectsWork={[]}
+        websitesWork={[]}
+      />,
+    );
+
+    expect(spinners(container)).toHaveLength(1);
+
+    fireEvent.load(container.querySelector('img[src^="/api/favicon"]')!);
+
+    expect(spinners(container)).toHaveLength(0);
+  });
+
+  it("drops the spinner and the image when the favicon fails", () => {
+    const { container } = render(
+      <Navigation
+        nav={[{ name: "github", href: "https://github.com/dmnktoe", isExternal: true }]}
+        projectsWork={[]}
+        websitesWork={[]}
+      />,
+    );
+
+    fireEvent.error(container.querySelector('img[src^="/api/favicon"]')!);
+
+    expect(spinners(container)).toHaveLength(0);
+    expect(container.querySelector('img[src^="/api/favicon"]')).toBeNull();
   });
 
   it("renders favicons for external work items in the recent work columns", () => {

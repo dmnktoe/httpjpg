@@ -12,32 +12,72 @@ import type { HeaderProps } from "./header";
 
 const INITIAL_WORK_COUNT = 5;
 
+const SPINNER_FRAMES = ["|", "/", "-", "\\"];
+const SPINNER_INTERVAL_MS = 120;
+
 function Favicon({ href }: { href: string }) {
-  const [hasFailed, setHasFailed] = useState(false);
+  const [state, setState] = useState<"loading" | "loaded" | "failed">("loading");
+  const [frame, setFrame] = useState(0);
   const src = getFaviconUrl(href);
-  if (!src || hasFailed) return null;
+
+  useEffect(() => {
+    if (!src || state !== "loading") return;
+    const timer = setInterval(() => setFrame((current) => current + 1), SPINNER_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, [src, state]);
+
+  if (!src || state === "failed") return null;
+
   return (
-    <Box
-      as="img"
-      src={src}
-      alt=""
-      aria-hidden="true"
-      width={14}
-      height={14}
-      loading="lazy"
-      onError={() => setHasFailed(true)}
-      css={{
-        display: { base: "none", md: "inline-block" },
-        flexShrink: 0,
-        w: "14px",
-        h: "14px",
-        mr: "0.25em",
-        verticalAlign: "middle",
-        imageRendering: "pixelated",
-      }}
-    />
+    <>
+      {state === "loading" && (
+        <Box as="span" aria-hidden="true" css={SPINNER_STYLES}>
+          {SPINNER_FRAMES[frame % SPINNER_FRAMES.length]}
+        </Box>
+      )}
+      <Box
+        as="img"
+        src={src}
+        alt=""
+        aria-hidden="true"
+        width={14}
+        height={14}
+        loading="lazy"
+        onLoad={() => setState("loaded")}
+        onError={() => setState("failed")}
+        css={state === "loaded" ? FAVICON_STYLES : HIDDEN_FAVICON_STYLES}
+      />
+    </>
   );
 }
+
+const FAVICON_STYLES = {
+  display: { base: "none", md: "inline-block" },
+  flexShrink: 0,
+  w: "14px",
+  h: "14px",
+  mr: "0.25em",
+  verticalAlign: "middle",
+  imageRendering: "pixelated",
+} as const;
+
+const HIDDEN_FAVICON_STYLES = {
+  display: "none",
+} as const;
+
+const SPINNER_STYLES = {
+  display: { base: "none", md: "inline-block" },
+  flexShrink: 0,
+  w: "14px",
+  h: "14px",
+  mr: "0.25em",
+  verticalAlign: "middle",
+  fontFamily: "mono",
+  fontSize: "10px",
+  lineHeight: "14px",
+  textAlign: "center",
+  opacity: 0.4,
+} as const;
 
 const WORK_LINK_FLEX = {
   display: "flex",

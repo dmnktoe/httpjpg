@@ -230,6 +230,7 @@ export function CommandPalette({
                 answer={answer}
                 sources={sources}
                 isStreaming={isStreaming}
+                onSourceClick={onClose}
                 errorMessage={
                   status === "error" ? (errorMessage ?? "The answer failed.") : undefined
                 }

@@ -4,8 +4,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockPush = vi.fn();
 
+const mockPathname = vi.fn(() => "/");
+
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
+  usePathname: () => mockPathname(),
 }));
 
 import { AskWidget } from "./ask-widget";
@@ -68,6 +71,7 @@ async function type(value: string) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  mockPathname.mockReturnValue("/");
   mockFetch();
 });
 
@@ -101,6 +105,17 @@ describe("AskWidget", () => {
     fireEvent(window, new CustomEvent(OPEN_SEARCH_EVENT));
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("closes itself when the route changes underneath it", () => {
+    const { rerender } = render(<AskWidget />);
+    openPalette();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+    mockPathname.mockReturnValue("/work/brutalist");
+    rerender(<AskWidget />);
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("toggles closed on a second shortcut press", () => {

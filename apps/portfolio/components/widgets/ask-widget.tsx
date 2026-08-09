@@ -6,7 +6,7 @@ import {
   type CommandPaletteStatus,
   OPEN_SEARCH_EVENT,
 } from "@httpjpg/ui";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { readAskStream } from "@/lib/search/ask-stream";
@@ -32,6 +32,7 @@ interface SearchResponse {
 
 export function AskWidget({ askEnabled = true }: AskWidgetProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<CommandPaletteResult[]>([]);
@@ -61,6 +62,13 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  // The palette lives in the layout, so it survives navigation. Anything that
+  // changes the route while it is open — a source link, the back button —
+  // should leave it behind, the same way the header drops its mobile menu.
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     const handleOpen = () => setIsOpen(true);

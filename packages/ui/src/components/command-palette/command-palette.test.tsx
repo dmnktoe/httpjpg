@@ -373,6 +373,17 @@ describe("CommandPalette answer", () => {
     );
   });
 
+  it("closes when a source link is followed", () => {
+    const props = setup({
+      answer: "It is a portfolio.",
+      sources: [{ title: "Brutalist Portfolio", href: "/work/brutalist" }],
+    });
+
+    fireEvent.click(screen.getByRole("link", { name: /Brutalist Portfolio/ }));
+
+    expect(props.onClose).toHaveBeenCalled();
+  });
+
   it("marks the answer busy while streaming", () => {
     setup({ answer: "partial", status: "answering" });
 

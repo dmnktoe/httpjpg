@@ -13,6 +13,7 @@ interface CommandPaletteAnswerProps {
   sources: CommandPaletteSource[];
   isStreaming: boolean;
   errorMessage?: string;
+  onSourceClick: () => void;
 }
 
 export function CommandPaletteAnswer({
@@ -20,6 +21,7 @@ export function CommandPaletteAnswer({
   sources,
   isStreaming,
   errorMessage,
+  onSourceClick,
 }: CommandPaletteAnswerProps) {
   return (
     <Box
@@ -98,7 +100,7 @@ export function CommandPaletteAnswer({
             sources
           </Box>
           {sources.map((source, index) => (
-            <Link key={source.href} href={source.href}>
+            <Link key={source.href} href={source.href} onClick={onSourceClick}>
               [{index + 1}] {source.title}
             </Link>
           ))}

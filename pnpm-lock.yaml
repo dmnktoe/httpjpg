@@ -7,7 +7,7 @@ settings:
 catalogs:
   default:
     '@storyblok/react':
-      specifier: ^7.0.0
+      specifier: 7.2.3
       version: 7.2.3
     '@testing-library/jest-dom':
       specifier: ^7.0.0
@@ -484,7 +484,7 @@ importers:
         specifier: workspace:*
         version: link:../env
       storyblok-js-client:
-        specifier: ^7.4.0
+        specifier: 7.7.2
         version: 7.7.2
     devDependencies:
       '@types/node':

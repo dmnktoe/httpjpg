@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@httpjpg/env": "workspace:*",
-    "storyblok-js-client": "^7.4.0"
+    "storyblok-js-client": "7.7.2"
   },
   "devDependencies": {
     "@types/node": "catalog:",

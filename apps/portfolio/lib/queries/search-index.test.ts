@@ -15,11 +15,6 @@ vi.mock("next/cache", () => ({
   unstable_cache: (fn: (...args: unknown[]) => unknown) => fn,
 }));
 
-vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
-  captureServerException: vi.fn(),
-}));
-
-import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 
 import { getSearchIndex } from "./search-index";
@@ -51,7 +46,7 @@ beforeEach(() => {
 
 describe("getSearchIndex", () => {
   it("requests published stories only", async () => {
-    const getStories = mockStories([]);
+    const getStories = mockStories([story()]);
 
     await getSearchIndex();
 
@@ -170,22 +165,26 @@ describe("getSearchIndex", () => {
     expect(getStories).toHaveBeenCalledTimes(1);
   });
 
-  // getStories swallows its own fetch errors and returns an empty page, so an
-  // outage reaches us as an empty index rather than a rejection.
-  it("yields an empty index when Storyblok returns nothing", async () => {
+  // getStories swallows its own fetch errors and answers with an empty page,
+  // so an outage looks exactly like an empty space. Throwing is what stops
+  // that emptiness being cached for an hour.
+  it("throws rather than caching an empty result", async () => {
     const getStories = vi.fn().mockResolvedValue({ stories: [], total: 0, perPage: 100 });
     mockGetStoryblokApi.mockReturnValue({ getStories } as never);
 
-    await expect(getSearchIndex()).resolves.toEqual([]);
+    await expect(getSearchIndex()).rejects.toThrow(/no published stories/i);
   });
 
-  it("reports an unexpected failure to Sentry", async () => {
+  it("propagates an unexpected failure to the caller", async () => {
     const getStories = vi.fn().mockRejectedValue(new Error("storyblok down"));
     mockGetStoryblokApi.mockReturnValue({ getStories } as never);
 
+    await expect(getSearchIndex()).rejects.toThrow("storyblok down");
+  });
+
+  it("still returns an empty index when every story is filtered out", async () => {
+    mockStories([story({ full_slug: "config", content: { component: "config" } })]);
+
     await expect(getSearchIndex()).resolves.toEqual([]);
-    expect(captureServerException).toHaveBeenCalledWith(expect.any(Error), {
-      tags: { query: "search-index" },
-    });
   });
 });

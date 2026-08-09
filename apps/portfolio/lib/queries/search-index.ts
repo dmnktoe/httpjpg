@@ -1,4 +1,3 @@
-import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { CACHE_TAGS } from "@httpjpg/storyblok-next";
 import { unstable_cache } from "next/cache";
@@ -58,36 +57,39 @@ function toSearchDocument(story: IndexableStory): SearchDocument {
 /** The published corpus both search and the ask endpoint read. */
 export async function getSearchIndex(): Promise<SearchDocument[]> {
   const buildIndex = async (): Promise<SearchDocument[]> => {
-    try {
-      const api = getStoryblokApi({ draftMode: false });
-      const stories: IndexableStory[] = [];
+    const api = getStoryblokApi({ draftMode: false });
+    const stories: IndexableStory[] = [];
 
-      // Paginated rather than capped at one page: a silent truncation would
-      // simply drop later work out of search with nothing to show for it.
-      for (let page = 1; page <= MAX_PAGES; page += 1) {
-        const response = await api.getStories({
-          per_page: PER_PAGE,
-          page,
-          version: "published",
-        });
-        stories.push(...((response.stories ?? []) as IndexableStory[]));
+    // Paginated rather than capped at one page: a silent truncation would
+    // simply drop later work out of search with nothing to show for it.
+    for (let page = 1; page <= MAX_PAGES; page += 1) {
+      const response = await api.getStories({
+        per_page: PER_PAGE,
+        page,
+        version: "published",
+      });
+      stories.push(...((response.stories ?? []) as IndexableStory[]));
 
-        const perPage = response.perPage || PER_PAGE;
-        const total = response.total ?? stories.length;
-        if (stories.length >= total || page * perPage >= total) {
-          break;
-        }
+      const perPage = response.perPage || PER_PAGE;
+      const total = response.total ?? stories.length;
+      if (stories.length >= total || page * perPage >= total) {
+        break;
       }
-
-      return stories
-        .filter((story) => !EXCLUDED_SLUGS.has(story.full_slug || story.slug))
-        .map(toSearchDocument)
-        .filter((document) => Boolean(document.title));
-    } catch (error) {
-      console.error("Error building search index:", error);
-      captureServerException(error, { tags: { query: "search-index" } });
-      return [];
     }
+
+    // `getStories` swallows its own fetch errors and answers with an empty
+    // page, so an outage is indistinguishable from an empty space. Throwing
+    // keeps `unstable_cache` from storing it — otherwise a two-second blip
+    // during a refill leaves search answering "no matches" for an hour. The
+    // caller reports it and returns its error response.
+    if (stories.length === 0) {
+      throw new Error("Storyblok returned no published stories for the search index");
+    }
+
+    return stories
+      .filter((story) => !EXCLUDED_SLUGS.has(story.full_slug || story.slug))
+      .map(toSearchDocument)
+      .filter((document) => Boolean(document.title));
   };
 
   return unstable_cache(buildIndex, ["search-index"], {

@@ -16,7 +16,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "colorthief": "^3.0.0"
+    "colorthief": "3.4.0"
   },
   "devDependencies": {
     "@testing-library/react": "catalog:",

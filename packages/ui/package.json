@@ -49,8 +49,8 @@
   },
   "dependencies": {
     "@httpjpg/tokens": "workspace:*",
-    "motion": "^13.0.0",
-    "swiper": "^14.0.0"
+    "motion": "13.0.0",
+    "swiper": "14.0.7"
   },
   "devDependencies": {
     "@httpjpg/storyblok-utils": "workspace:*",

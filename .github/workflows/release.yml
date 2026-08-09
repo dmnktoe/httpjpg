@@ -32,7 +32,7 @@ jobs:
       - name: Mint httpjpg-bot token
         id: bot-token
         if: env.HAS_BOT_APP == 'true'
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ secrets.HTTPJPG_BOT_APP_ID }}
           private-key: ${{ secrets.HTTPJPG_BOT_PRIVATE_KEY }}
@@ -82,7 +82,7 @@ jobs:
             echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: steps.preflight.outputs.configured == 'true'
         with:
           ref: ${{ needs.release-please.outputs.tag_name }}

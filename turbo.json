@@ -90,7 +90,7 @@
     },
     "test": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", "test/config/**", "vitest.config.ts"],
+      "inputs": ["$TURBO_DEFAULT$", "tools/vitest/**", "vitest.config.ts"],
       "outputs": ["coverage/**"]
     },
     "test:e2e": {

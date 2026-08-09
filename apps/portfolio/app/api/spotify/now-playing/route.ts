@@ -20,6 +20,8 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type",
 } as const;
 
+const UNAVAILABLE_CACHE_CONTROL = "public, s-maxage=600, stale-while-revalidate=1200";
+
 export async function GET(request: NextRequest) {
   const limited = await enforceRateLimit(request);
   if (limited) {
@@ -41,8 +43,13 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     if (error instanceof SpotifyForbiddenError) {
       return NextResponse.json(
-        { error: "premium_missing", message: error.message },
-        { status: 403, headers: CORS_HEADERS },
+        { data: null, unavailable: "premium_missing", message: error.message },
+        {
+          headers: {
+            "Cache-Control": UNAVAILABLE_CACHE_CONTROL,
+            ...CORS_HEADERS,
+          },
+        },
       );
     }
 

@@ -31,14 +31,54 @@ describe("useNowPlaying", () => {
     expect(result.current.errorCode).toBeNull();
   });
 
-  it("surfaces the endpoint error code (e.g. premium_missing)", async () => {
-    mockFetch(403, { error: "premium_missing", message: "no premium" }, false);
+  it("surfaces an unavailable state carried by a 200 (e.g. premium_missing)", async () => {
+    mockFetch(200, { data: null, unavailable: "premium_missing", message: "no premium" });
 
     const { result } = renderHook(() => useNowPlaying({ endpoint: "/np", pollInterval: 100000 }));
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.errorCode).toBe("premium_missing");
     expect(result.current.error?.message).toBe("no premium");
+    expect(result.current.data).toBeNull();
+  });
+
+  it("stops polling once the state is terminal", async () => {
+    vi.useFakeTimers();
+    mockFetch(200, { data: null, unavailable: "premium_missing" });
+
+    const { result } = renderHook(() => useNowPlaying({ endpoint: "/np", pollInterval: 1000 }));
+
+    await vi.waitFor(() => expect(result.current.errorCode).toBe("premium_missing"));
+    expect(fetch).toHaveBeenCalledOnce();
+
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(fetch).toHaveBeenCalledOnce();
+
+    vi.useRealTimers();
+  });
+
+  it("gives up after repeated failures instead of polling forever", async () => {
+    vi.useFakeTimers();
+    mockFetch(500, { error: "internal_error" }, false);
+
+    const { result } = renderHook(() => useNowPlaying({ endpoint: "/np", pollInterval: 1000 }));
+
+    await vi.waitFor(() => expect(result.current.errorCode).toBe("internal_error"));
+    await vi.advanceTimersByTimeAsync(20000);
+
+    expect(fetch).toHaveBeenCalledTimes(5);
+
+    vi.useRealTimers();
+  });
+
+  it("surfaces an error code carried by a failed response", async () => {
+    mockFetch(500, { error: "internal_error", message: "boom" }, false);
+
+    const { result } = renderHook(() => useNowPlaying({ endpoint: "/np", pollInterval: 100000 }));
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.errorCode).toBe("internal_error");
+    expect(result.current.error?.message).toBe("boom");
     expect(result.current.data).toBeNull();
   });
 

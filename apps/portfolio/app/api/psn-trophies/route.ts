@@ -2,13 +2,17 @@ import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
+import { draftMode } from "next/headers";
 import { NextResponse } from "next/server";
 
+import { widgetCacheHeaders } from "@/lib/cache-headers";
 import { fetchRecentTrophies, isPsnUsername } from "@/lib/integrations/psn-trophies";
 
-async function resolveUsername(): Promise<string | undefined> {
+async function resolveUsername(isDraft: boolean): Promise<string | undefined> {
   try {
-    const story = await getStoryblokApi().getStory({ slug: "config" });
+    const story = await getStoryblokApi({ draftMode: isDraft }).getStory({
+      slug: "config",
+    });
     const config = story?.content as SbConfigStory | undefined;
     const username = config?.psn_username;
     if (username && !isPsnUsername(username)) {
@@ -23,6 +27,7 @@ async function resolveUsername(): Promise<string | undefined> {
 }
 
 export async function GET() {
+  const { isEnabled: isDraft } = await draftMode();
   try {
     if (!env.PSN_NPSSO) {
       return NextResponse.json(
@@ -30,11 +35,11 @@ export async function GET() {
           error: "PSN not configured",
           message: "Set PSN_NPSSO to enable the trophy widget",
         },
-        { status: 500 },
+        { status: 501 },
       );
     }
 
-    const username = await resolveUsername();
+    const username = await resolveUsername(isDraft);
 
     const result = await fetchRecentTrophies(env.PSN_NPSSO, username);
     if (!result.ok) {
@@ -52,7 +57,7 @@ export async function GET() {
 
     return NextResponse.json(
       { trophies: result.trophies, avatar: result.avatar },
-      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
+      { headers: widgetCacheHeaders(isDraft, 300) },
     );
   } catch (error) {
     console.error("PSN trophies API error:", error);

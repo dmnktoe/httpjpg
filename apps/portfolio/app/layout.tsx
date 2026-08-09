@@ -24,13 +24,17 @@ import { CustomCursorWrapper } from "@/components/ui/custom-cursor-wrapper";
 import { NostalgiaSlideshow } from "@/components/ui/nostalgia-slideshow";
 import { PreviewNotification } from "@/components/ui/preview-notification";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
+import { BuildBadge } from "@/components/widgets/build-badge";
+import { DiscogsStatus } from "@/components/widgets/discogs-status";
 import { DiscordStatus } from "@/components/widgets/discord-status";
 import { LetterboxdStatus } from "@/components/widgets/letterboxd-status";
 import { NowPlayingWidget } from "@/components/widgets/now-playing-widget";
 import { PSNCard } from "@/components/widgets/psn-card";
 import { TrophyStatus } from "@/components/widgets/trophy-status";
 import { WeatherTime } from "@/components/widgets/weather-time-widget";
+import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
+import { XStatus } from "@/components/widgets/x-status";
 import { config } from "@/lib/config";
 import { getPageTheme } from "@/lib/page-theme";
 import { getFooterConfig, getNavigation, getSeoDefaults } from "@/lib/queries/config";
@@ -118,9 +122,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               cookiePolicyHref="/cookie-policy"
               showVersion={Boolean(lastUpdated || version)}
               version={version}
-              versionHref={
-                version ? `https://github.com/dmnktoe/httpjpg/releases/tag/${version}` : undefined
-              }
+              versionHref={version ? `${config.repositoryUrl}/releases/tag/${version}` : undefined}
               lastUpdated={
                 lastUpdated ? `last updated ${formatLastUpdated(lastUpdated)}` : undefined
               }
@@ -136,8 +138,18 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 >
                   {widgetConfig.discordEnabled && <DiscordStatus />}
                   {widgetConfig.letterboxdEnabled && <LetterboxdStatus />}
+                  {widgetConfig.discogsEnabled && <DiscogsStatus />}
+                  {widgetConfig.xEnabled && <XStatus />}
                   {widgetConfig.psnTrophyEnabled && <TrophyStatus />}
                   <WeatherTime />
+                  {flags.webVitalsBadgeEnabled && <WebVitalsBadge />}
+                  {flags.buildBadgeEnabled && (
+                    <BuildBadge
+                      version={version}
+                      buildTime={env.NEXT_PUBLIC_BUILD_TIME}
+                      commitSha={env.NEXT_PUBLIC_COMMIT_SHA}
+                    />
+                  )}
                   <AsciiArt
                     label="signoff"
                     css={{ my: "5", opacity: 0.3, fontSize: "xs", letterSpacing: "0.2em" }}

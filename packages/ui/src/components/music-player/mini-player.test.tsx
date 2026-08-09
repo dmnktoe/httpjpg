@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { MiniPlayer } from "./mini-player";
 
 function renderPlayer(props: Partial<Parameters<typeof MiniPlayer>[0]> = {}) {
-  const handlers = { onToggle: vi.fn(), onNext: vi.fn(), onPrevious: vi.fn() };
+  const handlers = { onToggle: vi.fn(), onNext: vi.fn(), onPrevious: vi.fn(), onStop: vi.fn() };
   render(
     <MiniPlayer
       title="Night Drive"
@@ -44,6 +44,7 @@ describe("MiniPlayer", () => {
         onToggle={vi.fn()}
         onNext={vi.fn()}
         onPrevious={vi.fn()}
+        onStop={vi.fn()}
       />,
     );
     expect(screen.getByRole("button", { name: "Play" })).toHaveTextContent("▸");
@@ -58,6 +59,7 @@ describe("MiniPlayer", () => {
         onToggle={vi.fn()}
         onNext={vi.fn()}
         onPrevious={vi.fn()}
+        onStop={vi.fn()}
       />,
     );
     expect(screen.getByRole("button", { name: "Pause" })).toBeInTheDocument();
@@ -95,6 +97,7 @@ describe("MiniPlayer", () => {
         onToggle={vi.fn()}
         onNext={vi.fn()}
         onPrevious={vi.fn()}
+        onStop={vi.fn()}
       />,
     );
 
@@ -120,17 +123,27 @@ describe("MiniPlayer", () => {
     expect(screen.queryByText("-:--")).not.toBeInTheDocument();
   });
 
-  it("points the record at the source url", () => {
-    renderPlayer({ href: "/audio/night-drive.mp3" });
+  it("points the record back at the page the track sits on", () => {
+    renderPlayer({ href: "/work/night-drive" });
 
-    const link = screen.getByRole("link", { name: "Open the source of Night Drive — Nova" });
-    expect(link).toHaveAttribute("href", "/audio/night-drive.mp3");
-    expect(link).toHaveAttribute("rel", "noreferrer");
+    const link = screen.getByRole("link", { name: "Go to the page playing Night Drive — Nova" });
+    expect(link).toHaveAttribute("href", "/work/night-drive");
+    // An internal route, so it must not carry the new-tab treatment: a document
+    // reload would stop the very playback the header is reporting.
+    expect(link).not.toHaveAttribute("target");
   });
 
-  it("leaves the record unlinked without a source url", () => {
+  it("leaves the record unlinked without a page", () => {
     renderPlayer();
 
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  });
+
+  it("clears the player", () => {
+    const handlers = renderPlayer();
+
+    fireEvent.click(screen.getByRole("button", { name: "Stop playback" }));
+
+    expect(handlers.onStop).toHaveBeenCalledOnce();
   });
 });

@@ -1,16 +1,16 @@
 "use client";
 
-import { css } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
+import { Link } from "../link/link";
 import { formatTime } from "./lib";
 
 export interface MiniPlayerProps {
   title?: string;
   artist?: string;
   artwork?: string;
-  /** Source url of the running track; makes the record a link to it. */
+  /** Page the running track sits on; makes the record a link back to it. */
   href?: string;
   isPlaying: boolean;
   currentTime: number;
@@ -20,6 +20,7 @@ export interface MiniPlayerProps {
   onToggle: () => void;
   onNext: () => void;
   onPrevious: () => void;
+  onStop: () => void;
   css?: SystemStyleObject;
 }
 
@@ -41,6 +42,7 @@ export function MiniPlayer({
   onToggle,
   onNext,
   onPrevious,
+  onStop,
   css: cssProp,
 }: MiniPlayerProps) {
   const label = [title, artist].filter(Boolean).join(" — ") || "audio";
@@ -60,11 +62,10 @@ export function MiniPlayer({
         _motionReduce: { animation: "none" },
       }}
     >
-      {artwork ? (
-        <img src={artwork} alt="" className={css({ w: "full", h: "full", objectFit: "cover" })} />
-      ) : (
-        "◉"
-      )}
+      {artwork && <Box as="img" src={artwork} alt="" css={ARTWORK_STYLES} />}
+      <Box as="span" css={artwork ? GLYPH_BEHIND_ARTWORK_STYLES : GLYPH_STYLES}>
+        ◉
+      </Box>
     </Box>
   );
 
@@ -89,16 +90,9 @@ export function MiniPlayer({
       }}
     >
       {href ? (
-        <Box
-          as="a"
-          href={href}
-          target="_blank"
-          rel="noreferrer"
-          aria-label={`Open the source of ${label}`}
-          css={RECORD_LINK_STYLES}
-        >
+        <Link href={href} aria-label={`Go to the page playing ${label}`} css={RECORD_LINK_STYLES}>
           {record}
-        </Box>
+        </Link>
       ) : (
         record
       )}
@@ -136,6 +130,16 @@ export function MiniPlayer({
       <Box as="span" css={CLOCK_STYLES}>
         {duration > 0 ? formatTime(currentTime) : "-:--"}
       </Box>
+
+      <Box
+        as="button"
+        type="button"
+        onClick={onStop}
+        aria-label="Stop playback"
+        css={{ ...CONTROL_STYLES, ml: "0.15em", opacity: 0.5, _hover: { opacity: 1 } }}
+      >
+        ✕
+      </Box>
     </Box>
   );
 }
@@ -168,11 +172,28 @@ const RECORD_STYLES = {
   overflow: "hidden",
 } as const;
 
+const ARTWORK_STYLES = {
+  display: { base: "none", lg: "block" },
+  w: "full",
+  h: "full",
+  objectFit: "cover",
+} as const;
+
+const GLYPH_STYLES = {
+  display: "inline",
+} as const;
+
+// The cover is desktop-only, so on the phone the glyph stands in for it.
+const GLYPH_BEHIND_ARTWORK_STYLES = {
+  display: { base: "inline", lg: "none" },
+} as const;
+
 const RECORD_LINK_STYLES = {
   display: "inline-flex",
   lineHeight: "0",
   pointerEvents: "auto",
   textDecoration: "none",
+  _hover: { textDecoration: "none" },
 } as const;
 
 const PAUSE_BAR_STYLES = {

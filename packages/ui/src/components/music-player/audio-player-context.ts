@@ -8,6 +8,8 @@ export interface AudioTrack {
   title?: string;
   artist?: string;
   artwork?: string;
+  /** Page the track was registered from. Stamped by the provider. */
+  href?: string;
 }
 
 export interface AudioPlayerValue {
@@ -23,6 +25,8 @@ export interface AudioPlayerValue {
   next: () => void;
   previous: () => void;
   seek: (time: number) => void;
+  /** Unloads the track and empties the queue. */
+  stop: () => void;
   /** Adds a track to the page queue; the returned callback takes it out again. */
   registerTrack: (track: AudioTrack) => () => void;
 }
@@ -41,12 +45,12 @@ export function useAudioPlayer(): AudioPlayerValue | null {
 /** Keeps `track` in the page queue for as long as the caller is mounted. */
 export function useAudioQueueEntry(track: AudioTrack | null): void {
   const registerTrack = useAudioPlayer()?.registerTrack;
-  const { src, title, artist, artwork } = track ?? {};
+  const { src, title, artist, artwork, href } = track ?? {};
 
   useEffect(() => {
     if (!registerTrack || !src) {
       return;
     }
-    return registerTrack({ src, title, artist, artwork });
-  }, [registerTrack, src, title, artist, artwork]);
+    return registerTrack({ src, title, artist, artwork, href });
+  }, [registerTrack, src, title, artist, artwork, href]);
 }

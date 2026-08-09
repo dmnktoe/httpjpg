@@ -27,6 +27,7 @@ function Transport() {
   return (
     <>
       <span data-testid="current">{player.track?.src ?? "none"}</span>
+      <span data-testid="page">{player.track?.href ?? "none"}</span>
       <span data-testid="playing">{String(player.isPlaying)}</span>
       <span data-testid="has-next">{String(player.hasNext)}</span>
       <span data-testid="has-previous">{String(player.hasPrevious)}</span>
@@ -42,6 +43,9 @@ function Transport() {
       </button>
       <button type="button" onClick={() => player.seek(42)}>
         seek
+      </button>
+      <button type="button" onClick={player.stop}>
+        stop
       </button>
     </>
   );
@@ -246,6 +250,43 @@ describe("AudioPlayerProvider", () => {
 
     expect(play).toHaveBeenCalledTimes(2);
     expect(state("time")).toBe("30/0");
+  });
+
+  it("stamps a track with the page it was registered from", () => {
+    stubPlayback();
+    window.history.pushState({}, "", "/work/night-drive");
+    renderQueue();
+
+    fireEvent.click(screen.getByText("play /one.mp3"));
+
+    expect(state("page")).toBe("/work/night-drive");
+    window.history.pushState({}, "", "/");
+  });
+
+  it("unloads the track and empties the queue on stop", () => {
+    stubPlayback();
+    renderQueue();
+    fireEvent.click(screen.getByText("play /one.mp3"));
+    emit("play", false);
+
+    fireEvent.click(screen.getByText("stop"));
+
+    expect(state("current")).toBe("none");
+    expect(state("playing")).toBe("false");
+    expect(state("has-next")).toBe("false");
+    expect(audioElement().hasAttribute("src")).toBe(false);
+  });
+
+  it("takes a fresh track after a stop", () => {
+    stubPlayback();
+    renderQueue();
+    fireEvent.click(screen.getByText("play /one.mp3"));
+    fireEvent.click(screen.getByText("stop"));
+
+    fireEvent.click(screen.getByText("play /two.mp3"));
+
+    expect(state("current")).toBe("/two.mp3");
+    expect(audioElement().getAttribute("src")).toBe("/two.mp3");
   });
 
   it("names the shared element after the loaded track", () => {

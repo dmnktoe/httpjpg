@@ -12,7 +12,7 @@ const meta: Meta<typeof MiniPlayer> = {
     title: { control: "text", description: "Track title" },
     artist: { control: "text", description: "Artist name" },
     artwork: { control: "text", description: "Artwork URL shown on the spinning record" },
-    href: { control: "text", description: "Source url the record links to" },
+    href: { control: "text", description: "Page the record links back to" },
     currentTime: { control: "number", description: "Elapsed seconds" },
     duration: { control: "number", description: "Track length in seconds; 0 renders -:--" },
     isPlaying: { control: "boolean", description: "Spins the record and flips the play control" },
@@ -65,7 +65,7 @@ export const SingleTrack: Story = {
  */
 export const WithArtwork: Story = {
   args: {
-    href: "/audio/night-drive.mp3",
+    href: "/work/night-drive",
     artwork:
       "https://a.storyblok.com/f/292817/1000x1000/0f2e0b0c8a/placeholder.jpg/m/64x64/filters:format(webp)",
   },

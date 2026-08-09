@@ -27,9 +27,10 @@ export function AudioPlayerProvider({ children }: PropsWithChildren) {
   const [duration, setDuration] = useState(0);
 
   const registerTrack = useCallback((entry: AudioTrack) => {
-    registryRef.current = [...registryRef.current, entry];
+    const stamped = withPage(entry);
+    registryRef.current = [...registryRef.current, stamped];
     return () => {
-      registryRef.current = registryRef.current.filter((item) => item !== entry);
+      registryRef.current = registryRef.current.filter((item) => item !== stamped);
     };
   }, []);
 
@@ -57,10 +58,13 @@ export function AudioPlayerProvider({ children }: PropsWithChildren) {
   const play = useCallback(
     (next: AudioTrack) => {
       const snapshot = dedupeBySrc(registryRef.current);
-      const withTrack = snapshot.some((item) => item.src === next.src) ? snapshot : [next];
+      // Prefer the registered entry: it carries the page it was stamped with.
+      const queued = snapshot.find((item) => item.src === next.src);
+      const target = queued ?? withPage(next);
+      const withTrack = queued ? snapshot : [target];
       queueRef.current = withTrack;
       setQueue(withTrack);
-      start(next);
+      start(target);
     },
     [start],
   );
@@ -94,6 +98,20 @@ export function AudioPlayerProvider({ children }: PropsWithChildren) {
     } else {
       audio.pause();
     }
+  }, []);
+
+  const stop = useCallback(() => {
+    const audio = audioRef.current;
+    audio?.pause();
+    // Drops the buffered resource; the element is reused for the next track.
+    audio?.removeAttribute("src");
+    trackRef.current = null;
+    queueRef.current = [];
+    setTrack(null);
+    setQueue([]);
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
   }, []);
 
   const seek = useCallback((time: number) => {
@@ -211,6 +229,7 @@ export function AudioPlayerProvider({ children }: PropsWithChildren) {
       next,
       previous,
       seek,
+      stop,
       registerTrack,
     }),
     [
@@ -225,6 +244,7 @@ export function AudioPlayerProvider({ children }: PropsWithChildren) {
       next,
       previous,
       seek,
+      stop,
       registerTrack,
     ],
   );
@@ -236,6 +256,15 @@ export function AudioPlayerProvider({ children }: PropsWithChildren) {
       <audio ref={audioRef} preload="none" aria-label={track?.title || "Audio player"} />
     </AudioPlayerContext.Provider>
   );
+}
+
+function withPage(track: AudioTrack): AudioTrack {
+  if (track.href || typeof window === "undefined") {
+    return track;
+  }
+  // Registration happens in an effect, so the router is already showing the
+  // page this blok sits on.
+  return { ...track, href: window.location.pathname };
 }
 
 function dedupeBySrc(tracks: AudioTrack[]): AudioTrack[] {

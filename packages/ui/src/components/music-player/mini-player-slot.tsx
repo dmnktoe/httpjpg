@@ -22,7 +22,7 @@ export function MiniPlayerSlot() {
         title={player.track.title}
         artist={player.track.artist}
         artwork={player.track.artwork}
-        href={player.track.src}
+        href={player.track.href}
         isPlaying={player.isPlaying}
         currentTime={player.currentTime}
         duration={player.duration}
@@ -31,6 +31,7 @@ export function MiniPlayerSlot() {
         onToggle={player.toggle}
         onNext={player.next}
         onPrevious={player.previous}
+        onStop={player.stop}
       />
     </>
   );

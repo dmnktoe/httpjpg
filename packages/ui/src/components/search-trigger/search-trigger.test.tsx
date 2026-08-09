@@ -27,13 +27,6 @@ describe("SearchTrigger", () => {
     render(<SearchTrigger />);
 
     expect(screen.getByRole("button", { name: "Open search" })).toBeInTheDocument();
-    expect(screen.getByText("search")).toBeInTheDocument();
-  });
-
-  it("accepts a custom label", () => {
-    render(<SearchTrigger label="search or ask" />);
-
-    expect(screen.getByText("search or ask")).toBeInTheDocument();
   });
 
   it("asks the palette to open over the window", () => {
@@ -60,20 +53,25 @@ describe("SearchTrigger", () => {
     window.removeEventListener(OPEN_SEARCH_EVENT, listener);
   });
 
-  it("advertises the shortcut on a device with a keyboard", async () => {
-    const { container } = render(<SearchTrigger />);
+  it("shows the modifier and K where there is a keyboard", async () => {
+    render(<SearchTrigger />);
 
-    await waitFor(() =>
-      expect(container.querySelector("[data-badge]")).toHaveTextContent(/^(⌘|\^)K$/),
-    );
+    await waitFor(() => expect(screen.getByRole("button")).toHaveTextContent(/(⌘|\^)\+𝙆$/));
   });
 
-  it("falls back to a magnifier on touch devices, where there is no keyboard", async () => {
+  it("falls back to the word label on touch devices, where there is no keyboard", async () => {
     mockPointer(true);
-    const { container } = render(<SearchTrigger />);
+    render(<SearchTrigger />);
 
-    await waitFor(() => expect(screen.getByRole("button")).toBeInTheDocument());
-    expect(container.querySelector("[data-badge]")).toHaveTextContent("⌕");
+    await waitFor(() => expect(screen.getByRole("button")).toHaveTextContent(/search$/));
+    expect(screen.getByRole("button")).not.toHaveTextContent("𝙆");
+  });
+
+  it("accepts a custom touch label", async () => {
+    mockPointer(true);
+    render(<SearchTrigger label="search or ask" />);
+
+    await waitFor(() => expect(screen.getByRole("button")).toHaveTextContent(/search or ask$/));
   });
 
   it("keeps the label readable to assistive tech even when visually hidden", () => {

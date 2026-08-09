@@ -3,6 +3,7 @@
 import type { ChangeEvent, KeyboardEvent, RefObject } from "react";
 
 import { Box } from "../box/box";
+import { IconButton } from "../icon-button/icon-button";
 
 interface CommandPaletteInputProps {
   value: string;
@@ -31,14 +32,14 @@ export function CommandPaletteInput({
         gap: "3",
         px: "4",
         py: "3",
-        borderColor: "primary.500",
-        borderBottom: "2px solid",
+        borderColor: "pageBorder",
+        borderBottom: "1px solid",
       }}
     >
       <Box
         as="span"
         aria-hidden="true"
-        css={{ color: "accentFg", fontFamily: "mono", fontSize: "md", fontWeight: "bold" }}
+        css={{ color: "primary.500", fontFamily: "mono", fontSize: "md" }}
       >
         &gt;
       </Box>
@@ -72,31 +73,21 @@ export function CommandPaletteInput({
         }}
       />
       {value && (
-        <Box
-          as="button"
-          type="button"
-          onClick={onClear}
+        <IconButton
+          icon="close"
+          iconSize="14px"
+          size="sm"
+          variant="ghost"
           aria-label="Clear search"
+          onClick={onClear}
           css={{
-            display: "flex",
             flexShrink: 0,
-            justifyContent: "center",
-            alignItems: "center",
-            w: "6",
-            h: "6",
             color: "pageMuted",
-            fontFamily: "mono",
-            fontSize: "md",
-            lineHeight: "none",
-            bg: "transparent",
-            border: "none",
-            cursor: "pointer",
-            _hover: { color: "pageBg", bg: "primary.500" },
-            _focusVisible: { outline: "2px solid", outlineColor: "primary.500" },
+            // The shared ghost variant fades on hover, which reads as the
+            // control disappearing. Here it sharpens instead.
+            _hover: { color: "pageFg", opacity: 1 },
           }}
-        >
-          ×
-        </Box>
+        />
       )}
       <Box
         as="kbd"
@@ -104,11 +95,11 @@ export function CommandPaletteInput({
           flexShrink: 0,
           px: "1.5",
           py: "0.5",
-          color: "primary.500",
+          color: "pageMuted",
           fontFamily: "mono",
           fontSize: "sm",
           border: "1px solid",
-          borderColor: "primary.500",
+          borderColor: "pageBorder",
         }}
       >
         ESC

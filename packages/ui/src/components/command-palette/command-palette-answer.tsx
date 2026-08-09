@@ -28,7 +28,7 @@ export function CommandPaletteAnswer({
         py: "3",
         borderColor: "pageBorder",
         borderBottom: "1px solid",
-        borderLeft: "3px solid",
+        borderLeft: "2px solid",
         borderLeftColor: "primary.500",
       }}
     >
@@ -37,7 +37,7 @@ export function CommandPaletteAnswer({
         css={{
           display: "block",
           mb: "2",
-          color: "accentFg",
+          color: "pageMuted",
           fontFamily: "mono",
           fontSize: "sm",
           letterSpacing: "wide",
@@ -71,7 +71,7 @@ export function CommandPaletteAnswer({
                 display: "inline-block",
                 w: "2",
                 ml: "1",
-                bg: "primary.500",
+                bg: "pageFg",
                 animation: "caretBlink 1s steps(1, end) infinite",
               }}
             >
@@ -89,12 +89,12 @@ export function CommandPaletteAnswer({
             alignItems: "center",
             gap: "2",
             mt: "3",
-            color: "primary.500",
+            color: "pageMuted",
             fontFamily: "mono",
             fontSize: "sm",
           }}
         >
-          <Box as="span" css={{ color: "accentFg", opacity: 0.8, textTransform: "uppercase" }}>
+          <Box as="span" css={{ textTransform: "uppercase" }}>
             sources
           </Box>
           {sources.map((source, index) => (

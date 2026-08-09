@@ -114,12 +114,16 @@ export function Header({
             </Link>
             <br />
             <Box as="span" css={{ opacity: 0.7, fontSize: "2xs" }}>
-              ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ꠹ρᧁ! 🎀
+              ꫝꪊꫝꪊꪊꪊ ꫝꪻꪻρ &&& ꠹ρᧁ! 🎀 {showSearch && <SearchTrigger />}
             </Box>
           </Box>
 
-          <Navigation nav={nav} projectsWork={projectsWork} websitesWork={websitesWork} />
-          {showSearch && <SearchTrigger css={{ ml: "auto" }} />}
+          <Navigation
+            nav={nav}
+            projectsWork={projectsWork}
+            websitesWork={websitesWork}
+            showSearch={showSearch}
+          />
           <MobileMenuButton isOpen={mobileMenuIsOpen} setIsOpen={setMobileMenuIsOpen} />
         </Box>
       </Container>

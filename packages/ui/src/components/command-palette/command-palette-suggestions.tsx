@@ -33,8 +33,7 @@ export function CommandPaletteSuggestions({
       <Box
         as="span"
         css={{
-          color: "accentFg",
-          opacity: 0.7,
+          color: "pageMuted",
           fontFamily: "mono",
           fontSize: "sm",
           letterSpacing: "wide",
@@ -55,14 +54,14 @@ export function CommandPaletteSuggestions({
           css={{
             px: "2",
             py: "0.5",
-            color: "accentFg",
+            color: "pageFg",
             fontFamily: "mono",
             fontSize: "sm",
             bg: "transparent",
             border: "1px solid",
-            borderColor: "accentFg",
+            borderColor: "pageBorder",
             cursor: "pointer",
-            _hover: { color: "pageBg", bg: "accentFg" },
+            _hover: { color: "pageBg", bg: "pageFg" },
             _focusVisible: { outline: "2px solid", outlineColor: "primary.500" },
           }}
         >

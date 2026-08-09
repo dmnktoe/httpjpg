@@ -178,6 +178,6 @@ describe("Header", () => {
   it("renders the search trigger when asked to", () => {
     render(<Header nav={NAV} showSearch />);
 
-    expect(screen.getByRole("button", { name: "Open search" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Open search" }).length).toBeGreaterThan(0);
   });
 });

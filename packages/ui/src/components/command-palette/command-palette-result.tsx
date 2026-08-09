@@ -45,10 +45,10 @@ export function CommandPaletteResultItem({
         gap: "3",
         px: "4",
         py: "2",
-        color: isActive ? "white" : "pageFg",
-        bg: isActive ? "primary.500" : "transparent",
+        color: isActive ? "pageBg" : "pageFg",
+        bg: isActive ? "pageFg" : "transparent",
         borderLeft: "3px solid",
-        borderLeftColor: isActive ? "accent.400" : "transparent",
+        borderLeftColor: isActive ? "primary.500" : "transparent",
         cursor: "pointer",
       }}
     >
@@ -57,8 +57,8 @@ export function CommandPaletteResultItem({
         css={{
           flexShrink: 0,
           w: "14",
-          color: isActive ? "accent.300" : "accentFg",
-          opacity: isActive ? 1 : 0.85,
+          color: "inherit",
+          opacity: 0.5,
           fontFamily: "mono",
           fontSize: "sm",
           letterSpacing: "wide",

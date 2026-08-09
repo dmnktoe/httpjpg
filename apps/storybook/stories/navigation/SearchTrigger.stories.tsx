@@ -22,42 +22,33 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * The shortcut hint resolves after mount — `⌘K` on Apple platforms, `^K`
- * elsewhere, and nothing at all on a coarse pointer, where there is no keyboard
- * to press.
+ * Reads as an inline link. The shortcut resolves after mount — `⌘+𝙆` on Apple
+ * platforms, `^+𝙆` elsewhere, and the word label on a coarse pointer, where
+ * there is no keyboard to press.
  */
 export const Playground: Story = {};
 
-export const CustomLabel: Story = {
+export const CustomTouchLabel: Story = {
   args: { label: "search or ask" },
 };
 
-/** How it sits in the header row, pushed to the right of the navigation. */
-export const InHeaderRow: Story = {
+/** In the nav's decorative line, which is where it actually lives. */
+export const InNavLine: Story = {
   render: (args) => (
     <Box
       css={{
-        display: "flex",
-        alignItems: "center",
-        gap: "6",
-        w: "480px",
+        w: "24rem",
         p: "4",
-        fontFamily: "mono",
         fontSize: "sm",
+        lineHeight: "snug",
         border: "1px dashed",
         borderColor: "pageBorder",
       }}
     >
-      <Box as="span" css={{ fontWeight: "bold" }}>
-        ⇝HE𝓁𝓁O
+      <Box as="span">
+        —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷))){" "}
+        <SearchTrigger {...args} />
       </Box>
-      <Box as="span" css={{ opacity: 0.6 }}>
-        work
-      </Box>
-      <Box as="span" css={{ opacity: 0.6 }}>
-        about
-      </Box>
-      <SearchTrigger {...args} css={{ ml: "auto" }} />
     </Box>
   ),
 };

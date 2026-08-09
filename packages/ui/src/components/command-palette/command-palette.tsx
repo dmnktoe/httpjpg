@@ -1,12 +1,12 @@
 "use client";
 
-import { zIndex } from "@httpjpg/tokens";
 import type { KeyboardEvent, MouseEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { lockBodyScroll } from "../../lib/scroll-lock";
 import { Box } from "../box/box";
+import { Button } from "../button/button";
 import { CommandPaletteAnswer, type CommandPaletteSource } from "./command-palette-answer";
 import { CommandPaletteInput } from "./command-palette-input";
 import { type CommandPaletteResult, CommandPaletteResultItem } from "./command-palette-result";
@@ -155,14 +155,15 @@ export function CommandPalette({
       css={{
         position: "fixed",
         inset: "0",
-        zIndex: zIndex.commandPalette,
+        zIndex: "commandPalette",
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
         px: "4",
         pt: { base: "16", md: "24" },
-        bg: "rgba(23, 37, 84, 0.35)",
-        backdropFilter: "blur(10px) saturate(130%)",
+        bg: "rgba(0, 0, 0, 0.2)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
       }}
     >
       <Box
@@ -179,9 +180,9 @@ export function CommandPalette({
           maxH: "70dvh",
           color: "pageFg",
           bg: "pageBg",
-          border: "2px solid",
-          borderColor: "primary.500",
-          boxShadow: "8px 8px 0 0 rgba(59, 130, 246, 0.35)",
+          border: "1px solid",
+          borderColor: "pageBorder",
+          boxShadow: "0 24px 60px -12px rgba(0, 0, 0, 0.35)",
           overflowY: "auto",
         }}
       >
@@ -263,42 +264,24 @@ function CommandPaletteFooter({
         py: "2",
         fontFamily: "mono",
         fontSize: "sm",
-        borderColor: "primary.500",
-        borderTop: "2px solid",
+        borderColor: "pageBorder",
+        borderTop: "1px solid",
       }}
     >
       <Box as="span" css={{ color: "pageMuted" }}>
         {statusLabel(status, query, resultCount)}
       </Box>
       {canAsk && (
-        <Box
-          as="button"
-          type="button"
+        <Button
+          size="sm"
           onMouseDown={(event: MouseEvent) => {
             event.preventDefault();
             onAsk(query.trim());
           }}
-          css={{
-            px: "3",
-            py: "1",
-            color: "white",
-            fontFamily: "mono",
-            fontSize: "sm",
-            fontWeight: "bold",
-            bg: "primary.500",
-            border: "2px solid",
-            borderColor: "primary.500",
-            cursor: "pointer",
-            _hover: { color: "primary.500", bg: "transparent" },
-            _focusVisible: {
-              outline: "2px solid",
-              outlineColor: "accent.400",
-              outlineOffset: "2px",
-            },
-          }}
+          css={{ flexShrink: 0, fontFamily: "mono" }}
         >
           ask ⌘↵
-        </Box>
+        </Button>
       )}
     </Box>
   );

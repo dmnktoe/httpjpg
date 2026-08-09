@@ -17,6 +17,7 @@ declare global {
 export interface SearchTriggerProps {
   /** Overrides the default `window` event, mirroring Footer's cookie hook. */
   onTrigger?: () => void;
+  /** Shown where there is no keyboard to press. */
   label?: string;
   css?: SystemStyleObject;
 }
@@ -47,67 +48,26 @@ export function SearchTrigger({ onTrigger, label = "search", css: cssProp }: Sea
       aria-label="Open search"
       aria-keyshortcuts="Meta+K Control+K"
       css={{
-        display: "flex",
-        flexShrink: 0,
-        alignItems: "center",
-        gap: "2",
+        display: "inline",
         p: "0",
-        color: "pageFg",
-        fontFamily: "mono",
-        fontSize: "sm",
+        color: "primary.500",
+        font: "inherit",
         bg: "transparent",
         border: "none",
         cursor: "pointer",
         pointerEvents: "auto",
-        _hover: {
-          "& [data-badge]": { color: "primary.500", bg: "accent.400" },
-          "& [data-label]": { textDecorationStyle: "wavy" },
-        },
-        _focusVisible: {
-          outline: "2px solid",
-          outlineColor: "primary.500",
-          outlineOffset: "3px",
-        },
+        textDecoration: "underline",
+        textDecorationThickness: "1px",
+        textUnderlineOffset: "2px",
+        _hover: { textDecorationStyle: "wavy" },
+        _focusVisible: { outline: "2px solid", outlineColor: "primary.500", outlineOffset: "2px" },
         ...cssProp,
       }}
     >
-      <Box
-        data-badge
-        aria-hidden="true"
-        css={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "0.5",
-          minW: "7",
-          h: "7",
-          px: "1.5",
-          color: "white",
-          fontFamily: "mono",
-          fontSize: "sm",
-          fontWeight: "bold",
-          lineHeight: "none",
-          bg: "primary.500",
-          boxShadow: "2px 2px 0 0 #A3E635",
-          transition: "background 120ms ease-out, color 120ms ease-out",
-        }}
-      >
-        {modifier ?? "⌕"}
-        {modifier && <Box as="span">K</Box>}
+      <Box as="span" aria-hidden="true">
+        •&nbsp;
       </Box>
-      <Box
-        as="span"
-        data-label
-        css={{
-          display: { base: "none", md: "inline" },
-          textDecoration: "underline",
-          textDecorationColor: "primary.500",
-          textDecorationThickness: "1px",
-          textUnderlineOffset: "3px",
-        }}
-      >
-        {label}
-      </Box>
+      {modifier ? `${modifier}+𝙆` : label}
     </Box>
   );
 }

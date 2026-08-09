@@ -8,6 +8,7 @@ import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
 import { Link } from "../link/link";
 import { NavLink } from "../nav-link/nav-link";
+import { SearchTrigger } from "../search-trigger/search-trigger";
 import type { HeaderProps } from "./header";
 
 const INITIAL_WORK_COUNT = 5;
@@ -171,6 +172,7 @@ export function Navigation({
   nav,
   projectsWork = [],
   websitesWork = [],
+  showSearch = false,
 }: Omit<HeaderProps, "children">) {
   return (
     <Box css={{ position: "relative", display: { base: "none", lg: "flex" }, w: "full" }}>
@@ -223,7 +225,8 @@ export function Navigation({
               </span>
             ))}
             <Box as="span" css={{ textAlign: "justify" }}>
-              —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷)))
+              —————— ꀭꉣꁅ! :))))) ･ﾟ⋆ 🎀 𝒽𝓊𝒽𝓊𝓊𝓊 𝒽𝓉𝓉𝓅 &&& —————— 𝒿𝓅𝑔❣ 𝓈(^‿^)-𝒷))){" "}
+              {showSearch && <SearchTrigger />}
             </Box>
             <br />
             <Link

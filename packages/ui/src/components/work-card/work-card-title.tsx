@@ -8,10 +8,6 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
       css={{
         width: { base: "full", xl: "1/2" },
         containerType: "inline-size",
-        "@supports (mix-blend-mode: difference)": {
-          color: "white",
-          mixBlendMode: "difference",
-        },
       }}
     >
       <Box

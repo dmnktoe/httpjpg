@@ -10,21 +10,30 @@ export function DiscogsStatus() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchCollection = async () => {
       try {
-        const response = await fetch("/api/discogs");
+        const response = await fetch("/api/discogs", { signal: controller.signal });
         if (response.ok) {
           const data = await response.json();
           setRelease(data.releases?.[0] ?? null);
         }
       } catch (error) {
+        if (controller.signal.aborted) {
+          return;
+        }
         console.error("Failed to fetch Discogs collection:", error);
       } finally {
-        setLoaded(true);
+        if (!controller.signal.aborted) {
+          setLoaded(true);
+        }
       }
     };
 
     fetchCollection();
+
+    return () => controller.abort();
   }, []);
 
   if (!release) {

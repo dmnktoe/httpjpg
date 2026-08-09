@@ -4,12 +4,12 @@ import type { SbConfigStory } from "@httpjpg/storyblok-ui";
 import { draftMode } from "next/headers";
 import { NextResponse } from "next/server";
 
+import { widgetCacheHeaders } from "@/lib/cache-headers";
 import { fetchDiscogsCollection, isDiscogsUsername } from "@/lib/integrations/discogs";
 
-async function resolveUsername(): Promise<string | undefined> {
+async function resolveUsername(isDraft: boolean): Promise<string | undefined> {
   try {
-    const { isEnabled } = await draftMode();
-    const story = await getStoryblokApi({ draftMode: isEnabled }).getStory({
+    const story = await getStoryblokApi({ draftMode: isDraft }).getStory({
       slug: "config",
     });
     const config = story?.content as SbConfigStory | undefined;
@@ -26,8 +26,9 @@ async function resolveUsername(): Promise<string | undefined> {
 }
 
 export async function GET() {
+  const { isEnabled: isDraft } = await draftMode();
   try {
-    const username = await resolveUsername();
+    const username = await resolveUsername(isDraft);
     if (!username) {
       return NextResponse.json(
         {
@@ -49,7 +50,7 @@ export async function GET() {
 
     return NextResponse.json(
       { releases: result.releases },
-      { headers: { "Cache-Control": "public, s-maxage=900, stale-while-revalidate=1800" } },
+      { headers: widgetCacheHeaders(isDraft, 900) },
     );
   } catch (error) {
     console.error("Discogs API error:", error);

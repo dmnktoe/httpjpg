@@ -4,6 +4,7 @@ import type { SbConfigStory } from "@httpjpg/storyblok-ui";
 import { draftMode } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
+import { widgetCacheHeaders } from "@/lib/cache-headers";
 import { fetchDiscordPresence, isDiscordUserId } from "@/lib/integrations/discord";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
@@ -12,10 +13,9 @@ interface ResolvedUserId {
   configUnavailable: boolean;
 }
 
-async function resolveUserId(): Promise<ResolvedUserId> {
+async function resolveUserId(isDraft: boolean): Promise<ResolvedUserId> {
   try {
-    const { isEnabled } = await draftMode();
-    const story = await getStoryblokApi({ draftMode: isEnabled }).getStory({
+    const story = await getStoryblokApi({ draftMode: isDraft }).getStory({
       slug: "config",
     });
     if (!story) {
@@ -40,8 +40,10 @@ export async function GET(request: NextRequest) {
     return limited;
   }
 
+  const { isEnabled: isDraft } = await draftMode();
+
   try {
-    const { userId, configUnavailable } = await resolveUserId();
+    const { userId, configUnavailable } = await resolveUserId(isDraft);
     if (configUnavailable) {
       return NextResponse.json(
         {
@@ -71,7 +73,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(result.presence, {
-      headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60" },
+      headers: widgetCacheHeaders(isDraft, 30),
     });
   } catch (error) {
     console.error("Discord API error:", error);

@@ -37,6 +37,7 @@ describe("XStatus", () => {
   afterEach(() => {
     cleanup();
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
   it("holds a loading label, then collapses when there is no post", async () => {

@@ -29,6 +29,7 @@ describe("DiscogsStatus", () => {
   afterEach(() => {
     cleanup();
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
   it("holds a loading label, then collapses when the collection is empty", async () => {

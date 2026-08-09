@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { beforeEach, type MockedFunction, vi } from "vitest";
+import { afterEach, beforeEach, type MockedFunction, vi } from "vitest";
 
 import { fetchWithTimeout, readJson } from "./http";
 
@@ -13,6 +13,10 @@ function jsonResponse(body: unknown, ok = true, status = 200): Response {
 describe("fetchWithTimeout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("passes the url through and defaults to an uncached request", async () => {
@@ -114,7 +118,6 @@ describe("fetchWithTimeout", () => {
       status: 504,
       message: "Example request timed out.",
     });
-    vi.useRealTimers();
   });
 });
 

@@ -96,7 +96,7 @@ export function toPost(tweet: TweetApiTweet, fallbackUsername: string): XPost | 
     return null;
   }
 
-  const text = cleanPostText(tweet.text ?? "");
+  const text = cleanPostText(typeof tweet.text === "string" ? tweet.text : "");
   const hasMedia = (tweet.media?.length ?? 0) > 0;
   if (!text && !hasMedia) {
     return null;
@@ -174,6 +174,7 @@ export async function fetchXTimeline({
   }
 
   const posts = body.data.data
+    .filter((tweet): tweet is TweetApiTweet => typeof tweet === "object" && tweet !== null)
     .map((tweet) => toPost(tweet, profile.username))
     .filter((post): post is XPost => post !== null)
     .sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""))

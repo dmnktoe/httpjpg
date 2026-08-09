@@ -282,6 +282,19 @@ describe("fetchXTimeline", () => {
     });
   });
 
+  it("skips null entries instead of throwing", async () => {
+    mockFetch
+      .mockResolvedValueOnce(jsonResponse({ data: USER }))
+      .mockResolvedValueOnce(jsonResponse({ data: [null, TWEET, { id: "2", text: 42 }] }));
+
+    const result = await fetchXTimeline(REQUEST);
+
+    expect(result).toMatchObject({ ok: true });
+    if (result.ok) {
+      expect(result.timeline.posts.map((post) => post.id)).toEqual([TWEET.id]);
+    }
+  });
+
   it("reports a timeout as a 504", async () => {
     mockFetch.mockRejectedValueOnce(new DOMException("aborted", "AbortError"));
 

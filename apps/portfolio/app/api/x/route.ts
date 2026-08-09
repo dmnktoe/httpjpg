@@ -5,13 +5,13 @@ import type { SbConfigStory } from "@httpjpg/storyblok-ui";
 import { draftMode } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
+import { widgetCacheHeaders } from "@/lib/cache-headers";
 import { fetchXTimeline, isXUsername } from "@/lib/integrations/x-posts";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
-async function resolveUsername(): Promise<string | undefined> {
+async function resolveUsername(isDraft: boolean): Promise<string | undefined> {
   try {
-    const { isEnabled } = await draftMode();
-    const story = await getStoryblokApi({ draftMode: isEnabled }).getStory({
+    const story = await getStoryblokApi({ draftMode: isDraft }).getStory({
       slug: "config",
     });
     const config = story?.content as SbConfigStory | undefined;
@@ -33,6 +33,8 @@ export async function GET(request: NextRequest) {
     return limited;
   }
 
+  const { isEnabled: isDraft } = await draftMode();
+
   const apiKey = env.TWEETAPI_KEY;
   if (!apiKey) {
     return NextResponse.json(
@@ -42,7 +44,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const username = await resolveUsername();
+    const username = await resolveUsername(isDraft);
     if (!username) {
       return NextResponse.json(
         {
@@ -68,7 +70,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(result.timeline, {
-      headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200" },
+      headers: widgetCacheHeaders(isDraft, 3600),
     });
   } catch (error) {
     console.error("X API error:", error);

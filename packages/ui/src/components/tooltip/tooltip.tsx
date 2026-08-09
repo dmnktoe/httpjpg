@@ -63,6 +63,7 @@ export function Tooltip({
     <Box
       as="span"
       className={className}
+      tabIndex={disabled ? undefined : 0}
       aria-describedby={isVisible ? tooltipId : undefined}
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
@@ -110,7 +111,8 @@ export function Tooltip({
   );
 }
 
-export function asciiFrame(label: string): string {
+export function asciiFrame(rawLabel: string): string {
+  const label = rawLabel.replace(/\s+/g, " ").trim();
   const border = `+${"-".repeat(label.length + 2)}+`;
   return [border, `| ${label} |`, border].join("\n");
 }

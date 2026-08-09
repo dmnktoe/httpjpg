@@ -25,7 +25,7 @@ export async function fetchWithTimeout(
   try {
     response = await fetch(url, { cache: "no-store", ...init, signal: controller.signal });
   } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") {
+    if ((error as { name?: string } | null)?.name === "AbortError") {
       return { ok: false, status: 504, message: `${label} request timed out.` };
     }
     throw error;

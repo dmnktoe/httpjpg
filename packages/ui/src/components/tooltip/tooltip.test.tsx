@@ -14,6 +14,12 @@ describe("asciiFrame", () => {
     expect(widths.size).toBe(1);
   });
 
+  it("collapses a multi-line label so every frame line stays equal", () => {
+    const lines = asciiFrame("a\nb").split("\n");
+    expect(new Set(lines.map((line) => line.length)).size).toBe(1);
+    expect(lines[1]).toBe("| a b |");
+  });
+
   it("handles an empty label without collapsing the frame", () => {
     expect(asciiFrame("")).toBe(["+--+", "|  |", "+--+"].join("\n"));
   });
@@ -75,6 +81,16 @@ describe("Tooltip", () => {
     fireEvent.mouseEnter(trigger);
 
     expect(trigger.getAttribute("aria-describedby")).toBe(screen.getByRole("tooltip").id);
+  });
+
+  it("is reachable by keyboard so the description has a focusable owner", () => {
+    render(
+      <Tooltip label="@dmnktoe">
+        <span>avatar</span>
+      </Tooltip>,
+    );
+
+    expect(screen.getByText("avatar").parentElement).toHaveAttribute("tabindex", "0");
   });
 
   it("dismisses on Escape", () => {

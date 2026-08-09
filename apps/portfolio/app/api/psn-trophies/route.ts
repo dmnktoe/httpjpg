@@ -5,12 +5,12 @@ import type { SbConfigStory } from "@httpjpg/storyblok-ui";
 import { draftMode } from "next/headers";
 import { NextResponse } from "next/server";
 
+import { widgetCacheHeaders } from "@/lib/cache-headers";
 import { fetchRecentTrophies, isPsnUsername } from "@/lib/integrations/psn-trophies";
 
-async function resolveUsername(): Promise<string | undefined> {
+async function resolveUsername(isDraft: boolean): Promise<string | undefined> {
   try {
-    const { isEnabled } = await draftMode();
-    const story = await getStoryblokApi({ draftMode: isEnabled }).getStory({
+    const story = await getStoryblokApi({ draftMode: isDraft }).getStory({
       slug: "config",
     });
     const config = story?.content as SbConfigStory | undefined;
@@ -27,6 +27,7 @@ async function resolveUsername(): Promise<string | undefined> {
 }
 
 export async function GET() {
+  const { isEnabled: isDraft } = await draftMode();
   try {
     if (!env.PSN_NPSSO) {
       return NextResponse.json(
@@ -38,7 +39,7 @@ export async function GET() {
       );
     }
 
-    const username = await resolveUsername();
+    const username = await resolveUsername(isDraft);
 
     const result = await fetchRecentTrophies(env.PSN_NPSSO, username);
     if (!result.ok) {
@@ -56,7 +57,7 @@ export async function GET() {
 
     return NextResponse.json(
       { trophies: result.trophies, avatar: result.avatar },
-      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
+      { headers: widgetCacheHeaders(isDraft, 300) },
     );
   } catch (error) {
     console.error("PSN trophies API error:", error);

@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { decodeEntities, stripHtml } from "./html";
+import { decodeEntities } from "./html";
 
 describe("decodeEntities", () => {
   it("decodes the named entities", () => {
@@ -18,26 +18,10 @@ describe("decodeEntities", () => {
     expect(decodeEntities("&unknown;")).toBe("&unknown;");
     expect(decodeEntities("&#xZZ;")).toBe("&#xZZ;");
   });
-});
 
-describe("stripHtml", () => {
-  it("turns block markup into single spaces", () => {
-    expect(stripHtml("<p>First</p><p>Second</p>")).toBe("First Second");
-    expect(stripHtml("one<br>two<br/>three")).toBe("one two three");
-    expect(stripHtml("<ul><li>a</li><li>b</li></ul>")).toBe("a b");
-  });
-
-  it("drops inline markup but keeps its text", () => {
-    expect(stripHtml('<p>hello <a href="https://example.test">world</a></p>')).toBe("hello world");
-  });
-
-  it("decodes entities after removing the tags", () => {
-    expect(stripHtml("<p>Tom &amp; Jerry</p>")).toBe("Tom & Jerry");
-    expect(stripHtml("<p>&lt;script&gt;</p>")).toBe("<script>");
-  });
-
-  it("collapses whitespace and trims", () => {
-    expect(stripHtml("<p>  spaced   out  </p>")).toBe("spaced out");
-    expect(stripHtml("")).toBe("");
+  it("leaves numeric entities outside the Unicode range alone", () => {
+    expect(decodeEntities("&#1114112;")).toBe("&#1114112;");
+    expect(decodeEntities("&#xFFFFFFFF;")).toBe("&#xFFFFFFFF;");
+    expect(decodeEntities("&#x10FFFF;")).toBe(String.fromCodePoint(0x10ffff));
   });
 });

@@ -10,9 +10,11 @@ export function XStatus() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchTimeline = async () => {
       try {
-        const response = await fetch("/api/x");
+        const response = await fetch("/api/x", { signal: controller.signal });
         if (response.ok) {
           const data = await response.json();
           const post = data.posts?.[0];
@@ -21,13 +23,20 @@ export function XStatus() {
           }
         }
       } catch (error) {
+        if (controller.signal.aborted) {
+          return;
+        }
         console.error("Failed to fetch X posts:", error);
       } finally {
-        setLoaded(true);
+        if (!controller.signal.aborted) {
+          setLoaded(true);
+        }
       }
     };
 
     fetchTimeline();
+
+    return () => controller.abort();
   }, []);
 
   if (!timeline) {

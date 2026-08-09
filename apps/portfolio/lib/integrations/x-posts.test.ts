@@ -21,6 +21,7 @@ const USER = {
   username: "dmnktoe",
   name: "Sample User 96991",
   avatar: "https://example.com/images/sample-avatar-96991.jpg",
+  followerCount: 226995885,
 };
 
 const TWEET = {
@@ -79,6 +80,7 @@ describe("toProfile", () => {
       username: "dmnktoe",
       name: "Sample User 96991",
       avatar: "https://example.com/images/sample-avatar-96991.jpg",
+      followerCount: 226995885,
     });
   });
 
@@ -89,6 +91,20 @@ describe("toProfile", () => {
 
   it("nulls a missing avatar", () => {
     expect(toProfile({ ...USER, avatar: "" })).toMatchObject({ avatar: null });
+  });
+
+  it("nulls a follower count that is missing or nonsensical", () => {
+    expect(toProfile({ ...USER, followerCount: undefined })).toMatchObject({
+      followerCount: null,
+    });
+    expect(toProfile({ ...USER, followerCount: -1 })).toMatchObject({ followerCount: null });
+    expect(toProfile({ ...USER, followerCount: Number.NaN })).toMatchObject({
+      followerCount: null,
+    });
+  });
+
+  it("keeps a zero follower count", () => {
+    expect(toProfile({ ...USER, followerCount: 0 })).toMatchObject({ followerCount: 0 });
   });
 
   it("returns null without an id or username", () => {

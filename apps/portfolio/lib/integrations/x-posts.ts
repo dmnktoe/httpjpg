@@ -6,6 +6,7 @@ export interface XProfile {
   username: string;
   name: string;
   avatar: string | null;
+  followerCount: number | null;
 }
 
 export interface XPost {
@@ -32,6 +33,7 @@ interface TweetApiUser {
   username?: string;
   name?: string;
   avatar?: string;
+  followerCount?: number;
 }
 
 interface TweetApiMedia {
@@ -76,11 +78,16 @@ export function toProfile(user: TweetApiUser | undefined): XProfile | null {
   if (!user?.id || !user.username) {
     return null;
   }
+  const followers = user.followerCount;
   return {
     id: user.id,
     username: user.username,
     name: user.name?.trim() || user.username,
     avatar: user.avatar || null,
+    followerCount:
+      typeof followers === "number" && Number.isFinite(followers) && followers >= 0
+        ? followers
+        : null,
   };
 }
 

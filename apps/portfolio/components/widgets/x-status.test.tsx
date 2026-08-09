@@ -1,4 +1,4 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { XPost, XProfile } from "@/lib/integrations/x-posts";
@@ -10,6 +10,7 @@ const profile: XProfile = {
   username: "dmnktoe",
   name: "dmnk",
   avatar: "https://example.com/avatar.jpg",
+  followerCount: 1234,
 };
 
 const post: XPost = {
@@ -46,14 +47,54 @@ describe("XStatus", () => {
     await waitFor(() => expect(container).toBeEmptyDOMElement());
   });
 
-  it("renders the latest post with the handle and avatar", async () => {
+  it("renders the avatar, the follower count and the latest post", async () => {
     mockFetch({ profile, posts: [post] });
     render(<XStatus />);
 
     expect(await screen.findByText("Hello world")).toBeInTheDocument();
-    expect(screen.getByText("@dmnktoe")).toBeInTheDocument();
+    expect(screen.getByText("(1.2K)")).toBeInTheDocument();
     expect(document.querySelector(`img[src="${profile.avatar}"]`)).toBeInTheDocument();
     expect(screen.getByRole("link")).toHaveAttribute("href", post.url);
+  });
+
+  it("compacts large follower counts and spells small ones out", async () => {
+    mockFetch({ profile: { ...profile, followerCount: 226995885 }, posts: [post] });
+    const { unmount } = render(<XStatus />);
+    expect(await screen.findByText("(227M)")).toBeInTheDocument();
+    unmount();
+
+    mockFetch({ profile: { ...profile, followerCount: 42 }, posts: [post] });
+    render(<XStatus />);
+    expect(await screen.findByText("(42)")).toBeInTheDocument();
+  });
+
+  it("reveals the handle in a tooltip when the avatar is hovered", async () => {
+    mockFetch({ profile, posts: [post] });
+    render(<XStatus />);
+
+    await screen.findByText("Hello world");
+    const avatar = document.querySelector(`img[src="${profile.avatar}"]`) as HTMLElement;
+    const trigger = avatar.closest("[aria-describedby], span")?.parentElement as HTMLElement;
+
+    expect(screen.getByRole("tooltip", { hidden: true }).textContent).toContain("@dmnktoe");
+
+    fireEvent.mouseEnter(trigger);
+    expect(screen.getByRole("tooltip")).toHaveAttribute("aria-hidden", "false");
+  });
+
+  it("labels the follower count with the exact number for screen readers", async () => {
+    mockFetch({ profile, posts: [post] });
+    render(<XStatus />);
+
+    expect(await screen.findByLabelText("1234 followers")).toBeInTheDocument();
+  });
+
+  it("omits the follower count when the API did not report one", async () => {
+    mockFetch({ profile: { ...profile, followerCount: null }, posts: [post] });
+    render(<XStatus />);
+
+    await screen.findByText("Hello world");
+    expect(screen.queryByText(/^\(/)).not.toBeInTheDocument();
   });
 
   it("renders without an avatar when the profile has none", async () => {
@@ -62,6 +103,7 @@ describe("XStatus", () => {
 
     await screen.findByText("Hello world");
     expect(document.querySelector("img")).not.toBeInTheDocument();
+    expect(screen.getByText("(1.2K)")).toBeInTheDocument();
   });
 
   it("marks quote posts and posts with media", async () => {

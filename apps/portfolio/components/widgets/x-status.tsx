@@ -1,14 +1,9 @@
 "use client";
 
-import { Box } from "@httpjpg/ui";
+import { Box, Tooltip } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 
 import type { XPost, XProfile } from "@/lib/integrations/x-posts";
-
-interface XTimelineState {
-  profile: XProfile;
-  post: XPost;
-}
 
 export function XStatus() {
   const [timeline, setTimeline] = useState<XTimelineState | null>(null);
@@ -87,26 +82,33 @@ export function XStatus() {
         x:
       </Box>
       {profile.avatar && (
-        <Box
-          as="span"
-          css={{
-            display: "inline-block",
-            width: "3",
-            height: "3",
-            verticalAlign: "middle",
-            borderRadius: "full",
-            overflow: "hidden",
-          }}
-        >
-          <img
-            src={profile.avatar}
-            alt=""
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          />
+        <Tooltip label={`@${profile.username}`}>
+          <Box
+            as="span"
+            css={{
+              display: "inline-block",
+              width: "3",
+              height: "3",
+              verticalAlign: "middle",
+              borderRadius: "full",
+              overflow: "hidden",
+            }}
+          >
+            <img
+              src={profile.avatar}
+              alt=""
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+          </Box>
+        </Tooltip>
+      )}
+      {profile.followerCount !== null && (
+        <Box as="span" aria-label={`${profile.followerCount} followers`} css={{ opacity: 50 }}>
+          ({formatFollowerCount(profile.followerCount)})
         </Box>
       )}
-      <Box as="span" css={{ opacity: 50 }}>
-        @{profile.username}
+      <Box as="span" css={{ opacity: 40 }}>
+        •
       </Box>
       <Box
         as="span"
@@ -132,4 +134,16 @@ export function XStatus() {
       )}
     </Box>
   );
+}
+
+function formatFollowerCount(value: number): string {
+  return new Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
+interface XTimelineState {
+  profile: XProfile;
+  post: XPost;
 }

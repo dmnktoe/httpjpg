@@ -1,14 +1,7 @@
-// Google's s2 endpoint resolves a bare hostname, so every project that lives
-// under a shared host (dmnktoe.github.io/buli-tabelle) collapses onto the
-// host's icon — or onto nothing at all. This resolver keeps the full URL,
-// reads the page's own <link rel="icon">, and only then falls back to
-// /favicon.ico, first next to the page and then at the origin.
-
 import { lookup } from "node:dns/promises";
 
 export interface FaviconAsset {
   ok: true;
-  // Pinned to ArrayBuffer (not ArrayBufferLike) so the bytes satisfy BodyInit.
   body: Uint8Array<ArrayBuffer>;
   contentType: string;
   source: string;
@@ -30,10 +23,9 @@ const MAX_CANDIDATES = 6;
 
 const USER_AGENT = "Mozilla/5.0 (compatible; httpjpg-favicon/1.0; +https://httpjpg.com)";
 
-const ICON_RELS = ["icon", "shortcut icon", "apple-touch-icon", "apple-touch-icon-precomposed"];
+const ICON_REL_TOKENS = ["icon", "apple-touch-icon", "apple-touch-icon-precomposed"];
 
-// Rel values that only ever carry a monochrome mask, never a usable favicon.
-const REL_BLOCKLIST = ["mask-icon"];
+const REL_BLOCKLIST = ["mask-icon", "fluid-icon"];
 
 const MAGIC_CONTENT_TYPES: { type: string; match: (bytes: Uint8Array) => boolean }[] = [
   {
@@ -73,16 +65,12 @@ export function isHttpUrl(value: string): URL | null {
   if (url.protocol !== "http:" && url.protocol !== "https:") {
     return null;
   }
-  // Credentials in the URL would be forwarded to whatever host we fetch.
   if (url.username || url.password) {
     return null;
   }
   return url;
 }
 
-// A proxy that fetches arbitrary user-supplied URLs is an SSRF primitive unless
-// every hop is pinned to a public address, so resolve the host up front and
-// re-check after each redirect.
 export function isPrivateAddress(address: string): boolean {
   const ip = address.startsWith("::ffff:") ? address.slice(7) : address;
 
@@ -129,8 +117,6 @@ async function isPublicHost(hostname: string): Promise<boolean> {
   }
 }
 
-// fetch() follows redirects opaquely, which would hand a public host the chance
-// to bounce us onto a private one. Walk the chain by hand instead.
 async function safeFetch(target: URL, accept: string): Promise<Response | null> {
   let url = target;
 
@@ -182,8 +168,6 @@ async function readLimited(
   return body.byteLength > maxBytes ? null : body;
 }
 
-// Servers hand out favicons as application/octet-stream, text/plain and the
-// occasional HTML error page, so trust the bytes over the header.
 export function sniffContentType(bytes: Uint8Array): string | null {
   if (bytes.byteLength < 4) {
     return null;
@@ -210,26 +194,36 @@ function decodeHtmlEntities(value: string): string {
     .replace(/&#0?39;/g, "'");
 }
 
+function readAttribute(tag: string, name: string): string {
+  const match = tag.match(
+    new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'\`=<>]+))`, "i"),
+  );
+  return (match?.[1] ?? match?.[2] ?? match?.[3] ?? "").trim();
+}
+
+function isIconRel(rel: string): boolean {
+  const tokens = rel.split(/\s+/).filter(Boolean);
+  if (tokens.length === 0 || tokens.some((token) => REL_BLOCKLIST.includes(token))) {
+    return false;
+  }
+  return tokens.some((token) => ICON_REL_TOKENS.includes(token));
+}
+
 export function extractIconCandidates(html: string): IconCandidate[] {
   const head = html.split(/<\/head>/i)[0];
   const candidates: IconCandidate[] = [];
 
-  for (const tag of head.match(/<link\b[^>]*>/gi) ?? []) {
-    const rel =
-      tag
-        .match(/\brel\s*=\s*["']?([^"'>]+)/i)?.[1]
-        ?.trim()
-        .toLowerCase() ?? "";
-    const href = tag.match(/\bhref\s*=\s*["']([^"']+)["']/i)?.[1]?.trim();
-    if (!href || REL_BLOCKLIST.includes(rel) || !ICON_RELS.includes(rel)) {
+  for (const tag of head.match(/<link\b(?:[^>"']|"[^"]*"|'[^']*')*>/gi) ?? []) {
+    const rel = readAttribute(tag, "rel").toLowerCase();
+    const href = readAttribute(tag, "href");
+    if (!href || !isIconRel(rel)) {
       continue;
     }
-    const sizes =
-      tag
-        .match(/\bsizes\s*=\s*["']?([^"'>]+)/i)?.[1]
-        ?.trim()
-        .toLowerCase() ?? "";
-    candidates.push({ href: decodeHtmlEntities(href), rel, sizes });
+    candidates.push({
+      href: decodeHtmlEntities(href),
+      rel,
+      sizes: readAttribute(tag, "sizes").toLowerCase(),
+    });
   }
 
   return candidates;
@@ -246,8 +240,6 @@ function parseSize(sizes: string): number {
   return parsed.length > 0 ? Math.max(...parsed) : 0;
 }
 
-// Prefer the smallest icon that still covers the requested size — scaling a
-// 180px apple-touch-icon down to 16px costs bytes and blurs the pixel grid.
 function rankCandidates(candidates: IconCandidate[], size: number): IconCandidate[] {
   return [...candidates].sort((a, b) => {
     const aSize = parseSize(a.sizes);
@@ -266,8 +258,6 @@ function rankCandidates(candidates: IconCandidate[], size: number): IconCandidat
   });
 }
 
-// Project pages ship their own icon next to the page ("/buli-tabelle/favicon.ico"),
-// which is exactly the case a hostname-only lookup cannot see.
 export function fallbackIconUrls(pageUrl: URL): string[] {
   const urls = [new URL("/favicon.ico", pageUrl).href];
   const directory = pageUrl.pathname.replace(/[^/]*$/, "");
@@ -325,10 +315,6 @@ async function fetchIcon(iconUrl: string): Promise<FaviconAsset | null> {
   return { ok: true, body, contentType, source: url.href };
 }
 
-// Only the <head> carries icon links, and app shells like github.com or
-// instagram.com ship far more markup than a byte cap would ever allow — so read
-// the stream until </head> shows up instead of buffering the whole document and
-// giving up on the big pages that need this most.
 async function readHtmlHead(response: Response): Promise<string | null> {
   const reader = response.body?.getReader();
   if (!reader) {
@@ -377,8 +363,6 @@ async function fetchPageIconHrefs(pageUrl: URL, size: number): Promise<string[]>
     return [];
   }
 
-  // response.url is empty under manual redirects, so resolve against the last
-  // URL we actually walked to instead.
   const base = isHttpUrl(response.url) ?? pageUrl;
 
   return rankCandidates(extractIconCandidates(html), size)

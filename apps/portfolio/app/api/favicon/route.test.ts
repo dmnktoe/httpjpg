@@ -6,6 +6,8 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
 const { fetchFavicon } = vi.hoisted(() => ({ fetchFavicon: vi.fn() }));
 vi.mock("@/lib/integrations/favicon", () => ({ fetchFavicon }));
 
+import { inflateSync } from "node:zlib";
+
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { NextRequest } from "next/server";
 
@@ -49,8 +51,6 @@ describe("GET /api/favicon", () => {
 
     const response = await GET(request("?url=https%3A%2F%2Fexample.com%2F"));
 
-    // A stale Content-Length truncates the icon into a broken image once the
-    // server re-encodes the body.
     expect(response.headers.get("Content-Length")).toBeNull();
     expect(response.headers.get("Content-Security-Policy")).toBeNull();
   });
@@ -92,9 +92,24 @@ describe("GET /api/favicon", () => {
     const response = await GET(request("?url=https%3A%2F%2Fexample.com%2F"));
 
     expect(response.status).toBe(200);
-    expect(response.headers.get("Content-Type")).toBe("image/gif");
+    expect(response.headers.get("Content-Type")).toBe("image/png");
     expect(response.headers.get("X-Favicon-Status")).toBe("not-found");
     expect(response.headers.get("Cache-Control")).toContain("s-maxage=21600");
+  });
+
+  it("serves a placeholder that is actually transparent", async () => {
+    fetchFavicon.mockResolvedValueOnce({ ok: false, status: 404, message: "No favicon found." });
+
+    const response = await GET(request("?url=https%3A%2F%2Fexample.com%2F"));
+    const png = Buffer.from(await response.arrayBuffer());
+
+    expect(png.subarray(1, 4).toString("latin1")).toBe("PNG");
+    expect(png[24]).toBe(8);
+    expect(png[25]).toBe(6);
+
+    const idat = png.indexOf("IDAT") + 4;
+    const scanline = inflateSync(png.subarray(idat, idat + png.readUInt32BE(idat - 8)));
+    expect([...scanline]).toEqual([0, 0, 0, 0, 0]);
   });
 
   it("rejects a request without a url", async () => {

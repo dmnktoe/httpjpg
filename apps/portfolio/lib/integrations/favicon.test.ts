@@ -40,8 +40,6 @@ function binaryResponse(bytes: Uint8Array, url = "https://example.com/favicon.ic
   } as unknown as Response;
 }
 
-// Mirrors a real page: a small <head> followed by an app shell far past the
-// byte cap, delivered in chunks.
 function streamedHtmlResponse(head: string, tailBytes: number): Response {
   const chunks = [new TextEncoder().encode(head)];
   for (let sent = 0; sent < tailBytes; sent += 64 * 1024) {
@@ -160,6 +158,36 @@ describe("extractIconCandidates", () => {
     expect(candidates.map((candidate) => candidate.href)).toEqual(["/icon-32.png", "/apple.png"]);
   });
 
+  it("reads rel as a token list", () => {
+    const candidates = extractIconCandidates(`
+      <link rel="shortcut icon" href="/a.ico">
+      <link rel="ICON" href="/b.png">
+      <link rel="icon shortcut" href="/c.png">
+      <link rel="fluid-icon" href="/d.png">
+      <link rel="preload" href="/e.png">
+    `);
+
+    expect(candidates.map((candidate) => candidate.href)).toEqual(["/a.ico", "/b.png", "/c.png"]);
+  });
+
+  it("reads unquoted and single-quoted attribute values", () => {
+    const candidates = extractIconCandidates(`
+      <link rel=icon href=/bare.ico>
+      <link rel='apple-touch-icon' sizes='180x180' href='/single.png'>
+    `);
+
+    expect(candidates.map((candidate) => candidate.href)).toEqual(["/bare.ico", "/single.png"]);
+    expect(candidates[1].sizes).toBe("180x180");
+  });
+
+  it("keeps a data: href that carries quotes of its own", () => {
+    const [candidate] = extractIconCandidates(
+      `<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>">`,
+    );
+
+    expect(candidate.href).toBe("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>");
+  });
+
   it("decodes entity-escaped hrefs", () => {
     const [candidate] = extractIconCandidates(`<link rel="icon" href="/i.png?a=1&amp;b=2">`);
     expect(candidate.href).toBe("/i.png?a=1&b=2");
@@ -267,6 +295,30 @@ describe("fetchFavicon", () => {
     await fetchFavicon("https://example.com/", 32);
 
     expect(mockFetch.mock.calls[1][0]).toMatchObject({ href: "https://example.com/medium.png" });
+  });
+
+  it("reads a minified head with unquoted attributes", async () => {
+    mockFetch
+      .mockResolvedValueOnce(
+        htmlResponse(
+          `<!doctype html><html lang=de><meta charset=UTF-8><title>x</title>` +
+            `<link rel=icon type=image/svg+xml href=/static/favicon.svg>` +
+            `<link rel=icon type=image/png sizes=32x32 href=/static/assets/favicon/favicon-32x32.png>` +
+            `<link rel=icon type=image/png sizes=16x16 href=/static/assets/favicon/favicon-16x16.png>` +
+            `<link rel="shortcut icon" href=/static/assets/favicon/favicon.ico>` +
+            `<link rel=apple-touch-icon sizes=180x180 href=/static/assets/favicon/apple-touch-icon.png>` +
+            `<link rel=manifest href=/static/site.webmanifest>`,
+          "https://id-100.online/",
+        ),
+      )
+      .mockResolvedValueOnce(binaryResponse(PNG));
+
+    const result = await fetchFavicon("https://id-100.online/");
+
+    expect(result).toMatchObject({ ok: true, contentType: "image/png" });
+    expect(mockFetch.mock.calls[1][0]).toMatchObject({
+      href: "https://id-100.online/static/assets/favicon/favicon-16x16.png",
+    });
   });
 
   it("decodes inline data: icons", async () => {

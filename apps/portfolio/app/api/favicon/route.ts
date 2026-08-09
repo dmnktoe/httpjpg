@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 
 import { fetchFavicon } from "@/lib/integrations/favicon";
 
-// node:dns backs the SSRF guard in the resolver, so this route cannot run on edge.
 export const runtime = "nodejs";
 
 const MIN_SIZE = 16;
@@ -14,17 +13,18 @@ const DEFAULT_SIZE = 16;
 const SUCCESS_CACHE = "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400";
 const MISS_CACHE = "public, max-age=3600, s-maxage=21600, stale-while-revalidate=3600";
 
-// A transparent 1x1 GIF: a miss keeps the reserved 14x14 slot empty instead of
-// dropping a broken-image glyph into the nav.
 const PLACEHOLDER = Uint8Array.from(
-  Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", "base64"),
+  Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGNgAAIAAAUAAXpeqz8AAAAASUVORK5CYII=",
+    "base64",
+  ),
 );
 
 function placeholderResponse(status: number, reason: string): NextResponse {
   return new NextResponse(PLACEHOLDER, {
     status,
     headers: {
-      "Content-Type": "image/gif",
+      "Content-Type": "image/png",
       "Cache-Control": MISS_CACHE,
       "X-Favicon-Status": reason,
     },
@@ -59,15 +59,10 @@ export async function GET(request: NextRequest) {
       "X-Favicon-Status": "hit",
     });
 
-    // An SVG opened directly would run as a document on our own origin, so lock
-    // that one content type down. The other formats are inert and a CSP on them
-    // only risks upsetting how the browser decodes the response.
     if (result.contentType === "image/svg+xml") {
       headers.set("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'");
     }
 
-    // No explicit Content-Length: the dev server may re-encode the body, and a
-    // stale length truncates every icon into a broken image.
     return new NextResponse(result.body, { status: 200, headers });
   } catch (error) {
     console.error("Favicon proxy error:", error);

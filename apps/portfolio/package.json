@@ -21,6 +21,7 @@
     "@httpjpg/analytics": "workspace:*",
     "@httpjpg/consent": "workspace:*",
     "@httpjpg/env": "workspace:*",
+    "@httpjpg/groq": "workspace:*",
     "@httpjpg/now-playing": "workspace:*",
     "@httpjpg/observability": "workspace:*",
     "@httpjpg/spotify": "workspace:*",

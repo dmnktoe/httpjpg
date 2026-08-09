@@ -10,6 +10,7 @@ export interface WidgetConfig {
   xEnabled: boolean;
   spotifyEnabled: boolean;
   nostalgiaSlideshowEnabled: boolean;
+  askEnabled: boolean;
   customCursorEnabled: boolean;
   mouseTrailEnabled: boolean;
 }
@@ -26,6 +27,7 @@ export async function getWidgetConfig(): Promise<WidgetConfig> {
     xEnabled: config?.x_enabled ?? false,
     spotifyEnabled: config?.spotify_enabled ?? true,
     nostalgiaSlideshowEnabled: config?.nostalgia_slideshow_enabled ?? false,
+    askEnabled: config?.ask_enabled ?? true,
     customCursorEnabled: config?.custom_cursor_enabled ?? true,
     mouseTrailEnabled: config?.mouse_trail_enabled ?? true,
   };

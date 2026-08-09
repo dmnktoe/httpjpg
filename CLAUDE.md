@@ -41,9 +41,10 @@ When generating or updating code: read neighboring files first, prefer the exist
 │   │   ├── components/          # App-specific React components
 │   │   │   ├── providers/       # Consent, Storyblok live, registry init
 │   │   │   ├── ui/              # Layout shell (footer wrapper, theme sync, work-nav)
-│   │   │   └── widgets/         # Discord, PSN, now-playing, weather/time, web vitals
+│   │   │   └── widgets/         # Ask palette, Discord, PSN, now-playing, weather/time, web vitals
 │   │   ├── lib/
-│   │   │   ├── queries/         # Storyblok data fetchers (config, work, widgets, last-updated)
+│   │   │   ├── queries/         # Storyblok data fetchers (config, work, widgets, search-index, …)
+│   │   │   ├── search/          # Ranking, autocomplete, ask prompt + NDJSON stream reader
 │   │   │   ├── integrations/    # Third-party API adapters (discord/Lanyard, …)
 │   │   │   ├── page-theme.ts    # Light/dark resolution from headers + draft mode
 │   │   │   ├── seo.ts           # Story → Next Metadata mapping
@@ -59,6 +60,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 │   ├── analytics/               # Google Analytics gtag wrapper
 │   ├── consent/                 # Cookie consent state + banner UI + vendor catalog
 │   ├── env/                     # Env validation (t3-oss + zod), edge-safe loader
+│   ├── groq/                    # Groq chat-completions client (streaming + one-shot)
 │   ├── now-playing/             # Draggable "now playing" widget UI
 │   ├── observability/           # Sentry init for client / server / edge
 │   ├── spotify/                 # Spotify API client + useNowPlaying hook + color extraction
@@ -118,6 +120,7 @@ storyblok-utils  ←  storyblok-api    storyblok-richtext  ←  storyblok-ui
 - **`@httpjpg/spotify`** — Spotify Web API client (server-side, uses `Buffer`), `useNowPlaying` polling hook, and `extractVibrantColor` (colorthief wrapper) for album-artwork color extraction.
 - **`@httpjpg/now-playing`** — the actual draggable widget UI. Consumes `@httpjpg/spotify` for color extraction and `@httpjpg/ui` (peer) for `Marquee`. UI-only — no API or hook logic lives here.
 - **`@httpjpg/analytics`** — analytics wrappers (Google Analytics 4 under `src/google/`, privacy-first Umami under `src/umami/`). Thin, env-driven wrappers; both tracker scripts load only behind `analytics` consent (gated in the app via `ConsentGate`). Track-functions follow `track*` naming and fan out to whichever providers are configured.
+- **`@httpjpg/groq`** — Groq chat-completions client. Dependency-free leaf built on `fetch`, so it runs on node and edge alike: `createGroqClient()` returns `complete()` and a streaming `stream()` that yields content deltas via `parseSseStream`. Failures surface as `GroqApiError` (with an `isTransient` flag for 429/5xx) or `GroqNotConfiguredError` when no key is set. Owns no prompts — grounding lives in the app.
 - **`@httpjpg/observability`** — Sentry init for the three Next runtimes. `getSentryConfig(scope)` resolves DSN, env, production flag, and enabled state per runtime.
 - **`@httpjpg/consent`** — cookie consent state machine (`getConsent`, `setConsent`, `hasVendorConsent`, …), the `CookieBanner` (portal-rendered) + `CookieCategory` + `VendorList` UI, and the vendor catalog (`EXTERNAL_VENDORS`).
 
@@ -341,6 +344,19 @@ When you add a new blok:
 - **Cache tags** — `CACHE_TAGS.STORY(slug)`, `CACHE_TAGS.STORIES`, `CACHE_TAGS.CONFIG`. Use `revalidateTag` from `next/cache` in webhook/route handlers, never bare strings.
 - **Default TTL is 1 hour** plus webhook-driven invalidation. Don't ship per-call ad-hoc TTLs without a reason.
 - **Per-request dedupe** uses `react.cache()` (see `getCachedStory` in `lib/queries/work.ts`). This is request-scoped and cheap; cache loaders, not raw API calls.
+
+---
+
+## Site Search & Ask
+
+The command palette (`⌘K` / `Ctrl+K`) is one feature with two halves, and they share a corpus.
+
+- **One index, two consumers.** `getSearchIndex()` in `lib/queries/search-index.ts` flattens every published story into `SearchDocument[]` — title, tags, href, and a text excerpt gathered by `collectStoryText()` from an allowlist of content keys. It is cached under `CACHE_TAGS.STORIES`, so the existing publish webhook already invalidates it. Both search and the AI answer read that one snapshot; do not add a second corpus.
+- **Ranking is lexical and pure.** `rankDocuments()` and `suggestCompletions()` in `lib/search/ranking.ts` take documents in and give results out — no I/O, no React. Autocomplete is deliberately not an AI call: it fires on every keystroke and must stay free and instant.
+- **`GET /api/search`** returns `{ results, suggestions }`. **`POST /api/ask`** streams NDJSON — one `sources` line first so the widget can render citations, then `delta` lines, then an in-band `error` line if the upstream fails after the 200 has been sent. Both go through `enforceRateLimit`.
+- **AI is optional.** No `GROQ_API_KEY` means `/api/ask` answers 503 and the palette hides the ask affordance; search, autocomplete, and navigation keep working. Never make search depend on the model.
+- **Answers are grounded.** `buildAskMessages()` in `lib/search/prompt.ts` owns the system prompt and numbers the sources for citation. Prompts live in the app, never in `@httpjpg/groq`.
+- **UI split.** `CommandPalette` in `@httpjpg/ui` is presentational and fully controlled (hence its Storybook stories); `AskWidget` in `components/widgets/` owns fetching, debouncing, and aborts. Keep that line — the palette must stay storyable without a network.
 
 ---
 

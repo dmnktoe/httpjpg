@@ -58,7 +58,9 @@
         "WEATHER_LONGITUDE",
         "TWEETAPI_API_URL",
         "TWEETAPI_KEY",
-        "ARCJET_KEY"
+        "ARCJET_KEY",
+        "GROQ_API_KEY",
+        "GROQ_MODEL"
       ]
     },
     "dev": {

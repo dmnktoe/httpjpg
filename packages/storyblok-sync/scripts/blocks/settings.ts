@@ -85,6 +85,7 @@ export const settingsBlocks: BlockDef[] = [
           description: "Handle without @, e.g. dmnktoe. Needs TWEETAPI_KEY to be set.",
           tooltip: true,
         }),
+        ask_enabled: field.boolean("Ask · Search & AI Palette", "true"),
         custom_cursor_enabled: field.boolean("Custom Cursor", "true"),
         mouse_trail_enabled: field.boolean("Mouse Trail", "true"),
       }),

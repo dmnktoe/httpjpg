@@ -1,0 +1,50 @@
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
+import { type NextRequest, NextResponse } from "next/server";
+
+import { getSearchIndex } from "@/lib/queries/search-index";
+import { enforceRateLimit } from "@/lib/rate-limit";
+import { rankDocuments, suggestCompletions } from "@/lib/search/ranking";
+
+const MAX_QUERY_LENGTH = 120;
+const DEFAULT_LIMIT = 8;
+const MAX_LIMIT = 20;
+
+function parseLimit(raw: string | null): number {
+  const parsed = Number.parseInt(raw ?? "", 10);
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return DEFAULT_LIMIT;
+  }
+  return Math.min(parsed, MAX_LIMIT);
+}
+
+export async function GET(request: NextRequest) {
+  const limited = await enforceRateLimit(request);
+  if (limited) {
+    return limited;
+  }
+
+  const query = (request.nextUrl.searchParams.get("q") ?? "").slice(0, MAX_QUERY_LENGTH).trim();
+  const limit = parseLimit(request.nextUrl.searchParams.get("limit"));
+
+  if (!query) {
+    return NextResponse.json({ results: [], suggestions: [] });
+  }
+
+  try {
+    const documents = await getSearchIndex();
+
+    return NextResponse.json(
+      {
+        results: rankDocuments(documents, query, limit),
+        suggestions: suggestCompletions(documents, query),
+      },
+      // Short shared cache: the index only changes on publish, and repeated
+      // keystrokes across visitors hit the same handful of prefixes.
+      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
+    );
+  } catch (error) {
+    console.error("Search API error:", error);
+    captureServerException(error, { tags: { route: "search" } });
+    return NextResponse.json({ error: "Search unavailable" }, { status: 500 });
+  }
+}

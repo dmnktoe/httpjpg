@@ -38,7 +38,7 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
       >
         <Icon
           name="arrow-up"
-          size="1em"
+          size="1.25em"
           css={{
             display: "inline-block",
             mr: "2",

@@ -74,7 +74,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 │   └── ui/                      # Core UI component library (Panda CSS)
 │
 ├── tsconfig/                    # Shared TS configs: base, nextjs, react-library
-├── test/config/                 # Workspace Vitest setup file
+├── tools/                       # Repo tooling: oxlint plugin, Vitest setup, commitlint config
 ├── turbo.json                   # Task graph, cached inputs/outputs, env passthrough
 └── pnpm-workspace.yaml          # Catalog versions for react, typescript, dotenv, …
 ```

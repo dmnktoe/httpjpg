@@ -2,15 +2,15 @@
 
 import { useEffect } from "react";
 
-interface BodyStyles {
-  position: string;
-  top: string;
-  left: string;
-  right: string;
-  width: string;
-  overflow: string;
-  overscrollBehavior: string;
-  paddingRight: string;
+interface LockedStyles {
+  htmlOverflow: string;
+  htmlOverscrollBehavior: string;
+  bodyPosition: string;
+  bodyTop: string;
+  bodyLeft: string;
+  bodyRight: string;
+  bodyWidth: string;
+  bodyOverscrollBehavior: string;
 }
 
 // Reference-counted because the mobile menu and the command palette can both
@@ -19,52 +19,59 @@ interface BodyStyles {
 // first would hand scrolling back while the other still covered the page, and
 // would restore a scroll position captured after the body was already fixed.
 let lockCount = 0;
-let previous: BodyStyles | null = null;
+let previous: LockedStyles | null = null;
 let lockedScrollY = 0;
 
 function freeze() {
-  const { body } = document;
+  const { body, documentElement: html } = document;
   lockedScrollY = window.scrollY;
-  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
   previous = {
-    position: body.style.position,
-    top: body.style.top,
-    left: body.style.left,
-    right: body.style.right,
-    width: body.style.width,
-    overflow: body.style.overflow,
-    overscrollBehavior: body.style.overscrollBehavior,
-    paddingRight: body.style.paddingRight,
+    htmlOverflow: html.style.overflow,
+    htmlOverscrollBehavior: html.style.overscrollBehavior,
+    bodyPosition: body.style.position,
+    bodyTop: body.style.top,
+    bodyLeft: body.style.left,
+    bodyRight: body.style.right,
+    bodyWidth: body.style.width,
+    bodyOverscrollBehavior: body.style.overscrollBehavior,
   };
 
-  // `overflow: hidden` alone does nothing here: globals.css sets
-  // `overflow-x: clip` on <html>, which stops the body's overflow propagating
-  // to the viewport. Taking the body out of flow is also what holds on iOS.
+  html.style.overflow = "hidden";
+  html.style.overscrollBehavior = "none";
+
   body.style.position = "fixed";
   body.style.top = `${-lockedScrollY}px`;
   body.style.left = "0";
   body.style.right = "0";
   body.style.width = "100%";
-  body.style.overflow = "hidden";
   body.style.overscrollBehavior = "none";
-  if (scrollbarWidth > 0) {
-    body.style.paddingRight = `${scrollbarWidth}px`;
+}
+
+function reclamp() {
+  if (!previous) {
+    return;
   }
+  const maxScrollY = Math.max(0, document.body.scrollHeight - window.innerHeight);
+  if (lockedScrollY <= maxScrollY) {
+    return;
+  }
+  lockedScrollY = maxScrollY;
+  document.body.style.top = `${-lockedScrollY}px`;
 }
 
 function thaw() {
   if (!previous) {
     return;
   }
-  const { body } = document;
-  body.style.position = previous.position;
-  body.style.top = previous.top;
-  body.style.left = previous.left;
-  body.style.right = previous.right;
-  body.style.width = previous.width;
-  body.style.overflow = previous.overflow;
-  body.style.overscrollBehavior = previous.overscrollBehavior;
-  body.style.paddingRight = previous.paddingRight;
+  const { body, documentElement: html } = document;
+  html.style.overflow = previous.htmlOverflow;
+  html.style.overscrollBehavior = previous.htmlOverscrollBehavior;
+  body.style.position = previous.bodyPosition;
+  body.style.top = previous.bodyTop;
+  body.style.left = previous.bodyLeft;
+  body.style.right = previous.bodyRight;
+  body.style.width = previous.bodyWidth;
+  body.style.overscrollBehavior = previous.bodyOverscrollBehavior;
   previous = null;
   window.scrollTo(0, lockedScrollY);
 }
@@ -81,7 +88,12 @@ export function useBodyScrollLock(isLocked: boolean) {
     }
     lockCount += 1;
 
+    window.addEventListener("resize", reclamp);
+    window.addEventListener("orientationchange", reclamp);
+
     return () => {
+      window.removeEventListener("resize", reclamp);
+      window.removeEventListener("orientationchange", reclamp);
       lockCount -= 1;
       if (lockCount === 0) {
         thaw();

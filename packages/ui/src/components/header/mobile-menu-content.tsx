@@ -23,10 +23,17 @@ export function MobileMenuContent({
 }: MobileMenuContentProps) {
   const [mounted, setMounted] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (isOpen && scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [isOpen]);
 
   // Trap keyboard focus inside the panel while open; close on Escape. `mounted`
   // is a dependency because the panel only exists once the portal has mounted.
@@ -112,7 +119,7 @@ export function MobileMenuContent({
         justifyContent: { md: "end" },
         w: "full",
         maxW: "full",
-        maxH: "100dvh",
+        overflow: "hidden",
       }}
     >
       <MobileMenuBackdrop />
@@ -120,8 +127,7 @@ export function MobileMenuContent({
         css={{
           display: "flex",
           w: { base: "full", md: "96" },
-          h: "100dvh",
-          maxH: "100dvh",
+          h: "100%",
           m: 0,
           overflow: "hidden",
         }}
@@ -153,6 +159,7 @@ export function MobileMenuContent({
           }}
         >
           <Box
+            ref={scrollRef}
             css={{
               display: "flex",
               flex: "1 1 auto",

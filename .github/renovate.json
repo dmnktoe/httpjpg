@@ -10,135 +10,39 @@
   "assignees": ["dmnktoe"],
   "reviewers": ["dmnktoe"],
   "labels": ["dependencies"],
-  "prHourlyLimit": 4,
-  "prConcurrentLimit": 12,
   "dependencyDashboard": false,
-  "lockFileMaintenance": { "enabled": true },
-  "vulnerabilityAlerts": {
-    "labels": ["security", "priority:high"],
-    "assignees": ["dmnktoe"]
-  },
+  "vulnerabilityAlerts": { "labels": ["security"] },
   "packageRules": [
     {
-      "description": "Keep semver ranges, but move the floor so in-range updates still produce a manifest diff and therefore a PR. 'replace' hid them (next 16.3.0 sat inside ^16.0.7 and was never proposed); 'pin' surfaced them but rewrote every range in the repo. This is the middle. Also overrides the :pinDevDependencies that config:best-practices pulls in.",
+      "description": "Keep the ranges, move the floor. 'replace' only rewrites a range when the new version falls outside it, so an in-range release (next 16.3.0 inside ^16.0.7) produced no diff and no PR. This also overrides the :pinDevDependencies that config:best-practices pulls in — packageRules beat top-level config, so it has to live here.",
       "matchPackageNames": ["*"],
       "rangeStrategy": "bump"
     },
     {
-      "description": "Peers and engines keep their ranges — consumers own the resolution",
+      "description": "Peers and engines keep their ranges — a peer range is a compatibility statement, not an install instruction",
       "matchDepTypes": ["engines", "peerDependencies"],
       "rangeStrategy": "replace"
     },
     {
-      "description": "Production deps get individual PRs, dev deps are grouped",
-      "matchDepTypes": ["dependencies", "peerDependencies", "optionalDependencies"],
-      "addLabels": ["deps:prod"]
-    },
-    {
-      "description": "All dev deps land in one PR by default",
-      "groupName": "dev-dependencies",
+      "description": "All dev tooling lands in one PR",
       "matchDepTypes": ["devDependencies"],
-      "addLabels": ["deps:dev"]
+      "groupName": "dev dependencies"
     },
     {
-      "description": "Type definitions get their own group",
-      "groupName": "type definitions",
-      "matchPackageNames": ["@types/**"],
-      "addLabels": ["deps:dev", "deps:types"]
+      "description": "React and Next move in lockstep, types included. Declared after the devDependencies rule so it wins for @types/react.",
+      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom", "next", "@next/**"],
+      "groupName": "react + next"
     },
     {
-      "description": "Test tooling gets its own group",
-      "groupName": "test tooling",
-      "matchPackageNames": [
-        "vitest",
-        "@vitest/**",
-        "playwright",
-        "@playwright/test",
-        "@testing-library/**",
-        "jsdom",
-        "happy-dom"
-      ],
-      "addLabels": ["deps:dev", "deps:test"]
-    },
-    {
-      "description": "Storyblok SDK + client move together",
-      "groupName": "storyblok",
-      "matchPackageNames": ["@storyblok/**", "storyblok-js-client"],
-      "addLabels": ["storyblok"]
-    },
-    {
-      "description": "React core moves in lockstep",
-      "groupName": "react",
-      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
-      "addLabels": ["react"]
-    },
-    {
-      "description": "Panda CSS toolchain",
-      "groupName": "panda css",
-      "matchPackageNames": ["@pandacss/**"],
-      "addLabels": ["panda"]
-    },
-    {
-      "description": "Lint + format toolchain moves together",
-      "groupName": "linting & formatting",
-      "matchPackageNames": ["oxlint", "oxfmt"],
-      "addLabels": ["deps:dev", "tooling"]
-    },
-    {
-      "description": "Build toolchain moves together",
-      "groupName": "build tooling",
-      "matchPackageNames": ["turbo", "typescript"],
-      "addLabels": ["deps:dev", "tooling"]
-    },
-    {
-      "description": "Next.js",
-      "groupName": "next.js",
-      "matchPackageNames": ["next"],
-      "addLabels": ["next"]
-    },
-    {
-      "description": "Majors and 0.x bumps need a human",
-      "matchUpdateTypes": ["major"],
-      "addLabels": ["breaking", "manual-review"],
-      "prPriority": 5
-    },
-    {
-      "matchCurrentVersion": "/^0\\./",
-      "matchUpdateTypes": ["major", "minor"],
-      "addLabels": ["manual-review"]
-    },
-    {
-      "description": "Workspace scoping",
-      "matchFileNames": ["apps/portfolio/**"],
-      "addLabels": ["app:portfolio"]
-    },
-    {
-      "matchFileNames": ["apps/storybook/**"],
-      "addLabels": ["app:storybook"]
-    },
-    {
-      "matchFileNames": ["packages/**"],
-      "addLabels": ["packages"]
-    },
-    {
-      "description": "CI / Docker tooling",
+      "description": "CI actions in one PR — grouping keeps the digest refresh in the same branch as the version bump instead of opening a second PR next to it",
       "matchManagers": ["github-actions"],
+      "groupName": "github actions",
       "addLabels": ["ci"]
     },
     {
-      "description": "No standalone digest-bump PRs for GitHub Actions — SHA pins stay and refresh on version bumps, so we don't get a duplicate 'digest' PR next to every version PR",
-      "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["digest"],
-      "enabled": false
-    },
-    {
-      "matchManagers": ["dockerfile", "docker-compose"],
-      "addLabels": ["docker"]
-    },
-    {
-      "description": "Toolchain pins need a human (Node engine, pnpm)",
-      "matchDepNames": ["node", "pnpm"],
-      "addLabels": ["tooling", "manual-review"]
+      "description": "Majors need a human",
+      "matchUpdateTypes": ["major"],
+      "addLabels": ["manual-review"]
     }
   ]
 }

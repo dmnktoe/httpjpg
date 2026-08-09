@@ -8,6 +8,10 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
       css={{
         width: { base: "full", xl: "1/2" },
         containerType: "inline-size",
+        "@supports (mix-blend-mode: difference)": {
+          color: "white",
+          mixBlendMode: "difference",
+        },
       }}
     >
       <Box
@@ -26,16 +30,18 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
               : {
                   fontSize: {
                     base: "clamp(1.5rem, 7cqi, 3rem)",
-                    md: "clamp(1.75rem, 9cqi, 5rem)",
+                    md: "clamp(1.75rem, 14cqi, 5rem)",
+                    lg: "clamp(1.75rem, 17cqi, 5rem)",
                   },
                 }),
         }}
       >
         <Icon
           name="arrow-up"
-          size="0.7em"
+          size="1.25em"
           css={{
             display: "inline-block",
+            my: "-0.625em",
             mr: "2",
             verticalAlign: "middle",
             transform: "rotate(90deg)",

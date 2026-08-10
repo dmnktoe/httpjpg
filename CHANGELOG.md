@@ -6,95 +6,109 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [2.6.1](https://github.com/dmnktoe/httpjpg/compare/v2.6.0...v2.6.1) (2026-08-10)
 
+
 ### Dependencies
 
-- **deps:** update pnpm to v11 ([#200](https://github.com/dmnktoe/httpjpg/issues/200)) ([c61119a](https://github.com/dmnktoe/httpjpg/commit/c61119add4d93162602894f179aa300de0acb1d8))
-- update node.js to v24 ([#199](https://github.com/dmnktoe/httpjpg/issues/199)) ([8508249](https://github.com/dmnktoe/httpjpg/commit/8508249c6a751f8ee136966df448b1e45b42f41b))
+* **deps:** update pnpm to v11 ([#200](https://github.com/dmnktoe/httpjpg/issues/200)) ([c61119a](https://github.com/dmnktoe/httpjpg/commit/c61119add4d93162602894f179aa300de0acb1d8))
+* update node.js to v24 ([#199](https://github.com/dmnktoe/httpjpg/issues/199)) ([8508249](https://github.com/dmnktoe/httpjpg/commit/8508249c6a751f8ee136966df448b1e45b42f41b))
 
 ## [2.6.0](https://github.com/dmnktoe/httpjpg/compare/v2.5.0...v2.6.0) (2026-08-10)
 
+
 ### Added
 
-- **favicon:** serve favicons from an own proxy instead of Google s2 ([#219](https://github.com/dmnktoe/httpjpg/issues/219)) ([4a2b901](https://github.com/dmnktoe/httpjpg/commit/4a2b90194b35dc1a2f12b5bf5e2ea6bf37fd0073))
-- **search:** add Groq-powered site search and ask palette ([#222](https://github.com/dmnktoe/httpjpg/issues/222)) ([5722408](https://github.com/dmnktoe/httpjpg/commit/57224082772d7b282fd416841b22931800d0fba4))
-- **search:** show a media strip of page thumbnails in the command palette ([#227](https://github.com/dmnktoe/httpjpg/issues/227)) ([bdb2476](https://github.com/dmnktoe/httpjpg/commit/bdb2476737c7ff7abf94e7f59c00a7f57c1322e2))
-- **ui:** blend the work card headline into the slideshow ([#221](https://github.com/dmnktoe/httpjpg/issues/221)) ([59ea236](https://github.com/dmnktoe/httpjpg/commit/59ea236eddd7e1cf1b78d6a46767a48cb0a5653e))
-- **ui:** page-wide music player that survives a page change ([#230](https://github.com/dmnktoe/httpjpg/issues/230)) ([039e037](https://github.com/dmnktoe/httpjpg/commit/039e037f95434937e25946845f5c2bc9f4a36b4c))
+* **favicon:** serve favicons from an own proxy instead of Google s2 ([#219](https://github.com/dmnktoe/httpjpg/issues/219)) ([4a2b901](https://github.com/dmnktoe/httpjpg/commit/4a2b90194b35dc1a2f12b5bf5e2ea6bf37fd0073))
+* **search:** add Groq-powered site search and ask palette ([#222](https://github.com/dmnktoe/httpjpg/issues/222)) ([5722408](https://github.com/dmnktoe/httpjpg/commit/57224082772d7b282fd416841b22931800d0fba4))
+* **search:** show a media strip of page thumbnails in the command palette ([#227](https://github.com/dmnktoe/httpjpg/issues/227)) ([bdb2476](https://github.com/dmnktoe/httpjpg/commit/bdb2476737c7ff7abf94e7f59c00a7f57c1322e2))
+* **ui:** blend the work card headline into the slideshow ([#221](https://github.com/dmnktoe/httpjpg/issues/221)) ([59ea236](https://github.com/dmnktoe/httpjpg/commit/59ea236eddd7e1cf1b78d6a46767a48cb0a5653e))
+* **ui:** page-wide music player that survives a page change ([#230](https://github.com/dmnktoe/httpjpg/issues/230)) ([039e037](https://github.com/dmnktoe/httpjpg/commit/039e037f95434937e25946845f5c2bc9f4a36b4c))
+
 
 ### Fixed
 
-- **now-playing:** stop the missing-premium poll from spamming the console ([#228](https://github.com/dmnktoe/httpjpg/issues/228)) ([c647e67](https://github.com/dmnktoe/httpjpg/commit/c647e67c722d8b2d224b4590ff9aab8e2034ddf8))
-- **slideshow:** preload adjacent slides so clicking next is not blank ([#223](https://github.com/dmnktoe/httpjpg/issues/223)) ([25f01a6](https://github.com/dmnktoe/httpjpg/commit/25f01a6e732a8a45dd5c12b48e975629d09b1b64))
-- **ui:** hold the mobile menu scroll lock on iOS ([#224](https://github.com/dmnktoe/httpjpg/issues/224)) ([d34733f](https://github.com/dmnktoe/httpjpg/commit/d34733f2fc0e3f6295f23a1c0ebc9bf32b4041f0))
-- **ui:** hold the scroll lock from &lt;html&gt; and unfreeze the work carousel ([#229](https://github.com/dmnktoe/httpjpg/issues/229)) ([b0a3b4d](https://github.com/dmnktoe/httpjpg/commit/b0a3b4d25bab6e6961eaabf924f99db25e68449d))
-- **ui:** stop the mini player record when playback stops ([#235](https://github.com/dmnktoe/httpjpg/issues/235)) ([6f77700](https://github.com/dmnktoe/httpjpg/commit/6f77700a9321e4ab9e2c85b9e7dfbd9bed605e75))
-- **widgets:** stop the discogs footer line wrapping on narrow viewports ([#225](https://github.com/dmnktoe/httpjpg/issues/225)) ([d67c4eb](https://github.com/dmnktoe/httpjpg/commit/d67c4eb4fce6bd1d4006acabb79301ef9d65bb70))
+* **now-playing:** stop the missing-premium poll from spamming the console ([#228](https://github.com/dmnktoe/httpjpg/issues/228)) ([c647e67](https://github.com/dmnktoe/httpjpg/commit/c647e67c722d8b2d224b4590ff9aab8e2034ddf8))
+* **slideshow:** preload adjacent slides so clicking next is not blank ([#223](https://github.com/dmnktoe/httpjpg/issues/223)) ([25f01a6](https://github.com/dmnktoe/httpjpg/commit/25f01a6e732a8a45dd5c12b48e975629d09b1b64))
+* **ui:** hold the mobile menu scroll lock on iOS ([#224](https://github.com/dmnktoe/httpjpg/issues/224)) ([d34733f](https://github.com/dmnktoe/httpjpg/commit/d34733f2fc0e3f6295f23a1c0ebc9bf32b4041f0))
+* **ui:** hold the scroll lock from &lt;html&gt; and unfreeze the work carousel ([#229](https://github.com/dmnktoe/httpjpg/issues/229)) ([b0a3b4d](https://github.com/dmnktoe/httpjpg/commit/b0a3b4d25bab6e6961eaabf924f99db25e68449d))
+* **ui:** stop the mini player record when playback stops ([#235](https://github.com/dmnktoe/httpjpg/issues/235)) ([6f77700](https://github.com/dmnktoe/httpjpg/commit/6f77700a9321e4ab9e2c85b9e7dfbd9bed605e75))
+* **widgets:** stop the discogs footer line wrapping on narrow viewports ([#225](https://github.com/dmnktoe/httpjpg/issues/225)) ([d67c4eb](https://github.com/dmnktoe/httpjpg/commit/d67c4eb4fce6bd1d4006acabb79301ef9d65bb70))
+
 
 ### Changed
 
-- consolidate root tooling configs under tools/ ([#244](https://github.com/dmnktoe/httpjpg/issues/244)) ([fde2504](https://github.com/dmnktoe/httpjpg/commit/fde25045fde1d8ff615fcd9415cf94b1a89b2a6d))
-- **ui:** drop the work card headline blend ([#231](https://github.com/dmnktoe/httpjpg/issues/231)) ([543fb54](https://github.com/dmnktoe/httpjpg/commit/543fb543c57c5c2bdcb2c966d9cfd873db92bb8f))
+* consolidate root tooling configs under tools/ ([#244](https://github.com/dmnktoe/httpjpg/issues/244)) ([fde2504](https://github.com/dmnktoe/httpjpg/commit/fde25045fde1d8ff615fcd9415cf94b1a89b2a6d))
+* **ui:** drop the work card headline blend ([#231](https://github.com/dmnktoe/httpjpg/issues/231)) ([543fb54](https://github.com/dmnktoe/httpjpg/commit/543fb543c57c5c2bdcb2c966d9cfd873db92bb8f))
+
 
 ### Tooling
 
-- cut the renovate config down to a handful of groups ([#243](https://github.com/dmnktoe/httpjpg/issues/243)) ([032be4f](https://github.com/dmnktoe/httpjpg/commit/032be4f1a53a0e2ecfeb3185bd400f2fc00c6956))
-- **github:** restyle the pull request template to match the readme ([#233](https://github.com/dmnktoe/httpjpg/issues/233)) ([13dd0a7](https://github.com/dmnktoe/httpjpg/commit/13dd0a739713b0415fe208c5bc640e845a352942))
-- pin dependency versions instead of preserving semver ranges ([#232](https://github.com/dmnktoe/httpjpg/issues/232)) ([dcf8618](https://github.com/dmnktoe/httpjpg/commit/dcf8618dcd11b3ac63f970eee65ede990557dfcf))
+* cut the renovate config down to a handful of groups ([#243](https://github.com/dmnktoe/httpjpg/issues/243)) ([032be4f](https://github.com/dmnktoe/httpjpg/commit/032be4f1a53a0e2ecfeb3185bd400f2fc00c6956))
+* **github:** restyle the pull request template to match the readme ([#233](https://github.com/dmnktoe/httpjpg/issues/233)) ([13dd0a7](https://github.com/dmnktoe/httpjpg/commit/13dd0a739713b0415fe208c5bc640e845a352942))
+* pin dependency versions instead of preserving semver ranges ([#232](https://github.com/dmnktoe/httpjpg/issues/232)) ([dcf8618](https://github.com/dmnktoe/httpjpg/commit/dcf8618dcd11b3ac63f970eee65ede990557dfcf))
+
 
 ### Dependencies
 
-- **deps:** update dependency motion to v13 ([#192](https://github.com/dmnktoe/httpjpg/issues/192)) ([77919a3](https://github.com/dmnktoe/httpjpg/commit/77919a3c44699b87640c91d0ec8dd68cf3b0b2ca))
-- update dependency @arcjet/next to ^1.9.1 ([#252](https://github.com/dmnktoe/httpjpg/issues/252)) ([5a8f2bb](https://github.com/dmnktoe/httpjpg/commit/5a8f2bbe3970f119809292f47d25d4d746a0d48f))
-- update dependency dotenv to ^17.4.2 ([#245](https://github.com/dmnktoe/httpjpg/issues/245)) ([c7bbdca](https://github.com/dmnktoe/httpjpg/commit/c7bbdca2cc5d0076584c89bbe2a9bd9656882243))
-- update dependency jsdom to ^30.0.1 ([#246](https://github.com/dmnktoe/httpjpg/issues/246)) ([f5f96a6](https://github.com/dmnktoe/httpjpg/commit/f5f96a6b7414724134bb043768f76197b9ccaf2e))
-- update dependency react-draggable to ^4.7.1 ([#247](https://github.com/dmnktoe/httpjpg/issues/247)) ([210d696](https://github.com/dmnktoe/httpjpg/commit/210d6968c2e406cc6d85dcd12eb5d18df0441819))
-- update dev dependencies ([#248](https://github.com/dmnktoe/httpjpg/issues/248)) ([52a30ee](https://github.com/dmnktoe/httpjpg/commit/52a30ee858d71faa0e01e8bc982df2419aa233f8))
-- update github actions ([#251](https://github.com/dmnktoe/httpjpg/issues/251)) ([3220574](https://github.com/dmnktoe/httpjpg/commit/3220574b132d33c9a9daf5f412df893933ffff8f))
-- update react + next ([#250](https://github.com/dmnktoe/httpjpg/issues/250)) ([e391e99](https://github.com/dmnktoe/httpjpg/commit/e391e998f5f7cc451a76a85e46228fd1249327de))
-- update vitest monorepo to ^4.1.10 ([#249](https://github.com/dmnktoe/httpjpg/issues/249)) ([446d531](https://github.com/dmnktoe/httpjpg/commit/446d531db851ff685e8398499058feea1e920e72))
+* **deps:** update dependency motion to v13 ([#192](https://github.com/dmnktoe/httpjpg/issues/192)) ([77919a3](https://github.com/dmnktoe/httpjpg/commit/77919a3c44699b87640c91d0ec8dd68cf3b0b2ca))
+* update dependency @arcjet/next to ^1.9.1 ([#252](https://github.com/dmnktoe/httpjpg/issues/252)) ([5a8f2bb](https://github.com/dmnktoe/httpjpg/commit/5a8f2bbe3970f119809292f47d25d4d746a0d48f))
+* update dependency dotenv to ^17.4.2 ([#245](https://github.com/dmnktoe/httpjpg/issues/245)) ([c7bbdca](https://github.com/dmnktoe/httpjpg/commit/c7bbdca2cc5d0076584c89bbe2a9bd9656882243))
+* update dependency jsdom to ^30.0.1 ([#246](https://github.com/dmnktoe/httpjpg/issues/246)) ([f5f96a6](https://github.com/dmnktoe/httpjpg/commit/f5f96a6b7414724134bb043768f76197b9ccaf2e))
+* update dependency react-draggable to ^4.7.1 ([#247](https://github.com/dmnktoe/httpjpg/issues/247)) ([210d696](https://github.com/dmnktoe/httpjpg/commit/210d6968c2e406cc6d85dcd12eb5d18df0441819))
+* update dev dependencies ([#248](https://github.com/dmnktoe/httpjpg/issues/248)) ([52a30ee](https://github.com/dmnktoe/httpjpg/commit/52a30ee858d71faa0e01e8bc982df2419aa233f8))
+* update github actions ([#251](https://github.com/dmnktoe/httpjpg/issues/251)) ([3220574](https://github.com/dmnktoe/httpjpg/commit/3220574b132d33c9a9daf5f412df893933ffff8f))
+* update react + next ([#250](https://github.com/dmnktoe/httpjpg/issues/250)) ([e391e99](https://github.com/dmnktoe/httpjpg/commit/e391e998f5f7cc451a76a85e46228fd1249327de))
+* update vitest monorepo to ^4.1.10 ([#249](https://github.com/dmnktoe/httpjpg/issues/249)) ([446d531](https://github.com/dmnktoe/httpjpg/commit/446d531db851ff685e8398499058feea1e920e72))
 
 ## [2.5.0](https://github.com/dmnktoe/httpjpg/compare/v2.4.2...v2.5.0) (2026-08-09)
 
+
 ### Added
 
-- **slideshow:** let video slides play through before advancing ([#216](https://github.com/dmnktoe/httpjpg/issues/216)) ([dcd57ac](https://github.com/dmnktoe/httpjpg/commit/dcd57acd52bd0441df6b3c8b9832161681606b4e))
-- **widgets:** add four footer widgets and an ASCII tooltip ([#218](https://github.com/dmnktoe/httpjpg/issues/218)) ([fc91155](https://github.com/dmnktoe/httpjpg/commit/fc91155c8ca78783bbb891fec1abf2f0d3953b13))
+* **slideshow:** let video slides play through before advancing ([#216](https://github.com/dmnktoe/httpjpg/issues/216)) ([dcd57ac](https://github.com/dmnktoe/httpjpg/commit/dcd57acd52bd0441df6b3c8b9832161681606b4e))
+* **widgets:** add four footer widgets and an ASCII tooltip ([#218](https://github.com/dmnktoe/httpjpg/issues/218)) ([fc91155](https://github.com/dmnktoe/httpjpg/commit/fc91155c8ca78783bbb891fec1abf2f0d3953b13))
 
 ## [2.4.2](https://github.com/dmnktoe/httpjpg/compare/v2.4.1...v2.4.2) (2026-08-09)
 
+
 ### Fixed
 
-- **ui:** keep the mouse trail visible on dark pages ([#214](https://github.com/dmnktoe/httpjpg/issues/214)) ([8b41ad6](https://github.com/dmnktoe/httpjpg/commit/8b41ad646c2f9d9983cb8b1b5f1de18e632b7370))
-- **weather:** keep the clock pinned to the site's home timezone ([#212](https://github.com/dmnktoe/httpjpg/issues/212)) ([a8b7324](https://github.com/dmnktoe/httpjpg/commit/a8b7324839ec9532a7d02ddcbc644b1d63669145))
+* **ui:** keep the mouse trail visible on dark pages ([#214](https://github.com/dmnktoe/httpjpg/issues/214)) ([8b41ad6](https://github.com/dmnktoe/httpjpg/commit/8b41ad646c2f9d9983cb8b1b5f1de18e632b7370))
+* **weather:** keep the clock pinned to the site's home timezone ([#212](https://github.com/dmnktoe/httpjpg/issues/212)) ([a8b7324](https://github.com/dmnktoe/httpjpg/commit/a8b7324839ec9532a7d02ddcbc644b1d63669145))
+
 
 ### Tooling
 
-- add a pull request template ([#215](https://github.com/dmnktoe/httpjpg/issues/215)) ([13d0a9e](https://github.com/dmnktoe/httpjpg/commit/13d0a9e866ea6f006dc39d24ac2730040ddd3ebc))
+* add a pull request template ([#215](https://github.com/dmnktoe/httpjpg/issues/215)) ([13d0a9e](https://github.com/dmnktoe/httpjpg/commit/13d0a9e866ea6f006dc39d24ac2730040ddd3ebc))
 
 ## [2.4.1](https://github.com/dmnktoe/httpjpg/compare/v2.4.0...v2.4.1) (2026-08-08)
 
+
 ### Fixed
 
-- **draft:** stop paging Sentry for rejected preview secrets ([#209](https://github.com/dmnktoe/httpjpg/issues/209)) ([dae2f2f](https://github.com/dmnktoe/httpjpg/commit/dae2f2f76b24cdb741830807773760f1233e3b02))
-- **weather:** show night emojis after dark ([#211](https://github.com/dmnktoe/httpjpg/issues/211)) ([3440f7f](https://github.com/dmnktoe/httpjpg/commit/3440f7fe04ca09c7497cd5cc157dfee7cd88e4fe))
+* **draft:** stop paging Sentry for rejected preview secrets ([#209](https://github.com/dmnktoe/httpjpg/issues/209)) ([dae2f2f](https://github.com/dmnktoe/httpjpg/commit/dae2f2f76b24cdb741830807773760f1233e3b02))
+* **weather:** show night emojis after dark ([#211](https://github.com/dmnktoe/httpjpg/issues/211)) ([3440f7f](https://github.com/dmnktoe/httpjpg/commit/3440f7fe04ca09c7497cd5cc157dfee7cd88e4fe))
 
 ## [2.4.0](https://github.com/dmnktoe/httpjpg/compare/v2.3.2...v2.4.0) (2026-08-08)
 
+
 ### Added
 
-- **terminal:** unify dev CLI output across the repo ([#207](https://github.com/dmnktoe/httpjpg/issues/207)) ([0ae5f88](https://github.com/dmnktoe/httpjpg/commit/0ae5f883c1f5f1b44904835bdb22b503a538fbf7))
+* **terminal:** unify dev CLI output across the repo ([#207](https://github.com/dmnktoe/httpjpg/issues/207)) ([0ae5f88](https://github.com/dmnktoe/httpjpg/commit/0ae5f883c1f5f1b44904835bdb22b503a538fbf7))
+
 
 ### Fixed
 
-- **psn:** surface rejected credentials, and add CLIs to renew them ([#206](https://github.com/dmnktoe/httpjpg/issues/206)) ([51adb5a](https://github.com/dmnktoe/httpjpg/commit/51adb5a870d8f8c9c1cecd63bcfb8ae64ca8784f))
+* **psn:** surface rejected credentials, and add CLIs to renew them ([#206](https://github.com/dmnktoe/httpjpg/issues/206)) ([51adb5a](https://github.com/dmnktoe/httpjpg/commit/51adb5a870d8f8c9c1cecd63bcfb8ae64ca8784f))
+
 
 ### Tooling
 
-- raise coverage thresholds to 85% and cover four e2e contracts ([#208](https://github.com/dmnktoe/httpjpg/issues/208)) ([baa07ab](https://github.com/dmnktoe/httpjpg/commit/baa07abe0445e698852d5cd74c23453a52fa8e4b))
+* raise coverage thresholds to 85% and cover four e2e contracts ([#208](https://github.com/dmnktoe/httpjpg/issues/208)) ([baa07ab](https://github.com/dmnktoe/httpjpg/commit/baa07abe0445e698852d5cd74c23453a52fa8e4b))
+
 
 ### Dependencies
 
-- update actions/create-github-app-token action to v3 ([#202](https://github.com/dmnktoe/httpjpg/issues/202)) ([5327f1d](https://github.com/dmnktoe/httpjpg/commit/5327f1d4921cce4b26f603a3470ee76a53ea1bf0))
+* update actions/create-github-app-token action to v3 ([#202](https://github.com/dmnktoe/httpjpg/issues/202)) ([5327f1d](https://github.com/dmnktoe/httpjpg/commit/5327f1d4921cce4b26f603a3470ee76a53ea1bf0))
 
 ## [2.3.2](https://github.com/dmnktoe/httpjpg/compare/v2.3.1...v2.3.2) (2026-08-08)
 

@@ -114,7 +114,7 @@ importers:
   apps/portfolio:
     dependencies:
       '@arcjet/next':
-        specifier: ^1.4.0
+        specifier: ^1.9.1
         version: 1.9.1(next@16.3.0(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       '@httpjpg/analytics':
         specifier: workspace:*

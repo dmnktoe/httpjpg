@@ -41,7 +41,7 @@ import { config } from "@/lib/config";
 import { getPageTheme } from "@/lib/page-theme";
 import { getFooterConfig, getNavigation, getSeoDefaults } from "@/lib/queries/config";
 import { getLastUpdated } from "@/lib/queries/last-updated";
-import { getFeatureFlags, getWidgetConfig } from "@/lib/queries/widgets";
+import { getFeatureFlags, getInterfaceConfig, getWidgetConfig } from "@/lib/queries/widgets";
 import { getRecentWork } from "@/lib/queries/work";
 
 import "./globals.css";
@@ -87,6 +87,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const navigation = await getNavigation();
   const footerConfig = await getFooterConfig();
   const widgetConfig = await getWidgetConfig();
+  const interfaceConfig = await getInterfaceConfig();
   const flags = await getFeatureFlags();
   const { projectsWork, websitesWork } = await getRecentWork();
   const lastUpdated = flags.lastUpdatedBadgeEnabled ? await getLastUpdated() : undefined;
@@ -105,8 +106,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <LazyMotionProvider>
             <StoryblokProvider>
               <CustomCursorWrapper
-                cursorEnabled={widgetConfig.customCursorEnabled}
-                trailEnabled={widgetConfig.mouseTrailEnabled}
+                cursorEnabled={interfaceConfig.customCursorEnabled}
+                trailEnabled={interfaceConfig.mouseTrailEnabled}
               />
               <ImagePreview />
               {widgetConfig.nostalgiaSlideshowEnabled && <NostalgiaSlideshow />}
@@ -119,6 +120,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 projectsWork={projectsWork}
                 websitesWork={websitesWork}
                 showSearch={widgetConfig.askEnabled}
+                showScrollVeil={interfaceConfig.headerScrollVeilEnabled}
               />
               <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
                 {children}

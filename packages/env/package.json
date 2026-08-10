@@ -16,7 +16,7 @@
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.13.8",
     "dotenv": "catalog:",
-    "zod": "^4.0.0"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "typescript": "catalog:"

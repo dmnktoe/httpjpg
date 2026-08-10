@@ -28,7 +28,6 @@ function colorDs(): DatasourceWithEntries {
   };
 }
 
-/** Every datasource this repo owns. The sync pushes these; the validator cross-references them. */
 export function allDatasources(): DatasourceWithEntries[] {
   return [spacingDs(), colorDs()];
 }

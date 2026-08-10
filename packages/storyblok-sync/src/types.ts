@@ -1,22 +1,11 @@
 import type { Field } from "@storyblok/schema";
 
-/**
- * The Management API accepts `"true"` / `"false"` strings for a boolean field's
- * default, and that is what this space already stores. The generated schema
- * types only model the boolean form, so widen that one property rather than
- * change the pushed payload.
- */
 type BooleanField = Omit<Extract<Field, { type: "boolean" }>, "default_value"> & {
   default_value?: string | boolean;
 };
 
-/**
- * A component schema field, discriminated by `type`. Generated from Storyblok's
- * OpenAPI specs by `@storyblok/schema`; only the boolean default is widened.
- */
 export type StoryblokField = Exclude<Field, { type: "boolean" }> | BooleanField;
 
-/** Narrows {@link StoryblokField} to a single field type, e.g. `FieldOf<"bloks">`. */
 export type FieldOf<T extends StoryblokField["type"]> = Extract<StoryblokField, { type: T }>;
 
 export interface DatasourceEntry {

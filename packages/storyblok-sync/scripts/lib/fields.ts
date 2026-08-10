@@ -1,6 +1,5 @@
 import type { FieldOf, StoryblokField } from "../../src/index";
 
-/** Extra schema keys for a field, checked against that field type only. */
 export type FieldOpts<T extends StoryblokField["type"]> = Partial<FieldOf<T>>;
 
 const datasource = (slug: string) => ({ source: "internal", datasource_slug: slug }) as const;

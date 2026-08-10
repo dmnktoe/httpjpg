@@ -5,10 +5,6 @@ import type { BlockDef } from "./block";
 import { allDatasources } from "./datasources";
 import { allBlocks } from "./schema";
 
-/**
- * Translates one wire-format field (the `schema` record the Management API
- * expects) into the normalized shape `validateSchema` cross-references.
- */
 function toSchemaField(name: string, field: StoryblokField): SchemaFieldLike {
   return {
     name,
@@ -32,7 +28,6 @@ function toSchemaBlock(def: BlockDef) {
   };
 }
 
-/** The local schema in the shape `@storyblok/schema`'s validators consume. */
 export function toSchemaLike(
   blocks: BlockDef[] = allBlocks(),
   datasources = allDatasources(),
@@ -46,11 +41,6 @@ export function toSchemaLike(
   };
 }
 
-/**
- * Validates the local schema before it is pushed: duplicate block or field
- * names, `bloks` whitelists pointing at blocks that do not exist, and
- * `datasource_slug`s that no datasource in this repo provides.
- */
 export function validateLocalSchema(blocks?: BlockDef[]) {
   return validateSchema(toSchemaLike(blocks));
 }

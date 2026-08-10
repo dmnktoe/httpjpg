@@ -29,38 +29,63 @@ function scrollTo(y: number) {
   }
 }
 
+function veil() {
+  return screen.getByTestId("header-scroll-veil");
+}
+
 function progress() {
-  return screen.getByTestId("header-scroll-veil").style.getPropertyValue("--veil-progress");
+  return veil().style.getPropertyValue("--veil-progress");
+}
+
+function blur() {
+  return veil().style.getPropertyValue("--veil-blur");
 }
 
 describe("HeaderScrollVeil", () => {
   it("is hidden from assistive tech and starts fully transparent", () => {
     render(<HeaderScrollVeil />);
 
-    const veil = screen.getByTestId("header-scroll-veil");
-    expect(veil).toHaveAttribute("aria-hidden", "true");
+    expect(veil()).toHaveAttribute("aria-hidden", "true");
     expect(progress()).toBe("0.000");
+    expect(blur()).toBe("0.000");
+    expect(veil().dataset.veilIdle).toBe("true");
   });
 
-  it("ramps in linearly with scroll and clamps at 1", () => {
+  it("ramps the tint in linearly with scroll and clamps at 1", () => {
     render(<HeaderScrollVeil />);
 
-    scrollTo(60);
+    scrollTo(80);
     expect(progress()).toBe("0.500");
+    expect(veil().dataset.veilIdle).toBe("false");
 
-    scrollTo(120);
+    scrollTo(160);
     expect(progress()).toBe("1.000");
 
     scrollTo(4000);
     expect(progress()).toBe("1.000");
   });
 
+  it("eases the blur radius in behind the tint", () => {
+    render(<HeaderScrollVeil />);
+
+    // Squared ramp: the first pixels of scroll barely blur at all.
+    scrollTo(16);
+    expect(blur()).toBe("0.010");
+
+    scrollTo(80);
+    expect(blur()).toBe("0.250");
+
+    scrollTo(160);
+    expect(blur()).toBe("1.000");
+  });
+
   it("picks up the scroll position already in place on mount", () => {
-    vi.stubGlobal("scrollY", 120);
+    vi.stubGlobal("scrollY", 160);
 
     render(<HeaderScrollVeil />);
 
     expect(progress()).toBe("1.000");
+    expect(blur()).toBe("1.000");
   });
 
   it("drops its scroll listeners on unmount", () => {

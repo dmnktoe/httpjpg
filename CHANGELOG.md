@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.1](https://github.com/dmnktoe/httpjpg/compare/v2.6.0...v2.6.1) (2026-08-10)
+
+
+### Dependencies
+
+* **deps:** update pnpm to v11 ([#200](https://github.com/dmnktoe/httpjpg/issues/200)) ([c61119a](https://github.com/dmnktoe/httpjpg/commit/c61119add4d93162602894f179aa300de0acb1d8))
+* update node.js to v24 ([#199](https://github.com/dmnktoe/httpjpg/issues/199)) ([8508249](https://github.com/dmnktoe/httpjpg/commit/8508249c6a751f8ee136966df448b1e45b42f41b))
+
 ## [2.6.0](https://github.com/dmnktoe/httpjpg/compare/v2.5.0...v2.6.0) (2026-08-10)
 
 

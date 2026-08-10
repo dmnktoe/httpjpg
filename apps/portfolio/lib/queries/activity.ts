@@ -8,18 +8,6 @@ import { fetchRecentTrophies, isPsnUsername } from "../integrations/psn-trophies
 import { getConfig } from "./config";
 import { getSearchIndex } from "./search-index";
 
-/**
- * One chronological stream out of the sources the footer widgets already read
- * one at a time: published work, films, records, trophies.
- *
- * `/now` renders the head of each source; `/log` renders the merge. Both go
- * through here so they can never disagree about what the latest anything is.
- *
- * Every source is optional and every source is allowed to fail. A dead
- * Letterboxd feed costs its own section and nothing else — `settle` turns a
- * rejection into an empty list and reports it.
- */
-
 export const ACTIVITY_KINDS = {
   work: "work",
   film: "film",
@@ -33,22 +21,14 @@ export interface ActivityEntry {
   id: string;
   kind: ActivityKind;
   title: string;
-  /** Short qualifier: the artist, the game, the tags. */
   detail?: string;
-  /** ISO-8601. Entries without one are dropped — a timeline needs a date. */
   date: string;
   href?: string;
   thumb?: string;
 }
 
-/** Per source, so one prolific source cannot crowd out the others. */
 const PER_SOURCE_LIMIT = 12;
 
-/**
- * The widget routes lean on CDN headers for this; a server-rendered page has
- * no such shield, so the third-party calls are cached here instead. Without
- * it every visit to `/now` would hit Letterboxd, Discogs and PSN directly.
- */
 const THIRD_PARTY_TTL = 900;
 
 function cached<A extends string[]>(
@@ -61,7 +41,6 @@ function cached<A extends string[]>(
     })();
 }
 
-/** A source that was configured, was asked, and did not answer. */
 export interface ActivityIssue {
   source: string;
   message: string;
@@ -72,11 +51,6 @@ export interface ActivitySources {
   films: ActivityEntry[];
   records: ActivityEntry[];
   trophies: ActivityEntry[];
-  /**
-   * Empty on a healthy fetch. `/now` and `/log` ignore this — a dead feed just
-   * costs its section — but `/status` reports it, which is the difference
-   * between "nothing to show" and "the feed is down".
-   */
   issues: ActivityIssue[];
 }
 
@@ -158,7 +132,6 @@ async function filmEntries(username: string): Promise<ActivityEntry[]> {
 function filmDetail(rating: number | null, rewatch: boolean): string | undefined {
   const parts: string[] = [];
   if (rating !== null) {
-    // Letterboxd rates in halves; "★★★½" reads better than "3.5".
     parts.push("★".repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? "½" : ""));
   }
   if (rewatch) {
@@ -217,7 +190,6 @@ async function trophyEntries(npsso: string, username?: string): Promise<Activity
 
 const cachedFilms = cached("letterboxd", filmEntries);
 const cachedRecords = cached("discogs", recordEntries);
-// The npsso is a credential, not an identifier — keyed on the username only.
 const cachedTrophies = cached("psn", (username: string) =>
   trophyEntries(env.PSN_NPSSO ?? "", username || undefined),
 );
@@ -229,10 +201,6 @@ interface ActivityConfig {
   psnUsername: string;
 }
 
-/**
- * Which sources this deployment actually has. Shared with `/status` so
- * "switched off" and "broken" are decided by the same rules in both places.
- */
 export function resolveActivityConfig(config: {
   letterboxd_enabled?: boolean;
   letterboxd_username?: string;
@@ -255,10 +223,6 @@ export function resolveActivityConfig(config: {
   };
 }
 
-/**
- * Each source separately, newest first. `/now` wants them apart; `/log` merges
- * them with `mergeActivity`.
- */
 export async function getActivitySources(): Promise<ActivitySources> {
   const config = await getConfig().catch((error) => {
     console.warn("Activity config lookup failed:", error);
@@ -284,7 +248,6 @@ export async function getActivitySources(): Promise<ActivitySources> {
   return { work, films, records, trophies, issues };
 }
 
-/** One list, newest first. Ties break on id so the order never flickers. */
 export function mergeActivity(sources: ActivitySources, limit = 40): ActivityEntry[] {
   return [...sources.work, ...sources.films, ...sources.records, ...sources.trophies]
     .sort(byDateDesc)

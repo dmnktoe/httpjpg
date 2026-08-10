@@ -20,10 +20,6 @@ export interface WorkStory {
 const BASE_URL = "/work";
 const TAXONOMY_TAGS = new Set(["Projects", "Websites"]);
 
-/**
- * Curated tags win. Stories predating the vocabulary still carry loose
- * Storyblok tags, so those keep showing until an editor picks proper ones.
- */
 function cardTags(story: WorkStory): string[] {
   const curated = workTagLabels(story.content?.tags);
   if (curated.length > 0) {
@@ -57,10 +53,6 @@ export function parseCols(value: string | undefined): number | undefined {
   return Number.isFinite(n) && n > 0 ? n : undefined;
 }
 
-/**
- * Bridge `input` re-emits `work` as UUIDs after edits — cache resolved
- * objects so subsequent renders can rehydrate them by uuid.
- */
 export function resolveStories(
   items: Array<string | WorkStory> | undefined,
   cache: Map<string, WorkStory>,

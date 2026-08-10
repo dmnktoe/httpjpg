@@ -77,8 +77,6 @@ describe("GET /api/md/[...slug]", () => {
     expect(body).toContain("> Source: https://www.httpjpg.com/");
   });
 
-  // The mirror is the public site in plain text; a preview cookie must not
-  // turn it into a leak of unpublished work.
   it("always reads published content, never draft", async () => {
     await GET(request(), context("work", "demo"));
 

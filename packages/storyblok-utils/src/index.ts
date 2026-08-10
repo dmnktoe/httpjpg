@@ -67,7 +67,6 @@ export type {
   StoryMetadata,
 } from "./types";
 
-/** Storyblok `resolve_relations` slugs. Used by fetchStory / getStories. */
 export const STORYBLOK_RELATIONS = {
   WORK_LIST: "work_list.work",
 } as const;

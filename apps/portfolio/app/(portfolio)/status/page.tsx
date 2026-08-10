@@ -12,14 +12,6 @@ import {
   type ServiceStatus,
 } from "@/lib/queries/status";
 
-/**
- * `/status` — what is running, what it is running from, and how fast it felt.
- *
- * The build block and the service list are server-rendered; the vitals block
- * is the visitor's own measurements, which is the only performance figure this
- * site can honestly report (nothing stores them).
- */
-
 const TITLE = "Status";
 const DESCRIPTION = "Build, integrations and performance of this deployment.";
 
@@ -41,7 +33,6 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: "/status" },
-  // A snapshot of one moment has no business in search results.
   robots: { index: false, follow: true },
 };
 

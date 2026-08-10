@@ -21,8 +21,6 @@ describe("firstCitedSource", () => {
     expect(firstCitedSource("I could not find anything about that.", 3)).toBeNull();
   });
 
-  // A model that cites [7] against five sources is guessing; there is no page
-  // to send anyone to, so the palette shows no jump.
   it("returns null for a citation outside the source range", () => {
     expect(firstCitedSource("See [7].", 3)).toBeNull();
   });

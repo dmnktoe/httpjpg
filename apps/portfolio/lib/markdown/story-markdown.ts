@@ -1,29 +1,15 @@
 import { storyblokHref } from "@httpjpg/storyblok-ui";
 import { richTextToMarkdown } from "@httpjpg/storyblok-utils";
 
-/**
- * Render a story's blok tree as Markdown.
- *
- * This is the same content the page renders, in the form an agent, a reader
- * mode, or a `curl` can consume. It is deliberately a separate walk from
- * `collectStoryText`: that one flattens everything into a search excerpt and
- * throws away structure, this one keeps it.
- *
- * Unknown bloks recurse into whatever child bloks they hold rather than being
- * skipped, so a new blok degrades to its contents instead of a hole.
- */
-
 interface Blok {
   component?: string;
   [key: string]: unknown;
 }
 
-/** Bounds the walk so a cyclic payload cannot hang a request. */
 const MAX_DEPTH = 12;
 
 const MAX_HEADING_LEVEL = 6;
 
-/** Keys holding child bloks, checked in order when a blok is not handled. */
 const CHILD_KEYS = ["body", "content", "items", "grid_items"];
 
 function str(blok: Blok, key: string): string {
@@ -84,7 +70,6 @@ function renderBlok(blok: Blok, depth: number): string {
   const children = (key: string) => renderBloks(bloks(blok[key]), depth + 1);
 
   switch (blok.component) {
-    // Layout: no output of their own, just their contents.
     case "page":
     case "work":
       return children("body");
@@ -216,8 +201,6 @@ function renderBlok(blok: Blok, depth: number): string {
       return src ? `- [${label}](${src})` : `- ${label}`;
     }
 
-    // Rendered from resolved stories the CDN only fills in for the page
-    // itself, and the index already lists that work — so nothing to add here.
     case "work_list":
     case "icon":
       return "";
@@ -238,7 +221,6 @@ function renderBloks(list: Blok[], depth: number): string {
   return joinBlocks(list.map((blok) => renderBlok(blok, depth)));
 }
 
-/** Markdown for one story's content. Empty when the story renders no text. */
 export function storyContentToMarkdown(content: unknown): string {
   if (!content || typeof content !== "object") {
     return "";

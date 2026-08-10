@@ -113,8 +113,6 @@ describe("readAskStream", () => {
     expect(events[0]).toMatchObject({ action: { kind: "page" } });
   });
 
-  // The event crosses the network; an off-site or protocol-relative href would
-  // turn "go to" into an open redirect, so the reader drops it.
   it("drops an action pointing off-site", async () => {
     const events = await collect([
       `${JSON.stringify({

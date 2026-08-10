@@ -81,7 +81,6 @@ describe("getRelatedWork", () => {
     expect((await getRelatedWork("/work/current", 2)).related).toHaveLength(2);
   });
 
-  // A recommendation strip is not worth 500-ing a work page over.
   it("degrades to nothing when the index is unavailable", async () => {
     mockGetSearchIndex.mockRejectedValue(new Error("storyblok is down"));
 

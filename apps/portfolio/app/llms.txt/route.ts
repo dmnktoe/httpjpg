@@ -5,16 +5,6 @@ import { getSeoDefaults } from "@/lib/queries/config";
 import { getSearchIndex } from "@/lib/queries/search-index";
 import type { SearchDocument } from "@/lib/search/ranking";
 
-/**
- * `/llms.txt` — the site in one plain-text file, per llmstxt.org.
- *
- * It reads the same index search and ask read, so there is nothing extra to
- * keep in sync: publishing a story invalidates `CACHE_TAGS.STORIES` and this
- * file changes with it. Every entry links to the page's `.md` mirror, which
- * `next.config.ts` rewrites onto `/api/md/*`.
- */
-
-/** Enough to identify a page, short enough that the file stays scannable. */
 const SUMMARY_LENGTH = 160;
 
 export async function GET() {

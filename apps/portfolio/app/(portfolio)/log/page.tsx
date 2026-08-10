@@ -5,13 +5,6 @@ import { ActivityList } from "@/components/ui/activity-list";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { type ActivityEntry, getActivitySources, mergeActivity } from "@/lib/queries/activity";
 
-/**
- * `/log` — everything that happened, newest first, in one column.
- *
- * Same sources as `/now`, merged instead of split. Grouped by month so a long
- * list still has landmarks.
- */
-
 const TITLE = "Log";
 const DESCRIPTION = "Published work, films watched, records bought, trophies earned.";
 
@@ -76,7 +69,6 @@ export default async function LogPage() {
   );
 }
 
-/** `YYYY-MM` buckets, in the order the entries already arrive in. */
 function groupByMonth(entries: ActivityEntry[]): Array<[string, ActivityEntry[]]> {
   const months = new Map<string, ActivityEntry[]>();
   for (const entry of entries) {

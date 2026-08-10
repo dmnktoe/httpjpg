@@ -5,18 +5,9 @@ import { ActivityList } from "@/components/ui/activity-list";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { getActivitySources } from "@/lib/queries/activity";
 
-/**
- * `/now` — what is current, in the nownownow.com sense.
- *
- * The footer widgets each show one of these; this page is the same data with
- * room to breathe. It reads `getActivitySources`, so nothing here can drift
- * out of step with `/log`.
- */
-
 const TITLE = "Now";
 const DESCRIPTION = "What I am making, watching, listening to and playing at the moment.";
 
-/** Enough to read as "lately" without turning the page into the log. */
 const PER_SECTION = 5;
 
 export const metadata: Metadata = {
@@ -85,9 +76,4 @@ export default async function NowPage() {
   );
 }
 
-/**
- * `getConfig` reads draft mode, so the render is dynamic either way. The
- * expensive part — the third-party calls — is cached inside
- * `getActivitySources` rather than at the route level.
- */
 export const dynamic = "force-dynamic";

@@ -99,7 +99,6 @@ export const field = {
     ...datasource(slug),
     ...opts,
   }),
-  /** Multi-select backed by a datasource; the value is a `string[]`. */
   datasourceMulti: (
     display_name: string,
     slug: string,
@@ -127,7 +126,6 @@ export const field = {
   }),
 };
 
-/** Group fields under a Storyblok editor tab; keys not in any `tabbed()` stay in the default tab. */
 export function tabbed(
   label: string,
   prefix: string,
@@ -136,7 +134,6 @@ export function tabbed(
   return { [`tab_${prefix}`]: field.tab(label, Object.keys(fields)), ...fields };
 }
 
-/** Pretty-print an enum-style value like `space-between` → `Space Between`. */
 export function labelize(values: readonly string[]) {
   return values.map((v) => ({
     name: v.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),

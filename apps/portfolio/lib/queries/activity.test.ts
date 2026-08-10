@@ -32,8 +32,6 @@ describe("mergeActivity", () => {
     expect(merged.map((item) => item.id)).toEqual(["film-new", "record-mid", "work-old"]);
   });
 
-  // Two entries can share a timestamp — a Discogs import stamps a whole batch
-  // with one time — and the page must not reorder them between renders.
   it("breaks a same-timestamp tie on id so the order is stable", () => {
     const merged = mergeActivity(
       sources({

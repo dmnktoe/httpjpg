@@ -28,8 +28,6 @@ describe("WORK_TAGS", () => {
     }
   });
 
-  // Values are the ranking key and are stored on published stories, so they
-  // have to survive a URL and a datasource round-trip unchanged.
   it("uses url-safe lowercase values", () => {
     for (const tag of WORK_TAGS) {
       expect(tag.value).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);

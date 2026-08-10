@@ -4,13 +4,10 @@ import type { ActivityEntry, ActivityKind } from "@/lib/queries/activity";
 
 export interface ActivityListProps {
   entries: ActivityEntry[];
-  /** Prefix each row with its source. Off when a heading already says it. */
   showKind?: boolean;
-  /** Shown in place of the list when there is nothing to show. */
   emptyLabel?: string;
 }
 
-/** Fixed-width so the titles line up down the page. */
 const KIND_LABEL: Record<ActivityKind, string> = {
   work: "work",
   film: "film",
@@ -94,11 +91,6 @@ function ActivityRow({ entry, showKind }: { entry: ActivityEntry; showKind: bool
   );
 }
 
-/**
- * `YYYY-MM-DD` in UTC. Rendering on the server means a locale-aware format
- * would be the server's locale, not the reader's, and would differ from what
- * the client would produce — ISO sidesteps both and suits the type anyway.
- */
 function formatDay(iso: string): string {
   return iso.slice(0, 10);
 }

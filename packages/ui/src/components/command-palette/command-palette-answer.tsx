@@ -11,10 +11,6 @@ export interface CommandPaletteSource {
   href: string;
 }
 
-/**
- * Where the answer points. The caller decides what following it means — the
- * palette only renders the affordance and reports the click.
- */
 export interface CommandPaletteAction {
   type: "navigate";
   href: string;
@@ -105,6 +101,7 @@ export function CommandPaletteAnswer({
         <Box css={{ mt: "3" }}>
           <Button
             size="sm"
+            variant="secondary"
             onMouseDown={(event: MouseEvent) => event.preventDefault()}
             onClick={() => onAction(action)}
             css={{ fontFamily: "mono" }}

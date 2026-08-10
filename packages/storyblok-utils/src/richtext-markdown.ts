@@ -1,14 +1,3 @@
-/**
- * Render a Storyblok rich-text document as Markdown.
- *
- * `extractPlainText` throws away every heading, list, and link — fine for a
- * meta description, useless as a readable representation of a page. This keeps
- * the structure, so the Markdown mirror of a story reads like the story.
- *
- * Pure and framework-agnostic: no React, no Next, callable from a route
- * handler, a script, or a test.
- */
-
 interface RichTextMark {
   type?: string;
   attrs?: Record<string, unknown>;
@@ -24,7 +13,6 @@ interface RichTextNode {
 
 const MAX_HEADING_LEVEL = 6;
 
-/** Characters that would otherwise start Markdown syntax at the line level. */
 function escapeText(text: string): string {
   return text.replace(/([\\`*_[\]])/g, "\\$1");
 }
@@ -39,7 +27,6 @@ function markHref(mark: RichTextMark): string {
   const anchor = attrString(mark.attrs, "anchor");
   const linktype = attrString(mark.attrs, "linktype");
 
-  // A story link stores the target's slug rather than a path.
   const base = linktype === "story" && href && !href.startsWith("/") ? `/${href}` : href;
   return anchor ? `${base}#${anchor}` : base;
 }
@@ -49,7 +36,6 @@ function applyMarks(text: string, marks: RichTextMark[] | undefined): string {
     return text;
   }
 
-  // Code first: its content is literal, so no other mark may add syntax inside it.
   if (marks.some((mark) => mark.type === "code")) {
     const link = marks.find((mark) => mark.type === "link");
     const code = `\`${text.replace(/`/g, "")}\``;
@@ -81,7 +67,6 @@ function applyMarks(text: string, marks: RichTextMark[] | undefined): string {
   return out;
 }
 
-/** Inline content of one block: text runs with their marks applied. */
 function renderInline(nodes: RichTextNode[] | undefined): string {
   if (!nodes?.length) {
     return "";
@@ -116,10 +101,6 @@ function renderImage(node: RichTextNode): string {
   return title ? `![${alt}](${src} "${title}")` : `![${alt}](${src})`;
 }
 
-/**
- * Every list renders flush left; nesting comes from the parent item indenting
- * its own continuation lines. Indenting in both places would double up.
- */
 function renderList(node: RichTextNode, ordered: boolean): string {
   return (node.content ?? [])
     .map((item, index) => {
@@ -186,7 +167,6 @@ function renderBlocks(nodes: RichTextNode[] | undefined): string {
     .join("\n\n");
 }
 
-/** Markdown for a Storyblok rich-text document. Empty string when there is none. */
 export function richTextToMarkdown(richtext: { content?: unknown } | null | undefined): string {
   const content = richtext?.content;
   if (!Array.isArray(content)) {

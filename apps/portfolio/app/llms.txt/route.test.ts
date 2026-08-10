@@ -81,7 +81,6 @@ describe("GET /llms.txt", () => {
     expect(body).not.toContain("## Pages");
   });
 
-  // An external-only story has no page of ours to mirror.
   it("leaves out stories that live off-site", async () => {
     mockGetSearchIndex.mockResolvedValue([
       doc({ title: "Elsewhere", href: "https://example.com/x" }),

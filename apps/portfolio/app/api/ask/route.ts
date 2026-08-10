@@ -9,7 +9,6 @@ import { firstCitedSource } from "@/lib/search/citations";
 import { buildAskMessages, MAX_QUESTION_LENGTH } from "@/lib/search/prompt";
 import { rankDocuments } from "@/lib/search/ranking";
 
-/** Sources per answer. */
 const MAX_SOURCES = 5;
 
 interface AskBody {
@@ -19,18 +18,12 @@ interface AskBody {
 const NO_MATCH_ANSWER =
   "I could not find anything about that on this site. Try a different wording, or browse the work list.";
 
-/** Slim source shape the widget renders as citation links. */
 interface AskSource {
   title: string;
   href: string;
   kind: "work" | "page";
 }
 
-/**
- * A destination the palette offers once the answer is complete, taken from
- * the source the model cited first. Only ever one of the sources already sent,
- * so it cannot point somewhere that does not exist.
- */
 interface AskNavigateAction {
   type: "navigate";
   href: string;
@@ -44,8 +37,6 @@ function navigateAction(answer: string, sources: AskSource[]): AskNavigateAction
     return null;
   }
   const source = sources[cited - 1];
-  // Off-site sources open in a new tab from the citation list already; a
-  // "go to" affordance should mean staying on the site.
   if (!source || !source.href.startsWith("/")) {
     return null;
   }
@@ -93,8 +84,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "retrieval_failed" }, { status: 500 });
   }
 
-  // With nothing retrieved the model can only say it does not know, so say it
-  // here instead: no request, no bill, no room to invent a source.
   if (sources.length === 0) {
     return ndjson([
       { type: "sources", sources },
@@ -120,8 +109,6 @@ export async function POST(request: NextRequest) {
           send({ type: "delta", text: delta });
         }
 
-        // Last, so it can read the whole answer — and so a widget that stops
-        // reading early simply never sees it.
         const action = navigateAction(answer, sources);
         if (action) {
           send({ type: "action", action });
@@ -147,7 +134,6 @@ export async function POST(request: NextRequest) {
   return ndjsonResponse(stream);
 }
 
-/** Sends a fixed set of NDJSON events, for answers that need no model call. */
 function ndjson(events: unknown[]): Response {
   const encoder = new TextEncoder();
   const body = events.map((event) => `${JSON.stringify(event)}\n`).join("");

@@ -222,9 +222,6 @@ describe("getSearchIndex", () => {
     expect(getStories).toHaveBeenCalledTimes(1);
   });
 
-  // getStories swallows its own fetch errors and answers with an empty page,
-  // so an outage looks exactly like an empty space. Throwing is what stops
-  // that emptiness being cached for an hour.
   it("throws rather than caching an empty result", async () => {
     const getStories = vi.fn().mockResolvedValue({ stories: [], total: 0, perPage: 100 });
     mockGetStoryblokApi.mockReturnValue({ getStories } as never);

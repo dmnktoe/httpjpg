@@ -140,7 +140,6 @@ describe("POST /api/ask", () => {
     expect(lines.some((line) => line.type === "action")).toBe(false);
   });
 
-  // "go to" should mean staying on the site; the citation list already links out.
   it("sends no action when the cited source is external", async () => {
     mockGetSearchIndex.mockResolvedValue([EXTERNAL_DOCUMENT]);
     mockStream.mockImplementation(yields("Over there [1]."));
@@ -257,7 +256,6 @@ describe("POST /api/ask", () => {
   });
 
   it("reports a permanent upstream failure in-band as ai_failed", async () => {
-    // Fails before producing anything, so the widget only ever sees the error.
     // oxlint-disable-next-line eslint/require-yield
     mockStream.mockImplementation(async function* failing() {
       throw new GroqApiError(400, "bad request");

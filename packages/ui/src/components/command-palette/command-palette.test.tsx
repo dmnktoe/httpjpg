@@ -420,7 +420,6 @@ describe("CommandPalette action", () => {
     expect(props.onAction).toHaveBeenCalledWith(ACTION);
   });
 
-  // The answer is still growing, so the citation it points at can still change.
   it("withholds the action while the answer is streaming", () => {
     setup({ answer: "It is the s", action: ACTION, status: "answering", onAction: vi.fn() });
 

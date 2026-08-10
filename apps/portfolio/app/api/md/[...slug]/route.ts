@@ -7,15 +7,6 @@ import { storyContentToMarkdown } from "@/lib/markdown/story-markdown";
 import { isInternalSlug } from "@/lib/page-theme";
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
-/**
- * The Markdown representation of a page, reached at `<path>.md` through a
- * rewrite in `next.config.ts`.
- *
- * Published content only. Draft mode deliberately does not apply: this is the
- * machine-readable mirror of the public site, and a preview cookie leaking
- * unpublished work into a plain-text endpoint is not a trade worth making.
- */
-
 interface RouteContext {
   params: Promise<{ slug?: string[] }>;
 }

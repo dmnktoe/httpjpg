@@ -14,14 +14,6 @@ import {
   type VitalRating,
 } from "@/lib/web-vitals";
 
-/**
- * Core Web Vitals for the visitor's own page load.
- *
- * Deliberately not "the site's p75": nothing stores vitals across sessions, so
- * a percentile would be invented. One honest sample beats a fabricated
- * aggregate, and the label says which it is.
- */
-
 interface VitalMetricLike {
   name: string;
   value: number;
@@ -36,8 +28,6 @@ const RATING_COLOR: Record<VitalRating, string> = {
 export function SessionVitals() {
   const [vitals, setVitals] = useState<Partial<Record<VitalName, number>>>({});
 
-  // `useReportWebVitals` keys its effect on the callback and never
-  // unsubscribes, so a fresh closure each render would stack observers.
   const reportVital = useCallback((metric: VitalMetricLike) => {
     if (!isVitalName(metric.name)) {
       return;

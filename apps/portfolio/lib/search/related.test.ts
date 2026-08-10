@@ -52,7 +52,6 @@ describe("relatedDocuments", () => {
     expect(relatedDocuments([current, page], current)).toEqual([]);
   });
 
-  // The whole point of weighting: a tag everything carries is a weak signal.
   it("ranks a rare shared tag above a ubiquitous one", () => {
     const current = doc("current", ["web", "glsl"]);
     const common = doc("common", ["web"]);

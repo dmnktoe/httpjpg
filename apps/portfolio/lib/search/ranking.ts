@@ -1,29 +1,16 @@
-/** A thumbnail a story shows, surfaced in the palette's media strip. */
 export interface SearchMedia {
   id: string;
   kind: "image" | "video" | "audio";
-  /** Thumbnail URL. Empty for a track whose artwork the editor left blank. */
   thumb: string;
   label: string;
 }
 
 export interface SearchDocument {
   id: string;
-  /** Site-relative href, e.g. `/work/some-project`. */
   href: string;
   title: string;
   kind: "work" | "page";
-  /** Display labels — curated work tags first, then loose story tags. */
   tags: string[];
-  /**
-   * Canonical values from the curated work-tag vocabulary. Related work
-   * compares these, never the labels, so a renamed label never splits a tag
-   * in two.
-   *
-   * Optional because the index is persisted by `unstable_cache`: for up to an
-   * hour after a deploy, entries written by the previous build are still
-   * served, and those have no `tagValues` at all.
-   */
   tagValues?: string[];
   excerpt: string;
   date?: string;
@@ -34,12 +21,10 @@ export interface SearchResult extends SearchDocument {
   score: number;
 }
 
-/** Field weights: a body hit alone must never outrank a title hit. */
 const WEIGHT = {
   titleExact: 100,
   titlePrefix: 14,
   titleToken: 8,
-  /** A whole-tag hit — "swift" against the SwiftUI tag, not a substring of it. */
   tagExact: 12,
   tagToken: 6,
   excerptToken: 2,
@@ -48,7 +33,6 @@ const WEIGHT = {
 
 const MIN_TOKEN_LENGTH = 2;
 
-/** Lowercase, strip diacritics, and drop punctuation so "Müller's" matches "muller". */
 export function normalize(value: string): string {
   return value
     .toLowerCase()
@@ -65,12 +49,6 @@ export function tokenize(value: string): string[] {
     .filter((token) => token.length >= MIN_TOKEN_LENGTH);
 }
 
-/**
- * Every spelling of a tag a visitor might type. "Next.js" normalizes to
- * "next js", but nobody types the space — so the collapsed form is a match
- * candidate too, and so is the stored value for tags whose label diverges
- * from it.
- */
 function tagVariants(document: SearchDocument): string[] {
   const variants = new Set<string>();
   for (const tag of [...document.tags, ...(document.tagValues ?? [])]) {
@@ -129,7 +107,6 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
   return score;
 }
 
-/** Rank documents by relevance. Ties break on recency, then title, for stability. */
 export function rankDocuments(
   documents: SearchDocument[],
   query: string,
@@ -153,7 +130,6 @@ export function rankDocuments(
     .slice(0, limit);
 }
 
-/** Type-ahead completions from titles and tags. Index-only, never a model call. */
 export function suggestCompletions(
   documents: SearchDocument[],
   query: string,

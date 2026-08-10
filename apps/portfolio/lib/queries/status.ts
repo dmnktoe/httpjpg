@@ -4,16 +4,6 @@ import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { getActivitySources, resolveActivityConfig } from "./activity";
 import { getConfig } from "./config";
 
-/**
- * What `/status` reports.
- *
- * Two honest categories, kept apart on purpose:
- *  - `live` — something was actually called just now and answered.
- *  - `configured` — we know a key or a setting is present, nothing more. Ask
- *    and Spotify are here because probing them costs a model call or a token
- *    refresh on every page view, which is not worth a green dot.
- */
-
 export const SERVICE_STATES = {
   ok: "ok",
   down: "down",
@@ -26,9 +16,7 @@ export interface ServiceStatus {
   id: string;
   label: string;
   state: ServiceState;
-  /** How the state was reached. Shown verbatim. */
   detail: string;
-  /** Present only for services this request actually called. */
   probed: boolean;
 }
 
@@ -54,7 +42,6 @@ function service(
   return { id, label, state, detail, probed };
 }
 
-/** A live call, so an outage shows up rather than being masked by the index cache. */
 async function probeStoryblok(): Promise<ServiceStatus> {
   const started = Date.now();
   try {
@@ -63,8 +50,6 @@ async function probeStoryblok(): Promise<ServiceStatus> {
       version: "published",
     });
     const total = response.total ?? response.stories?.length ?? 0;
-    // `getStories` answers with an empty page instead of throwing, so an empty
-    // result is the shape an outage takes here.
     if (!response.stories || response.stories.length === 0) {
       return service("storyblok", "Storyblok", SERVICE_STATES.down, "no published stories", true);
     }

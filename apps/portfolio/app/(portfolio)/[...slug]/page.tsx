@@ -116,7 +116,6 @@ export default async function DynamicPage({
         });
       }
 
-      // Independent lookups, and the page renders neither until both settle.
       [adjacent, related] = await Promise.all([
         flags.prevNextWorkEnabled ? getAdjacentWork(story.slug) : Promise.resolve({}),
         flags.relatedWorkEnabled ? getRelatedWork(`/${fullSlug}`) : Promise.resolve(related),

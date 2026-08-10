@@ -65,7 +65,6 @@ describe("richTextToMarkdown", () => {
     expect(markdown).toBe("[here](https://example.com)");
   });
 
-  // Storyblok stores an internal link as a bare slug.
   it("roots a story link at the site root", () => {
     const markdown = richTextToMarkdown(
       doc(
@@ -86,7 +85,6 @@ describe("richTextToMarkdown", () => {
     expect(markdown).toBe("[jump](/about#team)");
   });
 
-  // Nothing inside a code span may be re-marked, or the backticks stop being literal.
   it("keeps a code span literal, even when it is also a link", () => {
     const markdown = richTextToMarkdown(
       doc(

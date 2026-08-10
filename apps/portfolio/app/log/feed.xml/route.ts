@@ -4,11 +4,6 @@ import { captureServerException } from "@httpjpg/observability/sentry/server.ts"
 import { type ActivityEntry, getActivitySources, mergeActivity } from "@/lib/queries/activity";
 import { getFeatureFlags } from "@/lib/queries/widgets";
 
-/**
- * The activity log as RSS. Mirrors `/work/feed.xml` in shape and in its
- * feature flag, so one switch turns both feeds off.
- */
-
 const FEED_TITLE = "httpjpg / log";
 const FEED_DESCRIPTION = "Work, films, records and trophies — newest first.";
 
@@ -70,8 +65,6 @@ ${items}
 }
 
 function toItem(entry: ActivityEntry, base: string): string {
-  // Entries without an href — none today, but the type allows it — still need
-  // a stable guid, so fall back to the id rather than dropping the item.
   const link = entry.href
     ? entry.href.startsWith("/")
       ? `${base}${entry.href}`

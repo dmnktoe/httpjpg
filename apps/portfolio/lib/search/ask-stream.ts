@@ -13,7 +13,6 @@ export interface AskErrorEvent {
   error: string;
 }
 
-/** Where the answer points. Site-relative — the server drops external hrefs. */
 export interface AskNavigateAction {
   type: "navigate";
   href: string;
@@ -36,8 +35,6 @@ function toNavigateAction(value: unknown): AskNavigateAction | null {
   if (action.type !== "navigate" || typeof action.title !== "string") {
     return null;
   }
-  // Same-origin only. The event crosses the network, so the widget verifies it
-  // rather than trusting the server to have done so.
   if (
     typeof action.href !== "string" ||
     !action.href.startsWith("/") ||
@@ -73,7 +70,6 @@ function toEvent(line: string): AskEvent | null {
   return null;
 }
 
-/** Read the `/api/ask` NDJSON body as typed events. */
 export async function* readAskStream(
   body: ReadableStream<Uint8Array>,
 ): AsyncGenerator<AskEvent, void, undefined> {

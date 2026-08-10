@@ -191,8 +191,6 @@ describe("storyContentToMarkdown", () => {
     expect(markdown).toBe("Deep inside.");
   });
 
-  // A blok added to the CMS before this walker knows about it should still
-  // surface its contents rather than silently dropping them.
   it("falls back to the children of an unknown blok", () => {
     const markdown = storyContentToMarkdown(
       page({ component: "brand_new_thing", content: [{ component: "paragraph", text: "Kept." }] }),

@@ -12,18 +12,11 @@ interface SitemapStory {
   content?: { external_only?: boolean };
 }
 
-/**
- * Routes the app owns in code rather than in Storyblok, so the story walk
- * below never sees them. `/status` is deliberately absent: it is `noindex`.
- */
 const CODE_ROUTES = [
   { path: "/now", changeFrequency: "daily" as const, priority: 0.6 },
   { path: "/log", changeFrequency: "daily" as const, priority: 0.6 },
 ];
 
-/**
- * Dynamic sitemap generation from Storyblok stories
- */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = env.NEXT_PUBLIC_APP_URL;
   const { getStories } = getStoryblokApi();
@@ -35,11 +28,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route.priority,
   }));
 
-  // Internal pages that should not be in sitemap
   const EXCLUDED_SLUGS = ["config", "page-not-found"];
 
   try {
-    // Use getStories with published version to get only published stories
     const response = await getStories({
       per_page: 100,
       version: "published",
@@ -62,7 +53,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: story.full_slug === "home" ? 1 : 0.8,
       }));
 
-    // Add home page
     entries.unshift({
       url: baseUrl,
       lastModified: new Date(),
@@ -74,7 +64,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   } catch (error) {
     console.error("Error generating sitemap:", error);
     captureServerException(error, { tags: { route: "sitemap" } });
-    // Storyblok is down, but the code-owned routes still resolve.
     return [
       {
         url: baseUrl,

@@ -14,11 +14,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { type AskNavigateAction, readAskStream } from "@/lib/search/ask-stream";
 
 export interface AskWidgetProps {
-  /** False when the deployment has no Groq key — search still works. */
   askEnabled?: boolean;
 }
 
-/** Long enough to skip most intermediate keystrokes, short enough to feel live. */
 const SEARCH_DEBOUNCE_MS = 140;
 
 interface SearchResponse {
@@ -67,9 +65,6 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // The palette lives in the layout, so it survives navigation. Anything that
-  // changes the route while it is open — a source link, the back button —
-  // should leave it behind, the same way the header drops its mobile menu.
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
@@ -113,8 +108,6 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
           throw new Error(`Search failed with ${response.status}`);
         }
         const data = (await response.json()) as SearchResponse;
-        // A superseded search must not write its results, and must not report
-        // "idle" over a stream that started after it did.
         if (controller.signal.aborted || searchAbort.current !== controller) {
           return;
         }
@@ -151,8 +144,6 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
   );
 
   const handleAsk = useCallback(async (question: string) => {
-    // Cmd+Enter can fire while a debounced search is still in flight, and its
-    // late "idle" would make a streaming answer look finished.
     searchAbort.current?.abort();
 
     const controller = new AbortController();

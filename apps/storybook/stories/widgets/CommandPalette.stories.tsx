@@ -2,7 +2,6 @@ import { CommandPalette, type CommandPaletteResult } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState } from "react";
 
-/** Inline so the strip renders identically offline and in CI snapshots. */
 function swatch(fill: string): string {
   return `data:image/svg+xml;utf8,${encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56"><rect width="56" height="56" fill="${fill}"/></svg>`,
@@ -61,8 +60,6 @@ const meta = {
   component: CommandPalette,
   parameters: { layout: "fullscreen" },
   tags: ["autodocs"],
-  // The palette is fully controlled. Stories that only need to look right take
-  // these no-ops; Playground swaps in real state so it can be typed into.
   args: {
     open: true,
     query: "",
@@ -93,10 +90,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Live palette: typing filters the fixture list and the autocomplete chips the
- * same way the real index does, so keyboard navigation can be tried out here.
- */
 export const Playground: Story = {
   args: {
     query: "poster",
@@ -155,11 +148,6 @@ export const Searching: Story = {
   },
 };
 
-/**
- * Media strip: one thumbnail per matching page before a second from any of
- * them, so an image-heavy page cannot crowd the others out. Tracks without
- * artwork keep their slot as a glyph tile.
- */
 export const MediaStrip: Story = {
   args: {
     query: "poster",
@@ -167,7 +155,6 @@ export const MediaStrip: Story = {
   },
 };
 
-/** Autocomplete only — suggestions arrive before the ranked results do. */
 export const Autocomplete: Story = {
   args: {
     query: "pos",
@@ -186,10 +173,6 @@ export const WithAnswer: Story = {
   },
 };
 
-/**
- * The finished answer cited `[1]`, so the palette offers that source as a
- * one-click destination alongside the citation list.
- */
 export const WithNavigateAction: Story = {
   args: {
     query: "what is this site?",
@@ -215,7 +198,6 @@ export const AnswerFailed: Story = {
   },
 };
 
-/** Search-only build: no Groq key, so the ask affordance is withheld. */
 export const AskDisabled: Story = {
   args: {
     query: "poster",
@@ -224,7 +206,6 @@ export const AskDisabled: Story = {
   },
 };
 
-/** Types the answer out token by token, the way the real stream renders. */
 export const StreamingAnswer: Story = {
   args: {
     query: "what is this site?",
@@ -256,11 +237,6 @@ export const StreamingAnswer: Story = {
   },
 };
 
-/**
- * Toggle `open` in the controls to watch the enter and exit run: the backdrop
- * fades its blur in while the dialog lifts and scales up, and both leave faster
- * than they arrive. Reduced motion keeps the fade and drops the movement.
- */
 export const OpenClose: Story = {
   args: {
     query: "poster",

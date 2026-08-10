@@ -44,7 +44,6 @@ describe("sitemap", () => {
 
     const entries = await sitemap();
 
-    // Home page is unshifted to the front.
     expect(entries[0].url).toBe("https://example.test");
     expect(entries.some((e) => e.url === "https://example.test/about")).toBe(true);
     const work = entries.find((e) => e.url === "https://example.test/work/project");
@@ -78,8 +77,6 @@ describe("sitemap", () => {
     });
 
     const entries = await sitemap();
-    // Only the home entry survives the filters; the code-owned routes are
-    // appended regardless of what Storyblok holds.
     expect(entries.map((entry) => entry.url)).toEqual([
       "https://example.test",
       "https://example.test/now",
@@ -100,7 +97,6 @@ describe("sitemap", () => {
 
     const entries = await sitemap();
 
-    // Storyblok is down, but the code-owned routes still resolve.
     expect(entries.map((entry) => entry.url)).toEqual([
       "https://example.test",
       "https://example.test/now",

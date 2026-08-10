@@ -68,7 +68,6 @@ describe("HeaderScrollVeil", () => {
   it("eases the blur radius in behind the tint", () => {
     render(<HeaderScrollVeil />);
 
-    // Squared ramp: the first pixels of scroll barely blur at all.
     scrollTo(16);
     expect(blur()).toBe("0.010");
 

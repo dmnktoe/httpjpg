@@ -38,10 +38,7 @@ export interface HeaderProps {
   websitesWork?: WorkItem[];
   /** Renders the search trigger next to the nav. @default false */
   showSearch?: boolean;
-  /**
-   * Fades a soft, theme-aware scrim in behind the header as the page
-   * scrolls, so content passing underneath stays legible. @default true
-   */
+  /** Fades a theme-aware scrim in behind the header on scroll. @default true */
   showScrollVeil?: boolean;
   children?: ReactNode;
 }

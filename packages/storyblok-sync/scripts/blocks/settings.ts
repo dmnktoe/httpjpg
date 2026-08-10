@@ -68,9 +68,7 @@ export const settingsBlocks: BlockDef[] = [
       ...tabbed("Widgets", "widgets", {
         spotify_enabled: field.boolean("Spotify · Now Playing", "true"),
         nostalgia_slideshow_enabled: field.boolean("Nostalgia · Slideshow", "true"),
-        psn_enabled: field.boolean("PSN · Trophy Card"),
-        psn_trophy_enabled: field.boolean("PSN · Latest Trophy"),
-        psn_username: field.text("PSN · Username"),
+        ask_enabled: field.boolean("Ask · Search & AI Palette", "true"),
         discord_enabled: field.boolean("Discord · Live Status", "true"),
         discord_user_id: field.text("Discord · User ID", {
           description: "17–20 digit Discord snowflake; powers the live status widget.",
@@ -85,7 +83,22 @@ export const settingsBlocks: BlockDef[] = [
           description: "Handle without @, e.g. dmnktoe. Needs TWEETAPI_KEY to be set.",
           tooltip: true,
         }),
-        ask_enabled: field.boolean("Ask · Search & AI Palette", "true"),
+        psn_enabled: field.boolean("PSN · Trophy Card", "false", {
+          description: "Floating card with the trophy summary.",
+          tooltip: true,
+        }),
+        psn_trophy_enabled: field.boolean("PSN · Latest Trophy", "false", {
+          description: "One-line footer status with the most recent trophy.",
+          tooltip: true,
+        }),
+        psn_username: field.text("PSN · Username"),
+      }),
+      ...tabbed("Features", "features", {
+        last_updated_badge_enabled: field.boolean("Last-Updated · Footer Badge", "true"),
+        web_vitals_badge_enabled: field.boolean("Web Vitals · Footer Badge"),
+        build_badge_enabled: field.boolean("Build · Footer Badge"),
+        prev_next_work_enabled: field.boolean("Prev/Next · Work Navigation", "true"),
+        rss_feed_enabled: field.boolean("RSS Feed · /work/feed.xml", "true"),
       }),
       ...tabbed("Interface", "interface", {
         custom_cursor_enabled: field.boolean("Custom Cursor", "true", {
@@ -103,13 +116,6 @@ export const settingsBlocks: BlockDef[] = [
             "Fades a blurred, theme-aware scrim in behind the header while scrolling, so content passing underneath stays legible. Off leaves the header fully transparent.",
           tooltip: true,
         }),
-      }),
-      ...tabbed("Features", "features", {
-        last_updated_badge_enabled: field.boolean("Last-Updated · Footer Badge", "true"),
-        web_vitals_badge_enabled: field.boolean("Web Vitals · Footer Badge"),
-        build_badge_enabled: field.boolean("Build · Footer Badge"),
-        prev_next_work_enabled: field.boolean("Prev/Next · Work Navigation", "true"),
-        rss_feed_enabled: field.boolean("RSS Feed · /work/feed.xml", "true"),
       }),
     },
   },

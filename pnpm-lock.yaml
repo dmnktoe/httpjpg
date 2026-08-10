@@ -540,6 +540,9 @@ importers:
       '@httpjpg/tokens':
         specifier: workspace:*
         version: link:../tokens
+      '@storyblok/schema':
+        specifier: ^0.3.0
+        version: 0.3.0
       dotenv:
         specifier: 'catalog:'
         version: 17.4.2
@@ -3035,6 +3038,9 @@ packages:
 
   '@storyblok/richtext@5.2.1':
     resolution: {integrity: sha512-Lw5DP8hwH3BKTp7ddYAbrZPAYDkM26SvxyC/xOlxCV/FQnFzsBgRAOfRsXr/NvNt9piKWWAYscD2iCZmw6eitA==}
+
+  '@storyblok/schema@0.3.0':
+    resolution: {integrity: sha512-a4Ys8h2+n6d+pkJqOkjrC0PxYy/NOPgqgIEtCrQPwanQceBRcfLdPxbxowpvKCEATWmGaUikmY+VfQBS76kKfA==}
 
   '@storybook/addon-docs@10.5.7':
     resolution: {integrity: sha512-KNARJfjICaizinsR3INMEiipZm1ObYo+xw+E26gteu50Bcy2dIZUtk5uHY5XdtardU3AXX6yRXoBZ2HCY3lbHA==}
@@ -7597,6 +7603,11 @@ snapshots:
       - '@floating-ui/dom'
       - bufferutil
       - utf-8-validate
+
+  '@storyblok/schema@0.3.0':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      zod: 4.4.3
 
   '@storybook/addon-docs@10.5.7(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(esbuild@0.28.1)(rollup@4.62.4)(storybook@10.5.7(@types/react@19.2.18)(prettier@3.2.5)(react@19.2.8))(vite@8.2.1(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.6.1)(terser@5.49.0)(tsx@4.23.12)(yaml@2.9.0))(webpack@5.109.2(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.25))':
     dependencies:

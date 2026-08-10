@@ -11,27 +11,26 @@ config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
 import { banner, fail, outro, warn } from "@httpjpg/terminal";
 
 import { validateEnv } from "../src/index";
-import { contentBlocks } from "./blocks/content";
-import { layoutBlocks } from "./blocks/layout";
-import { mediaBlocks } from "./blocks/media";
-import { pageBlocks } from "./blocks/pages";
-import { settingsBlocks } from "./blocks/settings";
-import { type BlockDef, fetchComponentIds, upsertBlock } from "./lib/block";
-
-const BLOCKS: BlockDef[] = [
-  ...layoutBlocks,
-  ...contentBlocks,
-  ...mediaBlocks,
-  ...pageBlocks,
-  ...settingsBlocks,
-];
+import { fetchComponentIds, upsertBlock } from "./lib/block";
+import { allBlocks } from "./lib/schema";
+import { validateLocalSchema } from "./lib/validate";
 
 async function syncComponents(): Promise<void> {
   banner("storyblok · components");
   validateEnv();
+
+  const blocks = allBlocks();
+  const validation = validateLocalSchema(blocks);
+  for (const issue of validation.issues) {
+    warn(`${issue.entity} · ${issue.code} · ${issue.message}`);
+  }
+  if (!validation.ok) {
+    throw new Error("schema validation failed — nothing was pushed");
+  }
+
   const existingIds = await fetchComponentIds();
   const failed: string[] = [];
-  for (const def of BLOCKS) {
+  for (const def of blocks) {
     try {
       await upsertBlock(def, existingIds);
     } catch (error) {

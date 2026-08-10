@@ -27,7 +27,8 @@
     "**/tailwind-animate.css",
     "**/coverage/**",
     "**/.panda-studio/**",
-    "**/storybook-static/**"
+    "**/storybook-static/**",
+    "CHANGELOG.md"
   ],
   "overrides": [
     {

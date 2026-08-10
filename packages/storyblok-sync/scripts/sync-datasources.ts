@@ -8,11 +8,10 @@ import { config } from "dotenv";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 config({ path: resolve(__dirname, "../../../.env.local"), quiet: true });
 
-import { CMS_OPTIONS } from "@httpjpg/storyblok-utils";
 import { banner, done, fail, outro, step } from "@httpjpg/terminal";
-import { spacing } from "@httpjpg/tokens";
 
 import { type Datasource, type DatasourceEntry, storyblokRequest, validateEnv } from "../src/index";
+import { allDatasources } from "./lib/datasources";
 
 async function getDatasource(slug: string): Promise<{ id: number } | null> {
   try {
@@ -78,36 +77,11 @@ async function upsertDatasource(datasource: Datasource, entries: DatasourceEntry
   }
 }
 
-interface DatasourceWithEntries {
-  datasource: Datasource;
-  entries: DatasourceEntry[];
-}
-
-function spacingDs(): DatasourceWithEntries {
-  return {
-    datasource: { name: "Spacing Options", slug: "spacing-options" },
-    entries: CMS_OPTIONS.spacing
-      .slice()
-      .sort((a, b) => Number(a) - Number(b))
-      .map((key) => ({
-        name: `${key} (${spacing[key as unknown as keyof typeof spacing]})`,
-        value: key,
-      })),
-  };
-}
-
-function colorDs(): DatasourceWithEntries {
-  return {
-    datasource: { name: "Color Options", slug: "color-options" },
-    entries: CMS_OPTIONS.colorEntries.slice(),
-  };
-}
-
 async function syncDatasources(): Promise<void> {
   banner("storyblok · datasources");
   validateEnv();
 
-  const datasources = [spacingDs(), colorDs()];
+  const datasources = allDatasources();
 
   for (const { datasource, entries } of datasources) {
     try {

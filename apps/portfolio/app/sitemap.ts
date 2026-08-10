@@ -13,11 +13,27 @@ interface SitemapStory {
 }
 
 /**
+ * Routes the app owns in code rather than in Storyblok, so the story walk
+ * below never sees them. `/status` is deliberately absent: it is `noindex`.
+ */
+const CODE_ROUTES = [
+  { path: "/now", changeFrequency: "daily" as const, priority: 0.6 },
+  { path: "/log", changeFrequency: "daily" as const, priority: 0.6 },
+];
+
+/**
  * Dynamic sitemap generation from Storyblok stories
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = env.NEXT_PUBLIC_APP_URL;
   const { getStories } = getStoryblokApi();
+
+  const codeEntries: MetadataRoute.Sitemap = CODE_ROUTES.map((route) => ({
+    url: `${baseUrl}${route.path}`,
+    lastModified: new Date(),
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
+  }));
 
   // Internal pages that should not be in sitemap
   const EXCLUDED_SLUGS = ["config", "page-not-found"];
@@ -54,11 +70,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     });
 
-    return entries;
+    return [...entries, ...codeEntries];
   } catch (error) {
     console.error("Error generating sitemap:", error);
     captureServerException(error, { tags: { route: "sitemap" } });
-    // Fallback to minimal sitemap
+    // Storyblok is down, but the code-owned routes still resolve.
     return [
       {
         url: baseUrl,
@@ -66,6 +82,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: "weekly",
         priority: 1,
       },
+      ...codeEntries,
     ];
   }
 }

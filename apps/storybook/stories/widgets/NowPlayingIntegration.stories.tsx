@@ -34,11 +34,11 @@ const ColorDebugBadge = ({ data }: { data: { artwork: string } | null }) => {
         fontFamily: "monospace",
         fontSize: "11px",
         borderRadius: "8px",
-        border: `2px solid ${color.rgb}`,
+        border: `2px solid ${color.css}`,
         zIndex: 10000,
       }}
     >
-      🎨 {color.rgb} · Text: {color.textColor}
+      🎨 {color.css} · Text: {color.textColor}
     </div>
   );
 };

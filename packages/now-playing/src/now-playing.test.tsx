@@ -47,9 +47,9 @@ describe("NowPlaying", () => {
   it("applies the extracted vibrant color when auto extraction is enabled", async () => {
     const { extractVibrantColor } = await import("@httpjpg/spotify");
     vi.mocked(extractVibrantColor).mockResolvedValueOnce({
-      rgb: "rgb(10, 20, 30)",
-      rgba: "rgba(10, 20, 30, 0.9)",
-      textColor: "black",
+      css: "rgb(10, 20, 30)",
+      textColor: "#000000",
+      withAlpha: (alpha) => `rgba(10, 20, 30, ${alpha})`,
     });
 
     const { container } = render(

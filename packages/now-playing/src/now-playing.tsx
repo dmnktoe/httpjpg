@@ -70,10 +70,14 @@ export function NowPlaying({
     };
   }, [artwork, autoExtractColor, vibrantColor]);
 
-  const finalVibrantColor = vibrantColor || extractedColor?.rgba;
+  // A caller-supplied colour is an opaque string, so only an extracted one can be re-alphaed.
+  const dimmable = vibrantColor ? null : extractedColor;
+  const finalVibrantColor = vibrantColor || extractedColor?.withAlpha(0.9);
   const finalTextColor = textColor || extractedColor?.textColor || "white";
   const hasVibrantColor = !!finalVibrantColor && !isExtracting;
   const glowColor = hasVibrantColor ? finalVibrantColor : "rgba(163, 163, 163, 0.6)";
+  const midGlow = dimmable?.withAlpha(0.4) || finalVibrantColor;
+  const outerGlow = dimmable?.withAlpha(0.2) || finalVibrantColor;
   const hasArtwork = isLoading || Boolean(artwork);
 
   return (
@@ -154,7 +158,7 @@ export function NowPlaying({
               filter: "blur(8px)",
               borderRadius: "9999px",
               boxShadow: hasVibrantColor
-                ? `0 0 25px 0 ${finalVibrantColor?.replace("0.9)", "0.4)")}, 0 0 50px 0 ${finalVibrantColor?.replace("0.9)", "0.2)")}`
+                ? `0 0 25px 0 ${midGlow}, 0 0 50px 0 ${outerGlow}`
                 : "0 0 15px 0 rgba(163, 163, 163, 0.3)",
               zIndex: -1,
               transition: "background 0.6s ease-in-out, box-shadow 0.6s ease-in-out",

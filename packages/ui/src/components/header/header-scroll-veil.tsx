@@ -8,27 +8,32 @@ import { Box } from "../box/box";
 const FADE_DISTANCE = 160;
 
 const BLUR_LAYERS = [
-  { blur: 1, solid: 70, end: 106 },
-  { blur: 2, solid: 55, end: 92 },
-  { blur: 4, solid: 38, end: 75 },
-  { blur: 8, solid: 20, end: 55 },
+  { blur: 1, solid: 42, end: 100 },
+  { blur: 2, solid: 30, end: 86 },
+  { blur: 4, solid: 18, end: 70 },
+  { blur: 8, solid: 6, end: 50 },
 ] as const;
 
 const FADE_CURVE = [
   [0, 1],
-  [0.2, 0.94],
-  [0.4, 0.77],
-  [0.6, 0.5],
-  [0.8, 0.22],
+  [0.15, 0.96],
+  [0.3, 0.87],
+  [0.45, 0.73],
+  [0.6, 0.54],
+  [0.72, 0.37],
+  [0.84, 0.19],
+  [0.93, 0.07],
   [1, 0],
 ] as const;
 
 const TINT_STOPS = [
   [0, 0.92],
-  [35, 0.88],
-  [55, 0.72],
-  [70, 0.48],
-  [85, 0.21],
+  [18, 0.87],
+  [38, 0.74],
+  [55, 0.55],
+  [70, 0.35],
+  [82, 0.18],
+  [92, 0.06],
   [100, 0],
 ] as const;
 
@@ -90,7 +95,7 @@ export function HeaderScrollVeil() {
         right: 0,
         left: 0,
         zIndex: -1,
-        height: "calc(100% + 4rem)",
+        height: "calc(100% + 1.5rem)",
         pointerEvents: "none",
         userSelect: "none",
         "--veil-rgb": "255 255 255",

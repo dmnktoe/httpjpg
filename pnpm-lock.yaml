@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@storyblok/react':
-      specifier: ^7.0.0
-      version: 7.2.3
+      specifier: ^7.2.4
+      version: 7.2.4
     '@testing-library/jest-dom':
       specifier: ^7.0.0
       version: 7.0.0
@@ -160,7 +160,7 @@ importers:
         version: 16.3.0(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@storyblok/react':
         specifier: 'catalog:'
-        version: 7.2.3(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 7.2.4(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next:
         specifier: 'catalog:'
         version: 16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -517,7 +517,7 @@ importers:
         version: link:../ui
       '@storyblok/react':
         specifier: 'catalog:'
-        version: 7.2.3(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 7.2.4(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react:
         specifier: 'catalog:'
         version: 19.2.8
@@ -567,7 +567,7 @@ importers:
         version: link:../ui
       '@storyblok/react':
         specifier: 'catalog:'
-        version: 7.2.3(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 7.2.4(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
     devDependencies:
       '@testing-library/jest-dom':
         specifier: 'catalog:'
@@ -3017,14 +3017,14 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@storyblok/js@6.3.0':
-    resolution: {integrity: sha512-7H4A3Rsw7UsOIWO6zmzBFVyGxaH5/RD+KBuxsXkPD3kWh56WSjSHnlbdRquxVgL/jCxULcphSHgsHzBRfKkG1Q==}
+  '@storyblok/js@6.3.1':
+    resolution: {integrity: sha512-fCeHsPrvitSZOzIqsmsBLQQ16b69ctP3InXK6+u6xJb5WzXqwKlcpqCQuU3KJddUg4DJ+p8txcWd212N2iQRdw==}
 
   '@storyblok/preview-bridge@2.2.1':
     resolution: {integrity: sha512-ioES1Y3SHpgKxCBA2LWkuiPpdg14HjqeGDsLQLxnMGLdMDxIkfyPkCDJ3+9Av4otlWojvQANAwgQf/2yW02P9Q==}
 
-  '@storyblok/react@7.2.3':
-    resolution: {integrity: sha512-RWVR3pPKgh9lx8fjHE9o/Qz6n5dLjFo0gqEz+RgC0lxqvZmKK7vp2p91qiRDRyUW+KpT8Ke+HKlGIvr1QGNHEg==}
+  '@storyblok/react@7.2.4':
+    resolution: {integrity: sha512-1Wfj9dWAW8slWo/Y68N8YjX4GNsKTdENKt8JAoHyIh/BZZdrddK42eiiA7gXscvCrfb7jSpLa3EneV6pr7oG3A==}
     peerDependencies:
       next: ^13 || ^14 || ^15 || ^16
       react: ^17 || ^18 || ^19
@@ -3032,9 +3032,6 @@ packages:
     peerDependenciesMeta:
       next:
         optional: true
-
-  '@storyblok/richtext@5.2.0':
-    resolution: {integrity: sha512-M/DMwIxJ0SAksgKMP/IUOEh/Y3Ooeb6cnseH9pCHGGD64ayuHrOlxLqOVyVrqidIGyYYjn2VzoalVNixWIhMSQ==}
 
   '@storyblok/richtext@5.2.1':
     resolution: {integrity: sha512-Lw5DP8hwH3BKTp7ddYAbrZPAYDkM26SvxyC/xOlxCV/FQnFzsBgRAOfRsXr/NvNt9piKWWAYscD2iCZmw6eitA==}
@@ -5115,11 +5112,11 @@ packages:
   std-env@4.2.0:
     resolution: {integrity: sha512-oCUKSupKTHX53EyjDtuZQ64pjLJ6yYCtpmEw0goYxtjG9KpbRe8KAsl2tBUGU9DyMcJ0RwJ8GqJAFzMXcXW1Rw==}
 
-  storyblok-js-client@7.7.1:
-    resolution: {integrity: sha512-aofkkc+62W5EGfxmlabA8snTi5QygFmdsXquEUE3FessVkyvOkMuP1Am9hww491O2dsRjBQdBCzHbAmguR27SA==}
-
   storyblok-js-client@7.7.2:
     resolution: {integrity: sha512-Y01kOqq6yxZBeGkVHTXwhuMFQobAV0Ejyr4EPHIobFq8UWv7xDPh6pyk5S0A54WgRouVPWeYvHsDLgkXlnsp0Q==}
+
+  storyblok-js-client@7.7.3:
+    resolution: {integrity: sha512-Do4Z0mSgoYMewtPArE/3dvW8T8/WI5wqjckqkPO0/2o4CE0dKojS40Nmde3ZQMt9faYxwAgNqOKY0l3NwqQJuA==}
 
   storybook@10.5.7:
     resolution: {integrity: sha512-oiKvWIwIoOhFP1i6dASYyMXwPHKEtVZMshqSB7EvIVYjWRh0l9H7gHEt1z4Gh2rLGFMekWdsm4s94rvwpR7gkg==}
@@ -7528,11 +7525,11 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@storyblok/js@6.3.0(@floating-ui/dom@1.8.0)':
+  '@storyblok/js@6.3.1(@floating-ui/dom@1.8.0)':
     dependencies:
       '@storyblok/preview-bridge': 2.2.1
-      '@storyblok/richtext': 5.2.0(@floating-ui/dom@1.8.0)
-      storyblok-js-client: 7.7.1
+      '@storyblok/richtext': 5.2.1(@floating-ui/dom@1.8.0)
+      storyblok-js-client: 7.7.3
     transitivePeerDependencies:
       - '@floating-ui/dom'
       - bufferutil
@@ -7542,9 +7539,9 @@ snapshots:
     dependencies:
       pure-parse: 0.0.0-beta.8
 
-  '@storyblok/react@7.2.3(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@storyblok/react@7.2.4(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@storyblok/js': 6.3.0(@floating-ui/dom@1.8.0)
+      '@storyblok/js': 6.3.1(@floating-ui/dom@1.8.0)
       '@storyblok/richtext': 5.2.1(@floating-ui/dom@1.8.0)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
@@ -7555,50 +7552,14 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@storyblok/react@7.2.3(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@storyblok/react@7.2.4(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@storyblok/js': 6.3.0(@floating-ui/dom@1.8.0)
+      '@storyblok/js': 6.3.1(@floating-ui/dom@1.8.0)
       '@storyblok/richtext': 5.2.1(@floating-ui/dom@1.8.0)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
     optionalDependencies:
       next: 16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-    transitivePeerDependencies:
-      - '@floating-ui/dom'
-      - bufferutil
-      - utf-8-validate
-
-  '@storyblok/richtext@5.2.0(@floating-ui/dom@1.8.0)':
-    dependencies:
-      '@tiptap/core': 3.29.2(@tiptap/pm@3.29.2)
-      '@tiptap/extension-blockquote': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
-      '@tiptap/extension-bold': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/extension-code': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/extension-code-block': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
-      '@tiptap/extension-document': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/extension-emoji': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)(@tiptap/suggestion@3.29.2(@floating-ui/dom@1.8.0)(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2))(emojibase@17.0.0)
-      '@tiptap/extension-hard-break': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/extension-heading': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/extension-highlight': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/extension-horizontal-rule': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
-      '@tiptap/extension-image': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/extension-italic': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/extension-link': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
-      '@tiptap/extension-list': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
-      '@tiptap/extension-paragraph': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/extension-strike': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/extension-subscript': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
-      '@tiptap/extension-superscript': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
-      '@tiptap/extension-table': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
-      '@tiptap/extension-text': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/extension-text-style': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/extension-underline': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
-      '@tiptap/html': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)(happy-dom@20.11.1)
-      '@tiptap/pm': 3.29.2
-      '@tiptap/suggestion': 3.29.2(@floating-ui/dom@1.8.0)(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
-      emojibase: 17.0.0
-      happy-dom: 20.11.1
-      markdown-it: 14.3.0
     transitivePeerDependencies:
       - '@floating-ui/dom'
       - bufferutil
@@ -9856,9 +9817,9 @@ snapshots:
 
   std-env@4.2.0: {}
 
-  storyblok-js-client@7.7.1: {}
-
   storyblok-js-client@7.7.2: {}
+
+  storyblok-js-client@7.7.3: {}
 
   storybook@10.5.7(@types/react@19.2.18)(prettier@3.2.5)(react@19.2.8):
     dependencies:

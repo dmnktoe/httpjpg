@@ -540,13 +540,13 @@ importers:
       '@httpjpg/tokens':
         specifier: workspace:*
         version: link:../tokens
+      '@storyblok/schema':
+        specifier: ^0.3.0
+        version: 0.3.0
       dotenv:
         specifier: 'catalog:'
         version: 17.4.2
     devDependencies:
-      '@storyblok/schema':
-        specifier: ^0.3.0
-        version: 0.3.0
       tsx:
         specifier: 'catalog:'
         version: 4.23.1

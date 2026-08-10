@@ -26,10 +26,10 @@
     "@httpjpg/storyblok-utils": "workspace:*",
     "@httpjpg/terminal": "workspace:*",
     "@httpjpg/tokens": "workspace:*",
+    "@storyblok/schema": "^0.3.0",
     "dotenv": "catalog:"
   },
   "devDependencies": {
-    "@storyblok/schema": "^0.3.0",
     "tsx": "catalog:",
     "typescript": "catalog:"
   }

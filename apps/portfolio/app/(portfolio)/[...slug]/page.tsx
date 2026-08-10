@@ -7,10 +7,12 @@ import { notFound } from "next/navigation";
 import ReactDOM from "react-dom";
 
 import { StoryblokLive } from "@/components/providers/storyblok-live";
+import { RelatedWork } from "@/components/ui/related-work";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { WorkNav } from "@/components/ui/work-nav";
 import { isInternalSlug } from "@/lib/page-theme";
 import { getAuthor, getSiteConfig, getSocialProfiles } from "@/lib/queries/config";
+import { getRelatedWork } from "@/lib/queries/related-work";
 import { getFeatureFlags } from "@/lib/queries/widgets";
 import { getAdjacentWork, getCachedStory } from "@/lib/queries/work";
 import { generateCreativeWorkSchema, JsonLd } from "@/lib/schema-org";
@@ -76,6 +78,7 @@ export default async function DynamicPage({
 
     let schemaMarkup = null;
     let adjacent: Awaited<ReturnType<typeof getAdjacentWork>> = {};
+    let related: Awaited<ReturnType<typeof getRelatedWork>> = { tags: [], related: [] };
 
     if (isWorkPage) {
       const site = await getSiteConfig();
@@ -113,9 +116,11 @@ export default async function DynamicPage({
         });
       }
 
-      if (flags.prevNextWorkEnabled) {
-        adjacent = await getAdjacentWork(story.slug);
-      }
+      // Independent lookups, and the page renders neither until both settle.
+      [adjacent, related] = await Promise.all([
+        flags.prevNextWorkEnabled ? getAdjacentWork(story.slug) : Promise.resolve({}),
+        flags.relatedWorkEnabled ? getRelatedWork(`/${fullSlug}`) : Promise.resolve(related),
+      ]);
     }
 
     const pageTheme = story.content?.isDark ? "dark" : "light";
@@ -125,6 +130,7 @@ export default async function DynamicPage({
         <ThemeSync theme={pageTheme} />
         {schemaMarkup && <JsonLd data={schemaMarkup} />}
         <StoryblokServerComponent blok={story.content} />
+        {isWorkPage && flags.relatedWorkEnabled && <RelatedWork {...related} />}
         {isWorkPage && flags.prevNextWorkEnabled && (
           <WorkNav prev={adjacent.prev} next={adjacent.next} />
         )}

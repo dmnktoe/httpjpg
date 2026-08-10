@@ -1,5 +1,6 @@
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { CACHE_TAGS } from "@httpjpg/storyblok-next";
+import { resolveWorkTags } from "@httpjpg/storyblok-utils";
 import { unstable_cache } from "next/cache";
 
 import type { SearchDocument } from "../search/ranking";
@@ -18,9 +19,17 @@ interface IndexableStory {
     title?: string;
     date?: string;
     external_only?: boolean;
+    tags?: string[];
     link?: { url?: string; cached_url?: string };
   } & Record<string, unknown>;
 }
+
+/**
+ * Story-level Storyblok tags that categorise the work list rather than
+ * describe the work. They stay out of the searchable tag set — a query for
+ * "projects" should not match every project.
+ */
+const TAXONOMY_TAGS = new Set(["Projects", "Websites"]);
 
 const PER_PAGE = 100;
 
@@ -44,12 +53,22 @@ function toHref(story: IndexableStory): string {
 }
 
 function toSearchDocument(story: IndexableStory): SearchDocument {
+  // Curated tags first: they are the vocabulary the editor chose from, so they
+  // are the ones worth showing and the ones related work can compare across
+  // stories. Loose story tags trail behind as extra search surface.
+  const curated = resolveWorkTags(story.content?.tags);
+  const curatedLabels = new Set(curated.map((tag) => tag.label));
+  const loose = (story.tag_list ?? []).filter(
+    (tag) => !TAXONOMY_TAGS.has(tag) && !curatedLabels.has(tag),
+  );
+
   return {
     id: story.uuid,
     href: toHref(story),
     title: story.content?.title || story.name,
     kind: story.content?.component === "work" ? "work" : "page",
-    tags: story.tag_list ?? [],
+    tags: [...curatedLabels, ...loose],
+    tagValues: curated.map((tag) => tag.value),
     excerpt: collectStoryText(story.content),
     date: story.content?.date,
     media: collectStoryMedia(story.content),

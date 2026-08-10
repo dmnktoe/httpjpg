@@ -75,12 +75,45 @@ describe("getSearchIndex", () => {
         href: "/work/demo",
         title: "Demo Project",
         kind: "work",
-        tags: ["Projects"],
+        tags: [],
+        tagValues: [],
         excerpt: "Demo Project A stark site",
         date: "2026-01-01",
         media: [],
       },
     ]);
+  });
+
+  it("resolves curated tags to labels and keeps their values", async () => {
+    mockStories([
+      story({
+        tag_list: ["Projects"],
+        content: {
+          component: "work",
+          title: "Demo Project",
+          tags: ["typescript", "ios", "not-a-real-tag"],
+        },
+      }),
+    ]);
+
+    const [document] = await getSearchIndex();
+
+    expect(document.tags).toEqual(["TypeScript", "iOS"]);
+    expect(document.tagValues).toEqual(["typescript", "ios"]);
+  });
+
+  it("keeps loose story tags as extra search surface but drops the taxonomy ones", async () => {
+    mockStories([
+      story({
+        tag_list: ["Projects", "Websites", "Riso"],
+        content: { component: "work", title: "Demo Project", tags: ["print"] },
+      }),
+    ]);
+
+    const [document] = await getSearchIndex();
+
+    expect(document.tags).toEqual(["Print", "Riso"]);
+    expect(document.tagValues).toEqual(["print"]);
   });
 
   it("carries the story's thumbnails into the document", async () => {

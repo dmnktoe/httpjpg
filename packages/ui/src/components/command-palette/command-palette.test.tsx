@@ -403,3 +403,39 @@ describe("CommandPalette answer", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("The answer failed.");
   });
 });
+
+describe("CommandPalette action", () => {
+  const ACTION = {
+    type: "navigate",
+    href: "/work/brutalist",
+    title: "Brutalist Portfolio",
+    kind: "work",
+  } as const;
+
+  it("offers the destination the finished answer points at", () => {
+    const props = setup({ answer: "It is the site [1].", action: ACTION, onAction: vi.fn() });
+
+    fireEvent.click(screen.getByRole("button", { name: /go to Brutalist Portfolio/ }));
+
+    expect(props.onAction).toHaveBeenCalledWith(ACTION);
+  });
+
+  // The answer is still growing, so the citation it points at can still change.
+  it("withholds the action while the answer is streaming", () => {
+    setup({ answer: "It is the s", action: ACTION, status: "answering", onAction: vi.fn() });
+
+    expect(screen.queryByRole("button", { name: /go to/ })).not.toBeInTheDocument();
+  });
+
+  it("shows no action when the answer failed", () => {
+    setup({ status: "error", action: ACTION, onAction: vi.fn() });
+
+    expect(screen.queryByRole("button", { name: /go to/ })).not.toBeInTheDocument();
+  });
+
+  it("shows no action when the caller cannot handle one", () => {
+    setup({ answer: "It is the site [1].", action: ACTION });
+
+    expect(screen.queryByRole("button", { name: /go to/ })).not.toBeInTheDocument();
+  });
+});

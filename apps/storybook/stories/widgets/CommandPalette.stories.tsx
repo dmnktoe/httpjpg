@@ -186,6 +186,26 @@ export const WithAnswer: Story = {
   },
 };
 
+/**
+ * The finished answer cited `[1]`, so the palette offers that source as a
+ * one-click destination alongside the citation list.
+ */
+export const WithNavigateAction: Story = {
+  args: {
+    query: "what is this site?",
+    results: RESULTS.slice(0, 2),
+    answer: ANSWER,
+    sources: SOURCES,
+    action: {
+      type: "navigate",
+      href: "/work/brutalist-portfolio",
+      title: "Brutalist Portfolio",
+      kind: "work",
+    },
+    status: "idle",
+  },
+};
+
 export const AnswerFailed: Story = {
   args: {
     query: "what is this site?",

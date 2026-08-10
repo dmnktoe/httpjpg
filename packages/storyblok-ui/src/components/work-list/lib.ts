@@ -1,5 +1,5 @@
 import { renderStoryblokRichText } from "@httpjpg/storyblok-richtext";
-import { type StoryblokImage, toSlideshowImage } from "@httpjpg/storyblok-utils";
+import { type StoryblokImage, toSlideshowImage, workTagLabels } from "@httpjpg/storyblok-utils";
 
 export interface WorkStory {
   uuid?: string;
@@ -11,6 +11,7 @@ export interface WorkStory {
     title?: string;
     description?: unknown;
     images?: StoryblokImage[];
+    tags?: string[];
     date?: string;
     date_end?: string;
   };
@@ -19,9 +20,21 @@ export interface WorkStory {
 const BASE_URL = "/work";
 const TAXONOMY_TAGS = new Set(["Projects", "Websites"]);
 
+/**
+ * Curated tags win. Stories predating the vocabulary still carry loose
+ * Storyblok tags, so those keep showing until an editor picks proper ones.
+ */
+function cardTags(story: WorkStory): string[] {
+  const curated = workTagLabels(story.content?.tags);
+  if (curated.length > 0) {
+    return curated;
+  }
+  return story.tag_list?.filter((t) => !TAXONOMY_TAGS.has(t)) ?? [];
+}
+
 export function toWorkCardProps(story: WorkStory) {
   const title = story.content?.title || story.name;
-  const tags = story.tag_list?.filter((t) => !TAXONOMY_TAGS.has(t));
+  const tags = cardTags(story);
   return {
     slug: story.slug,
     title,
@@ -32,7 +45,7 @@ export function toWorkCardProps(story: WorkStory) {
     date: story.content?.date,
     dateEnd: story.content?.date_end,
     baseUrl: BASE_URL,
-    tags: tags?.length ? tags : undefined,
+    tags: tags.length ? tags : undefined,
   };
 }
 

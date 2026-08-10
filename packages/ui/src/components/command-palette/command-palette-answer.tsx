@@ -1,6 +1,9 @@
 "use client";
 
+import type { MouseEvent } from "react";
+
 import { Box } from "../box/box";
+import { Button } from "../button/button";
 import { Link } from "../link/link";
 
 export interface CommandPaletteSource {
@@ -8,20 +11,35 @@ export interface CommandPaletteSource {
   href: string;
 }
 
+/**
+ * Where the answer points. The caller decides what following it means — the
+ * palette only renders the affordance and reports the click.
+ */
+export interface CommandPaletteAction {
+  type: "navigate";
+  href: string;
+  title: string;
+  kind?: "work" | "page";
+}
+
 interface CommandPaletteAnswerProps {
   answer: string;
   sources: CommandPaletteSource[];
+  action?: CommandPaletteAction;
   isStreaming: boolean;
   errorMessage?: string;
   onSourceClick: () => void;
+  onAction?: (action: CommandPaletteAction) => void;
 }
 
 export function CommandPaletteAnswer({
   answer,
   sources,
+  action,
   isStreaming,
   errorMessage,
   onSourceClick,
+  onAction,
 }: CommandPaletteAnswerProps) {
   return (
     <Box
@@ -80,6 +98,19 @@ export function CommandPaletteAnswer({
               &nbsp;
             </Box>
           )}
+        </Box>
+      )}
+
+      {action && onAction && !errorMessage && (
+        <Box css={{ mt: "3" }}>
+          <Button
+            size="sm"
+            onMouseDown={(event: MouseEvent) => event.preventDefault()}
+            onClick={() => onAction(action)}
+            css={{ fontFamily: "mono" }}
+          >
+            go to {action.title} →
+          </Button>
         </Box>
       )}
 

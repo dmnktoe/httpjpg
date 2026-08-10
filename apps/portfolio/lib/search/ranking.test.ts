@@ -12,6 +12,7 @@ function doc(overrides: Partial<SearchDocument> & { title: string }): SearchDocu
     href: `/work/${overrides.title.toLowerCase().replace(/\s+/g, "-")}`,
     kind: "work",
     tags: [],
+    tagValues: [],
     excerpt: "",
     ...overrides,
   };
@@ -67,6 +68,27 @@ describe("rankDocuments", () => {
     const results = rankDocuments(DOCUMENTS, "print");
 
     expect(results.map((result) => result.title)).toEqual(["Poster Series"]);
+  });
+
+  it("matches a punctuated tag label typed without its punctuation", () => {
+    const documents = [doc({ title: "Some Site", tags: ["Next.js"], tagValues: ["next-js"] })];
+
+    expect(rankDocuments(documents, "nextjs").map((result) => result.title)).toEqual(["Some Site"]);
+  });
+
+  it("matches the stored tag value as well as its label", () => {
+    const documents = [doc({ title: "App", tags: ["PostgreSQL"], tagValues: ["postgres"] })];
+
+    expect(rankDocuments(documents, "postgres")).toHaveLength(1);
+  });
+
+  it("scores a whole-tag hit above a tag the token merely appears inside", () => {
+    const whole = doc({ title: "A", tags: ["Swift"], tagValues: ["swift"], id: "whole" });
+    const partial = doc({ title: "B", tags: ["SwiftUI"], tagValues: ["swiftui"], id: "partial" });
+
+    const results = rankDocuments([partial, whole], "swift");
+
+    expect(results.map((result) => result.id)).toEqual(["whole", "partial"]);
   });
 
   it("excludes documents that match nothing", () => {

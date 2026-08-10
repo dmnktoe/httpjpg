@@ -5,6 +5,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { getSearchIndex } from "@/lib/queries/search-index";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { firstCitedSource } from "@/lib/search/citations";
 import { buildAskMessages, MAX_QUESTION_LENGTH } from "@/lib/search/prompt";
 import { rankDocuments } from "@/lib/search/ranking";
 
@@ -23,6 +24,32 @@ interface AskSource {
   title: string;
   href: string;
   kind: "work" | "page";
+}
+
+/**
+ * A destination the palette offers once the answer is complete, taken from
+ * the source the model cited first. Only ever one of the sources already sent,
+ * so it cannot point somewhere that does not exist.
+ */
+interface AskNavigateAction {
+  type: "navigate";
+  href: string;
+  title: string;
+  kind: "work" | "page";
+}
+
+function navigateAction(answer: string, sources: AskSource[]): AskNavigateAction | null {
+  const cited = firstCitedSource(answer, sources.length);
+  if (cited === null) {
+    return null;
+  }
+  const source = sources[cited - 1];
+  // Off-site sources open in a new tab from the citation list already; a
+  // "go to" affordance should mean staying on the site.
+  if (!source || !source.href.startsWith("/")) {
+    return null;
+  }
+  return { type: "navigate", href: source.href, title: source.title, kind: source.kind };
 }
 
 export async function POST(request: NextRequest) {
@@ -86,9 +113,18 @@ export async function POST(request: NextRequest) {
 
       send({ type: "sources", sources });
 
+      let answer = "";
       try {
         for await (const delta of client.stream(messages, { signal: request.signal })) {
+          answer += delta;
           send({ type: "delta", text: delta });
+        }
+
+        // Last, so it can read the whole answer — and so a widget that stops
+        // reading early simply never sees it.
+        const action = navigateAction(answer, sources);
+        if (action) {
+          send({ type: "action", action });
         }
       } catch (error) {
         if (request.signal.aborted) {

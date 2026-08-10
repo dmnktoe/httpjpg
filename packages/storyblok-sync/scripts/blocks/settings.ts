@@ -159,6 +159,7 @@ export const settingsBlocks: BlockDef[] = [
         web_vitals_badge_enabled: field.boolean("Web Vitals · Footer Badge"),
         build_badge_enabled: field.boolean("Build · Footer Badge"),
         prev_next_work_enabled: field.boolean("Prev/Next · Work Navigation", "true"),
+        related_work_enabled: field.boolean("Related Work · Tag Neighbours", "true"),
         rss_feed_enabled: field.boolean("RSS Feed · /work/feed.xml", "true"),
       }),
       ...tabbed("Interface", "interface", {

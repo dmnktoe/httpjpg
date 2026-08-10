@@ -353,11 +353,43 @@ The command palette (`⌘K` / `Ctrl+K`) is one feature with two halves, and they
 
 - **One index, two consumers.** `getSearchIndex()` in `lib/queries/search-index.ts` flattens every published story into `SearchDocument[]` — title, tags, href, and a text excerpt gathered by `collectStoryText()` from an allowlist of content keys. It is cached under `CACHE_TAGS.STORIES`, so the existing publish webhook already invalidates it. Both search and the AI answer read that one snapshot; do not add a second corpus.
 - **Ranking is lexical and pure.** `rankDocuments()` and `suggestCompletions()` in `lib/search/ranking.ts` take documents in and give results out — no I/O, no React. Autocomplete is deliberately not an AI call: it fires on every keystroke and must stay free and instant.
-- **`GET /api/search`** returns `{ results, suggestions }`. **`POST /api/ask`** streams NDJSON — one `sources` line first so the widget can render citations, then `delta` lines, then an in-band `error` line if the upstream fails after the 200 has been sent. Both go through `enforceRateLimit`.
+- **`GET /api/search`** returns `{ results, suggestions }`. **`POST /api/ask`** streams NDJSON — one `sources` line first so the widget can render citations, then `delta` lines, then either a closing `action` line or an in-band `error` line if the upstream fails after the 200 has been sent. Both go through `enforceRateLimit`.
+- **The `action` line is derived, not asked for.** `firstCitedSource()` in `lib/search/citations.ts` reads the first `[n]` out of the finished answer and resolves it against the sources already sent, so the palette can offer "go to X" without a second model call and without any way to invent a link. External and uncited answers get no action; `readAskStream` re-checks that the href is same-origin before yielding it.
 - **AI is optional.** No `GROQ_API_KEY` means `/api/ask` answers 503 and the palette hides the ask affordance; search, autocomplete, and navigation keep working. Never make search depend on the model.
 - **Answers are grounded.** `buildAskMessages()` in `lib/search/prompt.ts` owns the system prompt and numbers the sources for citation. Prompts live in the app, never in `@httpjpg/groq`.
 - **UI split.** `CommandPalette` in `@httpjpg/ui` is presentational and fully controlled (hence its Storybook stories); `AskWidget` in `components/widgets/` owns fetching, debouncing, and aborts. Keep that line — the palette must stay storyable without a network.
 - **Opening it.** `⌘K` / `Ctrl+K`, or the header's `SearchTrigger`. The trigger lives in a different subtree from the widget, so it dispatches the `OPEN_SEARCH_EVENT` window event and `AskWidget` listens — the same arrangement as the Footer's `OPEN_COOKIE_SETTINGS_EVENT`. Never make the trigger keyboard-only: touch visitors have no other way in.
+
+---
+
+## Work Tags
+
+Tags are a controlled vocabulary, not free text, because three spellings of "TypeScript" are three tags to a ranker and one to a human.
+
+- **The catalog is code.** `WORK_TAGS` in `packages/storyblok-utils/src/work-tags.ts` is the single source of truth: a `value` (stored, stable, never renamed), a `label` (displayed), and a `group`. `sync-datasources` pushes it to the `work-tags` datasource, and the `tags` field on the `work` blok is a datasource-backed multi-select — so the editor picks, never types. Adding a tag: edit the catalog, run `pnpm --filter @httpjpg/storyblok-sync sync:datasources`.
+- **Values and labels do different jobs.** `SearchDocument.tagValues` carries the canonical values and is what related work compares; `SearchDocument.tags` carries display labels and is what search matches and the UI renders. `resolveWorkTags()` drops anything outside the vocabulary rather than rendering a raw slug, which is what makes removing a tag safe.
+- **`tagValues` is optional on purpose.** The search index is persisted by `unstable_cache`, so for up to an hour after a deploy the previous build's documents are still being served. Every reader has to tolerate their absence.
+- **Story-level Storyblok tags still exist.** `Projects` and `Websites` categorise the work list and stay out of the searchable set; other loose tags trail behind the curated ones as extra search surface until an editor picks proper ones.
+- **Related work is rarity-weighted.** `relatedDocuments()` in `lib/search/related.ts` scores shared tags by how rare they are in the corpus — two stories both tagged "web" say nothing on a site where everything is web. Untagged stories get no neighbours; padding the strip with recent-but-unrelated work would make it a second nav.
+
+---
+
+## Machine-readable Site
+
+Three routes serve the site to something other than a browser. All of them read the same search index, so publishing a story invalidates them along with everything else.
+
+- **`/llms.txt`** is the site in one plain-text file, per llmstxt.org: work and pages, each linking to its Markdown mirror, plus the feeds.
+- **`<path>.md`** is any page as Markdown, rewritten onto `/api/md/*` in `next.config.ts` (`/index.md` for the home story). `storyContentToMarkdown()` walks the blok tree and `richTextToMarkdown()` handles rich text — both keep structure, unlike `collectStoryText()`, which flattens for search. An unknown blok falls through to its children rather than becoming a hole. **Published content only**: draft mode deliberately does not apply, so a preview cookie can never turn the mirror into a leak.
+- **`/log/feed.xml`** is the activity timeline as RSS, behind the same `rss_feed_enabled` flag as `/work/feed.xml`.
+
+---
+
+## Now, Log, Status
+
+- **One source, two views.** `getActivitySources()` in `lib/queries/activity.ts` reads published work plus Letterboxd, Discogs and PSN. `/now` shows the head of each source, `/log` shows `mergeActivity()` of all of them — so the two pages can never disagree about what the latest anything is.
+- **Every source may fail.** `settle()` turns a rejection into an empty list and records an `ActivityIssue`. `/now` and `/log` ignore the issues — a dead feed just costs its section — and `/status` reports them, which is the difference between "nothing to show" and "the feed is down".
+- **Third-party calls are cached here, not at the route.** The widget routes lean on `widgetCacheHeaders`; a server-rendered page has no such shield, so `activity.ts` wraps them in `unstable_cache`. Never call an integration straight from a page render.
+- **`/status` separates probed from configured.** A green dot means something was actually called this request; Ask and Spotify are reported from configuration only, because probing them costs a model call or a token refresh per page view. The vitals block is the visitor's own page load, labelled as such — nothing stores vitals, so a p75 would be invented.
 
 ---
 

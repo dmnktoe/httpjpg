@@ -13,7 +13,18 @@ export interface SearchDocument {
   href: string;
   title: string;
   kind: "work" | "page";
+  /** Display labels — curated work tags first, then loose story tags. */
   tags: string[];
+  /**
+   * Canonical values from the curated work-tag vocabulary. Related work
+   * compares these, never the labels, so a renamed label never splits a tag
+   * in two.
+   *
+   * Optional because the index is persisted by `unstable_cache`: for up to an
+   * hour after a deploy, entries written by the previous build are still
+   * served, and those have no `tagValues` at all.
+   */
+  tagValues?: string[];
   excerpt: string;
   date?: string;
   media?: SearchMedia[];
@@ -28,6 +39,8 @@ const WEIGHT = {
   titleExact: 100,
   titlePrefix: 14,
   titleToken: 8,
+  /** A whole-tag hit — "swift" against the SwiftUI tag, not a substring of it. */
+  tagExact: 12,
   tagToken: 6,
   excerptToken: 2,
   allTokens: 5,
@@ -52,10 +65,29 @@ export function tokenize(value: string): string[] {
     .filter((token) => token.length >= MIN_TOKEN_LENGTH);
 }
 
+/**
+ * Every spelling of a tag a visitor might type. "Next.js" normalizes to
+ * "next js", but nobody types the space — so the collapsed form is a match
+ * candidate too, and so is the stored value for tags whose label diverges
+ * from it.
+ */
+function tagVariants(document: SearchDocument): string[] {
+  const variants = new Set<string>();
+  for (const tag of [...document.tags, ...(document.tagValues ?? [])]) {
+    const normalized = normalize(tag);
+    if (!normalized) {
+      continue;
+    }
+    variants.add(normalized);
+    variants.add(normalized.replace(/\s/g, ""));
+  }
+  return [...variants];
+}
+
 function scoreDocument(document: SearchDocument, query: string, tokens: string[]): number {
   const title = normalize(document.title);
   const excerpt = normalize(document.excerpt);
-  const tags = document.tags.map(normalize);
+  const tags = tagVariants(document);
 
   let score = 0;
   let matched = 0;
@@ -73,7 +105,10 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
       score += title.startsWith(token) ? WEIGHT.titlePrefix : WEIGHT.titleToken;
       hit = true;
     }
-    if (tags.some((tag) => tag.includes(token))) {
+    if (tags.includes(token)) {
+      score += WEIGHT.tagExact;
+      hit = true;
+    } else if (tags.some((tag) => tag.includes(token))) {
       score += WEIGHT.tagToken;
       hit = true;
     }

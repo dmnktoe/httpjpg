@@ -1,3 +1,5 @@
+import { WORK_TAG_DATASOURCE_SLUG } from "@httpjpg/storyblok-utils";
+
 import type { BlockDef } from "../lib/block";
 import { field } from "../lib/fields";
 
@@ -30,6 +32,11 @@ export const pageBlocks: BlockDef[] = [
       description: field.richtext("Description", { translatable: true }),
       images: field.multiasset("Featured Images", ["images", "videos"], {
         allow_external_url: true,
+      }),
+      tags: field.datasourceMulti("Tags", WORK_TAG_DATASOURCE_SLUG, {
+        description:
+          "Drives related work, search ranking, and the answers the ask palette gives. Pick from the shared vocabulary rather than the story's Storyblok tags.",
+        tooltip: true,
       }),
       date: field.datetime("Date"),
       date_end: field.datetime("End Date"),

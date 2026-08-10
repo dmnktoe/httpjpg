@@ -86,6 +86,59 @@ describe("readAskStream", () => {
     expect(events).toEqual([{ type: "sources", sources: [] }]);
   });
 
+  it("yields a navigate action", async () => {
+    const events = await collect([
+      `${JSON.stringify({
+        type: "action",
+        action: { type: "navigate", href: "/work/demo", title: "Demo", kind: "work" },
+      })}\n`,
+    ]);
+
+    expect(events).toEqual([
+      {
+        type: "action",
+        action: { type: "navigate", href: "/work/demo", title: "Demo", kind: "work" },
+      },
+    ]);
+  });
+
+  it("defaults an unrecognised action kind to page", async () => {
+    const events = await collect([
+      `${JSON.stringify({
+        type: "action",
+        action: { type: "navigate", href: "/about", title: "About" },
+      })}\n`,
+    ]);
+
+    expect(events[0]).toMatchObject({ action: { kind: "page" } });
+  });
+
+  // The event crosses the network; an off-site or protocol-relative href would
+  // turn "go to" into an open redirect, so the reader drops it.
+  it("drops an action pointing off-site", async () => {
+    const events = await collect([
+      `${JSON.stringify({
+        type: "action",
+        action: { type: "navigate", href: "https://evil.example/x", title: "Elsewhere" },
+      })}\n`,
+      `${JSON.stringify({
+        type: "action",
+        action: { type: "navigate", href: "//evil.example/x", title: "Elsewhere" },
+      })}\n`,
+    ]);
+
+    expect(events).toEqual([]);
+  });
+
+  it("drops a malformed action", async () => {
+    const events = await collect([
+      `${JSON.stringify({ type: "action" })}\n`,
+      `${JSON.stringify({ type: "action", action: { type: "navigate", href: "/x" } })}\n`,
+    ]);
+
+    expect(events).toEqual([]);
+  });
+
   it("ignores blank lines", async () => {
     const events = await collect(["\n\n", `${JSON.stringify({ type: "delta", text: "x" })}\n`]);
 

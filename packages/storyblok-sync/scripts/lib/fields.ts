@@ -99,6 +99,17 @@ export const field = {
     ...datasource(slug),
     ...opts,
   }),
+  /** Multi-select backed by a datasource; the value is a `string[]`. */
+  datasourceMulti: (
+    display_name: string,
+    slug: string,
+    opts: FieldOpts<"options"> = {},
+  ): FieldOf<"options"> => ({
+    type: "options",
+    display_name,
+    ...datasource(slug),
+    ...opts,
+  }),
   options: (
     display_name: string,
     options: ReadonlyArray<string | { name: string; value: string }>,

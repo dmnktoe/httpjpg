@@ -99,6 +99,11 @@ export default async (): Promise<NextConfig> => {
       return [
         { source: "/draft", destination: "/api/draft" },
         { source: "/exit-draft", destination: "/api/exit-draft" },
+        // The Markdown mirror lives at `<path>.md`. `/index.md` is the home
+        // page, which has no path of its own to hang a suffix off — the slug
+        // matches STORYBLOK_SLUGS.HOME, which this config cannot import.
+        { source: "/index.md", destination: "/api/md/home" },
+        { source: "/:path*.md", destination: "/api/md/:path*" },
       ];
     },
 

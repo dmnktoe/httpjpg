@@ -45,6 +45,17 @@ export { getResponsiveImage } from "./image-processing";
 export type { ResponsiveImage, ResponsiveImageOptions } from "./image-processing";
 export { firstImageFilename, isVideoAsset, toSlideshowImage } from "./media-utils";
 export { validateStoryblokPreviewToken } from "./preview";
+export { richTextToMarkdown } from "./richtext-markdown";
+export {
+  resolveWorkTags,
+  WORK_TAG_DATASOURCE_SLUG,
+  WORK_TAG_GROUPS,
+  WORK_TAGS,
+  workTagByValue,
+  workTagDatasourceEntries,
+  workTagLabels,
+} from "./work-tags";
+export type { WorkTag, WorkTagGroup } from "./work-tags";
 export type {
   StoryblokApiResponse,
   StoryblokBlokData,

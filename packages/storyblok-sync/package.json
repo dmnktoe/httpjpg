@@ -13,6 +13,7 @@
     "sync:groups": "tsx scripts/sync-component-groups.ts",
     "sync:datasources": "tsx scripts/sync-datasources.ts",
     "sync:components": "tsx scripts/sync-components.ts",
+    "validate:schema": "tsx scripts/validate-schema.ts",
     "sync:all": "pnpm sync:groups && pnpm sync:datasources && pnpm sync:components",
     "prepare": "pnpm run codegen",
     "codegen": "tsx scripts/codegen-types.ts",
@@ -25,6 +26,7 @@
     "@httpjpg/storyblok-utils": "workspace:*",
     "@httpjpg/terminal": "workspace:*",
     "@httpjpg/tokens": "workspace:*",
+    "@storyblok/schema": "^0.3.0",
     "dotenv": "catalog:"
   },
   "devDependencies": {

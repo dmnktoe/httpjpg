@@ -3,6 +3,7 @@ export type {
   ComponentGroup,
   Datasource,
   DatasourceEntry,
+  FieldOf,
   StoryblokComponent,
   StoryblokField,
 } from "./types";

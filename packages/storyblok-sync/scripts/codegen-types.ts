@@ -7,23 +7,13 @@ import { fileURLToPath } from "node:url";
 import { done, fail } from "@httpjpg/terminal";
 
 import type { StoryblokField } from "../src/index";
-import { contentBlocks } from "./blocks/content";
-import { layoutBlocks } from "./blocks/layout";
-import { mediaBlocks } from "./blocks/media";
-import { pageBlocks } from "./blocks/pages";
-import { settingsBlocks } from "./blocks/settings";
 import type { BlockDef } from "./lib/block";
+import { allBlocks } from "./lib/schema";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUTPUT = resolve(__dirname, "../../storyblok-utils/src/blok-types.gen.ts");
 
-const ALL_BLOCKS: BlockDef[] = [
-  ...layoutBlocks,
-  ...contentBlocks,
-  ...mediaBlocks,
-  ...pageBlocks,
-  ...settingsBlocks,
-];
+const ALL_BLOCKS: BlockDef[] = allBlocks();
 
 const SPACING_FIELDS = ["mt", "mb", "ml", "mr", "pt", "pb", "pl", "pr"] as const;
 
@@ -62,8 +52,6 @@ export function fieldToTsType(name: string, field: StoryblokField): string | nul
       return "StoryblokLink";
     case "richtext":
       return "StoryblokRichText";
-    case "image":
-      return "StoryblokImage";
     case "option":
       if (field.options && field.options.length > 0) {
         return field.options.map((o) => JSON.stringify(o.value)).join(" | ");
@@ -108,7 +96,7 @@ export function renderInterface(def: BlockDef): string {
     if (type === null) {
       continue;
     }
-    const optional = fieldDef.required ? "" : "?";
+    const optional = "required" in fieldDef && fieldDef.required ? "" : "?";
     lines.push(`  ${key}${optional}: ${type};`);
   }
 

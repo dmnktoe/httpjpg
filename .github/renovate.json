@@ -30,7 +30,14 @@
     },
     {
       "description": "React and Next move in lockstep, types included",
-      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom", "next", "@next/**"],
+      "matchPackageNames": [
+        "react",
+        "react-dom",
+        "@types/react",
+        "@types/react-dom",
+        "next",
+        "@next/**"
+      ],
       "groupName": "react + next"
     },
     {

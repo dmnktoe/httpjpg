@@ -372,7 +372,7 @@ importers:
         specifier: 'catalog:'
         version: 17.4.2
       zod:
-        specifier: ^4.0.0
+        specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
       typescript:

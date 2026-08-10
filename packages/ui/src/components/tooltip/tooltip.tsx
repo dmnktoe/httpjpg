@@ -6,7 +6,9 @@ import {
   type HTMLAttributes,
   type KeyboardEvent,
   type ReactElement,
+  useEffect,
   useId,
+  useRef,
   useState,
 } from "react";
 import type { SystemStyleObject } from "styled-system/types";
@@ -23,6 +25,8 @@ export interface TooltipProps {
   /** The single element the tooltip describes. It becomes the trigger. */
   children: ReactElement<TriggerProps>;
   placement?: TooltipPlacement;
+  /** Milliseconds the pointer has to rest on the trigger. Focus ignores it. */
+  delay?: number;
   /** Keeps the trigger interactive but never reveals the bubble. */
   disabled?: boolean;
   className?: string;
@@ -33,16 +37,56 @@ export function Tooltip({
   label,
   children,
   placement = "top",
+  delay = 0,
   disabled = false,
   className,
   css: cssProp,
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const tooltipId = useId();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
+  const cancelPending = () => {
+    if (timerRef.current !== null) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const handleMouseEnter = () => {
+    if (delay <= 0) {
+      setIsOpen(true);
+      return;
+    }
+
+    cancelPending();
+    timerRef.current = setTimeout(() => {
+      timerRef.current = null;
+      setIsOpen(true);
+    }, delay);
+  };
+
+  const handleShow = () => {
+    cancelPending();
+    setIsOpen(true);
+  };
+
+  const handleHide = () => {
+    cancelPending();
+    setIsOpen(false);
+  };
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Escape") {
-      setIsOpen(false);
+      handleHide();
     }
   };
 
@@ -84,10 +128,10 @@ export function Tooltip({
       {cloneElement(trigger, {
         "aria-describedby": isVisible ? tooltipId : undefined,
         tabIndex: trigger.props.tabIndex ?? 0,
-        onMouseEnter: () => setIsOpen(true),
-        onMouseLeave: () => setIsOpen(false),
-        onFocus: () => setIsOpen(true),
-        onBlur: () => setIsOpen(false),
+        onMouseEnter: handleMouseEnter,
+        onMouseLeave: handleHide,
+        onFocus: handleShow,
+        onBlur: handleHide,
         onKeyDown: handleKeyDown,
       })}
       <Box

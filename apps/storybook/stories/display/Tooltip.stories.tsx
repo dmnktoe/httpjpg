@@ -14,6 +14,7 @@ const meta = {
       options: PLACEMENTS,
       table: { defaultValue: { summary: "top" } },
     },
+    delay: { control: { type: "number" as const }, table: { defaultValue: { summary: "0" } } },
     disabled: { control: "boolean" },
     label: { control: "text" },
   },
@@ -71,6 +72,14 @@ export const LongLabel: Story = {
   args: {
     label: "the frame grows with the label",
     children: <Button>hover me</Button>,
+  },
+};
+
+export const Delayed: Story = {
+  args: {
+    label: "@dmnktoe",
+    delay: 1000,
+    children: <Button>rest here for a second</Button>,
   },
 };
 

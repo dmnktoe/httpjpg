@@ -86,8 +86,23 @@ export const settingsBlocks: BlockDef[] = [
           tooltip: true,
         }),
         ask_enabled: field.boolean("Ask · Search & AI Palette", "true"),
-        custom_cursor_enabled: field.boolean("Custom Cursor", "true"),
-        mouse_trail_enabled: field.boolean("Mouse Trail", "true"),
+      }),
+      ...tabbed("Interface", "interface", {
+        custom_cursor_enabled: field.boolean("Custom Cursor", "true", {
+          description:
+            "Draws a ✧ glyph that follows the pointer and reacts to links. Needs a mouse, and stays off under reduced motion.",
+          tooltip: true,
+        }),
+        mouse_trail_enabled: field.boolean("Mouse Trail", "true", {
+          description:
+            "Trails fading ✧ particles behind the pointer as it moves. Needs a mouse, and stays off under reduced motion.",
+          tooltip: true,
+        }),
+        header_scroll_veil_enabled: field.boolean("Header · Scroll Veil", "true", {
+          description:
+            "Fades a blurred, theme-aware scrim in behind the header while scrolling, so content passing underneath stays legible. Off leaves the header fully transparent.",
+          tooltip: true,
+        }),
       }),
       ...tabbed("Features", "features", {
         last_updated_badge_enabled: field.boolean("Last-Updated · Footer Badge", "true"),

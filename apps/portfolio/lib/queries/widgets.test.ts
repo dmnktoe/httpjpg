@@ -3,7 +3,7 @@ import { beforeEach, vi } from "vitest";
 vi.mock("./config", () => ({ getConfig: vi.fn() }));
 
 import { getConfig } from "./config";
-import { getFeatureFlags, getWidgetConfig } from "./widgets";
+import { getFeatureFlags, getInterfaceConfig, getWidgetConfig } from "./widgets";
 
 const mockGetConfig = vi.mocked(getConfig);
 
@@ -25,8 +25,6 @@ describe("getWidgetConfig", () => {
       spotifyEnabled: true,
       nostalgiaSlideshowEnabled: false,
       askEnabled: true,
-      customCursorEnabled: true,
-      mouseTrailEnabled: true,
     });
   });
 
@@ -42,8 +40,6 @@ describe("getWidgetConfig", () => {
       spotify_enabled: false,
       nostalgia_slideshow_enabled: true,
       ask_enabled: false,
-      custom_cursor_enabled: false,
-      mouse_trail_enabled: false,
     } as never);
 
     await expect(getWidgetConfig()).resolves.toEqual({
@@ -57,8 +53,34 @@ describe("getWidgetConfig", () => {
       spotifyEnabled: false,
       nostalgiaSlideshowEnabled: true,
       askEnabled: false,
+    });
+  });
+});
+
+describe("getInterfaceConfig", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("keeps cursor, trail and veil on when no config exists", async () => {
+    mockGetConfig.mockResolvedValue(null);
+    await expect(getInterfaceConfig()).resolves.toEqual({
+      customCursorEnabled: true,
+      mouseTrailEnabled: true,
+      headerScrollVeilEnabled: true,
+    });
+  });
+
+  it("honors explicit flags from the config", async () => {
+    mockGetConfig.mockResolvedValue({
+      custom_cursor_enabled: false,
+      mouse_trail_enabled: false,
+      header_scroll_veil_enabled: false,
+    } as never);
+    await expect(getInterfaceConfig()).resolves.toEqual({
       customCursorEnabled: false,
       mouseTrailEnabled: false,
+      headerScrollVeilEnabled: false,
     });
   });
 });

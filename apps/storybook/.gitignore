@@ -14,3 +14,4 @@ node_modules/
 tests/visual/__screenshots__/
 playwright-report/
 test-results/
+visual-results.json

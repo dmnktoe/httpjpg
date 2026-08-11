@@ -14,7 +14,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : undefined,
   reporter: process.env.CI
-    ? [["html", { open: "never" }], ["github"]]
+    ? [["html", { open: "never" }], ["json", { outputFile: "visual-results.json" }], ["github"]]
     : [["html", { open: "never" }], ["list"]],
 
   expect: {

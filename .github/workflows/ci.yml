@@ -265,6 +265,9 @@ jobs:
     if: needs.guard.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -296,7 +299,9 @@ jobs:
         if: steps.changes.outputs.relevant == 'true'
 
       - name: Compare stories against main's baselines
+        id: compare
         if: github.event_name == 'pull_request' && steps.restore.outputs.cache-matched-key != ''
+        continue-on-error: true
         run: pnpm run test:visual
 
       - name: Report a missing baseline
@@ -316,7 +321,7 @@ jobs:
           key: visual-baselines-${{ github.sha }}
 
       - name: Upload diff report
-        if: failure() && steps.changes.outputs.relevant == 'true'
+        if: steps.compare.outcome == 'failure' || failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: visual-report
@@ -325,18 +330,52 @@ jobs:
             apps/storybook/test-results/
           retention-days: 14
 
-      - name: Explain the diff
-        if: failure() && github.event_name == 'pull_request'
+      - name: Comment with what moved
+        if: steps.compare.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
         run: |
-          {
-            echo "## Visual regression"
-            echo ""
-            echo "Stories render differently than they do on \`main\`."
-            echo ""
-            echo "Download the \`visual-report\` artifact for the expected, actual and diff"
-            echo "images. Intended changes need no accept step — merging re-takes the"
-            echo "baselines on \`main\`."
-          } >> "$GITHUB_STEP_SUMMARY"
+          BODY="$(node apps/storybook/scripts/visual-summary.mjs apps/storybook/visual-results.json)"
+          ISSUE="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues"
+
+          EXISTING="$(curl -sS -H "Authorization: Bearer $GH_TOKEN" \
+            "$ISSUE/$PR/comments?per_page=100" \
+            | jq -r 'map(select(.body | startswith("<!-- visual-regression -->"))) | last | .id // empty')"
+
+          if [[ -n "$EXISTING" ]]; then
+            METHOD=PATCH
+            URL="$ISSUE/comments/$EXISTING"
+          else
+            METHOD=POST
+            URL="$ISSUE/$PR/comments"
+          fi
+
+          jq -Rs '{body: .}' <<< "$BODY" \
+            | curl -sS -o /dev/null -X "$METHOD" -d @- \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Content-Type: application/json" \
+                "$URL"
+
+      # Asked for live rather than read off the event payload: a "Re-run failed
+      # jobs" replays the original payload, so a label added after the fact
+      # would be invisible there.
+      - name: Gate on the visual-approved label
+        if: steps.compare.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          LABELS="$(curl -sS -H "Authorization: Bearer $GH_TOKEN" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR/labels" | jq -r '.[].name')"
+
+          if grep -qx "visual-approved" <<< "$LABELS"; then
+            echo "::notice::Visual changes accepted via the visual-approved label."
+            exit 0
+          fi
+
+          echo "::error::Stories render differently than on main. Review the visual-report artifact, apply the visual-approved label, then re-run this job."
+          exit 1
 
   ci:
     name: All checks passed

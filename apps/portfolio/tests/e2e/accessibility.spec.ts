@@ -4,8 +4,9 @@ test.describe("document accessibility", () => {
   test("home page exposes a sound document outline", async ({ page }) => {
     await page.goto("/");
 
-    // A declared language is what screen readers pick a voice from.
-    await expect(page.locator("html")).toHaveAttribute("lang", "de");
+    // A declared language is what screen readers pick a voice from. Which one
+    // it is comes from the CMS, so assert the shape and not a fixed language.
+    await expect(page.locator("html")).toHaveAttribute("lang", /^[a-z]{2}$/);
 
     // Exactly one top-level heading: more than one leaves the outline ambiguous.
     await expect(page.locator("h1")).toHaveCount(1);

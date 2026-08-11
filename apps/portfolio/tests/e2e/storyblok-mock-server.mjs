@@ -52,6 +52,9 @@ const HOME = baseStory("home", pageContent("Welcome to httpjpg", "httpjpg portfo
 const CONFIG = baseStory("config", {
   _uid: "config",
   component: "config",
+  site_name: "httpjpg",
+  site_locale: "en_US",
+  repository_url: "https://github.com/dmnktoe/httpjpg",
   seo_title: "httpjpg",
   seo_description: "httpjpg portfolio.",
   author_name: "httpjpg",

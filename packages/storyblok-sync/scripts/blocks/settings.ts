@@ -85,8 +85,10 @@ export const settingsBlocks: BlockDef[] = [
     schema: {
       ...tabbed("General", "general", {
         site_name: field.text("Site Name", {
+          required: true,
           default_value: "㋡httpjpg.com",
-          description: "Suffixes every page title and names the site in Open Graph.",
+          description:
+            "The only place the site is named. Suffixes every page title and fills the Open Graph site name; empty means no suffix at all.",
           tooltip: true,
         }),
         site_locale: field.options(
@@ -97,6 +99,7 @@ export const settingsBlocks: BlockDef[] = [
             { name: "English · UK (en_GB)", value: "en_GB" },
           ],
           {
+            required: true,
             default_value: "de_DE",
             description: "Drives <html lang>, the Open Graph locale and schema.org inLanguage.",
             tooltip: true,

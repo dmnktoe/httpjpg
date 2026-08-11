@@ -30,7 +30,7 @@ describe("ConsoleBanner", () => {
   });
 
   it("logs the banner and marks the window flag", () => {
-    render(<ConsoleBanner />);
+    render(<ConsoleBanner repositoryUrl="https://github.com/acme/site" />);
 
     expect(window.__httpjpgBannerLogged).toBe(true);
     expect(console.log).toHaveBeenCalledWith(
@@ -38,7 +38,16 @@ describe("ConsoleBanner", () => {
       expect.any(String),
     );
     expect(console.log).toHaveBeenCalledWith(
-      expect.stringContaining("github.com/dmnktoe/httpjpg"),
+      expect.stringContaining("github.com/acme/site"),
+      expect.any(String),
+    );
+  });
+
+  it("skips the source line when no repository is configured", () => {
+    render(<ConsoleBanner />);
+
+    expect(console.log).not.toHaveBeenCalledWith(
+      expect.stringContaining("source:"),
       expect.any(String),
     );
   });

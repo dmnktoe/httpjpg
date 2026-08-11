@@ -238,14 +238,25 @@ describe("getSiteConfig", () => {
     });
   });
 
-  it("falls back to the app config when the story has nothing set", async () => {
+  it("leaves every field undefined when the story has nothing set", async () => {
     setupGetStory(async () => ({ content: {} }));
     await expect(getSiteConfig()).resolves.toEqual({
-      name: "㋡httpjpg.com",
-      locale: "de_DE",
-      htmlLang: "de",
-      language: "de-DE",
-      repositoryUrl: "https://github.com/dmnktoe/httpjpg",
+      name: undefined,
+      locale: undefined,
+      htmlLang: undefined,
+      language: undefined,
+      repositoryUrl: undefined,
+    });
+  });
+
+  it("leaves every field undefined when the config story is missing", async () => {
+    setupGetStory(async () => null);
+    await expect(getSiteConfig()).resolves.toEqual({
+      name: undefined,
+      locale: undefined,
+      htmlLang: undefined,
+      language: undefined,
+      repositoryUrl: undefined,
     });
   });
 });

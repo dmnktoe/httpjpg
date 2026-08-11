@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { formatRelativeTime } from "@/lib/relative-time";
 
 export interface BuildBadgeProps {
-  repositoryUrl: string;
+  repositoryUrl?: string;
   version?: string;
   buildTime?: string;
   commitSha?: string;
@@ -26,11 +26,13 @@ export function BuildBadge({ repositoryUrl, version, buildTime, commitSha }: Bui
   }
 
   const shortSha = commitSha ? commitSha.slice(0, SHORT_SHA_LENGTH) : null;
-  const href = commitSha
-    ? `${repositoryUrl}/commit/${commitSha}`
-    : version
-      ? `${repositoryUrl}/releases/tag/${version}`
-      : null;
+  const href = !repositoryUrl
+    ? null
+    : commitSha
+      ? `${repositoryUrl}/commit/${commitSha}`
+      : version
+        ? `${repositoryUrl}/releases/tag/${version}`
+        : null;
 
   const content = (
     <>

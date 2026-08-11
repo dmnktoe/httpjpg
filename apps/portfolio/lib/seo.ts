@@ -47,8 +47,8 @@ export function extractStoryMetadata(story: StoryShape): StoryMetadata {
   return { title, description, ogImage };
 }
 
-export function toNextMetadata(meta: StoryMetadata, path: string, siteName: string): Metadata {
-  const fullTitle = `${meta.title} | ${siteName}`;
+export function toNextMetadata(meta: StoryMetadata, path: string, siteName?: string): Metadata {
+  const fullTitle = siteName ? `${meta.title} | ${siteName}` : meta.title;
   const ogImages = meta.ogImage
     ? [{ url: meta.ogImage.url, width: 1200, height: 630, alt: meta.ogImage.alt }]
     : undefined;

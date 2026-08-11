@@ -186,6 +186,12 @@ describe("toNextMetadata", () => {
     expect(openGraph?.title).toBe("T | ㋡httpjpg.com");
   });
 
+  it("drops the suffix when no site name is configured", () => {
+    const md = toNextMetadata({ title: "About", description: "D" }, "/about");
+    expect(md.openGraph?.title).toBe("About");
+    expect(md.twitter?.title).toBe("About");
+  });
+
   it("declares the open graph type as website", () => {
     const md = toNextMetadata({ title: "T", description: "D" }, "/", "httpjpg");
     const openGraph = md.openGraph as { type?: string } | undefined;

@@ -72,6 +72,13 @@ describe("BuildBadge", () => {
     );
   });
 
+  it("renders the version unlinked when no repository is configured", () => {
+    render(<BuildBadge version="v2.4.0" commitSha="a1b2c3d4e5f6a7b8" />);
+
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.getByText("v2.4.0")).toBeInTheDocument();
+  });
+
   it("omits the deploy age when the build time is unparseable", () => {
     render(<BuildBadge repositoryUrl={REPO} version="v2.4.0" buildTime="not-a-date" />);
 

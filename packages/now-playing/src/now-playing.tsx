@@ -16,7 +16,7 @@ export interface NowPlayingProps {
   isLoading?: boolean;
   autoExtractColor?: boolean;
   vibrantColor?: string;
-  textColor?: "black" | "white" | (string & {});
+  textColor?: string;
   size?: NowPlayingSize;
 }
 

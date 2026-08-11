@@ -61,7 +61,7 @@ export const SingleTrack: Story = {
 };
 
 /**
- * With artwork the 16px record shows the cover instead of the glyph.
+ * With artwork the record shows the cover instead of the glyph.
  */
 export const WithArtwork: Story = {
   args: {

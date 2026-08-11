@@ -5,7 +5,7 @@ import type { SystemStyleObject } from "styled-system/types";
 import { Box } from "../box/box";
 import { Link } from "../link/link";
 import { Tooltip } from "../tooltip/tooltip";
-import { formatTime } from "./lib";
+import { formatTime, truncate } from "./lib";
 
 export interface MiniPlayerProps {
   title?: string;
@@ -26,8 +26,8 @@ export interface MiniPlayerProps {
 }
 
 /**
- * The page-wide player squeezed into a line of header copy: a 16px record that
- * spins while audio runs, plus the four transport controls. Presentational and
+ * The page-wide player squeezed into a line of header copy: a record that spins
+ * while audio runs, plus the four transport controls. Presentational and
  * fully controlled — `MiniPlayerSlot` is what wires it to the engine.
  */
 export function MiniPlayer({
@@ -47,6 +47,7 @@ export function MiniPlayer({
   css: cssProp,
 }: MiniPlayerProps) {
   const label = [title, artist].filter(Boolean).join(" — ") || "audio";
+  const tooltipLabel = truncate(label, MAX_TOOLTIP_LABEL_LENGTH);
 
   const record = (
     <Box
@@ -87,13 +88,14 @@ export function MiniPlayer({
         alignItems: "center",
         gap: "0.35em",
         verticalAlign: "middle",
+        my: "-2px",
         pointerEvents: "auto",
         animation: "fadeInUp 150ms ease-out",
         _motionReduce: { animation: "none" },
         ...cssProp,
       }}
     >
-      <Tooltip label={label} placement="bottom" delay={TOOLTIP_DELAY}>
+      <Tooltip label={tooltipLabel} placement="bottom" delay={TOOLTIP_DELAY}>
         {href ? (
           <Link href={href} aria-label={`Go to the page playing ${label}`} css={RECORD_LINK_STYLES}>
             {record}
@@ -165,16 +167,18 @@ function PauseBars() {
 
 const TOOLTIP_DELAY = 1000;
 
+const MAX_TOOLTIP_LABEL_LENGTH = 40;
+
 const RECORD_STYLES = {
   display: "inline-flex",
   flexShrink: 0,
   justifyContent: "center",
   alignItems: "center",
-  w: "16px",
-  h: "16px",
+  w: "14px",
+  h: "14px",
   color: "primary.500",
   fontSize: "2xs",
-  lineHeight: "16px",
+  lineHeight: "14px",
   bg: "transparent",
   borderRadius: "full",
   overflow: "hidden",

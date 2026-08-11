@@ -38,6 +38,10 @@ export const pageBlocks: BlockDef[] = [
         description: "Links straight to the external URL instead of an on-site detail page.",
         tooltip: true,
       }),
+      show_in_app: field.boolean("Show in iOS-App", "true", {
+        description: "Lists this work in the app's work list. Off leaves it in the sidebar only.",
+        tooltip: true,
+      }),
       isDark: field.boolean("Dark Mode"),
     },
   },

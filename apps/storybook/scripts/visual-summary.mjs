@@ -1,9 +1,15 @@
-// Turns Playwright's JSON report into the body of the pull request comment.
-// Prints markdown to stdout; posting it is the workflow's job.
+// Interprets Playwright's JSON report for the workflow.
+//
+// Default output is the markdown body of the pull request comment. With
+// --verdict it prints "mismatch-only" or "errors" instead, which is what
+// decides whether the visual-approved label may override the failure: a label
+// must never wave through a build, Docker or runner failure.
 
 import { readFileSync } from "node:fs";
 
-const REPORT = process.argv[2] ?? "visual-results.json";
+const args = process.argv.slice(2);
+const VERDICT_ONLY = args.includes("--verdict");
+const REPORT = args.find((arg) => !arg.startsWith("--")) ?? "visual-results.json";
 const MAX_LISTED = 40;
 
 const ANSI = /\[[0-9;]*m/g;
@@ -15,6 +21,13 @@ const report = JSON.parse(readFileSync(REPORT, "utf8"));
 const changed = [];
 const broken = [];
 collect(report.suites ?? []);
+
+if (VERDICT_ONLY) {
+  // No failures at all means the step died outside the tests.
+  const mismatchOnly = broken.length === 0 && changed.length > 0;
+  process.stdout.write(mismatchOnly ? "mismatch-only\n" : "errors\n");
+  process.exit(0);
+}
 
 changed.sort((a, b) => b.ratio - a.ratio);
 
@@ -30,7 +43,7 @@ lines.push(
   "Visual Regression job. The label is dropped again on the next push.",
 );
 
-console.log(lines.join("\n"));
+process.stdout.write(`${lines.join("\n")}\n`);
 
 function collect(suites) {
   for (const suite of suites) {

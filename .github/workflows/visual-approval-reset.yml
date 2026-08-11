@@ -21,7 +21,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.number }}
         run: |
-          curl -sS -o /dev/null -X DELETE \
+          curl --fail-with-body -sS -o /dev/null -X DELETE \
             -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
             "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR/labels/visual-approved"
           echo "::notice::Dropped visual-approved — the branch moved, so the screenshots need looking at again."

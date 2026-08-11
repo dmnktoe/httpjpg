@@ -21,7 +21,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      # A cache written anywhere else is scoped to that branch and no pull
+      # request can restore it, so the run would be pure waste.
+      - name: Refuse anything but main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Dispatched against ${GITHUB_REF_NAME}. Baselines are only useful when published from main."
+          exit 1
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/setup
       - name: Take baselines
         run: pnpm run test:visual:update
@@ -35,10 +44,5 @@ jobs:
           {
             echo "## Visual baselines"
             echo ""
-            echo "Published a fresh set from \`${GITHUB_REF_NAME}\` at \`${GITHUB_SHA:0:7}\`."
-            if [[ "${GITHUB_REF_NAME}" != "main" ]]; then
-              echo ""
-              echo "> Ran on \`${GITHUB_REF_NAME}\`, not \`main\`. The cache is scoped to that"
-              echo "> branch, so pull requests will not see it. Re-dispatch against \`main\`."
-            fi
+            echo "Published a fresh set from \`main\` at \`${GITHUB_SHA:0:7}\`."
           } >> "$GITHUB_STEP_SUMMARY"

@@ -272,6 +272,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+          # This job holds a write-capable token and the API calls below pass it
+          # explicitly; nothing needs it sitting in the local git config.
+          persist-credentials: false
       - name: Check for visual-relevant changes
         id: changes
         run: |
@@ -339,7 +342,7 @@ jobs:
           BODY="$(node apps/storybook/scripts/visual-summary.mjs apps/storybook/visual-results.json)"
           ISSUE="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues"
 
-          EXISTING="$(curl -sS -H "Authorization: Bearer $GH_TOKEN" \
+          EXISTING="$(curl --fail-with-body -sS -H "Authorization: Bearer $GH_TOKEN" \
             "$ISSUE/$PR/comments?per_page=100" \
             | jq -r 'map(select(.body | startswith("<!-- visual-regression -->"))) | last | .id // empty')"
 
@@ -352,30 +355,82 @@ jobs:
           fi
 
           jq -Rs '{body: .}' <<< "$BODY" \
-            | curl -sS -o /dev/null -X "$METHOD" -d @- \
+            | curl --fail-with-body -sS -o /dev/null -X "$METHOD" -d @- \
                 -H "Authorization: Bearer $GH_TOKEN" \
                 -H "Content-Type: application/json" \
                 "$URL"
 
-      # Asked for live rather than read off the event payload: a "Re-run failed
-      # jobs" replays the original payload, so a label added after the fact
-      # would be invisible there.
       - name: Gate on the visual-approved label
         if: steps.compare.outcome == 'failure'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          LABELS="$(curl -sS -H "Authorization: Bearer $GH_TOKEN" \
-            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR/labels" | jq -r '.[].name')"
+          set -euo pipefail
+          ISSUE="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues"
 
-          if grep -qx "visual-approved" <<< "$LABELS"; then
-            echo "::notice::Visual changes accepted via the visual-approved label."
-            exit 0
+          # The label may only excuse screenshot differences. A build, Docker or
+          # runner failure exits non-zero the same way, and waving those through
+          # would turn the gate into decoration.
+          if [[ ! -f apps/storybook/visual-results.json ]]; then
+            echo "::error::The visual run failed before it produced a report — this is not a screenshot difference."
+            exit 1
           fi
 
-          echo "::error::Stories render differently than on main. Review the visual-report artifact, apply the visual-approved label, then re-run this job."
-          exit 1
+          VERDICT="$(node apps/storybook/scripts/visual-summary.mjs --verdict apps/storybook/visual-results.json)"
+          if [[ "$VERDICT" != "mismatch-only" ]]; then
+            echo "::error::The visual run failed for reasons beyond changed screenshots. Read the log; the label does not apply."
+            exit 1
+          fi
+
+          # Read live rather than off the event payload: "Re-run failed jobs"
+          # replays the original payload, where a label added afterwards is
+          # invisible.
+          # The timeline is oldest-first, so the newest approval sits on the last
+          # page — walk them rather than trusting page one.
+          LABELLED_AT=""
+          PAGE=1
+          while [[ "$PAGE" -le 10 ]]; do
+            CHUNK="$(curl --fail-with-body -sS \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "$ISSUE/$PR/timeline?per_page=100&page=$PAGE")"
+
+            MATCH="$(jq -r '[.[] | select(.event == "labeled" and .label.name == "visual-approved")] | last | .created_at // empty' <<< "$CHUNK")"
+            if [[ -n "$MATCH" ]]; then
+              LABELLED_AT="$MATCH"
+            fi
+
+            if [[ "$(jq 'length' <<< "$CHUNK")" -lt 100 ]]; then
+              break
+            fi
+            PAGE=$((PAGE + 1))
+          done
+
+          if [[ -z "$LABELLED_AT" ]]; then
+            echo "::error::Stories render differently than on main. Review the visual-report artifact, apply the visual-approved label, then re-run this job."
+            exit 1
+          fi
+
+          # And it has to post-date the commit under test, so an approval cannot
+          # carry over from an earlier rendering if the reset workflow loses the
+          # race against this one.
+          COMMITTED_AT="$(curl --fail-with-body -sS \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA" \
+            | jq -r '.commit.committer.date')"
+
+          # Normalised to epoch seconds: a commit date can carry a timezone
+          # offset while the label timestamp is UTC, and comparing those as
+          # strings silently gets the order wrong.
+          if [[ "$(date -u -d "$LABELLED_AT" +%s)" -lt "$(date -u -d "$COMMITTED_AT" +%s)" ]]; then
+            echo "::error::visual-approved predates $HEAD_SHA — it approved an earlier rendering. Re-apply it and re-run this job."
+            exit 1
+          fi
+
+          echo "::notice::Visual changes accepted via the visual-approved label."
 
   ci:
     name: All checks passed

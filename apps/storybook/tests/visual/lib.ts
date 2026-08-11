@@ -117,6 +117,11 @@ async function freezeNondeterminism(page: Page): Promise<void> {
         construct(target, args, newTarget) {
           return Reflect.construct(target, args.length === 0 ? [now] : args, newTarget);
         },
+        // Date() without new bypasses the construct trap and would report the
+        // real clock.
+        apply() {
+          return new OriginalDate(now).toString();
+        },
       });
       FrozenDate.now = () => now;
       globalThis.Date = FrozenDate;

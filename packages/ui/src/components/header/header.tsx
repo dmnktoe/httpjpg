@@ -10,6 +10,7 @@ import { Container } from "../container/container";
 import { Link } from "../link/link";
 import { MiniPlayerSlot } from "../music-player/mini-player-slot";
 import { SearchTrigger } from "../search-trigger/search-trigger";
+import { HeaderScrollVeil } from "./header-scroll-veil";
 import { MobileMenuButton } from "./mobile-menu-button";
 import { MobileMenuContent } from "./mobile-menu-content";
 import { Navigation } from "./navigation";
@@ -37,6 +38,8 @@ export interface HeaderProps {
   websitesWork?: WorkItem[];
   /** Renders the search trigger next to the nav. @default false */
   showSearch?: boolean;
+  /** Fades a theme-aware scrim in behind the header on scroll. @default true */
+  showScrollVeil?: boolean;
   children?: ReactNode;
 }
 
@@ -45,6 +48,7 @@ export function Header({
   projectsWork = [],
   websitesWork = [],
   showSearch = false,
+  showScrollVeil = true,
   children,
 }: HeaderProps) {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
@@ -85,6 +89,8 @@ export function Header({
         userSelect: "none",
       }}
     >
+      {showScrollVeil && <HeaderScrollVeil />}
+
       <Container size="xl" px={{ base: 4, md: 6, lg: 8 }} center={false}>
         <Box
           css={{

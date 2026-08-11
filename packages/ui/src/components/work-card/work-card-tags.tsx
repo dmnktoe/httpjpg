@@ -2,7 +2,6 @@ import { Box } from "../box/box";
 import { HStack } from "../stack/stack";
 
 export function WorkCardTags({ tags }: { tags: string[] }) {
-  // Storyblok's tag_list isn't enforced unique. Dedup so React keys don't collide.
   const uniqueTags = [...new Set(tags)];
   return (
     <HStack

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { SessionVitals } from "@/components/widgets/session-vitals";
-import { config as appConfig } from "@/lib/config";
+import { getSiteConfig } from "@/lib/queries/config";
 import {
   getBuildInfo,
   getSiteStatus,
@@ -37,8 +37,8 @@ export const metadata: Metadata = {
 };
 
 export default async function StatusPage() {
-  const { services, checkedAt } = await getSiteStatus();
-  const build = getBuildInfo(appConfig.repositoryUrl);
+  const [{ services, checkedAt }, site] = await Promise.all([getSiteStatus(), getSiteConfig()]);
+  const build = getBuildInfo(site.repositoryUrl);
   const down = services.filter((entry) => entry.state === SERVICE_STATES.down);
 
   return (
@@ -67,30 +67,26 @@ export default async function StatusPage() {
                 }}
               >
                 <Field label="version">
-                  {build.version ? (
-                    <Link
-                      href={`${build.repositoryUrl}/releases/tag/${build.version}`}
-                      isExternal
-                      css={{ color: "primary.500" }}
-                    >
-                      {build.version}
-                    </Link>
-                  ) : (
-                    "unknown"
-                  )}
+                  <MaybeLink
+                    href={
+                      build.repositoryUrl && build.version
+                        ? `${build.repositoryUrl}/releases/tag/${build.version}`
+                        : undefined
+                    }
+                  >
+                    {build.version ?? "unknown"}
+                  </MaybeLink>
                 </Field>
                 <Field label="commit">
-                  {build.commitSha ? (
-                    <Link
-                      href={`${build.repositoryUrl}/commit/${build.commitSha}`}
-                      isExternal
-                      css={{ color: "primary.500" }}
-                    >
-                      {build.commitSha.slice(0, SHORT_SHA_LENGTH)}
-                    </Link>
-                  ) : (
-                    "unknown"
-                  )}
+                  <MaybeLink
+                    href={
+                      build.repositoryUrl && build.commitSha
+                        ? `${build.repositoryUrl}/commit/${build.commitSha}`
+                        : undefined
+                    }
+                  >
+                    {build.commitSha?.slice(0, SHORT_SHA_LENGTH) ?? "unknown"}
+                  </MaybeLink>
                 </Field>
                 <Field label="built">
                   {build.buildTime ? build.buildTime.slice(0, 19).replace("T", " ") : "unknown"}
@@ -154,6 +150,17 @@ function ServiceRow({ service }: { service: ServiceStatus }) {
         {service.detail}
       </Box>
     </Box>
+  );
+}
+
+function MaybeLink({ href, children }: { href?: string; children: React.ReactNode }) {
+  if (!href) {
+    return <>{children}</>;
+  }
+  return (
+    <Link href={href} isExternal css={{ color: "primary.500" }}>
+      {children}
+    </Link>
   );
 }
 

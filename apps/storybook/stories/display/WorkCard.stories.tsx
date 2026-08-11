@@ -3,21 +3,15 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { MOCK_TAGGED_WORK, OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
-/**
- * WorkCard component stories
- *
- * Individual portfolio work card with slideshow, animated title, and project details.
- */
 const meta = {
   title: "Display/WorkCard",
   component: WorkCard,
   parameters: {
     layout: "fullscreen",
-    // Prevent layout shift jitter in docs by using iframe
     docs: {
       story: {
         inline: false,
-        iframeHeight: 800, // Set explicit height for iframe
+        iframeHeight: 800,
       },
     },
   },
@@ -87,10 +81,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Default work card with multiple images
- */
-
 export const Default: Story = {
   args: {
     title: "BLENCE NETWORK™ INC., 2025",
@@ -142,19 +132,10 @@ export const Default: Story = {
   },
 };
 
-/**
- * Tags come from the curated vocabulary in `@httpjpg/storyblok-utils`. Storyblok
- * stores the values (`typescript`, `next-js`); `workTagLabels` resolves them to
- * the labels shown here, so casing and punctuation survive the round trip.
- */
 export const WithTags: Story = {
   args: MOCK_TAGGED_WORK,
 };
 
-/**
- * A card with a tag from every group, to check the chips wrap rather than
- * push the card out of its column.
- */
 export const ManyTags: Story = {
   args: {
     ...MOCK_TAGGED_WORK,
@@ -176,9 +157,6 @@ export const ManyTags: Story = {
   },
 };
 
-/**
- * Work card with single image
- */
 export const SingleImage: Story = {
   args: {
     title: "E-Commerce Redesign",
@@ -195,9 +173,6 @@ export const SingleImage: Story = {
   },
 };
 
-/**
- * Work card without description
- */
 export const NoDescription: Story = {
   args: {
     title: "Creative Exhibition",
@@ -213,9 +188,6 @@ export const NoDescription: Story = {
   },
 };
 
-/**
- * Work card without date
- */
 export const NoDate: Story = {
   args: {
     title: "Magazine Layout",
@@ -231,9 +203,6 @@ export const NoDate: Story = {
   },
 };
 
-/**
- * Work card with multiple images (slideshow)
- */
 export const MultipleImages: Story = {
   args: {
     title: "Photo Series",
@@ -263,9 +232,6 @@ export const MultipleImages: Story = {
   },
 };
 
-/**
- * Minimal work card
- */
 export const Minimal: Story = {
   args: {
     title: "Project Title",
@@ -279,9 +245,6 @@ export const Minimal: Story = {
   },
 };
 
-/**
- * Fully customizable work card with live controls (Playground)
- */
 export const Playground: Story = {
   args: {
     title: "Brand Identity",

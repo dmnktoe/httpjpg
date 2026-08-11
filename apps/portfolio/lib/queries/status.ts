@@ -24,7 +24,7 @@ export interface BuildInfo {
   version?: string;
   commitSha?: string;
   buildTime?: string;
-  repositoryUrl: string;
+  repositoryUrl?: string;
 }
 
 export interface SiteStatus {
@@ -132,7 +132,7 @@ export async function getSiteStatus(): Promise<SiteStatus> {
   return { services, checkedAt: new Date().toISOString() };
 }
 
-export function getBuildInfo(repositoryUrl: string): BuildInfo {
+export function getBuildInfo(repositoryUrl?: string): BuildInfo {
   return {
     version: env.NEXT_PUBLIC_APP_VERSION,
     commitSha: env.NEXT_PUBLIC_COMMIT_SHA,

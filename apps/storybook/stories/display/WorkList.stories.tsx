@@ -3,12 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { MOCK_TAGGED_WORKS, OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
-/**
- * WorkList component stories
- *
- * Portfolio work showcase list built on VStack with optional dividers.
- * Displays WorkCard components with slideshow, animated titles, and project details.
- */
 const meta = {
   title: "Display/WorkList",
   component: WorkList,
@@ -21,7 +15,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Sample work data
 const sampleWorks = [
   {
     title: "Brand Identity",
@@ -95,9 +88,6 @@ const sampleWorks = [
   },
 ];
 
-/**
- * Default work list with multiple projects
- */
 export const Default: Story = {
   args: {
     works: sampleWorks,
@@ -105,10 +95,6 @@ export const Default: Story = {
   },
 };
 
-/**
- * Every card carries tags from the curated vocabulary, so the chips render
- * under each title. The filter itself is off — see `WithTagFilter`.
- */
 export const WithTags: Story = {
   args: {
     works: MOCK_TAGGED_WORKS,
@@ -116,11 +102,6 @@ export const WithTags: Story = {
   },
 };
 
-/**
- * `showTagFilter` collects the tags off the rendered cards' `data-tags` and
- * hides the ones that do not match. Pick "TypeScript" to see a broad tag, or
- * "GLSL" for one that only a single project carries.
- */
 export const WithTagFilter: Story = {
   args: {
     works: MOCK_TAGGED_WORKS,
@@ -129,10 +110,6 @@ export const WithTagFilter: Story = {
   },
 };
 
-/**
- * The filter reads the cards it can see, so a grid filters exactly like a
- * stacked list.
- */
 export const TagFilterInGrid: Story = {
   args: {
     works: MOCK_TAGGED_WORKS,
@@ -145,10 +122,6 @@ export const TagFilterInGrid: Story = {
   },
 };
 
-/**
- * Untagged work leaves nothing for the filter to collect, so it renders
- * nothing at all rather than an empty bar.
- */
 export const TagFilterWithoutTags: Story = {
   args: {
     works: sampleWorks,
@@ -157,9 +130,6 @@ export const TagFilterWithoutTags: Story = {
   },
 };
 
-/**
- * Work list with large spacing
- */
 export const LargeSpacing: Story = {
   args: {
     works: sampleWorks,
@@ -167,9 +137,6 @@ export const LargeSpacing: Story = {
   },
 };
 
-/**
- * Work list with compact spacing
- */
 export const Compact: Story = {
   args: {
     works: sampleWorks,
@@ -177,9 +144,6 @@ export const Compact: Story = {
   },
 };
 
-/**
- * Work list with header
- */
 export const WithHeader: Story = {
   args: {
     works: sampleWorks,
@@ -207,9 +171,6 @@ export const WithHeader: Story = {
   },
 };
 
-/**
- * Work list with footer
- */
 export const WithFooter: Story = {
   args: {
     works: sampleWorks.slice(0, 2),
@@ -240,18 +201,12 @@ export const WithFooter: Story = {
   },
 };
 
-/**
- * Single work item
- */
 export const Single: Story = {
   args: {
     works: [sampleWorks[0]],
   },
 };
 
-/**
- * Minimal work list (no descriptions)
- */
 export const Minimal: Story = {
   args: {
     works: sampleWorks.map((work) => ({
@@ -262,9 +217,6 @@ export const Minimal: Story = {
   },
 };
 
-/**
- * Work list without dates
- */
 export const NoDates: Story = {
   args: {
     works: sampleWorks.map((work) => ({
@@ -274,9 +226,6 @@ export const NoDates: Story = {
   },
 };
 
-/**
- * Work list with solid dividers
- */
 export const WithSolidDividers: Story = {
   args: {
     works: sampleWorks,
@@ -290,9 +239,6 @@ export const WithSolidDividers: Story = {
   },
 };
 
-/**
- * Work list with dashed dividers
- */
 export const WithDashedDividers: Story = {
   args: {
     works: sampleWorks,
@@ -307,9 +253,6 @@ export const WithDashedDividers: Story = {
   },
 };
 
-/**
- * Work list with ASCII dividers (brutalist aesthetic)
- */
 export const WithASCIIDividers: Story = {
   args: {
     works: sampleWorks,
@@ -324,18 +267,12 @@ export const WithASCIIDividers: Story = {
   },
 };
 
-/**
- * Empty work list (default ASCII art)
- */
 export const Empty: Story = {
   args: {
     works: [],
   },
 };
 
-/**
- * Work list with custom ASCII pattern
- */
 export const WithCustomPattern: Story = {
   args: {
     works: sampleWorks.slice(0, 3),

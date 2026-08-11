@@ -107,9 +107,6 @@ const MOCK_WORK_ITEMS = [
   },
 ] as const;
 
-/**
- * Work items shaped for the Header component (derived from MOCK_WORK_ITEMS).
- */
 function toHeaderWork(items: typeof MOCK_WORK_ITEMS, tag: string) {
   return items
     .filter((w) => (w.tags as readonly string[]).includes(tag))
@@ -125,14 +122,6 @@ function toHeaderWork(items: typeof MOCK_WORK_ITEMS, tag: string) {
 export const MOCK_HEADER_PROJECTS_WORK = toHeaderWork(MOCK_WORK_ITEMS, "Projects");
 export const MOCK_HEADER_WEBSITES_WORK = toHeaderWork(MOCK_WORK_ITEMS, "Websites");
 
-/**
- * Work carrying tags from the curated vocabulary in `@httpjpg/storyblok-utils`.
- * The values are what Storyblok stores; `workTagLabels` resolves them to the
- * labels a visitor reads, exactly as the app does.
- *
- * The spread is deliberate: some tags recur across several items and some
- * appear once, so the tag filter has both a broad and a narrow case to show.
- */
 const TAGGED_WORK_SOURCE = [
   {
     title: "Brand Identity",
@@ -199,7 +188,6 @@ export const MOCK_TAGGED_WORKS = TAGGED_WORK_SOURCE.map((work) => ({
   tags: workTagLabels(work.tagValues),
 }));
 
-/** The single most-tagged item, for stories that need one card. */
 export const MOCK_TAGGED_WORK = MOCK_TAGGED_WORKS[1];
 
 export const MOCK_RICHTEXT = {

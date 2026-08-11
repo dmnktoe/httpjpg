@@ -1,5 +1,6 @@
 import { Box, Button, Tooltip } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import type { ComponentPropsWithoutRef } from "react";
 
 const PLACEMENTS = ["top", "bottom"] as const;
 
@@ -97,10 +98,17 @@ export const Disabled: Story = {
   },
 };
 
-function Dot({ size }: { size: "avatar" | "tiny" }) {
+interface DotProps extends ComponentPropsWithoutRef<"span"> {
+  size: "avatar" | "tiny";
+}
+
+// The tooltip clones its handlers onto the trigger, so the trigger has to pass
+// them on to a real element.
+function Dot({ size, ...props }: DotProps) {
   return (
     <Box
       as="span"
+      {...props}
       css={{
         display: "inline-block",
         w: size === "avatar" ? "8" : "4",

@@ -411,6 +411,7 @@ The portfolio site has no forms. If you add one:
 - **Nothing external is fetched.** `prepareStory()` in `tests/visual/lib.ts` answers every non-local request itself: images get a fixed placeholder (so `onLoad` fires and skeletons clear), everything else is aborted. A story that needs the real Storyblok CDN to look right will flake — give it a local fixture instead.
 - **Coverage is tag-driven.** `skip-visual` on a story or meta keeps it out; `visual-mobile` additionally captures it at 390×844. Don't add a bespoke opt-out, and don't disable a story to silence a diff.
 - **A missing baseline warns, it does not fail.** Before `main` has published a set, or after a 7-day cache eviction, the job passes with a warning rather than failing on 361 missing files.
+- **Chromatic still runs, but only publishes.** The `chromatic` job uploads the built Storybook so each run has a browsable one; snapshots are switched off in the Chromatic project settings (UI Tests and UI Review), and there is no CLI flag for it. Publishing is unmetered, snapshots are not — that split is the whole point. Don't hand it back the testing role.
 
 ---
 

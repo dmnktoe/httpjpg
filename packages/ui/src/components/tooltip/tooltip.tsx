@@ -1,5 +1,6 @@
 "use client";
 
+import { arrow, autoUpdate, flip, shift, useFloating } from "@floating-ui/react-dom";
 import {
   Children,
   cloneElement,
@@ -11,6 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
@@ -24,6 +26,7 @@ export interface TooltipProps {
   label: string;
   /** The single element the tooltip describes. It becomes the trigger. */
   children: ReactElement<TriggerProps>;
+  /** Preferred side. The bubble flips when that side has no room. */
   placement?: TooltipPlacement;
   /** Milliseconds the pointer has to rest on the trigger. Focus ignores it. */
   delay?: number;
@@ -43,8 +46,41 @@ export function Tooltip({
   css: cssProp,
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const tailRef = useRef<HTMLSpanElement>(null);
   const tooltipId = useId();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const isVisible = isOpen && !disabled;
+
+  const {
+    refs,
+    elements,
+    floatingStyles,
+    middlewareData,
+    placement: floatingPlacement,
+    update,
+  } = useFloating({
+    placement,
+    strategy: "fixed",
+    transform: false,
+    middleware: [
+      flip(),
+      shift({ padding: VIEWPORT_PADDING }),
+      arrow({ element: tailRef, padding: TAIL_PADDING }),
+    ],
+  });
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible || !elements.reference || !elements.floating) {
+      return;
+    }
+    return autoUpdate(elements.reference, elements.floating, update);
+  }, [isVisible, elements.reference, elements.floating, update]);
 
   useEffect(() => {
     return () => {
@@ -90,9 +126,12 @@ export function Tooltip({
     }
   };
 
-  const isVisible = isOpen && !disabled;
   const trigger = Children.only(children);
-  const tail = placement === "top" ? "v" : "^";
+  const resolvedPlacement: TooltipPlacement = floatingPlacement.startsWith("bottom")
+    ? "bottom"
+    : "top";
+  const tail = resolvedPlacement === "top" ? "v" : "^";
+  const tailX = middlewareData.arrow?.x;
 
   const frame = (
     <Box as="span" css={{ display: "block" }}>
@@ -101,26 +140,65 @@ export function Tooltip({
   );
 
   const pointer = (
+    <Box as="span" css={{ display: "block", textAlign: tailX === undefined ? "center" : "left" }}>
+      <Box
+        as="span"
+        ref={tailRef}
+        style={tailX === undefined ? undefined : { marginLeft: `${tailX}px` }}
+        css={{
+          display: "inline-block",
+          opacity: 0.55,
+          animation: "asciiPulse 2s ease-in-out infinite",
+          _motionReduce: { animation: "none" },
+        }}
+      >
+        {tail}
+      </Box>
+    </Box>
+  );
+
+  const bubble = (
     <Box
       as="span"
+      ref={refs.setFloating}
+      id={tooltipId}
+      role="tooltip"
+      aria-hidden={!isVisible}
+      style={floatingStyles}
       css={{
-        display: "block",
-        opacity: 0.55,
-        animation: "asciiPulse 2s ease-in-out infinite",
-        _motionReduce: { animation: "none" },
+        zIndex: "tooltip",
+        visibility: isVisible ? "visible" : "hidden",
+        color: "pageFg",
+        opacity: isVisible ? 1 : 0,
+        fontFamily: "mono",
+        fontSize: "xs",
+        lineHeight: 1.15,
+        textAlign: "center",
+        whiteSpace: "pre",
+        bg: "pageBg",
+        transform: isVisible
+          ? "translateY(0)"
+          : resolvedPlacement === "top"
+            ? "translateY(2px)"
+            : "translateY(-2px)",
+        transition: "opacity 100ms ease-out, transform 100ms ease-out",
+        pointerEvents: "none",
+        userSelect: "none",
+        _motionReduce: { transition: "none" },
       }}
     >
-      {tail}
+      {resolvedPlacement === "top" ? frame : pointer}
+      {resolvedPlacement === "top" ? pointer : frame}
     </Box>
   );
 
   return (
     <Box
       as="span"
+      ref={refs.setReference}
       className={className}
       css={{
         display: "inline-flex",
-        position: "relative",
         alignItems: "center",
         ...cssProp,
       }}
@@ -134,35 +212,7 @@ export function Tooltip({
         onBlur: handleHide,
         onKeyDown: handleKeyDown,
       })}
-      <Box
-        as="span"
-        id={tooltipId}
-        role="tooltip"
-        aria-hidden={!isVisible}
-        css={{
-          position: "absolute",
-          left: "50%",
-          zIndex: "tooltip",
-          transform: `translateX(-50%) translateY(${isVisible ? "0" : OFFSETS[placement]})`,
-          ...PLACEMENTS[placement],
-          color: "pageFg",
-          bg: "pageBg",
-          opacity: isVisible ? 1 : 0,
-          fontFamily: "mono",
-          fontSize: "xs",
-          lineHeight: 1.15,
-          whiteSpace: "pre",
-          textAlign: "center",
-          userSelect: "none",
-          pointerEvents: "none",
-          visibility: isVisible ? "visible" : "hidden",
-          transition: "opacity 100ms ease-out, transform 100ms ease-out",
-          _motionReduce: { transition: "none" },
-        }}
-      >
-        {placement === "top" ? frame : pointer}
-        {placement === "top" ? pointer : frame}
-      </Box>
+      {isMounted && createPortal(bubble, document.body)}
     </Box>
   );
 }
@@ -173,12 +223,6 @@ export function asciiFrame(rawLabel: string): string {
   return [border, `| ${label} |`, border].join("\n");
 }
 
-const OFFSETS: Record<TooltipPlacement, string> = {
-  top: "2px",
-  bottom: "-2px",
-};
+const VIEWPORT_PADDING = 8;
 
-const PLACEMENTS: Record<TooltipPlacement, SystemStyleObject> = {
-  top: { bottom: "100%" },
-  bottom: { top: "100%" },
-};
+const TAIL_PADDING = 4;

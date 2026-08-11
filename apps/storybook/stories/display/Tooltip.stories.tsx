@@ -51,18 +51,7 @@ export const OnAnAvatar: Story = {
   render: (args) => (
     <Box css={{ py: "12" }}>
       <Tooltip {...args}>
-        <Box
-          as="span"
-          css={{
-            display: "inline-block",
-            w: "8",
-            h: "8",
-            bg: "primary.500",
-            border: "1px solid",
-            borderColor: "pageBorder",
-            borderRadius: "full",
-          }}
-        />
+        <Dot size="avatar" />
       </Tooltip>
     </Box>
   ),
@@ -73,6 +62,23 @@ export const LongLabel: Story = {
     label: "the frame grows with the label",
     children: <Button>hover me</Button>,
   },
+};
+
+export const AtTheViewportEdges: Story = {
+  args: {
+    label: "a label far wider than the trigger it hangs off",
+    children: <span>trigger</span>,
+  },
+  parameters: { layout: "fullscreen" as const },
+  render: (args) => (
+    <Box css={{ display: "flex", justifyContent: "space-between", px: "1", py: "24" }}>
+      {EDGES.map((edge) => (
+        <Tooltip key={edge} {...args} placement="bottom">
+          <Dot size="tiny" />
+        </Tooltip>
+      ))}
+    </Box>
+  ),
 };
 
 export const Delayed: Story = {
@@ -90,3 +96,22 @@ export const Disabled: Story = {
     children: <Button>nothing happens</Button>,
   },
 };
+
+function Dot({ size }: { size: "avatar" | "tiny" }) {
+  return (
+    <Box
+      as="span"
+      css={{
+        display: "inline-block",
+        w: size === "avatar" ? "8" : "4",
+        h: size === "avatar" ? "8" : "4",
+        bg: "primary.500",
+        border: "1px solid",
+        borderColor: "pageBorder",
+        borderRadius: "full",
+      }}
+    />
+  );
+}
+
+const EDGES = ["left", "right"] as const;

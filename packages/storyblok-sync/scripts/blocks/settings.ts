@@ -32,6 +32,38 @@ export const settingsBlocks: BlockDef[] = [
     },
   },
   {
+    name: "social_profile",
+    display_name: "Social Profile",
+    group: "Settings",
+    icon: "block-share",
+    color: "#8b5cf6",
+    preview_field: "url",
+    schema: {
+      platform: field.options(
+        "Platform",
+        [
+          "Instagram",
+          "GitHub",
+          "SoundCloud",
+          "Bandcamp",
+          "Spotify",
+          "Discogs",
+          "Letterboxd",
+          "X",
+          "LinkedIn",
+          "Mastodon",
+          "Other",
+        ],
+        { default_value: "Instagram" },
+      ),
+      url: field.text("Profile URL", {
+        required: true,
+        description: "Full URL (incl. https://). Emitted as schema.org sameAs for the author.",
+        tooltip: true,
+      }),
+    },
+  },
+  {
     name: "footer_config",
     display_name: "Footer Config",
     group: "Settings",
@@ -51,10 +83,36 @@ export const settingsBlocks: BlockDef[] = [
     icon: "block-settings-2",
     color: "#8b5cf6",
     schema: {
-      header_menu: field.bloks("Header Menu", { whitelist: ["menu_link"] }),
-      footer_config: field.bloks("Footer", {
-        whitelist: ["footer_config"],
-        maximum: 1,
+      ...tabbed("General", "general", {
+        site_name: field.text("Site Name", {
+          default_value: "㋡httpjpg.com",
+          description: "Suffixes every page title and names the site in Open Graph.",
+          tooltip: true,
+        }),
+        site_locale: field.options(
+          "Locale",
+          [
+            { name: "Deutsch (de_DE)", value: "de_DE" },
+            { name: "English · US (en_US)", value: "en_US" },
+            { name: "English · UK (en_GB)", value: "en_GB" },
+          ],
+          {
+            default_value: "de_DE",
+            description: "Drives <html lang>, the Open Graph locale and schema.org inLanguage.",
+            tooltip: true,
+          },
+        ),
+        repository_url: field.text("Repository URL", {
+          default_value: "https://github.com/dmnktoe/httpjpg",
+          description: "Where the build badge and version link point.",
+          tooltip: true,
+        }),
+        header_menu: field.bloks("Header Menu", { whitelist: ["menu_link"] }),
+        footer_config: field.bloks("Footer", {
+          whitelist: ["footer_config"],
+          maximum: 1,
+        }),
+        social_profiles: field.bloks("Social Profiles", { whitelist: ["social_profile"] }),
       }),
       ...tabbed("SEO", "seo", {
         seo_title: field.text("Default Page Title", { translatable: true }),

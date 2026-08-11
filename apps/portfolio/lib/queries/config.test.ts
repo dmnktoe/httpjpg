@@ -23,7 +23,15 @@ vi.mock("next/headers", () => ({
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { draftMode } from "next/headers";
 
-import { getConfig, getFooterConfig, getNavigation, getSeoDefaults } from "./config";
+import {
+  getAuthor,
+  getConfig,
+  getFooterConfig,
+  getNavigation,
+  getSeoDefaults,
+  getSiteConfig,
+  getSocialProfiles,
+} from "./config";
 
 const mockGetStoryblokApi = vi.mocked(getStoryblokApi);
 const mockDraftMode = vi.mocked(draftMode);
@@ -204,5 +212,102 @@ describe("getSeoDefaults", () => {
       title: undefined,
       description: undefined,
     });
+  });
+});
+
+describe("getSiteConfig", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockDraftMode.mockResolvedValue({ isEnabled: false } as never);
+  });
+
+  it("derives the html lang and BCP 47 language from the configured locale", async () => {
+    setupGetStory(async () => ({
+      content: {
+        site_name: "example.com",
+        site_locale: "en_US",
+        repository_url: "https://github.com/acme/site",
+      },
+    }));
+    await expect(getSiteConfig()).resolves.toEqual({
+      name: "example.com",
+      locale: "en_US",
+      htmlLang: "en",
+      language: "en-US",
+      repositoryUrl: "https://github.com/acme/site",
+    });
+  });
+
+  it("falls back to the app config when the story has nothing set", async () => {
+    setupGetStory(async () => ({ content: {} }));
+    await expect(getSiteConfig()).resolves.toEqual({
+      name: "㋡httpjpg.com",
+      locale: "de_DE",
+      htmlLang: "de",
+      language: "de-DE",
+      repositoryUrl: "https://github.com/dmnktoe/httpjpg",
+    });
+  });
+});
+
+describe("getAuthor", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockDraftMode.mockResolvedValue({ isEnabled: false } as never);
+  });
+
+  it("returns the author when a name is configured", async () => {
+    setupGetStory(async () => ({
+      content: { author_name: "Dominik", author_url: "https://httpjpg.com" },
+    }));
+    await expect(getAuthor()).resolves.toEqual({
+      name: "Dominik",
+      url: "https://httpjpg.com",
+    });
+  });
+
+  it("returns null without a name, since schema.org has nothing to attach to", async () => {
+    setupGetStory(async () => ({ content: { author_url: "https://httpjpg.com" } }));
+    await expect(getAuthor()).resolves.toBeNull();
+  });
+});
+
+describe("getSocialProfiles", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockDraftMode.mockResolvedValue({ isEnabled: false } as never);
+  });
+
+  it("returns the profile URLs in authored order", async () => {
+    setupGetStory(async () => ({
+      content: {
+        social_profiles: [
+          { platform: "GitHub", url: "https://github.com/dmnktoe" },
+          { platform: "Instagram", url: "https://instagram.com/httpjpg" },
+        ],
+      },
+    }));
+    await expect(getSocialProfiles()).resolves.toEqual([
+      "https://github.com/dmnktoe",
+      "https://instagram.com/httpjpg",
+    ]);
+  });
+
+  it("drops entries without a URL and trims the rest", async () => {
+    setupGetStory(async () => ({
+      content: {
+        social_profiles: [
+          { platform: "GitHub", url: "  https://github.com/dmnktoe  " },
+          { platform: "Other" },
+          { platform: "Other", url: "   " },
+        ],
+      },
+    }));
+    await expect(getSocialProfiles()).resolves.toEqual(["https://github.com/dmnktoe"]);
+  });
+
+  it("returns an empty list when the config story is missing", async () => {
+    setupGetStory(async () => null);
+    await expect(getSocialProfiles()).resolves.toEqual([]);
   });
 });

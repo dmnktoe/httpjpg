@@ -10,7 +10,7 @@ import { StoryblokLive } from "@/components/providers/storyblok-live";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { WorkNav } from "@/components/ui/work-nav";
 import { isInternalSlug } from "@/lib/page-theme";
-import { getConfig } from "@/lib/queries/config";
+import { getAuthor, getSiteConfig, getSocialProfiles } from "@/lib/queries/config";
 import { getFeatureFlags } from "@/lib/queries/widgets";
 import { getAdjacentWork, getCachedStory } from "@/lib/queries/work";
 import { generateCreativeWorkSchema, JsonLd } from "@/lib/schema-org";
@@ -38,7 +38,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: "Not Found" };
   }
 
-  return toNextMetadata(extractStoryMetadata(story), `/${slug?.join("/") || ""}`);
+  const site = await getSiteConfig();
+  return toNextMetadata(extractStoryMetadata(story), `/${slug?.join("/") || ""}`, site.name);
 }
 
 export default async function DynamicPage({
@@ -77,12 +78,14 @@ export default async function DynamicPage({
     let adjacent: Awaited<ReturnType<typeof getAdjacentWork>> = {};
 
     if (isWorkPage) {
-      const config = await getConfig();
-      const author = config?.author_name
+      const site = await getSiteConfig();
+      const siteAuthor = await getAuthor();
+      const author = siteAuthor
         ? {
             "@type": "Person" as const,
-            name: config.author_name,
-            url: config.author_url,
+            name: siteAuthor.name,
+            url: siteAuthor.url,
+            sameAs: await getSocialProfiles(),
           }
         : undefined;
 
@@ -100,6 +103,7 @@ export default async function DynamicPage({
         datePublished: story.first_published_at,
         dateModified: story.published_at,
         author,
+        inLanguage: site.language,
       });
 
       if (firstImage?.filename) {

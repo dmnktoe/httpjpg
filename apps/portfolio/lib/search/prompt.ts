@@ -10,8 +10,21 @@ const SYSTEM_PROMPT = [
   "- If the sources do not cover the question, say so plainly and suggest what is there.",
   "- Cite the sources you used as bracketed numbers, e.g. [1] or [1][3].",
   "- Answer in at most three short sentences. No preamble, no sign-off.",
-  "- Reply in the language the question was asked in.",
+  "- Always answer in English, whatever language the question is in.",
+  "- Write complete, grammatical sentences, each closed with a full stop.",
+  "- Write entirely in lowercase, including names and the first word of a sentence.",
+  "- A source marked `status: draft` is not published yet. You may use it, but say so.",
 ].join("\n");
+
+/**
+ * The lowercase rule is enforced here rather than trusted to the model, which
+ * capitalises names and sentence openings whatever the prompt says. Citations
+ * and punctuation are unaffected, and it is safe per chunk because case folding
+ * needs no context from the characters around it.
+ */
+export function toAnswerCase(text: string): string {
+  return text.toLowerCase();
+}
 
 /** Hard cap on question length. */
 export const MAX_QUESTION_LENGTH = 500;
@@ -21,6 +34,9 @@ export function buildAskMessages(question: string, sources: SearchDocument[]): G
   const context = sources
     .map((source, index) => {
       const parts = [`[${index + 1}] ${source.title}`, `path: ${source.href}`];
+      if (source.isDraft) {
+        parts.push("status: draft");
+      }
       if (source.tags.length > 0) {
         parts.push(`tags: ${source.tags.join(", ")}`);
       }

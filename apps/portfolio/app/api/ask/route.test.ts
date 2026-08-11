@@ -29,6 +29,12 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
+const { draftState } = vi.hoisted(() => ({ draftState: { isEnabled: false } }));
+
+vi.mock("next/headers", () => ({
+  draftMode: () => Promise.resolve(draftState),
+}));
+
 import { createGroqClient, GroqApiError } from "@httpjpg/groq";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { NextRequest, NextResponse } from "next/server";
@@ -92,6 +98,7 @@ function yields(...chunks: string[]) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  draftState.isEnabled = false;
   envObj.GROQ_API_KEY = "test-key";
   mockEnforceRateLimit.mockResolvedValue(null);
   mockGetSearchIndex.mockResolvedValue(DOCUMENTS);
@@ -111,7 +118,7 @@ describe("POST /api/ask", () => {
           { title: "Brutalist Portfolio", href: "/work/brutalist-portfolio", kind: "work" },
         ],
       },
-      { type: "delta", text: "Hello" },
+      { type: "delta", text: "hello" },
       { type: "delta", text: " there" },
     ]);
   });
@@ -280,5 +287,71 @@ describe("POST /api/ask", () => {
 
     expect(lines.at(-1)).toEqual({ type: "delta", text: "partial" });
     expect(captureServerException).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/ask · answer shape", () => {
+  it("lowercases the streamed answer whatever the model returns", async () => {
+    mockStream.mockImplementation(yields("It Is ", "The Site [1]."));
+
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+    const answer = lines
+      .filter((line) => line.type === "delta")
+      .map((line) => line.text)
+      .join("");
+
+    expect(answer).toBe("it is the site [1].");
+  });
+
+  it("keeps citations intact while lowercasing", async () => {
+    mockStream.mockImplementation(yields("See [1][2] For More."));
+
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+
+    expect(lines.some((line) => String(line.text ?? "").includes("[1][2]"))).toBe(true);
+  });
+
+  it("answers a zero-match question in lowercase too", async () => {
+    mockGetSearchIndex.mockResolvedValue([]);
+
+    const lines = await readLines(await POST(post({ question: "kubernetes?" })));
+    const text = String(lines[1]?.text);
+
+    expect(text).toBe(text.toLowerCase());
+  });
+});
+
+describe("POST /api/ask · draft mode", () => {
+  it("reads the published index when draft mode is off", async () => {
+    await POST(post({ question: "brutalist" }));
+
+    expect(mockGetSearchIndex).toHaveBeenCalledWith({ draftMode: false });
+  });
+
+  it("reads the draft index when draft mode is on", async () => {
+    draftState.isEnabled = true;
+
+    await POST(post({ question: "brutalist" }));
+
+    expect(mockGetSearchIndex).toHaveBeenCalledWith({ draftMode: true });
+  });
+
+  it("marks an unpublished source so the widget can label it", async () => {
+    draftState.isEnabled = true;
+    mockGetSearchIndex.mockResolvedValue([{ ...DOCUMENTS[0], isDraft: true }]);
+
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+
+    expect(lines[0]).toMatchObject({
+      type: "sources",
+      sources: [expect.objectContaining({ isDraft: true })],
+    });
+  });
+
+  it("leaves the draft flag off a published source", async () => {
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+    const [source] = (lines[0] as { sources: Array<Record<string, unknown>> }).sources;
+
+    expect(source).not.toHaveProperty("isDraft");
   });
 });

@@ -14,6 +14,7 @@ interface IndexableStory {
   full_slug?: string;
   name: string;
   tag_list?: string[];
+  first_published_at?: string | null;
   content?: {
     component?: string;
     title?: string;
@@ -62,40 +63,53 @@ function toSearchDocument(story: IndexableStory): SearchDocument {
     excerpt: collectStoryText(story.content),
     date: story.content?.date,
     media: collectStoryMedia(story.content),
+    ...(story.first_published_at === null ? { isDraft: true } : {}),
   };
 }
 
-export async function getSearchIndex(): Promise<SearchDocument[]> {
-  const buildIndex = async (): Promise<SearchDocument[]> => {
-    const api = getStoryblokApi({ draftMode: false });
-    const stories: IndexableStory[] = [];
+export interface SearchIndexOptions {
+  draftMode?: boolean;
+}
 
-    for (let page = 1; page <= MAX_PAGES; page += 1) {
-      const response = await api.getStories({
-        per_page: PER_PAGE,
-        page,
-        version: "published",
-      });
-      stories.push(...((response.stories ?? []) as IndexableStory[]));
+async function buildIndex(draftMode: boolean): Promise<SearchDocument[]> {
+  const api = getStoryblokApi({ draftMode });
+  const stories: IndexableStory[] = [];
 
-      const perPage = response.perPage || PER_PAGE;
-      const total = response.total ?? stories.length;
-      if (stories.length >= total || page * perPage >= total) {
-        break;
-      }
+  for (let page = 1; page <= MAX_PAGES; page += 1) {
+    const response = await api.getStories({
+      per_page: PER_PAGE,
+      page,
+      version: draftMode ? "draft" : "published",
+      ...(draftMode ? { cv: Date.now() } : {}),
+    });
+    stories.push(...((response.stories ?? []) as IndexableStory[]));
+
+    const perPage = response.perPage || PER_PAGE;
+    const total = response.total ?? stories.length;
+    if (stories.length >= total || page * perPage >= total) {
+      break;
     }
+  }
 
-    if (stories.length === 0) {
-      throw new Error("Storyblok returned no published stories for the search index");
-    }
+  if (stories.length === 0) {
+    throw new Error("Storyblok returned no stories for the search index");
+  }
 
-    return stories
-      .filter((story) => !EXCLUDED_SLUGS.has(story.full_slug || story.slug))
-      .map(toSearchDocument)
-      .filter((document) => Boolean(document.title));
-  };
+  return stories
+    .filter((story) => !EXCLUDED_SLUGS.has(story.full_slug || story.slug))
+    .map(toSearchDocument)
+    .filter((document) => Boolean(document.title));
+}
 
-  return unstable_cache(buildIndex, ["search-index"], {
+export async function getSearchIndex(options: SearchIndexOptions = {}): Promise<SearchDocument[]> {
+  // Draft results bypass `unstable_cache` entirely. The cache is shared across
+  // every visitor, so a draft written into it would outlive the preview
+  // session that fetched it and leak unpublished work to the public index.
+  if (options.draftMode) {
+    return buildIndex(true);
+  }
+
+  return unstable_cache(() => buildIndex(false), ["search-index"], {
     tags: [CACHE_TAGS.STORIES],
     revalidate: 3600,
   })();

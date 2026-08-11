@@ -15,6 +15,8 @@ export interface SearchDocument {
   excerpt: string;
   date?: string;
   media?: SearchMedia[];
+  /** Only ever set on a draft-mode index: the story has never been published. */
+  isDraft?: boolean;
 }
 
 export interface SearchResult extends SearchDocument {

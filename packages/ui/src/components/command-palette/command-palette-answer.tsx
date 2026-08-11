@@ -9,6 +9,7 @@ import { Link } from "../link/link";
 export interface CommandPaletteSource {
   title: string;
   href: string;
+  isDraft?: boolean;
 }
 
 export interface CommandPaletteAction {
@@ -130,6 +131,7 @@ export function CommandPaletteAnswer({
           {sources.map((source, index) => (
             <Link key={source.href} href={source.href} onClick={onSourceClick}>
               [{index + 1}] {source.title}
+              {source.isDraft && " (draft)"}
             </Link>
           ))}
         </Box>

@@ -27,8 +27,10 @@ interface SearchResponse {
     kind: "work" | "page";
     excerpt?: string;
     media?: CommandPaletteMediaItem[];
+    isDraft?: boolean;
   }>;
   suggestions?: string[];
+  isDraft?: boolean;
 }
 
 export function AskWidget({ askEnabled = true }: AskWidgetProps) {
@@ -39,7 +41,10 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
   const [results, setResults] = useState<CommandPaletteResult[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [answer, setAnswer] = useState("");
-  const [sources, setSources] = useState<Array<{ title: string; href: string }>>([]);
+  const [sources, setSources] = useState<Array<{ title: string; href: string; isDraft?: boolean }>>(
+    [],
+  );
+  const [isDraftMode, setIsDraftMode] = useState(false);
   const [action, setAction] = useState<AskNavigateAction>();
   const [status, setStatus] = useState<CommandPaletteStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -113,6 +118,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
         }
         setResults(data.results ?? []);
         setSuggestions(data.suggestions ?? []);
+        setIsDraftMode(data.isDraft === true);
         setStatus("idle");
       } catch (error) {
         if (controller.signal.aborted || searchAbort.current !== controller) {
@@ -229,6 +235,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
       answer={answer}
       sources={sources}
       action={action}
+      isDraftMode={isDraftMode}
       status={status}
       errorMessage={errorMessage}
       askEnabled={askEnabled}

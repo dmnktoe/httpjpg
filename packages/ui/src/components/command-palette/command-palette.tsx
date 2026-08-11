@@ -9,6 +9,7 @@ import { css } from "styled-system/css";
 import { useBodyScrollLock } from "../../lib/use-body-scroll-lock";
 import { Box } from "../box/box";
 import { Button } from "../button/button";
+import { Tag } from "../tag/tag";
 import {
   type CommandPaletteAction,
   CommandPaletteAnswer,
@@ -43,6 +44,8 @@ export interface CommandPaletteProps {
   answer?: string;
   sources?: CommandPaletteSource[];
   action?: CommandPaletteAction;
+  /** Search and ask are reading unpublished stories. */
+  isDraftMode?: boolean;
   status?: CommandPaletteStatus;
   errorMessage?: string;
   askEnabled?: boolean;
@@ -62,6 +65,7 @@ export function CommandPalette({
   answer = "",
   sources = [],
   action,
+  isDraftMode = false,
   status = "idle",
   errorMessage,
   askEnabled = true,
@@ -263,6 +267,7 @@ export function CommandPalette({
               status={status}
               resultCount={results.length}
               canAsk={canAsk}
+              isDraftMode={isDraftMode}
               onAsk={onAsk}
             />
           </m.div>
@@ -279,6 +284,7 @@ interface CommandPaletteFooterProps {
   status: CommandPaletteStatus;
   resultCount: number;
   canAsk: boolean;
+  isDraftMode: boolean;
   onAsk: (question: string) => void;
 }
 
@@ -287,6 +293,7 @@ function CommandPaletteFooter({
   status,
   resultCount,
   canAsk,
+  isDraftMode,
   onAsk,
 }: CommandPaletteFooterProps) {
   return (
@@ -304,8 +311,13 @@ function CommandPaletteFooter({
         borderTop: "1px solid",
       }}
     >
-      <Box as="span" css={{ color: "pageMuted" }}>
+      <Box as="span" css={{ display: "flex", alignItems: "center", gap: "2", color: "pageMuted" }}>
         {statusLabel(status, query, resultCount)}
+        {isDraftMode && (
+          <Tag showMarker={false} css={{ flexShrink: 0, px: "2", color: "inherit" }}>
+            drafts
+          </Tag>
+        )}
       </Box>
       {canAsk && (
         <Button

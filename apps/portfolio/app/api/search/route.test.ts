@@ -14,6 +14,12 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
+const { draftState } = vi.hoisted(() => ({ draftState: { isEnabled: false } }));
+
+vi.mock("next/headers", () => ({
+  draftMode: () => Promise.resolve(draftState),
+}));
+
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -52,6 +58,7 @@ function get(url: string): NextRequest {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  draftState.isEnabled = false;
   mockEnforceRateLimit.mockResolvedValue(null);
   mockGetSearchIndex.mockResolvedValue(DOCUMENTS);
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -140,5 +147,36 @@ describe("GET /api/search", () => {
     expect(captureServerException).toHaveBeenCalledWith(expect.any(Error), {
       tags: { route: "search" },
     });
+  });
+});
+
+describe("GET /api/search · draft mode", () => {
+  it("reads the published index when draft mode is off", async () => {
+    await GET(get("/api/search?q=poster"));
+
+    expect(mockGetSearchIndex).toHaveBeenCalledWith({ draftMode: false });
+  });
+
+  it("reads the draft index when draft mode is on", async () => {
+    draftState.isEnabled = true;
+
+    const response = await GET(get("/api/search?q=poster"));
+
+    expect(mockGetSearchIndex).toHaveBeenCalledWith({ draftMode: true });
+    await expect(response.json()).resolves.toMatchObject({ isDraft: true });
+  });
+
+  it("never lets a shared cache hold a draft response", async () => {
+    draftState.isEnabled = true;
+
+    const response = await GET(get("/api/search?q=poster"));
+
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+  });
+
+  it("omits the draft flag entirely when publishing", async () => {
+    const body = (await (await GET(get("/api/search?q=poster"))).json()) as Record<string, unknown>;
+
+    expect(body).not.toHaveProperty("isDraft");
   });
 });

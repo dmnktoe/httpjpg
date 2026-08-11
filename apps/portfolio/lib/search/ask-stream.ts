@@ -1,6 +1,6 @@
 export interface AskSourcesEvent {
   type: "sources";
-  sources: Array<{ title: string; href: string }>;
+  sources: Array<{ title: string; href: string; isDraft?: boolean }>;
 }
 
 export interface AskDeltaEvent {

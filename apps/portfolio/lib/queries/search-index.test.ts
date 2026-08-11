@@ -226,7 +226,7 @@ describe("getSearchIndex", () => {
     const getStories = vi.fn().mockResolvedValue({ stories: [], total: 0, perPage: 100 });
     mockGetStoryblokApi.mockReturnValue({ getStories } as never);
 
-    await expect(getSearchIndex()).rejects.toThrow(/no published stories/i);
+    await expect(getSearchIndex()).rejects.toThrow(/no stories/i);
   });
 
   it("propagates an unexpected failure to the caller", async () => {
@@ -240,5 +240,49 @@ describe("getSearchIndex", () => {
     mockStories([story({ full_slug: "config", content: { component: "config" } })]);
 
     await expect(getSearchIndex()).resolves.toEqual([]);
+  });
+});
+
+describe("getSearchIndex · draft mode", () => {
+  it("asks Storyblok for published stories by default", async () => {
+    const getStories = mockStories([story()]);
+
+    await getSearchIndex();
+
+    expect(mockGetStoryblokApi).toHaveBeenCalledWith({ draftMode: false });
+    expect(getStories).toHaveBeenCalledWith({ per_page: 100, page: 1, version: "published" });
+  });
+
+  it("asks for drafts through the draft client when requested", async () => {
+    const getStories = mockStories([story()]);
+
+    await getSearchIndex({ draftMode: true });
+
+    expect(mockGetStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
+    expect(getStories).toHaveBeenCalledWith(expect.objectContaining({ version: "draft", page: 1 }));
+  });
+
+  it("busts Storyblok's own cache so an edit shows up immediately", async () => {
+    const getStories = mockStories([story()]);
+
+    await getSearchIndex({ draftMode: true });
+
+    expect(getStories.mock.calls[0][0]).toHaveProperty("cv");
+  });
+
+  it("marks a never-published story as a draft", async () => {
+    mockStories([story({ first_published_at: null })]);
+
+    const [document] = await getSearchIndex({ draftMode: true });
+
+    expect(document.isDraft).toBe(true);
+  });
+
+  it("leaves the flag off a published story", async () => {
+    mockStories([story({ first_published_at: "2026-01-01" })]);
+
+    const [document] = await getSearchIndex({ draftMode: true });
+
+    expect(document).not.toHaveProperty("isDraft");
   });
 });

@@ -1,4 +1,4 @@
-import { buildAskMessages, MAX_QUESTION_LENGTH } from "./prompt";
+import { buildAskMessages, MAX_QUESTION_LENGTH, toAnswerCase } from "./prompt";
 import type { SearchDocument } from "./ranking";
 
 const SOURCE: SearchDocument = {
@@ -72,5 +72,57 @@ describe("buildAskMessages", () => {
 
     expect(user.content).toContain("y".repeat(600));
     expect(user.content).not.toContain("y".repeat(601));
+  });
+});
+
+describe("toAnswerCase", () => {
+  it("lowercases prose", () => {
+    expect(toAnswerCase("It Is The Site.")).toBe("it is the site.");
+  });
+
+  it("leaves citations and punctuation alone", () => {
+    expect(toAnswerCase("See [1][2] — yes.")).toBe("see [1][2] — yes.");
+  });
+
+  it("is safe to apply chunk by chunk", () => {
+    const whole = toAnswerCase("Brutalist Portfolio");
+    const chunked = ["Bruta", "list Port", "folio"].map(toAnswerCase).join("");
+
+    expect(chunked).toBe(whole);
+  });
+});
+
+describe("buildAskMessages · drafts", () => {
+  it("labels an unpublished source so the model can flag it", () => {
+    const [, user] = buildAskMessages("what is new?", [
+      {
+        id: "1",
+        href: "/work/wip",
+        title: "Work In Progress",
+        kind: "work",
+        tags: [],
+        tagValues: [],
+        excerpt: "",
+        isDraft: true,
+      },
+    ]);
+
+    expect(user.content).toContain("status: draft");
+  });
+
+  it("says nothing about status for a published source", () => {
+    const [, user] = buildAskMessages("what is new?", [
+      {
+        id: "1",
+        href: "/work/live",
+        title: "Live",
+        kind: "work",
+        tags: [],
+        tagValues: [],
+        excerpt: "",
+      },
+    ]);
+
+    expect(user.content).not.toContain("status: draft");
   });
 });

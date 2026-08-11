@@ -1,3 +1,5 @@
+import { workTagLabels } from "@httpjpg/storyblok-utils";
+
 export const MOCK_IMAGES = {
   videoStill1: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png",
   videoStill2: "https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png",
@@ -122,6 +124,83 @@ function toHeaderWork(items: typeof MOCK_WORK_ITEMS, tag: string) {
 
 export const MOCK_HEADER_PROJECTS_WORK = toHeaderWork(MOCK_WORK_ITEMS, "Projects");
 export const MOCK_HEADER_WEBSITES_WORK = toHeaderWork(MOCK_WORK_ITEMS, "Websites");
+
+/**
+ * Work carrying tags from the curated vocabulary in `@httpjpg/storyblok-utils`.
+ * The values are what Storyblok stores; `workTagLabels` resolves them to the
+ * labels a visitor reads, exactly as the app does.
+ *
+ * The spread is deliberate: some tags recur across several items and some
+ * appear once, so the tag filter has both a broad and a narrow case to show.
+ */
+const TAGGED_WORK_SOURCE = [
+  {
+    title: "Brand Identity",
+    description:
+      "Comprehensive brand identity system for a modern tech startup. Includes logo design, colour palette, typography, and brand guidelines.",
+    date: "2024-03-15",
+    slug: "brand-identity",
+    tagValues: ["branding", "typography", "figma", "client-work"],
+    images: [
+      { url: OPTIMIZED_IMAGES.outletStore1, alt: "Outlet Store 1" },
+      { url: OPTIMIZED_IMAGES.outletStore2, alt: "Outlet Store 2", copyright: "Studio XYZ" },
+    ],
+  },
+  {
+    title: "E-Commerce Redesign",
+    description:
+      "Complete redesign of an e-commerce platform focusing on user experience, conversion optimisation, and mobile-first design.",
+    date: "2024-02-20",
+    slug: "ecommerce-redesign",
+    tagValues: ["frontend", "typescript", "next-js", "web", "client-work"],
+    images: [
+      { url: OPTIMIZED_IMAGES.outletStore3, alt: "Outlet Store 3" },
+      { url: OPTIMIZED_IMAGES.videoStill1, alt: "Video still 1" },
+    ],
+  },
+  {
+    title: "Field Recorder",
+    description:
+      "A small iOS app for capturing and tagging field recordings, built in SwiftUI over a weekend.",
+    date: "2024-01-10",
+    slug: "field-recorder",
+    tagValues: ["ios", "swift", "swiftui", "sound-design", "personal"],
+    images: [{ url: OPTIMIZED_IMAGES.portrait, alt: "Recorder in the field" }],
+  },
+  {
+    title: "Magazine Layout",
+    description:
+      "Editorial design for a fashion magazine. Clean typography, bold imagery, and modern layout systems.",
+    date: "2023-12-05",
+    slug: "magazine-layout",
+    tagValues: ["editorial", "typography", "print", "client-work"],
+    images: [
+      { url: OPTIMIZED_IMAGES.videoStill2, alt: "Video still 2" },
+      { url: OPTIMIZED_IMAGES.videoStill3, alt: "Video still 3" },
+    ],
+  },
+  {
+    title: "Shader Studies",
+    description:
+      "A series of GLSL experiments exploring noise, feedback, and displacement in the browser.",
+    date: "2023-09-18",
+    slug: "shader-studies",
+    tagValues: ["glsl", "three-js", "web", "experiment", "open-source"],
+    images: [{ url: OPTIMIZED_IMAGES.landscape, alt: "Shader output" }],
+  },
+] as const;
+
+export const MOCK_TAGGED_WORKS = TAGGED_WORK_SOURCE.map((work) => ({
+  title: work.title,
+  description: work.description,
+  date: work.date,
+  slug: work.slug,
+  images: [...work.images],
+  tags: workTagLabels(work.tagValues),
+}));
+
+/** The single most-tagged item, for stories that need one card. */
+export const MOCK_TAGGED_WORK = MOCK_TAGGED_WORKS[1];
 
 export const MOCK_RICHTEXT = {
   simple: {

@@ -1,7 +1,7 @@
 import { WorkCard } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
+import { MOCK_TAGGED_WORK, OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
 /**
  * WorkCard component stories
@@ -48,7 +48,8 @@ const meta = {
     },
     tags: {
       control: "object",
-      description: "Inline tags surfaced as `data-tags` for WorkTagFilter",
+      description:
+        "Display labels from the curated work-tag vocabulary. Rendered as chips and surfaced as `data-tags` for WorkTagFilter.",
     },
     overlay: {
       control: { type: "select" as const },
@@ -137,6 +138,40 @@ export const Default: Story = {
         alt: "Video still 2",
         copyright: "Studio XYZ",
       },
+    ],
+  },
+};
+
+/**
+ * Tags come from the curated vocabulary in `@httpjpg/storyblok-utils`. Storyblok
+ * stores the values (`typescript`, `next-js`); `workTagLabels` resolves them to
+ * the labels shown here, so casing and punctuation survive the round trip.
+ */
+export const WithTags: Story = {
+  args: MOCK_TAGGED_WORK,
+};
+
+/**
+ * A card with a tag from every group, to check the chips wrap rather than
+ * push the card out of its column.
+ */
+export const ManyTags: Story = {
+  args: {
+    ...MOCK_TAGGED_WORK,
+    title: "Everything, All At Once",
+    tags: [
+      "Frontend",
+      "Art Direction",
+      "TypeScript",
+      "GLSL",
+      "Next.js",
+      "Three.js",
+      "iOS",
+      "Web",
+      "Figma",
+      "Storyblok",
+      "GitHub Actions",
+      "Client Work",
     ],
   },
 };
@@ -254,6 +289,7 @@ export const Playground: Story = {
       "Comprehensive brand identity system for a modern tech startup. Includes logo design, color palette, typography, and brand guidelines.",
     date: "2024-03-15",
     slug: "brand-identity",
+    tags: ["Branding", "Typography", "Figma", "Client Work"],
     images: [
       {
         url: OPTIMIZED_IMAGES.videoStill1,

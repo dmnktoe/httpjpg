@@ -13,4 +13,13 @@ describe("WorkCardTags", () => {
     render(<WorkCardTags tags={["dup", "dup"]} />);
     expect(screen.getAllByText("#dup")).toHaveLength(1);
   });
+
+  // The curated vocabulary distinguishes "TypeScript" from "typescript" and
+  // the filter beside these chips renders the label as authored, so a
+  // lowercasing transform here would both lose information and disagree.
+  it("keeps the authored casing rather than lowercasing it", () => {
+    render(<WorkCardTags tags={["TypeScript", "iOS"]} />);
+    expect(screen.getByText("#TypeScript")).not.toHaveClass("tt_lowercase");
+    expect(screen.getByText("#iOS")).toBeInTheDocument();
+  });
 });

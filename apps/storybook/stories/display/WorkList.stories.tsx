@@ -1,7 +1,7 @@
 import { Box, Headline, Paragraph, WorkList } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
+import { MOCK_TAGGED_WORKS, OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
 /**
  * WorkList component stories
@@ -102,6 +102,58 @@ export const Default: Story = {
   args: {
     works: sampleWorks,
     gap: 24,
+  },
+};
+
+/**
+ * Every card carries tags from the curated vocabulary, so the chips render
+ * under each title. The filter itself is off — see `WithTagFilter`.
+ */
+export const WithTags: Story = {
+  args: {
+    works: MOCK_TAGGED_WORKS,
+    gap: 24,
+  },
+};
+
+/**
+ * `showTagFilter` collects the tags off the rendered cards' `data-tags` and
+ * hides the ones that do not match. Pick "TypeScript" to see a broad tag, or
+ * "GLSL" for one that only a single project carries.
+ */
+export const WithTagFilter: Story = {
+  args: {
+    works: MOCK_TAGGED_WORKS,
+    gap: 24,
+    showTagFilter: true,
+  },
+};
+
+/**
+ * The filter reads the cards it can see, so a grid filters exactly like a
+ * stacked list.
+ */
+export const TagFilterInGrid: Story = {
+  args: {
+    works: MOCK_TAGGED_WORKS,
+    gap: 24,
+    columns: 1,
+    columnsMd: 2,
+    columnsLg: 3,
+    variant: "compact",
+    showTagFilter: true,
+  },
+};
+
+/**
+ * Untagged work leaves nothing for the filter to collect, so it renders
+ * nothing at all rather than an empty bar.
+ */
+export const TagFilterWithoutTags: Story = {
+  args: {
+    works: sampleWorks,
+    gap: 24,
+    showTagFilter: true,
   },
 };
 

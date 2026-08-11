@@ -1,0 +1,124 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+import { WORK_TAGS, WORK_TAG_GROUPS, WORK_TAG_DATASOURCE_SLUG } from "@httpjpg/storyblok-utils";
+
+<Meta title="Foundations/Work Tags" />
+
+# Work Tags
+
+The controlled vocabulary an editor picks work tags from. Three spellings of "TypeScript" are three
+tags to a ranker and one to a human, so the list lives in code — `WORK_TAGS` in
+`@httpjpg/storyblok-utils` — and Storyblok only ever offers these values.
+
+Each tag has a **value** and a **label**, and they do different jobs:
+
+- The **value** is what Storyblok stores and what the ranker keys on. It is stable and never
+  renamed — renaming one orphans it on every story already carrying it.
+- The **label** is what a visitor reads. Change it freely; nothing depends on its spelling.
+
+<div
+  style={{
+    display: "flex",
+    gap: "2rem",
+    margin: "2rem 0",
+    fontFamily: "monospace",
+    fontSize: "0.875rem",
+  }}
+>
+  <div>
+    <div style={{ opacity: 0.5 }}>tags</div>
+    <div style={{ fontSize: "1.5rem" }}>{WORK_TAGS.length}</div>
+  </div>
+  <div>
+    <div style={{ opacity: 0.5 }}>groups</div>
+    <div style={{ fontSize: "1.5rem" }}>{Object.keys(WORK_TAG_GROUPS).length}</div>
+  </div>
+  <div>
+    <div style={{ opacity: 0.5 }}>datasource</div>
+    <div style={{ fontSize: "1.5rem" }}>{WORK_TAG_DATASOURCE_SLUG}</div>
+  </div>
+</div>
+
+## The vocabulary
+
+Groups order how tags render on a card. Within a group, the catalog's own order wins.
+
+<div style={{ display: "flex", flexDirection: "column", gap: "2.5rem", marginTop: "2rem" }}>
+  {Object.entries(WORK_TAG_GROUPS).map(([group, groupLabel]) => (
+    <div key={group}>
+      <div
+        style={{
+          fontFamily: "monospace",
+          fontSize: "0.75rem",
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          opacity: 0.5,
+          marginBottom: "0.75rem",
+        }}
+      >
+        {groupLabel}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+        {WORK_TAGS.filter((tag) => tag.group === group).map((tag) => (
+          <div
+            key={tag.value}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "minmax(0, 14rem) minmax(0, 1fr)",
+              gap: "1rem",
+              alignItems: "baseline",
+              fontFamily: "monospace",
+              fontSize: "0.875rem",
+            }}
+          >
+            <span
+              style={{
+                border: "1px solid currentColor",
+                padding: "0.125rem 0.375rem",
+                justifySelf: "start",
+                opacity: 0.8,
+              }}
+            >
+              #{tag.label}
+            </span>
+            <span style={{ opacity: 0.45 }}>{tag.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+## Adding a tag
+
+1. Add it to `WORK_TAGS` in `packages/storyblok-utils/src/work-tags.ts`.
+2. Run `pnpm --filter @httpjpg/storyblok-sync sync:datasources`.
+
+The `tags` field on the `work` blok is a datasource-backed multi-select pointing at the
+`work-tags` datasource, so the new tag shows up in the editor immediately after the sync.
+
+## Removing a tag
+
+Delete it from the catalog and sync. Stories still holding the value keep it in Storyblok, but
+`resolveWorkTags` drops anything outside the vocabulary rather than rendering a raw slug — so
+nothing leaks into the UI. That is what makes removal safe without a content migration.
+
+## What reads them
+
+```ts
+import { resolveWorkTags, workTagLabels } from "@httpjpg/storyblok-utils";
+
+// Values in, tags out — unknown values dropped, duplicates collapsed,
+// ordered by group.
+resolveWorkTags(["figma", "typescript", "made-up"]);
+// → [{ value: "typescript", label: "TypeScript", group: "language" },
+//    { value: "figma", label: "Figma", group: "tooling" }]
+
+// Just the labels, for a card or a chip row.
+workTagLabels(["ios", "swiftui"]);
+// → ["SwiftUI", "iOS"]
+```
+
+- **Search** matches a whole tag above a substring of one, and finds `nextjs` for `Next.js`.
+- **Related work** compares values, weighted by how rare each shared tag is in the corpus — two
+  projects both tagged `web` say little on a site where everything is web.
+- **Ask** grounds its answers in the labels, so the model sees `TypeScript`, not `typescript`.

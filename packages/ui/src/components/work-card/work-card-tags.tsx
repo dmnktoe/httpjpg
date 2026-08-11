@@ -23,7 +23,6 @@ export function WorkCardTags({ tags }: { tags: string[] }) {
           css={{
             px: "1.5",
             py: "0.5",
-            textTransform: "lowercase",
             border: "1px solid",
             borderColor: "neutral.400",
           }}

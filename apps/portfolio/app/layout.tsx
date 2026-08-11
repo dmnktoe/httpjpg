@@ -37,17 +37,21 @@ import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
 import { XStatus } from "@/components/widgets/x-status";
-import { config } from "@/lib/config";
 import { getPageTheme } from "@/lib/page-theme";
-import { getFooterConfig, getNavigation, getSeoDefaults } from "@/lib/queries/config";
+import {
+  getAuthor,
+  getFooterConfig,
+  getNavigation,
+  getSeoDefaults,
+  getSiteConfig,
+  getSocialProfiles,
+} from "@/lib/queries/config";
 import { getLastUpdated } from "@/lib/queries/last-updated";
-import { getFeatureFlags, getWidgetConfig } from "@/lib/queries/widgets";
+import { getFeatureFlags, getInterfaceConfig, getWidgetConfig } from "@/lib/queries/widgets";
 import { getRecentWork } from "@/lib/queries/work";
+import { generatePersonSchema, JsonLd } from "@/lib/schema-org";
 
 import "./globals.css";
-
-const FALLBACK_DESCRIPTION =
-  "Personal portfolio showcasing creative work, design, and development projects";
 
 function formatVersion(raw: string): string {
   if (/^v?\d+\.\d+\.\d+/.test(raw)) {
@@ -63,18 +67,19 @@ function formatLastUpdated(iso: string): string {
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoDefaults();
+  const site = await getSiteConfig();
   return {
     title: {
-      absolute: seo.title || config.appName,
-      default: seo.title || config.appName,
-      template: `%s ${config.appName}`,
+      absolute: seo.title || site.name || "",
+      default: seo.title || site.name || "",
+      template: site.name ? `%s ${site.name}` : "%s",
     },
-    description: seo.description || FALLBACK_DESCRIPTION,
+    description: seo.description,
     metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
     openGraph: {
       type: "website",
-      locale: "de_DE",
-      siteName: config.appName,
+      locale: site.locale,
+      siteName: site.name,
     },
     twitter: {
       card: "summary_large_image",
@@ -87,6 +92,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const navigation = await getNavigation();
   const footerConfig = await getFooterConfig();
   const widgetConfig = await getWidgetConfig();
+  const interfaceConfig = await getInterfaceConfig();
+  const site = await getSiteConfig();
+  const author = await getAuthor();
+  const socialProfiles = await getSocialProfiles();
   const flags = await getFeatureFlags();
   const { projectsWork, websitesWork } = await getRecentWork();
   const lastUpdated = flags.lastUpdatedBadgeEnabled ? await getLastUpdated() : undefined;
@@ -95,9 +104,18 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const version = rawVersion ? formatVersion(rawVersion) : undefined;
 
   return (
-    <html lang="de" data-theme={theme}>
+    <html lang={site.htmlLang} data-theme={theme}>
       <body style={{ margin: 0, padding: 0 }}>
-        <ConsoleBanner />
+        {author && (
+          <JsonLd
+            data={generatePersonSchema({
+              name: author.name,
+              url: author.url,
+              sameAs: socialProfiles,
+            })}
+          />
+        )}
+        <ConsoleBanner repositoryUrl={site.repositoryUrl} />
         <ConsentProvider />
         <WebVitalsReporter />
         <ScrollToTop />
@@ -105,8 +123,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <LazyMotionProvider>
             <StoryblokProvider>
               <CustomCursorWrapper
-                cursorEnabled={widgetConfig.customCursorEnabled}
-                trailEnabled={widgetConfig.mouseTrailEnabled}
+                cursorEnabled={interfaceConfig.customCursorEnabled}
+                trailEnabled={interfaceConfig.mouseTrailEnabled}
               />
               <ImagePreview />
               {widgetConfig.nostalgiaSlideshowEnabled && <NostalgiaSlideshow />}
@@ -119,6 +137,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 projectsWork={projectsWork}
                 websitesWork={websitesWork}
                 showSearch={widgetConfig.askEnabled}
+                showScrollVeil={interfaceConfig.headerScrollVeilEnabled}
               />
               <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
                 {children}
@@ -132,7 +151,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 showVersion={Boolean(lastUpdated || version)}
                 version={version}
                 versionHref={
-                  version ? `${config.repositoryUrl}/releases/tag/${version}` : undefined
+                  version && site.repositoryUrl
+                    ? `${site.repositoryUrl}/releases/tag/${version}`
+                    : undefined
                 }
                 lastUpdated={
                   lastUpdated ? `last updated ${formatLastUpdated(lastUpdated)}` : undefined
@@ -156,6 +177,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                     {flags.webVitalsBadgeEnabled && <WebVitalsBadge />}
                     {flags.buildBadgeEnabled && (
                       <BuildBadge
+                        repositoryUrl={site.repositoryUrl}
                         version={version}
                         buildTime={env.NEXT_PUBLIC_BUILD_TIME}
                         commitSha={env.NEXT_PUBLIC_COMMIT_SHA}

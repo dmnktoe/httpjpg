@@ -5,7 +5,9 @@ const {
   notFound,
   getCachedStory,
   getAdjacentWork,
-  getConfig,
+  getAuthor,
+  getSiteConfig,
+  getSocialProfiles,
   getFeatureFlags,
   preload,
 } = vi.hoisted(() => ({
@@ -15,7 +17,9 @@ const {
   }),
   getCachedStory: vi.fn(),
   getAdjacentWork: vi.fn(),
-  getConfig: vi.fn(),
+  getAuthor: vi.fn(),
+  getSiteConfig: vi.fn(),
+  getSocialProfiles: vi.fn(),
   getFeatureFlags: vi.fn(),
   preload: vi.fn(),
 }));
@@ -37,7 +41,7 @@ vi.mock("@/components/providers/storyblok-live", () => ({
   StoryblokLive: () => <div data-testid="live" />,
 }));
 
-vi.mock("@/lib/queries/config", () => ({ getConfig }));
+vi.mock("@/lib/queries/config", () => ({ getAuthor, getSiteConfig, getSocialProfiles }));
 vi.mock("@/lib/queries/widgets", () => ({ getFeatureFlags }));
 vi.mock("@/lib/queries/work", () => ({ getAdjacentWork, getCachedStory }));
 
@@ -68,7 +72,15 @@ beforeEach(() => {
   vi.clearAllMocks();
   draftMode.mockResolvedValue({ isEnabled: false });
   getFeatureFlags.mockResolvedValue({ prevNextWorkEnabled: false });
-  getConfig.mockResolvedValue({});
+  getAuthor.mockResolvedValue(null);
+  getSocialProfiles.mockResolvedValue([]);
+  getSiteConfig.mockResolvedValue({
+    name: "㋡httpjpg.com",
+    locale: "de_DE",
+    htmlLang: "de",
+    language: "de-DE",
+    repositoryUrl: "https://github.com/dmnktoe/httpjpg",
+  });
   getAdjacentWork.mockResolvedValue({});
   vi.spyOn(console, "error").mockImplementation(() => {});
 });
@@ -197,17 +209,32 @@ describe("DynamicPage", () => {
     });
   });
 
-  it("includes the configured author in the schema markup", async () => {
-    getConfig.mockResolvedValueOnce({
-      author_name: "Dominik",
-      author_url: "https://httpjpg.test/about",
-    });
+  it("includes the configured author and their profiles in the schema markup", async () => {
+    getAuthor.mockResolvedValueOnce({ name: "Dominik", url: "https://httpjpg.test/about" });
+    getSocialProfiles.mockResolvedValueOnce(["https://github.com/dmnktoe"]);
     getCachedStory.mockResolvedValueOnce(workStory);
 
     render(await DynamicPage({ params: params(["work", "some-project"]), searchParams: search() }));
 
     const jsonLd = document.querySelector('script[type="application/ld+json"]');
     expect(jsonLd?.textContent).toContain("Dominik");
+    expect(jsonLd?.textContent).toContain("https://github.com/dmnktoe");
+  });
+
+  it("stamps the schema language from the configured locale", async () => {
+    getSiteConfig.mockResolvedValueOnce({
+      name: "example.com",
+      locale: "en_US",
+      htmlLang: "en",
+      language: "en-US",
+      repositoryUrl: "https://github.com/acme/site",
+    });
+    getCachedStory.mockResolvedValueOnce(workStory);
+
+    render(await DynamicPage({ params: params(["work", "some-project"]), searchParams: search() }));
+
+    const jsonLd = document.querySelector('script[type="application/ld+json"]');
+    expect(JSON.parse(jsonLd?.textContent ?? "{}").inLanguage).toBe("en-US");
   });
 
   it("renders the work navigation when the flag is enabled", async () => {

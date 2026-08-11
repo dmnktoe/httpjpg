@@ -11,8 +11,6 @@ export interface WidgetConfig {
   spotifyEnabled: boolean;
   nostalgiaSlideshowEnabled: boolean;
   askEnabled: boolean;
-  customCursorEnabled: boolean;
-  mouseTrailEnabled: boolean;
 }
 
 export async function getWidgetConfig(): Promise<WidgetConfig> {
@@ -28,8 +26,21 @@ export async function getWidgetConfig(): Promise<WidgetConfig> {
     spotifyEnabled: config?.spotify_enabled ?? true,
     nostalgiaSlideshowEnabled: config?.nostalgia_slideshow_enabled ?? false,
     askEnabled: config?.ask_enabled ?? true,
+  };
+}
+
+export interface InterfaceConfig {
+  customCursorEnabled: boolean;
+  mouseTrailEnabled: boolean;
+  headerScrollVeilEnabled: boolean;
+}
+
+export async function getInterfaceConfig(): Promise<InterfaceConfig> {
+  const config = await getConfig();
+  return {
     customCursorEnabled: config?.custom_cursor_enabled ?? true,
     mouseTrailEnabled: config?.mouse_trail_enabled ?? true,
+    headerScrollVeilEnabled: config?.header_scroll_veil_enabled ?? true,
   };
 }
 

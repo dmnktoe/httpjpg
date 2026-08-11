@@ -32,6 +32,38 @@ export const settingsBlocks: BlockDef[] = [
     },
   },
   {
+    name: "social_profile",
+    display_name: "Social Profile",
+    group: "Settings",
+    icon: "block-share",
+    color: "#8b5cf6",
+    preview_field: "url",
+    schema: {
+      platform: field.options(
+        "Platform",
+        [
+          "Instagram",
+          "GitHub",
+          "SoundCloud",
+          "Bandcamp",
+          "Spotify",
+          "Discogs",
+          "Letterboxd",
+          "X",
+          "LinkedIn",
+          "Mastodon",
+          "Other",
+        ],
+        { default_value: "Instagram" },
+      ),
+      url: field.text("Profile URL", {
+        required: true,
+        description: "Full URL (incl. https://). Emitted as schema.org sameAs for the author.",
+        tooltip: true,
+      }),
+    },
+  },
+  {
     name: "footer_config",
     display_name: "Footer Config",
     group: "Settings",
@@ -51,10 +83,39 @@ export const settingsBlocks: BlockDef[] = [
     icon: "block-settings-2",
     color: "#8b5cf6",
     schema: {
-      header_menu: field.bloks("Header Menu", { whitelist: ["menu_link"] }),
-      footer_config: field.bloks("Footer", {
-        whitelist: ["footer_config"],
-        maximum: 1,
+      ...tabbed("General", "general", {
+        site_name: field.text("Site Name", {
+          required: true,
+          default_value: "㋡httpjpg.com",
+          description:
+            "The only place the site is named. Suffixes every page title and fills the Open Graph site name; empty means no suffix at all.",
+          tooltip: true,
+        }),
+        site_locale: field.options(
+          "Locale",
+          [
+            { name: "Deutsch (de_DE)", value: "de_DE" },
+            { name: "English · US (en_US)", value: "en_US" },
+            { name: "English · UK (en_GB)", value: "en_GB" },
+          ],
+          {
+            required: true,
+            default_value: "de_DE",
+            description: "Drives <html lang>, the Open Graph locale and schema.org inLanguage.",
+            tooltip: true,
+          },
+        ),
+        repository_url: field.text("Repository URL", {
+          default_value: "https://github.com/dmnktoe/httpjpg",
+          description: "Where the build badge and version link point.",
+          tooltip: true,
+        }),
+        header_menu: field.bloks("Header Menu", { whitelist: ["menu_link"] }),
+        footer_config: field.bloks("Footer", {
+          whitelist: ["footer_config"],
+          maximum: 1,
+        }),
+        social_profiles: field.bloks("Social Profiles", { whitelist: ["social_profile"] }),
       }),
       ...tabbed("SEO", "seo", {
         seo_title: field.text("Default Page Title", { translatable: true }),
@@ -68,9 +129,7 @@ export const settingsBlocks: BlockDef[] = [
       ...tabbed("Widgets", "widgets", {
         spotify_enabled: field.boolean("Spotify · Now Playing", "true"),
         nostalgia_slideshow_enabled: field.boolean("Nostalgia · Slideshow", "true"),
-        psn_enabled: field.boolean("PSN · Trophy Card"),
-        psn_trophy_enabled: field.boolean("PSN · Latest Trophy"),
-        psn_username: field.text("PSN · Username"),
+        ask_enabled: field.boolean("Ask · Search & AI Palette", "true"),
         discord_enabled: field.boolean("Discord · Live Status", "true"),
         discord_user_id: field.text("Discord · User ID", {
           description: "17–20 digit Discord snowflake; powers the live status widget.",
@@ -85,9 +144,15 @@ export const settingsBlocks: BlockDef[] = [
           description: "Handle without @, e.g. dmnktoe. Needs TWEETAPI_KEY to be set.",
           tooltip: true,
         }),
-        ask_enabled: field.boolean("Ask · Search & AI Palette", "true"),
-        custom_cursor_enabled: field.boolean("Custom Cursor", "true"),
-        mouse_trail_enabled: field.boolean("Mouse Trail", "true"),
+        psn_enabled: field.boolean("PSN · Trophy Card", "false", {
+          description: "Floating card with the trophy summary.",
+          tooltip: true,
+        }),
+        psn_trophy_enabled: field.boolean("PSN · Latest Trophy", "false", {
+          description: "One-line footer status with the most recent trophy.",
+          tooltip: true,
+        }),
+        psn_username: field.text("PSN · Username"),
       }),
       ...tabbed("Features", "features", {
         last_updated_badge_enabled: field.boolean("Last-Updated · Footer Badge", "true"),
@@ -95,6 +160,23 @@ export const settingsBlocks: BlockDef[] = [
         build_badge_enabled: field.boolean("Build · Footer Badge"),
         prev_next_work_enabled: field.boolean("Prev/Next · Work Navigation", "true"),
         rss_feed_enabled: field.boolean("RSS Feed · /work/feed.xml", "true"),
+      }),
+      ...tabbed("Interface", "interface", {
+        custom_cursor_enabled: field.boolean("Custom Cursor", "true", {
+          description:
+            "Draws a ✧ glyph that follows the pointer and reacts to links. Needs a mouse, and stays off under reduced motion.",
+          tooltip: true,
+        }),
+        mouse_trail_enabled: field.boolean("Mouse Trail", "true", {
+          description:
+            "Trails fading ✧ particles behind the pointer as it moves. Needs a mouse, and stays off under reduced motion.",
+          tooltip: true,
+        }),
+        header_scroll_veil_enabled: field.boolean("Header · Scroll Veil", "true", {
+          description:
+            "Fades a blurred, theme-aware scrim in behind the header while scrolling, so content passing underneath stays legible. Off leaves the header fully transparent.",
+          tooltip: true,
+        }),
       }),
     },
   },

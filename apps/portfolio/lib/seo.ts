@@ -19,7 +19,6 @@ interface StoryMetadata {
   ogImage?: { url: string; alt: string };
 }
 
-const APP_NAME = "httpjpg";
 const DESCRIPTION_LIMIT = 160;
 
 export function extractStoryMetadata(story: StoryShape): StoryMetadata {
@@ -48,8 +47,8 @@ export function extractStoryMetadata(story: StoryShape): StoryMetadata {
   return { title, description, ogImage };
 }
 
-export function toNextMetadata(meta: StoryMetadata, path: string): Metadata {
-  const fullTitle = `${meta.title} | ${APP_NAME}`;
+export function toNextMetadata(meta: StoryMetadata, path: string, siteName?: string): Metadata {
+  const fullTitle = siteName ? `${meta.title} | ${siteName}` : meta.title;
   const ogImages = meta.ogImage
     ? [{ url: meta.ogImage.url, width: 1200, height: 630, alt: meta.ogImage.alt }]
     : undefined;
@@ -61,6 +60,7 @@ export function toNextMetadata(meta: StoryMetadata, path: string): Metadata {
       description: meta.description,
       type: "website",
       url: path,
+      siteName,
       images: ogImages,
     },
     twitter: {

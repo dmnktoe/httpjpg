@@ -70,6 +70,57 @@ export async function getFooterConfig(): Promise<{
   };
 }
 
+/**
+ * Site identity, authored in the General tab. Every field is optional on
+ * purpose: the CMS owns these values outright, so a missing one drops the
+ * output that depends on it instead of resurfacing a copy kept in the code.
+ */
+export interface SiteConfig {
+  name?: string;
+  /** Open Graph / schema.org locale, e.g. `de_DE`. */
+  locale?: string;
+  /** `<html lang>` form of the locale, e.g. `de`. */
+  htmlLang?: string;
+  /** BCP 47 form of the locale, e.g. `de-DE`. */
+  language?: string;
+  repositoryUrl?: string;
+}
+
+export async function getSiteConfig(): Promise<SiteConfig> {
+  const story = await getConfig();
+  const locale = story?.site_locale || undefined;
+  return {
+    name: story?.site_name || undefined,
+    locale,
+    htmlLang: locale?.split("_")[0],
+    language: locale?.replace("_", "-"),
+    repositoryUrl: story?.repository_url || undefined,
+  };
+}
+
+export interface SiteAuthor {
+  name: string;
+  url?: string;
+}
+
+export async function getAuthor(): Promise<SiteAuthor | null> {
+  const config = await getConfig();
+  if (!config?.author_name) {
+    return null;
+  }
+  return { name: config.author_name, url: config.author_url || undefined };
+}
+
+/** Profile URLs for the author's schema.org `sameAs`. */
+export async function getSocialProfiles(): Promise<string[]> {
+  const config = await getConfig();
+  return (
+    config?.social_profiles
+      ?.map((profile) => profile.url?.trim())
+      .filter((url): url is string => Boolean(url)) ?? []
+  );
+}
+
 export async function getSeoDefaults(): Promise<{
   title?: string;
   description?: string;

@@ -16,9 +16,11 @@ test.describe("seo surface", () => {
       "content",
       "website",
     );
+    // The locale itself is authored in the CMS; the head must still carry a
+    // well-formed one for unfurls to pick a language.
     await expect(page.locator('head meta[property="og:locale"]')).toHaveAttribute(
       "content",
-      "de_DE",
+      /^[a-z]{2}_[A-Z]{2}$/,
     );
     await expect(page.locator('head meta[name="twitter:card"]')).toHaveAttribute(
       "content",

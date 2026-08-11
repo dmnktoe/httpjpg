@@ -1,7 +1,7 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, type MockInstance, vi } from "vitest";
 
-import { asciiFrame, Tooltip } from "./tooltip";
+import { asciiFrame, Tooltip, type TooltipProps } from "./tooltip";
 
 describe("asciiFrame", () => {
   it("sizes the border to the label", () => {
@@ -28,6 +28,7 @@ describe("asciiFrame", () => {
 describe("Tooltip", () => {
   afterEach(() => {
     cleanup();
+    vi.restoreAllMocks();
   });
 
   it("renders the trigger and keeps the bubble hidden at rest", () => {
@@ -197,6 +198,89 @@ describe("Tooltip", () => {
     vi.useRealTimers();
   });
 
+  it("keeps the bubble on screen when the trigger sits against the left edge", async () => {
+    stubLayout({ trigger: { left: 4, width: 16, top: 100 }, bubble: { width: 300, height: 40 } });
+    renderAnchored();
+
+    fireEvent.mouseEnter(screen.getByText("a"));
+
+    await waitFor(() => expect(bubble().style.left).toBe("8px"));
+    expect(bubble().style.top).toBe("60px");
+  });
+
+  it("pins the bubble to the right edge rather than letting it run off", async () => {
+    stubLayout({
+      trigger: { left: 1000, width: 16, top: 100 },
+      bubble: { width: 300, height: 40 },
+    });
+    renderAnchored();
+
+    fireEvent.mouseEnter(screen.getByText("a"));
+
+    await waitFor(() => expect(bubble().style.left).toBe("716px"));
+  });
+
+  it("keeps the tail pointing at the trigger once the frame has slid sideways", async () => {
+    stubLayout({ trigger: { left: 4, width: 16, top: 100 }, bubble: { width: 300, height: 40 } });
+    renderAnchored();
+
+    fireEvent.mouseEnter(screen.getByText("a"));
+
+    await waitFor(() => expect(screen.getByText("v").style.marginLeft).toBe("4px"));
+  });
+
+  it("flips below the trigger when there is no room above", async () => {
+    stubLayout({ trigger: { left: 400, width: 16, top: 4 }, bubble: { width: 120, height: 40 } });
+    renderAnchored({ label: "under the fold" });
+
+    fireEvent.mouseEnter(screen.getByText("a"));
+
+    await waitFor(() => expect(bubble().style.top).toBe("20px"));
+    expect(bubble().textContent).toContain("^");
+  });
+
+  it("flips above the trigger when there is no room below", async () => {
+    stubLayout({ trigger: { left: 400, width: 16, top: 740 }, bubble: { width: 120, height: 40 } });
+    renderAnchored({ label: "over the fold", placement: "bottom" });
+
+    fireEvent.mouseEnter(screen.getByText("a"));
+
+    await waitFor(() => expect(bubble().style.top).toBe("700px"));
+    expect(bubble().textContent).toContain("v");
+  });
+
+  it("re-measures while the page scrolls under an open bubble", async () => {
+    const layout = stubLayout({
+      trigger: { left: 400, width: 16, top: 300 },
+      bubble: { width: 120, height: 40 },
+    });
+    renderAnchored();
+
+    fireEvent.mouseEnter(screen.getByText("a"));
+    await waitFor(() => expect(bubble().style.top).toBe("260px"));
+
+    layout.trigger.top = 200;
+    fireEvent.scroll(window);
+
+    await waitFor(() => expect(bubble().style.top).toBe("160px"));
+  });
+
+  it("drops its position listeners once the bubble is hidden again", async () => {
+    stubLayout({ trigger: { left: 400, width: 16, top: 300 }, bubble: { width: 120, height: 40 } });
+    const addListener = vi.spyOn(window, "addEventListener");
+    const removeListener = vi.spyOn(window, "removeEventListener");
+    renderAnchored();
+    const trigger = screen.getByText("a");
+
+    fireEvent.mouseEnter(trigger);
+    await waitFor(() => expect(bubble().style.top).toBe("260px"));
+    expect(scrollHandlers(addListener)).not.toHaveLength(0);
+
+    fireEvent.mouseLeave(trigger);
+
+    expect(scrollHandlers(removeListener)).toEqual(scrollHandlers(addListener));
+  });
+
   it("points down above the trigger and up below it", () => {
     const { unmount } = render(
       <Tooltip label="hi">
@@ -214,3 +298,83 @@ describe("Tooltip", () => {
     expect(screen.getByRole("tooltip", { hidden: true }).textContent).toContain("^");
   });
 });
+
+function renderAnchored(props: Partial<TooltipProps> = {}) {
+  render(
+    <Tooltip label="a much wider label than the trigger" className={ANCHOR} {...props}>
+      <span>a</span>
+    </Tooltip>,
+  );
+}
+
+function bubble() {
+  return screen.getByRole("tooltip");
+}
+
+function stubLayout(rects: { trigger: StubRect; bubble: StubRect }) {
+  const state = {
+    trigger: { left: 0, top: 0, width: 16, height: 16, ...rects.trigger },
+    bubble: { left: 0, top: 0, width: 0, height: 0, ...rects.bubble },
+    tail: { left: 0, top: 0, width: 7, height: 12 },
+  };
+  const empty = { left: 0, top: 0, width: 0, height: 0 };
+
+  const boxFor = (element: HTMLElement) => {
+    if (element.getAttribute("role") === "tooltip") {
+      return state.bubble;
+    }
+    if (TAIL_GLYPHS.has(element.textContent ?? "")) {
+      return state.tail;
+    }
+    return element.classList.contains(ANCHOR) ? state.trigger : empty;
+  };
+
+  for (const [prop, size] of [
+    ["clientWidth", window.innerWidth],
+    ["clientHeight", window.innerHeight],
+  ] as const) {
+    vi.spyOn(document.documentElement, prop, "get").mockReturnValue(size);
+  }
+
+  vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockImplementation(
+    function (this: HTMLElement) {
+      return boxFor(this).width;
+    },
+  );
+  vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(
+    function (this: HTMLElement) {
+      return boxFor(this).height;
+    },
+  );
+
+  vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(
+    function (this: HTMLElement) {
+      const box = boxFor(this);
+      return {
+        ...box,
+        x: box.left,
+        y: box.top,
+        right: box.left + box.width,
+        bottom: box.top + box.height,
+        toJSON: () => "",
+      } as DOMRect;
+    },
+  );
+
+  return state;
+}
+
+function scrollHandlers(spy: MockInstance<Window["addEventListener"]>) {
+  return spy.mock.calls.filter(([type]) => type === "scroll").map(([, handler]) => handler);
+}
+
+const ANCHOR = "tooltip-anchor";
+
+const TAIL_GLYPHS = new Set(["v", "^"]);
+
+interface StubRect {
+  left?: number;
+  top?: number;
+  width?: number;
+  height?: number;
+}

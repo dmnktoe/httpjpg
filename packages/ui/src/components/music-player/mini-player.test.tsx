@@ -196,6 +196,29 @@ describe("MiniPlayer", () => {
     vi.useRealTimers();
   });
 
+  it("cuts a long track name down before it reaches the frame", () => {
+    vi.useFakeTimers();
+    renderPlayer({
+      title: "An Extremely Long Track Name That Never Ends",
+      artist: "The Interminable Orchestra",
+    });
+
+    fireEvent.mouseEnter(screen.getByText("◉"));
+    expect(screen.getByRole("tooltip", { hidden: true })).toHaveAttribute("aria-hidden", "true");
+
+    act(() => vi.advanceTimersByTime(1000));
+
+    expect(screen.getByRole("tooltip")).toHaveTextContent(
+      "An Extremely Long Track Name That Never…",
+    );
+    expect(
+      screen.getByRole("group", {
+        name: "Now playing: An Extremely Long Track Name That Never Ends — The Interminable Orchestra",
+      }),
+    ).toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
   it("clears the player", () => {
     const handlers = renderPlayer();
 

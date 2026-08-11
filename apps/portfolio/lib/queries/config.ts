@@ -6,6 +6,7 @@ import { isExternalLink, type NavItem } from "@httpjpg/ui";
 import { unstable_cache } from "next/cache";
 import { draftMode } from "next/headers";
 
+import { config as appConfig } from "../config";
 import { STORYBLOK_SLUGS } from "../storyblok-slugs";
 
 export async function getConfig(): Promise<SbConfigStory | null> {
@@ -68,6 +69,52 @@ export async function getFooterConfig(): Promise<{
       .filter((item): item is NavItem => item !== null),
     backgroundImage: footerConfig.background_image?.filename,
   };
+}
+
+export interface SiteConfig {
+  name: string;
+  /** Open Graph / schema.org locale, e.g. `de_DE`. */
+  locale: string;
+  /** `<html lang>` form of the locale, e.g. `de`. */
+  htmlLang: string;
+  /** BCP 47 form of the locale, e.g. `de-DE`. */
+  language: string;
+  repositoryUrl: string;
+}
+
+export async function getSiteConfig(): Promise<SiteConfig> {
+  const story = await getConfig();
+  const locale = story?.site_locale || appConfig.locale;
+  return {
+    name: story?.site_name || appConfig.appName,
+    locale,
+    htmlLang: locale.split("_")[0],
+    language: locale.replace("_", "-"),
+    repositoryUrl: story?.repository_url || appConfig.repositoryUrl,
+  };
+}
+
+export interface SiteAuthor {
+  name: string;
+  url?: string;
+}
+
+export async function getAuthor(): Promise<SiteAuthor | null> {
+  const config = await getConfig();
+  if (!config?.author_name) {
+    return null;
+  }
+  return { name: config.author_name, url: config.author_url || undefined };
+}
+
+/** Profile URLs for the author's schema.org `sameAs`. */
+export async function getSocialProfiles(): Promise<string[]> {
+  const config = await getConfig();
+  return (
+    config?.social_profiles
+      ?.map((profile) => profile.url?.trim())
+      .filter((url): url is string => Boolean(url)) ?? []
+  );
 }
 
 export async function getSeoDefaults(): Promise<{

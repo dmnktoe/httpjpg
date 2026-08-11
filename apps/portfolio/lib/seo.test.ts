@@ -134,14 +134,14 @@ describe("extractStoryMetadata", () => {
 
 describe("toNextMetadata", () => {
   it("returns the raw title for the page and a suffixed title in OG/Twitter", () => {
-    const md = toNextMetadata({ title: "About", description: "All about me" }, "/about");
+    const md = toNextMetadata({ title: "About", description: "All about me" }, "/about", "httpjpg");
     expect(md.title).toBe("About");
     expect(md.openGraph?.title).toBe("About | httpjpg");
     expect(md.twitter?.title).toBe("About | httpjpg");
   });
 
   it("populates the OG url from the passed path", () => {
-    const md = toNextMetadata({ title: "T", description: "D" }, "/some/path");
+    const md = toNextMetadata({ title: "T", description: "D" }, "/some/path", "httpjpg");
     expect(md.openGraph?.url).toBe("/some/path");
   });
 
@@ -153,6 +153,7 @@ describe("toNextMetadata", () => {
         ogImage: { url: "https://cdn/og.jpg", alt: "OG alt" },
       },
       "/",
+      "httpjpg",
     );
     const images = md.openGraph?.images as Array<{
       url: string;
@@ -167,19 +168,26 @@ describe("toNextMetadata", () => {
   });
 
   it("leaves images undefined when no og image is provided", () => {
-    const md = toNextMetadata({ title: "T", description: "D" }, "/");
+    const md = toNextMetadata({ title: "T", description: "D" }, "/", "httpjpg");
     expect(md.openGraph?.images).toBeUndefined();
     expect(md.twitter?.images).toBeUndefined();
   });
 
   it("uses summary_large_image as the twitter card type", () => {
-    const md = toNextMetadata({ title: "T", description: "D" }, "/");
+    const md = toNextMetadata({ title: "T", description: "D" }, "/", "httpjpg");
     const twitter = md.twitter as { card?: string } | undefined;
     expect(twitter?.card).toBe("summary_large_image");
   });
 
+  it("names the site in Open Graph from the passed site name", () => {
+    const md = toNextMetadata({ title: "T", description: "D" }, "/", "㋡httpjpg.com");
+    const openGraph = md.openGraph as { siteName?: string; title?: string } | undefined;
+    expect(openGraph?.siteName).toBe("㋡httpjpg.com");
+    expect(openGraph?.title).toBe("T | ㋡httpjpg.com");
+  });
+
   it("declares the open graph type as website", () => {
-    const md = toNextMetadata({ title: "T", description: "D" }, "/");
+    const md = toNextMetadata({ title: "T", description: "D" }, "/", "httpjpg");
     const openGraph = md.openGraph as { type?: string } | undefined;
     expect(openGraph?.type).toBe("website");
   });

@@ -3,16 +3,16 @@
 import { Box } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 
-import { config } from "@/lib/config";
 import { formatRelativeTime } from "@/lib/relative-time";
 
 export interface BuildBadgeProps {
+  repositoryUrl: string;
   version?: string;
   buildTime?: string;
   commitSha?: string;
 }
 
-export function BuildBadge({ version, buildTime, commitSha }: BuildBadgeProps) {
+export function BuildBadge({ repositoryUrl, version, buildTime, commitSha }: BuildBadgeProps) {
   const [deployedAt, setDeployedAt] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,9 +27,9 @@ export function BuildBadge({ version, buildTime, commitSha }: BuildBadgeProps) {
 
   const shortSha = commitSha ? commitSha.slice(0, SHORT_SHA_LENGTH) : null;
   const href = commitSha
-    ? `${config.repositoryUrl}/commit/${commitSha}`
+    ? `${repositoryUrl}/commit/${commitSha}`
     : version
-      ? `${config.repositoryUrl}/releases/tag/${version}`
+      ? `${repositoryUrl}/releases/tag/${version}`
       : null;
 
   const content = (

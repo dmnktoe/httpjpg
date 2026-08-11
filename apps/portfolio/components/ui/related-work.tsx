@@ -1,4 +1,4 @@
-import { Box, Image, Link } from "@httpjpg/ui";
+import { Box, Image, Link, Tag } from "@httpjpg/ui";
 
 import type { RelatedWork as RelatedWorkData } from "@/lib/queries/related-work";
 
@@ -53,20 +53,7 @@ function TagRow({ tags }: { tags: string[] }) {
       <Label>tagged</Label>
       <Box css={{ display: "flex", flexWrap: "wrap", gap: "2", mt: "3" }}>
         {tags.map((tag) => (
-          <Box
-            key={tag}
-            as="span"
-            css={{
-              px: "2",
-              py: "1",
-              fontSize: "xs",
-              letterSpacing: "0.05em",
-              border: "1px solid",
-              borderColor: "pageBorder",
-            }}
-          >
-            {tag}
-          </Box>
+          <Tag key={tag}>{tag}</Tag>
         ))}
       </Box>
     </Box>

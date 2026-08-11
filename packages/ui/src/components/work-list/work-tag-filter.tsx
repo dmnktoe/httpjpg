@@ -1,31 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { css } from "styled-system/css";
 
 import { Box } from "../box/box";
 import { HStack } from "../stack/stack";
+import { TagButton } from "../tag/tag-button";
 
 export interface WorkTagFilterProps {
   scopeSelector?: string;
 }
-
-const buttonClass = css({
-  px: "2",
-  py: "1",
-  color: "inherit",
-  fontFamily: "mono",
-  fontSize: "xs",
-  letterSpacing: "0.05em",
-  bg: "transparent",
-  border: "1px solid",
-  borderColor: "neutral.300",
-  transition: "all 150ms",
-  cursor: "pointer",
-  _hover: { borderColor: "neutral.700" },
-});
-
-const buttonActiveClass = css({ color: "primary.500", borderColor: "primary.500" });
 
 export function WorkTagFilter({ scopeSelector = "[data-work-list]" }: WorkTagFilterProps) {
   const [tags, setTags] = useState<string[]>([]);
@@ -63,6 +46,10 @@ export function WorkTagFilter({ scopeSelector = "[data-work-list]" }: WorkTagFil
   }, [active, scopeSelector]);
 
   const clear = useCallback(() => setActive(null), []);
+  const toggle = useCallback(
+    (tag: string) => setActive((current) => (current === tag ? null : tag)),
+    [],
+  );
 
   if (tags.length === 0) {
     return null;
@@ -71,18 +58,13 @@ export function WorkTagFilter({ scopeSelector = "[data-work-list]" }: WorkTagFil
   return (
     <Box css={{ mb: "4" }}>
       <HStack gap="2" css={{ flexWrap: "wrap" }}>
-        <button type="button" onClick={clear} className={!active ? buttonActiveClass : buttonClass}>
+        <TagButton isActive={!active} showMarker={false} onClick={clear}>
           all
-        </button>
+        </TagButton>
         {tags.map((tag) => (
-          <button
-            type="button"
-            key={tag}
-            onClick={() => setActive(tag)}
-            className={active === tag ? buttonActiveClass : buttonClass}
-          >
-            #{tag}
-          </button>
+          <TagButton key={tag} isActive={active === tag} onClick={() => toggle(tag)}>
+            {tag}
+          </TagButton>
         ))}
       </HStack>
     </Box>

@@ -53,9 +53,6 @@ import { generatePersonSchema, JsonLd } from "@/lib/schema-org";
 
 import "./globals.css";
 
-const FALLBACK_DESCRIPTION =
-  "Personal portfolio showcasing creative work, design, and development projects";
-
 function formatVersion(raw: string): string {
   if (/^v?\d+\.\d+\.\d+/.test(raw)) {
     return raw.startsWith("v") ? raw : `v${raw}`;
@@ -73,11 +70,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteConfig();
   return {
     title: {
-      absolute: seo.title || site.name,
-      default: seo.title || site.name,
-      template: `%s ${site.name}`,
+      absolute: seo.title || site.name || "",
+      default: seo.title || site.name || "",
+      template: site.name ? `%s ${site.name}` : "%s",
     },
-    description: seo.description || FALLBACK_DESCRIPTION,
+    description: seo.description,
     metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
     openGraph: {
       type: "website",
@@ -118,7 +115,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             })}
           />
         )}
-        <ConsoleBanner />
+        <ConsoleBanner repositoryUrl={site.repositoryUrl} />
         <ConsentProvider />
         <WebVitalsReporter />
         <ScrollToTop />
@@ -153,7 +150,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 cookiePolicyHref="/cookie-policy"
                 showVersion={Boolean(lastUpdated || version)}
                 version={version}
-                versionHref={version ? `${site.repositoryUrl}/releases/tag/${version}` : undefined}
+                versionHref={
+                  version && site.repositoryUrl
+                    ? `${site.repositoryUrl}/releases/tag/${version}`
+                    : undefined
+                }
                 lastUpdated={
                   lastUpdated ? `last updated ${formatLastUpdated(lastUpdated)}` : undefined
                 }

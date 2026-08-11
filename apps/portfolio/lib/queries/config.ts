@@ -6,7 +6,6 @@ import { isExternalLink, type NavItem } from "@httpjpg/ui";
 import { unstable_cache } from "next/cache";
 import { draftMode } from "next/headers";
 
-import { config as appConfig } from "../config";
 import { STORYBLOK_SLUGS } from "../storyblok-slugs";
 
 export async function getConfig(): Promise<SbConfigStory | null> {
@@ -71,26 +70,31 @@ export async function getFooterConfig(): Promise<{
   };
 }
 
+/**
+ * Site identity, authored in the General tab. Every field is optional on
+ * purpose: the CMS owns these values outright, so a missing one drops the
+ * output that depends on it instead of resurfacing a copy kept in the code.
+ */
 export interface SiteConfig {
-  name: string;
+  name?: string;
   /** Open Graph / schema.org locale, e.g. `de_DE`. */
-  locale: string;
+  locale?: string;
   /** `<html lang>` form of the locale, e.g. `de`. */
-  htmlLang: string;
+  htmlLang?: string;
   /** BCP 47 form of the locale, e.g. `de-DE`. */
-  language: string;
-  repositoryUrl: string;
+  language?: string;
+  repositoryUrl?: string;
 }
 
 export async function getSiteConfig(): Promise<SiteConfig> {
   const story = await getConfig();
-  const locale = story?.site_locale || appConfig.locale;
+  const locale = story?.site_locale || undefined;
   return {
-    name: story?.site_name || appConfig.appName,
+    name: story?.site_name || undefined,
     locale,
-    htmlLang: locale.split("_")[0],
-    language: locale.replace("_", "-"),
-    repositoryUrl: story?.repository_url || appConfig.repositoryUrl,
+    htmlLang: locale?.split("_")[0],
+    language: locale?.replace("_", "-"),
+    repositoryUrl: story?.repository_url || undefined,
   };
 }
 

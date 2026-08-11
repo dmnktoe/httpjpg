@@ -3,7 +3,11 @@
 import { CONSOLE_BANNER } from "@httpjpg/ui";
 import { useEffect } from "react";
 
-export function ConsoleBanner() {
+export interface ConsoleBannerProps {
+  repositoryUrl?: string;
+}
+
+export function ConsoleBanner({ repositoryUrl }: ConsoleBannerProps) {
   useEffect(() => {
     if (typeof window === "undefined") {
       return;
@@ -19,11 +23,13 @@ export function ConsoleBanner() {
 
     console.log(`%c${CONSOLE_BANNER}`, titleStyle);
     console.log("%c·°•. ⋆  curious dev?  ⋆ .•°·", hintStyle);
-    console.log(
-      "%csource: https://github.com/dmnktoe/httpjpg",
-      "color: #9b5de5; font-family: monospace; font-size: 11px;",
-    );
-  }, []);
+    if (repositoryUrl) {
+      console.log(
+        `%csource: ${repositoryUrl}`,
+        "color: #9b5de5; font-family: monospace; font-size: 11px;",
+      );
+    }
+  }, [repositoryUrl]);
 
   return null;
 }

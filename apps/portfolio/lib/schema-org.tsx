@@ -26,7 +26,7 @@ export function generateCreativeWorkSchema({
   datePublished?: string;
   dateModified?: string;
   author?: SchemaAuthor;
-  inLanguage: string;
+  inLanguage?: string;
 }): WithContext<Thing> {
   return {
     "@context": "https://schema.org",

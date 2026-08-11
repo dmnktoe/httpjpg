@@ -4,6 +4,7 @@ import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
 import { Link } from "../link/link";
+import { Tooltip } from "../tooltip/tooltip";
 import { formatTime } from "./lib";
 
 export interface MiniPlayerProps {
@@ -51,6 +52,7 @@ export function MiniPlayer({
     <Box
       as="span"
       aria-hidden="true"
+      tabIndex={-1}
       css={{
         ...RECORD_STYLES,
         // Written out rather than pulled from a helper: Panda extracts styles
@@ -80,7 +82,6 @@ export function MiniPlayer({
       // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
       role="group"
       aria-label={`Now playing: ${label}`}
-      title={label}
       css={{
         display: "inline-flex",
         alignItems: "center",
@@ -92,13 +93,15 @@ export function MiniPlayer({
         ...cssProp,
       }}
     >
-      {href ? (
-        <Link href={href} aria-label={`Go to the page playing ${label}`} css={RECORD_LINK_STYLES}>
-          {record}
-        </Link>
-      ) : (
-        record
-      )}
+      <Tooltip label={label} placement="bottom" delay={TOOLTIP_DELAY}>
+        {href ? (
+          <Link href={href} aria-label={`Go to the page playing ${label}`} css={RECORD_LINK_STYLES}>
+            {record}
+          </Link>
+        ) : (
+          record
+        )}
+      </Tooltip>
 
       <Box
         as="button"
@@ -159,6 +162,8 @@ function PauseBars() {
     </Box>
   );
 }
+
+const TOOLTIP_DELAY = 1000;
 
 const RECORD_STYLES = {
   display: "inline-flex",

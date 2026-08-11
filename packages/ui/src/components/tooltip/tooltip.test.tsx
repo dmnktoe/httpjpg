@@ -1,5 +1,5 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { asciiFrame, Tooltip } from "./tooltip";
 
@@ -146,6 +146,55 @@ describe("Tooltip", () => {
 
     expect(screen.getByRole("tooltip", { hidden: true })).toHaveAttribute("aria-hidden", "true");
     expect(trigger).not.toHaveAttribute("aria-describedby");
+  });
+
+  it("waits out the delay before revealing the bubble on hover", () => {
+    vi.useFakeTimers();
+    render(
+      <Tooltip label="@dmnktoe" delay={1000}>
+        <span>avatar</span>
+      </Tooltip>,
+    );
+
+    fireEvent.mouseEnter(screen.getByText("avatar"));
+    expect(screen.getByRole("tooltip", { hidden: true })).toHaveAttribute("aria-hidden", "true");
+
+    act(() => vi.advanceTimersByTime(1000));
+
+    expect(screen.getByRole("tooltip")).toHaveAttribute("aria-hidden", "false");
+    vi.useRealTimers();
+  });
+
+  it("drops a pending reveal when the pointer leaves early", () => {
+    vi.useFakeTimers();
+    render(
+      <Tooltip label="@dmnktoe" delay={1000}>
+        <span>avatar</span>
+      </Tooltip>,
+    );
+    const trigger = screen.getByText("avatar");
+
+    fireEvent.mouseEnter(trigger);
+    act(() => vi.advanceTimersByTime(400));
+    fireEvent.mouseLeave(trigger);
+    act(() => vi.advanceTimersByTime(1000));
+
+    expect(screen.getByRole("tooltip", { hidden: true })).toHaveAttribute("aria-hidden", "true");
+    vi.useRealTimers();
+  });
+
+  it("skips the delay on focus", () => {
+    vi.useFakeTimers();
+    render(
+      <Tooltip label="@dmnktoe" delay={1000}>
+        <button type="button">avatar</button>
+      </Tooltip>,
+    );
+
+    fireEvent.focus(screen.getByRole("button"));
+
+    expect(screen.getByRole("tooltip")).toHaveAttribute("aria-hidden", "false");
+    vi.useRealTimers();
   });
 
   it("points down above the trigger and up below it", () => {

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 
 import { MiniPlayer } from "./mini-player";
 
@@ -178,6 +178,22 @@ describe("MiniPlayer", () => {
     renderPlayer();
 
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  });
+
+  it("names the track in a tooltip once the pointer has rested on the record", () => {
+    vi.useFakeTimers();
+    renderPlayer({ href: "/work/night-drive" });
+    const record = screen.getByRole("link", {
+      name: "Go to the page playing Night Drive — Nova",
+    });
+
+    fireEvent.mouseEnter(record);
+    expect(screen.getByRole("tooltip", { hidden: true })).toHaveAttribute("aria-hidden", "true");
+
+    act(() => vi.advanceTimersByTime(1000));
+
+    expect(screen.getByRole("tooltip")).toHaveTextContent("Night Drive — Nova");
+    vi.useRealTimers();
   });
 
   it("clears the player", () => {

@@ -19,7 +19,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 - **Panda CSS** (zero-runtime) — `css({})` / `cx()` / token-aware patterns; consumes design tokens from `@httpjpg/tokens`
 - **Storyblok** as CMS — Visual Editor live-bridge in dev, draft mode in production
 - **Sentry** — error reporting via `@httpjpg/observability` for client/server/edge
-- **Vitest** for unit tests (jsdom by default, node env via `// @vitest-environment node` pragma), **Playwright** for E2E in `apps/portfolio/tests/e2e`
+- **Vitest** for unit tests (jsdom by default, node env via `// @vitest-environment node` pragma), **Playwright** for E2E in `apps/portfolio/tests/e2e` and for visual regression in `apps/storybook/tests/visual`
 - **oxlint** + **oxfmt** — linting and formatting (no ESLint, no Prettier)
 - **pnpm** workspaces with a catalog for shared versions, **Turbo** for task orchestration
 - **t3-oss/env-nextjs** + **Zod** for env validation in `@httpjpg/env`
@@ -399,7 +399,18 @@ The portfolio site has no forms. If you add one:
 - **Unit tests** — Vitest with `jsdom` environment by default; switch to node per file via `// @vitest-environment node` at the top of the file (see `packages/spotify/src/api.test.ts`). Globals (`describe`, `it`, `expect`, `vi`) are enabled — no need to import from `vitest` unless you need typed helpers like `MockedFunction`. Tests live next to source as `*.test.ts(x)`. Run with `pnpm test` at the root; single root `vitest.config.ts` discovers all package tests.
 - **Component tests** — `@testing-library/react` + `@testing-library/jest-dom/vitest`. Existing examples in `packages/ui/src/components/{box,button,headline}/*.test.tsx`.
 - **E2E** — Playwright specs in `apps/portfolio/tests/e2e`. Run with `pnpm --filter @httpjpg/portfolio test:e2e`.
-- **CI** — `.github/workflows/ci.yml` runs lint → typecheck → test → build → e2e.
+- **Visual regression** — Playwright specs in `apps/storybook/tests/visual`. Every story is photographed and compared against the set `main` last published to the GitHub Actions cache; nothing is stored in the repo. Locally, `pnpm --filter @httpjpg/storybook test:visual:smoke` renders every story without comparing.
+- **CI** — `.github/workflows/ci.yml` runs lint → typecheck → test → build → e2e → visual.
+
+### Visual regression rules
+
+`main` is the baseline: a push re-takes every screenshot and publishes the set to the Actions cache, a pull request restores that set and compares. There is no accept step — a pull request that changes rendering fails, uploads the expected/actual/diff images as the `visual-report` artifact, and is merged once a human agrees with the diff.
+
+- **One renderer.** Local scripts and CI both shell out to `mcr.microsoft.com/playwright:v<version>-noble` via `apps/storybook/scripts/visual-docker.sh`, which reads the version from the installed `@playwright/test`. Never take a baseline outside that container, and never put `{platform}` back into `snapshotPathTemplate` — there is one baseline set. Bumping `@playwright/test` re-renders text, so dispatch **Visual Baselines** against `main` afterwards.
+- **Baselines are never committed.** `apps/storybook/tests/visual/__screenshots__` is gitignored; anything taken locally is local. Caches written on `main` are readable from every branch, caches written elsewhere are not — publishing from another branch is pointless. This is also why `test:visual` is not a cacheable turbo task: turbo excludes ignored files from its hash, so a hit would report a stale pass.
+- **Nothing external is fetched.** `prepareStory()` in `tests/visual/lib.ts` answers every non-local request itself: images get a fixed placeholder (so `onLoad` fires and skeletons clear), everything else is aborted. A story that needs the real Storyblok CDN to look right will flake — give it a local fixture instead.
+- **Coverage is tag-driven.** `skip-visual` on a story or meta keeps it out; `visual-mobile` additionally captures it at 390×844. Don't add a bespoke opt-out, and don't disable a story to silence a diff.
+- **A missing baseline warns, it does not fail.** Before `main` has published a set, or after a 7-day cache eviction, the job passes with a warning rather than failing on 361 missing files.
 
 ---
 
@@ -412,6 +423,8 @@ pnpm dev:storybook    # only Storybook + its deps
 pnpm build            # PANDA_PRODUCTION=1 turbo run build
 pnpm type-check       # turbo run type-check (all packages + apps)
 pnpm test             # workspace-wide Vitest
+pnpm test:visual      # story screenshots vs. whatever is in __screenshots__ (needs Docker)
+pnpm test:visual:update  # (re)take the local screenshot set
 pnpm lint             # oxlint, root only
 pnpm lint:fix
 pnpm format           # oxfmt

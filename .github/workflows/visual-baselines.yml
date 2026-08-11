@@ -1,0 +1,44 @@
+name: Visual Baselines
+
+# Republishes the screenshot baselines outside a push to main — after a cache
+# eviction, or a @playwright/test bump that re-renders text.
+#
+# Dispatch against `main`. A cache written from any other branch is scoped to
+# that branch and no pull request will see it.
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: visual-baselines
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Take and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: ./.github/actions/setup
+      - name: Take baselines
+        run: pnpm run test:visual:update
+      - name: Publish baselines
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: apps/storybook/tests/visual/__screenshots__
+          key: visual-baselines-${{ github.sha }}
+      - name: Summary
+        run: |
+          {
+            echo "## Visual baselines"
+            echo ""
+            echo "Published a fresh set from \`${GITHUB_REF_NAME}\` at \`${GITHUB_SHA:0:7}\`."
+            if [[ "${GITHUB_REF_NAME}" != "main" ]]; then
+              echo ""
+              echo "> Ran on \`${GITHUB_REF_NAME}\`, not \`main\`. The cache is scoped to that"
+              echo "> branch, so pull requests will not see it. Re-dispatch against \`main\`."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

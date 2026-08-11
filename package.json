@@ -19,6 +19,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:ci": "vitest run --coverage --reporter=default --reporter=junit --outputFile=junit.xml",
+    "test:visual": "turbo run test:visual --filter=@httpjpg/storybook",
+    "test:visual:update": "turbo run build --filter=@httpjpg/storybook && pnpm --filter @httpjpg/storybook test:visual:update",
     "clean": "turbo run clean && rm -rf node_modules",
     "prepare": "husky",
     "postinstall": "turbo run build --filter=@httpjpg/tokens --filter=@httpjpg/ui"

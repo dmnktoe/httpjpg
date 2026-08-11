@@ -140,6 +140,13 @@ jobs:
           name: portfolio-build
           path: portfolio-build.tar.gz
           retention-days: 1
+      - name: Upload built Storybook
+        if: matrix.app == 'storybook'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: storybook-static
+          path: apps/storybook/storybook-static/
+          retention-days: 14
       - name: Upload Sentry sourcemaps
         if: matrix.app == 'portfolio' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
@@ -223,12 +230,13 @@ jobs:
           path: apps/portfolio/playwright-report/
           retention-days: 30
 
+  # ── Visual regression: main publishes baselines, PRs compare ───────
   visual:
-    name: Visual Regression (Chromatic)
+    name: Visual Regression
     needs: [guard]
     if: needs.guard.outputs.run == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -246,19 +254,61 @@ jobs:
           else
             echo "relevant=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Restore baselines
+        id: restore
+        if: github.event_name == 'pull_request' && steps.changes.outputs.relevant == 'true'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: apps/storybook/tests/visual/__screenshots__
+          key: visual-baselines-${{ github.sha }}
+          restore-keys: visual-baselines-
+
       - uses: ./.github/actions/setup
         if: steps.changes.outputs.relevant == 'true'
-      - name: Run Chromatic
-        if: steps.changes.outputs.relevant == 'true'
-        uses: chromaui/action@14cfaef73576e69f95f47f60058063f46ca38719 # v18
+
+      - name: Compare stories against main's baselines
+        if: github.event_name == 'pull_request' && steps.restore.outputs.cache-matched-key != ''
+        run: pnpm run test:visual
+
+      - name: Report a missing baseline
+        if: github.event_name == 'pull_request' && steps.changes.outputs.relevant == 'true' && steps.restore.outputs.cache-matched-key == ''
+        run: |
+          echo "::warning::No baseline cache to compare against — nothing has published one from main yet, or it was evicted. Dispatch the Visual Baselines workflow against main to restore it."
+
+      - name: Take baselines
+        if: github.event_name == 'push' && steps.changes.outputs.relevant == 'true'
+        run: pnpm run test:visual:update
+
+      - name: Publish baselines
+        if: github.event_name == 'push' && steps.changes.outputs.relevant == 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          workingDir: apps/storybook
-          buildScriptName: build
-          onlyChanged: true
-          autoAcceptChanges: main
-          exitZeroOnChanges: true
-          exitOnceUploaded: true
+          path: apps/storybook/tests/visual/__screenshots__
+          key: visual-baselines-${{ github.sha }}
+
+      - name: Upload diff report
+        if: failure() && steps.changes.outputs.relevant == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: visual-report
+          path: |
+            apps/storybook/playwright-report/
+            apps/storybook/test-results/
+          retention-days: 14
+
+      - name: Explain the diff
+        if: failure() && github.event_name == 'pull_request'
+        run: |
+          {
+            echo "## Visual regression"
+            echo ""
+            echo "Stories render differently than they do on \`main\`."
+            echo ""
+            echo "Download the \`visual-report\` artifact for the expected, actual and diff"
+            echo "images. Intended changes need no accept step — merging re-takes the"
+            echo "baselines on \`main\`."
+          } >> "$GITHUB_STEP_SUMMARY"
 
   ci:
     name: All checks passed

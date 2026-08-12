@@ -13,7 +13,6 @@ interface IndexableStory {
   slug: string;
   full_slug?: string;
   name: string;
-  tag_list?: string[];
   first_published_at?: string | null;
   content?: {
     component?: string;
@@ -24,8 +23,6 @@ interface IndexableStory {
     link?: { url?: string; cached_url?: string };
   } & Record<string, unknown>;
 }
-
-const TAXONOMY_TAGS = new Set(["Projects", "Websites"]);
 
 const PER_PAGE = 100;
 
@@ -48,17 +45,13 @@ function toHref(story: IndexableStory): string {
 
 function toSearchDocument(story: IndexableStory): SearchDocument {
   const curated = resolveWorkTags(story.content?.tags);
-  const curatedLabels = new Set(curated.map((tag) => tag.label));
-  const loose = (story.tag_list ?? []).filter(
-    (tag) => !TAXONOMY_TAGS.has(tag) && !curatedLabels.has(tag),
-  );
 
   return {
     id: story.uuid,
     href: toHref(story),
     title: story.content?.title || story.name,
     kind: story.content?.component === "work" ? "work" : "page",
-    tags: [...curatedLabels, ...loose],
+    tags: curated.map((tag) => tag.label),
     tagValues: curated.map((tag) => tag.value),
     excerpt: collectStoryText(story.content),
     date: story.content?.date,

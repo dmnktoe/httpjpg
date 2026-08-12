@@ -6,7 +6,6 @@ export interface WorkStory {
   name: string;
   slug: string;
   full_slug: string;
-  tag_list?: string[];
   content?: {
     title?: string;
     description?: unknown;
@@ -18,19 +17,10 @@ export interface WorkStory {
 }
 
 const BASE_URL = "/work";
-const TAXONOMY_TAGS = new Set(["Projects", "Websites"]);
-
-function cardTags(story: WorkStory): string[] {
-  const curated = workTagLabels(story.content?.tags);
-  if (curated.length > 0) {
-    return curated;
-  }
-  return story.tag_list?.filter((t) => !TAXONOMY_TAGS.has(t)) ?? [];
-}
 
 export function toWorkCardProps(story: WorkStory) {
   const title = story.content?.title || story.name;
-  const tags = cardTags(story);
+  const tags = workTagLabels(story.content?.tags);
   return {
     slug: story.slug,
     title,

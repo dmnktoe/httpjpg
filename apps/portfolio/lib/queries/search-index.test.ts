@@ -102,7 +102,7 @@ describe("getSearchIndex", () => {
     expect(document.tagValues).toEqual(["typescript", "ios"]);
   });
 
-  it("keeps loose story tags as extra search surface but drops the taxonomy ones", async () => {
+  it("ignores story-level Storyblok tags, which categorise rather than describe", async () => {
     mockStories([
       story({
         tag_list: ["Projects", "Websites", "Riso"],
@@ -112,7 +112,7 @@ describe("getSearchIndex", () => {
 
     const [document] = await getSearchIndex();
 
-    expect(document.tags).toEqual(["Print", "Riso"]);
+    expect(document.tags).toEqual(["Print"]);
     expect(document.tagValues).toEqual(["print"]);
   });
 

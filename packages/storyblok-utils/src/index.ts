@@ -8,6 +8,7 @@ export type {
   SbBlokName,
   SbBlokRegistry,
   SbButtonData,
+  SbButtonGroupData,
   SbCalloutData,
   SbCodeBlockData,
   SbConfigData,

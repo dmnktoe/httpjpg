@@ -1,6 +1,7 @@
 export { SbAccordion, type SbAccordionProps } from "./components/accordion/SbAccordion";
 export { SbBadges, type SbBadgesProps } from "./components/badges/SbBadges";
 export { SbButton, type SbButtonProps } from "./components/button/SbButton";
+export { SbButtonGroup, type SbButtonGroupProps } from "./components/button-group/SbButtonGroup";
 export { SbCallout, type SbCalloutProps } from "./components/callout/SbCallout";
 export { SbCodeBlock, type SbCodeBlockProps } from "./components/code-block/SbCodeBlock";
 export { SbContainer, type SbContainerProps } from "./components/container/SbContainer";

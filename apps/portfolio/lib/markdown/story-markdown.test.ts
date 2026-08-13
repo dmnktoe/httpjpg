@@ -212,3 +212,215 @@ describe("storyContentToMarkdown", () => {
     expect(() => storyContentToMarkdown(page(loop))).not.toThrow();
   });
 });
+
+describe("storyContentToMarkdown · structural bloks", () => {
+  it("walks a work story's body the same way it walks a page", () => {
+    const markdown = storyContentToMarkdown({
+      component: "work",
+      body: [{ component: "paragraph", text: "A project." }],
+    });
+
+    expect(markdown).toBe("A project.");
+  });
+
+  it("descends into a grid and its items", () => {
+    const markdown = storyContentToMarkdown(
+      page({
+        component: "grid",
+        items: [
+          {
+            component: "grid_item",
+            content: [{ component: "paragraph", text: "Cell." }],
+          },
+        ],
+      }),
+    );
+
+    expect(markdown).toBe("Cell.");
+  });
+
+  it("renders a marquee as its plain text", () => {
+    expect(storyContentToMarkdown(page({ component: "marquee", text: "Rolling." }))).toBe(
+      "Rolling.",
+    );
+  });
+
+  it("clamps a heading deeper than h6", () => {
+    expect(storyContentToMarkdown(page({ component: "headline", text: "Deep", level: "9" }))).toBe(
+      "###### Deep",
+    );
+  });
+
+  it("drops a headline with no text", () => {
+    expect(storyContentToMarkdown(page({ component: "headline", level: "2" }))).toBe("");
+  });
+});
+
+describe("storyContentToMarkdown · lists and stats", () => {
+  it("numbers an ordered list", () => {
+    const markdown = storyContentToMarkdown(
+      page({
+        component: "list",
+        ordered: true,
+        items: [
+          { component: "list_item", text: "First" },
+          { component: "list_item", text: "Second" },
+        ],
+      }),
+    );
+
+    expect(markdown).toBe("1. First\n2. Second");
+  });
+
+  it("skips a list item with no text rather than emitting a bare bullet", () => {
+    const markdown = storyContentToMarkdown(
+      page({
+        component: "list",
+        items: [{ component: "list_item", text: "Kept" }, { component: "list_item" }],
+      }),
+    );
+
+    expect(markdown).toBe("- Kept");
+  });
+
+  it("renders stats as a list, with the caption in brackets", () => {
+    const markdown = storyContentToMarkdown(
+      page({
+        component: "stats",
+        items: [
+          { component: "stat_item", value: "12", label: "Projects", caption: "since 2019" },
+          { component: "stat_item", value: "3", label: "Awards" },
+        ],
+      }),
+    );
+
+    expect(markdown).toBe("- 12 — Projects (since 2019)\n- 3 — Awards");
+  });
+
+  it("drops a stat with neither value nor label", () => {
+    expect(
+      storyContentToMarkdown(page({ component: "stats", items: [{ component: "stat_item" }] })),
+    ).toBe("");
+  });
+
+  it("renders badges as inline images and drops the ones with no source", () => {
+    const markdown = storyContentToMarkdown(
+      page({
+        component: "badges",
+        items: [
+          { component: "badge_item", src: "https://img.example/a.svg", alt: "build" },
+          { component: "badge_item", alt: "nothing" },
+        ],
+      }),
+    );
+
+    expect(markdown).toBe("![build](https://img.example/a.svg)");
+  });
+});
+
+describe("storyContentToMarkdown · links and dividers", () => {
+  it("renders a link with its URL", () => {
+    const markdown = storyContentToMarkdown(
+      page({
+        component: "link",
+        text: "Read more",
+        link: { linktype: "url", url: "https://example.com" },
+      }),
+    );
+
+    expect(markdown).toBe("[Read more](https://example.com)");
+  });
+
+  it("falls back to bare text when a button has no destination", () => {
+    expect(storyContentToMarkdown(page({ component: "button", text: "Press" }))).toBe("Press");
+  });
+
+  it("drops a link with no text", () => {
+    expect(
+      storyContentToMarkdown(
+        page({ component: "link", link: { linktype: "url", url: "https://example.com" } }),
+      ),
+    ).toBe("");
+  });
+
+  it("renders a divider as a rule, or as its label when it has one", () => {
+    expect(storyContentToMarkdown(page({ component: "divider" }))).toBe("---");
+    expect(storyContentToMarkdown(page({ component: "divider", label: "· · ·" }))).toBe("· · ·");
+  });
+});
+
+describe("storyContentToMarkdown · media", () => {
+  it("renders a scroll-clip image like an ordinary one", () => {
+    const markdown = storyContentToMarkdown(
+      page({
+        component: "scroll_clip_image",
+        image: { filename: "https://a.storyblok.com/f/1/x.jpg", alt: "Fallback" },
+      }),
+    );
+
+    expect(markdown).toBe("![Fallback](https://a.storyblok.com/f/1/x.jpg)");
+  });
+
+  it("prefers the blok's own alt over the asset's", () => {
+    const markdown = storyContentToMarkdown(
+      page({
+        component: "image",
+        alt: "Chosen",
+        image: { filename: "https://a.storyblok.com/f/1/x.jpg", alt: "Fallback" },
+      }),
+    );
+
+    expect(markdown).toBe("![Chosen](https://a.storyblok.com/f/1/x.jpg)");
+  });
+
+  it("drops an image blok with no asset", () => {
+    expect(storyContentToMarkdown(page({ component: "image" }))).toBe("");
+  });
+
+  it("links a video by its uploaded asset when no URL is set", () => {
+    const markdown = storyContentToMarkdown(
+      page({ component: "video", video: { filename: "https://a.storyblok.com/f/1/v.mp4" } }),
+    );
+
+    expect(markdown).toBe("[Video](https://a.storyblok.com/f/1/v.mp4)");
+  });
+
+  it("emits nothing for a video with neither a URL nor an asset", () => {
+    expect(storyContentToMarkdown(page({ component: "video" }))).toBe("");
+  });
+});
+
+describe("storyContentToMarkdown · code and music", () => {
+  it("labels a fenced block with its filename", () => {
+    const markdown = storyContentToMarkdown(
+      page({
+        component: "code_block",
+        filename: "index.ts",
+        language: "ts",
+        code: "const a = 1;\n",
+      }),
+    );
+
+    expect(markdown).toBe("**index.ts**\n\n```ts\nconst a = 1;\n```");
+  });
+
+  it("drops a code block with no code", () => {
+    expect(storyContentToMarkdown(page({ component: "code_block", language: "ts" }))).toBe("");
+  });
+
+  it("links a track when it has a source, and names it plainly when it does not", () => {
+    expect(
+      storyContentToMarkdown(
+        page({ component: "music_player", title: "Track", artist: "Someone", src: "/a.mp3" }),
+      ),
+    ).toBe("- [Track — Someone](/a.mp3)");
+
+    expect(storyContentToMarkdown(page({ component: "music_player", title: "Track" }))).toBe(
+      "- Track",
+    );
+  });
+
+  it("drops a music player with neither title nor artist", () => {
+    expect(storyContentToMarkdown(page({ component: "music_player", src: "/a.mp3" }))).toBe("");
+  });
+});

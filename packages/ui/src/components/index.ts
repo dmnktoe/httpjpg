@@ -50,6 +50,8 @@ export * from "./shimmering-text/shimmering-text";
 export * from "./slideshow/slideshow";
 export * from "./stack/stack";
 export * from "./stats/stats";
+export * from "./tag/tag";
+export * from "./tag/tag-button";
 export * from "./tooltip/tooltip";
 export * from "./video/video";
 export * from "./work-card/work-card";

@@ -210,7 +210,7 @@ export const formatYear = (date?: string) =>
   ```
 
 - **Hooks** → `function useFoo()` (React's rules apply).
-- **No default exports** anywhere outside `apps/portfolio/app/**` — Next.js App Router requires defaults for `page.tsx` / `layout.tsx` / `loading.tsx` / `error.tsx` / `not-found.tsx` / `route.ts`, and nowhere else.
+- **No default exports** outside two places that require them. Next.js App Router needs a default in `apps/portfolio/app/**` for `page.tsx` / `layout.tsx` / `loading.tsx` / `error.tsx` / `not-found.tsx` / `route.ts`. Storybook's CSF format needs `export default meta` in `apps/storybook/**/*.stories.tsx`. Nowhere else.
 - **One exported component per file.** Subcomponents either go in sibling files (preferred when ≥ 30 lines or reused) or stay private and unexported.
 - **File layout inside a component file:** exports first (props interface → component), then private subcomponents, then helpers, then static constants, then types-only.
 

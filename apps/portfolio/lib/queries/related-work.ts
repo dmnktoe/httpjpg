@@ -1,8 +1,14 @@
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { workTagLabels } from "@httpjpg/storyblok-utils";
+import { getResponsiveImage, workTagLabels } from "@httpjpg/storyblok-utils";
 
+import type { SearchMedia } from "../search/ranking";
 import { relatedDocuments } from "../search/related";
 import { getSearchIndex } from "./search-index";
+
+/** The crop the cards are laid out at, so the box and the cut file cannot drift. */
+export const RELATED_CARD_ASPECT_RATIO = "4/3";
+
+const CARD_WIDTHS = [320, 480, 640, 960, 1280];
 
 export interface RelatedWorkItem {
   id: string;
@@ -10,6 +16,7 @@ export interface RelatedWorkItem {
   href: string;
   date?: string;
   thumb?: string;
+  thumbSrcSet?: string;
   sharedTags: string[];
 }
 
@@ -39,7 +46,9 @@ export async function getRelatedWork(href: string, limit = 3): Promise<RelatedWo
         title: document.title,
         href: document.href,
         date: document.date,
-        thumb: document.media?.find((item) => item.kind === "image" && item.thumb)?.thumb,
+        ...cardImage(
+          document.media?.find((item) => item.kind === "image" && (item.source || item.thumb)),
+        ),
         sharedTags: workTagLabels(document.sharedTags),
       })),
     };
@@ -48,4 +57,22 @@ export async function getRelatedWork(href: string, limit = 3): Promise<RelatedWo
     captureServerException(error, { tags: { query: "related-work" } });
     return EMPTY;
   }
+}
+
+/** A document indexed before `source` existed falls back to its 200px thumbnail. */
+function cardImage(media: SearchMedia | undefined): Pick<RelatedWorkItem, "thumb" | "thumbSrcSet"> {
+  if (!media) {
+    return {};
+  }
+  if (!media.source) {
+    return { thumb: media.thumb };
+  }
+
+  const { src, srcSet } = getResponsiveImage(media.source, {
+    widths: CARD_WIDTHS,
+    aspectRatio: RELATED_CARD_ASPECT_RATIO,
+    focus: media.focus,
+  });
+
+  return { thumb: src, thumbSrcSet: srcSet || undefined };
 }

@@ -52,6 +52,35 @@ describe("RelatedWork", () => {
     expect(screen.getByText("Swift · iOS")).toBeInTheDocument();
   });
 
+  it("renders the width candidates alongside sizes", () => {
+    render(
+      <RelatedWork
+        tags={["Swift"]}
+        related={[
+          {
+            ...ITEM,
+            thumb: "https://a.storyblok.com/f/1/x/abc/shot.jpg/m/1280x960/filters:quality(75)",
+            thumbSrcSet:
+              "https://a.storyblok.com/f/1/x/abc/shot.jpg/m/320x240/filters:quality(75) 320w, " +
+              "https://a.storyblok.com/f/1/x/abc/shot.jpg/m/1280x960/filters:quality(75) 1280w",
+          },
+        ]}
+      />,
+    );
+
+    const image = document.querySelector("img");
+
+    expect(image).toHaveAttribute("srcset", expect.stringContaining("1280w"));
+    expect(image).toHaveAttribute("sizes", "(min-width: 768px) 33vw, 100vw");
+  });
+
+  it("renders a neighbour that has no image", () => {
+    render(<RelatedWork tags={["Swift"]} related={[ITEM]} />);
+
+    expect(document.querySelector("img")).toBeNull();
+    expect(screen.getByRole("link", { name: /Field Recorder/ })).toBeInTheDocument();
+  });
+
   it("shows the tag row on its own when nothing shares a tag", () => {
     render(<RelatedWork tags={["Swift"]} related={[]} />);
 

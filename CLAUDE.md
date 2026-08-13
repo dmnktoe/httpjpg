@@ -375,6 +375,26 @@ Tags are a controlled vocabulary, not free text, because three spellings of "Typ
 
 ---
 
+## Machine-readable Site
+
+Three routes serve the site to something other than a browser. All of them read the same search index, so publishing a story invalidates them along with everything else.
+
+- **`/llms.txt`** is the site in one plain-text file, per llmstxt.org: work and pages, each linking to its Markdown mirror, plus the feeds.
+- **`<path>.md`** is any page as Markdown, rewritten onto `/api/md/*` in `next.config.ts` (`/index.md` for the home story). `storyContentToMarkdown()` walks the blok tree and `richTextToMarkdown()` handles rich text — both keep structure, unlike `collectStoryText()`, which flattens for search. An unknown blok falls through to its children rather than becoming a hole. **Published content only**: draft mode deliberately does not apply, so a preview cookie can never turn the mirror into a leak.
+- **`/log/feed.xml`** is the activity timeline as RSS, behind the same `rss_feed_enabled` flag as `/work/feed.xml`.
+
+---
+
+## Now, Log, Status
+
+- **One source, two views.** `getActivitySources()` in `lib/queries/activity.ts` reads published work plus Letterboxd, Discogs and PSN. `/now` shows the head of each source, `/log` shows `mergeActivity()` of all of them — so the two pages can never disagree about what the latest anything is.
+- **Every source may fail.** `settle()` turns a rejection into an empty list and records an `ActivityIssue`. `/now` and `/log` ignore the issues — a dead feed just costs its section — and `/status` reports them, which is the difference between "nothing to show" and "the feed is down".
+- **Third-party calls are cached here, not at the route.** The widget routes lean on `widgetCacheHeaders`; a server-rendered page has no such shield, so `activity.ts` wraps them in `unstable_cache`. Never call an integration straight from a page render.
+- **`/status` separates probed from configured.** A green dot means something was actually called this request; Ask and Spotify are reported from configuration only, because probing them costs a model call or a token refresh per page view. The vitals block is the visitor's own page load, labelled as such — nothing stores vitals, so a p75 would be invented.
+- **`/now` and `/log` are in the sitemap but not the nav** — the nav comes from the Storyblok config, so they need `menu_link` entries. `/status` is `noindex` and deliberately stays out of the sitemap.
+
+---
+
 ## Page-wide Audio
 
 Audio outlives a page change, the way the iOS app's `AudioPlayerModel` does.

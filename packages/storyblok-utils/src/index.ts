@@ -45,6 +45,7 @@ export { getResponsiveImage } from "./image-processing";
 export type { ResponsiveImage, ResponsiveImageOptions } from "./image-processing";
 export { firstImageFilename, isVideoAsset, toSlideshowImage } from "./media-utils";
 export { validateStoryblokPreviewToken } from "./preview";
+export { richTextToMarkdown } from "./richtext-markdown";
 export type {
   StoryblokApiResponse,
   StoryblokBlokData,

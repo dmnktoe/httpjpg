@@ -44,7 +44,6 @@ describe("sitemap", () => {
 
     const entries = await sitemap();
 
-    // Home page is unshifted to the front.
     expect(entries[0].url).toBe("https://example.test");
     expect(entries.some((e) => e.url === "https://example.test/about")).toBe(true);
     const work = entries.find((e) => e.url === "https://example.test/work/project");
@@ -78,9 +77,19 @@ describe("sitemap", () => {
     });
 
     const entries = await sitemap();
-    // Only the home entry survives the filters.
-    expect(entries).toHaveLength(1);
-    expect(entries[0].url).toBe("https://example.test");
+    expect(entries.map((entry) => entry.url)).toEqual([
+      "https://example.test",
+      "https://example.test/now",
+      "https://example.test/log",
+    ]);
+  });
+
+  it("never lists /status, which is noindex", async () => {
+    getStories.mockResolvedValueOnce({ stories: [] });
+
+    const entries = await sitemap();
+
+    expect(entries.some((entry) => entry.url.endsWith("/status"))).toBe(false);
   });
 
   it("falls back to a minimal sitemap and reports on error", async () => {
@@ -88,8 +97,11 @@ describe("sitemap", () => {
 
     const entries = await sitemap();
 
-    expect(entries).toHaveLength(1);
-    expect(entries[0].url).toBe("https://example.test");
+    expect(entries.map((entry) => entry.url)).toEqual([
+      "https://example.test",
+      "https://example.test/now",
+      "https://example.test/log",
+    ]);
     expect(captureServerException).toHaveBeenCalledOnce();
   });
 });

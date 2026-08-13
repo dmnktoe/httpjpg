@@ -99,6 +99,10 @@ export default async (): Promise<NextConfig> => {
       return [
         { source: "/draft", destination: "/api/draft" },
         { source: "/exit-draft", destination: "/api/exit-draft" },
+        // Markdown mirror of every page. `/index.md` is the home story, which
+        // has no path segment of its own to rewrite.
+        { source: "/index.md", destination: "/api/md/home" },
+        { source: "/:path*.md", destination: "/api/md/:path*" },
       ];
     },
 

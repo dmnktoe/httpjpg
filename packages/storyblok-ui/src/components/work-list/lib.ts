@@ -1,27 +1,31 @@
 import { renderStoryblokRichText } from "@httpjpg/storyblok-richtext";
-import { type StoryblokImage, toSlideshowImage } from "@httpjpg/storyblok-utils";
+import { type StoryblokImage, toSlideshowImage, workTagLabels } from "@httpjpg/storyblok-utils";
 
 export interface WorkStory {
   uuid?: string;
   name: string;
   slug: string;
   full_slug: string;
-  tag_list?: string[];
   content?: {
     title?: string;
     description?: unknown;
     images?: StoryblokImage[];
+    tags?: string[];
     date?: string;
     date_end?: string;
   };
 }
 
 const BASE_URL = "/work";
-const TAXONOMY_TAGS = new Set(["Projects", "Websites"]);
 
+/**
+ * Chips come from `content.tags`, the curated vocabulary — never from the
+ * story's `tag_list`, which is the Projects/Websites taxonomy the header nav
+ * sorts by and says nothing about what a work is.
+ */
 export function toWorkCardProps(story: WorkStory) {
   const title = story.content?.title || story.name;
-  const tags = story.tag_list?.filter((t) => !TAXONOMY_TAGS.has(t));
+  const tags = workTagLabels(story.content?.tags);
   return {
     slug: story.slug,
     title,
@@ -32,7 +36,7 @@ export function toWorkCardProps(story: WorkStory) {
     date: story.content?.date,
     dateEnd: story.content?.date_end,
     baseUrl: BASE_URL,
-    tags: tags?.length ? tags : undefined,
+    tags: tags.length ? tags : undefined,
   };
 }
 

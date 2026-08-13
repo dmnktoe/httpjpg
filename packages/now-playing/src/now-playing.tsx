@@ -1,7 +1,7 @@
 "use client";
 
 import { type ExtractedColor, extractVibrantColor } from "@httpjpg/spotify";
-import { zIndex } from "@httpjpg/tokens";
+import { colors, zIndex } from "@httpjpg/tokens";
 import { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 
@@ -75,7 +75,7 @@ export function NowPlaying({
   const finalVibrantColor = vibrantColor || extractedColor?.withAlpha(0.9);
   const finalTextColor = textColor || extractedColor?.textColor || "white";
   const hasVibrantColor = !!finalVibrantColor && !isExtracting;
-  const glowColor = hasVibrantColor ? finalVibrantColor : "rgba(163, 163, 163, 0.6)";
+  const glowColor = hasVibrantColor ? finalVibrantColor : IDLE_GLOW;
   const midGlow = dimmable?.withAlpha(0.4) || finalVibrantColor;
   const outerGlow = dimmable?.withAlpha(0.2) || finalVibrantColor;
   const hasArtwork = isLoading || Boolean(artwork);
@@ -84,6 +84,18 @@ export function NowPlaying({
     <>
       <style>
         {`
+          [data-now-playing] {
+            --np-idle-glow: ${mix(colors.neutral[400], 0.6)};
+            --np-idle-shadow: ${mix(colors.neutral[400], 0.3)};
+            --np-skeleton-base: ${mix(colors.neutral[400], 0.8)};
+            --np-skeleton-sheen: ${mix(colors.neutral[300], 0.8)};
+          }
+          [data-theme="dark"] [data-now-playing] {
+            --np-idle-glow: ${mix(colors.neutral[700], 0.6)};
+            --np-idle-shadow: ${mix(colors.neutral[700], 0.3)};
+            --np-skeleton-base: ${mix(colors.neutral[700], 0.8)};
+            --np-skeleton-sheen: ${mix(colors.neutral[600], 0.8)};
+          }
           @keyframes skeleton-shimmer {
             0% {
               background-position: -200% 0;
@@ -138,6 +150,7 @@ export function NowPlaying({
         <div
           ref={nodeRef}
           data-draggable="true"
+          data-now-playing=""
           style={{
             position: "fixed",
             bottom: 40,
@@ -159,7 +172,7 @@ export function NowPlaying({
               borderRadius: "9999px",
               boxShadow: hasVibrantColor
                 ? `0 0 25px 0 ${midGlow}, 0 0 50px 0 ${outerGlow}`
-                : "0 0 15px 0 rgba(163, 163, 163, 0.3)",
+                : "0 0 15px 0 var(--np-idle-shadow)",
               zIndex: -1,
               transition: "background 0.6s ease-in-out, box-shadow 0.6s ease-in-out",
             }}
@@ -189,7 +202,7 @@ export function NowPlaying({
                   overflow: "hidden",
                   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
                   backgroundImage: isLoading
-                    ? "linear-gradient(90deg, rgba(163, 163, 163, 0.8) 0%, rgba(200, 200, 200, 0.8) 50%, rgba(163, 163, 163, 0.8) 100%)"
+                    ? "linear-gradient(90deg, var(--np-skeleton-base) 0%, var(--np-skeleton-sheen) 50%, var(--np-skeleton-base) 100%)"
                     : undefined,
                   backgroundSize: "200% 100%",
                   animation: isLoading ? "skeleton-shimmer 2s ease-in-out infinite" : undefined,
@@ -290,3 +303,14 @@ export function NowPlaying({
     </>
   );
 }
+
+/** A palette hex at `alpha`, so the CSS keeps the token instead of a hand-converted rgba. */
+function mix(hex: string, alpha: number): string {
+  return `color-mix(in srgb, ${hex} ${alpha * 100}%, transparent)`;
+}
+
+/**
+ * The neutral glow shown before a colour is extracted. It resolves through the
+ * custom property above, so it follows the page theme wherever it is passed in.
+ */
+export const IDLE_GLOW = "var(--np-idle-glow)";

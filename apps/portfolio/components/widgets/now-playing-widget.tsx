@@ -1,7 +1,7 @@
 "use client";
 
 import { trackNowPlayingClick } from "@httpjpg/analytics";
-import { NowPlaying } from "@httpjpg/now-playing";
+import { IDLE_GLOW, NowPlaying } from "@httpjpg/now-playing";
 import { useNowPlaying } from "@httpjpg/spotify";
 import { Box } from "@httpjpg/ui";
 import dynamic from "next/dynamic";
@@ -18,7 +18,6 @@ const PREMIUM_ARTWORK =
 const ERROR_ARTWORK =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ef4444' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='30' font-weight='bold' text-anchor='middle' dy='.35em' fill='white'%3E╳_╳%3C/text%3E%3C/svg%3E";
 
-const IDLE_COLOR = "rgba(163, 163, 163, 0.6)";
 const DANGER_COLOR = "rgba(239, 68, 68, 0.9)";
 const DANGER_TEXT_COLOR = "#ef4444";
 
@@ -47,7 +46,7 @@ function NowPlayingWidgetComponent() {
           title: "╳╳ premium missing 🫪 ╳╳",
           artist: "⋄ ⋄ ⋄ (spotify(no_premium)) ⋄ ⋄ ⋄",
           artwork: PREMIUM_ARTWORK,
-          vibrantColor: IDLE_COLOR,
+          vibrantColor: IDLE_GLOW,
           textColor: DANGER_TEXT_COLOR,
         }
       : errorCode
@@ -81,7 +80,7 @@ function NowPlayingWidgetComponent() {
             isPlaying={data?.isPlaying || false}
             isLoading={isLoading}
             autoExtractColor={!!data && !isLoading}
-            vibrantColor={!data || isLoading ? IDLE_COLOR : undefined}
+            vibrantColor={!data || isLoading ? IDLE_GLOW : undefined}
             textColor={!data || isLoading ? "white" : undefined}
           />
         )}

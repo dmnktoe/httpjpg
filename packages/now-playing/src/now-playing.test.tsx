@@ -44,6 +44,19 @@ describe("NowPlaying", () => {
     expect(container.querySelector('[data-draggable="true"]')).not.toBeNull();
   });
 
+  it("scopes its neutral fallbacks to a data attribute so the page theme can flip them", () => {
+    const { container } = render(<NowPlaying title="t" artist="a" autoExtractColor={false} />);
+
+    expect(container.querySelector("[data-now-playing]")).not.toBeNull();
+
+    const style = container.querySelector("style")?.textContent ?? "";
+    expect(style).toContain("[data-now-playing] {");
+    expect(style).toContain('[data-theme="dark"] [data-now-playing] {');
+    // Light keeps neutral.400, dark drops to neutral.700 — same flip direction as pageBorder.
+    expect(style).toContain("#A3A3A3");
+    expect(style).toContain("#404040");
+  });
+
   it("applies the extracted vibrant color when auto extraction is enabled", async () => {
     const { extractVibrantColor } = await import("@httpjpg/spotify");
     vi.mocked(extractVibrantColor).mockResolvedValueOnce({

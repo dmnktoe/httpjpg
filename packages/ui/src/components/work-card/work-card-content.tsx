@@ -4,7 +4,6 @@ import { Box } from "../box/box";
 import { Paragraph } from "../paragraph/paragraph";
 import { VStack } from "../stack/stack";
 import { WorkCardMeta } from "./work-card-meta";
-import { WorkCardTags } from "./work-card-tags";
 
 export function WorkCardContent({
   description,
@@ -12,14 +11,12 @@ export function WorkCardContent({
   dateEnd,
   slug,
   baseUrl,
-  tags,
 }: {
   description?: ReactNode;
   date?: string | Date;
   dateEnd?: string | Date;
   slug: string;
   baseUrl: string;
-  tags?: string[];
 }) {
   return (
     <Box css={{ w: { base: "full", xl: "1/2" } }}>
@@ -40,7 +37,6 @@ export function WorkCardContent({
         )}
         <Box>
           <WorkCardMeta date={date} dateEnd={dateEnd} slug={slug} baseUrl={baseUrl} />
-          {tags && tags.length > 0 && <WorkCardTags tags={tags} />}
         </Box>
       </VStack>
     </Box>

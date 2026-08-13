@@ -1,8 +1,17 @@
 import { Box } from "../box/box";
 import { Icon } from "../icon/icon";
 import type { WorkCardVariant } from "./work-card";
+import { WorkCardTags } from "./work-card-tags";
 
-export function WorkCardTitle({ title, variant }: { title: string; variant: WorkCardVariant }) {
+export function WorkCardTitle({
+  title,
+  variant,
+  tags,
+}: {
+  title: string;
+  variant: WorkCardVariant;
+  tags?: string[];
+}) {
   return (
     <Box
       css={{
@@ -13,6 +22,8 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
       <Box
         as="h3"
         css={{
+          position: "relative",
+          zIndex: "widget",
           lineHeight: 0.9,
           fontFamily: "headline",
           letterSpacing: "tighter",
@@ -44,6 +55,7 @@ export function WorkCardTitle({ title, variant }: { title: string; variant: Work
         />
         {title}
       </Box>
+      {tags && tags.length > 0 && <WorkCardTags tags={tags} />}
     </Box>
   );
 }

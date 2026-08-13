@@ -6,7 +6,8 @@ import { useState } from "react";
  * Tag stories
  *
  * The one chip on the site. `Tag` is the static span a work card renders;
- * `TagButton` is the same shape as a button, used by the work-list filter.
+ * `TagButton` is the same shape as a button, intended for the work-list filter,
+ * which adopts it when that filter is rebuilt.
  * Both share a single `cva` so their padding and radius cannot drift apart.
  */
 const meta = {

@@ -2,6 +2,8 @@ import { LazyMotionProvider } from "@httpjpg/ui";
 import type { Preview } from "@storybook/react-vite";
 import { create } from "storybook/theming/create";
 
+import { setMockPathname } from "./next-navigation-mock";
+
 import "@httpjpg/tokens/dist/tokens.css";
 import "@httpjpg/ui/styles.css";
 
@@ -106,6 +108,7 @@ const preview: Preview = {
   decorators: [
     (Story, context) => {
       const theme = (context.globals.theme as "light" | "dark") ?? "light";
+      setMockPathname((context.parameters.pathname as string | undefined) ?? "/");
       return (
         <LazyMotionProvider>
           <style>

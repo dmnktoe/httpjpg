@@ -31,19 +31,24 @@ function markHref(mark: RichTextMark): string {
   return anchor ? `${base}#${anchor}` : base;
 }
 
-function applyMarks(text: string, marks: RichTextMark[] | undefined): string {
+/**
+ * Takes the raw text and escapes it here rather than at the call site: a code
+ * span is literal, so Markdown never processes escapes inside one and a
+ * pre-escaped `foo_bar` would render its backslash.
+ */
+function applyMarks(raw: string, marks: RichTextMark[] | undefined): string {
   if (!marks?.length) {
-    return text;
+    return escapeText(raw);
   }
 
   if (marks.some((mark) => mark.type === "code")) {
     const link = marks.find((mark) => mark.type === "link");
-    const code = `\`${text.replace(/`/g, "")}\``;
+    const code = `\`${raw.replace(/`/g, "")}\``;
     const href = link ? markHref(link) : "";
     return href ? `[${code}](${href})` : code;
   }
 
-  let out = text;
+  let out = escapeText(raw);
   for (const mark of marks) {
     switch (mark.type) {
       case "bold":
@@ -78,7 +83,7 @@ function renderInline(nodes: RichTextNode[] | undefined): string {
         return "  \n";
       }
       if (node.type === "text") {
-        return applyMarks(escapeText(node.text ?? ""), node.marks);
+        return applyMarks(node.text ?? "", node.marks);
       }
       if (node.type === "emoji") {
         return attrString(node.attrs, "name") ? `:${attrString(node.attrs, "name")}:` : "";

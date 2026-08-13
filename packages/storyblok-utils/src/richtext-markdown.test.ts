@@ -205,3 +205,173 @@ describe("richTextToMarkdown", () => {
     expect(markdown).toBe("Kept");
   });
 });
+
+describe("richTextToMarkdown · links", () => {
+  it("falls back to the url attribute when there is no href", () => {
+    const markdown = richTextToMarkdown(
+      doc(paragraph(text("Elsewhere", [{ type: "link", attrs: { url: "https://example.com" } }]))),
+    );
+
+    expect(markdown).toBe("[Elsewhere](https://example.com)");
+  });
+
+  it("appends an anchor to the destination", () => {
+    const markdown = richTextToMarkdown(
+      doc(
+        paragraph(text("Section", [{ type: "link", attrs: { href: "/about", anchor: "team" } }])),
+      ),
+    );
+
+    expect(markdown).toBe("[Section](/about#team)");
+  });
+
+  it("roots a story link that is missing its leading slash", () => {
+    const markdown = richTextToMarkdown(
+      doc(
+        paragraph(text("Work", [{ type: "link", attrs: { href: "work/x", linktype: "story" } }])),
+      ),
+    );
+
+    expect(markdown).toBe("[Work](/work/x)");
+  });
+
+  it("leaves a story link that already has one alone", () => {
+    const markdown = richTextToMarkdown(
+      doc(
+        paragraph(text("Work", [{ type: "link", attrs: { href: "/work/x", linktype: "story" } }])),
+      ),
+    );
+
+    expect(markdown).toBe("[Work](/work/x)");
+  });
+
+  it("drops a link mark with no destination, keeping the text", () => {
+    const markdown = richTextToMarkdown(
+      doc(paragraph(text("Bare", [{ type: "link", attrs: {} }]))),
+    );
+
+    expect(markdown).toBe("Bare");
+  });
+
+  it("links inline code when it carries both marks", () => {
+    const markdown = richTextToMarkdown(
+      doc(
+        paragraph(
+          text("npm i", [{ type: "code" }, { type: "link", attrs: { href: "https://npmjs.com" } }]),
+        ),
+      ),
+    );
+
+    expect(markdown).toBe("[`npm i`](https://npmjs.com)");
+  });
+
+  it("strips backticks out of inline code so the span cannot break", () => {
+    const markdown = richTextToMarkdown(doc(paragraph(text("a`b", [{ type: "code" }]))));
+
+    expect(markdown).toBe("`ab`");
+  });
+
+  // A code span is literal in Markdown, so an escape inside one renders as a
+  // backslash rather than disappearing.
+  it("leaves inline code unescaped", () => {
+    const markdown = richTextToMarkdown(doc(paragraph(text("foo_bar[0]", [{ type: "code" }]))));
+
+    expect(markdown).toBe("`foo_bar[0]`");
+  });
+
+  it("still escapes the same characters in prose", () => {
+    expect(richTextToMarkdown(doc(paragraph(text("foo_bar"))))).toBe("foo\\_bar");
+  });
+});
+
+describe("richTextToMarkdown · headings and nodes", () => {
+  it("clamps a heading deeper than six", () => {
+    const markdown = richTextToMarkdown(
+      doc({ type: "heading", attrs: { level: 9 }, content: [text("Deep")] }),
+    );
+
+    expect(markdown).toBe("###### Deep");
+  });
+
+  it("falls back to h1 for a level that is not a number", () => {
+    const markdown = richTextToMarkdown(
+      doc({ type: "heading", attrs: { level: "nope" }, content: [text("Odd")] }),
+    );
+
+    expect(markdown).toBe("# Odd");
+  });
+
+  it("drops an empty heading", () => {
+    expect(richTextToMarkdown(doc({ type: "heading", attrs: { level: 2 }, content: [] }))).toBe("");
+  });
+
+  it("renders an emoji by its shortcode", () => {
+    const markdown = richTextToMarkdown(
+      doc(paragraph(text("hi "), { type: "emoji", attrs: { name: "wave" } })),
+    );
+
+    expect(markdown).toBe("hi :wave:");
+  });
+
+  it("drops an emoji with no name", () => {
+    const markdown = richTextToMarkdown(doc(paragraph(text("hi"), { type: "emoji", attrs: {} })));
+
+    expect(markdown).toBe("hi");
+  });
+
+  it("descends into an unrecognised inline node instead of dropping its text", () => {
+    const markdown = richTextToMarkdown(
+      doc(paragraph({ type: "something_new", content: [text("Kept")] })),
+    );
+
+    expect(markdown).toBe("Kept");
+  });
+
+  it("gives an image its title when one is set", () => {
+    const markdown = richTextToMarkdown(
+      doc({ type: "image", attrs: { src: "https://img/a.jpg", alt: "Alt", title: "Titled" } }),
+    );
+
+    expect(markdown).toBe('![Alt](https://img/a.jpg "Titled")');
+  });
+
+  it("drops an image with no source", () => {
+    expect(richTextToMarkdown(doc({ type: "image", attrs: { alt: "Alt" } }))).toBe("");
+  });
+
+  it("emits nothing for a stray hard break at block level", () => {
+    expect(richTextToMarkdown(doc({ type: "hard_break" }))).toBe("");
+  });
+});
+
+describe("richTextToMarkdown · lists", () => {
+  it("indents the continuation lines of a multi-block list item", () => {
+    const markdown = richTextToMarkdown(
+      doc({
+        type: "bullet_list",
+        content: [
+          {
+            type: "list_item",
+            content: [paragraph(text("First")), paragraph(text("Second"))],
+          },
+        ],
+      }),
+    );
+
+    expect(markdown).toBe("- First\n\n  Second");
+  });
+
+  it("skips an empty list item rather than emitting a bare bullet", () => {
+    const markdown = richTextToMarkdown(
+      doc({
+        type: "ordered_list",
+        content: [
+          { type: "list_item", content: [paragraph(text("Kept"))] },
+          { type: "list_item", content: [] },
+        ],
+      }),
+    );
+
+    expect(markdown).toBe("1. Kept");
+  });
+});

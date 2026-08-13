@@ -32,6 +32,7 @@ export const layoutBlocks: BlockDef[] = [
           "paragraph",
           "richtext",
           "button",
+          "button_group",
           "divider",
           "link",
           "icon",

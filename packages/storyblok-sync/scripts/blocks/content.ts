@@ -82,6 +82,20 @@ const STATS_ALIGN_OPTIONS = [
   { name: "Center", value: "center" },
 ];
 
+const BUTTON_GROUP_DIRECTION_OPTIONS = [
+  { name: "Row", value: "row" },
+  { name: "Column", value: "column" },
+];
+
+const BUTTON_GROUP_ALIGN_OPTIONS = labelize(["start", "center", "end"] as const);
+
+const BUTTON_GROUP_JUSTIFY_OPTIONS = [
+  { name: "Start", value: "start" },
+  { name: "Center", value: "center" },
+  { name: "End", value: "end" },
+  { name: "Space Between", value: "between" },
+];
+
 const BADGE_ALIGN_OPTIONS = [
   { name: "Start", value: "start" },
   { name: "Center", value: "center" },
@@ -185,6 +199,34 @@ export const contentBlocks: BlockDef[] = [
       ),
       disabled: field.boolean("Disabled"),
       link: field.multilink("Link"),
+    }),
+  },
+  {
+    name: "button_group",
+    display_name: "Button Group",
+    group: "Content",
+    icon: "block-button",
+    color: "#667eea",
+    schema: withSpacing({
+      buttons: field.bloks("Buttons", { required: true, whitelist: ["button"] }),
+      direction: field.options("Direction", BUTTON_GROUP_DIRECTION_OPTIONS, {
+        default_value: "row",
+      }),
+      align: field.options("Vertical Align", BUTTON_GROUP_ALIGN_OPTIONS, {
+        default_value: "center",
+      }),
+      justify: field.options("Row Alignment", BUTTON_GROUP_JUSTIFY_OPTIONS, {
+        default_value: "start",
+      }),
+      gap: field.datasource("Gap", "spacing-options"),
+      wrap: field.boolean("Wrap", "true", {
+        description: "Let the buttons break onto a new line when the row runs out of space.",
+        tooltip: true,
+      }),
+      stretch: field.boolean("Fill Available Width", "false", {
+        description: "Buttons share the width equally instead of hugging their labels.",
+        tooltip: true,
+      }),
     }),
   },
   {

@@ -36,6 +36,18 @@ describe("collectStoryMedia", () => {
     expect(media[0].thumb).toContain("/m/200x0/");
   });
 
+  it("carries the unprocessed asset and its focal point", () => {
+    const media = collectStoryMedia({
+      component: "page",
+      body: [{ ...IMAGE_BLOK, image: { ...IMAGE_BLOK.image, focus: "1x1:2x2" } }],
+    });
+
+    expect(media[0]).toMatchObject({
+      source: "https://a.storyblok.com/f/1/2x2/abc/print.jpeg",
+      focus: "1x1:2x2",
+    });
+  });
+
   it("falls back to the caption when the image has no alt text", () => {
     const media = collectStoryMedia({
       component: "image",

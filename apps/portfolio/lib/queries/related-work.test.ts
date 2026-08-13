@@ -11,6 +11,8 @@ import { getSearchIndex } from "./search-index";
 
 const mockGetSearchIndex = vi.mocked(getSearchIndex);
 
+const ASSET = "https://a.storyblok.com/f/1/1600x1200/abc/shot.jpg";
+
 function doc(id: string, tagValues: string[], overrides: Partial<SearchDocument> = {}) {
   return {
     id,
@@ -50,20 +52,92 @@ describe("getRelatedWork", () => {
     expect(related[0]).toMatchObject({ title: "other", href: "/work/other", sharedTags: ["iOS"] });
   });
 
-  it("carries the first image thumbnail across", async () => {
+  it("cuts the first image to card widths", async () => {
     mockGetSearchIndex.mockResolvedValue([
       doc("current", ["ios"]),
       doc("other", ["ios"], {
         media: [
           { id: "a", kind: "audio", thumb: "", label: "track" },
-          { id: "b", kind: "image", thumb: "https://img.example/x.jpg", label: "shot" },
+          {
+            id: "b",
+            kind: "image",
+            thumb: `${ASSET}/m/200x0/filters:quality(75)`,
+            source: ASSET,
+            label: "shot",
+          },
         ],
       }),
     ]);
 
     const { related } = await getRelatedWork("/work/current");
 
-    expect(related[0]?.thumb).toBe("https://img.example/x.jpg");
+    expect(related[0]?.thumb).toBe(`${ASSET}/m/1280x960/filters:quality(75)`);
+    expect(related[0]?.thumbSrcSet).toContain(`${ASSET}/m/320x240/filters:quality(75) 320w`);
+    expect(related[0]?.thumbSrcSet).toContain(`${ASSET}/m/1280x960/filters:quality(75) 1280w`);
+  });
+
+  it("keeps the focal point across the wider crop", async () => {
+    mockGetSearchIndex.mockResolvedValue([
+      doc("current", ["ios"]),
+      doc("other", ["ios"], {
+        media: [
+          { id: "b", kind: "image", thumb: "", source: ASSET, focus: "100x50:101x51", label: "" },
+        ],
+      }),
+    ]);
+
+    const { related } = await getRelatedWork("/work/current");
+
+    expect(related[0]?.thumb).toContain("focal(100x50:1280x960)");
+  });
+
+  it("falls back to the indexed thumbnail when the document predates `source`", async () => {
+    mockGetSearchIndex.mockResolvedValue([
+      doc("current", ["ios"]),
+      doc("other", ["ios"], {
+        media: [{ id: "b", kind: "image", thumb: "https://img.example/x.jpg", label: "shot" }],
+      }),
+    ]);
+
+    const { related } = await getRelatedWork("/work/current");
+
+    expect(related[0]).toMatchObject({ thumb: "https://img.example/x.jpg" });
+    expect(related[0]?.thumbSrcSet).toBeUndefined();
+  });
+
+  it("leaves an external asset unresized", async () => {
+    mockGetSearchIndex.mockResolvedValue([
+      doc("current", ["ios"]),
+      doc("other", ["ios"], {
+        media: [
+          {
+            id: "b",
+            kind: "image",
+            thumb: "https://img.example/x.jpg",
+            source: "https://img.example/x.jpg",
+            label: "shot",
+          },
+        ],
+      }),
+    ]);
+
+    const { related } = await getRelatedWork("/work/current");
+
+    expect(related[0]).toMatchObject({ thumb: "https://img.example/x.jpg" });
+    expect(related[0]?.thumbSrcSet).toBeUndefined();
+  });
+
+  it("gives a neighbour with no image no thumbnail", async () => {
+    mockGetSearchIndex.mockResolvedValue([
+      doc("current", ["ios"]),
+      doc("other", ["ios"], {
+        media: [{ id: "a", kind: "audio", thumb: "", label: "track" }],
+      }),
+    ]);
+
+    const { related } = await getRelatedWork("/work/current");
+
+    expect(related[0]?.thumb).toBeUndefined();
   });
 
   it("returns nothing for a path that is not in the index", async () => {

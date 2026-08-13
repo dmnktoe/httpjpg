@@ -61,6 +61,8 @@ function imageFromAsset(asset: AssetLike, id: string, label: string): SearchMedi
     id,
     kind: "image",
     thumb: imagePreset.thumb(asset.filename, asset.focus),
+    source: asset.filename,
+    focus: asset.focus,
     label: label || asset.alt || asset.title || "",
   };
 }
@@ -87,6 +89,8 @@ function collectFromBlok(blok: BlokLike): SearchMedia[] {
           id: uid,
           kind: "video",
           thumb: imagePreset.thumb(blok.poster.filename, blok.poster.focus),
+          source: blok.poster.filename,
+          focus: blok.poster.focus,
           label: captionText(blok.caption) || text(blok.poster.alt),
         },
       ];
@@ -110,6 +114,7 @@ function collectFromBlok(blok: BlokLike): SearchMedia[] {
           // Tracks without artwork still belong in the strip — the palette
           // draws a glyph tile for them rather than dropping the track.
           thumb: artwork ? imagePreset.thumb(artwork) : "",
+          source: artwork || undefined,
           label: trackLabel(blok),
         },
       ];

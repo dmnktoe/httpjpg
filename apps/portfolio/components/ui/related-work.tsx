@@ -1,6 +1,9 @@
 import { Box, Image, Link, Tag } from "@httpjpg/ui";
 
-import type { RelatedWork as RelatedWorkData } from "@/lib/queries/related-work";
+import {
+  RELATED_CARD_ASPECT_RATIO,
+  type RelatedWork as RelatedWorkData,
+} from "@/lib/queries/related-work";
 
 export interface RelatedWorkProps extends RelatedWorkData {
   /**
@@ -67,7 +70,14 @@ function TagRow({ tags }: { tags: string[] }) {
   );
 }
 
-function RelatedItem({ title, href, date, thumb, sharedTags }: RelatedWorkData["related"][number]) {
+function RelatedItem({
+  title,
+  href,
+  date,
+  thumb,
+  thumbSrcSet,
+  sharedTags,
+}: RelatedWorkData["related"][number]) {
   const year = date ? new Date(date).getFullYear() : null;
 
   return (
@@ -84,7 +94,14 @@ function RelatedItem({ title, href, date, thumb, sharedTags }: RelatedWorkData["
         }}
       >
         {thumb && (
-          <Image src={thumb} alt="" aspectRatio="4/3" sizes="(min-width: 768px) 33vw, 100vw" />
+          <Image
+            src={thumb}
+            srcSet={thumbSrcSet}
+            alt=""
+            aspectRatio={RELATED_CARD_ASPECT_RATIO}
+            sizes="(min-width: 768px) 33vw, 100vw"
+            loading="lazy"
+          />
         )}
         <Box
           css={{

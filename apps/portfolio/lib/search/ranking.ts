@@ -2,8 +2,15 @@
 export interface SearchMedia {
   id: string;
   kind: "image" | "video" | "audio";
-  /** Thumbnail URL. Empty for a track whose artwork the editor left blank. */
+  /** 200px-wide thumbnail URL. Empty for a track whose artwork the editor left blank. */
   thumb: string;
+  /**
+   * The unprocessed asset, so a consumer rendering wider than the strip can cut
+   * its own. Optional for the same reason `tagValues` is: `unstable_cache` keeps
+   * serving the previous build's documents for up to an hour after a deploy.
+   */
+  source?: string;
+  focus?: string;
   label: string;
 }
 

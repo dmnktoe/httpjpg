@@ -55,6 +55,15 @@ const DOCUMENTS: SearchDocument[] = [
   },
 ];
 
+const EXTERNAL_DOCUMENT: SearchDocument = {
+  id: "2",
+  href: "https://example.com/elsewhere",
+  title: "Elsewhere",
+  kind: "work",
+  tags: [],
+  excerpt: "brutalist somewhere else",
+};
+
 function post(body: unknown, init?: { signal?: AbortSignal }): NextRequest {
   return new NextRequest("http://localhost/api/ask", {
     method: "POST",
@@ -103,6 +112,51 @@ describe("POST /api/ask", () => {
       { type: "delta", text: "Hello" },
       { type: "delta", text: " there" },
     ]);
+  });
+
+  it("offers the first cited source as a navigate action once the answer ends", async () => {
+    mockStream.mockImplementation(yields("It is the site itself", " [1]."));
+
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+
+    expect(lines.at(-1)).toEqual({
+      type: "action",
+      action: {
+        type: "navigate",
+        href: "/work/brutalist-portfolio",
+        title: "Brutalist Portfolio",
+        kind: "work",
+      },
+    });
+  });
+
+  it("sends no action when the answer cites nothing", async () => {
+    mockStream.mockImplementation(yields("I am not sure."));
+
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+
+    expect(lines.some((line) => line.type === "action")).toBe(false);
+  });
+
+  it("sends no action when the cited source is external", async () => {
+    mockGetSearchIndex.mockResolvedValue([EXTERNAL_DOCUMENT]);
+    mockStream.mockImplementation(yields("Over there [1]."));
+
+    const lines = await readLines(await POST(post({ question: "brutalist" })));
+
+    expect(lines.some((line) => line.type === "action")).toBe(false);
+  });
+
+  it("sends no action when the answer failed mid-stream", async () => {
+    mockStream.mockImplementation(async function* generate() {
+      yield "Partly [1]";
+      throw new GroqApiError(500, "upstream exploded");
+    });
+
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+
+    expect(lines.some((line) => line.type === "action")).toBe(false);
+    expect(lines.at(-1)).toMatchObject({ type: "error" });
   });
 
   it("grounds the prompt in the ranked sources", async () => {

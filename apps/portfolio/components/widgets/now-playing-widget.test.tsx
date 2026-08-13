@@ -12,6 +12,7 @@ vi.mock("@httpjpg/spotify", () => ({
 }));
 
 vi.mock("@httpjpg/now-playing", () => ({
+  IDLE_GLOW: "var(--np-idle-glow)",
   NowPlaying: ({ title, artist }: { title?: string; artist?: string }) => (
     <div>
       <span>{title}</span>

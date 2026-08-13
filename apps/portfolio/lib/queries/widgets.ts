@@ -49,6 +49,7 @@ export interface FeatureFlags {
   webVitalsBadgeEnabled: boolean;
   buildBadgeEnabled: boolean;
   prevNextWorkEnabled: boolean;
+  relatedWorkEnabled: boolean;
   rssFeedEnabled: boolean;
 }
 
@@ -59,6 +60,7 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
     webVitalsBadgeEnabled: config?.web_vitals_badge_enabled ?? false,
     buildBadgeEnabled: config?.build_badge_enabled ?? false,
     prevNextWorkEnabled: config?.prev_next_work_enabled ?? true,
+    relatedWorkEnabled: config?.related_work_enabled ?? true,
     rssFeedEnabled: config?.rss_feed_enabled ?? true,
   };
 }

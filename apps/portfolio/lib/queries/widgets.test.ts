@@ -97,6 +97,7 @@ describe("getFeatureFlags", () => {
       webVitalsBadgeEnabled: false,
       buildBadgeEnabled: false,
       prevNextWorkEnabled: true,
+      relatedWorkEnabled: true,
       rssFeedEnabled: true,
     });
   });
@@ -107,6 +108,7 @@ describe("getFeatureFlags", () => {
       web_vitals_badge_enabled: true,
       build_badge_enabled: true,
       prev_next_work_enabled: false,
+      related_work_enabled: false,
       rss_feed_enabled: false,
     } as never);
     await expect(getFeatureFlags()).resolves.toEqual({
@@ -114,6 +116,7 @@ describe("getFeatureFlags", () => {
       webVitalsBadgeEnabled: true,
       buildBadgeEnabled: true,
       prevNextWorkEnabled: false,
+      relatedWorkEnabled: false,
       rssFeedEnabled: false,
     });
   });

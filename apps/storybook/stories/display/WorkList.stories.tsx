@@ -1,7 +1,7 @@
 import { Box, Headline, Paragraph, WorkList } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
+import { MOCK_TAGGED_WORKS, OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
 /**
  * WorkList component stories
@@ -278,6 +278,42 @@ export const WithASCIIDividers: Story = {
 export const Empty: Story = {
   args: {
     works: [],
+  },
+};
+
+/**
+ * The tag filter, collapsed. It offers only the tags the listed works actually
+ * carry, ordered most-used first, and filtering removes the non-matching cards
+ * from the tree rather than hiding them with CSS.
+ */
+export const WithTagFilter: Story = {
+  args: {
+    works: MOCK_TAGGED_WORKS,
+    showTagFilter: true,
+  },
+};
+
+/**
+ * The same filter over a grid rather than a stack.
+ */
+export const TagFilterInGrid: Story = {
+  args: {
+    works: MOCK_TAGGED_WORKS,
+    showTagFilter: true,
+    columns: 1,
+    columnsMd: 2,
+    columnsLg: 3,
+  },
+};
+
+/**
+ * Asked for, but no listed work carries a tag — the bar renders nothing rather
+ * than an empty control. This is what an untagged space looks like.
+ */
+export const TagFilterWithoutTags: Story = {
+  args: {
+    works: sampleWorks.slice(0, 3),
+    showTagFilter: true,
   },
 };
 

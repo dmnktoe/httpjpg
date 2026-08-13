@@ -285,7 +285,8 @@ export const contentBlocks: BlockDef[] = [
           { default_value: "default" },
         ),
         enableTagFilter: field.boolean("Show Tag Filter Bar", "false", {
-          description: "Renders a filter bar from the comma-separated tags on each card.",
+          description:
+            "Adds a collapsible filter above the list, offering the Tags the listed work actually carries. Nothing renders until those work stories have tags.",
           tooltip: true,
         }),
       }),

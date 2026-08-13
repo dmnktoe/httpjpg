@@ -24,7 +24,7 @@ export interface WorkCardProps {
   /** Marks the card's first slide as the LCP image. */
   priority?: boolean;
   sizes?: string;
-  /** Rendered as inline chips and surfaced as `data-tags` for `<WorkTagFilter>`. */
+  /** Display labels from the curated vocabulary. Rendered as inline chips. */
   tags?: string[];
   /** ASCII sparkle overlay on each slide. @default "random" */
   overlay?: OverlayPattern;
@@ -55,11 +55,9 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
     ref,
   ) => {
     const showDescription = variant !== "compact";
-    const tagAttr = tags?.length ? `,${tags.join(",")},` : undefined;
     return (
       <Box
         ref={ref}
-        data-tags={tagAttr}
         css={{
           display: "flex",
           flexDirection: "column",

@@ -2,7 +2,11 @@ import { fireEvent, render, screen } from "@testing-library/react";
 
 import { WorkTagFilter } from "./work-tag-filter";
 
-const TAGS = ["TypeScript", "React", "Print"];
+const TAGS = [
+  { tag: "TypeScript", count: 4 },
+  { tag: "React", count: 2 },
+  { tag: "Print", count: 1 },
+];
 
 describe("WorkTagFilter", () => {
   it("renders nothing when there are no tags to offer", () => {
@@ -16,7 +20,7 @@ describe("WorkTagFilter", () => {
 
     const toggle = screen.getByRole("button", { name: /filter/i });
     expect(toggle).toHaveAttribute("aria-expanded", "false");
-    expect(screen.queryByRole("button", { name: "TypeScript" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^TypeScript/ })).not.toBeInTheDocument();
   });
 
   it("counts the available tags on the collapsed toggle", () => {
@@ -40,20 +44,54 @@ describe("WorkTagFilter", () => {
       "aria-expanded",
       "true",
     );
-    expect(screen.getByRole("button", { name: "TypeScript" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^TypeScript/ })).toBeInTheDocument();
+  });
+
+  it("shows each tag's work count in decorative digits", () => {
+    render(<WorkTagFilter tags={TAGS} active={null} onChange={() => {}} defaultExpanded />);
+
+    expect(screen.getByRole("button", { name: /^TypeScript/ })).toHaveTextContent("५");
+    expect(screen.getByRole("button", { name: /^React/ })).toHaveTextContent("ϩ");
+    expect(screen.getByRole("button", { name: /^Print/ })).toHaveTextContent("𝟙");
+  });
+
+  it("keeps the plain count in the accessible name, since the glyphs do not read", () => {
+    render(<WorkTagFilter tags={TAGS} active={null} onChange={() => {}} defaultExpanded />);
+
+    expect(screen.getByRole("button", { name: /^React\W+2$/ })).toBeInTheDocument();
+  });
+
+  it("counts every work on the all button", () => {
+    render(
+      <WorkTagFilter
+        tags={TAGS}
+        active={null}
+        totalCount={7}
+        onChange={() => {}}
+        defaultExpanded
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: /^all/ })).toHaveTextContent("7");
+  });
+
+  it("leaves the all button uncounted when no total is given", () => {
+    render(<WorkTagFilter tags={TAGS} active={null} onChange={() => {}} defaultExpanded />);
+
+    expect(screen.getByRole("button", { name: "all" })).toBeInTheDocument();
   });
 
   it("starts open when asked", () => {
     render(<WorkTagFilter tags={TAGS} active={null} onChange={() => {}} defaultExpanded />);
 
-    expect(screen.getByRole("button", { name: "React" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^React/ })).toBeInTheDocument();
   });
 
   it("reports a chosen tag", () => {
     const onChange = vi.fn();
     render(<WorkTagFilter tags={TAGS} active={null} onChange={onChange} defaultExpanded />);
 
-    fireEvent.click(screen.getByRole("button", { name: "React" }));
+    fireEvent.click(screen.getByRole("button", { name: /^React/ }));
 
     expect(onChange).toHaveBeenCalledWith("React");
   });
@@ -62,7 +100,7 @@ describe("WorkTagFilter", () => {
     const onChange = vi.fn();
     render(<WorkTagFilter tags={TAGS} active="React" onChange={onChange} defaultExpanded />);
 
-    fireEvent.click(screen.getByRole("button", { name: "React" }));
+    fireEvent.click(screen.getByRole("button", { name: /^React/ }));
 
     expect(onChange).toHaveBeenCalledWith(null);
   });
@@ -71,7 +109,7 @@ describe("WorkTagFilter", () => {
     const onChange = vi.fn();
     render(<WorkTagFilter tags={TAGS} active="React" onChange={onChange} defaultExpanded />);
 
-    fireEvent.click(screen.getByRole("button", { name: "all" }));
+    fireEvent.click(screen.getByRole("button", { name: /^all/ }));
 
     expect(onChange).toHaveBeenCalledWith(null);
   });
@@ -79,15 +117,15 @@ describe("WorkTagFilter", () => {
   it("marks the all button pressed while nothing is filtered", () => {
     render(<WorkTagFilter tags={TAGS} active={null} onChange={() => {}} defaultExpanded />);
 
-    expect(screen.getByRole("button", { name: "all" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "React" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: /^all/ })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: /^React/ })).toHaveAttribute("aria-pressed", "false");
   });
 
   it("moves the pressed state onto the active tag", () => {
     render(<WorkTagFilter tags={TAGS} active="React" onChange={() => {}} defaultExpanded />);
 
-    expect(screen.getByRole("button", { name: "all" })).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByRole("button", { name: "React" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: /^all/ })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: /^React/ })).toHaveAttribute("aria-pressed", "true");
   });
 
   it("points the toggle at the panel it controls", () => {

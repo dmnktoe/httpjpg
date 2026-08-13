@@ -73,15 +73,15 @@ describe("WorkList · tag filter", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /filter/i }));
 
-    expect(screen.getByRole("button", { name: "React" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Print" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^React/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Print/ })).toBeInTheDocument();
   });
 
   it("removes the non-matching cards from the tree rather than hiding them", () => {
     render(<WorkList works={TAGGED} showTagFilter />);
 
     fireEvent.click(screen.getByRole("button", { name: /filter/i }));
-    fireEvent.click(screen.getByRole("button", { name: "Print" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Print/ }));
 
     expect(screen.getByText("Alpha")).toBeInTheDocument();
     expect(screen.queryByText("Beta")).not.toBeInTheDocument();
@@ -92,8 +92,8 @@ describe("WorkList · tag filter", () => {
     render(<WorkList works={TAGGED} showTagFilter />);
 
     fireEvent.click(screen.getByRole("button", { name: /filter/i }));
-    fireEvent.click(screen.getByRole("button", { name: "Print" }));
-    fireEvent.click(screen.getByRole("button", { name: "all" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Print/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^all/ }));
 
     expect(screen.getByText("Beta")).toBeInTheDocument();
     expect(screen.getByText("Gamma")).toBeInTheDocument();
@@ -103,7 +103,7 @@ describe("WorkList · tag filter", () => {
     render(<WorkList works={TAGGED} columns={3} showTagFilter />);
 
     fireEvent.click(screen.getByRole("button", { name: /filter/i }));
-    fireEvent.click(screen.getByRole("button", { name: "Print" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Print/ }));
 
     expect(screen.queryByText("Beta")).not.toBeInTheDocument();
   });
@@ -112,7 +112,7 @@ describe("WorkList · tag filter", () => {
     const { rerender } = render(<WorkList works={TAGGED} showTagFilter />);
 
     fireEvent.click(screen.getByRole("button", { name: /filter/i }));
-    fireEvent.click(screen.getByRole("button", { name: "Print" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Print/ }));
     expect(screen.queryByText("Beta")).not.toBeInTheDocument();
 
     rerender(

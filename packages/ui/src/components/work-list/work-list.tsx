@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { forwardRef, useId } from "react";
+import { forwardRef, useMemo, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { AsciiArt } from "../ascii-art/ascii-art";
@@ -10,6 +10,7 @@ import { Box } from "../box/box";
 import { Divider, type DividerProps } from "../divider/divider";
 import { VStack } from "../stack/stack";
 import { WorkCard, type WorkCardProps, type WorkCardVariant } from "../work-card/work-card";
+import { collectWorkTags, filterWorksByTag } from "./lib";
 import { WorkTagFilter } from "./work-tag-filter";
 
 export interface WorkListProps {
@@ -62,6 +63,15 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
     },
     ref,
   ) => {
+    const [selectedTag, setSelectedTag] = useState<string | null>(null);
+    const availableTags = useMemo(() => collectWorkTags(works), [works]);
+
+    // Derived rather than reset in an effect: a Storyblok live edit can drop
+    // the tag that is currently selected, and a stale selection would leave
+    // the list empty with an active chip that no longer exists.
+    const activeTag = selectedTag && availableTags.includes(selectedTag) ? selectedTag : null;
+    const visibleWorks = useMemo(() => filterWorksByTag(works, activeTag), [works, activeTag]);
+
     if (works.length === 0) {
       return (
         <Box ref={ref} css={cssProp} {...props}>
@@ -78,9 +88,8 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
 
     const isStacked = columns === 1 && !columnsMd && !columnsLg;
     const sizes = sizesFromColumns(columns, columnsMd, columnsLg);
-    const listScopeId = `work-list-${useId().replace(/:/g, "")}`;
 
-    const cards = works.map((work, index) => {
+    const cards = visibleWorks.map((work, index) => {
       const cardProps: WorkCardProps = {
         ...work,
         variant: work.variant ?? variant,
@@ -92,7 +101,7 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
         return (
           <VStack key={work.slug || index} gap={0}>
             <WorkCard {...cardProps} />
-            {showDividers && index < works.length - 1 && (
+            {showDividers && index < visibleWorks.length - 1 && (
               <Divider orientation="horizontal" {...dividerProps} />
             )}
           </VStack>
@@ -102,7 +111,7 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
     });
 
     const filterBar = showTagFilter ? (
-      <WorkTagFilter scopeSelector={`[data-work-list="${listScopeId}"]`} />
+      <WorkTagFilter tags={availableTags} active={activeTag} onChange={setSelectedTag} />
     ) : null;
 
     if (isStacked) {
@@ -110,7 +119,7 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
         <Box ref={ref} css={cssProp} {...props}>
           {header}
           {filterBar}
-          <VStack data-work-list={listScopeId} gap={gap} align="stretch">
+          <VStack gap={gap} align="stretch">
             {cards}
           </VStack>
           {footer}
@@ -123,7 +132,6 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
         {header}
         {filterBar}
         <Box
-          data-work-list={listScopeId}
           css={{
             display: "grid",
             gridTemplateColumns: {

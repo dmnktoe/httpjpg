@@ -1,90 +1,111 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useId, useState } from "react";
 import { css } from "styled-system/css";
 
 import { Box } from "../box/box";
-import { HStack } from "../stack/stack";
+import { TagButton } from "../tag/tag-button";
 
 export interface WorkTagFilterProps {
-  scopeSelector?: string;
+  /** Tags to offer, already deduplicated and ordered by the caller. */
+  tags: string[];
+  active: string | null;
+  onChange: (tag: string | null) => void;
+  /** Opens the panel on first render instead of hiding it behind the toggle. */
+  defaultExpanded?: boolean;
 }
 
-const buttonClass = css({
-  px: "2",
+const toggleClass = css({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "2",
+  px: "0",
   py: "1",
   color: "inherit",
   fontFamily: "mono",
   fontSize: "xs",
-  letterSpacing: "0.05em",
+  letterSpacing: "0.1em",
+  textTransform: "uppercase",
   bg: "transparent",
-  border: "1px solid",
-  borderColor: "neutral.300",
-  transition: "all 150ms",
+  border: "none",
+  transitionProperty: "opacity",
+  transitionDuration: "fast",
   cursor: "pointer",
-  _hover: { borderColor: "neutral.700" },
+  _hover: { opacity: 0.6 },
+  _focusVisible: { outline: "2px solid", outlineColor: "primary.500", outlineOffset: "2px" },
 });
 
-const buttonActiveClass = css({ color: "primary.500", borderColor: "primary.500" });
+const bracketClass = css({ userSelect: "none" });
 
-export function WorkTagFilter({ scopeSelector = "[data-work-list]" }: WorkTagFilterProps) {
-  const [tags, setTags] = useState<string[]>([]);
-  const [active, setActive] = useState<string | null>(null);
+const summaryClass = css({ opacity: 0.5, letterSpacing: "0.05em", textTransform: "none" });
 
-  useEffect(() => {
-    const scope = document.querySelector(scopeSelector);
-    if (!scope) {
-      return;
-    }
-    const cards = scope.querySelectorAll<HTMLElement>("[data-tags]");
-    const seen = new Set<string>();
-    cards.forEach((card) => {
-      const raw = card.dataset.tags || "";
-      raw
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean)
-        .forEach((t) => seen.add(t));
-    });
-    setTags([...seen].sort());
-  }, [scopeSelector]);
+/** Names the group for assistive tech; the visible toggle already says "filter". */
+const legendClass = css({
+  position: "absolute",
+  w: "1px",
+  h: "1px",
+  m: "-1px",
+  p: 0,
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  clipPath: "inset(50%)",
+});
 
-  useEffect(() => {
-    const scope = document.querySelector(scopeSelector);
-    if (!scope) {
-      return;
-    }
-    const cards = scope.querySelectorAll<HTMLElement>("[data-tags]");
-    cards.forEach((card) => {
-      const cardTags = (card.dataset.tags || "").split(",").map((t) => t.trim());
-      const visible = !active || cardTags.includes(active);
-      card.style.display = visible ? "" : "none";
-    });
-  }, [active, scopeSelector]);
-
-  const clear = useCallback(() => setActive(null), []);
+export function WorkTagFilter({
+  tags,
+  active,
+  onChange,
+  defaultExpanded = false,
+}: WorkTagFilterProps) {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const panelId = `work-tag-filter-${useId().replace(/:/g, "")}`;
 
   if (tags.length === 0) {
     return null;
   }
 
+  // Collapsed with a filter on would otherwise hide the reason the list is
+  // short, so the toggle line reports it.
+  const summary = active ? `#${active}` : `${tags.length} tags`;
+
   return (
     <Box css={{ mb: "4" }}>
-      <HStack gap="2" css={{ flexWrap: "wrap" }}>
-        <button type="button" onClick={clear} className={!active ? buttonActiveClass : buttonClass}>
+      <button
+        type="button"
+        aria-expanded={isExpanded}
+        aria-controls={panelId}
+        onClick={() => setIsExpanded((expanded) => !expanded)}
+        className={toggleClass}
+      >
+        <span aria-hidden="true" className={bracketClass}>
+          {isExpanded ? "[ − ]" : "[ + ]"}
+        </span>
+        filter
+        <span className={summaryClass}>· {summary}</span>
+      </button>
+
+      <Box
+        as="fieldset"
+        id={panelId}
+        hidden={!isExpanded}
+        css={{ display: "flex", flexWrap: "wrap", gap: "2", m: 0, mt: "3", p: 0, border: "none" }}
+      >
+        <Box as="legend" className={legendClass}>
+          Filter work by tag
+        </Box>
+        <TagButton showMarker={false} isActive={!active} onClick={() => onChange(null)}>
           all
-        </button>
+        </TagButton>
         {tags.map((tag) => (
-          <button
-            type="button"
+          <TagButton
             key={tag}
-            onClick={() => setActive(tag)}
-            className={active === tag ? buttonActiveClass : buttonClass}
+            isActive={active === tag}
+            onClick={() => onChange(active === tag ? null : tag)}
           >
-            #{tag}
-          </button>
+            {tag}
+          </TagButton>
         ))}
-      </HStack>
+      </Box>
     </Box>
   );
 }

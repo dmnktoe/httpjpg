@@ -48,7 +48,7 @@ const meta = {
     },
     tags: {
       control: "object",
-      description: "Inline tags surfaced as `data-tags` for WorkTagFilter",
+      description: "Display labels from the curated work-tag vocabulary",
     },
     overlay: {
       control: { type: "select" as const },

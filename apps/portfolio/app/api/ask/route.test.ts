@@ -29,6 +29,12 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
+const { draftState } = vi.hoisted(() => ({ draftState: { isEnabled: false } }));
+
+vi.mock("next/headers", () => ({
+  draftMode: () => Promise.resolve(draftState),
+}));
+
 import { createGroqClient, GroqApiError } from "@httpjpg/groq";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { NextRequest, NextResponse } from "next/server";
@@ -50,10 +56,21 @@ const DOCUMENTS: SearchDocument[] = [
     title: "Brutalist Portfolio",
     kind: "work",
     tags: ["Websites"],
+    tagValues: [],
     excerpt: "A stark site",
     date: "2026-01-01",
   },
 ];
+
+const EXTERNAL_DOCUMENT: SearchDocument = {
+  id: "2",
+  href: "https://example.com/elsewhere",
+  title: "Elsewhere",
+  kind: "work",
+  tags: [],
+  tagValues: [],
+  excerpt: "brutalist somewhere else",
+};
 
 function post(body: unknown, init?: { signal?: AbortSignal }): NextRequest {
   return new NextRequest("http://localhost/api/ask", {
@@ -81,6 +98,7 @@ function yields(...chunks: string[]) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  draftState.isEnabled = false;
   envObj.GROQ_API_KEY = "test-key";
   mockEnforceRateLimit.mockResolvedValue(null);
   mockGetSearchIndex.mockResolvedValue(DOCUMENTS);
@@ -103,6 +121,51 @@ describe("POST /api/ask", () => {
       { type: "delta", text: "Hello" },
       { type: "delta", text: " there" },
     ]);
+  });
+
+  it("offers the first cited source as a navigate action once the answer ends", async () => {
+    mockStream.mockImplementation(yields("It is the site itself", " [1]."));
+
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+
+    expect(lines.at(-1)).toEqual({
+      type: "action",
+      action: {
+        type: "navigate",
+        href: "/work/brutalist-portfolio",
+        title: "Brutalist Portfolio",
+        kind: "work",
+      },
+    });
+  });
+
+  it("sends no action when the answer cites nothing", async () => {
+    mockStream.mockImplementation(yields("I am not sure."));
+
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+
+    expect(lines.some((line) => line.type === "action")).toBe(false);
+  });
+
+  it("sends no action when the cited source is external", async () => {
+    mockGetSearchIndex.mockResolvedValue([EXTERNAL_DOCUMENT]);
+    mockStream.mockImplementation(yields("Over there [1]."));
+
+    const lines = await readLines(await POST(post({ question: "brutalist" })));
+
+    expect(lines.some((line) => line.type === "action")).toBe(false);
+  });
+
+  it("sends no action when the answer failed mid-stream", async () => {
+    mockStream.mockImplementation(async function* generate() {
+      yield "Partly [1]";
+      throw new GroqApiError(500, "upstream exploded");
+    });
+
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+
+    expect(lines.some((line) => line.type === "action")).toBe(false);
+    expect(lines.at(-1)).toMatchObject({ type: "error" });
   });
 
   it("grounds the prompt in the ranked sources", async () => {
@@ -225,5 +288,40 @@ describe("POST /api/ask", () => {
 
     expect(lines.at(-1)).toEqual({ type: "delta", text: "partial" });
     expect(captureServerException).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/ask · draft mode", () => {
+  it("reads the published index when draft mode is off", async () => {
+    await POST(post({ question: "brutalist" }));
+
+    expect(mockGetSearchIndex).toHaveBeenCalledWith({ draftMode: false });
+  });
+
+  it("reads the draft index when draft mode is on", async () => {
+    draftState.isEnabled = true;
+
+    await POST(post({ question: "brutalist" }));
+
+    expect(mockGetSearchIndex).toHaveBeenCalledWith({ draftMode: true });
+  });
+
+  it("marks an unpublished source so the widget can label it", async () => {
+    draftState.isEnabled = true;
+    mockGetSearchIndex.mockResolvedValue([{ ...DOCUMENTS[0], isDraft: true }]);
+
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+
+    expect(lines[0]).toMatchObject({
+      type: "sources",
+      sources: [expect.objectContaining({ isDraft: true })],
+    });
+  });
+
+  it("leaves the draft flag off a published source", async () => {
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+    const [source] = (lines[0] as { sources: Array<Record<string, unknown>> }).sources;
+
+    expect(source).not.toHaveProperty("isDraft");
   });
 });

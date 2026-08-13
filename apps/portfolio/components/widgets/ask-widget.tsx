@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  type CommandPaletteAction,
   CommandPalette,
   type CommandPaletteMediaItem,
   type CommandPaletteResult,
@@ -10,7 +11,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { readAskStream } from "@/lib/search/ask-stream";
+import { type AskNavigateAction, readAskStream } from "@/lib/search/ask-stream";
 
 export interface AskWidgetProps {
   /** False when the deployment has no Groq key — search still works. */
@@ -28,8 +29,10 @@ interface SearchResponse {
     kind: "work" | "page";
     excerpt?: string;
     media?: CommandPaletteMediaItem[];
+    isDraft?: boolean;
   }>;
   suggestions?: string[];
+  isDraft?: boolean;
 }
 
 export function AskWidget({ askEnabled = true }: AskWidgetProps) {
@@ -40,7 +43,11 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
   const [results, setResults] = useState<CommandPaletteResult[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [answer, setAnswer] = useState("");
-  const [sources, setSources] = useState<Array<{ title: string; href: string }>>([]);
+  const [sources, setSources] = useState<Array<{ title: string; href: string; isDraft?: boolean }>>(
+    [],
+  );
+  const [isDraftMode, setIsDraftMode] = useState(false);
+  const [action, setAction] = useState<AskNavigateAction>();
   const [status, setStatus] = useState<CommandPaletteStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string>();
 
@@ -118,6 +125,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
         }
         setResults(data.results ?? []);
         setSuggestions(data.suggestions ?? []);
+        setIsDraftMode(data.isDraft === true);
         setStatus("idle");
       } catch (error) {
         if (controller.signal.aborted || searchAbort.current !== controller) {
@@ -159,6 +167,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
 
     setAnswer("");
     setSources([]);
+    setAction(undefined);
     setErrorMessage(undefined);
     setStatus("answering");
 
@@ -185,6 +194,8 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
           setSources(event.sources);
         } else if (event.type === "delta") {
           setAnswer((current) => current + event.text);
+        } else if (event.type === "action") {
+          setAction(event.action);
         } else {
           setStatus("error");
           setErrorMessage(
@@ -212,8 +223,17 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     askAbort.current?.abort();
     setAnswer("");
     setSources([]);
+    setAction(undefined);
     setErrorMessage(undefined);
   }, []);
+
+  const handleAction = useCallback(
+    (target: CommandPaletteAction) => {
+      close();
+      router.push(target.href);
+    },
+    [close, router],
+  );
 
   return (
     <CommandPalette
@@ -223,6 +243,8 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
       suggestions={suggestions}
       answer={answer}
       sources={sources}
+      action={action}
+      isDraftMode={isDraftMode}
       status={status}
       errorMessage={errorMessage}
       askEnabled={askEnabled}
@@ -230,6 +252,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
       onClose={close}
       onSelect={handleSelect}
       onAsk={handleAsk}
+      onAction={handleAction}
     />
   );
 }

@@ -1,4 +1,5 @@
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
+import { draftMode } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { getSearchIndex } from "@/lib/queries/search-index";
@@ -25,20 +26,29 @@ export async function GET(request: NextRequest) {
 
   const query = (request.nextUrl.searchParams.get("q") ?? "").slice(0, MAX_QUERY_LENGTH).trim();
   const limit = parseLimit(request.nextUrl.searchParams.get("limit"));
+  const { isEnabled: isDraft } = await draftMode();
 
   if (!query) {
     return NextResponse.json({ results: [], suggestions: [] });
   }
 
   try {
-    const documents = await getSearchIndex();
+    const documents = await getSearchIndex({ draftMode: isDraft });
 
     return NextResponse.json(
       {
         results: rankDocuments(documents, query, limit),
         suggestions: suggestCompletions(documents, query),
+        ...(isDraft ? { isDraft: true } : {}),
       },
-      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
+      {
+        headers: {
+          // A shared cache must never hold a response built from drafts.
+          "Cache-Control": isDraft
+            ? "private, no-store"
+            : "public, s-maxage=300, stale-while-revalidate=600",
+        },
+      },
     );
   } catch (error) {
     console.error("Search API error:", error);

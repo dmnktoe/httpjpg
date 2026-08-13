@@ -1,10 +1,12 @@
 import { env } from "@httpjpg/env";
 import { createGroqClient, GroqApiError } from "@httpjpg/groq";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
+import { draftMode } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { getSearchIndex } from "@/lib/queries/search-index";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { firstCitedSource } from "@/lib/search/citations";
 import { buildAskMessages, MAX_QUESTION_LENGTH } from "@/lib/search/prompt";
 import { rankDocuments } from "@/lib/search/ranking";
 
@@ -23,6 +25,32 @@ interface AskSource {
   title: string;
   href: string;
   kind: "work" | "page";
+  isDraft?: boolean;
+}
+
+interface AskNavigateAction {
+  type: "navigate";
+  href: string;
+  title: string;
+  kind: "work" | "page";
+}
+
+/**
+ * Derived from the finished answer rather than asked of the model: it can only
+ * point at a source it was already handed, so there is no second call to pay
+ * for and no way to invent a destination. External sources are skipped — the
+ * offer is to navigate the site, not to leave it.
+ */
+function navigateAction(answer: string, sources: AskSource[]): AskNavigateAction | null {
+  const cited = firstCitedSource(answer, sources.length);
+  if (cited === null) {
+    return null;
+  }
+  const source = sources[cited - 1];
+  if (!source || !source.href.startsWith("/")) {
+    return null;
+  }
+  return { type: "navigate", href: source.href, title: source.title, kind: source.kind };
 }
 
 export async function POST(request: NextRequest) {
@@ -45,6 +73,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  const { isEnabled: isDraft } = await draftMode();
+
   const question = typeof body.question === "string" ? body.question.trim() : "";
   if (!question) {
     return NextResponse.json({ error: "missing_question" }, { status: 400 });
@@ -56,9 +86,14 @@ export async function POST(request: NextRequest) {
   let sources: AskSource[] = [];
   let messages;
   try {
-    const documents = await getSearchIndex();
+    const documents = await getSearchIndex({ draftMode: isDraft });
     const ranked = rankDocuments(documents, question, MAX_SOURCES);
-    sources = ranked.map(({ title, href, kind }) => ({ title, href, kind }));
+    sources = ranked.map(({ title, href, kind, isDraft: draft }) => ({
+      title,
+      href,
+      kind,
+      ...(draft ? { isDraft: true } : {}),
+    }));
     messages = buildAskMessages(question, ranked);
   } catch (error) {
     console.error("Ask retrieval failed:", error);
@@ -86,9 +121,16 @@ export async function POST(request: NextRequest) {
 
       send({ type: "sources", sources });
 
+      let answer = "";
       try {
         for await (const delta of client.stream(messages, { signal: request.signal })) {
+          answer += delta;
           send({ type: "delta", text: delta });
+        }
+
+        const action = navigateAction(answer, sources);
+        if (action) {
+          send({ type: "action", action });
         }
       } catch (error) {
         if (request.signal.aborted) {

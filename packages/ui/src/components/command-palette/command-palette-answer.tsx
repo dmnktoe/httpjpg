@@ -1,27 +1,42 @@
 "use client";
 
+import type { MouseEvent } from "react";
+
 import { Box } from "../box/box";
+import { Button } from "../button/button";
 import { Link } from "../link/link";
 
 export interface CommandPaletteSource {
   title: string;
   href: string;
+  isDraft?: boolean;
+}
+
+export interface CommandPaletteAction {
+  type: "navigate";
+  href: string;
+  title: string;
+  kind?: "work" | "page";
 }
 
 interface CommandPaletteAnswerProps {
   answer: string;
   sources: CommandPaletteSource[];
+  action?: CommandPaletteAction;
   isStreaming: boolean;
   errorMessage?: string;
   onSourceClick: () => void;
+  onAction?: (action: CommandPaletteAction) => void;
 }
 
 export function CommandPaletteAnswer({
   answer,
   sources,
+  action,
   isStreaming,
   errorMessage,
   onSourceClick,
+  onAction,
 }: CommandPaletteAnswerProps) {
   return (
     <Box
@@ -83,6 +98,20 @@ export function CommandPaletteAnswer({
         </Box>
       )}
 
+      {action && onAction && !errorMessage && (
+        <Box css={{ mt: "3" }}>
+          <Button
+            size="sm"
+            variant="secondary"
+            onMouseDown={(event: MouseEvent) => event.preventDefault()}
+            onClick={() => onAction(action)}
+            css={{ fontFamily: "mono" }}
+          >
+            go to {action.title} →
+          </Button>
+        </Box>
+      )}
+
       {sources.length > 0 && (
         <Box
           css={{
@@ -102,6 +131,7 @@ export function CommandPaletteAnswer({
           {sources.map((source, index) => (
             <Link key={source.href} href={source.href} onClick={onSourceClick}>
               [{index + 1}] {source.title}
+              {source.isDraft && " (draft)"}
             </Link>
           ))}
         </Box>

@@ -71,6 +71,7 @@ const meta = {
     onClose: () => {},
     onSelect: () => {},
     onAsk: () => {},
+    onAction: () => {},
   },
   argTypes: {
     status: {
@@ -182,6 +183,40 @@ export const WithAnswer: Story = {
     results: RESULTS.slice(0, 2),
     answer: ANSWER,
     sources: SOURCES,
+    status: "idle",
+  },
+};
+
+/**
+ * The closing action, derived from the first source the finished answer cites.
+ * It is withheld while the answer is still streaming, and when the answer cites
+ * nothing or cites something off-site.
+ */
+export const WithNavigateAction: Story = {
+  args: {
+    query: "what is this site?",
+    results: RESULTS.slice(0, 2),
+    answer: ANSWER,
+    sources: SOURCES,
+    action: {
+      type: "navigate",
+      href: "/work/brutalist-portfolio",
+      title: "Brutalist Portfolio",
+      kind: "work",
+    },
+    status: "idle",
+  },
+};
+
+/**
+ * Draft mode: the palette is reading unpublished stories, so the footer says so
+ * and any unpublished hit is labelled rather than silently mixed in.
+ */
+export const DraftMode: Story = {
+  args: {
+    query: "poster",
+    results: [{ ...RESULTS[0], isDraft: true }, RESULTS[1]],
+    isDraftMode: true,
     status: "idle",
   },
 };

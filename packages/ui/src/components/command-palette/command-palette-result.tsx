@@ -3,6 +3,7 @@
 import type { MouseEvent } from "react";
 
 import { Box } from "../box/box";
+import { Tag } from "../tag/tag";
 import type { CommandPaletteMediaItem } from "./command-palette-media";
 
 export interface CommandPaletteResult {
@@ -13,6 +14,8 @@ export interface CommandPaletteResult {
   excerpt?: string;
   /** Thumbnails from the page, shown in the palette's media strip. */
   media?: CommandPaletteMediaItem[];
+  /** Marks a result that only exists in draft. */
+  isDraft?: boolean;
 }
 
 interface CommandPaletteResultItemProps {
@@ -71,7 +74,16 @@ export function CommandPaletteResultItem({
         {result.kind}
       </Box>
       <Box css={{ minW: 0 }}>
-        <Box css={{ fontFamily: "sans", fontSize: "md", fontWeight: "bold" }}>{result.title}</Box>
+        <Box css={{ display: "flex", alignItems: "center", gap: "2" }}>
+          <Box as="span" css={{ fontFamily: "sans", fontSize: "md", fontWeight: "bold" }}>
+            {result.title}
+          </Box>
+          {result.isDraft && (
+            <Tag showMarker={false} css={{ flexShrink: 0, px: "2", color: "inherit" }}>
+              draft
+            </Tag>
+          )}
+        </Box>
         {result.excerpt && (
           <Box
             css={{

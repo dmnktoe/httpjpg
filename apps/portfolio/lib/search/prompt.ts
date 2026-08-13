@@ -11,6 +11,7 @@ const SYSTEM_PROMPT = [
   "- Cite the sources you used as bracketed numbers, e.g. [1] or [1][3].",
   "- Answer in at most three short sentences. No preamble, no sign-off.",
   "- Reply in the language the question was asked in.",
+  "- A source marked `status: draft` is not published yet. You may use it, but say so.",
 ].join("\n");
 
 /** Hard cap on question length. */
@@ -21,6 +22,9 @@ export function buildAskMessages(question: string, sources: SearchDocument[]): G
   const context = sources
     .map((source, index) => {
       const parts = [`[${index + 1}] ${source.title}`, `path: ${source.href}`];
+      if (source.isDraft) {
+        parts.push("status: draft");
+      }
       if (source.tags.length > 0) {
         parts.push(`tags: ${source.tags.join(", ")}`);
       }

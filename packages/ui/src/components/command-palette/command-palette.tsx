@@ -9,13 +9,23 @@ import { css } from "styled-system/css";
 import { useBodyScrollLock } from "../../lib/use-body-scroll-lock";
 import { Box } from "../box/box";
 import { Button } from "../button/button";
-import { CommandPaletteAnswer, type CommandPaletteSource } from "./command-palette-answer";
+import { Tag } from "../tag/tag";
+import {
+  type CommandPaletteAction,
+  CommandPaletteAnswer,
+  type CommandPaletteSource,
+} from "./command-palette-answer";
 import { CommandPaletteInput } from "./command-palette-input";
 import { CommandPaletteMedia, type CommandPaletteMediaItem } from "./command-palette-media";
 import { type CommandPaletteResult, CommandPaletteResultItem } from "./command-palette-result";
 import { CommandPaletteSuggestions } from "./command-palette-suggestions";
 
-export type { CommandPaletteMediaItem, CommandPaletteResult, CommandPaletteSource };
+export type {
+  CommandPaletteAction,
+  CommandPaletteMediaItem,
+  CommandPaletteResult,
+  CommandPaletteSource,
+};
 
 /** Wide enough for a three-sentence answer, narrow enough to stay scannable. */
 const MAX_WIDTH = "640px";
@@ -38,6 +48,9 @@ export interface CommandPaletteProps {
   /** The answer text so far. Grows token by token while status is `answering`. */
   answer?: string;
   sources?: CommandPaletteSource[];
+  action?: CommandPaletteAction;
+  /** Search and ask are reading unpublished stories. */
+  isDraftMode?: boolean;
   status?: CommandPaletteStatus;
   errorMessage?: string;
   /** Hides the "ask" affordance when the deployment has no AI key. @default true */
@@ -47,6 +60,7 @@ export interface CommandPaletteProps {
   onClose: () => void;
   onSelect: (result: CommandPaletteResult) => void;
   onAsk: (question: string) => void;
+  onAction?: (action: CommandPaletteAction) => void;
 }
 
 export function CommandPalette({
@@ -56,6 +70,8 @@ export function CommandPalette({
   suggestions = [],
   answer = "",
   sources = [],
+  action,
+  isDraftMode = false,
   status = "idle",
   errorMessage,
   askEnabled = true,
@@ -64,6 +80,7 @@ export function CommandPalette({
   onClose,
   onSelect,
   onAsk,
+  onAction,
 }: CommandPaletteProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
@@ -229,8 +246,10 @@ export function CommandPalette({
               <CommandPaletteAnswer
                 answer={answer}
                 sources={sources}
+                action={isStreaming ? undefined : action}
                 isStreaming={isStreaming}
                 onSourceClick={onClose}
+                onAction={onAction}
                 errorMessage={
                   status === "error" ? (errorMessage ?? "The answer failed.") : undefined
                 }
@@ -256,6 +275,7 @@ export function CommandPalette({
               status={status}
               resultCount={results.length}
               canAsk={canAsk}
+              isDraftMode={isDraftMode}
               onAsk={onAsk}
             />
           </m.div>
@@ -272,6 +292,7 @@ interface CommandPaletteFooterProps {
   status: CommandPaletteStatus;
   resultCount: number;
   canAsk: boolean;
+  isDraftMode: boolean;
   onAsk: (question: string) => void;
 }
 
@@ -280,6 +301,7 @@ function CommandPaletteFooter({
   status,
   resultCount,
   canAsk,
+  isDraftMode,
   onAsk,
 }: CommandPaletteFooterProps) {
   return (
@@ -297,8 +319,13 @@ function CommandPaletteFooter({
         borderTop: "1px solid",
       }}
     >
-      <Box as="span" css={{ color: "pageMuted" }}>
+      <Box as="span" css={{ display: "flex", alignItems: "center", gap: "2", color: "pageMuted" }}>
         {statusLabel(status, query, resultCount)}
+        {isDraftMode && (
+          <Tag showMarker={false} css={{ flexShrink: 0, px: "2", color: "inherit" }}>
+            drafts
+          </Tag>
+        )}
       </Box>
       {canAsk && (
         <Button

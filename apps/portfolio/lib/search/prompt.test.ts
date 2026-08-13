@@ -74,3 +74,38 @@ describe("buildAskMessages", () => {
     expect(user.content).not.toContain("y".repeat(601));
   });
 });
+
+describe("buildAskMessages · drafts", () => {
+  it("labels an unpublished source so the model can flag it", () => {
+    const [, user] = buildAskMessages("what is new?", [
+      {
+        id: "1",
+        href: "/work/wip",
+        title: "Work In Progress",
+        kind: "work",
+        tags: [],
+        tagValues: [],
+        excerpt: "",
+        isDraft: true,
+      },
+    ]);
+
+    expect(user.content).toContain("status: draft");
+  });
+
+  it("says nothing about status for a published source", () => {
+    const [, user] = buildAskMessages("what is new?", [
+      {
+        id: "1",
+        href: "/work/live",
+        title: "Live",
+        kind: "work",
+        tags: [],
+        tagValues: [],
+        excerpt: "",
+      },
+    ]);
+
+    expect(user.content).not.toContain("status: draft");
+  });
+});

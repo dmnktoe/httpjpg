@@ -80,7 +80,7 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
           />
         </Box>
 
-        <Box css={{ zIndex: "docked" }}>
+        <Box css={{ zIndex: "widget" }}>
           <Box
             css={{
               display: "flex",
@@ -88,14 +88,13 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
               gap: "2",
             }}
           >
-            <WorkCardTitle title={title} variant={variant} />
+            <WorkCardTitle title={title} variant={variant} tags={tags} />
             <WorkCardContent
               description={showDescription ? description : undefined}
               date={date}
               dateEnd={dateEnd}
               slug={slug}
               baseUrl={baseUrl}
-              tags={tags}
             />
           </Box>
         </Box>

@@ -1,4 +1,4 @@
-import { formatYear } from "./format";
+import { formatGlyphDigits, formatYear } from "./format";
 
 describe("formatYear", () => {
   it("returns null for a missing date", () => {
@@ -28,5 +28,16 @@ describe("formatYear", () => {
   it("respects an explicit timezone offset", () => {
     expect(formatYear("2027-01-01T00:00:00Z")).toBe("2027");
     expect(formatYear("2027-01-01T00:00:00+01:00")).toBe("2026");
+  });
+});
+
+describe("formatGlyphDigits", () => {
+  it("maps every digit onto its lookalike", () => {
+    expect(formatGlyphDigits(1234567890)).toBe("\u{1D7D9}ϩӠ५ƼϬ7\u{1D7E0}९⊘");
+  });
+
+  it("keeps multi-digit counts in order", () => {
+    expect(formatGlyphDigits(0)).toBe("⊘");
+    expect(formatGlyphDigits(12)).toBe("\u{1D7D9}ϩ");
   });
 });

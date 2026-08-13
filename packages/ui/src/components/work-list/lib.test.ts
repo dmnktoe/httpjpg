@@ -10,26 +10,32 @@ describe("collectWorkTags", () => {
     expect(collectWorkTags([work("a"), work("b")])).toEqual([]);
   });
 
-  it("orders the most-used tag first", () => {
+  it("orders the most-used tag first and reports how many works carry it", () => {
     const works = [
       work("a", ["React", "Print"]),
       work("b", ["React"]),
       work("c", ["React", "Print"]),
     ];
 
-    expect(collectWorkTags(works)).toEqual(["React", "Print"]);
+    expect(collectWorkTags(works)).toEqual([
+      { tag: "React", count: 3 },
+      { tag: "Print", count: 2 },
+    ]);
   });
 
   it("breaks ties alphabetically so the order is stable across renders", () => {
     const works = [work("a", ["Zine", "Audio"]), work("b", ["Motion"])];
 
-    expect(collectWorkTags(works)).toEqual(["Audio", "Motion", "Zine"]);
+    expect(collectWorkTags(works).map(({ tag }) => tag)).toEqual(["Audio", "Motion", "Zine"]);
   });
 
   it("counts a tag once per work even when it repeats on one", () => {
     const works = [work("a", ["React", "React"]), work("b", ["Print"])];
 
-    expect(collectWorkTags(works)).toEqual(["Print", "React"]);
+    expect(collectWorkTags(works)).toEqual([
+      { tag: "Print", count: 1 },
+      { tag: "React", count: 1 },
+    ]);
   });
 });
 

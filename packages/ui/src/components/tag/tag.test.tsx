@@ -58,6 +58,15 @@ describe("TagButton", () => {
     expect(onClick).toHaveBeenCalledOnce();
   });
 
+  // TypeScript does not excess-property-check hyphenated JSX attributes, so
+  // omitting `aria-pressed` from the props cannot stop a caller on its own.
+  // Setting it after the spread is what actually keeps it truthful.
+  it("ignores a caller trying to contradict the pressed state", () => {
+    render(<TagButton aria-pressed="true">Print</TagButton>);
+
+    expect(screen.getByRole("button", { name: /Print/ })).toHaveAttribute("aria-pressed", "false");
+  });
+
   it("defaults to type=button so it never submits a form", () => {
     render(<TagButton>Print</TagButton>);
 

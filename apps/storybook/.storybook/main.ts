@@ -37,6 +37,7 @@ const config: StorybookConfig = {
           "styled-system": path.resolve(uiPackagePath, "styled-system"),
           // Mock Next.js Link for Storybook
           "next/link": path.resolve(__dirname, "next-link-mock.tsx"),
+          "next/navigation": path.resolve(__dirname, "next-navigation-mock.ts"),
         },
         preserveSymlinks: false,
       },

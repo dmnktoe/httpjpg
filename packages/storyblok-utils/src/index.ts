@@ -55,6 +55,16 @@ export type {
   StoryblokVideoAsset,
   StoryMetadata,
 } from "./types";
+export {
+  resolveWorkTags,
+  WORK_TAG_DATASOURCE_SLUG,
+  WORK_TAG_GROUPS,
+  WORK_TAGS,
+  workTagByValue,
+  workTagDatasourceEntries,
+  workTagLabels,
+} from "./work-tags";
+export type { WorkTag, WorkTagGroup } from "./work-tags";
 
 /** Storyblok `resolve_relations` slugs. Used by fetchStory / getStories. */
 export const STORYBLOK_RELATIONS = {

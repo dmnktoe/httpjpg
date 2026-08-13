@@ -1,5 +1,6 @@
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { CACHE_TAGS } from "@httpjpg/storyblok-next";
+import { resolveWorkTags } from "@httpjpg/storyblok-utils";
 import { unstable_cache } from "next/cache";
 
 import type { SearchDocument } from "../search/ranking";
@@ -12,12 +13,12 @@ interface IndexableStory {
   slug: string;
   full_slug?: string;
   name: string;
-  tag_list?: string[];
   content?: {
     component?: string;
     title?: string;
     date?: string;
     external_only?: boolean;
+    tags?: string[];
     link?: { url?: string; cached_url?: string };
   } & Record<string, unknown>;
 }
@@ -44,12 +45,18 @@ function toHref(story: IndexableStory): string {
 }
 
 function toSearchDocument(story: IndexableStory): SearchDocument {
+  // Labels are what a visitor reads and what the model is shown; values are
+  // the stable key related work compares. Both come off one resolve so they
+  // can never disagree about which tags a story carries.
+  const curated = resolveWorkTags(story.content?.tags);
+
   return {
     id: story.uuid,
     href: toHref(story),
     title: story.content?.title || story.name,
     kind: story.content?.component === "work" ? "work" : "page",
-    tags: story.tag_list ?? [],
+    tags: curated.map((tag) => tag.label),
+    tagValues: curated.map((tag) => tag.value),
     excerpt: collectStoryText(story.content),
     date: story.content?.date,
     media: collectStoryMedia(story.content),

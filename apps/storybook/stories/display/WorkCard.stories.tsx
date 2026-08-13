@@ -1,7 +1,7 @@
 import { WorkCard } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
+import { MOCK_TAGGED_WORK, OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
 /**
  * WorkCard component stories
@@ -242,6 +242,15 @@ export const Minimal: Story = {
       },
     ],
   },
+};
+
+/**
+ * Tags come from the curated vocabulary in `@httpjpg/storyblok-utils`, resolved
+ * to their labels. The card renders them as `Tag` chips in their authored
+ * casing — `TypeScript`, not `typescript`.
+ */
+export const WithTags: Story = {
+  args: MOCK_TAGGED_WORK,
 };
 
 /**

@@ -361,6 +361,17 @@ The command palette (`⌘K` / `Ctrl+K`) is one feature with two halves, and they
 
 ---
 
+## Work Tags
+
+Tags are a controlled vocabulary, not free text, because three spellings of "TypeScript" are three tags to a ranker and one to a human.
+
+- **The catalog is code.** `WORK_TAGS` in `packages/storyblok-utils/src/work-tags.ts` is the single source of truth: a `value` (stored, stable, never renamed), a `label` (displayed), and a `group`. `sync:datasources` pushes it to the `work-tags` datasource, and the `tags` field on the `work` blok is a datasource-backed multi-select — so the editor picks, never types. Adding a tag: edit the catalog, run `pnpm --filter @httpjpg/storyblok-sync sync:datasources`.
+- **Values and labels do different jobs.** `SearchDocument.tagValues` carries the canonical values; `SearchDocument.tags` carries display labels and is what the UI renders. Search matches both. `resolveWorkTags()` drops anything outside the vocabulary rather than rendering a raw slug, which is what makes retiring a tag safe without a content migration.
+- **`tagValues` is optional on purpose.** The search index is persisted by `unstable_cache`, so for up to an hour after a deploy the previous build's documents are still being served. Every reader has to tolerate their absence.
+- **Story-level Storyblok tags are a separate axis, and load-bearing.** `tag_list` says where a story belongs — `Projects` and `Websites` drive the work-list split and the header nav, and that logic lives in `lib/queries/work.ts`. `content.tags` says what a story is about. Nothing reads `tag_list` for description: cards and the search index render the curated vocabulary only, so the two never mix and renaming a tag in one axis can never disturb the other.
+
+---
+
 ## Page-wide Audio
 
 Audio outlives a page change, the way the iOS app's `AudioPlayerModel` does.

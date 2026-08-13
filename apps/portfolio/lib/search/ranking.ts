@@ -13,7 +13,14 @@ export interface SearchDocument {
   href: string;
   title: string;
   kind: "work" | "page";
+  /** Display labels, e.g. `TypeScript`. What search matches and the UI renders. */
   tags: string[];
+  /**
+   * Canonical vocabulary values, e.g. `typescript`. Optional because
+   * `unstable_cache` keeps serving the previous build's documents for up to an
+   * hour after a deploy, so every reader has to tolerate their absence.
+   */
+  tagValues?: string[];
   excerpt: string;
   date?: string;
   media?: SearchMedia[];
@@ -28,6 +35,7 @@ const WEIGHT = {
   titleExact: 100,
   titlePrefix: 14,
   titleToken: 8,
+  tagExact: 12,
   tagToken: 6,
   excerptToken: 2,
   allTokens: 5,
@@ -52,10 +60,27 @@ export function tokenize(value: string): string[] {
     .filter((token) => token.length >= MIN_TOKEN_LENGTH);
 }
 
+/**
+ * Both spellings of every tag, plus a space-free variant, so `nextjs` finds a
+ * story tagged `Next.js` and `next-js` finds it too.
+ */
+function tagVariants(document: SearchDocument): string[] {
+  const variants = new Set<string>();
+  for (const tag of [...document.tags, ...(document.tagValues ?? [])]) {
+    const normalized = normalize(tag);
+    if (!normalized) {
+      continue;
+    }
+    variants.add(normalized);
+    variants.add(normalized.replace(/\s/g, ""));
+  }
+  return [...variants];
+}
+
 function scoreDocument(document: SearchDocument, query: string, tokens: string[]): number {
   const title = normalize(document.title);
   const excerpt = normalize(document.excerpt);
-  const tags = document.tags.map(normalize);
+  const tags = tagVariants(document);
 
   let score = 0;
   let matched = 0;
@@ -73,7 +98,10 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
       score += title.startsWith(token) ? WEIGHT.titlePrefix : WEIGHT.titleToken;
       hit = true;
     }
-    if (tags.some((tag) => tag.includes(token))) {
+    if (tags.includes(token)) {
+      score += WEIGHT.tagExact;
+      hit = true;
+    } else if (tags.some((tag) => tag.includes(token))) {
       score += WEIGHT.tagToken;
       hit = true;
     }

@@ -25,26 +25,30 @@ describe("toWorkCardProps", () => {
     expect(props.images).toEqual([]);
   });
 
-  it("uses the content title and strips taxonomy tags", () => {
+  it("uses the content title and renders the curated tags as labels", () => {
     const story: WorkStory = {
       name: "Name",
       slug: "s",
       full_slug: "work/s",
-      tag_list: ["Projects", "Cool"],
-      content: { title: "Real Title", date: "2024-01-01" },
+      content: { title: "Real Title", date: "2024-01-01", tags: ["typescript", "react"] },
     };
     const props = toWorkCardProps(story);
     expect(props.title).toBe("Real Title");
-    expect(props.tags).toEqual(["Cool"]);
+    expect(props.tags).toEqual(["TypeScript", "React"]);
     expect(props.date).toBe("2024-01-01");
   });
 
-  it("returns undefined tags when only taxonomy tags remain", () => {
+  it("returns undefined tags when the story carries none", () => {
+    const story: WorkStory = { name: "Name", slug: "s", full_slug: "work/s" };
+    expect(toWorkCardProps(story).tags).toBeUndefined();
+  });
+
+  it("ignores values outside the vocabulary", () => {
     const story: WorkStory = {
       name: "Name",
       slug: "s",
       full_slug: "work/s",
-      tag_list: ["Projects", "Websites"],
+      content: { tags: ["retired-tag"] },
     };
     expect(toWorkCardProps(story).tags).toBeUndefined();
   });

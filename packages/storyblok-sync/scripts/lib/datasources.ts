@@ -1,4 +1,8 @@
-import { CMS_OPTIONS } from "@httpjpg/storyblok-utils";
+import {
+  CMS_OPTIONS,
+  WORK_TAG_DATASOURCE_SLUG,
+  workTagDatasourceEntries,
+} from "@httpjpg/storyblok-utils";
 import { spacing } from "@httpjpg/tokens";
 
 import type { Datasource, DatasourceEntry } from "../../src/index";
@@ -28,6 +32,13 @@ function colorDs(): DatasourceWithEntries {
   };
 }
 
+function workTagsDs(): DatasourceWithEntries {
+  return {
+    datasource: { name: "Work Tags", slug: WORK_TAG_DATASOURCE_SLUG },
+    entries: workTagDatasourceEntries(),
+  };
+}
+
 export function allDatasources(): DatasourceWithEntries[] {
-  return [spacingDs(), colorDs()];
+  return [spacingDs(), colorDs(), workTagsDs()];
 }

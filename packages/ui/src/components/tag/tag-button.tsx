@@ -8,8 +8,12 @@ import type { SystemStyleObject } from "styled-system/types";
 import { tagRecipe } from "./lib";
 import { TagMarker } from "./tag-marker";
 
-export interface TagButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "css"> {
+export interface TagButtonProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "aria-pressed" | "css"
+> {
   children: string;
+  /** Drives both the pressed state and the active styling. */
   isActive?: boolean;
   showMarker?: boolean;
   css?: SystemStyleObject;
@@ -23,13 +27,15 @@ export const TagButton = forwardRef<HTMLButtonElement, TagButtonProps>(function 
     <button
       ref={ref}
       type={type ?? "button"}
-      aria-pressed={isActive}
       className={cx(
         tagRecipe({ interactive: true, active: isActive }),
         cssProp && css(cssProp),
         className,
       )}
       {...props}
+      // After the spread: `isActive` drives the styling, so a caller-supplied
+      // `aria-pressed` could only ever disagree with what is on screen.
+      aria-pressed={isActive}
     >
       {showMarker && <TagMarker />}
       {children}

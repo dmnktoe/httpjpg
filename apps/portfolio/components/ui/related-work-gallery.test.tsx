@@ -12,6 +12,9 @@ const ITEMS = [
     href: "/work/field-recorder",
     date: "2024-01-10",
     thumb: "https://a.storyblok.com/f/1/x/abc/shot.jpg/m/1280x960/filters:quality(75)",
+    thumbSrcSet:
+      "https://a.storyblok.com/f/1/x/abc/shot.jpg/m/320x240/filters:quality(75) 320w, " +
+      "https://a.storyblok.com/f/1/x/abc/shot.jpg/m/1280x960/filters:quality(75) 1280w",
     sharedTags: ["Swift", "iOS"],
   },
   {
@@ -23,68 +26,83 @@ const ITEMS = [
   },
 ];
 
+function clickView(view: "grid" | "list") {
+  fireEvent.click(screen.getByRole("button", { name: new RegExp(view, "i") }));
+}
+
 beforeEach(() => {
   window.localStorage.clear();
 });
 
 describe("RelatedWorkGallery", () => {
-  it("opens on the grid with its images", () => {
+  it("opens on the list, fetching no thumbnails", () => {
     render(<RelatedWorkGallery items={ITEMS} />);
 
+    expect(screen.getByRole("button", { name: /list/i })).toHaveAttribute("aria-pressed", "true");
+    expect(document.querySelector("img")).toBeNull();
+  });
+
+  it("brings the images in for the grid", () => {
+    render(<RelatedWorkGallery items={ITEMS} />);
+
+    clickView("grid");
+
     expect(screen.getByRole("button", { name: /grid/i })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: /list/i })).toHaveAttribute("aria-pressed", "false");
     expect(document.querySelector("img")).toBeInTheDocument();
   });
 
-  it("drops the images for the list", () => {
+  it("hands the browser the width candidates in the grid", () => {
     render(<RelatedWorkGallery items={ITEMS} />);
 
-    fireEvent.click(screen.getByRole("button", { name: /list/i }));
+    clickView("grid");
+    const image = document.querySelector("img");
 
-    expect(screen.getByRole("button", { name: /list/i })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: /grid/i })).toHaveAttribute("aria-pressed", "false");
-    expect(document.querySelector("img")).toBeNull();
+    expect(image).toHaveAttribute("srcset", expect.stringContaining("1280w"));
+    expect(image).toHaveAttribute("sizes", "(min-width: 768px) 33vw, 100vw");
   });
 
   it("keeps every neighbour reachable in both views", () => {
     render(<RelatedWorkGallery items={ITEMS} />);
 
-    fireEvent.click(screen.getByRole("button", { name: /list/i }));
-
     expect(screen.getByRole("link", { name: /Field Recorder/ })).toHaveAttribute(
       "href",
       "/work/field-recorder",
     );
-    expect(screen.getByRole("link", { name: /Healform/ })).toBeInTheDocument();
     expect(screen.getByText("2027")).toBeInTheDocument();
+
+    clickView("grid");
+
+    expect(screen.getByRole("link", { name: /Healform/ })).toBeInTheDocument();
   });
 
-  it("switches back to the grid", () => {
+  it("switches back to the list", () => {
     render(<RelatedWorkGallery items={ITEMS} />);
 
-    fireEvent.click(screen.getByRole("button", { name: /list/i }));
-    fireEvent.click(screen.getByRole("button", { name: /grid/i }));
+    clickView("grid");
+    clickView("list");
 
-    expect(document.querySelector("img")).toBeInTheDocument();
+    expect(document.querySelector("img")).toBeNull();
   });
 
   it("remembers the choice", () => {
     render(<RelatedWorkGallery items={ITEMS} />);
 
-    fireEvent.click(screen.getByRole("button", { name: /list/i }));
+    clickView("grid");
 
-    expect(window.localStorage.getItem(STORAGE_KEY)).toBe("list");
+    expect(window.localStorage.getItem(STORAGE_KEY)).toBe("grid");
   });
 
   it("restores a stored choice on the next page", async () => {
-    window.localStorage.setItem(STORAGE_KEY, "list");
+    window.localStorage.setItem(STORAGE_KEY, "grid");
 
     render(<RelatedWorkGallery items={ITEMS} />);
 
-    expect(await screen.findByRole("button", { name: /list/i })).toHaveAttribute(
+    expect(await screen.findByRole("button", { name: /grid/i })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
-    expect(document.querySelector("img")).toBeNull();
+    expect(document.querySelector("img")).toBeInTheDocument();
   });
 
   it("ignores a stored value that is not a view", () => {
@@ -92,6 +110,6 @@ describe("RelatedWorkGallery", () => {
 
     render(<RelatedWorkGallery items={ITEMS} />);
 
-    expect(screen.getByRole("button", { name: /grid/i })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: /list/i })).toHaveAttribute("aria-pressed", "true");
   });
 });

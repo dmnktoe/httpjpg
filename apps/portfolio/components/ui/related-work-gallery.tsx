@@ -16,15 +16,17 @@ import {
 
 const STORAGE_KEY = "httpjpg:related-work-view";
 
+const DEFAULT_VIEW: RelatedWorkView = "list";
+
 export interface RelatedWorkGalleryProps {
   items: RelatedWorkItem[];
 }
 
 export function RelatedWorkGallery({ items }: RelatedWorkGalleryProps) {
-  const [view, setView] = useState<RelatedWorkView>("grid");
+  const [view, setView] = useState<RelatedWorkView>(DEFAULT_VIEW);
 
   // Read after mount rather than in the initial state: the server cannot know
-  // the stored choice, so a list reader gets one frame of grid instead of a
+  // the stored choice, so a grid reader gets one frame of list instead of a
   // hydration mismatch.
   useEffect(() => {
     const stored = readStoredView();

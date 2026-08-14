@@ -6,19 +6,20 @@ import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
-import { CopyrightLabel, type CopyrightPosition } from "../copyright-label/copyright-label";
-
-const DEFAULT_MAX_CLIP_RATIO = 10;
-const DEFAULT_MAX_SCALE = 1.1;
+import {
+  CopyrightLabel,
+  type CopyrightPosition,
+  isInlineCopyright,
+} from "../copyright-label/copyright-label";
+import { DEFAULT_MAX_CLIP_RATIO, DEFAULT_MAX_SCALE, getEntryProgress, getPinProgress } from "./lib";
+import { ScrollClipBrackets } from "./scroll-clip-brackets";
+import { ScrollClipProgress } from "./scroll-clip-progress";
 
 export interface ScrollClipImageProps {
   src: string;
   alt: string;
-  /** Optional href; when set, the image becomes a link wrapper. */
   href?: string;
-  /** Title for the link (tooltip). */
   title?: string;
-  /** `srcSet` / `sizes` passthrough. */
   srcSet?: string;
   sizes?: string;
   /** CSS aspect-ratio string. @default "16/9" */
@@ -58,59 +59,14 @@ export interface ScrollClipImageProps {
    * @default true
    */
   showProgress?: boolean;
-  /** Copyright text. */
   copyright?: string;
-  /** Asset source/credit, shown as a second line below the copyright. */
   copyrightSource?: string;
   copyrightPosition?: CopyrightPosition;
-  /** Slotted below the image (e.g. caption). */
   children?: ReactNode;
-  /** LCP hint. */
   fetchPriority?: "auto" | "high" | "low";
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
   css?: SystemStyleObject;
   className?: string;
-}
-
-const bracketBaseClass = css({
-  position: "absolute",
-  zIndex: "docked",
-  color: "white",
-  fontFamily: "mono",
-  fontSize: "lg",
-  lineHeight: 1,
-  transition:
-    "opacity 120ms cubic-bezier(.35, 0, 0, 1), transform 200ms cubic-bezier(.35, 0, 0, 1)",
-  pointerEvents: "none",
-  userSelect: "none",
-  textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
-});
-
-function getEntryProgress(rect: DOMRect, viewportHeight: number): number {
-  // 0 = element top at bottom of viewport (entry).
-  // 1 = element center at center of viewport (settled).
-  const startDistance = viewportHeight;
-  const endDistance = (viewportHeight - rect.height) / 2;
-  const travel = startDistance - endDistance;
-  if (travel <= 0) {
-    return rect.top <= endDistance ? 1 : 0;
-  }
-  const consumed = startDistance - rect.top;
-  return Math.max(0, Math.min(1, consumed / travel));
-}
-
-function getPinProgress(rect: DOMRect, viewportHeight: number): number {
-  const travel = rect.height - viewportHeight;
-  if (travel <= 0) {
-    return 1;
-  }
-  if (rect.top >= 0) {
-    return 0;
-  }
-  if (rect.bottom <= viewportHeight) {
-    return 1;
-  }
-  return Math.max(0, Math.min(1, -rect.top / travel));
 }
 
 export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
@@ -154,8 +110,6 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
     }, []);
 
     useEffect(() => {
-      // In pin mode the tracker is the outer scroll wrapper; in non-pin
-      // mode the tracker is the mask element itself.
       const tracker = pin ? trackerRef.current : maskRef.current;
       const mask = maskRef.current;
       if (!tracker || !mask) {
@@ -224,6 +178,9 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
       "--scale-ratio": String(maxScale),
     } as CSSProperties;
 
+    const hasCredit = Boolean(copyright || copyrightSource);
+    const inline = hasCredit && isInlineCopyright(copyrightPosition);
+
     const maskNode = (
       <Box
         ref={maskRef}
@@ -265,82 +222,11 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
           }}
         />
 
-        {brackets && (
-          <>
-            <span
-              aria-hidden="true"
-              className={bracketBaseClass}
-              style={{
-                top: "calc(var(--clip-ratio, 0%) + 6px)",
-                left: "calc(var(--clip-ratio, 0%) + 6px)",
-              }}
-            >
-              ┌
-            </span>
-            <span
-              aria-hidden="true"
-              className={bracketBaseClass}
-              style={{
-                top: "calc(var(--clip-ratio, 0%) + 6px)",
-                right: "calc(var(--clip-ratio, 0%) + 6px)",
-              }}
-            >
-              ┐
-            </span>
-            <span
-              aria-hidden="true"
-              className={bracketBaseClass}
-              style={{
-                bottom: "calc(var(--clip-ratio, 0%) + 6px)",
-                left: "calc(var(--clip-ratio, 0%) + 6px)",
-              }}
-            >
-              └
-            </span>
-            <span
-              aria-hidden="true"
-              className={bracketBaseClass}
-              style={{
-                bottom: "calc(var(--clip-ratio, 0%) + 6px)",
-                right: "calc(var(--clip-ratio, 0%) + 6px)",
-              }}
-            >
-              ┘
-            </span>
-          </>
+        {brackets && <ScrollClipBrackets />}
+        {pin && showProgress && <ScrollClipProgress labelRef={progressLabelRef} />}
+        {inline && (
+          <CopyrightLabel text={copyright} source={copyrightSource} position={copyrightPosition} />
         )}
-
-        {pin && showProgress && (
-          <Box
-            aria-hidden="true"
-            css={{
-              position: "absolute",
-              top: 3,
-              right: 3,
-              zIndex: "docked",
-              color: "white",
-              fontFamily: "mono",
-              fontSize: "xs",
-              letterSpacing: "wider",
-              pointerEvents: "none",
-              userSelect: "none",
-              textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
-            }}
-          >
-            [ <span ref={progressLabelRef}>00</span> / 99 ]
-          </Box>
-        )}
-
-        {(copyright || copyrightSource) &&
-          (copyrightPosition === "inline-white" ||
-            copyrightPosition === "inline-black" ||
-            copyrightPosition === "overlay") && (
-            <CopyrightLabel
-              text={copyright}
-              source={copyrightSource}
-              position={copyrightPosition}
-            />
-          )}
       </Box>
     );
 
@@ -364,9 +250,13 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
       }
     };
 
-    if (pin) {
-      return (
-        <Box css={{ display: "block", width: "100%" }} className={className} ref={outerRef}>
+    const creditBelow = hasCredit && copyrightPosition === "below" && (
+      <CopyrightLabel text={copyright} source={copyrightSource} position="below" />
+    );
+
+    return (
+      <Box css={{ display: "block", width: "100%" }} className={className} ref={outerRef}>
+        {pin ? (
           <Box
             ref={trackerRef}
             style={{ height: `calc(100vh + ${pinDistance})` }}
@@ -387,20 +277,10 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
               <Box css={{ width: "100%" }}>{wrapped}</Box>
             </Box>
           </Box>
-          {(copyright || copyrightSource) && copyrightPosition === "below" && (
-            <CopyrightLabel text={copyright} source={copyrightSource} position="below" />
-          )}
-          {children}
-        </Box>
-      );
-    }
-
-    return (
-      <Box css={{ display: "block", width: "100%" }} className={className} ref={outerRef}>
-        {wrapped}
-        {(copyright || copyrightSource) && copyrightPosition === "below" && (
-          <CopyrightLabel text={copyright} source={copyrightSource} position="below" />
+        ) : (
+          wrapped
         )}
+        {creditBelow}
         {children}
       </Box>
     );

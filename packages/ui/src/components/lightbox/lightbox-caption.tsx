@@ -8,13 +8,6 @@ export interface LightboxCaptionProps {
   copyright?: string;
 }
 
-/**
- * Caption and credit, below the frame rather than over the image.
- *
- * The `inline-*` copyright positions rotate the credit into the image's corner,
- * which works on a cropped thumbnail but fights a contained full-size view — so
- * the lightbox always renders the `below` variant and lets it read straight.
- */
 export function LightboxCaption({ caption, copyright }: LightboxCaptionProps) {
   if (!caption && !copyright) {
     return null;

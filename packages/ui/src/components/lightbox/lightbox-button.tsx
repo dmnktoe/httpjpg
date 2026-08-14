@@ -10,12 +10,6 @@ export interface LightboxButtonProps extends Omit<ButtonHTMLAttributes<HTMLButto
   css?: SystemStyleObject;
 }
 
-/**
- * The lightbox's control surface: a monospace glyph in brackets rather than an
- * `IconButton`, so the chrome reads in the same ASCII register as the rest of
- * the site. Disabled is never used — navigation wraps — but focus is, so the
- * ring has to stay.
- */
 export function LightboxButton({ children, css: cssProp, ...props }: LightboxButtonProps) {
   return (
     <Box

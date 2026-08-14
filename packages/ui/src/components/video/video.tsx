@@ -8,7 +8,11 @@ import { token } from "styled-system/tokens";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
-import { CopyrightLabel, type CopyrightPosition } from "../copyright-label/copyright-label";
+import {
+  CopyrightLabel,
+  type CopyrightPosition,
+  isInlineCopyright,
+} from "../copyright-label/copyright-label";
 import { VideoControls } from "./video-controls";
 
 export type VideoSource = "native" | "youtube" | "vimeo";
@@ -24,7 +28,6 @@ export interface VideoProps extends Omit<VideoHTMLAttributes<HTMLVideoElement>, 
   aspectRatio?: string;
   objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
   copyright?: string;
-  /** Asset source/credit, shown as a second line below the copyright. */
   copyrightSource?: string;
   copyrightPosition?: CopyrightPosition;
   mediaRef?: RefObject<HTMLVideoElement | null>;
@@ -107,7 +110,9 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
 
     useEffect(() => {
       const video = videoRef.current;
-      if (!video) return;
+      if (!video) {
+        return;
+      }
       // React sets the `muted` DOM property unreliably, which can block
       // autoplay; assign it imperatively so muted autoplay is honored.
       video.muted = muted;
@@ -117,11 +122,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
     }, [muted]);
 
     const hasCredit = Boolean(copyright || copyrightSource);
-    const inline =
-      hasCredit &&
-      (copyrightPosition === "inline-white" ||
-        copyrightPosition === "inline-black" ||
-        copyrightPosition === "overlay");
+    const inline = hasCredit && isInlineCopyright(copyrightPosition);
 
     let media: React.ReactNode;
     if (source === "youtube") {

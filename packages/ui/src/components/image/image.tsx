@@ -6,7 +6,11 @@ import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
-import { CopyrightLabel, type CopyrightPosition } from "../copyright-label/copyright-label";
+import {
+  CopyrightLabel,
+  type CopyrightPosition,
+  isInlineCopyright,
+} from "../copyright-label/copyright-label";
 
 const skeletonClass = css({
   position: "absolute",
@@ -29,12 +33,10 @@ export interface ImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "c
   aspectRatio?: string;
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
   copyright?: string;
-  /** Asset source/credit, shown as a second line below the copyright. */
   copyrightSource?: string;
   copyrightPosition?: CopyrightPosition;
   blurOnLoad?: boolean;
   blurDataURL?: string;
-  /** Set `"high"` on the LCP image. */
   fetchPriority?: "auto" | "high" | "low";
   srcSet?: string;
   sizes?: string;
@@ -118,11 +120,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
     const showBlur = blurOnLoad && !highResLoaded && blurDataURL;
     const showSkeleton = blurOnLoad && !blurDataURL;
     const hasCredit = Boolean(copyright || copyrightSource);
-    const inline =
-      hasCredit &&
-      (copyrightPosition === "inline-white" ||
-        copyrightPosition === "inline-black" ||
-        copyrightPosition === "overlay");
+    const inline = hasCredit && isInlineCopyright(copyrightPosition);
 
     return (
       <>

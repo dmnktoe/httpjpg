@@ -9,50 +9,40 @@ import { css } from "styled-system/css";
 import { useBodyScrollLock } from "../../lib/use-body-scroll-lock";
 import { Box } from "../box/box";
 import { Video, type VideoSource } from "../video/video";
-import { LightboxButton } from "./lightbox-button";
+import { LightboxBar } from "./lightbox-bar";
 import { LightboxCaption } from "./lightbox-caption";
 import { type PageTheme, usePageTheme } from "./use-page-theme";
 
+export type { PageTheme };
+
 export interface LightboxVideo {
-  /** `native` plays the file at `src`; the others embed it. @default "native" */
   source?: VideoSource;
   poster?: string;
-  /** @default "16/9" */
   aspectRatio?: string;
 }
 
 export interface LightboxItem {
-  /** Image URL, or the file / embed URL when `video` is set. */
   src: string;
   alt: string;
   srcSet?: string;
   sizes?: string;
   caption?: string;
-  /** Credit line; the © symbol is prepended by `CopyrightLabel`. */
   copyright?: string;
-  /** Renders a player in place of the image. */
   video?: LightboxVideo;
 }
 
 export interface LightboxProps {
   open: boolean;
   items: LightboxItem[];
-  /** Index of the visible item. Out-of-range values are clamped. */
   index: number;
   onClose: () => void;
   onIndexChange: (index: number) => void;
-  /** Pins the theme instead of mirroring the page's. Mostly for stories. */
   theme?: PageTheme;
 }
 
-/** Tab stops the trap cycles between. */
 const FOCUSABLE_SELECTOR = 'a[href], button, [tabindex]:not([tabindex="-1"])';
-
-/** Enter is a touch slower than exit, so dismissing feels immediate. */
 const ENTER_TRANSITION = { duration: 0.18, ease: [0.16, 1, 0.3, 1] } as const;
 const EXIT_TRANSITION = { duration: 0.12, ease: "easeIn" } as const;
-
-/** Horizontal travel that counts as a swipe rather than a tap. */
 const SWIPE_THRESHOLD = 48;
 
 export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: LightboxProps) {
@@ -83,16 +73,12 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
     };
   }, [open, isMounted]);
 
-  // Warm the neighbours so a prev/next lands on a decoded image instead of a
-  // blank frame. Browsers dedupe against the cache, so this costs one request
-  // per image at most.
   useEffect(() => {
     if (!open || count < 2) {
       return;
     }
     for (const offset of [1, -1]) {
       const neighbour = items[(safeIndex + offset + count) % count];
-      // Videos are streamed by the player, not warmed here.
       if (neighbour?.src && !neighbour.video) {
         const preload = new window.Image();
         preload.src = neighbour.src;
@@ -165,8 +151,6 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
     }
   };
 
-  // Reduced motion keeps the fade — it carries no movement — but drops the
-  // scale, which is the part that reads as motion.
   const frameFrom = prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.98 };
   const frameEnter = prefersReducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1 };
   const frameExit = prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.99 };
@@ -243,9 +227,6 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
               }}
             >
               {item.video ? (
-                // Width-bounded rather than height-bounded: the player derives
-                // its own height from the aspect ratio, and an embed cannot be
-                // measured from here to bound it the way an image is.
                 <Box key={item.src} css={{ w: "full", maxW: "min(1100px, 100%)" }}>
                   <Video
                     src={item.src}
@@ -281,69 +262,5 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
     </AnimatePresence>
   );
 
-  return createPortal(
-    // Panda's `_pageDark` condition matches `[data-theme=dark] &`, and this
-    // subtree hangs off `document.body` — outside whatever carries the page's
-    // attribute. Restating it here is what keeps the frame in the page's theme.
-    <div data-theme={resolvedTheme}>{lightbox}</div>,
-    document.body,
-  );
-}
-
-interface LightboxBarProps {
-  current: number;
-  total: number;
-  hasNavigation: boolean;
-  onClose: () => void;
-  onPrev: () => void;
-  onNext: () => void;
-}
-
-function LightboxBar({ current, total, hasNavigation, onClose, onPrev, onNext }: LightboxBarProps) {
-  return (
-    <Box
-      css={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: "2",
-        px: "2",
-        borderColor: "pageBorder",
-        borderBottom: "1px solid",
-      }}
-    >
-      <Box
-        as="span"
-        aria-live="polite"
-        css={{
-          px: "2",
-          opacity: 0.7,
-          fontFamily: "mono",
-          fontSize: "xs",
-          letterSpacing: "0.15em",
-          userSelect: "none",
-        }}
-      >
-        {hasNavigation
-          ? `[ ${String(current).padStart(2, "0")} / ${String(total).padStart(2, "0")} ]`
-          : "[ 01 ]"}
-      </Box>
-
-      <Box css={{ display: "flex", alignItems: "center" }}>
-        {hasNavigation && (
-          <>
-            <LightboxButton aria-label="Previous image" onClick={onPrev}>
-              [ ← ]
-            </LightboxButton>
-            <LightboxButton aria-label="Next image" onClick={onNext}>
-              [ → ]
-            </LightboxButton>
-          </>
-        )}
-        <LightboxButton aria-label="Close image viewer" onClick={onClose}>
-          [ esc ]
-        </LightboxButton>
-      </Box>
-    </Box>
-  );
+  return createPortal(<div data-theme={resolvedTheme}>{lightbox}</div>, document.body);
 }

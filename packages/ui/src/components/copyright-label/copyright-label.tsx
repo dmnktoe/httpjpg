@@ -7,12 +7,14 @@ import { Box } from "../box/box";
 export type CopyrightPosition = "below" | "overlay" | "inline-black" | "inline-white";
 
 export interface CopyrightLabelProps {
-  /** Copyright text; the © symbol is prepended automatically. */
   text?: string;
-  /** Asset source/credit, rendered on its own line below the copyright. */
   source?: string;
   position?: CopyrightPosition;
   css?: SystemStyleObject;
+}
+
+export function isInlineCopyright(position: CopyrightPosition): boolean {
+  return position !== "below";
 }
 
 export function CopyrightLabel({

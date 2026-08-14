@@ -8,12 +8,12 @@ import { css } from "styled-system/css";
 
 import { useBodyScrollLock } from "../../lib/use-body-scroll-lock";
 import { Box } from "../box/box";
-import { Button } from "../button/button";
 import {
   type CommandPaletteAction,
   CommandPaletteAnswer,
   type CommandPaletteSource,
 } from "./command-palette-answer";
+import { CommandPaletteFooter } from "./command-palette-footer";
 import { CommandPaletteInput } from "./command-palette-input";
 import { CommandPaletteMedia, type CommandPaletteMediaItem } from "./command-palette-media";
 import { type CommandPaletteResult, CommandPaletteResultItem } from "./command-palette-result";
@@ -26,17 +26,11 @@ export type {
   CommandPaletteSource,
 };
 
-/** Wide enough for a three-sentence answer, narrow enough to stay scannable. */
 const MAX_WIDTH = "640px";
-
-/** Tab stops the trap cycles between. Result rows are reached with the arrows. */
 const FOCUSABLE_SELECTOR = 'a[href], button, input, [tabindex]:not([tabindex="-1"])';
-
-/** Enter is a touch slower than exit, so dismissing feels immediate. */
 const ENTER_TRANSITION = { duration: 0.18, ease: [0.16, 1, 0.3, 1] } as const;
 const EXIT_TRANSITION = { duration: 0.12, ease: "easeIn" } as const;
 
-/** `answering` keeps the caret blinking; `error` swaps the answer for a message. */
 export type CommandPaletteStatus = "idle" | "searching" | "answering" | "error";
 
 export interface CommandPaletteProps {
@@ -44,13 +38,11 @@ export interface CommandPaletteProps {
   query: string;
   results: CommandPaletteResult[];
   suggestions?: string[];
-  /** The answer text so far. Grows token by token while status is `answering`. */
   answer?: string;
   sources?: CommandPaletteSource[];
   action?: CommandPaletteAction;
   status?: CommandPaletteStatus;
   errorMessage?: string;
-  /** Hides the "ask" affordance when the deployment has no AI key. @default true */
   askEnabled?: boolean;
   placeholder?: string;
   onQueryChange: (query: string) => void;
@@ -165,8 +157,6 @@ export function CommandPalette({
     }
   };
 
-  // Reduced motion keeps the fade — it carries no movement — but drops the
-  // lift and the scale, which are the parts that read as motion.
   const dialogEnter = prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 };
   const dialogFrom = prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -8, scale: 0.98 };
   const dialogExit = prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -4, scale: 0.99 };
@@ -282,71 +272,6 @@ export function CommandPalette({
   return createPortal(palette, document.body);
 }
 
-interface CommandPaletteFooterProps {
-  query: string;
-  status: CommandPaletteStatus;
-  resultCount: number;
-  canAsk: boolean;
-  onAsk: (question: string) => void;
-}
-
-function CommandPaletteFooter({
-  query,
-  status,
-  resultCount,
-  canAsk,
-  onAsk,
-}: CommandPaletteFooterProps) {
-  return (
-    <Box
-      css={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: "3",
-        px: "4",
-        py: "2",
-        fontFamily: "mono",
-        fontSize: "sm",
-        borderColor: "pageBorder",
-        borderTop: "1px solid",
-      }}
-    >
-      <Box as="span" css={{ color: "pageMuted" }}>
-        {statusLabel(status, query, resultCount)}
-      </Box>
-      {canAsk && (
-        <Button
-          size="sm"
-          // mousedown only guards the input's focus; Enter and Space dispatch
-          // click, so the action itself has to hang off onClick.
-          onMouseDown={(event: MouseEvent) => event.preventDefault()}
-          onClick={() => onAsk(query.trim())}
-          css={{ flexShrink: 0, fontFamily: "mono" }}
-        >
-          ask ⌘↵
-        </Button>
-      )}
-    </Box>
-  );
-}
-
 function optionId(index: number): string {
   return `command-palette-option-${index}`;
-}
-
-function statusLabel(status: CommandPaletteStatus, query: string, resultCount: number): string {
-  if (status === "searching") {
-    return "searching…";
-  }
-  if (status === "answering") {
-    return "thinking…";
-  }
-  if (!query.trim()) {
-    return "type to search";
-  }
-  if (resultCount === 0) {
-    return "no matches";
-  }
-  return `${resultCount} ${resultCount === 1 ? "match" : "matches"}`;
 }

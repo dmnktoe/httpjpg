@@ -91,6 +91,11 @@ function thaw() {
   window.scrollTo(0, heldScrollY);
 }
 
+/** Whether an overlay currently holds the body scroll lock. */
+export function isBodyScrollLocked(): boolean {
+  return lockCount > 0;
+}
+
 /** Freeze background scrolling while an overlay is open. */
 export function useBodyScrollLock(isLocked: boolean) {
   useEffect(() => {

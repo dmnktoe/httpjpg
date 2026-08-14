@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 
 import { SbImage } from "./SbImage";
 
@@ -8,6 +8,53 @@ describe("SbImage", () => {
   it("returns null without an image filename", () => {
     const { container } = render(<SbImage blok={{ _uid: "1", component: "image" } as never} />);
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it("offers no lightbox trigger unless the blok asks for one", () => {
+    render(
+      <SbImage
+        blok={
+          {
+            _uid: "10",
+            component: "image",
+            image: { filename, alt: "A photo" },
+            overlay: "none",
+          } as never
+        }
+      />,
+    );
+    expect(screen.queryByRole("button", { name: /full size/i })).not.toBeInTheDocument();
+  });
+
+  it("opens the image at full size, carrying its caption and credit", () => {
+    render(
+      <SbImage
+        blok={
+          {
+            _uid: "11",
+            component: "image",
+            image: { filename, alt: "A photo", copyright: "2025 Studio" },
+            caption: {
+              type: "doc",
+              content: [{ type: "paragraph", content: [{ type: "text", text: "On the roof" }] }],
+            },
+            overlay: "none",
+            lightbox: true,
+          } as never
+        }
+      />,
+    );
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Open A photo at full size" }));
+
+    const dialog = screen.getByRole("dialog", { name: "Image viewer" });
+    // Scoped to the dialog: the thumbnail carries its own caption and credit.
+    expect(within(dialog).getByText("On the roof")).toBeInTheDocument();
+    expect(within(dialog).getByText("© 2025 Studio")).toBeInTheDocument();
+    // A lone item drops prev/next.
+    expect(screen.queryByRole("button", { name: "Next image" })).not.toBeInTheDocument();
   });
 
   it("renders no caption for an empty richtext document", () => {

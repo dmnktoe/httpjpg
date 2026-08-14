@@ -17,4 +17,11 @@ export const imagePreset = {
   /** 20px wide low-res placeholder for blur-on-load. */
   blur: (filename: string | undefined, focus?: string): string =>
     filename ? getProcessedImage(filename, "20x0", focus ?? "", "") : "",
+  /**
+   * 2560px wide, height auto — the uncropped rendition a lightbox shows.
+   * Matches the top of `DEFAULT_RESPONSIVE_WIDTHS`, so opening an image the
+   * page already fetched at full width is usually a cache hit.
+   */
+  full: (filename: string | undefined, focus?: string): string =>
+    filename ? getProcessedImage(filename, "2560x0", focus ?? "", "") : "",
 };

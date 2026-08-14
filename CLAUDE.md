@@ -388,6 +388,23 @@ Audio outlives a page change, the way the iOS app's `AudioPlayerModel` does.
 
 ---
 
+## Lightbox
+
+Enlarging a picture is a modal overlay, and it follows the same shape as the command palette rather than inventing a second one.
+
+- **Controlled, like `CommandPalette`.** `Lightbox` in `@httpjpg/ui` takes `open` / `index` / `items` and reports back through `onClose` / `onIndexChange`. It holds no state of its own, so it stays storyable without a network or a click. `useLightbox()` is the other half for callers that just want a gallery — the same presentational/stateful split as `CommandPalette` / `AskWidget`.
+- **The portal has to restate the theme.** Panda's `_pageDark` condition is `[data-theme=dark] &`, and the overlay renders into `document.body` — outside the element carrying the attribute, `<html>` in the app and a decorator `<div>` in Storybook. `usePageTheme()` reads the page's value and the portal root repeats it, which is the only reason `pageBg` / `pageFg` / `pageBorder` resolve to the page's theme instead of always light. Any future portalled overlay needs the same treatment; the command palette predates it.
+- **The trigger is a sibling, not a wrapper.** `LightboxTrigger`'s default `cover` variant is a transparent button stretched over a positioned parent. `<button>` takes phrasing content, and the zoomable thing is an image _plus_ its ASCII overlay and credit — wrapping that would be invalid markup, so it is overlaid instead. Anything carrying its own controls takes the `corner` variant instead: a full-size hit area over a video swallows the play button.
+- **Chrome is ASCII, not iconography.** Counter as `[ 02 / 05 ]` on `padStart(2, "0")` — the same format the slideshow counter uses — and controls as `[ ← ]` `[ → ]` `[ esc ]` in mono. `IconButton` is deliberately not used here; the register matches the command palette's `ask ⌘↵` footer.
+- **Navigation wraps, and the index is clamped.** Past the last item comes the first. An out-of-range `index` is clamped rather than blanking the frame, because the Visual Editor reorders and deletes assets underneath a remembered index. Arrow keys, the buttons, and a horizontal swipe all go through one `step()`.
+- **Neighbours are preloaded.** On open and on every move, the next and previous `src` are warmed so a click lands on a decoded image. Browsers dedupe against the cache, so it costs one request per image at most.
+- **Credit reads straight.** The `inline-*` copyright positions rotate the credit into the image's corner, which suits a cropped thumbnail and fights a contained full-size view — so the lightbox always renders `CopyrightLabel`'s `below` variant, in a bar under the frame.
+- **An item can be a video.** `LightboxItem.video` swaps the `<img>` for the `Video` component, embed sources included. It is bounded by width where a still is bounded by height: an embed's intrinsic size cannot be measured from outside the iframe. Preloading skips them — the player streams.
+- **Two bloks opt in, and only two.** `lightbox` is a boolean on the `image` and `video` schemas, and each opens itself. The `slideshow` blok deliberately has no toggle: it already owns a transport, and layering a second one over it is a different feature. `items` is still an array, so a future gallery needs no change to `Lightbox` — but grouping separate bloks means a page-level registry like the audio queue's, not a wider prop.
+- **`imagePreset.full`** is the rendition it shows: 2560px wide, uncropped, matching the top of `DEFAULT_RESPONSIVE_WIDTHS` so opening an image the page already fetched at full width is usually a cache hit.
+
+---
+
 ## Env, Config, Observability
 
 - **Env access** — always `import { env } from "@httpjpg/env"`. Never `process.env.FOO` outside `env.mjs` (the one exception is `NODE_ENV` checks, which the t3-oss layer also exposes).

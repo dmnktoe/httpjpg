@@ -25,7 +25,15 @@ export function Favicon({ href }: { href: string }) {
     }
   };
 
-  if (!src || state === "failed") return null;
+  if (!src) return null;
+
+  if (state === "failed") {
+    return (
+      <Box as="span" aria-hidden="true" css={FALLBACK_STYLES}>
+        🔗
+      </Box>
+    );
+  }
 
   return (
     <>
@@ -76,4 +84,17 @@ const SPINNER_STYLES = {
   lineHeight: "14px",
   textAlign: "center",
   opacity: 0.4,
+} as const;
+
+const FALLBACK_STYLES = {
+  display: { base: "none", md: "inline-block" },
+  flexShrink: 0,
+  w: "14px",
+  h: "14px",
+  mr: "0.25em",
+  verticalAlign: "middle",
+  fontSize: "10px",
+  lineHeight: "14px",
+  textAlign: "center",
+  opacity: 0.5,
 } as const;

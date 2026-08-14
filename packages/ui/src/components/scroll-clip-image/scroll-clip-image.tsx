@@ -232,11 +232,7 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
         {brackets && <ScrollClipImageBrackets />}
         {pin && showProgress && <ScrollClipImageProgress labelRef={progressLabelRef} />}
         {inline && (
-          <CopyrightLabel
-            text={copyright}
-            source={copyrightSource}
-            position={copyrightPosition}
-          />
+          <CopyrightLabel text={copyright} source={copyrightSource} position={copyrightPosition} />
         )}
       </Box>
     );

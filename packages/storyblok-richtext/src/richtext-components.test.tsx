@@ -166,4 +166,77 @@ describe("richTextComponents · images", () => {
     expect(paragraph?.querySelector("div")).toBeNull();
     expect(paragraph?.querySelectorAll("img")).toHaveLength(2);
   });
+
+  it("reads intrinsic size from a Storyblok asset URL so the slot is reserved", () => {
+    renderDoc([
+      {
+        type: "image",
+        attrs: {
+          src: "https://a.storyblok.com/f/12345/1920x1080/abcdef/photo.jpg",
+          alt: "sized",
+        },
+      },
+    ]);
+    const img = screen.getByAltText("sized");
+    expect(img).toHaveAttribute("width", "1920");
+    expect(img).toHaveAttribute("height", "1080");
+  });
+
+  it("leaves width and height off when the URL has no embedded size", () => {
+    renderDoc([{ type: "image", attrs: { src: "/photo.jpg", alt: "plain" } }]);
+    const img = screen.getByAltText("plain");
+    expect(img).not.toHaveAttribute("width");
+    expect(img).not.toHaveAttribute("height");
+  });
+
+  it("renders copyright below a richtext image without introducing a div", () => {
+    const { container } = renderDoc([
+      {
+        type: "paragraph",
+        content: [
+          {
+            type: "image",
+            attrs: {
+              src: "/photo.jpg",
+              alt: "credited",
+              copyright: "Studio",
+            },
+          },
+        ],
+      },
+    ]);
+    const paragraph = container.querySelector("p");
+    expect(paragraph?.querySelector("div")).toBeNull();
+    expect(screen.getByText("© Studio")).toBeInTheDocument();
+  });
+
+  it("reads copyright from meta_data when the top-level field is missing", () => {
+    renderDoc([
+      {
+        type: "image",
+        attrs: {
+          src: "/photo.jpg",
+          alt: "meta",
+          meta_data: { copyright: "From meta" },
+        },
+      },
+    ]);
+    expect(screen.getByText("© From meta")).toBeInTheDocument();
+  });
+
+  it("renders the asset source below the copyright", () => {
+    renderDoc([
+      {
+        type: "image",
+        attrs: {
+          src: "/photo.jpg",
+          alt: "sourced",
+          copyright: "Studio",
+          source: "flickr.com/x",
+        },
+      },
+    ]);
+    expect(screen.getByText("© Studio")).toBeInTheDocument();
+    expect(screen.getByText("flickr.com/x")).toBeInTheDocument();
+  });
 });

@@ -1,5 +1,6 @@
 import {
   Box,
+  CopyrightLabel,
   Divider,
   Headline,
   Link,
@@ -87,21 +88,44 @@ function ImageRenderer({ attrs }: SbReactRichTextProps<"image">) {
   }
   const alt = attrs?.alt ?? attrs?.meta_data?.alt ?? "";
   const title = attrs?.title ?? attrs?.meta_data?.title ?? undefined;
+  const copyright = attrs?.copyright || attrs?.meta_data?.copyright || undefined;
+  const source = attrs?.source || attrs?.meta_data?.source || undefined;
+  const size = dimensionsFromSrc(src);
 
   return (
-    <img
-      src={src}
-      alt={alt}
-      title={title}
-      loading="lazy"
-      style={{
-        display: "block",
-        maxWidth: "100%",
-        height: "auto",
-        margin: "1.5rem auto",
-      }}
-    />
+    <Box as="span" css={{ display: "block", my: "6" }}>
+      <img
+        src={src}
+        alt={alt}
+        title={title}
+        loading="lazy"
+        width={size?.width}
+        height={size?.height}
+        style={{
+          display: "block",
+          maxWidth: "100%",
+          height: "auto",
+        }}
+      />
+      {copyright || source ? (
+        <CopyrightLabel text={copyright} source={source} position="below" />
+      ) : null}
+    </Box>
   );
+}
+
+/** Storyblok asset URLs embed natural size as `/f/<space>/<W>x<H>/`. */
+function dimensionsFromSrc(src: string): { width: number; height: number } | undefined {
+  const match = /\/(\d+)x(\d+)\//.exec(src);
+  if (!match) {
+    return undefined;
+  }
+  const width = Number(match[1]);
+  const height = Number(match[2]);
+  if (!width || !height) {
+    return undefined;
+  }
+  return { width, height };
 }
 
 function EmojiRenderer({ attrs }: SbReactRichTextProps<"emoji">) {

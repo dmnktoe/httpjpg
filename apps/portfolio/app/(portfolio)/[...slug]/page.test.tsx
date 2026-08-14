@@ -9,7 +9,6 @@ const {
   getSiteConfig,
   getSocialProfiles,
   getFeatureFlags,
-  preload,
 } = vi.hoisted(() => ({
   draftMode: vi.fn(),
   notFound: vi.fn(() => {
@@ -21,16 +20,10 @@ const {
   getSiteConfig: vi.fn(),
   getSocialProfiles: vi.fn(),
   getFeatureFlags: vi.fn(),
-  preload: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({ draftMode }));
 vi.mock("next/navigation", () => ({ notFound }));
-vi.mock("react-dom", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("react-dom")>();
-  return { ...actual, default: { ...actual, preload }, preload };
-});
-
 vi.mock("@storyblok/react/rsc", () => ({
   StoryblokServerComponent: ({ blok }: { blok: { component?: string } }) => (
     <div data-testid="blok">{blok?.component}</div>
@@ -194,7 +187,7 @@ describe("DynamicPage", () => {
     expect(document.querySelector('script[type="application/ld+json"]')).toBeNull();
   });
 
-  it("emits schema markup and preloads the hero image for work pages", async () => {
+  it("emits schema markup for work pages", async () => {
     getCachedStory.mockResolvedValueOnce(workStory);
 
     render(await DynamicPage({ params: params(["work", "some-project"]), searchParams: search() }));
@@ -203,10 +196,7 @@ describe("DynamicPage", () => {
     expect(jsonLd).not.toBeNull();
     expect(jsonLd?.textContent).toContain("Some Project");
     expect(jsonLd?.textContent).toContain("https://httpjpg.test/work/some-project");
-    expect(preload).toHaveBeenCalledWith(expect.stringContaining("x.jpg"), {
-      as: "image",
-      fetchPriority: "high",
-    });
+    expect(jsonLd?.textContent).toContain("/m/1200x630/smart");
   });
 
   it("includes the configured author and their profiles in the schema markup", async () => {
@@ -251,7 +241,7 @@ describe("DynamicPage", () => {
     expect(getAdjacentWork).toHaveBeenCalledWith("some-project");
   });
 
-  it("skips the image preload when the work page has no images", async () => {
+  it("omits schema images when the work page has no images", async () => {
     getCachedStory.mockResolvedValueOnce({
       ...workStory,
       content: { component: "work", title: "No Images" },
@@ -259,7 +249,8 @@ describe("DynamicPage", () => {
 
     render(await DynamicPage({ params: params(["work", "no-images"]), searchParams: search() }));
 
-    expect(preload).not.toHaveBeenCalled();
+    const jsonLd = document.querySelector('script[type="application/ld+json"]');
+    expect(jsonLd?.textContent).not.toContain("/m/1200x630/smart");
   });
 
   it("re-throws and logs errors raised while loading the story", async () => {

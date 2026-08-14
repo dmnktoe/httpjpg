@@ -4,7 +4,6 @@ import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import type { Metadata } from "next";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
-import ReactDOM from "react-dom";
 
 import { StoryblokLive } from "@/components/providers/storyblok-live";
 import { RelatedWork } from "@/components/ui/related-work";
@@ -96,7 +95,6 @@ export default async function DynamicPage({
       const images = story.content?.images?.map((img: { filename: string; focus?: string }) =>
         imagePreset.og(img.filename, img.focus),
       );
-      const firstImage = story.content?.images?.[0];
 
       schemaMarkup = generateCreativeWorkSchema({
         name: meta.title,
@@ -108,13 +106,6 @@ export default async function DynamicPage({
         author,
         inLanguage: site.language,
       });
-
-      if (firstImage?.filename) {
-        ReactDOM.preload(imagePreset.og(firstImage.filename, firstImage.focus), {
-          as: "image",
-          fetchPriority: "high",
-        });
-      }
 
       [adjacent, related] = await Promise.all([
         flags.prevNextWorkEnabled ? getAdjacentWork(story.slug) : Promise.resolve({}),

@@ -1,4 +1,4 @@
-import { extractPlainText } from "@httpjpg/storyblok-utils";
+import { extractPlainText, type StoryblokRichTextNode } from "@httpjpg/storyblok-utils";
 import type { Metadata } from "next";
 
 interface StoryShape {
@@ -8,7 +8,7 @@ interface StoryShape {
   content?: {
     component?: string;
     title?: string;
-    description?: string | { content?: unknown[] };
+    description?: string | { content?: StoryblokRichTextNode[] };
     images?: Array<{ filename?: string; alt?: string; focus?: string }>;
   };
 }
@@ -26,11 +26,7 @@ export function extractStoryMetadata(story: StoryShape): StoryMetadata {
 
   const desc = story.content?.description;
   const description =
-    typeof desc === "string"
-      ? desc
-      : desc
-        ? extractPlainText(desc as Parameters<typeof extractPlainText>[0], DESCRIPTION_LIMIT)
-        : "";
+    typeof desc === "string" ? desc : desc ? extractPlainText(desc, DESCRIPTION_LIMIT) : "";
 
   const firstImage = story.content?.images?.[0];
   // Fall back to slug for stories where Storyblok didn't return full_slug,

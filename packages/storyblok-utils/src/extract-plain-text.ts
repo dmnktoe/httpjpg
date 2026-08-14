@@ -1,8 +1,4 @@
-interface RichTextNode {
-  type?: string;
-  text?: string;
-  content?: RichTextNode[];
-}
+import type { StoryblokRichTextNode } from "./types";
 
 /**
  * Walk a Storyblok rich-text document and return the concatenated text,
@@ -10,13 +6,13 @@ interface RichTextNode {
  * search excerpts.
  */
 export function extractPlainText(
-  richtext: { content?: RichTextNode[] } | null | undefined,
+  richtext: { content?: StoryblokRichTextNode[] } | null | undefined,
   maxLength?: number,
 ): string {
   if (!richtext?.content) {
     return "";
   }
-  const walk = (nodes: RichTextNode[]): string =>
+  const walk = (nodes: StoryblokRichTextNode[]): string =>
     nodes
       .map((node) => {
         if (node.type === "text" && node.text) {

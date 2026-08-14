@@ -52,6 +52,7 @@ export type {
   StoryblokImage,
   StoryblokLink,
   StoryblokRichText,
+  StoryblokRichTextNode,
   StoryblokStory,
   StoryblokVideoAsset,
   StoryMetadata,

@@ -1,4 +1,4 @@
-import { extractPlainText } from "@httpjpg/storyblok-utils";
+import { extractPlainText, type StoryblokRichText } from "@httpjpg/storyblok-utils";
 
 /** Indexable text keys. An allowlist keeps blok plumbing out of the index. */
 const TEXT_KEYS = new Set([
@@ -19,12 +19,7 @@ const TEXT_KEYS = new Set([
 /** Bounds the walk so a cyclic payload cannot hang a build. */
 const MAX_DEPTH = 8;
 
-interface RichTextDoc {
-  type: "doc";
-  content?: unknown[];
-}
-
-function isRichTextDoc(value: unknown): value is RichTextDoc {
+function isRichTextDoc(value: unknown): value is StoryblokRichText {
   return typeof value === "object" && value !== null && (value as { type?: string }).type === "doc";
 }
 
@@ -43,7 +38,7 @@ export function collectStoryText(content: unknown, maxLength = 1200): string {
       return;
     }
     if (isRichTextDoc(node)) {
-      const text = extractPlainText(node as { content?: [] });
+      const text = extractPlainText(node);
       if (text) {
         parts.push(text);
       }

@@ -68,6 +68,13 @@ describe("Header", () => {
     expect(screen.getByTestId("extra")).toBeInTheDocument();
   });
 
+  it("keeps the scroll veil outside the sticky header", () => {
+    render(<Header nav={NAV} />);
+
+    const veil = screen.getByTestId("header-scroll-veil");
+    expect(veil.closest("header")).toBeNull();
+  });
+
   it("omits the scroll veil when asked to", () => {
     render(<Header nav={NAV} showScrollVeil={false} />);
 

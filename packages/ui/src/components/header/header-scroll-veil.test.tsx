@@ -59,12 +59,23 @@ function progress() {
   return veil().style.getPropertyValue("--veil-progress");
 }
 
+function blur() {
+  return veil().style.getPropertyValue("--veil-blur");
+}
+
 describe("HeaderScrollVeil", () => {
   it("is hidden from assistive tech and starts fully transparent", () => {
     render(<HeaderScrollVeil />);
 
     expect(veil()).toHaveAttribute("aria-hidden", "true");
     expect(progress()).toBe("0.000");
+    expect(blur()).toBe("0.000");
+  });
+
+  it("sizes itself to the sticky header plus the fade tail", () => {
+    render(<HeaderScrollVeil height={120} />);
+
+    expect(veil().style.height).toBe("calc(120px + 1.5rem)");
   });
 
   it("ramps the tint in linearly with scroll and clamps at 1", () => {
@@ -80,38 +91,57 @@ describe("HeaderScrollVeil", () => {
     expect(progress()).toBe("1.000");
   });
 
+  it("eases the blur radius in behind the tint", () => {
+    render(<HeaderScrollVeil />);
+
+    scrollTo(16);
+    expect(blur()).toBe("0.010");
+
+    scrollTo(80);
+    expect(blur()).toBe("0.250");
+
+    scrollTo(160);
+    expect(blur()).toBe("1.000");
+  });
+
   it("picks up the scroll position already in place on mount", () => {
     vi.stubGlobal("scrollY", 160);
 
     render(<HeaderScrollVeil />);
 
     expect(progress()).toBe("1.000");
+    expect(blur()).toBe("1.000");
   });
 
-  it("holds its value while an overlay locks the body scroll", () => {
+  it("holds the tint while an overlay locks the body and drops only the blur", () => {
     vi.stubGlobal("scrollY", 160);
     render(<HeaderScrollVeil />);
     expect(progress()).toBe("1.000");
+    expect(blur()).toBe("1.000");
 
     vi.mocked(isBodyScrollLocked).mockReturnValue(true);
     scrollTo(0);
     expect(progress()).toBe("1.000");
+    expect(blur()).toBe("0");
 
     vi.mocked(isBodyScrollLocked).mockReturnValue(false);
     scrollTo(160);
     expect(progress()).toBe("1.000");
+    expect(blur()).toBe("1.000");
   });
 
-  it("holds the tint when the lock arrives without a scroll event", () => {
+  it("drops the blur when the lock arrives without a scroll event", () => {
     vi.stubGlobal("scrollY", 160);
     render(<HeaderScrollVeil />);
-    expect(progress()).toBe("1.000");
+    expect(blur()).toBe("1.000");
 
     setLocked(true);
     expect(progress()).toBe("1.000");
+    expect(blur()).toBe("0");
 
     setLocked(false);
     expect(progress()).toBe("1.000");
+    expect(blur()).toBe("1.000");
   });
 
   it("recomputes from the real scroll position when the lock lifts", () => {
@@ -123,6 +153,7 @@ describe("HeaderScrollVeil", () => {
     setLocked(false);
 
     expect(progress()).toBe("0.000");
+    expect(blur()).toBe("0.000");
   });
 
   it("drops its scroll listeners on unmount", () => {

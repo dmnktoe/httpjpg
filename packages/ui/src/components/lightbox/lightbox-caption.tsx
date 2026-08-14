@@ -6,6 +6,7 @@ import { CopyrightLabel } from "../copyright-label/copyright-label";
 export interface LightboxCaptionProps {
   caption?: string;
   copyright?: string;
+  copyrightSource?: string;
 }
 
 /**
@@ -15,8 +16,8 @@ export interface LightboxCaptionProps {
  * which works on a cropped thumbnail but fights a contained full-size view — so
  * the lightbox always renders the `below` variant and lets it read straight.
  */
-export function LightboxCaption({ caption, copyright }: LightboxCaptionProps) {
-  if (!caption && !copyright) {
+export function LightboxCaption({ caption, copyright, copyrightSource }: LightboxCaptionProps) {
+  if (!caption && !copyright && !copyrightSource) {
     return null;
   }
 
@@ -24,6 +25,7 @@ export function LightboxCaption({ caption, copyright }: LightboxCaptionProps) {
     <Box
       css={{
         display: "flex",
+        flexShrink: 0,
         flexWrap: "wrap",
         justifyContent: "space-between",
         alignItems: "baseline",
@@ -40,11 +42,12 @@ export function LightboxCaption({ caption, copyright }: LightboxCaptionProps) {
           {caption}
         </Box>
       )}
-      {copyright && (
+      {(copyright || copyrightSource) && (
         <CopyrightLabel
           text={copyright}
+          source={copyrightSource}
           position="below"
-          css={{ ml: "auto", py: 0, fontFamily: "mono", whiteSpace: "nowrap" }}
+          css={{ ml: "auto", py: 0, fontFamily: "mono" }}
         />
       )}
     </Box>

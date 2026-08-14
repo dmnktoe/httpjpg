@@ -3,7 +3,16 @@
 import { ConsentPlaceholder, useVendorConsent } from "@httpjpg/consent";
 import type { SbVideoData } from "@httpjpg/storyblok-utils";
 import { extractPlainText } from "@httpjpg/storyblok-utils";
-import { Box, Lightbox, LightboxTrigger, useLightbox, Video } from "@httpjpg/ui";
+import {
+  Box,
+  Lightbox,
+  type LightboxEntry,
+  LightboxTrigger,
+  useLightbox,
+  useLightboxEntry,
+  useLightboxGallery,
+  Video,
+} from "@httpjpg/ui";
 import { memo, useRef } from "react";
 
 import { editableAttrs, spacingCss } from "../../lib/use-blok";
@@ -39,9 +48,14 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
   const editable = editableAttrs(blok);
   // Only the embed sources gate on third-party consent; native video is local.
   const consent = useVendorConsent(source === "youtube" || source === "vimeo" ? source : null);
+  const gallery = useLightboxGallery();
   const viewer = useLightbox();
   const inlineRef = useRef<HTMLVideoElement | null>(null);
   const src = resolveSrc(blok);
+  const lightboxItem =
+    lightbox && src && consent ? lightboxItemFromVideo(blok._uid, blok, src) : null;
+
+  useLightboxEntry(lightboxItem);
 
   if (!src) {
     return null;
@@ -83,24 +97,20 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
               // soundtracks stack. Only reachable for native video — an embed
               // is an iframe, and stopping it needs its own vendor API.
               inlineRef.current?.pause();
+              if (gallery && lightboxItem) {
+                gallery.openAt(lightboxItem.id);
+                return;
+              }
               viewer.openAt(0);
             }}
           />
         )}
       </Box>
       {caption?.content?.length ? <SbCaption data={caption as SbCaptionProps["data"]} /> : null}
-      {lightbox && (
+      {lightbox && !gallery && lightboxItem && (
         <Lightbox
           open={viewer.open}
-          items={[
-            {
-              src,
-              alt: "",
-              caption: extractPlainText(caption),
-              copyright: copyright || "",
-              video: { source, poster: poster?.filename, aspectRatio },
-            },
-          ]}
+          items={[lightboxItem]}
           index={0}
           onClose={viewer.close}
           onIndexChange={viewer.setIndex}
@@ -111,3 +121,19 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
 });
 
 SbVideo.displayName = "SbVideo";
+
+function lightboxItemFromVideo(id: string, blok: SbVideoProps["blok"], src: string): LightboxEntry {
+  return {
+    id,
+    src,
+    alt: "",
+    caption: extractPlainText(blok.caption) || undefined,
+    copyright: blok.video?.copyright || undefined,
+    copyrightSource: blok.video?.source || undefined,
+    video: {
+      source: blok.source,
+      poster: blok.poster?.filename,
+      aspectRatio: blok.aspectRatio ?? "16/9",
+    },
+  };
+}

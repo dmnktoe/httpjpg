@@ -31,6 +31,8 @@ export * from "./image-preview/image-preview";
 export * from "./image/image";
 export * from "./lazy-motion-provider/lazy-motion-provider";
 export * from "./lightbox/lightbox";
+export * from "./lightbox/lightbox-context";
+export * from "./lightbox/lightbox-provider";
 export * from "./lightbox/lightbox-trigger";
 export * from "./lightbox/use-lightbox";
 export * from "./lightbox/use-page-theme";

@@ -3,7 +3,13 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { Lightbox, type LightboxItem, type LightboxProps } from "./lightbox";
 
 const ITEMS: LightboxItem[] = [
-  { src: "/one.jpg", alt: "One", caption: "The first one", copyright: "2025 Studio" },
+  {
+    src: "/one.jpg",
+    alt: "One",
+    caption: "The first one",
+    copyright: "2025 Studio",
+    copyrightSource: "id-100.online",
+  },
   { src: "/two.jpg", alt: "Two" },
   { src: "/three.jpg", alt: "Three" },
 ];
@@ -55,6 +61,13 @@ describe("Lightbox", () => {
 
     expect(screen.getByText("The first one")).toBeInTheDocument();
     expect(screen.getByText("© 2025 Studio")).toBeInTheDocument();
+    expect(screen.getByText("id-100.online")).toBeInTheDocument();
+  });
+
+  it("renders the asset source even without a copyright text", () => {
+    setup({ items: [{ src: "/one.jpg", alt: "One", copyrightSource: "id-100.online" }] });
+
+    expect(screen.getByText("id-100.online")).toBeInTheDocument();
   });
 
   it("omits the caption bar when the item carries neither", () => {

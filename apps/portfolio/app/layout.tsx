@@ -11,6 +11,7 @@ import {
   Header,
   ImagePreview,
   LazyMotionProvider,
+  LightboxProvider,
 } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
@@ -123,78 +124,80 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <ScrollToTop />
         <AudioPlayerProvider>
           <LazyMotionProvider>
-            <StoryblokProvider>
-              <CustomCursorWrapper
-                cursorEnabled={interfaceConfig.customCursorEnabled}
-                trailEnabled={interfaceConfig.mouseTrailEnabled}
-              />
-              <ImagePreview />
-              {widgetConfig.nostalgiaSlideshowEnabled && <NostalgiaSlideshow />}
-              {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
-              {widgetConfig.psnEnabled && <PSNCard username={widgetConfig.psnUsername} />}
-              {widgetConfig.askEnabled && <AskWidget askEnabled={Boolean(env.GROQ_API_KEY)} />}
-              <PreviewNotification />
-              <Header
-                nav={navigation}
-                projectsWork={projectsWork}
-                websitesWork={websitesWork}
-                showSearch={widgetConfig.askEnabled}
-                showScrollVeil={interfaceConfig.headerScrollVeilEnabled}
-              />
-              <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
-                {children}
-              </Box>
-              <Footer
-                backgroundImage={footerConfig.backgroundImage}
-                footerLinks={footerConfig.footerLinks}
-                copyrightText={footerConfig.copyrightText}
-                showCookieSettings
-                cookiePolicyHref="/cookie-policy"
-                showVersion={Boolean(lastUpdated || version)}
-                version={version}
-                versionHref={
-                  version && site.repositoryUrl
-                    ? `${site.repositoryUrl}/releases/tag/${version}`
-                    : undefined
-                }
-                lastUpdated={
-                  lastUpdated ? `last updated ${formatLastUpdated(lastUpdated)}` : undefined
-                }
-                widgets={
-                  <Box
-                    css={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "0",
-                      w: "full",
-                    }}
-                  >
-                    {widgetConfig.discordEnabled && <DiscordStatus />}
-                    {widgetConfig.letterboxdEnabled && <LetterboxdStatus />}
-                    {widgetConfig.discogsEnabled && <DiscogsStatus />}
-                    {widgetConfig.xEnabled && <XStatus />}
-                    {widgetConfig.psnTrophyEnabled && <TrophyStatus />}
-                    <WeatherTime />
-                    {flags.webVitalsBadgeEnabled && <WebVitalsBadge />}
-                    {flags.buildBadgeEnabled && (
-                      <BuildBadge
-                        repositoryUrl={site.repositoryUrl}
-                        version={version}
-                        buildTime={env.NEXT_PUBLIC_BUILD_TIME}
-                        commitSha={env.NEXT_PUBLIC_COMMIT_SHA}
-                      />
-                    )}
-                    <AsciiArt
-                      label="signoff"
-                      css={{ my: "5", opacity: 0.3, fontSize: "xs", letterSpacing: "0.2em" }}
+            <LightboxProvider>
+              <StoryblokProvider>
+                <CustomCursorWrapper
+                  cursorEnabled={interfaceConfig.customCursorEnabled}
+                  trailEnabled={interfaceConfig.mouseTrailEnabled}
+                />
+                <ImagePreview />
+                {widgetConfig.nostalgiaSlideshowEnabled && <NostalgiaSlideshow />}
+                {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
+                {widgetConfig.psnEnabled && <PSNCard username={widgetConfig.psnUsername} />}
+                {widgetConfig.askEnabled && <AskWidget askEnabled={Boolean(env.GROQ_API_KEY)} />}
+                <PreviewNotification />
+                <Header
+                  nav={navigation}
+                  projectsWork={projectsWork}
+                  websitesWork={websitesWork}
+                  showSearch={widgetConfig.askEnabled}
+                  showScrollVeil={interfaceConfig.headerScrollVeilEnabled}
+                />
+                <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
+                  {children}
+                </Box>
+                <Footer
+                  backgroundImage={footerConfig.backgroundImage}
+                  footerLinks={footerConfig.footerLinks}
+                  copyrightText={footerConfig.copyrightText}
+                  showCookieSettings
+                  cookiePolicyHref="/cookie-policy"
+                  showVersion={Boolean(lastUpdated || version)}
+                  version={version}
+                  versionHref={
+                    version && site.repositoryUrl
+                      ? `${site.repositoryUrl}/releases/tag/${version}`
+                      : undefined
+                  }
+                  lastUpdated={
+                    lastUpdated ? `last updated ${formatLastUpdated(lastUpdated)}` : undefined
+                  }
+                  widgets={
+                    <Box
+                      css={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "0",
+                        w: "full",
+                      }}
                     >
-                      {ASCII_DIVIDER_WAVE}
-                    </AsciiArt>
-                  </Box>
-                }
-              />
-            </StoryblokProvider>
+                      {widgetConfig.discordEnabled && <DiscordStatus />}
+                      {widgetConfig.letterboxdEnabled && <LetterboxdStatus />}
+                      {widgetConfig.discogsEnabled && <DiscogsStatus />}
+                      {widgetConfig.xEnabled && <XStatus />}
+                      {widgetConfig.psnTrophyEnabled && <TrophyStatus />}
+                      <WeatherTime />
+                      {flags.webVitalsBadgeEnabled && <WebVitalsBadge />}
+                      {flags.buildBadgeEnabled && (
+                        <BuildBadge
+                          repositoryUrl={site.repositoryUrl}
+                          version={version}
+                          buildTime={env.NEXT_PUBLIC_BUILD_TIME}
+                          commitSha={env.NEXT_PUBLIC_COMMIT_SHA}
+                        />
+                      )}
+                      <AsciiArt
+                        label="signoff"
+                        css={{ my: "5", opacity: 0.3, fontSize: "xs", letterSpacing: "0.2em" }}
+                      >
+                        {ASCII_DIVIDER_WAVE}
+                      </AsciiArt>
+                    </Box>
+                  }
+                />
+              </StoryblokProvider>
+            </LightboxProvider>
           </LazyMotionProvider>
         </AudioPlayerProvider>
 

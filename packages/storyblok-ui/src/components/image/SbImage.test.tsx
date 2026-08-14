@@ -1,3 +1,4 @@
+import { LightboxProvider } from "@httpjpg/ui";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 
 import { SbImage } from "./SbImage";
@@ -26,14 +27,19 @@ describe("SbImage", () => {
     expect(screen.queryByRole("button", { name: /full size/i })).not.toBeInTheDocument();
   });
 
-  it("opens the image at full size, carrying its caption and credit", () => {
+  it("opens the image at full size, carrying its caption, credit and source", () => {
     render(
       <SbImage
         blok={
           {
             _uid: "11",
             component: "image",
-            image: { filename, alt: "A photo", copyright: "2025 Studio" },
+            image: {
+              filename,
+              alt: "A photo",
+              copyright: "2025 Studio",
+              source: "id-100.online",
+            },
             caption: {
               type: "doc",
               content: [{ type: "paragraph", content: [{ type: "text", text: "On the roof" }] }],
@@ -53,8 +59,49 @@ describe("SbImage", () => {
     // Scoped to the dialog: the thumbnail carries its own caption and credit.
     expect(within(dialog).getByText("On the roof")).toBeInTheDocument();
     expect(within(dialog).getByText("© 2025 Studio")).toBeInTheDocument();
+    expect(within(dialog).getByText("id-100.online")).toBeInTheDocument();
     // A lone item drops prev/next.
     expect(screen.queryByRole("button", { name: "Next image" })).not.toBeInTheDocument();
+  });
+
+  it("walks every zoomable image on the page from the shared lightbox", () => {
+    render(
+      <LightboxProvider>
+        <SbImage
+          blok={
+            {
+              _uid: "a",
+              component: "image",
+              image: { filename: `${filename}?a`, alt: "First" },
+              overlay: "none",
+              lightbox: true,
+            } as never
+          }
+        />
+        <SbImage
+          blok={
+            {
+              _uid: "b",
+              component: "image",
+              image: { filename: `${filename}?b`, alt: "Second" },
+              overlay: "none",
+              lightbox: true,
+            } as never
+          }
+        />
+      </LightboxProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Open First at full size" }));
+
+    const dialog = screen.getByRole("dialog", { name: "Image viewer" });
+    expect(within(dialog).getByRole("img", { name: "First" })).toBeInTheDocument();
+    expect(within(dialog).getByText("[ 01 / 02 ]")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Next image" }));
+
+    expect(within(dialog).getByRole("img", { name: "Second" })).toBeInTheDocument();
+    expect(within(dialog).getByText("[ 02 / 02 ]")).toBeInTheDocument();
   });
 
   it("renders no caption for an empty richtext document", () => {

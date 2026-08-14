@@ -30,6 +30,8 @@ export interface LightboxItem {
   caption?: string;
   /** Credit line; the © symbol is prepended by `CopyrightLabel`. */
   copyright?: string;
+  /** Asset source (Storyblok `source`); shown under the credit. */
+  copyrightSource?: string;
   /** Renders a player in place of the image. */
   video?: LightboxVideo;
 }
@@ -207,10 +209,14 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
             animate={frameEnter}
             exit={{ ...frameExit, transition: EXIT_TRANSITION }}
             transition={ENTER_TRANSITION}
+            // minW/minH 0: the full rendition is 2560px; without this the
+            // frame cannot shrink and the photo paints over the chrome.
             className={css({
               display: "flex",
               flexDirection: "column",
+              minW: "0",
               maxW: "min(1280px, 100%)",
+              minH: "0",
               maxH: "100%",
               color: "pageFg",
               bg: "pageBg",
@@ -218,6 +224,7 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
               borderColor: "pageBorder",
               outline: "none",
               boxShadow: "0 24px 60px -12px rgba(0, 0, 0, 0.45)",
+              overflow: "hidden",
             })}
           >
             <LightboxBar
@@ -235,18 +242,21 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
               css={{
                 position: "relative",
                 display: "flex",
+                flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
+                minW: "0",
                 minH: "0",
                 p: { base: "2", md: "3" },
                 touchAction: "pan-y",
+                overflow: "hidden",
               }}
             >
               {item.video ? (
                 // Width-bounded rather than height-bounded: the player derives
                 // its own height from the aspect ratio, and an embed cannot be
                 // measured from here to bound it the way an image is.
-                <Box key={item.src} css={{ w: "full", maxW: "min(1100px, 100%)" }}>
+                <Box key={item.src} css={{ w: "full", minW: "0", maxW: "min(1100px, 100%)" }}>
                   <Video
                     src={item.src}
                     source={item.video.source}
@@ -264,17 +274,24 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
                   alt={item.alt}
                   decoding="async"
                   className={css({
+                    display: "block",
                     w: "auto",
+                    minW: "0",
                     maxW: "100%",
                     h: "auto",
-                    maxH: "min(78dvh, 100%)",
+                    minH: "0",
+                    maxH: "min(78dvh, calc(100dvh - 12rem))",
                     objectFit: "contain",
                   })}
                 />
               )}
             </Box>
 
-            <LightboxCaption caption={item.caption} copyright={item.copyright} />
+            <LightboxCaption
+              caption={item.caption}
+              copyright={item.copyright}
+              copyrightSource={item.copyrightSource}
+            />
           </m.div>
         </m.div>
       )}
@@ -304,6 +321,7 @@ function LightboxBar({ current, total, hasNavigation, onClose, onPrev, onNext }:
     <Box
       css={{
         display: "flex",
+        flexShrink: 0,
         justifyContent: "space-between",
         alignItems: "center",
         gap: "2",

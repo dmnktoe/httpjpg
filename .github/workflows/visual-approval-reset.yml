@@ -1,18 +1,25 @@
-name: Visual Approval Reset
+name: Visual Approval
 
-# Drops the visual-approved label whenever the branch moves, so an approval
-# granted for one rendering cannot silently cover a later one.
+# Drops visual-approved when the branch moves, so an approval granted for one
+# rendering cannot cover a later one. The Approve diffs button on the Visual
+# diffs check (and applying the label by hand) both stamp the PR and re-run
+# the failed CI jobs — GitHub records the click as a check_run requested_action.
+
 on:
   pull_request:
-    types: [synchronize]
+    types: [synchronize, labeled]
+  check_run:
+    types: [requested_action]
 
 permissions:
+  actions: write
+  checks: write
   pull-requests: write
 
 jobs:
   reset:
     name: Drop the approval
-    if: contains(github.event.pull_request.labels.*.name, 'visual-approved')
+    if: github.event_name == 'pull_request' && github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'visual-approved')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -26,3 +33,104 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR/labels/visual-approved"
           echo "::notice::Dropped visual-approved — the branch moved, so the screenshots need looking at again."
+
+  button:
+    name: Approve from the check button
+    if: github.event_name == 'check_run' && github.event.check_run.requested_action.identifier == 'approve-visuals' && github.event.check_run.name == 'Visual diffs'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Stamp the PR and close the check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.check_run.head_sha }}
+          CHECK: ${{ github.event.check_run.id }}
+        run: |
+          set -euo pipefail
+
+          PR="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${SHA}/pulls" \
+            --jq '.[0].number // empty')"
+          if [[ -z "$PR" ]]; then
+            echo "::error::No open pull request for $SHA."
+            exit 1
+          fi
+
+          curl --fail-with-body -sS -o /dev/null -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Content-Type: application/json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR/labels" \
+            -d '{"labels":["visual-approved"]}'
+
+          jq -n '{
+            status: "completed",
+            conclusion: "success",
+            output: {
+              title: "Visual diffs approved",
+              summary: "Approved via the **Approve diffs** button. `visual-approved` is on the pull request and the failed CI jobs are re-running."
+            }
+          }' | curl --fail-with-body -sS -o /dev/null -X PATCH -d @- \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Content-Type: application/json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/check-runs/$CHECK"
+
+          echo "::notice::Approved visual diffs on PR #$PR for $SHA."
+
+          BRANCH="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '.head.ref')"
+          RUN_ID="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=CI --branch="$BRANCH" --limit 30 \
+            --json databaseId,headSha,status,conclusion \
+            --jq --arg sha "$SHA" '[.[] | select(.headSha == $sha)][0].databaseId // empty')"
+
+          if [[ -z "$RUN_ID" ]]; then
+            echo "::warning::No CI run found for $SHA — the label is on the PR, re-run Visual Regression from the Checks tab if it is still red."
+            exit 0
+          fi
+
+          STATUS="$(gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --json status --jq '.status')"
+          if [[ "$STATUS" != "completed" ]]; then
+            echo "::notice::CI run $RUN_ID is still $STATUS — the in-flight visual gate will see the label."
+            exit 0
+          fi
+
+          gh run rerun "$RUN_ID" --repo "$GITHUB_REPOSITORY" --failed
+          echo "::notice::Re-ran failed jobs on $RUN_ID."
+
+  rerun:
+    name: Re-run failed jobs
+    if: github.event_name == 'pull_request' && github.event.action == 'labeled' && github.event.label.name == 'visual-approved'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Re-run the CI run for this head
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          RUN_ID="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=CI --branch="$BRANCH" --limit 30 \
+            --json databaseId,headSha,status,conclusion \
+            --jq --arg sha "$SHA" '[.[] | select(.headSha == $sha)][0].databaseId // empty')"
+
+          if [[ -z "$RUN_ID" ]]; then
+            echo "::warning::No CI run found for $SHA."
+            exit 0
+          fi
+
+          META="$(gh run view "$RUN_ID" --repo "$GITHUB_REPOSITORY" --json status,conclusion)"
+          STATUS="$(jq -r '.status' <<< "$META")"
+          CONCLUSION="$(jq -r '.conclusion' <<< "$META")"
+
+          if [[ "$STATUS" != "completed" ]]; then
+            echo "::notice::CI run $RUN_ID is still $STATUS — the in-flight visual gate will see the label."
+            exit 0
+          fi
+
+          if [[ "$CONCLUSION" == "success" ]]; then
+            echo "::notice::CI run $RUN_ID already passed."
+            exit 0
+          fi
+
+          gh run rerun "$RUN_ID" --repo "$GITHUB_REPOSITORY" --failed
+          echo "::notice::Re-ran failed jobs on $RUN_ID."

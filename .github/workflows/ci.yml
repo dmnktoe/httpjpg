@@ -266,6 +266,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     permissions:
+      actions: read
+      checks: write
       contents: read
       pull-requests: write
     steps:
@@ -289,28 +291,60 @@ jobs:
             echo "relevant=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Playwright version
+        id: pw
+        if: steps.changes.outputs.relevant == 'true'
+        run: echo "version=$(node apps/storybook/scripts/playwright-version.mjs)" >> "$GITHUB_OUTPUT"
+
       - name: Restore baselines
         id: restore
         if: github.event_name == 'pull_request' && steps.changes.outputs.relevant == 'true'
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/storybook/tests/visual/__screenshots__
-          key: visual-baselines-${{ github.sha }}
-          restore-keys: visual-baselines-
+          key: visual-baselines-${{ steps.pw.outputs.version }}-${{ github.sha }}
+          restore-keys: visual-baselines-${{ steps.pw.outputs.version }}-
+
+      - name: Find a durable baseline
+        id: artifact
+        if: github.event_name == 'pull_request' && steps.changes.outputs.relevant == 'true' && steps.restore.outputs.cache-matched-key == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.pw.outputs.version }}
+        run: |
+          set -euo pipefail
+          NAME="visual-baselines-${VERSION}"
+          FOUND="$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?name=${NAME}&per_page=20" \
+            --jq '[.artifacts[] | select(.expired == false and .workflow_run.head_branch == "main")][0] // empty')"
+          if [[ -z "$FOUND" ]]; then
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "found=true" >> "$GITHUB_OUTPUT"
+          echo "run-id=$(jq -r '.workflow_run.id' <<< "$FOUND")" >> "$GITHUB_OUTPUT"
+
+      - name: Restore baselines from artifact
+        if: steps.artifact.outputs.found == 'true'
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: visual-baselines-${{ steps.pw.outputs.version }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ steps.artifact.outputs.run-id }}
+          path: apps/storybook/tests/visual/__screenshots__
 
       - uses: ./.github/actions/setup
         if: steps.changes.outputs.relevant == 'true'
 
       - name: Compare stories against main's baselines
         id: compare
-        if: github.event_name == 'pull_request' && steps.restore.outputs.cache-matched-key != ''
+        if: github.event_name == 'pull_request' && (steps.restore.outputs.cache-matched-key != '' || steps.artifact.outputs.found == 'true')
         continue-on-error: true
         run: pnpm run test:visual
 
       - name: Report a missing baseline
-        if: github.event_name == 'pull_request' && steps.changes.outputs.relevant == 'true' && steps.restore.outputs.cache-matched-key == ''
+        if: github.event_name == 'pull_request' && steps.changes.outputs.relevant == 'true' && steps.restore.outputs.cache-matched-key == '' && steps.artifact.outputs.found != 'true'
         run: |
-          echo "::warning::No baseline cache to compare against — nothing has published one from main yet, or it was evicted. Dispatch the Visual Baselines workflow against main to restore it."
+          echo "::warning::No baseline to compare against — nothing has published one from main yet, the 90-day artifact expired, or Playwright was bumped. Dispatch the Visual Baselines workflow against main to restore it."
 
       - name: Take baselines
         if: github.event_name == 'push' && steps.changes.outputs.relevant == 'true'
@@ -321,7 +355,16 @@ jobs:
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/storybook/tests/visual/__screenshots__
-          key: visual-baselines-${{ github.sha }}
+          key: visual-baselines-${{ steps.pw.outputs.version }}-${{ github.sha }}
+
+      - name: Keep a durable baseline
+        if: github.event_name == 'push' && steps.changes.outputs.relevant == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: visual-baselines-${{ steps.pw.outputs.version }}
+          path: apps/storybook/tests/visual/__screenshots__
+          retention-days: 90
+          if-no-files-found: error
 
       - name: Upload diff report
         if: steps.compare.outcome == 'failure' || failure()
@@ -333,13 +376,48 @@ jobs:
             apps/storybook/test-results/
           retention-days: 14
 
+      - name: Publish diffs to Garage
+        id: diffs
+        if: steps.compare.outcome == 'failure'
+        env:
+          VISUAL_S3_ENDPOINT: ${{ secrets.VISUAL_S3_ENDPOINT }}
+          VISUAL_S3_BUCKET: ${{ secrets.VISUAL_S3_BUCKET }}
+          VISUAL_S3_ACCESS_KEY: ${{ secrets.VISUAL_S3_ACCESS_KEY }}
+          VISUAL_S3_SECRET_KEY: ${{ secrets.VISUAL_S3_SECRET_KEY }}
+          VISUAL_S3_PUBLIC_URL: ${{ secrets.VISUAL_S3_PUBLIC_URL }}
+          VISUAL_S3_REGION: ${{ secrets.VISUAL_S3_REGION }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          DIFFS=apps/storybook/visual-diffs
+          node apps/storybook/scripts/visual-summary.mjs --copy-diffs "$DIFFS" \
+            apps/storybook/visual-results.json >/dev/null
+
+          if [[ -z "$VISUAL_S3_ENDPOINT" || -z "$VISUAL_S3_BUCKET" || -z "$VISUAL_S3_ACCESS_KEY" || -z "$VISUAL_S3_SECRET_KEY" || -z "$VISUAL_S3_PUBLIC_URL" ]]; then
+            echo "::notice::Garage/S3 secrets are not set. Deploy Garage from Coolify (Services → Garage), create a public bucket, and add VISUAL_S3_* to the repo secrets to embed diffs in the comment."
+            echo "hosted=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          bash apps/storybook/scripts/upload-visual-report.sh "$DIFFS" apps/storybook/playwright-report
+          echo "hosted=true" >> "$GITHUB_OUTPUT"
+          echo "base=${VISUAL_S3_PUBLIC_URL%/}/pr/${PR}/${SHA}" >> "$GITHUB_OUTPUT"
+
       - name: Comment with what moved
         if: steps.compare.outcome == 'failure'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          HOSTED: ${{ steps.diffs.outputs.hosted }}
+          DIFFS_BASE: ${{ steps.diffs.outputs.base }}
         run: |
-          BODY="$(node apps/storybook/scripts/visual-summary.mjs apps/storybook/visual-results.json)"
+          ARGS=(--run-url "$RUN_URL" apps/storybook/visual-results.json)
+          if [[ "$HOSTED" == "true" ]]; then
+            ARGS+=(--diffs-base-url "${DIFFS_BASE}/diffs" --report-url "${DIFFS_BASE}/report/")
+          fi
+          BODY="$(node apps/storybook/scripts/visual-summary.mjs "${ARGS[@]}")"
           ISSUE="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues"
 
           EXISTING="$(curl --fail-with-body -sS -H "Authorization: Bearer $GH_TOKEN" \
@@ -359,6 +437,48 @@ jobs:
                 -H "Authorization: Bearer $GH_TOKEN" \
                 -H "Content-Type: application/json" \
                 "$URL"
+
+      - name: Offer an Approve diffs button
+        if: steps.compare.outcome == 'failure'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          if [[ ! -f apps/storybook/visual-results.json ]]; then
+            exit 0
+          fi
+          VERDICT="$(node apps/storybook/scripts/visual-summary.mjs --verdict apps/storybook/visual-results.json)"
+          if [[ "$VERDICT" != "mismatch-only" ]]; then
+            echo "::notice::No approve button — verdict is $VERDICT."
+            exit 0
+          fi
+
+          jq -n \
+            --arg sha "$HEAD_SHA" \
+            --arg summary "Review the visual-regression comment, then press **Approve diffs** if the new rendering is correct. CI applies \`visual-approved\` and re-runs the failed jobs." \
+            '{
+              name: "Visual diffs",
+              head_sha: $sha,
+              status: "completed",
+              conclusion: "action_required",
+              output: {
+                title: "Screenshots changed",
+                summary: $summary
+              },
+              actions: [
+                {
+                  label: "Approve diffs",
+                  description: "Accept these screenshots as the new look",
+                  identifier: "approve-visuals"
+                }
+              ]
+            }' | curl --fail-with-body -sS -o /dev/null -X POST -d @- \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "Content-Type: application/json" \
+              "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/check-runs"
 
       - name: Gate on the visual-approved label
         if: steps.compare.outcome == 'failure'
@@ -415,7 +535,7 @@ jobs:
           done
 
           if [[ -z "$LABELLED_AT" ]]; then
-            echo "::error::Stories render differently than on main. Review the visual-report artifact, apply the visual-approved label, then re-run this job."
+            echo "::error::Stories render differently than on main. Review the comment (and the visual-report artifact), apply the visual-approved label — CI re-runs the failed jobs itself."
             exit 1
           fi
 
@@ -432,7 +552,7 @@ jobs:
           # offset while the label timestamp is UTC, and comparing those as
           # strings silently gets the order wrong.
           if [[ "$(date -u -d "$LABELLED_AT" +%s)" -lt "$(date -u -d "$COMMITTED_AT" +%s)" ]]; then
-            echo "::error::visual-approved predates $HEAD_SHA — it approved an earlier rendering. Re-apply it and re-run this job."
+            echo "::error::visual-approved predates $HEAD_SHA — it approved an earlier rendering. Re-apply it; CI re-runs the failed jobs."
             exit 1
           fi
 

@@ -10,8 +10,9 @@ node_modules/
 # Build info
 *.tsbuildinfo
 
-# Visual regression — baselines live in the Actions cache, never in the repo
+# Visual regression — baselines live in the Actions cache / artifacts, never in the repo
 tests/visual/__screenshots__/
+visual-diffs/
 playwright-report/
 test-results/
 visual-results.json

@@ -31,6 +31,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+      - name: Playwright version
+        id: pw
+        run: echo "version=$(node apps/storybook/scripts/playwright-version.mjs)" >> "$GITHUB_OUTPUT"
       - uses: ./.github/actions/setup
       - name: Take baselines
         run: pnpm run test:visual:update
@@ -38,7 +41,14 @@ jobs:
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/storybook/tests/visual/__screenshots__
-          key: visual-baselines-${{ github.sha }}
+          key: visual-baselines-${{ steps.pw.outputs.version }}-${{ github.sha }}
+      - name: Keep a durable baseline
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: visual-baselines-${{ steps.pw.outputs.version }}
+          path: apps/storybook/tests/visual/__screenshots__
+          retention-days: 90
+          if-no-files-found: error
       - name: Summary
         run: |
           {

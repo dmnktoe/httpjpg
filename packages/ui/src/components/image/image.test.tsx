@@ -304,5 +304,28 @@ describe("Image", () => {
 
       expect(screen.queryByText(/httpjpg/)).not.toBeInTheDocument();
     });
+
+    it("renders the asset source on its own line below the copyright", () => {
+      render(
+        <Image
+          src="/photo.jpg"
+          alt="c"
+          copyright="httpjpg"
+          copyrightSource="flickr.com/x"
+          copyrightPosition="below"
+        />,
+      );
+
+      expect(screen.getByText("© httpjpg")).toBeInTheDocument();
+      expect(screen.getByText("flickr.com/x")).toBeInTheDocument();
+    });
+
+    it("renders the source even without a copyright text", () => {
+      render(
+        <Image src="/photo.jpg" alt="c" copyrightSource="flickr.com/x" copyrightPosition="below" />,
+      );
+
+      expect(screen.getByText("flickr.com/x")).toBeInTheDocument();
+    });
   });
 });

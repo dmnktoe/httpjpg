@@ -24,6 +24,8 @@ export interface VideoProps extends Omit<VideoHTMLAttributes<HTMLVideoElement>, 
   aspectRatio?: string;
   objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
   copyright?: string;
+  /** Asset source/credit, shown as a second line below the copyright. */
+  copyrightSource?: string;
   copyrightPosition?: CopyrightPosition;
   mediaRef?: RefObject<HTMLVideoElement | null>;
   css?: SystemStyleObject;
@@ -85,6 +87,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       aspectRatio = "16/9",
       objectFit = "contain",
       copyright,
+      copyrightSource,
       copyrightPosition = "inline-white",
       mediaRef,
       className,
@@ -113,8 +116,9 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       }
     }, [muted]);
 
+    const hasCredit = Boolean(copyright || copyrightSource);
     const inline =
-      copyright &&
+      hasCredit &&
       (copyrightPosition === "inline-white" ||
         copyrightPosition === "inline-black" ||
         copyrightPosition === "overlay");
@@ -188,10 +192,16 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
         >
           <Box className={skeletonClass} style={{ opacity: isLoading ? 1 : 0 }} />
           {media}
-          {inline && <CopyrightLabel text={copyright} position={copyrightPosition} />}
+          {inline && (
+            <CopyrightLabel
+              text={copyright}
+              source={copyrightSource}
+              position={copyrightPosition}
+            />
+          )}
         </Box>
-        {copyright && copyrightPosition === "below" && (
-          <CopyrightLabel text={copyright} position="below" />
+        {hasCredit && copyrightPosition === "below" && (
+          <CopyrightLabel text={copyright} source={copyrightSource} position="below" />
         )}
       </>
     );

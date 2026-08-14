@@ -70,6 +70,7 @@ export const SbScrollClipImage = memo(function SbScrollClipImage({ blok }: SbScr
         brackets={brackets}
         showProgress={showProgress}
         copyright={image.copyright || ""}
+        copyrightSource={image.source || ""}
         copyrightPosition={copyrightPosition}
         fetchPriority={fetchPriority}
       />

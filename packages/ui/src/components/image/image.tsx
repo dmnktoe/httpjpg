@@ -29,6 +29,8 @@ export interface ImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "c
   aspectRatio?: string;
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
   copyright?: string;
+  /** Asset source/credit, shown as a second line below the copyright. */
+  copyrightSource?: string;
   copyrightPosition?: CopyrightPosition;
   blurOnLoad?: boolean;
   blurDataURL?: string;
@@ -47,6 +49,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       aspectRatio,
       objectFit = "cover",
       copyright,
+      copyrightSource,
       copyrightPosition = "inline-white",
       blurOnLoad = false,
       blurDataURL,
@@ -114,8 +117,9 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
 
     const showBlur = blurOnLoad && !highResLoaded && blurDataURL;
     const showSkeleton = blurOnLoad && !blurDataURL;
+    const hasCredit = Boolean(copyright || copyrightSource);
     const inline =
-      copyright &&
+      hasCredit &&
       (copyrightPosition === "inline-white" ||
         copyrightPosition === "inline-black" ||
         copyrightPosition === "overlay");
@@ -199,11 +203,17 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
             {...props}
           />
 
-          {inline && <CopyrightLabel text={copyright} position={copyrightPosition} />}
+          {inline && (
+            <CopyrightLabel
+              text={copyright}
+              source={copyrightSource}
+              position={copyrightPosition}
+            />
+          )}
         </Box>
 
-        {copyright && copyrightPosition === "below" && (
-          <CopyrightLabel text={copyright} position="below" />
+        {hasCredit && copyrightPosition === "below" && (
+          <CopyrightLabel text={copyright} source={copyrightSource} position="below" />
         )}
       </>
     );

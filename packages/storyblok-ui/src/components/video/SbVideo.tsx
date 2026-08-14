@@ -33,6 +33,7 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
     copyrightPosition = "inline-white",
   } = blok;
   const copyright = video?.copyright;
+  const copyrightSource = video?.source;
   const editable = editableAttrs(blok);
   // Only the embed sources gate on third-party consent; native video is local.
   const consent = useVendorConsent(source === "youtube" || source === "vimeo" ? source : null);
@@ -62,6 +63,7 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
         loop={loop}
         muted={muted}
         copyright={copyright}
+        copyrightSource={copyrightSource}
         copyrightPosition={copyrightPosition}
       />
       {caption?.content?.length ? <SbCaption data={caption as SbCaptionProps["data"]} /> : null}

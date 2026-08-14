@@ -3,12 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
-/**
- * Custom Cursor component stories
- *
- * Interactive brutalist cursor that replaces the default browser cursor.
- * Responds to hover states and can display labels on interactive elements.
- */
 const meta = {
   title: "Motion/CustomCursor",
   component: CustomCursor,

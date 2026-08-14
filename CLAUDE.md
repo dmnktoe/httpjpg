@@ -13,7 +13,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 ## Technology Stack
 
 - **TypeScript** — strict mode, `interface` for object shapes, no `enum`
-- **Node.js** ≥ 22.12 (pinned via `.nvmrc` to 22.22.3), ESM-only (`"type": "module"` in every workspace package; the private root `package.json` does not declare it)
+- **Node.js** ≥ 22.12 (pinned via `.nvmrc` to 24.19.0), ESM-only (`"type": "module"` in every workspace package; the private root `package.json` does not declare it)
 - **Next.js 16** App Router — Server Components by default, route handlers in `app/api/*`
 - **React 19** — functional components only
 - **Panda CSS** (zero-runtime) — `css({})` / `cx()` / token-aware patterns; consumes design tokens from `@httpjpg/tokens`
@@ -59,6 +59,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 ├── packages/
 │   ├── analytics/               # Google Analytics gtag wrapper
 │   ├── consent/                 # Cookie consent state + banner UI + vendor catalog
+│   ├── credentials/             # Dev CLIs to mint/verify Spotify + PSN widget credentials
 │   ├── env/                     # Env validation (t3-oss + zod), edge-safe loader
 │   ├── groq/                    # Groq chat-completions client (streaming + one-shot)
 │   ├── now-playing/             # Draggable "now playing" widget UI
@@ -70,6 +71,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 │   ├── storyblok-sync/          # CLI tool: push schemas + datasources via Management API
 │   ├── storyblok-ui/            # Sb* blok components consuming @httpjpg/ui
 │   ├── storyblok-utils/         # Storyblok runtime types, image presets/processing, cms-options
+│   ├── terminal/                # Shared terminal output style for the repo's dev CLIs
 │   ├── tokens/                  # Design tokens (colors, typography, spacing, …) + CSS-var generator
 │   └── ui/                      # Core UI component library (Panda CSS)
 │
@@ -94,7 +96,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 
 #### Core UI
 
-- **`@httpjpg/ui`** — component library built on Panda CSS. Exports primitives (`Box`, `Stack`, `Grid`, `Container`), typography (`Headline`, `Paragraph`), media (`Image`, `Video`, `Slideshow`), navigation (`Header`, `Footer`, `Link`, `NavLink`), interactive widgets (`MusicPlayer`, `CustomCursor`, `MouseTrail`, `WorkCard`, `WorkList`, `CommandPalette`, `SearchTrigger`), and structural pieces (`Page`, `Section`, `Divider`, `ShimmeringText`). Owns `panda.config.ts` and the generated `styled-system/`. The runtime `src/lib/` holds format, external-link, and scroll-lock helpers; build-time helpers live in `panda.helpers.ts` next to the panda config. Anything anchored to an element — `Tooltip` today — positions through `@floating-ui/react-dom`, the engine Radix and Base UI also sit on; don't hand-roll the maths.
+- **`@httpjpg/ui`** — component library built on Panda CSS. Exports primitives (`Box`, `Stack`, `Grid`, `Container`), typography (`Headline`, `Paragraph`), media (`Image`, `Video`, `Slideshow`, `Lightbox`, `ScrollClipImage`), navigation (`Header`, `Footer`, `Link`, `NavLink`), interactive widgets (`MusicPlayer`, `MiniPlayer`, `CustomCursor`, `MouseTrail`, `WorkCard`, `WorkList`, `CommandPalette`, `SearchTrigger`), and structural pieces (`Page`, `Section`, `Divider`, `ShimmeringText`, `CopyrightLabel`). Owns `panda.config.ts` and the generated `styled-system/`. The runtime `src/lib/` holds format, external-link, favicon-url, and scroll-lock helpers; build-time helpers live in `panda.helpers.ts` next to the panda config. Anything anchored to an element — `Tooltip` today — positions through `@floating-ui/react-dom`, the engine Radix and Base UI also sit on; don't hand-roll the maths.
 
 #### Storyblok stack (layered)
 
@@ -111,7 +113,7 @@ storyblok-utils  ←  storyblok-api    storyblok-richtext  ←  storyblok-ui
 - **`@httpjpg/storyblok-utils`** — framework-agnostic leaf. Owns Storyblok runtime types (`StoryblokStory`, `StoryblokImage`, `StoryblokLink`, `StoryblokRichText`, `StoryblokVideoAsset`, `StoryMetadata`, `StoryblokBlokData`, `StoryblokApiResponse`), `CMS_OPTIONS` (the design-token contract Storyblok emits), image processing/presets, plain-text extraction from richtext, preview-token validation, and `STORYBLOK_RELATIONS`.
 - **`@httpjpg/storyblok-api`** — raw CDN client (`getStoryblokApi()`). No Next.js coupling, works in edge workers and scripts. Returns `{ client, getStory, getStories }`.
 - **`@httpjpg/storyblok-next`** — Next.js cache layer on top. Owns `fetchStory()` (uses `unstable_cache` with `STORY(slug)` + `STORIES` tags, 1 h revalidate, draft mode bypass) and `CACHE_TAGS`. Apps import from here when they need cached fetches.
-- **`@httpjpg/storyblok-richtext`** — renders a Storyblok richtext document to React via the `@storyblok/react` v5 renderer (`createRichTextRenderer`) with a `components` map keyed by node/mark type that maps onto `@httpjpg/ui` primitives.
+- **`@httpjpg/storyblok-richtext`** — renders a Storyblok richtext document to React via the `@storyblok/react` v7 renderer (`createRichTextRenderer`) with a `components` map keyed by node/mark type that maps onto `@httpjpg/ui` primitives.
 - **`@httpjpg/storyblok-ui`** — `Sb*` blok components (e.g. `SbPage`, `SbWorkList`, `SbImage`, `SbMusicPlayer`) that consume `@httpjpg/ui` primitives and the `BlokSpacing` schema. Re-exports the runtime types from `storyblok-utils` for app convenience and exposes `storyblokInit` / `apiPlugin`.
 - **`@httpjpg/storyblok-sync`** — `tsx`-driven CLI under `scripts/`. Pushes component schemas and datasources to Storyblok via the Management API. Reads `CMS_OPTIONS` from `storyblok-utils` and tokens from `@httpjpg/tokens` to keep the CMS contract in lock-step with the design system. Not imported at runtime.
 
@@ -123,6 +125,8 @@ storyblok-utils  ←  storyblok-api    storyblok-richtext  ←  storyblok-ui
 - **`@httpjpg/groq`** — Groq chat-completions client. Dependency-free leaf built on `fetch`, so it runs on node and edge alike: `createGroqClient()` returns `complete()` and a streaming `stream()` that yields content deltas via `parseSseStream`. Failures surface as `GroqApiError` (with an `isTransient` flag for 429/5xx) or `GroqNotConfiguredError` when no key is set. Owns no prompts — grounding lives in the app.
 - **`@httpjpg/observability`** — Sentry init for the three Next runtimes. `getSentryConfig(scope)` resolves DSN, env, production flag, and enabled state per runtime.
 - **`@httpjpg/consent`** — cookie consent state machine (`getConsent`, `setConsent`, `hasVendorConsent`, …), the `CookieBanner` (portal-rendered) + `CookieCategory` + `VendorList` UI, and the vendor catalog (`EXTERNAL_VENDORS`).
+- **`@httpjpg/terminal`** — shared terminal output (colour, ASCII, structured lines) for the repo's dev CLIs. Depends on `tokens` for palette values; nothing UI.
+- **`@httpjpg/credentials`** — `tsx` CLIs (`pnpm creds:spotify`, `pnpm creds:psn`) that mint and verify the Spotify and PSN credentials the widgets run on. Depends on `terminal`; not imported at runtime.
 
 ### Path Aliases
 
@@ -137,6 +141,8 @@ Across packages, always import workspace siblings via their package name (`@http
 ### Dependency Direction Rules
 
 - Tokens and env are leaves — they must not depend on anything in the workspace.
+- `terminal` may depend on `tokens` but on nothing UI.
+- `credentials` may depend on `terminal`.
 - `storyblok-utils` may depend on `tokens` but on nothing UI.
 - `storyblok-api` may depend on `env`.
 - `storyblok-next` depends on `storyblok-api`; only Next.js apps import from `storyblok-next`.

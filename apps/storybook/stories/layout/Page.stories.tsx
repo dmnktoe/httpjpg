@@ -1,12 +1,6 @@
 import { Box, Headline, Page, Paragraph, Section } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-/**
- * Page component stories
- *
- * Full page layout with Header and Footer. Designed for Storyblok CMS integration.
- * Provides consistent structure across all pages.
- */
 const meta = {
   title: "Layout/Page",
   component: Page,

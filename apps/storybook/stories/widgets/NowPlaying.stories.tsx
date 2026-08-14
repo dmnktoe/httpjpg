@@ -3,12 +3,6 @@ import { IDLE_GLOW, NowPlaying } from "@httpjpg/now-playing";
 import { Box, Headline, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-/**
- * NowPlaying component stories
- *
- * Draggable floating widget with Spotify-inspired glassmorphism design.
- * Features crisp album artwork and iOS-style marquee for long text.
- */
 const meta = {
   title: "Widgets/NowPlaying",
   component: NowPlaying,

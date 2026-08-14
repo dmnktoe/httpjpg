@@ -3,13 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { HEADLINE_LEVEL_OPTIONS } from "../shared/storybook-helpers";
 
-/**
- * Headline component stories
- *
- * The Headline component provides semantic heading elements with
- * responsive, fluid typography using CSS clamp(). Features include
- * balanced text wrapping and polymorphic rendering.
- */
 const meta = {
   title: "Typography/Headline",
   component: Headline,

@@ -24,6 +24,7 @@ export const zIndex = {
   mobileMenuButton: 320,
   previewImage: 340,
   commandPalette: 350,
+  lightbox: 355,
   cookieBanner: 360,
   mouseEffects: 380,
   cursor: 400,

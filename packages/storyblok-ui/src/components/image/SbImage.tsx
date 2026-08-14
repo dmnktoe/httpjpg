@@ -1,8 +1,16 @@
 "use client";
 
 import type { SbImageData } from "@httpjpg/storyblok-utils";
-import { getResponsiveImage, imagePreset } from "@httpjpg/storyblok-utils";
-import { Box, Image, ImageOverlay, useParallax } from "@httpjpg/ui";
+import { extractPlainText, getResponsiveImage, imagePreset } from "@httpjpg/storyblok-utils";
+import {
+  Box,
+  Image,
+  ImageOverlay,
+  Lightbox,
+  LightboxTrigger,
+  useLightbox,
+  useParallax,
+} from "@httpjpg/ui";
 import { memo } from "react";
 
 import { editableAttrs, sizesFromWidths, spacingCss, widthCss } from "../../lib/use-blok";
@@ -27,8 +35,10 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     copyrightPosition = "inline-white",
     overlay = "random",
     parallax = 0,
+    lightbox = false,
   } = blok;
   const editable = editableAttrs(blok);
+  const viewer = useLightbox();
 
   const parallaxSpeed = Math.min(Math.max(parallax, 0), 0.4);
   const isParallax = parallaxSpeed > 0;
@@ -48,13 +58,14 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
   });
   const sizes = sizesFromWidths({ width, widthMd, widthLg });
   const blurDataURL = blurOnLoad ? imagePreset.blur(image.filename, image.focus) : undefined;
+  const altText = alt || image.alt || image.title || "";
 
   const imageEl = (
     <Image
       src={src}
       srcSet={srcSet}
       sizes={sizes}
-      alt={alt || image.alt || image.title || ""}
+      alt={altText}
       aspectRatio={aspectRatio}
       copyright={image.copyright || ""}
       copyrightSource={image.source || ""}
@@ -92,8 +103,30 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
         {overlay !== "none" && (
           <ImageOverlay pattern={overlay} seed={image.filename} color="currentColor" />
         )}
+        {lightbox && (
+          <LightboxTrigger
+            label={altText ? `Open ${altText} at full size` : undefined}
+            onClick={() => viewer.openAt(0)}
+          />
+        )}
       </Box>
       {!!caption?.content?.length && <SbCaption data={caption as SbCaptionProps["data"]} />}
+      {lightbox && (
+        <Lightbox
+          open={viewer.open}
+          items={[
+            {
+              src: imagePreset.full(image.filename, image.focus),
+              alt: altText,
+              caption: extractPlainText(caption as Parameters<typeof extractPlainText>[0]),
+              copyright: image.copyright || "",
+            },
+          ]}
+          index={0}
+          onClose={viewer.close}
+          onIndexChange={viewer.setIndex}
+        />
+      )}
     </Box>
   );
 });

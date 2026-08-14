@@ -80,6 +80,11 @@ export const mediaBlocks: BlockDef[] = [
           description: "Scroll parallax strength as a fraction; 0 disables it.",
           tooltip: true,
         }),
+        lightbox: field.boolean("Open in Lightbox", "false", {
+          description:
+            "Lets visitors click the image open at full size. The caption and copyright come along.",
+          tooltip: true,
+        }),
       }),
     }),
   },
@@ -148,6 +153,11 @@ export const mediaBlocks: BlockDef[] = [
         autoPlay: field.boolean("Auto Play"),
         loop: field.boolean("Loop"),
         muted: field.boolean("Muted"),
+        lightbox: field.boolean("Open in Lightbox", "false", {
+          description:
+            "Adds an expand control that plays the video full size over the page. The caption and copyright come along.",
+          tooltip: true,
+        }),
       }),
     }),
   },

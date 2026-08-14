@@ -14,6 +14,12 @@ export interface SearchMedia {
   label: string;
 }
 
+/** The unprocessed featured asset, so related work can cut its own crops. */
+export interface SearchFeatured {
+  source: string;
+  focus?: string;
+}
+
 export interface SearchDocument {
   id: string;
   /** Site-relative href, e.g. `/work/some-project`. */
@@ -31,6 +37,12 @@ export interface SearchDocument {
   excerpt: string;
   date?: string;
   media?: SearchMedia[];
+  /**
+   * First featured image (`content.images`), the same asset the nav hover
+   * preview uses. Optional because `unstable_cache` keeps serving the previous
+   * build's documents for up to an hour after a deploy.
+   */
+  featured?: SearchFeatured;
 }
 
 export interface SearchResult extends SearchDocument {

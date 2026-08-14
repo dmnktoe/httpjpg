@@ -1,4 +1,4 @@
-import { firstImageFilename, isVideoAsset, toSlideshowImage } from "./media-utils";
+import { firstImage, firstImageFilename, isVideoAsset, toSlideshowImage } from "./media-utils";
 
 describe("isVideoAsset", () => {
   it("detects videos by content type", () => {
@@ -43,6 +43,26 @@ describe("toSlideshowImage", () => {
       "default alt",
     );
     expect(result.alt).toBe("default alt");
+  });
+});
+
+describe("firstImage", () => {
+  it("returns undefined for an empty or missing list", () => {
+    expect(firstImage(undefined)).toBeUndefined();
+    expect(firstImage([])).toBeUndefined();
+  });
+
+  it("returns the first non-video asset, including its focal point", () => {
+    expect(
+      firstImage([
+        { filename: "https://a.storyblok.com/f/1/clip.mp4" },
+        { filename: "https://a.storyblok.com/f/1/photo.jpg", focus: "10x10:11x11" },
+      ]),
+    ).toEqual({ filename: "https://a.storyblok.com/f/1/photo.jpg", focus: "10x10:11x11" });
+  });
+
+  it("returns undefined when every asset is a video", () => {
+    expect(firstImage([{ filename: "https://a.storyblok.com/f/1/clip.mov" }])).toBeUndefined();
   });
 });
 

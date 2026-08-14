@@ -9,6 +9,7 @@ const {
   getSiteConfig,
   getSocialProfiles,
   getFeatureFlags,
+  preload,
 } = vi.hoisted(() => ({
   draftMode: vi.fn(),
   notFound: vi.fn(() => {
@@ -20,10 +21,15 @@ const {
   getSiteConfig: vi.fn(),
   getSocialProfiles: vi.fn(),
   getFeatureFlags: vi.fn(),
+  preload: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({ draftMode }));
 vi.mock("next/navigation", () => ({ notFound }));
+vi.mock("react-dom", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("react-dom")>();
+  return { ...actual, default: { ...actual, preload }, preload };
+});
 vi.mock("@storyblok/react/rsc", () => ({
   StoryblokServerComponent: ({ blok }: { blok: { component?: string } }) => (
     <div data-testid="blok">{blok?.component}</div>
@@ -194,9 +200,15 @@ describe("DynamicPage", () => {
 
     const jsonLd = document.querySelector('script[type="application/ld+json"]');
     expect(jsonLd).not.toBeNull();
-    expect(jsonLd?.textContent).toContain("Some Project");
-    expect(jsonLd?.textContent).toContain("https://httpjpg.test/work/some-project");
-    expect(jsonLd?.textContent).toContain("/m/1200x630/smart");
+    const schema = JSON.parse(jsonLd?.textContent ?? "{}") as {
+      name?: string;
+      url?: string;
+      image?: string | string[];
+    };
+    expect(schema.name).toBe("Some Project");
+    expect(schema.url).toBe("https://httpjpg.test/work/some-project");
+    expect(schema.image).toEqual(expect.stringContaining("/m/1200x630/smart"));
+    expect(preload).not.toHaveBeenCalled();
   });
 
   it("includes the configured author and their profiles in the schema markup", async () => {
@@ -250,7 +262,8 @@ describe("DynamicPage", () => {
     render(await DynamicPage({ params: params(["work", "no-images"]), searchParams: search() }));
 
     const jsonLd = document.querySelector('script[type="application/ld+json"]');
-    expect(jsonLd?.textContent).not.toContain("/m/1200x630/smart");
+    expect(jsonLd).not.toBeNull();
+    expect(JSON.parse(jsonLd?.textContent ?? "{}")).not.toHaveProperty("image");
   });
 
   it("re-throws and logs errors raised while loading the story", async () => {

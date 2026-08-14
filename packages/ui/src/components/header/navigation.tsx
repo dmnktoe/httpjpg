@@ -1,173 +1,13 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { type ReactNode, useEffect, useState } from "react";
-
-import { getFaviconUrl } from "../../lib/favicon-url";
-import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
 import { Link } from "../link/link";
 import { MiniPlayerSlot } from "../music-player/mini-player-slot";
-import { NavLink } from "../nav-link/nav-link";
 import { SearchTrigger } from "../search-trigger/search-trigger";
+import { ExpandableLinks } from "./expandable-links";
+import { Favicon } from "./favicon";
 import type { HeaderProps } from "./header";
-
-const INITIAL_WORK_COUNT = 5;
-
-const SPINNER_FRAMES = ["|", "/", "-", "\\"];
-const SPINNER_INTERVAL_MS = 120;
-
-function Favicon({ href }: { href: string }) {
-  const [state, setState] = useState<"loading" | "loaded" | "failed">("loading");
-  const [frame, setFrame] = useState(0);
-  const src = getFaviconUrl(href);
-
-  useEffect(() => {
-    if (!src || state !== "loading") return;
-    const timer = setInterval(() => setFrame((current) => current + 1), SPINNER_INTERVAL_MS);
-    return () => clearInterval(timer);
-  }, [src, state]);
-
-  // An image that finished before hydration fired its load event into nothing.
-  const settleFromDom = (node: HTMLImageElement | null) => {
-    if (node?.complete) {
-      setState(node.naturalWidth > 0 ? "loaded" : "failed");
-    }
-  };
-
-  if (!src || state === "failed") return null;
-
-  return (
-    <>
-      {state === "loading" && (
-        <Box as="span" aria-hidden="true" css={SPINNER_STYLES}>
-          {SPINNER_FRAMES[frame % SPINNER_FRAMES.length]}
-        </Box>
-      )}
-      <Box
-        as="img"
-        ref={settleFromDom}
-        src={src}
-        alt=""
-        aria-hidden="true"
-        width={14}
-        height={14}
-        onLoad={() => setState("loaded")}
-        onError={() => setState("failed")}
-        css={state === "loaded" ? FAVICON_STYLES : HIDDEN_FAVICON_STYLES}
-      />
-    </>
-  );
-}
-
-const FAVICON_STYLES = {
-  display: { base: "none", md: "inline-block" },
-  flexShrink: 0,
-  w: "14px",
-  h: "14px",
-  mr: "0.25em",
-  verticalAlign: "middle",
-  imageRendering: "pixelated",
-} as const;
-
-const HIDDEN_FAVICON_STYLES = {
-  display: "none",
-} as const;
-
-const SPINNER_STYLES = {
-  display: { base: "none", md: "inline-block" },
-  flexShrink: 0,
-  w: "14px",
-  h: "14px",
-  mr: "0.25em",
-  verticalAlign: "middle",
-  fontFamily: "mono",
-  fontSize: "10px",
-  lineHeight: "14px",
-  textAlign: "center",
-  opacity: 0.4,
-} as const;
-
-const WORK_LINK_FLEX = {
-  display: "flex",
-  alignItems: "center",
-} as const;
-
-const WORK_LABEL_STYLES = {
-  minWidth: 0,
-  flex: "1 1 auto",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-} as const;
-
-const toggleStyles = {
-  display: "block",
-  background: "transparent",
-  border: "none",
-  cursor: "pointer",
-  color: "inherit",
-  font: "inherit",
-  fontFamily: "sans",
-  py: "2px",
-  px: "2px",
-  opacity: 0.7,
-  textAlign: "left",
-  _hover: { opacity: 1, textDecoration: "underline" },
-} as const;
-
-function ExpandableLinks<T>({
-  items,
-  renderItem,
-}: {
-  items: T[];
-  renderItem: (item: T) => ReactNode;
-}) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const pathname = usePathname();
-  useEffect(() => {
-    setIsExpanded(false);
-  }, [pathname]);
-  const initial = items.slice(0, INITIAL_WORK_COUNT);
-  const extras = items.slice(INITIAL_WORK_COUNT);
-  const remaining = extras.length;
-
-  return (
-    <Box css={{ position: "relative" }}>
-      {initial.map(renderItem)}
-      {remaining > 0 && (
-        <Box css={{ position: "relative" }}>
-          <Box
-            as="button"
-            type="button"
-            onClick={() => setIsExpanded(true)}
-            aria-hidden={isExpanded}
-            tabIndex={isExpanded ? -1 : 0}
-            css={{
-              ...toggleStyles,
-              visibility: isExpanded ? "hidden" : "visible",
-            }}
-          >
-            {`▾ more (${remaining})`}
-          </Box>
-          {isExpanded && (
-            <Box css={{ position: "absolute", top: 0, right: 0, left: 0 }}>
-              {extras.map(renderItem)}
-              <Box
-                as="button"
-                type="button"
-                onClick={() => setIsExpanded(false)}
-                css={toggleStyles}
-              >
-                ▴ less
-              </Box>
-            </Box>
-          )}
-        </Box>
-      )}
-    </Box>
-  );
-}
+import { WorkNavLink } from "./work-nav-link";
 
 export function Navigation({
   nav,
@@ -263,37 +103,7 @@ export function Navigation({
           {projectsWork.length > 0 ? (
             <ExpandableLinks
               items={projectsWork}
-              renderItem={(work) => {
-                const year = formatYear(work.date);
-                const previewImage = work.imageUrl;
-                return (
-                  <NavLink
-                    key={work.id}
-                    variant="projects"
-                    href={work.isExternal ? work.slug : `/work/${work.slug}`}
-                    isExternal={work.isExternal}
-                    showExternalIcon={work.isExternal}
-                    data-preview-image={previewImage}
-                    css={{
-                      ...WORK_LINK_FLEX,
-                      backgroundColor: work.isDraft ? "warning.200" : "transparent",
-                      color: work.isDraft ? "black" : "inherit",
-                      ...(work.isDraft && { padding: "2px 4px" }),
-                    }}
-                  >
-                    <Box as="span" css={WORK_LABEL_STYLES}>
-                      {work.isDraft && "[DRAFT] "}
-                      {year && (
-                        <Box as="span" css={{ fontStyle: "italic" }}>
-                          {year}{" "}
-                        </Box>
-                      )}
-                      <Favicon href={work.externalUrl ?? (work.isExternal ? work.slug : "")} />
-                      {work.title}
-                    </Box>
-                  </NavLink>
-                );
-              }}
+              renderItem={(work) => <WorkNavLink key={work.id} work={work} variant="projects" />}
             />
           ) : (
             <Box as="span" css={{ opacity: 0.5, fontSize: "xs" }}>
@@ -320,39 +130,7 @@ export function Navigation({
           {websitesWork.length > 0 ? (
             <ExpandableLinks
               items={websitesWork}
-              renderItem={(work) => {
-                const href = work.isExternal ? work.slug : `/work/${work.slug}`;
-                const year = formatYear(work.date);
-                const previewImage = work.imageUrl;
-
-                return (
-                  <NavLink
-                    key={work.id}
-                    variant="websites"
-                    href={href}
-                    isExternal={work.isExternal}
-                    showExternalIcon={work.isExternal}
-                    data-preview-image={previewImage}
-                    css={{
-                      ...WORK_LINK_FLEX,
-                      backgroundColor: work.isDraft ? "warning.200" : "transparent",
-                      color: work.isDraft ? "black" : "inherit",
-                      ...(work.isDraft && { padding: "0 4px" }),
-                    }}
-                  >
-                    <Box as="span" css={WORK_LABEL_STYLES}>
-                      {work.isDraft && "[DRAFT] "}
-                      {year && (
-                        <Box as="span" css={{ fontStyle: "italic" }}>
-                          {year}{" "}
-                        </Box>
-                      )}
-                      <Favicon href={work.externalUrl ?? (work.isExternal ? work.slug : "")} />
-                      {work.title}
-                    </Box>
-                  </NavLink>
-                );
-              }}
+              renderItem={(work) => <WorkNavLink key={work.id} work={work} variant="websites" />}
             />
           ) : (
             <Box as="span" css={{ opacity: 0.5, fontSize: "xs" }}>

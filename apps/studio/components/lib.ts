@@ -4,14 +4,14 @@ import { spacing } from "@httpjpg/tokens";
 import { blokPlugin } from "./bloks";
 
 export { BLOK_REGISTRY, type BlokPlugin, blokPlugin } from "./bloks";
-export type { FieldDef, FieldType } from "./bloks";
+export type { FieldDef } from "./bloks";
 
 export const GRID_COLS = 12;
 export const ROW_HEIGHT_PX = 40;
 export const MIN_ROWS = 30;
 
 /** Pixel value for each CMS spacing token key (e.g., "4" → "1rem"). */
-export const SPACING_PX: Record<string, string> = Object.fromEntries(
+const SPACING_PX: Record<string, string> = Object.fromEntries(
   Object.entries(spacing).map(([key, value]) => [key, value]),
 );
 
@@ -214,7 +214,7 @@ export interface ExportedGrid {
   items: ExportedGridItem[];
 }
 
-export interface ExportedGridItem {
+interface ExportedGridItem {
   component: "grid_item";
   _uid: string;
   colStart: number;
@@ -237,7 +237,7 @@ export interface ExportedGridItem {
   content: ExportedBlok[];
 }
 
-export interface ExportedBlok {
+interface ExportedBlok {
   component: string;
   _uid: string;
   [key: string]: unknown;

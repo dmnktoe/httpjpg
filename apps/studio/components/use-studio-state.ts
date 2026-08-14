@@ -11,7 +11,7 @@ import {
   type Viewport,
 } from "./lib";
 
-export interface StudioState {
+interface StudioState {
   items: BuilderItem[];
   settings: GridSettings;
   viewport: Viewport;

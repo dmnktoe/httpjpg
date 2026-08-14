@@ -9,7 +9,7 @@ const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 export const ENV_FILE = resolve(PACKAGE_ROOT, "../../.env.local");
 
-export function prompt(label: string): string {
+function prompt(label: string): string {
   return `  ${accent(ASCII_ARROW)} ${label} · `;
 }
 

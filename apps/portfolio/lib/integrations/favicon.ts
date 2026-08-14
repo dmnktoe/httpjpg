@@ -2,7 +2,7 @@ import { lookup } from "node:dns/promises";
 
 import { decodeEntities } from "./html";
 
-export interface FaviconAsset {
+interface FaviconAsset {
   ok: true;
   body: Uint8Array<ArrayBuffer>;
   contentType: string;

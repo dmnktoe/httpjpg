@@ -1,14 +1,14 @@
-export interface AskSourcesEvent {
+interface AskSourcesEvent {
   type: "sources";
   sources: Array<{ title: string; href: string }>;
 }
 
-export interface AskDeltaEvent {
+interface AskDeltaEvent {
   type: "delta";
   text: string;
 }
 
-export interface AskErrorEvent {
+interface AskErrorEvent {
   type: "error";
   error: string;
 }
@@ -20,7 +20,7 @@ export interface AskNavigateAction {
   kind: "work" | "page";
 }
 
-export interface AskActionEvent {
+interface AskActionEvent {
   type: "action";
   action: AskNavigateAction;
 }

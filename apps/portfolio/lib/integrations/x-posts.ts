@@ -19,7 +19,7 @@ export interface XPost {
   isQuote: boolean;
 }
 
-export interface XTimeline {
+interface XTimeline {
   profile: XProfile;
   posts: XPost[];
 }

@@ -1,8 +1,8 @@
-export const VITAL_NAMES = ["CLS", "FCP", "LCP", "TTFB", "INP"] as const;
+const VITAL_NAMES = ["CLS", "FCP", "LCP", "TTFB", "INP"] as const;
 
 export type VitalName = (typeof VITAL_NAMES)[number];
 
-export const TRACKED_VITALS: ReadonlySet<VitalName> = new Set(VITAL_NAMES);
+const TRACKED_VITALS: ReadonlySet<VitalName> = new Set(VITAL_NAMES);
 
 export const VITAL_RATINGS = {
   good: "good",

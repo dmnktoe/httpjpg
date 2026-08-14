@@ -42,6 +42,15 @@ describe("RelatedWorkGallery", () => {
     expect(document.querySelector("img")).toBeNull();
   });
 
+  it("puts the view it opens on first", () => {
+    render(<RelatedWorkGallery items={ITEMS} />);
+
+    expect(screen.getAllByRole("button").map((button) => button.textContent)).toEqual([
+      "[=]list",
+      "[#]grid",
+    ]);
+  });
+
   it("brings the images in for the grid", () => {
     render(<RelatedWorkGallery items={ITEMS} />);
 

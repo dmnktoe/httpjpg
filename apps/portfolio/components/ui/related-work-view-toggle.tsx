@@ -3,7 +3,8 @@
 import { Box } from "@httpjpg/ui";
 import { css } from "styled-system/css";
 
-export const RELATED_WORK_VIEWS = ["grid", "list"] as const;
+/** Declaration order is render order. */
+export const RELATED_WORK_VIEWS = ["list", "grid"] as const;
 
 export type RelatedWorkView = (typeof RELATED_WORK_VIEWS)[number];
 

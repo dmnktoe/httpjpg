@@ -7,12 +7,6 @@ import {
   spacingArgType,
 } from "../shared/storybook-helpers";
 
-/**
- * Divider component stories
- *
- * Visual separator with support for ASCII art, custom content, and traditional lines.
- * Perfect for brutalist design with decorative separators and overlapping text.
- */
 const meta = {
   title: "Layout/Divider",
   component: Divider,

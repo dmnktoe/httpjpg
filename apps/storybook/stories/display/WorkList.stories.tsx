@@ -3,12 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { MOCK_TAGGED_WORKS, OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
-/**
- * WorkList component stories
- *
- * Portfolio work showcase list built on VStack with optional dividers.
- * Displays WorkCard components with slideshow, animated titles, and project details.
- */
 const meta = {
   title: "Display/WorkList",
   component: WorkList,

@@ -3,12 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { extendedSpacingArgType } from "../shared/storybook-helpers";
 
-/**
- * Section component stories
- *
- * A semantic section wrapper with consistent spacing.
- * Perfect for organizing portfolio content and creating visual rhythm.
- */
 const meta = {
   title: "Layout/Section",
   component: Section,

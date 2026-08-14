@@ -3,11 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { CONTAINER_SIZE_OPTIONS, spacingArgType } from "../shared/storybook-helpers";
 
-/**
- * Container component stories
- *
- * Max-width wrapper for centered content layouts with responsive sizing.
- */
 const meta = {
   title: "Layout/Container",
   component: Container,

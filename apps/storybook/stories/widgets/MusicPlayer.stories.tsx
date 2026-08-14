@@ -127,12 +127,6 @@ export const MP3Player: Story = {
   },
 };
 
-/**
- * Minimal MP3 player
- *
- * MP3 player without artwork, showing only controls and minimal info.
- * Perfect for clean, text-focused layouts.
- */
 export const MinimalMP3: Story = {
   args: {
     source: "mp3",

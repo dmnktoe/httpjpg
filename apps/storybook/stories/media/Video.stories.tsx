@@ -1,6 +1,10 @@
 import { Video } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
+const NATIVE_SRC =
+  "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4";
+const NATIVE_POSTER = "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217";
+
 const meta: Meta<typeof Video> = {
   title: "Media/Video",
   component: Video,
@@ -12,37 +16,19 @@ const meta: Meta<typeof Video> = {
     source: {
       control: "select",
       options: ["native", "youtube", "vimeo"],
-      description: "Video source type",
     },
     aspectRatio: {
       control: "select",
       options: ["1/1", "4/3", "16/9", "21/9", "9/16"],
-      description: "Video aspect ratio (or custom number)",
     },
-    controls: {
-      control: "boolean",
-      description: "Show video controls",
-    },
-    autoPlay: {
-      control: "boolean",
-      description: "Autoplay video",
-    },
-    loop: {
-      control: "boolean",
-      description: "Loop video",
-    },
-    muted: {
-      control: "boolean",
-      description: "Mute video",
-    },
-    copyrightSource: {
-      control: "text",
-      description: "Asset source/credit, shown as a second line below the copyright",
-    },
+    controls: { control: "boolean" },
+    autoPlay: { control: "boolean" },
+    loop: { control: "boolean" },
+    muted: { control: "boolean" },
+    copyrightSource: { control: "text" },
     copyrightPosition: {
       control: "select",
-      options: ["below", "overlay"],
-      description: "Copyright text position",
+      options: ["inline-white", "inline-black", "below", "overlay"],
     },
   },
 };
@@ -50,9 +36,6 @@ const meta: Meta<typeof Video> = {
 export default meta;
 type Story = StoryObj<typeof Video>;
 
-/**
- * YouTube video embed
- */
 export const YouTube: Story = {
   args: {
     src: "dQw4w9WgXcQ",
@@ -62,14 +45,11 @@ export const YouTube: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2025 YouTube Video",
+    copyright: "2025 YouTube Video",
     copyrightPosition: "below",
   },
 };
 
-/**
- * Vimeo video embed
- */
 export const Vimeo: Story = {
   args: {
     src: "76979871",
@@ -79,69 +59,57 @@ export const Vimeo: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2025 Vimeo Video",
+    copyright: "2025 Vimeo Video",
     copyrightPosition: "below",
   },
 };
 
-/**
- * Native video with custom controls
- */
 export const Native: Story = {
   args: {
-    src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
+    src: NATIVE_SRC,
     source: "native",
-    poster: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217",
+    poster: NATIVE_POSTER,
     aspectRatio: "16/9",
     controls: true,
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2008 Blender Foundation | www.bigbuckbunny.org",
+    copyright: "2008 Blender Foundation | www.bigbuckbunny.org",
     copyrightPosition: "below",
   },
 };
 
-/**
- * Native video with a copyright + source line
- */
 export const NativeWithCopyrightSource: Story = {
   args: {
-    src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
+    src: NATIVE_SRC,
     source: "native",
-    poster: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217",
+    poster: NATIVE_POSTER,
     aspectRatio: "16/9",
     controls: true,
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2008 Blender Foundation",
+    copyright: "2008 Blender Foundation",
     copyrightSource: "peach.blender.org",
     copyrightPosition: "below",
   },
 };
 
-/**
- * Native video with overlay copyright
- */
 export const NativeWithOverlayCopyright: Story = {
   args: {
-    src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
+    src: NATIVE_SRC,
     source: "native",
-    poster: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217",
+    poster: NATIVE_POSTER,
     aspectRatio: "16/9",
     controls: true,
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2008 Blender Foundation",
+    copyright: "2008 Blender Foundation",
     copyrightPosition: "overlay",
   },
 };
 
-/**
- * Square aspect ratio (1:1)
- */
 export const SquareAspectRatio: Story = {
   args: {
     src: "dQw4w9WgXcQ",
@@ -154,9 +122,6 @@ export const SquareAspectRatio: Story = {
   },
 };
 
-/**
- * Ultrawide aspect ratio (21:9)
- */
 export const UltrawideAspectRatio: Story = {
   args: {
     src: "dQw4w9WgXcQ",
@@ -169,14 +134,11 @@ export const UltrawideAspectRatio: Story = {
   },
 };
 
-/**
- * Autoplay and muted (recommended for autoplay)
- */
 export const AutoplayMuted: Story = {
   args: {
-    src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
+    src: NATIVE_SRC,
     source: "native",
-    poster: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217",
+    poster: NATIVE_POSTER,
     aspectRatio: "16/9",
     controls: true,
     autoPlay: true,
@@ -185,9 +147,6 @@ export const AutoplayMuted: Story = {
   },
 };
 
-/**
- * Without controls
- */
 export const WithoutControls: Story = {
   args: {
     src: "dQw4w9WgXcQ",

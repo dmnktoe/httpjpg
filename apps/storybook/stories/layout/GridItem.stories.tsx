@@ -3,12 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
-/**
- * GridItem component stories
- *
- * GridItem provides precise control over positioning and spanning within Grid layouts.
- * Perfect for creating complex magazine-style layouts with overlapping elements.
- */
 const meta = {
   title: "Layout/GridItem",
   component: GridItem,

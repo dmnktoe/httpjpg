@@ -3,11 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { alignArgType, justifyArgType, spacingArgType } from "../shared/storybook-helpers";
 
-/**
- * Stack component stories
- *
- * Flexible layout components for vertical (VStack) and horizontal (HStack) layouts.
- */
 const meta = {
   title: "Layout/Stack",
   component: VStack,

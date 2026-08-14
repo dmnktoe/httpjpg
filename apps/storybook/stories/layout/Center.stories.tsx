@@ -1,12 +1,6 @@
 import { Box, Center, Headline, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-/**
- * Center component stories
- *
- * A utility component for centering content horizontally and/or vertically.
- * Perfect for hero sections, modal content, and centered layouts.
- */
 const meta = {
   title: "Layout/Center",
   component: Center,

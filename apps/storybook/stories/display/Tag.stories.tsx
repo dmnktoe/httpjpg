@@ -2,14 +2,6 @@ import { Tag, TagButton } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
-/**
- * Tag stories
- *
- * The one chip on the site. `Tag` is the static span a work card renders;
- * `TagButton` is the same shape as a button, intended for the work-list filter,
- * which adopts it when that filter is rebuilt.
- * Both share a single `cva` so their padding and radius cannot drift apart.
- */
 const meta = {
   title: "Display/Tag",
   component: Tag,
@@ -66,7 +58,6 @@ export const Interactive: Story = {
   },
 };
 
-/** Counts render in digit lookalikes; the plain number stays in the accessible name. */
 export const WithCounts: Story = {
   render: () => (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", maxWidth: 480 }}>

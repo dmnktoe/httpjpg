@@ -3,12 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { MOCK_HEADER_PROJECTS_WORK, MOCK_HEADER_WEBSITES_WORK } from "../shared/storybook-fixtures";
 
-/**
- * Header component stories
- *
- * Brutalist navigation header with ASCII art decorations.
- * Features responsive mobile menu and sections for recent work.
- */
 const meta = {
   title: "Navigation/Header",
   component: Header,

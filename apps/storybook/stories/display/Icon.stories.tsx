@@ -12,12 +12,6 @@ const ICON_NAMES: IconName[] = [
   "volume-mute",
 ];
 
-/**
- * Icon component stories
- *
- * Centralized icon system with SVG icons. All icons are scalable
- * and inherit the current text color.
- */
 const meta = {
   title: "Display/Icon",
   component: Icon,

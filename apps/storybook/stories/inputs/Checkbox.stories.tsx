@@ -2,15 +2,6 @@ import { Checkbox } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
-/**
- * Checkbox component stories
- *
- * A brutalist, mono-styled checkbox rendered as pure ASCII: tribal angle
- * brackets that hold a diamond mark (‹ › → ‹◆›) in the accent color when
- * checked. The indicator inherits the surrounding font size and keeps a
- * fixed 1ch slot for the mark, so it never changes width between states.
- * It is controlled — drive `checked` and listen to `onCheckedChange`.
- */
 const meta = {
   title: "Inputs/Checkbox",
   component: Checkbox,

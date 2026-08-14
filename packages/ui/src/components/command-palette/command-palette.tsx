@@ -8,12 +8,12 @@ import { css } from "styled-system/css";
 
 import { useBodyScrollLock } from "../../lib/use-body-scroll-lock";
 import { Box } from "../box/box";
-import { Button } from "../button/button";
 import {
   type CommandPaletteAction,
   CommandPaletteAnswer,
   type CommandPaletteSource,
 } from "./command-palette-answer";
+import { CommandPaletteFooter } from "./command-palette-footer";
 import { CommandPaletteInput } from "./command-palette-input";
 import { CommandPaletteMedia, type CommandPaletteMediaItem } from "./command-palette-media";
 import { type CommandPaletteResult, CommandPaletteResultItem } from "./command-palette-result";
@@ -267,11 +267,9 @@ export function CommandPalette({
             </Box>
 
             <CommandPaletteFooter
-              query={query}
-              status={status}
-              resultCount={results.length}
+              statusLabel={statusLabel(status, query, results.length)}
               canAsk={canAsk}
-              onAsk={onAsk}
+              onAsk={() => onAsk(query.trim())}
             />
           </m.div>
         </m.div>
@@ -280,55 +278,6 @@ export function CommandPalette({
   );
 
   return createPortal(palette, document.body);
-}
-
-interface CommandPaletteFooterProps {
-  query: string;
-  status: CommandPaletteStatus;
-  resultCount: number;
-  canAsk: boolean;
-  onAsk: (question: string) => void;
-}
-
-function CommandPaletteFooter({
-  query,
-  status,
-  resultCount,
-  canAsk,
-  onAsk,
-}: CommandPaletteFooterProps) {
-  return (
-    <Box
-      css={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: "3",
-        px: "4",
-        py: "2",
-        fontFamily: "mono",
-        fontSize: "sm",
-        borderColor: "pageBorder",
-        borderTop: "1px solid",
-      }}
-    >
-      <Box as="span" css={{ color: "pageMuted" }}>
-        {statusLabel(status, query, resultCount)}
-      </Box>
-      {canAsk && (
-        <Button
-          size="sm"
-          // mousedown only guards the input's focus; Enter and Space dispatch
-          // click, so the action itself has to hang off onClick.
-          onMouseDown={(event: MouseEvent) => event.preventDefault()}
-          onClick={() => onAsk(query.trim())}
-          css={{ flexShrink: 0, fontFamily: "mono" }}
-        >
-          ask ⌘↵
-        </Button>
-      )}
-    </Box>
-  );
 }
 
 function optionId(index: number): string {

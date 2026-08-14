@@ -4,12 +4,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 import { OBJECT_FIT_OPTIONS } from "../shared/storybook-helpers";
 
-/**
- * Image component stories
- *
- * A powerful image component with copyright support and blur-up loading.
- * Perfect for brutalist portfolio websites and Storyblok integration.
- */
 const meta = {
   title: "Media/Image",
   component: Image,
@@ -67,9 +61,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Basic image with live controls
- */
 export const Basic: Story = {
   args: {
     src: OPTIMIZED_IMAGES.videoStill1,
@@ -82,9 +73,6 @@ export const Basic: Story = {
   },
 };
 
-/**
- * Image with inline copyright (bottom right)
- */
 export const InlineCopyright: Story = {
   args: {
     src: OPTIMIZED_IMAGES.videoStill2,
@@ -95,9 +83,6 @@ export const InlineCopyright: Story = {
   },
 };
 
-/**
- * Image with copyright below
- */
 export const BelowCopyright: Story = {
   args: {
     src: OPTIMIZED_IMAGES.videoStill3,
@@ -108,10 +93,7 @@ export const BelowCopyright: Story = {
   },
 };
 
-/**
- * Copyright with an asset source line
- * The Storyblok asset `source` field renders on its own line below the © line.
- */
+/** The Storyblok asset `source` field renders on its own line below the © line. */
 export const CopyrightWithSource: Story = {
   args: {
     src: OPTIMIZED_IMAGES.videoStill3,
@@ -123,10 +105,6 @@ export const CopyrightWithSource: Story = {
   },
 };
 
-/**
- * Image with overlay copyright (gradient bottom)
- * Modern design with decorative ASCII elements
- */
 export const OverlayCopyright: Story = {
   args: {
     src: OPTIMIZED_IMAGES.landscape,
@@ -137,10 +115,6 @@ export const OverlayCopyright: Story = {
   },
 };
 
-/**
- * Image with blur-up loading
- * Progressive loading with decorative copyright
- */
 export const BlurUpLoading: Story = {
   args: {
     src: OPTIMIZED_IMAGES.portrait,
@@ -154,10 +128,6 @@ export const BlurUpLoading: Story = {
   },
 };
 
-/**
- * Portrait image (9:16)
- * Vertical format with overlay copyright
- */
 export const Portrait: Story = {
   args: {
     src: OPTIMIZED_IMAGES.videoStill1,
@@ -168,10 +138,6 @@ export const Portrait: Story = {
   },
 };
 
-/**
- * Square image (1:1)
- * Perfect square with copyright below
- */
 export const Square: Story = {
   args: {
     src: OPTIMIZED_IMAGES.videoStill2,
@@ -182,9 +148,6 @@ export const Square: Story = {
   },
 };
 
-/**
- * Gallery with different copyright styles
- */
 export const Gallery: Story = {
   args: {
     src: "",

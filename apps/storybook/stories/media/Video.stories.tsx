@@ -41,7 +41,7 @@ const meta: Meta<typeof Video> = {
     },
     copyrightPosition: {
       control: "select",
-      options: ["below", "overlay"],
+      options: ["below", "overlay", "inline-black", "inline-white"],
       description: "Copyright text position",
     },
   },
@@ -50,9 +50,6 @@ const meta: Meta<typeof Video> = {
 export default meta;
 type Story = StoryObj<typeof Video>;
 
-/**
- * YouTube video embed
- */
 export const YouTube: Story = {
   args: {
     src: "dQw4w9WgXcQ",
@@ -62,14 +59,11 @@ export const YouTube: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2025 YouTube Video",
+    copyright: "2025 YouTube Video",
     copyrightPosition: "below",
   },
 };
 
-/**
- * Vimeo video embed
- */
 export const Vimeo: Story = {
   args: {
     src: "76979871",
@@ -79,14 +73,11 @@ export const Vimeo: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2025 Vimeo Video",
+    copyright: "2025 Vimeo Video",
     copyrightPosition: "below",
   },
 };
 
-/**
- * Native video with custom controls
- */
 export const Native: Story = {
   args: {
     src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
@@ -97,14 +88,11 @@ export const Native: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2008 Blender Foundation | www.bigbuckbunny.org",
+    copyright: "2008 Blender Foundation | www.bigbuckbunny.org",
     copyrightPosition: "below",
   },
 };
 
-/**
- * Native video with a copyright + source line
- */
 export const NativeWithCopyrightSource: Story = {
   args: {
     src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
@@ -115,15 +103,12 @@ export const NativeWithCopyrightSource: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2008 Blender Foundation",
+    copyright: "2008 Blender Foundation",
     copyrightSource: "peach.blender.org",
     copyrightPosition: "below",
   },
 };
 
-/**
- * Native video with overlay copyright
- */
 export const NativeWithOverlayCopyright: Story = {
   args: {
     src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
@@ -134,14 +119,11 @@ export const NativeWithOverlayCopyright: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2008 Blender Foundation",
+    copyright: "2008 Blender Foundation",
     copyrightPosition: "overlay",
   },
 };
 
-/**
- * Square aspect ratio (1:1)
- */
 export const SquareAspectRatio: Story = {
   args: {
     src: "dQw4w9WgXcQ",
@@ -154,9 +136,6 @@ export const SquareAspectRatio: Story = {
   },
 };
 
-/**
- * Ultrawide aspect ratio (21:9)
- */
 export const UltrawideAspectRatio: Story = {
   args: {
     src: "dQw4w9WgXcQ",
@@ -169,9 +148,6 @@ export const UltrawideAspectRatio: Story = {
   },
 };
 
-/**
- * Autoplay and muted (recommended for autoplay)
- */
 export const AutoplayMuted: Story = {
   args: {
     src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
@@ -185,9 +161,6 @@ export const AutoplayMuted: Story = {
   },
 };
 
-/**
- * Without controls
- */
 export const WithoutControls: Story = {
   args: {
     src: "dQw4w9WgXcQ",

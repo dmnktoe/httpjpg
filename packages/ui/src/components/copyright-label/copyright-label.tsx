@@ -1,5 +1,3 @@
-"use client";
-
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
@@ -7,13 +5,34 @@ import { Box } from "../box/box";
 export type CopyrightPosition = "below" | "overlay" | "inline-black" | "inline-white";
 
 export interface CopyrightLabelProps {
-  /** Copyright text; the © symbol is prepended automatically. */
+  /** Copyright text; the © symbol is prepended unless it is already present. */
   text?: string;
   /** Asset source/credit, rendered on its own line below the copyright. */
   source?: string;
   position?: CopyrightPosition;
   css?: SystemStyleObject;
 }
+
+const BASE_CSS: SystemStyleObject = {
+  fontFamily: "sans",
+  fontSize: "sm",
+  opacity: 0.7,
+  pointerEvents: "none",
+};
+
+const INLINE_CSS: SystemStyleObject = {
+  ...BASE_CSS,
+  position: "absolute",
+  right: 2,
+  bottom: 2,
+  px: 1,
+  py: 2,
+  writingMode: "vertical-rl",
+  transform: "rotate(180deg)",
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+  zIndex: "docked",
+};
 
 export function CopyrightLabel({
   text,
@@ -27,7 +46,7 @@ export function CopyrightLabel({
 
   const lines = (
     <>
-      {text ? <>© {text}</> : null}
+      {text ? <>{formatCopyright(text)}</> : null}
       {source ? (
         <Box as="span" css={{ display: "block" }}>
           {source}
@@ -40,18 +59,15 @@ export function CopyrightLabel({
     return (
       <Box
         css={{
+          ...BASE_CSS,
           position: "absolute",
           bottom: 0,
           left: 0,
           right: 0,
           background: "linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent)",
           p: 4,
-          fontFamily: "sans",
-          fontSize: "sm",
-          opacity: 0.7,
           color: "white",
           boxSizing: "border-box",
-          pointerEvents: "none",
           zIndex: "docked",
           ...cssProp,
         }}
@@ -61,51 +77,12 @@ export function CopyrightLabel({
     );
   }
 
-  if (position === "inline-black") {
+  if (position === "inline-black" || position === "inline-white") {
     return (
       <Box
         css={{
-          position: "absolute",
-          right: 2,
-          bottom: 2,
-          px: 1,
-          py: 2,
-          fontFamily: "sans",
-          fontSize: "sm",
-          opacity: 0.7,
-          color: "black",
-          writingMode: "vertical-rl",
-          transform: "rotate(180deg)",
-          whiteSpace: "nowrap",
-          zIndex: "docked",
-          pointerEvents: "none",
-          ...cssProp,
-        }}
-      >
-        {lines}
-      </Box>
-    );
-  }
-
-  if (position === "inline-white") {
-    return (
-      <Box
-        css={{
-          position: "absolute",
-          bottom: 2,
-          right: 2,
-          px: 1,
-          py: 2,
-          fontFamily: "sans",
-          fontSize: "sm",
-          opacity: 0.7,
-          color: "white",
-          writingMode: "vertical-rl",
-          transform: "rotate(180deg)",
-          whiteSpace: "nowrap",
-          boxSizing: "border-box",
-          zIndex: "docked",
-          pointerEvents: "none",
+          ...INLINE_CSS,
+          color: position === "inline-black" ? "black" : "white",
           ...cssProp,
         }}
       >
@@ -117,15 +94,19 @@ export function CopyrightLabel({
   return (
     <Box
       css={{
-        fontFamily: "sans",
-        fontSize: "sm",
-        opacity: 0.7,
+        ...BASE_CSS,
         py: 2,
         color: "currentColor",
+        pointerEvents: undefined,
         ...cssProp,
       }}
     >
       {lines}
     </Box>
   );
+}
+
+function formatCopyright(text: string): string {
+  const trimmed = text.trim();
+  return trimmed.startsWith("©") ? trimmed : `© ${trimmed}`;
 }

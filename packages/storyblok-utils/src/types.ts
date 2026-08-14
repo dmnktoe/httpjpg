@@ -84,13 +84,15 @@ export interface StoryblokVideoAsset {
   fieldtype?: "asset";
 }
 
+export interface StoryblokRichTextNode {
+  type: string;
+  content?: StoryblokRichTextNode[];
+  attrs?: Record<string, unknown>;
+  marks?: Array<{ type: string; attrs?: Record<string, unknown> }>;
+  text?: string;
+}
+
 export interface StoryblokRichText {
   type: "doc";
-  content: Array<{
-    type: string;
-    content?: unknown[];
-    attrs?: Record<string, unknown>;
-    marks?: Array<{ type: string; attrs?: Record<string, unknown> }>;
-    text?: string;
-  }>;
+  content: StoryblokRichTextNode[];
 }

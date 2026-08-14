@@ -1,4 +1,9 @@
-import { extractPlainText, imagePreset, isVideoAsset } from "@httpjpg/storyblok-utils";
+import {
+  extractPlainText,
+  imagePreset,
+  isVideoAsset,
+  type StoryblokRichText,
+} from "@httpjpg/storyblok-utils";
 
 import type { SearchMedia } from "./ranking";
 
@@ -37,11 +42,12 @@ function isAsset(value: unknown): value is AssetLike {
   );
 }
 
+function isRichTextDoc(value: unknown): value is StoryblokRichText {
+  return typeof value === "object" && value !== null && (value as { type?: string }).type === "doc";
+}
+
 function captionText(value: unknown): string {
-  if (typeof value === "object" && value !== null && (value as { type?: string }).type === "doc") {
-    return extractPlainText(value as { content?: [] });
-  }
-  return "";
+  return isRichTextDoc(value) ? extractPlainText(value) : "";
 }
 
 function text(value: unknown): string {

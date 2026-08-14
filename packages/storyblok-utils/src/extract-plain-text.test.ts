@@ -27,4 +27,14 @@ describe("extractPlainText", () => {
       extractPlainText({ content: [{ type: "horizontal_rule" }, { type: "text", text: "x" }] }),
     ).toBe("x");
   });
+
+  it("tolerates malformed content without throwing", () => {
+    // A `type: "doc"` guard on the caller side does not prove `content` is a
+    // well-formed node array; the extractor must not throw on the odd shapes.
+    expect(extractPlainText({ content: "nope" } as never)).toBe("");
+    expect(extractPlainText({ content: [null, { type: "text", text: "x" }] } as never)).toBe("x");
+    expect(extractPlainText({ content: [{ type: "paragraph", content: "bad" }] } as never)).toBe(
+      "",
+    );
+  });
 });

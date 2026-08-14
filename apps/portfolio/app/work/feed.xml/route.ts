@@ -1,6 +1,11 @@
 import { env } from "@httpjpg/env";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
-import { extractPlainText, firstImageFilename, imagePreset } from "@httpjpg/storyblok-utils";
+import {
+  extractPlainText,
+  firstImageFilename,
+  imagePreset,
+  type StoryblokRichText,
+} from "@httpjpg/storyblok-utils";
 import { unstable_cache } from "next/cache";
 
 import { getFeatureFlags } from "@/lib/queries/widgets";
@@ -13,7 +18,7 @@ interface FeedStory {
   first_published_at?: string;
   content?: {
     title?: string;
-    description?: unknown;
+    description?: StoryblokRichText;
     images?: Array<{ filename?: string; content_type?: string }>;
     date?: string;
   };
@@ -65,7 +70,7 @@ export async function GET() {
       const pubDate = new Date(
         s.content?.date || s.published_at || s.first_published_at || Date.now(),
       ).toUTCString();
-      const desc = escapeXml(extractPlainText(s.content?.description as never, 500));
+      const desc = escapeXml(extractPlainText(s.content?.description, 500));
       const img = firstImageFilename(s.content?.images);
       const enclosure = img
         ? `\n      <enclosure url="${escapeXml(imagePreset.og(img))}" type="image/jpeg"/>`

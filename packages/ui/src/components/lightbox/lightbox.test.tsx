@@ -181,6 +181,22 @@ describe("Lightbox", () => {
     expect(props.onIndexChange).not.toHaveBeenCalled();
   });
 
+  it("restores focus to the opener without scrolling the page", () => {
+    const opener = document.createElement("button");
+    opener.textContent = "open";
+    document.body.append(opener);
+    opener.focus();
+    const focus = vi.spyOn(opener, "focus");
+
+    const { unmount } = render(
+      <Lightbox open items={ITEMS} index={0} onClose={vi.fn()} onIndexChange={vi.fn()} />,
+    );
+    unmount();
+
+    expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+    opener.remove();
+  });
+
   it("cycles focus inside the dialog rather than escaping it", () => {
     setup();
     const buttons = screen.getAllByRole("button");

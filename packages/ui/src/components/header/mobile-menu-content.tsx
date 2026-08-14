@@ -55,7 +55,7 @@ export function MobileMenuContent({
         ),
       );
 
-    (getFocusable()[0] ?? panel).focus();
+    (getFocusable()[0] ?? panel).focus({ preventScroll: true });
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -95,7 +95,7 @@ export function MobileMenuContent({
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      previouslyFocused?.focus?.();
+      previouslyFocused?.focus?.({ preventScroll: true });
     };
   }, [isOpen, mounted, setIsOpen]);
 

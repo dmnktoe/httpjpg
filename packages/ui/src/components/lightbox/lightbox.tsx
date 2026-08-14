@@ -79,9 +79,12 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
       return;
     }
     const previouslyFocused = document.activeElement as HTMLElement | null;
-    dialogRef.current?.focus();
+    dialogRef.current?.focus({ preventScroll: true });
     return () => {
-      previouslyFocused?.focus?.();
+      // Cleanup runs before the scroll lock thaws. Without preventScroll the
+      // opener can scroll into view after the page is restored, which on
+      // mobile leaves the sticky greeting off-screen.
+      previouslyFocused?.focus?.({ preventScroll: true });
     };
   }, [open, isMounted]);
 

@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
 
-import { isBodyScrollLocked } from "../../lib/use-body-scroll-lock";
+import { isBodyScrollLocked, subscribeBodyScrollLock } from "../../lib/use-body-scroll-lock";
 import { Box } from "../box/box";
 
 const FADE_DISTANCE = 160;
@@ -58,6 +58,11 @@ export function HeaderScrollVeil() {
     const update = () => {
       raf = 0;
       if (isBodyScrollLocked()) {
+        // Hide the blur layers, not the tint: stacking `backdrop-filter` on a
+        // sticky header with another filter (the lightbox) is what makes the
+        // greeting vanish on mobile after the first open. Leave --veil-progress
+        // alone so closing does not ramp 0 → 1.
+        veil.dataset.veilIdle = "true";
         return;
       }
       const progress = Math.min(1, Math.max(0, window.scrollY / FADE_DISTANCE));
@@ -74,10 +79,12 @@ export function HeaderScrollVeil() {
     };
 
     update();
+    const unsubscribe = subscribeBodyScrollLock(update);
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule, { passive: true });
 
     return () => {
+      unsubscribe();
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       if (raf) {

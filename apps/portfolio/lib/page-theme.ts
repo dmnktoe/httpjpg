@@ -1,6 +1,7 @@
 import { draftMode, headers } from "next/headers";
 
 import { getCachedStory } from "./queries/work";
+import { STORYBLOK_EDITOR_HEADER } from "./storyblok-editor";
 import { STORYBLOK_SLUGS } from "./storyblok-slugs";
 
 export type PageTheme = "light" | "dark";
@@ -17,7 +18,7 @@ export function isInternalSlug(slug: string): boolean {
 /** Light by default; only Storyblok-resolved pages with `content.isDark` flip to dark. */
 export async function getPageTheme(): Promise<PageTheme> {
   const reqHeaders = await headers();
-  if (reqHeaders.get("x-storyblok-editor") === "1") {
+  if (reqHeaders.get(STORYBLOK_EDITOR_HEADER) === "1") {
     return "light";
   }
   const pathname = reqHeaders.get("x-pathname") ?? "/";

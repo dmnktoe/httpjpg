@@ -1,4 +1,5 @@
-import { expect, test } from "@playwright/test";
+import { argosScreenshot } from "@argos-ci/playwright";
+import { test } from "@playwright/test";
 
 import { MOBILE_TAG, listVisualStories, prepareStory } from "./lib";
 
@@ -17,6 +18,7 @@ for (const story of stories) {
 
     await prepareStory(page, story.id);
 
-    await expect(page).toHaveScreenshot(`${story.id}.png`, { fullPage: true });
+    const name = testInfo.project.name === "mobile" ? `${story.id}-mobile` : story.id;
+    await argosScreenshot(page, name);
   });
 }

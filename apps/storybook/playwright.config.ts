@@ -1,3 +1,4 @@
+import { createArgosReporterOptions } from "@argos-ci/playwright/reporter";
 import { defineConfig, devices } from "@playwright/test";
 
 import { STORYBOOK_BASE_URL, STORYBOOK_STATIC_PORT } from "./tests/visual/lib";
@@ -7,34 +8,34 @@ const MOBILE_VIEWPORT = { width: 390, height: 844 };
 
 export default defineConfig({
   testDir: "./tests/visual",
-  snapshotPathTemplate: "{testDir}/__screenshots__/{projectName}/{arg}{ext}",
 
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : undefined,
-  reporter: process.env.CI
-    ? [["html", { open: "never" }], ["json", { outputFile: "visual-results.json" }], ["github"]]
-    : [["html", { open: "never" }], ["list"]],
-
-  expect: {
-    toHaveScreenshot: {
-      animations: "disabled",
-      caret: "hide",
-      scale: "css",
-      maxDiffPixelRatio: 0.0005,
-    },
-  },
+  reporter: [
+    process.env.CI ? ["dot"] : ["list"],
+    [
+      "@argos-ci/playwright/reporter",
+      createArgosReporterOptions({
+        uploadToArgos: !!process.env.CI,
+      }),
+    ],
+  ],
 
   use: {
     baseURL: STORYBOOK_BASE_URL,
+    bypassCSP: true,
     colorScheme: "light",
     contextOptions: { reducedMotion: "reduce" },
     deviceScaleFactor: 1,
-    launchOptions: { chromiumSandbox: false },
     locale: "en-US",
+    screenshot: "only-on-failure",
     timezoneId: "UTC",
     trace: "on-first-retry",
+    launchOptions: {
+      args: ["--disable-lcd-text", "--font-render-hinting=none"],
+    },
   },
 
   projects: [

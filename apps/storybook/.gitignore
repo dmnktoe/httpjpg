@@ -10,8 +10,8 @@ node_modules/
 # Build info
 *.tsbuildinfo
 
-# Visual regression — baselines live in the Actions cache, never in the repo
+# Visual regression — Argos owns baselines; local captures stay off git
+screenshots/
 tests/visual/__screenshots__/
 playwright-report/
 test-results/
-visual-results.json

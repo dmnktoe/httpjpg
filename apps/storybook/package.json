@@ -9,9 +9,8 @@
     "build": "turbo run build --filter=@httpjpg/ui && storybook build",
     "preview": "storybook preview",
     "chromatic": "chromatic",
-    "test:visual": "bash ./scripts/visual-docker.sh",
-    "test:visual:update": "bash ./scripts/visual-docker.sh --update-snapshots",
-    "test:visual:smoke": "playwright test --ignore-snapshots",
+    "test:visual": "playwright test",
+    "test:visual:smoke": "playwright test",
     "type-check": "tsc --noEmit",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix"
@@ -28,6 +27,7 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
+    "@argos-ci/playwright": "^7.4.6",
     "@playwright/test": "^1.62.1",
     "@storybook/addon-docs": "^10.5.8",
     "@storybook/react": "^10.5.8",

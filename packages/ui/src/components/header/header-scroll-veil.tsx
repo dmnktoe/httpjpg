@@ -3,6 +3,7 @@
 import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
 
+import { isBodyScrollLocked } from "../../lib/use-body-scroll-lock";
 import { Box } from "../box/box";
 
 const FADE_DISTANCE = 160;
@@ -56,6 +57,9 @@ export function HeaderScrollVeil() {
 
     const update = () => {
       raf = 0;
+      if (isBodyScrollLocked()) {
+        return;
+      }
       const progress = Math.min(1, Math.max(0, window.scrollY / FADE_DISTANCE));
       veil.style.setProperty("--veil-progress", progress.toFixed(3));
       veil.style.setProperty("--veil-blur", (progress * progress).toFixed(3));

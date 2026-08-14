@@ -1,11 +1,17 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 
+import { isBodyScrollLocked } from "../../lib/use-body-scroll-lock";
 import { HeaderScrollVeil } from "./header-scroll-veil";
+
+vi.mock("../../lib/use-body-scroll-lock", () => ({
+  isBodyScrollLocked: vi.fn(() => false),
+}));
 
 let frames: FrameRequestCallback[] = [];
 
 beforeEach(() => {
   frames = [];
+  vi.mocked(isBodyScrollLocked).mockReturnValue(false);
   vi.stubGlobal("scrollY", 0);
   vi.stubGlobal(
     "requestAnimationFrame",
@@ -85,6 +91,21 @@ describe("HeaderScrollVeil", () => {
 
     expect(progress()).toBe("1.000");
     expect(blur()).toBe("1.000");
+  });
+
+  it("holds its value while an overlay locks the body scroll", () => {
+    vi.stubGlobal("scrollY", 160);
+    render(<HeaderScrollVeil />);
+    expect(progress()).toBe("1.000");
+
+    vi.mocked(isBodyScrollLocked).mockReturnValue(true);
+    scrollTo(0);
+    expect(progress()).toBe("1.000");
+    expect(veil().dataset.veilIdle).toBe("false");
+
+    vi.mocked(isBodyScrollLocked).mockReturnValue(false);
+    scrollTo(160);
+    expect(progress()).toBe("1.000");
   });
 
   it("drops its scroll listeners on unmount", () => {

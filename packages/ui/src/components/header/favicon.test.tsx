@@ -10,6 +10,12 @@ function spinners(container: HTMLElement): Element[] {
   );
 }
 
+function loadFavicon(image: HTMLImageElement, size = 16) {
+  Object.defineProperty(image, "naturalWidth", { configurable: true, value: size });
+  Object.defineProperty(image, "naturalHeight", { configurable: true, value: size });
+  fireEvent.load(image);
+}
+
 describe("Favicon", () => {
   it("renders a 14x14 proxied image for an external href", () => {
     const { container } = render(<Favicon href={EXTERNAL_HREF} />);
@@ -34,9 +40,11 @@ describe("Favicon", () => {
 
     expect(spinners(container)).toHaveLength(1);
 
-    fireEvent.load(container.querySelector('img[src^="/api/favicon"]')!);
+    loadFavicon(container.querySelector('img[src^="/api/favicon"]')!);
 
     expect(spinners(container)).toHaveLength(0);
+    expect(container.querySelector('img[src^="/api/favicon"]')).toBeInTheDocument();
+    expect(screen.queryByText("🔗")).not.toBeInTheDocument();
   });
 
   it("settles an image that finished before hydration", () => {
@@ -45,11 +53,19 @@ describe("Favicon", () => {
       HTMLImageElement.prototype,
       "naturalWidth",
     );
+    const naturalHeight = Object.getOwnPropertyDescriptor(
+      HTMLImageElement.prototype,
+      "naturalHeight",
+    );
     Object.defineProperty(HTMLImageElement.prototype, "complete", {
       configurable: true,
       get: () => true,
     });
     Object.defineProperty(HTMLImageElement.prototype, "naturalWidth", {
+      configurable: true,
+      get: () => 16,
+    });
+    Object.defineProperty(HTMLImageElement.prototype, "naturalHeight", {
       configurable: true,
       get: () => 16,
     });
@@ -62,6 +78,7 @@ describe("Favicon", () => {
     } finally {
       Object.defineProperty(HTMLImageElement.prototype, "complete", complete!);
       Object.defineProperty(HTMLImageElement.prototype, "naturalWidth", naturalWidth!);
+      Object.defineProperty(HTMLImageElement.prototype, "naturalHeight", naturalHeight!);
     }
   });
 
@@ -80,6 +97,18 @@ describe("Favicon", () => {
     fireEvent.error(container.querySelector('img[src^="/api/favicon"]')!);
 
     expect(spinners(container)).toHaveLength(0);
+    expect(container.querySelector('img[src^="/api/favicon"]')).toBeNull();
+    expect(screen.getByText("🔗")).toBeInTheDocument();
+  });
+
+  it("treats the 1×1 miss placeholder as a failed favicon", () => {
+    const { container } = render(<Favicon href={EXTERNAL_HREF} />);
+    const image = container.querySelector('img[src^="/api/favicon"]')!;
+
+    Object.defineProperty(image, "naturalWidth", { configurable: true, value: 1 });
+    Object.defineProperty(image, "naturalHeight", { configurable: true, value: 1 });
+    fireEvent.load(image);
+
     expect(container.querySelector('img[src^="/api/favicon"]')).toBeNull();
     expect(screen.getByText("🔗")).toBeInTheDocument();
   });

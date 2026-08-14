@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type SyntheticEvent } from "react";
 
 import { getFaviconUrl } from "../../lib/favicon-url";
 import { Box } from "../box/box";
@@ -21,7 +21,7 @@ export function Favicon({ href }: { href: string }) {
 
   const settleFromDom = (node: HTMLImageElement | null) => {
     if (node?.complete) {
-      setState(node.naturalWidth > 0 ? "loaded" : "failed");
+      setState(isRenderedFavicon(node) ? "loaded" : "failed");
     }
   };
 
@@ -50,12 +50,19 @@ export function Favicon({ href }: { href: string }) {
         aria-hidden="true"
         width={14}
         height={14}
-        onLoad={() => setState("loaded")}
+        onLoad={(event: SyntheticEvent<HTMLImageElement>) =>
+          setState(isRenderedFavicon(event.currentTarget) ? "loaded" : "failed")
+        }
         onError={() => setState("failed")}
         css={state === "loaded" ? FAVICON_STYLES : HIDDEN_FAVICON_STYLES}
       />
     </>
   );
+}
+
+/** The proxy answers a miss with a 1×1 PNG and HTTP 200, so onLoad still fires. */
+function isRenderedFavicon(image: HTMLImageElement): boolean {
+  return image.naturalWidth > 1 && image.naturalHeight > 1;
 }
 
 const FAVICON_STYLES = {

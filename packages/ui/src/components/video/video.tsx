@@ -8,7 +8,7 @@ import { token } from "styled-system/tokens";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
-import { CopyrightLabel, type CopyrightPosition } from "../copyright-label/copyright-label";
+import { CopyrightLabel, type CopyrightPosition, isInlineCopyright } from "../copyright-label/copyright-label";
 import { VideoControls } from "./video-controls";
 
 export type VideoSource = "native" | "youtube" | "vimeo";
@@ -117,11 +117,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
     }, [muted]);
 
     const hasCredit = Boolean(copyright || copyrightSource);
-    const inline =
-      hasCredit &&
-      (copyrightPosition === "inline-white" ||
-        copyrightPosition === "inline-black" ||
-        copyrightPosition === "overlay");
+    const inline = hasCredit && isInlineCopyright(copyrightPosition);
 
     let media: React.ReactNode;
     if (source === "youtube") {

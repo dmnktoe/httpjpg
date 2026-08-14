@@ -6,7 +6,11 @@ import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
-import { CopyrightLabel, type CopyrightPosition } from "../copyright-label/copyright-label";
+import {
+  CopyrightLabel,
+  type CopyrightPosition,
+  isInlineCopyright,
+} from "../copyright-label/copyright-label";
 
 const skeletonClass = css({
   position: "absolute",
@@ -118,11 +122,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
     const showBlur = blurOnLoad && !highResLoaded && blurDataURL;
     const showSkeleton = blurOnLoad && !blurDataURL;
     const hasCredit = Boolean(copyright || copyrightSource);
-    const inline =
-      hasCredit &&
-      (copyrightPosition === "inline-white" ||
-        copyrightPosition === "inline-black" ||
-        copyrightPosition === "overlay");
+    const inline = hasCredit && isInlineCopyright(copyrightPosition);
 
     return (
       <>

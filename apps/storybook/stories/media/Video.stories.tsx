@@ -35,6 +35,10 @@ const meta: Meta<typeof Video> = {
       control: "boolean",
       description: "Mute video",
     },
+    copyrightSource: {
+      control: "text",
+      description: "Asset source/credit, shown as a second line below the copyright",
+    },
     copyrightPosition: {
       control: "select",
       options: ["below", "overlay"],
@@ -94,6 +98,25 @@ export const Native: Story = {
     loop: false,
     muted: false,
     copyright: "© 2008 Blender Foundation | www.bigbuckbunny.org",
+    copyrightPosition: "below",
+  },
+};
+
+/**
+ * Native video with a copyright + source line
+ */
+export const NativeWithCopyrightSource: Story = {
+  args: {
+    src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
+    source: "native",
+    poster: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217",
+    aspectRatio: "16/9",
+    controls: true,
+    autoPlay: false,
+    loop: false,
+    muted: false,
+    copyright: "© 2008 Blender Foundation",
+    copyrightSource: "peach.blender.org",
     copyrightPosition: "below",
   },
 };

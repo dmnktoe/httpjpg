@@ -73,6 +73,12 @@ describe("HeaderScrollVeil", () => {
     expect(veil().dataset.veilIdle).toBe("true");
   });
 
+  it("sizes itself to the sticky header plus the fade tail", () => {
+    render(<HeaderScrollVeil height={120} />);
+
+    expect(veil().style.height).toBe("calc(120px + 1.5rem)");
+  });
+
   it("ramps the tint in linearly with scroll and clamps at 1", () => {
     render(<HeaderScrollVeil />);
 

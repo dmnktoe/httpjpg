@@ -43,8 +43,17 @@ const TINT_GRADIENT = `linear-gradient(to bottom, ${TINT_STOPS.map(
     `rgb(var(--veil-rgb) / calc(${alpha} * var(--veil-strength))) ${position}%`,
 ).join(", ")})`;
 
-/** Readability scrim that grows in behind the sticky header as the page scrolls. */
-export function HeaderScrollVeil() {
+export interface HeaderScrollVeilProps {
+  /** Sticky header height in px. The fade continues 1.5rem past it. */
+  height?: number;
+}
+
+/**
+ * Readability scrim behind the sticky header. It is a `position: fixed`
+ * sibling, not a child: `backdrop-filter` inside `position: sticky` is what
+ * made the greeting vanish after the lightbox (another filter) opened.
+ */
+export function HeaderScrollVeil({ height = 0 }: HeaderScrollVeilProps) {
   const veilRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -58,10 +67,9 @@ export function HeaderScrollVeil() {
     const update = () => {
       raf = 0;
       if (isBodyScrollLocked()) {
-        // Hide the blur layers, not the tint: stacking `backdrop-filter` on a
-        // sticky header with another filter (the lightbox) is what makes the
-        // greeting vanish on mobile after the first open. Leave --veil-progress
-        // alone so closing does not ramp 0 → 1.
+        // Hide the blur layers, not the tint: two `backdrop-filter`s at once
+        // (this veil plus the lightbox) is muddy, and used to trap the sticky
+        // greeting. Leave --veil-progress alone so closing does not ramp 0 → 1.
         veil.dataset.veilIdle = "true";
         return;
       }
@@ -99,14 +107,21 @@ export function HeaderScrollVeil() {
       aria-hidden="true"
       data-testid="header-scroll-veil"
       data-veil-idle="true"
-      style={{ "--veil-progress": "0", "--veil-blur": "0" } as CSSProperties}
+      // Same z-index token as the header; the header element comes after this
+      // in the tree, so the greeting paints on top. On mobile the header is higher.
+      style={
+        {
+          "--veil-progress": "0",
+          "--veil-blur": "0",
+          height: `calc(${height}px + 1.5rem)`,
+        } as CSSProperties
+      }
       css={{
-        position: "absolute",
+        position: "fixed",
         top: 0,
         right: 0,
         left: 0,
-        zIndex: -1,
-        height: "calc(100% + 1.5rem)",
+        zIndex: "header",
         pointerEvents: "none",
         userSelect: "none",
         "--veil-rgb": "255 255 255",

@@ -50,17 +50,19 @@ export function toSlideshowImage(asset: ImageLike, fallbackAlt: string): Slidesh
   };
 }
 
+/** First non-video asset, or undefined. */
+export function firstImage<T extends Pick<ImageLike, "filename" | "content_type">>(
+  assets: ReadonlyArray<T> | undefined,
+): T | undefined {
+  if (!assets?.length) {
+    return undefined;
+  }
+  return assets.find((asset) => Boolean(asset.filename) && !isVideoAsset(asset));
+}
+
 /** First non-video filename, or undefined. */
 export function firstImageFilename(
   assets: ReadonlyArray<Pick<ImageLike, "filename" | "content_type">> | undefined,
 ): string | undefined {
-  if (!assets?.length) {
-    return undefined;
-  }
-  for (const asset of assets) {
-    if (!isVideoAsset(asset) && asset.filename) {
-      return asset.filename;
-    }
-  }
-  return undefined;
+  return firstImage(assets)?.filename;
 }

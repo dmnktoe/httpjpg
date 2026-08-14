@@ -1,9 +1,9 @@
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { CACHE_TAGS } from "@httpjpg/storyblok-next";
-import { resolveWorkTags } from "@httpjpg/storyblok-utils";
+import { firstImage, resolveWorkTags } from "@httpjpg/storyblok-utils";
 import { unstable_cache } from "next/cache";
 
-import type { SearchDocument } from "../search/ranking";
+import type { SearchDocument, SearchFeatured } from "../search/ranking";
 import { collectStoryMedia } from "../search/story-media";
 import { collectStoryText } from "../search/story-text";
 import { STORYBLOK_SLUGS } from "../storyblok-slugs";
@@ -20,6 +20,7 @@ interface IndexableStory {
     external_only?: boolean;
     tags?: string[];
     link?: { url?: string; cached_url?: string };
+    images?: Array<{ filename?: string; content_type?: string; focus?: string }>;
   } & Record<string, unknown>;
 }
 
@@ -49,6 +50,7 @@ function toSearchDocument(story: IndexableStory): SearchDocument {
   // the stable key related work compares. Both come off one resolve so they
   // can never disagree about which tags a story carries.
   const curated = resolveWorkTags(story.content?.tags);
+  const featured = toFeatured(story.content?.images);
 
   return {
     id: story.uuid,
@@ -60,7 +62,18 @@ function toSearchDocument(story: IndexableStory): SearchDocument {
     excerpt: collectStoryText(story.content),
     date: story.content?.date,
     media: collectStoryMedia(story.content),
+    ...(featured ? { featured } : {}),
   };
+}
+
+function toFeatured(
+  images: Array<{ filename?: string; content_type?: string; focus?: string }> | undefined,
+): SearchFeatured | undefined {
+  const image = firstImage(images);
+  if (!image?.filename) {
+    return undefined;
+  }
+  return { source: image.filename, focus: image.focus };
 }
 
 /** The published corpus both search and the ask endpoint read. */

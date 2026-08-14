@@ -15,6 +15,10 @@ const ITEMS = [
     thumbSrcSet:
       "https://a.storyblok.com/f/1/x/abc/shot.jpg/m/320x240/filters:quality(75) 320w, " +
       "https://a.storyblok.com/f/1/x/abc/shot.jpg/m/1280x960/filters:quality(75) 1280w",
+    square: "https://a.storyblok.com/f/1/x/abc/shot.jpg/m/120x120/filters:quality(75)",
+    squareSrcSet:
+      "https://a.storyblok.com/f/1/x/abc/shot.jpg/m/40x40/filters:quality(75) 40w, " +
+      "https://a.storyblok.com/f/1/x/abc/shot.jpg/m/120x120/filters:quality(75) 120w",
     sharedTags: ["Swift", "iOS"],
   },
   {
@@ -35,11 +39,13 @@ beforeEach(() => {
 });
 
 describe("RelatedWorkGallery", () => {
-  it("opens on the list, fetching no thumbnails", () => {
+  it("opens on the list with square thumbs", () => {
     render(<RelatedWorkGallery items={ITEMS} />);
 
     expect(screen.getByRole("button", { name: /list/i })).toHaveAttribute("aria-pressed", "true");
-    expect(document.querySelector("img")).toBeNull();
+    const image = document.querySelector("img");
+    expect(image).toHaveAttribute("src", ITEMS[0]?.square);
+    expect(image).toHaveAttribute("sizes", "40px");
   });
 
   it("puts the view it opens on first", () => {
@@ -58,7 +64,7 @@ describe("RelatedWorkGallery", () => {
 
     expect(screen.getByRole("button", { name: /grid/i })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: /list/i })).toHaveAttribute("aria-pressed", "false");
-    expect(document.querySelector("img")).toBeInTheDocument();
+    expect(document.querySelector("img")).toHaveAttribute("src", ITEMS[0]?.thumb);
   });
 
   it("hands the browser the width candidates in the grid", () => {
@@ -91,7 +97,7 @@ describe("RelatedWorkGallery", () => {
     clickView("grid");
     clickView("list");
 
-    expect(document.querySelector("img")).toBeNull();
+    expect(document.querySelector("img")).toHaveAttribute("src", ITEMS[0]?.square);
   });
 
   it("remembers the choice", () => {

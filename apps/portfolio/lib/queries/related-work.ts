@@ -1,14 +1,18 @@
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getResponsiveImage, workTagLabels } from "@httpjpg/storyblok-utils";
 
-import type { SearchMedia } from "../search/ranking";
+import type { SearchDocument } from "../search/ranking";
 import { relatedDocuments } from "../search/related";
 import { getSearchIndex } from "./search-index";
 
 /** The crop the cards are laid out at, so the box and the cut file cannot drift. */
 export const RELATED_CARD_ASPECT_RATIO = "4/3";
 
+/** The crop the list thumbs are laid out at, so the box and the cut file cannot drift. */
+export const RELATED_LIST_ASPECT_RATIO = "1/1";
+
 const CARD_WIDTHS = [320, 480, 640, 960, 1280];
+const LIST_WIDTHS = [40, 80, 120];
 
 export interface RelatedWorkItem {
   id: string;
@@ -17,6 +21,8 @@ export interface RelatedWorkItem {
   date?: string;
   thumb?: string;
   thumbSrcSet?: string;
+  square?: string;
+  squareSrcSet?: string;
   sharedTags: string[];
 }
 
@@ -46,9 +52,7 @@ export async function getRelatedWork(href: string, limit = 3): Promise<RelatedWo
         title: document.title,
         href: document.href,
         date: document.date,
-        ...cardImage(
-          document.media?.find((item) => item.kind === "image" && (item.source || item.thumb)),
-        ),
+        ...relatedImages(pickRelatedImage(document)),
         sharedTags: workTagLabels(document.sharedTags),
       })),
     };
@@ -59,20 +63,49 @@ export async function getRelatedWork(href: string, limit = 3): Promise<RelatedWo
   }
 }
 
+interface RelatedImageSource {
+  source?: string;
+  thumb?: string;
+  focus?: string;
+}
+
+/**
+ * Featured image first — the same asset the nav hover preview uses. A document
+ * indexed before `featured` existed falls back to its first body image.
+ */
+function pickRelatedImage(document: SearchDocument): RelatedImageSource | undefined {
+  if (document.featured?.source) {
+    return document.featured;
+  }
+  return document.media?.find((item) => item.kind === "image" && (item.source || item.thumb));
+}
+
 /** A document indexed before `source` existed falls back to its 200px thumbnail. */
-function cardImage(media: SearchMedia | undefined): Pick<RelatedWorkItem, "thumb" | "thumbSrcSet"> {
+function relatedImages(
+  media: RelatedImageSource | undefined,
+): Pick<RelatedWorkItem, "thumb" | "thumbSrcSet" | "square" | "squareSrcSet"> {
   if (!media) {
     return {};
   }
   if (!media.source) {
-    return { thumb: media.thumb };
+    return media.thumb ? { thumb: media.thumb, square: media.thumb } : {};
   }
 
-  const { src, srcSet } = getResponsiveImage(media.source, {
+  const card = getResponsiveImage(media.source, {
     widths: CARD_WIDTHS,
     aspectRatio: RELATED_CARD_ASPECT_RATIO,
     focus: media.focus,
   });
+  const square = getResponsiveImage(media.source, {
+    widths: LIST_WIDTHS,
+    aspectRatio: RELATED_LIST_ASPECT_RATIO,
+    focus: media.focus,
+  });
 
-  return { thumb: src, thumbSrcSet: srcSet || undefined };
+  return {
+    thumb: card.src,
+    thumbSrcSet: card.srcSet || undefined,
+    square: square.src,
+    squareSrcSet: square.srcSet || undefined,
+  };
 }

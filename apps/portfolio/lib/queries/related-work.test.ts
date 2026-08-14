@@ -52,7 +52,39 @@ describe("getRelatedWork", () => {
     expect(related[0]).toMatchObject({ title: "other", href: "/work/other", sharedTags: ["iOS"] });
   });
 
-  it("cuts the first image to card widths", async () => {
+  it("cuts the featured image to card and list sizes", async () => {
+    mockGetSearchIndex.mockResolvedValue([
+      doc("current", ["ios"]),
+      doc("other", ["ios"], {
+        featured: { source: ASSET, focus: "100x50:101x51" },
+        media: [
+          { id: "a", kind: "audio", thumb: "", label: "track" },
+          {
+            id: "b",
+            kind: "image",
+            thumb: `${ASSET}/m/200x0/filters:quality(75)`,
+            source: "https://a.storyblok.com/f/1/1600x1200/abc/body.jpg",
+            label: "shot",
+          },
+        ],
+      }),
+    ]);
+
+    const { related } = await getRelatedWork("/work/current");
+
+    expect(related[0]?.thumb).toBe(
+      `${ASSET}/m/1280x960/filters:quality(75):focal(100x50:1280x960)`,
+    );
+    expect(related[0]?.thumbSrcSet).toContain(
+      `${ASSET}/m/320x240/filters:quality(75):focal(100x50:320x240) 320w`,
+    );
+    expect(related[0]?.square).toBe(`${ASSET}/m/120x120/filters:quality(75):focal(100x50:120x120)`);
+    expect(related[0]?.squareSrcSet).toContain(
+      `${ASSET}/m/40x40/filters:quality(75):focal(100x50:40x40) 40w`,
+    );
+  });
+
+  it("cuts the first body image when the document predates `featured`", async () => {
     mockGetSearchIndex.mockResolvedValue([
       doc("current", ["ios"]),
       doc("other", ["ios"], {
@@ -74,6 +106,8 @@ describe("getRelatedWork", () => {
     expect(related[0]?.thumb).toBe(`${ASSET}/m/1280x960/filters:quality(75)`);
     expect(related[0]?.thumbSrcSet).toContain(`${ASSET}/m/320x240/filters:quality(75) 320w`);
     expect(related[0]?.thumbSrcSet).toContain(`${ASSET}/m/1280x960/filters:quality(75) 1280w`);
+    expect(related[0]?.square).toBe(`${ASSET}/m/120x120/filters:quality(75)`);
+    expect(related[0]?.squareSrcSet).toContain(`${ASSET}/m/40x40/filters:quality(75) 40w`);
   });
 
   it("keeps the focal point across the wider crop", async () => {
@@ -101,8 +135,12 @@ describe("getRelatedWork", () => {
 
     const { related } = await getRelatedWork("/work/current");
 
-    expect(related[0]).toMatchObject({ thumb: "https://img.example/x.jpg" });
+    expect(related[0]).toMatchObject({
+      thumb: "https://img.example/x.jpg",
+      square: "https://img.example/x.jpg",
+    });
     expect(related[0]?.thumbSrcSet).toBeUndefined();
+    expect(related[0]?.squareSrcSet).toBeUndefined();
   });
 
   it("leaves an external asset unresized", async () => {
@@ -123,8 +161,12 @@ describe("getRelatedWork", () => {
 
     const { related } = await getRelatedWork("/work/current");
 
-    expect(related[0]).toMatchObject({ thumb: "https://img.example/x.jpg" });
+    expect(related[0]).toMatchObject({
+      thumb: "https://img.example/x.jpg",
+      square: "https://img.example/x.jpg",
+    });
     expect(related[0]?.thumbSrcSet).toBeUndefined();
+    expect(related[0]?.squareSrcSet).toBeUndefined();
   });
 
   it("gives a neighbour with no image no thumbnail", async () => {

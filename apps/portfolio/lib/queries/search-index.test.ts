@@ -138,6 +138,31 @@ describe("getSearchIndex", () => {
     expect(document.media).toMatchObject([{ kind: "image", label: "Print run" }]);
   });
 
+  it("carries the featured image from work.images", async () => {
+    mockStories([
+      story({
+        content: {
+          component: "work",
+          title: "Demo Project",
+          images: [
+            { filename: "https://a.storyblok.com/f/1/clip.mp4", content_type: "video/mp4" },
+            {
+              filename: "https://a.storyblok.com/f/1/2x2/abc/cover.jpg",
+              focus: "10x10:11x11",
+            },
+          ],
+        },
+      }),
+    ]);
+
+    const [document] = await getSearchIndex();
+
+    expect(document.featured).toEqual({
+      source: "https://a.storyblok.com/f/1/2x2/abc/cover.jpg",
+      focus: "10x10:11x11",
+    });
+  });
+
   it("marks non-work stories as pages", async () => {
     mockStories([
       story({ full_slug: "about", content: { component: "page", title: "About" }, tag_list: [] }),

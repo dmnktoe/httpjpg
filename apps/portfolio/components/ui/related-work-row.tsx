@@ -1,8 +1,15 @@
-import { Box, Link } from "@httpjpg/ui";
+import { Box, Image, Link } from "@httpjpg/ui";
 
-import type { RelatedWorkItem } from "@/lib/queries/related-work";
+import { RELATED_LIST_ASPECT_RATIO, type RelatedWorkItem } from "@/lib/queries/related-work";
 
-export function RelatedWorkRow({ title, href, date, sharedTags }: RelatedWorkItem) {
+export function RelatedWorkRow({
+  title,
+  href,
+  date,
+  square,
+  squareSrcSet,
+  sharedTags,
+}: RelatedWorkItem) {
   const year = date ? new Date(date).getFullYear() : null;
 
   return (
@@ -11,7 +18,7 @@ export function RelatedWorkRow({ title, href, date, sharedTags }: RelatedWorkIte
         href={href}
         css={{
           display: "flex",
-          alignItems: "baseline",
+          alignItems: "center",
           gap: "4",
           py: "2",
           color: "inherit",
@@ -19,6 +26,19 @@ export function RelatedWorkRow({ title, href, date, sharedTags }: RelatedWorkIte
           _hover: { "& [data-related-title]": { textDecoration: "underline" } },
         }}
       >
+        {/* Rendered even when the story carries no image, so the titles stay in one column. */}
+        <Box css={{ flexShrink: 0, w: "10", h: "10", overflow: "hidden" }}>
+          {square && (
+            <Image
+              src={square}
+              srcSet={squareSrcSet}
+              alt=""
+              aspectRatio={RELATED_LIST_ASPECT_RATIO}
+              sizes="40px"
+              loading="lazy"
+            />
+          )}
+        </Box>
         {/* Rendered even when the story carries no date, so the titles stay in one column. */}
         <Box as="span" css={{ flexShrink: 0, w: "10", opacity: 0.5, fontSize: "xs" }}>
           {year}

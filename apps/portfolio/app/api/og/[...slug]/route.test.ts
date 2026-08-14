@@ -118,10 +118,9 @@ describe("GET /api/og/[...slug]", () => {
   it("reports a 500 when the font binary fetch fails", async () => {
     mockedFetchStory.mockResolvedValueOnce(validWorkStory());
     const prev = globalThis.fetch;
-    let callCount = 0;
-    globalThis.fetch = vi.fn(async () => {
-      callCount++;
-      if (callCount <= 5) {
+    globalThis.fetch = vi.fn(async (input: RequestInfo | URL) => {
+      const href = String(input);
+      if (href.includes("fonts.googleapis.com")) {
         return {
           ok: true,
           status: 200,
@@ -182,6 +181,12 @@ describe("GET /api/og/[...slug]", () => {
     expect(ImageResponse).toHaveBeenCalledTimes(1);
     const [, opts] = vi.mocked(ImageResponse).mock.calls[0]!;
     expect(opts).toMatchObject({ width: 1200, height: 630 });
+    expect(opts?.fonts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Sans", weight: 400 }),
+        expect.objectContaining({ name: "Headline", weight: 400 }),
+      ]),
+    );
   });
 
   it("renders the page layout for a non-work story with an image", async () => {

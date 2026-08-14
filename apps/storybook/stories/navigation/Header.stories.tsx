@@ -31,8 +31,7 @@ const meta = {
     },
     showScrollVeil: {
       control: "boolean",
-      description:
-        "Fades a theme-aware scrim with progressive blur in behind the header while scrolling",
+      description: "Fades a theme-aware scrim in behind the header while scrolling",
     },
   },
 } satisfies Meta<typeof Header>;

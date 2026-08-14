@@ -36,7 +36,7 @@ export function MobileMenuButton({ isOpen, setIsOpen }: MobileMenuButtonProps) {
           letterSpacing: "tight",
           bg: "transparent",
           border: "none",
-          transition: "all 150ms ease-out",
+          transition: "opacity 150ms ease-out",
           cursor: "pointer",
           _hover: { opacity: 0.6 },
         }}

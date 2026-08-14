@@ -68,16 +68,6 @@ describe("Header", () => {
     expect(screen.getByTestId("extra")).toBeInTheDocument();
   });
 
-  it("keeps the scroll veil outside the sticky header so its filter cannot trap the greeting", () => {
-    render(<Header nav={NAV} />);
-
-    const veil = screen.getByTestId("header-scroll-veil");
-    expect(veil.closest("header")).toBeNull();
-    expect(
-      screen.getByRole("banner").compareDocumentPosition(veil) & Node.DOCUMENT_POSITION_PRECEDING,
-    ).toBeTruthy();
-  });
-
   it("omits the scroll veil when asked to", () => {
     render(<Header nav={NAV} showScrollVeil={false} />);
 

@@ -2,37 +2,18 @@
 
 import { Box } from "../box/box";
 
-const PATTERN = [
-  "✦",
-  "·",
-  "⋆",
-  "·",
-  "☆",
-  "·",
-  "◆",
-  "·",
-  "⋆",
-  "·",
-  "✦",
-  "·",
-  "☆",
-  "·",
-  "◆",
-  "·",
-  "⋆",
-  "·",
-  "✦",
-  "·",
-] as const;
+const TILE = "✦ · ⋆ · ☆ · ◆ · ";
+const FIELD = Array.from({ length: 28 }, (_, row) => {
+  const line = TILE.repeat(14);
+  return row % 2 === 0 ? line : line.slice(4);
+}).join("\n");
 
-const COLS = 14;
-const ROWS = 28;
-const CELL_COUNT = COLS * ROWS;
-
+/** Full-viewport ASCII wash behind the mobile menu. One text node, not a cell grid. */
 export function MobileMenuBackdrop() {
   return (
     <Box
       aria-hidden="true"
+      data-testid="mobile-menu-backdrop"
       css={{
         position: "absolute",
         inset: 0,
@@ -46,32 +27,23 @@ export function MobileMenuBackdrop() {
         css={{
           position: "absolute",
           inset: 0,
-          display: "grid",
-          gridTemplateColumns: `repeat(${COLS}, 1fr)`,
-          gridAutoRows: "1fr",
+          p: "2",
           color: "pageFg",
+          opacity: 0.2,
           fontFamily: "mono",
           fontSize: "xs",
+          lineHeight: "loose",
+          letterSpacing: "0.35em",
+          whiteSpace: "pre",
+          animation: "asciiPulse 4s ease-in-out infinite",
+          overflow: "hidden",
+          "@media (prefers-reduced-motion: reduce)": { animation: "none" },
         }}
       >
-        {Array.from({ length: CELL_COUNT }, (_, i) => (
-          <Box
-            key={i}
-            as="span"
-            style={{ animationDelay: `${(((i * 41) % 100) / 100) * 4}s` }}
-            css={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              opacity: 0.2,
-              animation: "asciiPulse 4s ease-in-out infinite",
-              "@media (prefers-reduced-motion: reduce)": { animation: "none" },
-            }}
-          >
-            {PATTERN[i % PATTERN.length]}
-          </Box>
-        ))}
+        {FIELD}
       </Box>
     </Box>
   );
 }
+
+MobileMenuBackdrop.displayName = "MobileMenuBackdrop";

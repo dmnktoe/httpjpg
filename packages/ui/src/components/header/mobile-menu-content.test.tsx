@@ -80,6 +80,11 @@ describe("MobileMenuContent", () => {
     expect(screen.getByRole("link", { name: /^HOME$/ })).toHaveFocus();
   });
 
+  it("paints the backdrop as a single field rather than a cell per glyph", () => {
+    renderMenu();
+    expect(screen.getByTestId("mobile-menu-backdrop").querySelectorAll("*")).toHaveLength(2);
+  });
+
   it("exposes the panel as a modal dialog", () => {
     renderMenu();
     expect(screen.getByRole("dialog", { name: "Navigation" })).toHaveAttribute(

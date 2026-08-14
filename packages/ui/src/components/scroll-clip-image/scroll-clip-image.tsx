@@ -60,6 +60,8 @@ export interface ScrollClipImageProps {
   showProgress?: boolean;
   /** Copyright text. */
   copyright?: string;
+  /** Asset source/credit, shown as a second line below the copyright. */
+  copyrightSource?: string;
   copyrightPosition?: CopyrightPosition;
   /** Slotted below the image (e.g. caption). */
   children?: ReactNode;
@@ -128,6 +130,7 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
       brackets = true,
       showProgress = true,
       copyright,
+      copyrightSource,
       copyrightPosition = "inline-white",
       children,
       fetchPriority = "auto",
@@ -328,11 +331,15 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
           </Box>
         )}
 
-        {copyright &&
+        {(copyright || copyrightSource) &&
           (copyrightPosition === "inline-white" ||
             copyrightPosition === "inline-black" ||
             copyrightPosition === "overlay") && (
-            <CopyrightLabel text={copyright} position={copyrightPosition} />
+            <CopyrightLabel
+              text={copyright}
+              source={copyrightSource}
+              position={copyrightPosition}
+            />
           )}
       </Box>
     );
@@ -380,8 +387,8 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
               <Box css={{ width: "100%" }}>{wrapped}</Box>
             </Box>
           </Box>
-          {copyright && copyrightPosition === "below" && (
-            <CopyrightLabel text={copyright} position="below" />
+          {(copyright || copyrightSource) && copyrightPosition === "below" && (
+            <CopyrightLabel text={copyright} source={copyrightSource} position="below" />
           )}
           {children}
         </Box>
@@ -391,8 +398,8 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
     return (
       <Box css={{ display: "block", width: "100%" }} className={className} ref={outerRef}>
         {wrapped}
-        {copyright && copyrightPosition === "below" && (
-          <CopyrightLabel text={copyright} position="below" />
+        {(copyright || copyrightSource) && copyrightPosition === "below" && (
+          <CopyrightLabel text={copyright} source={copyrightSource} position="below" />
         )}
         {children}
       </Box>

@@ -40,6 +40,10 @@ const meta = {
       table: { defaultValue: { summary: "true" } },
     },
     aspectRatio: { control: "text" },
+    copyrightSource: {
+      control: "text",
+      description: "Asset source/credit, shown as a second line below the copyright",
+    },
   },
 } satisfies Meta<typeof ScrollClipImage>;
 
@@ -130,6 +134,27 @@ export const Gallery: Story = {
         alt="Video still"
         aspectRatio="16/9"
         brackets={false}
+      />
+      <Spacer label="end" />
+    </Stack>
+  ),
+};
+
+export const CopyrightWithSource: Story = {
+  args: {
+    src: OPTIMIZED_IMAGES.landscape,
+    alt: "Landscape",
+  },
+  render: () => (
+    <Stack direction="vertical" gap="16" css={{ maxWidth: "960px", mx: "auto", p: 6 }}>
+      <Spacer label="scroll target below" />
+      <ScrollClipImage
+        src={OPTIMIZED_IMAGES.landscape}
+        alt="Landscape"
+        aspectRatio="21/9"
+        copyright="2025 httpjpg"
+        copyrightSource="storyblok.com/asset"
+        copyrightPosition="below"
       />
       <Spacer label="end" />
     </Stack>

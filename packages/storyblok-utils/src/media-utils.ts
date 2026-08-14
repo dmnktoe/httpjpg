@@ -5,6 +5,7 @@ interface ImageLike {
   alt?: string;
   title?: string;
   copyright?: string;
+  source?: string;
   focus?: string;
   content_type?: string;
 }
@@ -13,6 +14,7 @@ interface SlideshowImageLike {
   url: string;
   alt: string;
   copyright?: string;
+  copyrightSource?: string;
   focus?: string;
   videoUrl?: string;
   srcSet?: string;
@@ -32,6 +34,7 @@ export function toSlideshowImage(asset: ImageLike, fallbackAlt: string): Slidesh
       url: "",
       alt: asset.alt || asset.title || fallbackAlt,
       copyright: asset.copyright,
+      copyrightSource: asset.source,
       focus: asset.focus,
       videoUrl: asset.filename,
     };
@@ -41,6 +44,7 @@ export function toSlideshowImage(asset: ImageLike, fallbackAlt: string): Slidesh
     url: src,
     alt: asset.alt || asset.title || fallbackAlt,
     copyright: asset.copyright,
+    copyrightSource: asset.source,
     focus: asset.focus,
     srcSet: srcSet || undefined,
   };

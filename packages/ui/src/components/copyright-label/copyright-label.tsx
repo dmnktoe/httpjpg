@@ -8,15 +8,33 @@ export type CopyrightPosition = "below" | "overlay" | "inline-black" | "inline-w
 
 export interface CopyrightLabelProps {
   /** Copyright text; the © symbol is prepended automatically. */
-  text: string;
+  text?: string;
+  /** Asset source/credit, rendered on its own line below the copyright. */
+  source?: string;
   position?: CopyrightPosition;
   css?: SystemStyleObject;
 }
 
-export function CopyrightLabel({ text, position = "below", css: cssProp }: CopyrightLabelProps) {
-  if (!text) {
+export function CopyrightLabel({
+  text,
+  source,
+  position = "below",
+  css: cssProp,
+}: CopyrightLabelProps) {
+  if (!text && !source) {
     return null;
   }
+
+  const lines = (
+    <>
+      {text ? <>© {text}</> : null}
+      {source ? (
+        <Box as="span" css={{ display: "block" }}>
+          {source}
+        </Box>
+      ) : null}
+    </>
+  );
 
   if (position === "overlay") {
     return (
@@ -38,7 +56,7 @@ export function CopyrightLabel({ text, position = "below", css: cssProp }: Copyr
           ...cssProp,
         }}
       >
-        © {text}
+        {lines}
       </Box>
     );
   }
@@ -64,7 +82,7 @@ export function CopyrightLabel({ text, position = "below", css: cssProp }: Copyr
           ...cssProp,
         }}
       >
-        © {text}
+        {lines}
       </Box>
     );
   }
@@ -91,7 +109,7 @@ export function CopyrightLabel({ text, position = "below", css: cssProp }: Copyr
           ...cssProp,
         }}
       >
-        © {text}
+        {lines}
       </Box>
     );
   }
@@ -107,7 +125,7 @@ export function CopyrightLabel({ text, position = "below", css: cssProp }: Copyr
         ...cssProp,
       }}
     >
-      © {text}
+      {lines}
     </Box>
   );
 }

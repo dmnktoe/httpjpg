@@ -41,6 +41,7 @@ export interface SlideshowImage {
   url: string;
   alt: string;
   copyright?: string;
+  copyrightSource?: string;
   copyrightPosition?: CopyrightPosition;
   focus?: string;
   videoUrl?: string;
@@ -230,9 +231,10 @@ export function Slideshow({
                       onFinished={handleVideoFinished}
                       onUnplayable={handleVideoUnplayable}
                     />
-                    {image.copyright && (
+                    {(image.copyright || image.copyrightSource) && (
                       <CopyrightLabel
                         text={image.copyright}
+                        source={image.copyrightSource}
                         position={image.copyrightPosition || "inline-black"}
                       />
                     )}
@@ -246,6 +248,7 @@ export function Slideshow({
                     aspectRatio={aspectRatio}
                     objectFit="cover"
                     copyright={image.copyright}
+                    copyrightSource={image.copyrightSource}
                     copyrightPosition={image.copyrightPosition || "inline-white"}
                     blurOnLoad={!disableBlurOnLoad}
                     loading={

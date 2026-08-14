@@ -57,6 +57,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
       alt={alt || image.alt || image.title || ""}
       aspectRatio={aspectRatio}
       copyright={image.copyright || ""}
+      copyrightSource={image.source || ""}
       copyrightPosition={copyrightPosition}
       blurOnLoad={blurOnLoad}
       blurDataURL={blurDataURL}

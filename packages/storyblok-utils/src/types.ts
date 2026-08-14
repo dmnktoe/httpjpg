@@ -56,6 +56,7 @@ export interface StoryblokImage {
   name?: string;
   focus?: string;
   title?: string;
+  source?: string;
   filename: string;
   copyright?: string;
   fieldtype?: "asset";
@@ -79,6 +80,7 @@ export interface StoryblokVideoAsset {
   alt?: string;
   name?: string;
   title?: string;
+  source?: string;
   filename: string;
   copyright?: string;
   fieldtype?: "asset";

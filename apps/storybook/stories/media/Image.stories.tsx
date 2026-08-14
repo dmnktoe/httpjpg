@@ -30,6 +30,10 @@ const meta = {
       control: "text",
       description: "Copyright text",
     },
+    copyrightSource: {
+      control: "text",
+      description: "Asset source/credit, shown as a second line below the copyright",
+    },
     copyrightPosition: {
       control: { type: "select" as const },
       options: ["inline-white", "inline-black", "below", "overlay"] as const,
@@ -99,6 +103,21 @@ export const BelowCopyright: Story = {
     src: OPTIMIZED_IMAGES.videoStill3,
     alt: "Video still 3",
     copyright: "2025 Jane Smith / Unsplash",
+    copyrightPosition: "below",
+    aspectRatio: "16/9",
+  },
+};
+
+/**
+ * Copyright with an asset source line
+ * The Storyblok asset `source` field renders on its own line below the © line.
+ */
+export const CopyrightWithSource: Story = {
+  args: {
+    src: OPTIMIZED_IMAGES.videoStill3,
+    alt: "Video still 3",
+    copyright: "2025 Jane Smith",
+    copyrightSource: "unsplash.com/@janesmith",
     copyrightPosition: "below",
     aspectRatio: "16/9",
   },

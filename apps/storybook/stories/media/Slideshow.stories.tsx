@@ -336,6 +336,32 @@ export const WithCopyright: Story = {
 };
 
 /**
+ * Copyright with an asset source line - the Storyblok asset `source` field
+ * renders on its own line below the © line.
+ */
+export const WithCopyrightSource: Story = {
+  args: {
+    images: [
+      {
+        url: "https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/2000x1125/smart/filters:quality(75)",
+        alt: "Klosterkirche - copyright with source, below",
+        copyright: "Studio XYZ 2024",
+        copyrightSource: "storyblok.com/asset",
+        copyrightPosition: "below",
+      },
+      {
+        url: "https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)",
+        alt: "Video still - copyright with source, overlay",
+        copyright: "Visual Arts Studio",
+        copyrightSource: "unsplash.com/@studio",
+        copyrightPosition: "overlay",
+      },
+    ],
+    speed: 600,
+  },
+};
+
+/**
  * Mixed content with video slide
  */
 export const WithVideo: Story = {

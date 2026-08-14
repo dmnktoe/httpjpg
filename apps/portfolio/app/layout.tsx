@@ -50,6 +50,7 @@ import { getLastUpdated } from "@/lib/queries/last-updated";
 import { getFeatureFlags, getInterfaceConfig, getWidgetConfig } from "@/lib/queries/widgets";
 import { getRecentWork } from "@/lib/queries/work";
 import { generatePersonSchema, JsonLd } from "@/lib/schema-org";
+import { isStoryblokEditor } from "@/lib/storyblok-editor";
 
 import "./globals.css";
 
@@ -89,6 +90,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const theme = await getPageTheme();
+  const inStoryblokEditor = await isStoryblokEditor();
   const navigation = await getNavigation();
   const footerConfig = await getFooterConfig();
   const widgetConfig = await getWidgetConfig();
@@ -116,7 +118,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           />
         )}
         <ConsoleBanner repositoryUrl={site.repositoryUrl} />
-        <ConsentProvider />
+        {!inStoryblokEditor && <ConsentProvider />}
         <WebVitalsReporter />
         <ScrollToTop />
         <AudioPlayerProvider>

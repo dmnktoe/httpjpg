@@ -14,10 +14,6 @@ const MAX_LISTED = 40;
 
 const ANSI = /\[[0-9;]*m/g;
 const COMPARISON = /toHaveScreenshot/;
-// Playwright fails the run that writes a snapshot for the first time, so this
-// is what a story nobody has photographed yet looks like. Baselines only ever
-// come from the cache `main` publishes, so a story added on a branch always
-// lands here on its first run — that is new, not broken.
 const FIRST_RUN = /snapshot doesn't exist/;
 const PIXELS = /([\d,]+) pixels \(ratio ([\d.]+)/;
 
@@ -58,19 +54,15 @@ if (changed.length > 0 || broken.length > 0) {
 process.stdout.write(`${lines.join("\n")}\n`);
 
 function verdict() {
-  // An unclassified failure is a build, Docker or runner problem and outranks
-  // everything else — nothing may wave those through.
   if (broken.length > 0) {
     return "errors";
   }
-  // A real difference still needs a human, even when new stories came with it.
   if (changed.length > 0) {
     return "mismatch-only";
   }
   if (added.length > 0) {
     return "baselines-added";
   }
-  // No failures at all means the step died outside the tests.
   return "errors";
 }
 
@@ -93,9 +85,6 @@ function collect(suites) {
 }
 
 function classify(title, project, message) {
-  // Checked before COMPARISON: depending on the Playwright version the
-  // first-run message can carry a call log naming the matcher, which would
-  // otherwise read as a comparison that moved zero pixels.
   if (FIRST_RUN.test(message)) {
     added.push({ title, project });
     return;

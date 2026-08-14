@@ -5,11 +5,14 @@ import { css } from "styled-system/css";
 
 import { Box } from "../box/box";
 import { TagButton } from "../tag/tag-button";
+import type { WorkTagCount } from "./lib";
 
 export interface WorkTagFilterProps {
-  /** Tags to offer, already deduplicated and ordered by the caller. */
-  tags: string[];
+  /** Tags to offer with their work counts, already deduplicated and ordered by the caller. */
+  tags: WorkTagCount[];
   active: string | null;
+  /** Total works behind the "all" chip. Omitted, the chip carries no count. */
+  totalCount?: number;
   onChange: (tag: string | null) => void;
   /** Opens the panel on first render instead of hiding it behind the toggle. */
   defaultExpanded?: boolean;
@@ -54,6 +57,7 @@ const legendClass = css({
 export function WorkTagFilter({
   tags,
   active,
+  totalCount,
   onChange,
   defaultExpanded = false,
 }: WorkTagFilterProps) {
@@ -93,13 +97,19 @@ export function WorkTagFilter({
         <Box as="legend" className={legendClass}>
           Filter work by tag
         </Box>
-        <TagButton showMarker={false} isActive={!active} onClick={() => onChange(null)}>
+        <TagButton
+          showMarker={false}
+          isActive={!active}
+          count={totalCount}
+          onClick={() => onChange(null)}
+        >
           all
         </TagButton>
-        {tags.map((tag) => (
+        {tags.map(({ tag, count }) => (
           <TagButton
             key={tag}
             isActive={active === tag}
+            count={count}
             onClick={() => onChange(active === tag ? null : tag)}
           >
             {tag}

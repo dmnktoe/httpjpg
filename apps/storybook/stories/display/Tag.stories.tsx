@@ -66,6 +66,29 @@ export const Interactive: Story = {
   },
 };
 
+/** Counts render in digit lookalikes; the plain number stays in the accessible name. */
+export const WithCounts: Story = {
+  render: () => (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", maxWidth: 480 }}>
+      <TagButton showMarker={false} isActive count={1024}>
+        all
+      </TagButton>
+      {[
+        ["Installation", 6],
+        ["Student Work", 5],
+        ["Collaboration", 4],
+        ["Motion", 3],
+        ["Personal", 2],
+        ["Sound Design", 1],
+      ].map(([tag, count]) => (
+        <TagButton key={tag} count={count as number}>
+          {tag as string}
+        </TagButton>
+      ))}
+    </div>
+  ),
+};
+
 export const States: Story = {
   render: () => (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>

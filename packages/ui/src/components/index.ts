@@ -7,6 +7,7 @@ export * from "./badge/badge-group";
 export * from "./badge/badges";
 export * from "./box/box";
 export * from "./button/button";
+export * from "./button/button-group";
 export * from "./callout/callout";
 export * from "./center/center";
 export * from "./checkbox/checkbox";

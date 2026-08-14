@@ -1,5 +1,5 @@
 import type { NowPlayingProps } from "@httpjpg/now-playing";
-import { NowPlaying } from "@httpjpg/now-playing";
+import { IDLE_GLOW, NowPlaying } from "@httpjpg/now-playing";
 import { Box, Headline, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
@@ -137,7 +137,7 @@ export const NothingPlaying: Story = {
     artwork:
       "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23a3a3a3' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='40' text-anchor='middle' dy='.3em' fill='white'%3E♪%3C/text%3E%3C/svg%3E",
     isPlaying: false,
-    vibrantColor: "rgba(163, 163, 163, 0.6)",
+    vibrantColor: IDLE_GLOW,
     textColor: "white",
     size: "sm",
   },
@@ -202,7 +202,7 @@ export const PremiumMissing = {
         artwork="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23a3a3a3' width='100' height='100'/%3E%3Ctext x='50' y='50' font-family='monospace' font-size='30' font-weight='bold' text-anchor='middle' dy='.35em' fill='%23ef4444'%3E⋄_⋄%3C/text%3E%3C/svg%3E"
         isPlaying={false}
         autoExtractColor={false}
-        vibrantColor="rgba(163, 163, 163, 0.6)"
+        vibrantColor={IDLE_GLOW}
         textColor="#ef4444"
       />
       <div

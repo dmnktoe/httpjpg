@@ -5,6 +5,7 @@ import { forwardRef } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
+import { formatGlyphDigits } from "../../lib/format";
 import { tagRecipe } from "./lib";
 import { TagMarker } from "./tag-marker";
 
@@ -16,11 +17,26 @@ export interface TagButtonProps extends Omit<
   /** Drives both the pressed state and the active styling. */
   isActive?: boolean;
   showMarker?: boolean;
+  /** Rendered after the label in decorative digits, with the plain number kept for screen readers. */
+  count?: number;
   css?: SystemStyleObject;
 }
 
+const countClass = css({ ml: "1", opacity: 0.5, fontFamily: "mono", fontSize: "xs" });
+
+const srOnlyClass = css({
+  position: "absolute",
+  w: "1px",
+  h: "1px",
+  m: "-1px",
+  p: 0,
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  clipPath: "inset(50%)",
+});
+
 export const TagButton = forwardRef<HTMLButtonElement, TagButtonProps>(function TagButton(
-  { children, isActive = false, showMarker = true, className, css: cssProp, type, ...props },
+  { children, isActive = false, showMarker = true, count, className, css: cssProp, type, ...props },
   ref,
 ) {
   return (
@@ -39,6 +55,14 @@ export const TagButton = forwardRef<HTMLButtonElement, TagButtonProps>(function 
     >
       {showMarker && <TagMarker />}
       {children}
+      {count !== undefined && (
+        <>
+          <span aria-hidden="true" className={countClass}>
+            {formatGlyphDigits(count)}
+          </span>
+          <span className={srOnlyClass}>{`, ${count}`}</span>
+        </>
+      )}
     </button>
   );
 });

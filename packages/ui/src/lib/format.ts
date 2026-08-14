@@ -1,5 +1,16 @@
 const WALL_CLOCK_YEAR = /^(\d{4})-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)?$/;
 
+/**
+ * Digit lookalikes, indexed by the digit they stand in for. Purely decorative —
+ * a screen reader would read most of them as punctuation or a Coptic letter, so
+ * anything rendering these has to keep the plain number in the accessible name.
+ */
+const GLYPH_DIGITS = ["⊘", "𝟙", "ϩ", "Ӡ", "५", "Ƽ", "Ϭ", "7", "𝟠", "९"] as const;
+
+export function formatGlyphDigits(value: number): string {
+  return value.toString().replace(/\d/g, (digit) => GLYPH_DIGITS[Number(digit)]);
+}
+
 export function formatYear(date?: string): string | null {
   if (!date) {
     return null;

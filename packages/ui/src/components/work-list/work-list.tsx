@@ -69,7 +69,8 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
     // Derived rather than reset in an effect: a Storyblok live edit can drop
     // the tag that is currently selected, and a stale selection would leave
     // the list empty with an active chip that no longer exists.
-    const activeTag = selectedTag && availableTags.includes(selectedTag) ? selectedTag : null;
+    const activeTag =
+      selectedTag && availableTags.some(({ tag }) => tag === selectedTag) ? selectedTag : null;
     const visibleWorks = useMemo(() => filterWorksByTag(works, activeTag), [works, activeTag]);
 
     if (works.length === 0) {
@@ -111,7 +112,12 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
     });
 
     const filterBar = showTagFilter ? (
-      <WorkTagFilter tags={availableTags} active={activeTag} onChange={setSelectedTag} />
+      <WorkTagFilter
+        tags={availableTags}
+        active={activeTag}
+        totalCount={works.length}
+        onChange={setSelectedTag}
+      />
     ) : null;
 
     if (isStacked) {

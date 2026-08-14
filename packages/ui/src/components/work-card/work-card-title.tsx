@@ -23,7 +23,7 @@ export function WorkCardTitle({
         as="h3"
         css={{
           position: "relative",
-          zIndex: "widget",
+          zIndex: "slideshow",
           lineHeight: 0.9,
           fontFamily: "headline",
           letterSpacing: "tighter",

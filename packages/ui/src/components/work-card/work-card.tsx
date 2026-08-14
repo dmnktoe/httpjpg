@@ -80,7 +80,7 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
           />
         </Box>
 
-        <Box css={{ zIndex: "widget" }}>
+        <Box css={{ zIndex: "slideshow" }}>
           <Box
             css={{
               display: "flex",

@@ -17,9 +17,12 @@ describe("getEntryProgress", () => {
     expect(getEntryProgress(rect(-100, 400), 800)).toBe(1);
   });
 
-  it("settles immediately when the element is taller than the travel", () => {
-    expect(getEntryProgress(rect(0, 2000), 800)).toBe(1);
-    expect(getEntryProgress(rect(900, 2000), 800)).toBe(0);
+  it("is 1 when a taller-than-viewport element is centered", () => {
+    expect(getEntryProgress(rect(-600, 2000), 800)).toBe(1);
+  });
+
+  it("is 0 when a taller-than-viewport element still sits below the fold", () => {
+    expect(getEntryProgress(rect(800, 2000), 800)).toBe(0);
   });
 });
 

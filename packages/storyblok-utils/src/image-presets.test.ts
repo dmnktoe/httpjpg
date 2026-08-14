@@ -7,6 +7,7 @@ describe("imagePreset", () => {
     expect(imagePreset.og(undefined)).toBe("");
     expect(imagePreset.thumb(undefined)).toBe("");
     expect(imagePreset.blur(undefined)).toBe("");
+    expect(imagePreset.full(undefined)).toBe("");
   });
 
   it("builds an Open Graph 1200x630 smart crop", () => {
@@ -20,6 +21,12 @@ describe("imagePreset", () => {
 
   it("builds a 20px blur placeholder", () => {
     expect(imagePreset.blur(filename)).toContain("/m/20x0");
+  });
+
+  it("builds a 2560px uncropped rendition for the lightbox", () => {
+    const result = imagePreset.full(filename);
+    expect(result).toContain("/m/2560x0");
+    expect(result).not.toContain("smart");
   });
 
   it("threads a focus point through the transform", () => {

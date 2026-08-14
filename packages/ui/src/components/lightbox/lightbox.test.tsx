@@ -136,6 +136,92 @@ describe("Lightbox", () => {
     expect(props.onClose).toHaveBeenCalledTimes(1);
   });
 
+  it("advances on a leftward swipe and goes back on a rightward one", () => {
+    const props = setup({ index: 0 });
+    const figure = screen.getByRole("img", { name: "One" }).parentElement!;
+
+    fireEvent.pointerDown(figure, { clientX: 300 });
+    fireEvent.pointerUp(figure, { clientX: 200 });
+    expect(props.onIndexChange).toHaveBeenCalledWith(1);
+
+    fireEvent.pointerDown(figure, { clientX: 200 });
+    fireEvent.pointerUp(figure, { clientX: 300 });
+    expect(props.onIndexChange).toHaveBeenLastCalledWith(2);
+  });
+
+  it("ignores a drag too short to be a swipe", () => {
+    const props = setup();
+    const figure = screen.getByRole("img", { name: "One" }).parentElement!;
+
+    fireEvent.pointerDown(figure, { clientX: 300 });
+    fireEvent.pointerUp(figure, { clientX: 280 });
+
+    expect(props.onIndexChange).not.toHaveBeenCalled();
+  });
+
+  it("ignores a release that never started on the frame", () => {
+    const props = setup();
+    const figure = screen.getByRole("img", { name: "One" }).parentElement!;
+
+    fireEvent.pointerUp(figure, { clientX: 0 });
+
+    expect(props.onIndexChange).not.toHaveBeenCalled();
+  });
+
+  it("cycles focus inside the dialog rather than escaping it", () => {
+    setup();
+    const buttons = screen.getAllByRole("button");
+    const first = buttons[0]!;
+    const last = buttons[buttons.length - 1]!;
+
+    last.focus();
+    fireEvent.keyDown(dialog(), { key: "Tab" });
+    expect(document.activeElement).toBe(first);
+
+    first.focus();
+    fireEvent.keyDown(dialog(), { key: "Tab", shiftKey: true });
+    expect(document.activeElement).toBe(last);
+  });
+
+  it("warms the neighbouring images so a move lands on a decoded one", () => {
+    const requested: string[] = [];
+    const RealImage = window.Image;
+    // jsdom does not fetch, so the assignment is the only observable effect.
+    class SpyImage {
+      set src(value: string) {
+        requested.push(value);
+      }
+    }
+    window.Image = SpyImage as unknown as typeof RealImage;
+
+    try {
+      setup({ index: 0 });
+    } finally {
+      window.Image = RealImage;
+    }
+
+    expect(requested).toEqual(["/two.jpg", "/three.jpg"]);
+  });
+
+  it("warms nothing for a lone item", () => {
+    const requested: string[] = [];
+    const RealImage = window.Image;
+    class SpyImage {
+      set src(value: string) {
+        requested.push(value);
+      }
+    }
+    window.Image = SpyImage as unknown as typeof RealImage;
+
+    try {
+      setup({ items: [ITEMS[0]!] });
+    } finally {
+      window.Image = RealImage;
+    }
+
+    expect(requested).toEqual([]);
+  });
+
   it("is a modal dialog with a label", () => {
     setup();
 

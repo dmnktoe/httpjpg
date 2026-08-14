@@ -1,8 +1,8 @@
 # ⇝www.httpjpg.com
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dmnktoe/httpjpg/ci.yml?branch=main&logo=github&logoColor=fff&label=CI&labelColor=000)
-![GitHub Release](https://img.shields.io/github/v/release/dmnktoe/httpjpg?label=Release&logo=Github&logoColor=fff&style=flat&labelColor=000&color=00b4f0)
-![Codecov](https://img.shields.io/codecov/c/github/dmnktoe/httpjpg?logo=codecov&logoColor=fff&label=Coverage&labelColor=000)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dmnktoe/httpjpg/ci.yml?logo=github&logoColor=fff&label=ci&labelColor=000&style=plastic&branch=main)
+![GitHub Release](https://img.shields.io/github/v/release/dmnktoe/httpjpg?logo=semanticrelease&logoColor=fff&label=release&labelColor=000&color=00b4f0&style=plastic)
+![Codecov](https://img.shields.io/codecov/c/github/dmnktoe/httpjpg?logo=codecov&logoColor=fff&label=coverage&labelColor=000&style=plastic)
 
 **next.js · storyblok · panda css · pnpm monorepo**
 

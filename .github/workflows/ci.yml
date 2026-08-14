@@ -379,6 +379,16 @@ jobs:
           fi
 
           VERDICT="$(node apps/storybook/scripts/visual-summary.mjs --verdict apps/storybook/visual-results.json)"
+
+          # Baselines only ever come from the cache main publishes, so a story
+          # added on a branch has nothing to be compared against and fails its
+          # first run by writing the snapshot. That is not a regression, and no
+          # label could describe it — merging is what takes the baseline.
+          if [[ "$VERDICT" == "baselines-added" ]]; then
+            echo "::notice::New stories wrote their first baselines; there was nothing to compare them against. Merging publishes the set from main."
+            exit 0
+          fi
+
           if [[ "$VERDICT" != "mismatch-only" ]]; then
             echo "::error::The visual run failed for reasons beyond changed screenshots. Read the log; the label does not apply."
             exit 1

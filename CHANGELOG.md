@@ -4,6 +4,77 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0](https://github.com/dmnktoe/httpjpg/compare/v2.6.1...v2.7.0) (2026-08-14)
+
+
+### Added
+
+* **portfolio:** list view for related work behind an ascii toggle ([#300](https://github.com/dmnktoe/httpjpg/issues/300)) ([8974ded](https://github.com/dmnktoe/httpjpg/commit/8974dede116bd4a700053b9e81122d2a1707c41b))
+* **portfolio:** offer the source an answer cites as a destination ([#294](https://github.com/dmnktoe/httpjpg/issues/294)) ([160e041](https://github.com/dmnktoe/httpjpg/commit/160e041fa8c8a5ad7f3445b555ee31ec6bb7eea7))
+* **portfolio:** related work from shared tags ([#290](https://github.com/dmnktoe/httpjpg/issues/290)) ([99a0b2f](https://github.com/dmnktoe/httpjpg/commit/99a0b2f3446a03be145a4942acd7c7a34beac2d1))
+* show Storyblok asset source below image copyright ([#303](https://github.com/dmnktoe/httpjpg/issues/303)) ([f6b218c](https://github.com/dmnktoe/httpjpg/commit/f6b218cdae88472264180758ed7f63a9ca7b9f32))
+* **storyblok-sync:** type schemas with @storyblok/schema and validate before push ([#260](https://github.com/dmnktoe/httpjpg/issues/260)) ([8eb61bb](https://github.com/dmnktoe/httpjpg/commit/8eb61bb9c7fbff5778c3178f32debc5a316200c1))
+* **storyblok:** a button group blok for stacking calls to action ([#295](https://github.com/dmnktoe/httpjpg/issues/295)) ([e59dabe](https://github.com/dmnktoe/httpjpg/commit/e59dabe38d64924e804da67218028ba2b3e0110c))
+* **storyblok:** a controlled vocabulary for work tags ([#288](https://github.com/dmnktoe/httpjpg/issues/288)) ([64359a3](https://github.com/dmnktoe/httpjpg/commit/64359a3022a0490e2d834ea3b3fd3ee4e6af2dad))
+* **storyblok:** add a Show in iOS-App toggle to the work schema ([#281](https://github.com/dmnktoe/httpjpg/issues/281)) ([eddd287](https://github.com/dmnktoe/httpjpg/commit/eddd2877b3fe24d8cc7a1e704b826952d2aeccea))
+* **storyblok:** add the Interface and General config tabs on top of main ([#280](https://github.com/dmnktoe/httpjpg/issues/280)) ([b3e2501](https://github.com/dmnktoe/httpjpg/commit/b3e250150e2451d26a781f7b9749286419d0109a))
+* **ui:** a lightbox that opens images and video at full size ([#302](https://github.com/dmnktoe/httpjpg/issues/302)) ([2ec0480](https://github.com/dmnktoe/httpjpg/commit/2ec04807e3a86c7863c663e844d5dcb33a6a806d))
+* **ui:** fade a theme-aware scroll veil in behind the header ([#264](https://github.com/dmnktoe/httpjpg/issues/264)) ([5640a57](https://github.com/dmnktoe/httpjpg/commit/5640a578a65b28a776e049f47d20ea1c306f89e8))
+* **ui:** rebuild the work-list tag filter on data instead of the DOM ([#289](https://github.com/dmnktoe/httpjpg/issues/289)) ([a1721be](https://github.com/dmnktoe/httpjpg/commit/a1721be40a41ec561f3cfb1432da8570dfd91433))
+* **ui:** show a link-glyph favicon fallback when offline ([#306](https://github.com/dmnktoe/httpjpg/issues/306)) ([6085d77](https://github.com/dmnktoe/httpjpg/commit/6085d771ab558a4ac800bae6e3c3b3f44510ebab))
+* **ui:** show a tooltip on the mini player record ([#277](https://github.com/dmnktoe/httpjpg/issues/277)) ([1b6742a](https://github.com/dmnktoe/httpjpg/commit/1b6742aa26138d9b47d54c2e1e9cbe975e9db0fa))
+
+
+### Fixed
+
+* **now-playing:** follow the page theme, and read colours through colorthief's own API ([#298](https://github.com/dmnktoe/httpjpg/issues/298)) ([31ca524](https://github.com/dmnktoe/httpjpg/commit/31ca5244723a30f5f5766872cc1537fadf9c8685))
+* **portfolio:** cut related work images to card size ([#296](https://github.com/dmnktoe/httpjpg/issues/296)) ([fcd0da0](https://github.com/dmnktoe/httpjpg/commit/fcd0da0130d56353506eeaa355c89e2f4b8ff07d))
+* **portfolio:** hide the cookie banner inside the Storyblok editor ([#301](https://github.com/dmnktoe/httpjpg/issues/301)) ([07abee4](https://github.com/dmnktoe/httpjpg/commit/07abee4fd4b5481692d27a74ce4d3c543f8deea4))
+* **storybook:** mock next/navigation so stories render again ([#297](https://github.com/dmnktoe/httpjpg/issues/297)) ([db63b1d](https://github.com/dmnktoe/httpjpg/commit/db63b1d86fb7336401ca8f7b09b1334f76e0e427))
+* **ui:** display work counts on tag filter chips with decorative glyphs ([#299](https://github.com/dmnktoe/httpjpg/issues/299)) ([d65320e](https://github.com/dmnktoe/httpjpg/commit/d65320ec7bdeb0bddfa190ca92a1016f771f721d))
+* **ui:** place the tooltip with floating-ui and keep the mini player out of the header's line height ([#282](https://github.com/dmnktoe/httpjpg/issues/282)) ([25b1360](https://github.com/dmnktoe/httpjpg/commit/25b1360bd8d2f39d976d058254d45cdfdd1daa8e))
+* **ui:** stop header veil flicker when closing the mobile menu ([#305](https://github.com/dmnktoe/httpjpg/issues/305)) ([cc2c323](https://github.com/dmnktoe/httpjpg/commit/cc2c323c232d344f622b753a0136fdc7ca4e3d23))
+
+
+### Changed
+
+* remove dead code and modularize the header nav and slideshow ([#308](https://github.com/dmnktoe/httpjpg/issues/308)) ([37c53fb](https://github.com/dmnktoe/httpjpg/commit/37c53fb7df4ede42096a92563a424012b3075bb1))
+* **storyblok-utils:** widen extractPlainText to the shared richtext node type ([#304](https://github.com/dmnktoe/httpjpg/issues/304)) ([fa427b6](https://github.com/dmnktoe/httpjpg/commit/fa427b6a8b8c9343208f939307202cff0810a583))
+* **ui:** one Tag primitive behind every chip ([#287](https://github.com/dmnktoe/httpjpg/issues/287)) ([6cf53fa](https://github.com/dmnktoe/httpjpg/commit/6cf53fa557c8463f3516d43281f9a821dc2e2705))
+
+
+### Tooling
+
+* **e2e:** fix the locale assertions and the mock config fixture ([#283](https://github.com/dmnktoe/httpjpg/issues/283)) ([3266ac9](https://github.com/dmnktoe/httpjpg/commit/3266ac9ccd30783f8d05b4464429bb9dd27b50f9))
+* let a story's first baseline pass the visual gate ([#307](https://github.com/dmnktoe/httpjpg/issues/307)) ([be60f24](https://github.com/dmnktoe/httpjpg/commit/be60f2422782c32fe21a346d6852b7cc5f7dd5ba))
+* **storybook:** move visual regression off Chromatic, keep publishing there ([#284](https://github.com/dmnktoe/httpjpg/issues/284)) ([6983002](https://github.com/dmnktoe/httpjpg/commit/69830026c2992d1f7038bb8dddf3d852942e2c22))
+* update readme badges style ([bee2ac5](https://github.com/dmnktoe/httpjpg/commit/bee2ac5606c6cd8e5a7222ca51ed63d8d9674cda))
+
+
+### Dependencies
+
+* lock file maintenance ([#276](https://github.com/dmnktoe/httpjpg/issues/276)) ([a078eea](https://github.com/dmnktoe/httpjpg/commit/a078eeaf7d62ef198d0761f094af5a66e5549ec5))
+* update dependency @sentry/nextjs to ^10.69.0 ([#254](https://github.com/dmnktoe/httpjpg/issues/254)) ([3639c46](https://github.com/dmnktoe/httpjpg/commit/3639c4632dbfb84e1a523bdc5c83d159e5b5cbab))
+* update dependency @sentry/nextjs to ^10.69.0 ([#266](https://github.com/dmnktoe/httpjpg/issues/266)) ([e33e7af](https://github.com/dmnktoe/httpjpg/commit/e33e7afcbd00327e36131316153c7ee1e28b0337))
+* update dependency @sentry/nextjs to ^10.70.0 ([#272](https://github.com/dmnktoe/httpjpg/issues/272)) ([9b08a6e](https://github.com/dmnktoe/httpjpg/commit/9b08a6e9af18ee6b53e4297e1ed6c107ff42a028))
+* update dependency @storyblok/react to ^7.2.4 ([#255](https://github.com/dmnktoe/httpjpg/issues/255)) ([b7ec350](https://github.com/dmnktoe/httpjpg/commit/b7ec350c1270bda85dfa5f82a500c4d333d41346))
+* update dependency @t3-oss/env-nextjs to ^0.13.11 ([#256](https://github.com/dmnktoe/httpjpg/issues/256)) ([803c5b2](https://github.com/dmnktoe/httpjpg/commit/803c5b24b11272aa06ce5b4502d6895e846cfeec))
+* update dependency @testing-library/jest-dom to ^7.0.1 ([#270](https://github.com/dmnktoe/httpjpg/issues/270)) ([39287f1](https://github.com/dmnktoe/httpjpg/commit/39287f10bff479c9bd1a67d851abd806832ec31f))
+* update dependency @testing-library/react to ^16.3.2 ([#257](https://github.com/dmnktoe/httpjpg/issues/257)) ([784db1f](https://github.com/dmnktoe/httpjpg/commit/784db1f57ca3225080e15909d1b46513f94440cb))
+* update dependency @vitejs/plugin-react to ^6.0.5 ([#258](https://github.com/dmnktoe/httpjpg/issues/258)) ([606a43a](https://github.com/dmnktoe/httpjpg/commit/606a43afbeeb8e5c196902df872dc666def0eb84))
+* update dependency motion to ^13.1.0 ([#226](https://github.com/dmnktoe/httpjpg/issues/226)) ([c566606](https://github.com/dmnktoe/httpjpg/commit/c566606bbe7b495a1663d9a5c64f5f3862df1ca3))
+* update dependency sharp to ^0.35.3 ([#259](https://github.com/dmnktoe/httpjpg/issues/259)) ([b81271e](https://github.com/dmnktoe/httpjpg/commit/b81271e5d1cb2d7c8d5d258984235ecb8876fecb))
+* update dependency storyblok-js-client to ^7.7.3 ([#262](https://github.com/dmnktoe/httpjpg/issues/262)) ([6669101](https://github.com/dmnktoe/httpjpg/commit/666910161a8bdf9bd01d2ba0fa8cc6cd239b726d))
+* update dependency swiper to ^14.1.0 ([#269](https://github.com/dmnktoe/httpjpg/issues/269)) ([44c699c](https://github.com/dmnktoe/httpjpg/commit/44c699c3f3bf638f11fe366cfe1206a90797d804))
+* update dependency tsx to ^4.23.11 ([#263](https://github.com/dmnktoe/httpjpg/issues/263)) ([9015f49](https://github.com/dmnktoe/httpjpg/commit/9015f49d479bf9dbade50b32da08f73e6f6a3ace))
+* update dependency tsx to ^4.23.12 ([#271](https://github.com/dmnktoe/httpjpg/issues/271)) ([ffcb2aa](https://github.com/dmnktoe/httpjpg/commit/ffcb2aadeb4cb8a0f42930d889b5ded22ba9855d))
+* update dependency turbo to ^2.10.9 ([#273](https://github.com/dmnktoe/httpjpg/issues/273)) ([03004de](https://github.com/dmnktoe/httpjpg/commit/03004ded2b7d3420c69ec56de5373509ceed38db))
+* update dependency typescript to v7 ([#275](https://github.com/dmnktoe/httpjpg/issues/275)) ([faaba1f](https://github.com/dmnktoe/httpjpg/commit/faaba1f6a6a4cc64f9830b8695aa03d9658193b6))
+* update dependency zod to ^4.4.3 ([#267](https://github.com/dmnktoe/httpjpg/issues/267)) ([d4b84a7](https://github.com/dmnktoe/httpjpg/commit/d4b84a7414a2f51d482517204e1983481fb0b75b))
+* update dev dependencies ([#286](https://github.com/dmnktoe/httpjpg/issues/286)) ([5cf703e](https://github.com/dmnktoe/httpjpg/commit/5cf703edd9b5ec718a312b385aa49073e5a3b9f2))
+* update dev dependencies ([#293](https://github.com/dmnktoe/httpjpg/issues/293)) ([09e78c0](https://github.com/dmnktoe/httpjpg/commit/09e78c094377a35309cca2d5a023b52494f1f9bc))
+* update pnpm to v11.21.0 ([#274](https://github.com/dmnktoe/httpjpg/issues/274)) ([8920935](https://github.com/dmnktoe/httpjpg/commit/89209353e998c33946dab3b1bb78b739e99288f3))
+
 ## [2.6.1](https://github.com/dmnktoe/httpjpg/compare/v2.6.0...v2.6.1) (2026-08-10)
 
 

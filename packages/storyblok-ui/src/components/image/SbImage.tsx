@@ -118,7 +118,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
             {
               src: imagePreset.full(image.filename, image.focus),
               alt: altText,
-              caption: extractPlainText(caption as Parameters<typeof extractPlainText>[0]),
+              caption: extractPlainText(caption),
               copyright: image.copyright || "",
             },
           ]}

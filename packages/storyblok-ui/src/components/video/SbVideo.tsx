@@ -96,7 +96,7 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
             {
               src,
               alt: "",
-              caption: extractPlainText(caption as Parameters<typeof extractPlainText>[0]),
+              caption: extractPlainText(caption),
               copyright: copyright || "",
               video: { source, poster: poster?.filename, aspectRatio },
             },

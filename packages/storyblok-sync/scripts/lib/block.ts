@@ -2,7 +2,7 @@ import { done, step } from "@httpjpg/terminal";
 
 import { type StoryblokComponent, type StoryblokField, storyblokRequest } from "../../src/index";
 
-export type Group = "Layout" | "Content" | "Media" | "Pages" | "Settings";
+type Group = "Layout" | "Content" | "Media" | "Pages" | "Settings";
 
 export interface BlockDef {
   name: string;

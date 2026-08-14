@@ -5,14 +5,7 @@ import { Button, Headline, Image, Marquee, MusicPlayer, Paragraph, Video } from 
 import type { ReactNode } from "react";
 import { css } from "styled-system/css";
 
-export type FieldType =
-  | "text"
-  | "textarea"
-  | "number"
-  | "boolean"
-  | "select"
-  | "assetUrl"
-  | "storyUuid";
+type FieldType = "text" | "textarea" | "number" | "boolean" | "select" | "assetUrl" | "storyUuid";
 
 export interface FieldDef {
   key: string;

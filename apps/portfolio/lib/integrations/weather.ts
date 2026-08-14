@@ -1,6 +1,6 @@
 import { fetchWithTimeout } from "./http";
 
-export interface WeatherFetchResult {
+interface WeatherFetchResult {
   ok: true;
   temperature: number;
   code: number;

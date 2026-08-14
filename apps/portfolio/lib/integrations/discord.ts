@@ -27,9 +27,9 @@ interface LanyardPresence {
   activities?: LanyardActivity[];
 }
 
-export type DiscordStatus = "online" | "idle" | "dnd" | "offline";
+type DiscordStatus = "online" | "idle" | "dnd" | "offline";
 
-export type ActivitySummary =
+type ActivitySummary =
   | {
       type: "game";
       name: string;
@@ -39,7 +39,7 @@ export type ActivitySummary =
     }
   | { type: "custom"; text: string; emoji: string };
 
-export interface DiscordPresenceSummary {
+interface DiscordPresenceSummary {
   status: DiscordStatus;
   activities: LanyardActivity[];
   activity: string | null;

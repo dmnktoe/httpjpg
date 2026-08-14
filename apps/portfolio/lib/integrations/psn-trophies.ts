@@ -10,8 +10,8 @@ import {
   type TrophyTitle,
 } from "psn-api";
 
-export const TROPHY_TYPES = ["bronze", "silver", "gold", "platinum"] as const;
-export type TrophyType = (typeof TROPHY_TYPES)[number];
+const TROPHY_TYPES = ["bronze", "silver", "gold", "platinum"] as const;
+type TrophyType = (typeof TROPHY_TYPES)[number];
 
 export interface PsnTrophy {
   name: string;
@@ -24,7 +24,7 @@ export interface PsnTrophy {
   image: string | null;
 }
 
-export type PsnFailureReason = "auth" | "upstream";
+type PsnFailureReason = "auth" | "upstream";
 
 export type PsnTrophyFetchResult =
   | { ok: true; trophies: PsnTrophy[]; avatar: string | null }

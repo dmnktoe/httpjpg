@@ -10,10 +10,7 @@ import {
 } from "../shared/storybook-helpers";
 
 /**
- * Grid component stories
- *
- * A powerful 12-column grid system perfect for magazine-style brutalist layouts.
- * Use with GridItem for precise control over positioning and spanning.
+ * 12-column grid. Pair with `GridItem` for span, start, and overlap.
  */
 const meta = {
   title: "Layout/Grid",

@@ -1,6 +1,10 @@
 import { MusicPlayer } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
+/**
+ * Spotify, SoundCloud, or a local MP3. MP3 mode uses the site audio engine
+ * when an `AudioPlayerProvider` is mounted.
+ */
 const meta: Meta<typeof MusicPlayer> = {
   title: "Widgets/MusicPlayer",
   component: MusicPlayer,
@@ -51,12 +55,6 @@ const meta: Meta<typeof MusicPlayer> = {
 export default meta;
 type Story = StoryObj<typeof MusicPlayer>;
 
-/**
- * Spotify track embed (compact size)
- *
- * Embeds a Spotify track player with ASCII decorations.
- * The compact player is smaller and perfect for minimal layouts.
- */
 export const SpotifyTrack: Story = {
   args: {
     source: "spotify",
@@ -66,11 +64,6 @@ export const SpotifyTrack: Story = {
   },
 };
 
-/**
- * Spotify track embed (normal size)
- *
- * Embeds a Spotify track player with full size display.
- */
 export const SpotifyTrackFull: Story = {
   args: {
     source: "spotify",
@@ -80,11 +73,6 @@ export const SpotifyTrackFull: Story = {
   },
 };
 
-/**
- * Spotify album embed
- *
- * Embeds an entire Spotify album with track list.
- */
 export const SpotifyAlbum: Story = {
   args: {
     source: "spotify",
@@ -94,11 +82,6 @@ export const SpotifyAlbum: Story = {
   },
 };
 
-/**
- * SoundCloud embed
- *
- * Embeds a SoundCloud track with ASCII decorations.
- */
 export const SoundCloudTrack: Story = {
   args: {
     source: "soundcloud",
@@ -107,12 +90,6 @@ export const SoundCloudTrack: Story = {
   },
 };
 
-/**
- * Custom MP3 player
- *
- * Custom HTML5 audio player with full controls, artwork, and track info.
- * Features play/pause, seek, volume control, and time display.
- */
 export const MP3Player: Story = {
   args: {
     source: "mp3",
@@ -128,10 +105,7 @@ export const MP3Player: Story = {
 };
 
 /**
- * Minimal MP3 player
- *
- * MP3 player without artwork, showing only controls and minimal info.
- * Perfect for clean, text-focused layouts.
+ * MP3 without artwork — controls and metadata only.
  */
 export const MinimalMP3: Story = {
   args: {
@@ -146,11 +120,6 @@ export const MinimalMP3: Story = {
   },
 };
 
-/**
- * MP3 player without track info
- *
- * Ultra minimal player showing only controls.
- */
 export const ControlsOnly: Story = {
   args: {
     source: "mp3",
@@ -162,11 +131,6 @@ export const ControlsOnly: Story = {
   },
 };
 
-/**
- * MP3 player with custom decoration
- *
- * Uses custom ASCII/kawaii decorations for a unique look.
- */
 export const CustomDecoration: Story = {
   args: {
     source: "mp3",
@@ -181,11 +145,6 @@ export const CustomDecoration: Story = {
   },
 };
 
-/**
- * MP3 player with header and footer
- *
- * Shows how to add custom header and footer content.
- */
 export const WithHeaderFooter: Story = {
   args: {
     source: "mp3",

@@ -3,7 +3,6 @@ import type { ExtractedColor } from "@httpjpg/spotify";
 import type { Meta } from "@storybook/react";
 import { useEffect, useState } from "react";
 
-// Debug badge to show extracted color info
 const ColorDebugBadge = ({ data }: { data: { artwork: string } | null }) => {
   const [color, setColor] = useState<ExtractedColor | null>(null);
 
@@ -12,7 +11,6 @@ const ColorDebugBadge = ({ data }: { data: { artwork: string } | null }) => {
       return;
     }
 
-    // Use the same extraction method as the component
     import("@httpjpg/spotify").then(({ extractVibrantColor }) => {
       extractVibrantColor(data.artwork).then(setColor);
     });
@@ -55,12 +53,6 @@ const meta = {
 
 export default meta;
 
-/**
- * Live Spotify Data with Vibrant Color
- * Fetches real data from Spotify API and automatically extracts vibrant color from album artwork
- * Component now handles color extraction internally - no manual state management needed!
- * Requires dev server running with SPOTIFY credentials in .env.local
- */
 export const LiveData = {
   render: () => {
     const [data, setData] = useState<{

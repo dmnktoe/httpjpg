@@ -2,10 +2,7 @@ import { AnimateInView, Box, Headline, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
 /**
- * AnimateInView component stories
- *
- * Scroll-triggered animations using Framer Motion. Respects user's
- * reduced motion preferences for accessibility.
+ * Scroll-triggered enter animation. Honours `prefers-reduced-motion`.
  */
 const meta = {
   title: "Motion/AnimateInView",

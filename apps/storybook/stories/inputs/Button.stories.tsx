@@ -4,10 +4,8 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { BUTTON_VARIANT_OPTIONS } from "../shared/storybook-helpers";
 
 /**
- * Button component stories
- *
- * The Button component supports multiple variants and sizes with full
- * accessibility support including keyboard navigation and focus states.
+ * Token-coloured button. `variant` and `size` are the only visual knobs;
+ * `href` turns it into a link.
  */
 const meta = {
   title: "Inputs/Button",

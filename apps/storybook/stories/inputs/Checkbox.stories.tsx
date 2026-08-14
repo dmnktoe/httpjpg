@@ -3,8 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
 /**
- * Checkbox component stories
- *
  * A brutalist, mono-styled checkbox rendered as pure ASCII: tribal angle
  * brackets that hold a diamond mark (‹ › → ‹◆›) in the accent color when
  * checked. The indicator inherits the surrounding font size and keeps a

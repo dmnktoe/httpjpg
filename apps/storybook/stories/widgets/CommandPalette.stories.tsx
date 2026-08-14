@@ -56,6 +56,10 @@ const SOURCES = [
 const ANSWER =
   "The portfolio is a brutalist, type-led site built on Next.js and Storyblok [1]. Most of the work listed is print and web design [1][2].";
 
+/**
+ * Controlled search/ask overlay. Stories feed results and an answer; the
+ * live widget (`AskWidget`) owns fetching.
+ */
 const meta = {
   title: "Widgets/CommandPalette",
   component: CommandPalette,

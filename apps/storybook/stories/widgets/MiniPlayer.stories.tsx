@@ -1,6 +1,10 @@
 import { MiniPlayer } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
+/**
+ * Presentational mini player. Controlled — the header's `MiniPlayerSlot`
+ * owns the audio engine and passes transport state in.
+ */
 const meta: Meta<typeof MiniPlayer> = {
   title: "Widgets/MiniPlayer",
   component: MiniPlayer,

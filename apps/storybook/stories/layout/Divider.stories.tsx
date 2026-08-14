@@ -8,10 +8,7 @@ import {
 } from "../shared/storybook-helpers";
 
 /**
- * Divider component stories
- *
- * Visual separator with support for ASCII art, custom content, and traditional lines.
- * Perfect for brutalist design with decorative separators and overlapping text.
+ * Separator. `ascii` variants take a `pattern`; `content` slots a label over the line.
  */
 const meta = {
   title: "Layout/Divider",

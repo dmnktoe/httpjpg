@@ -1,9 +1,9 @@
 // Interprets Playwright's JSON report for the workflow.
 //
 // Default output is the markdown body of the pull request comment. With
-// --verdict it prints "mismatch-only" or "errors" instead, which is what
-// decides whether the visual-approved label may override the failure: a label
-// must never wave through a build, Docker or runner failure.
+// --verdict it prints "baselines-added", "mismatch-only" or "errors" instead,
+// which is what decides how the workflow treats the failure: a label must never
+// wave through a build, Docker or runner failure.
 
 import { readFileSync } from "node:fs";
 
@@ -14,18 +14,18 @@ const MAX_LISTED = 40;
 
 const ANSI = /\[[0-9;]*m/g;
 const COMPARISON = /toHaveScreenshot/;
+const FIRST_RUN = /snapshot doesn't exist/;
 const PIXELS = /([\d,]+) pixels \(ratio ([\d.]+)/;
 
 const report = JSON.parse(readFileSync(REPORT, "utf8"));
 
 const changed = [];
+const added = [];
 const broken = [];
 collect(report.suites ?? []);
 
 if (VERDICT_ONLY) {
-  // No failures at all means the step died outside the tests.
-  const mismatchOnly = broken.length === 0 && changed.length > 0;
-  process.stdout.write(mismatchOnly ? "mismatch-only\n" : "errors\n");
+  process.stdout.write(`${verdict()}\n`);
   process.exit(0);
 }
 
@@ -35,15 +35,36 @@ const lines = ["<!-- visual-regression -->", "### Visual regression", ""];
 
 section(changed, ["renders differently", "render differently"], (entry) => ` — ${entry.detail}`);
 section(broken, ["failed to render", "failed to render"]);
+section(added, ["has no baseline yet", "have no baseline yet"]);
 
-lines.push(
-  "Download the `visual-report` artifact for the expected, actual and diff images.",
-  "",
-  "If the new rendering is correct, apply the **`visual-approved`** label and re-run the",
-  "Visual Regression job. The label is dropped again on the next push.",
-);
+if (changed.length > 0 || broken.length > 0) {
+  lines.push(
+    "Download the `visual-report` artifact for the expected, actual and diff images.",
+    "",
+    "If the new rendering is correct, apply the **`visual-approved`** label and re-run the",
+    "Visual Regression job. The label is dropped again on the next push.",
+  );
+} else {
+  lines.push(
+    "Nothing regressed — these stories are new, so there was nothing to compare them",
+    "against. Merging publishes their first baselines from `main`.",
+  );
+}
 
 process.stdout.write(`${lines.join("\n")}\n`);
+
+function verdict() {
+  if (broken.length > 0) {
+    return "errors";
+  }
+  if (changed.length > 0) {
+    return "mismatch-only";
+  }
+  if (added.length > 0) {
+    return "baselines-added";
+  }
+  return "errors";
+}
 
 function collect(suites) {
   for (const suite of suites) {
@@ -64,6 +85,11 @@ function collect(suites) {
 }
 
 function classify(title, project, message) {
+  if (FIRST_RUN.test(message)) {
+    added.push({ title, project });
+    return;
+  }
+
   if (!COMPARISON.test(message)) {
     broken.push({ title, project });
     return;

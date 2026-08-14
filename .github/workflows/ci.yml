@@ -379,6 +379,12 @@ jobs:
           fi
 
           VERDICT="$(node apps/storybook/scripts/visual-summary.mjs --verdict apps/storybook/visual-results.json)"
+
+          if [[ "$VERDICT" == "baselines-added" ]]; then
+            echo "::notice::New stories wrote their first baselines; there was nothing to compare them against. Merging publishes the set from main."
+            exit 0
+          fi
+
           if [[ "$VERDICT" != "mismatch-only" ]]; then
             echo "::error::The visual run failed for reasons beyond changed screenshots. Read the log; the label does not apply."
             exit 1

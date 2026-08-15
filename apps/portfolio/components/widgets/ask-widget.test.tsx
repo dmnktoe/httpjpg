@@ -152,6 +152,53 @@ describe("AskWidget", () => {
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
+  it("lists nav and social shortcuts when the palette opens empty", async () => {
+    render(
+      <AskWidget
+        links={[
+          { id: "nav:/work", title: "Projects", href: "/work", kind: "nav", excerpt: "header" },
+          {
+            id: "social:https://github.com/dmnktoe",
+            title: "GitHub",
+            href: "https://github.com/dmnktoe",
+            kind: "social",
+            excerpt: "profile",
+          },
+        ]}
+      />,
+    );
+    openPalette();
+
+    await waitFor(() => expect(screen.getAllByRole("option")).toHaveLength(2));
+    expect(screen.getByText("Projects")).toBeInTheDocument();
+    expect(screen.getByText("GitHub")).toBeInTheDocument();
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it("filters social shortcuts into the search results", async () => {
+    mockFetch({
+      search: { results: [], suggestions: [] },
+    });
+    render(
+      <AskWidget
+        links={[
+          { id: "nav:/work", title: "Projects", href: "/work", kind: "nav" },
+          {
+            id: "social:https://github.com/dmnktoe",
+            title: "GitHub",
+            href: "https://github.com/dmnktoe",
+            kind: "social",
+          },
+        ]}
+      />,
+    );
+    openPalette();
+    await type("git");
+
+    await waitFor(() => expect(screen.getByText("GitHub")).toBeInTheDocument());
+    expect(screen.queryByText("Projects")).not.toBeInTheDocument();
+  });
+
   it("clears results when the search request fails", async () => {
     mockFetch({ searchOk: false });
     vi.spyOn(console, "error").mockImplementation(() => {});

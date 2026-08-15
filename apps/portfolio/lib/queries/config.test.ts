@@ -28,8 +28,10 @@ import {
   getConfig,
   getFooterConfig,
   getNavigation,
+  getPaletteLinks,
   getSeoDefaults,
   getSiteConfig,
+  getSocialProfileLinks,
   getSocialProfiles,
 } from "./config";
 
@@ -320,5 +322,76 @@ describe("getSocialProfiles", () => {
   it("returns an empty list when the config story is missing", async () => {
     setupGetStory(async () => null);
     await expect(getSocialProfiles()).resolves.toEqual([]);
+  });
+});
+
+describe("getSocialProfileLinks", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockDraftMode.mockResolvedValue({ isEnabled: false } as never);
+  });
+
+  it("keeps the platform label next to each URL", async () => {
+    setupGetStory(async () => ({
+      content: {
+        social_profiles: [{ platform: "GitHub", url: "https://github.com/dmnktoe" }],
+      },
+    }));
+    await expect(getSocialProfileLinks()).resolves.toEqual([
+      { platform: "GitHub", href: "https://github.com/dmnktoe" },
+    ]);
+  });
+});
+
+describe("getPaletteLinks", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockDraftMode.mockResolvedValue({ isEnabled: false } as never);
+  });
+
+  it("merges header, footer, and social links and dedupes by href", async () => {
+    setupGetStory(async () => ({
+      content: {
+        header_menu: [
+          {
+            label: "Projects",
+            link: { linktype: "story", cached_url: "work" },
+          },
+        ],
+        footer_config: [
+          {
+            footer_links: [
+              { label: "Projects again", link: { linktype: "story", cached_url: "work" } },
+              { label: "Imprint", link: { linktype: "story", cached_url: "imprint" } },
+            ],
+          },
+        ],
+        social_profiles: [{ platform: "GitHub", url: "https://github.com/dmnktoe" }],
+      },
+    }));
+
+    await expect(getPaletteLinks()).resolves.toEqual([
+      {
+        id: "nav:/work",
+        title: "Projects",
+        href: "/work",
+        kind: "nav",
+        excerpt: "header",
+      },
+      {
+        id: "nav:/imprint",
+        title: "Imprint",
+        href: "/imprint",
+        kind: "nav",
+        excerpt: "footer",
+      },
+      {
+        id: "social:https://github.com/dmnktoe",
+        title: "GitHub",
+        href: "https://github.com/dmnktoe",
+        kind: "social",
+        excerpt: "profile",
+      },
+    ]);
   });
 });

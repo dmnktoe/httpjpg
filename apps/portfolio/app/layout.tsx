@@ -42,6 +42,7 @@ import {
   getAuthor,
   getFooterConfig,
   getNavigation,
+  getPaletteLinks,
   getSeoDefaults,
   getSiteConfig,
   getSocialProfiles,
@@ -98,6 +99,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const site = await getSiteConfig();
   const author = await getAuthor();
   const socialProfiles = await getSocialProfiles();
+  const paletteLinks = await getPaletteLinks();
   const flags = await getFeatureFlags();
   const { projectsWork, websitesWork } = await getRecentWork();
   const lastUpdated = flags.lastUpdatedBadgeEnabled ? await getLastUpdated() : undefined;
@@ -132,7 +134,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               {widgetConfig.nostalgiaSlideshowEnabled && <NostalgiaSlideshow />}
               {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
               {widgetConfig.psnEnabled && <PSNCard username={widgetConfig.psnUsername} />}
-              {widgetConfig.askEnabled && <AskWidget askEnabled={Boolean(env.GROQ_API_KEY)} />}
+              {widgetConfig.askEnabled && (
+                <AskWidget askEnabled={Boolean(env.GROQ_API_KEY)} links={paletteLinks} />
+              )}
               <PreviewNotification />
               <Header
                 nav={navigation}

@@ -11,15 +11,21 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import type { PaletteLink } from "@/lib/queries/config";
 import { type AskNavigateAction, readAskStream } from "@/lib/search/ask-stream";
+import { filterPaletteLinks, mergePaletteResults } from "@/lib/search/palette-links";
 
 export interface AskWidgetProps {
   /** False when the deployment has no Groq key — search still works. */
   askEnabled?: boolean;
+  /** Header / footer / social shortcuts merged into palette results. */
+  links?: PaletteLink[];
 }
 
 /** Long enough to skip most intermediate keystrokes, short enough to feel live. */
 const SEARCH_DEBOUNCE_MS = 140;
+
+const EMPTY_LINKS: PaletteLink[] = [];
 
 interface SearchResponse {
   results?: Array<{
@@ -33,12 +39,14 @@ interface SearchResponse {
   suggestions?: string[];
 }
 
-export function AskWidget({ askEnabled = true }: AskWidgetProps) {
+export function AskWidget({ askEnabled = true, links = EMPTY_LINKS }: AskWidgetProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<CommandPaletteResult[]>([]);
+  const [results, setResults] = useState<CommandPaletteResult[]>(() =>
+    mergePaletteResults(filterPaletteLinks(links, ""), []),
+  );
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState<Array<{ title: string; href: string }>>([]);
@@ -92,12 +100,17 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
       return;
     }
     const trimmed = query.trim();
+    const matchedLinks = filterPaletteLinks(links, trimmed);
+
     if (!trimmed) {
-      setResults([]);
+      setResults(mergePaletteResults(matchedLinks, []));
       setSuggestions([]);
       setStatus("idle");
       return;
     }
+
+    // Show matching shortcuts immediately while the Storyblok search is in flight.
+    setResults(mergePaletteResults(matchedLinks, []));
 
     const controller = new AbortController();
     searchAbort.current?.abort();
@@ -118,7 +131,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
         if (controller.signal.aborted || searchAbort.current !== controller) {
           return;
         }
-        setResults(data.results ?? []);
+        setResults(mergePaletteResults(matchedLinks, data.results ?? []));
         setSuggestions(data.suggestions ?? []);
         setStatus("idle");
       } catch (error) {
@@ -126,7 +139,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
           return;
         }
         console.error("Search request failed:", error);
-        setResults([]);
+        setResults(mergePaletteResults(matchedLinks, []));
         setSuggestions([]);
         setStatus("idle");
       }
@@ -136,7 +149,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [query, isOpen]);
+  }, [query, isOpen, links]);
 
   const handleSelect = useCallback(
     (result: CommandPaletteResult) => {

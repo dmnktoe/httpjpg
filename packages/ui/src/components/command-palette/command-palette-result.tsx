@@ -9,7 +9,7 @@ export interface CommandPaletteResult {
   id: string;
   title: string;
   href: string;
-  kind: "work" | "page";
+  kind: "work" | "page" | "nav" | "social";
   excerpt?: string;
   /** Thumbnails from the page, shown in the palette's media strip. */
   media?: CommandPaletteMediaItem[];

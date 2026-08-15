@@ -113,12 +113,77 @@ export async function getAuthor(): Promise<SiteAuthor | null> {
 
 /** Profile URLs for the author's schema.org `sameAs`. */
 export async function getSocialProfiles(): Promise<string[]> {
+  const links = await getSocialProfileLinks();
+  return links.map((link) => link.href);
+}
+
+export interface SocialProfileLink {
+  platform: string;
+  href: string;
+}
+
+/** Social profiles with platform labels — for the command palette and chrome. */
+export async function getSocialProfileLinks(): Promise<SocialProfileLink[]> {
   const config = await getConfig();
-  return (
-    config?.social_profiles
-      ?.map((profile) => profile.url?.trim())
-      .filter((url): url is string => Boolean(url)) ?? []
-  );
+  const links: SocialProfileLink[] = [];
+  for (const profile of config?.social_profiles ?? []) {
+    const href = profile.url?.trim();
+    if (!href) {
+      continue;
+    }
+    links.push({ platform: profile.platform || "Other", href });
+  }
+  return links;
+}
+
+/**
+ * Header nav, footer links, and social profiles as palette rows. Deduped by
+ * href (header wins over footer over social) so the same destination is not
+ * offered three times.
+ */
+export interface PaletteLink {
+  id: string;
+  title: string;
+  href: string;
+  kind: "nav" | "social";
+  excerpt?: string;
+}
+
+export async function getPaletteLinks(): Promise<PaletteLink[]> {
+  const [navigation, footer, social] = await Promise.all([
+    getNavigation(),
+    getFooterConfig(),
+    getSocialProfileLinks(),
+  ]);
+
+  const seen = new Set<string>();
+  const links: PaletteLink[] = [];
+
+  function push(kind: "nav" | "social", title: string, href: string, excerpt?: string) {
+    if (!href || seen.has(href)) {
+      return;
+    }
+    seen.add(href);
+    links.push({
+      id: `${kind}:${href}`,
+      title,
+      href,
+      kind,
+      excerpt,
+    });
+  }
+
+  for (const item of navigation) {
+    push("nav", item.name, item.href, "header");
+  }
+  for (const item of footer.footerLinks ?? []) {
+    push("nav", item.name, item.href, "footer");
+  }
+  for (const profile of social) {
+    push("social", profile.platform, profile.href, "profile");
+  }
+
+  return links;
 }
 
 export async function getSeoDefaults(): Promise<{

@@ -6,7 +6,7 @@ import { useEffect, useLayoutEffect } from "react";
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 /** CSS custom properties stamped onto `<html>` for work-page accents. */
-const ACCENT_VARS = ["--page-accent", "--page-accent-fg", "--accent-of-day"] as const;
+const ACCENT_VARS = ["--page-accent", "--page-accent-fg"] as const;
 
 export interface AccentSyncProps {
   /**
@@ -37,7 +37,6 @@ export function AccentSync({ imageUrl }: AccentSyncProps) {
       const root = document.documentElement;
       root.style.setProperty("--page-accent", color.css);
       root.style.setProperty("--page-accent-fg", color.textColor);
-      root.style.setProperty("--accent-of-day", color.css);
     });
 
     return () => {

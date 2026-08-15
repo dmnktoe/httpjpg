@@ -96,7 +96,7 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
             _active: { transform: "translateY(1px)" },
             _focusVisible: {
               outline: "2px solid",
-              outlineColor: "var(--accent-of-day, var(--colors-primary-500))",
+              outlineColor: "var(--page-accent, var(--colors-primary-500))",
               outlineOffset: "2px",
             },
           }),

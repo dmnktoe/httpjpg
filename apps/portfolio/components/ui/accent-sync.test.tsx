@@ -15,7 +15,6 @@ describe("AccentSync", () => {
     extractVibrantColor.mockReset();
     document.documentElement.style.removeProperty("--page-accent");
     document.documentElement.style.removeProperty("--page-accent-fg");
-    document.documentElement.style.removeProperty("--accent-of-day");
   });
 
   it("renders nothing", () => {
@@ -39,15 +38,11 @@ describe("AccentSync", () => {
       );
     });
     expect(document.documentElement.style.getPropertyValue("--page-accent-fg")).toBe("#ffffff");
-    expect(document.documentElement.style.getPropertyValue("--accent-of-day")).toBe(
-      "rgb(10, 20, 30)",
-    );
     expect(extractVibrantColor).toHaveBeenCalledWith("https://a.storyblok.com/f/1/cover.jpg");
   });
 
   it("clears accent variables when imageUrl is omitted", async () => {
     document.documentElement.style.setProperty("--page-accent", "rgb(1, 2, 3)");
-    document.documentElement.style.setProperty("--accent-of-day", "rgb(1, 2, 3)");
 
     render(<AccentSync />);
 
@@ -75,6 +70,5 @@ describe("AccentSync", () => {
     unmount();
 
     expect(document.documentElement.style.getPropertyValue("--page-accent")).toBe("");
-    expect(document.documentElement.style.getPropertyValue("--accent-of-day")).toBe("");
   });
 });

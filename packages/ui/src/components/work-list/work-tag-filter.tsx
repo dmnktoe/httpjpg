@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { css } from "styled-system/css";
 
 import { Box } from "../box/box";
@@ -63,6 +63,14 @@ export function WorkTagFilter({
 }: WorkTagFilterProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const panelId = `work-tag-filter-${useId().replace(/:/g, "")}`;
+
+  // A deep-linked `?tag=` arrives after the first paint; open the panel so the
+  // active chip explains why the list is filtered.
+  useEffect(() => {
+    if (active) {
+      setIsExpanded(true);
+    }
+  }, [active]);
 
   if (tags.length === 0) {
     return null;

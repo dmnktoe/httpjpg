@@ -39,6 +39,7 @@ export const SbWorkList = memo(function SbWorkList({ blok }: SbWorkListProps) {
       variant={blok.variant}
       showDividers={blok.showDividers}
       showTagFilter={blok.enableTagFilter}
+      tagUrlParam={blok.enableTagFilter ? "tag" : undefined}
       dividerProps={
         blok.showDividers
           ? {

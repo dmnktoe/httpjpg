@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeAll } from "vitest";
 
 import { ASCII_EMPTY } from "../ascii-art/banners";
@@ -123,5 +123,23 @@ describe("WorkList · tag filter", () => {
     );
 
     expect(screen.getByText("Beta")).toBeInTheDocument();
+  });
+
+  it("reads and writes the active tag through a URL query param", async () => {
+    window.history.replaceState(null, "", "/work?tag=Print");
+
+    render(<WorkList works={TAGGED} showTagFilter tagUrlParam="tag" />);
+
+    await waitFor(() => expect(screen.queryByText("Beta")).not.toBeInTheDocument());
+    expect(screen.getByText("Alpha")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /^React/ }));
+
+    expect(window.location.search).toBe("?tag=React");
+    expect(screen.getByText("Beta")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /^all/ }));
+
+    expect(window.location.search).toBe("");
   });
 });

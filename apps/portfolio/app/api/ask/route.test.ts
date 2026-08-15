@@ -177,6 +177,29 @@ describe("POST /api/ask", () => {
     });
   });
 
+  it("answers a tag browse intent without calling the model", async () => {
+    const lines = await readLines(await POST(post({ question: "show me TypeScript projects" })));
+
+    expect(lines).toEqual([
+      {
+        type: "sources",
+        sources: [{ title: "TypeScript work", href: "/work?tag=TypeScript", kind: "page" }],
+      },
+      { type: "delta", text: "Here are projects tagged TypeScript." },
+      {
+        type: "action",
+        action: {
+          type: "navigate",
+          href: "/work?tag=TypeScript",
+          title: "TypeScript work",
+          kind: "page",
+        },
+      },
+    ]);
+    expect(mockStream).not.toHaveBeenCalled();
+    expect(mockGetSearchIndex).not.toHaveBeenCalled();
+  });
+
   it("answers a zero-match question itself, without calling the model", async () => {
     mockGetSearchIndex.mockResolvedValue([]);
 

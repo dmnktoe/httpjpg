@@ -4,6 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getSearchIndex } from "@/lib/queries/search-index";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { rankDocuments, suggestCompletions } from "@/lib/search/ranking";
+import { resolveTagBrowseIntent } from "@/lib/search/tag-intent";
 
 const MAX_QUERY_LENGTH = 120;
 const DEFAULT_LIMIT = 8;
@@ -32,10 +33,26 @@ export async function GET(request: NextRequest) {
 
   try {
     const documents = await getSearchIndex();
+    const ranked = rankDocuments(documents, query, limit);
+    const tagIntent = resolveTagBrowseIntent(query);
+    const results = tagIntent
+      ? [
+          {
+            id: `tag:${tagIntent.tag.value}`,
+            href: tagIntent.href,
+            title: tagIntent.title,
+            kind: "page" as const,
+            tags: [tagIntent.tag.label],
+            excerpt: `Filter the work list by ${tagIntent.tag.label}`,
+            score: Number.MAX_SAFE_INTEGER,
+          },
+          ...ranked.filter((result) => result.href !== tagIntent.href),
+        ].slice(0, limit)
+      : ranked;
 
     return NextResponse.json(
       {
-        results: rankDocuments(documents, query, limit),
+        results,
         suggestions: suggestCompletions(documents, query),
       },
       { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },

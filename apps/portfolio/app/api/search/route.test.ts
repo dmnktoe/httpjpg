@@ -141,4 +141,16 @@ describe("GET /api/search", () => {
       tags: { route: "search" },
     });
   });
+
+  it("prepends a work-list filter result when the query is a tag browse intent", async () => {
+    const response = await GET(get("/api/search?q=TypeScript"));
+    const body = await response.json();
+
+    expect(body.results[0]).toMatchObject({
+      id: "tag:typescript",
+      href: "/work?tag=TypeScript",
+      title: "TypeScript work",
+      kind: "page",
+    });
+  });
 });

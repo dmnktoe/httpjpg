@@ -8,6 +8,7 @@ import { enforceRateLimit } from "@/lib/rate-limit";
 import { firstCitedSource } from "@/lib/search/citations";
 import { buildAskMessages, MAX_QUESTION_LENGTH } from "@/lib/search/prompt";
 import { rankDocuments } from "@/lib/search/ranking";
+import { resolveTagBrowseIntent } from "@/lib/search/tag-intent";
 
 /** Sources per answer. */
 const MAX_SOURCES = 5;
@@ -77,6 +78,33 @@ export async function POST(request: NextRequest) {
   }
   if (question.length > MAX_QUESTION_LENGTH) {
     return NextResponse.json({ error: "question_too_long" }, { status: 413 });
+  }
+
+  // Tag browse intents are derived from the controlled vocabulary — no model
+  // call, no invented links, just a deep-link into the work list filter.
+  const tagIntent = resolveTagBrowseIntent(question);
+  if (tagIntent) {
+    const source: AskSource = {
+      title: tagIntent.title,
+      href: tagIntent.href,
+      kind: "page",
+    };
+    return ndjson([
+      { type: "sources", sources: [source] },
+      {
+        type: "delta",
+        text: `Here are projects tagged ${tagIntent.tag.label}.`,
+      },
+      {
+        type: "action",
+        action: {
+          type: "navigate",
+          href: tagIntent.href,
+          title: tagIntent.title,
+          kind: "page",
+        } satisfies AskNavigateAction,
+      },
+    ]);
   }
 
   let sources: AskSource[] = [];

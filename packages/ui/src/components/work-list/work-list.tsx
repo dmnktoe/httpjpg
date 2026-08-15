@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { forwardRef, useMemo, useState } from "react";
+import { forwardRef, useLayoutEffect, useMemo, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { AsciiArt } from "../ascii-art/ascii-art";
@@ -26,6 +26,11 @@ export interface WorkListProps {
   showDividers?: boolean;
   dividerProps?: Omit<DividerProps, "orientation">;
   showTagFilter?: boolean;
+  /**
+   * When set (e.g. `"tag"`), the active filter is read from and written to that
+   * query param so Ask / deep links can open a pre-filtered list.
+   */
+  tagUrlParam?: string;
   header?: ReactNode;
   footer?: ReactNode;
   css?: SystemStyleObject;
@@ -56,6 +61,7 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
       showDividers = false,
       dividerProps,
       showTagFilter = false,
+      tagUrlParam,
       header,
       footer,
       css: cssProp,
@@ -66,12 +72,34 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
     const availableTags = useMemo(() => collectWorkTags(works), [works]);
 
+    useLayoutEffect(() => {
+      if (!tagUrlParam || typeof window === "undefined") {
+        return;
+      }
+      setSelectedTag(new URLSearchParams(window.location.search).get(tagUrlParam));
+    }, [tagUrlParam]);
+
     // Derived rather than reset in an effect: a Storyblok live edit can drop
     // the tag that is currently selected, and a stale selection would leave
     // the list empty with an active chip that no longer exists.
     const activeTag =
       selectedTag && availableTags.some(({ tag }) => tag === selectedTag) ? selectedTag : null;
     const visibleWorks = useMemo(() => filterWorksByTag(works, activeTag), [works, activeTag]);
+
+    function handleTagChange(tag: string | null) {
+      setSelectedTag(tag);
+      if (!tagUrlParam || typeof window === "undefined") {
+        return;
+      }
+      const url = new URL(window.location.href);
+      if (tag) {
+        url.searchParams.set(tagUrlParam, tag);
+      } else {
+        url.searchParams.delete(tagUrlParam);
+      }
+      const next = `${url.pathname}${url.search}${url.hash}`;
+      window.history.replaceState(window.history.state, "", next);
+    }
 
     if (works.length === 0) {
       return (
@@ -116,7 +144,8 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
         tags={availableTags}
         active={activeTag}
         totalCount={works.length}
-        onChange={setSelectedTag}
+        onChange={handleTagChange}
+        defaultExpanded={Boolean(activeTag)}
       />
     ) : null;
 

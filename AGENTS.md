@@ -268,9 +268,9 @@ None today. If adding: `react-hook-form` + zod (catalog v4), compose with `@http
 
 Argos owns the baseline: `main` is the reference, PRs upload and Argos compares. Review/approve in Argos (`argos` GitHub status) — not a label or committed snapshot.
 
-- **Storybook SDK:** `@storybook/addon-vitest` + `argosVitestPlugin` (`uploadToArgos: !!process.env.CI`). Chromium uses `--disable-lcd-text --font-render-hinting=none` and `reducedMotion: "reduce"` so motion settles before capture. Overflowing stories (e.g. Slideshow loop clones) set `parameters.argos.fitToContent: false` for a viewport shot. No Docker, don't commit screenshots; `test:visual` is not a cacheable turbo task (a hit would skip the upload).
+- **Storybook SDK:** `@storybook/addon-vitest` + `argosVitestPlugin` (`uploadToArgos: !!process.env.CI`). Chromium uses `--disable-lcd-text --font-render-hinting=none` and `reducedMotion: "reduce"` so motion settles before capture. `AnimateInView` skips its JS tween under reduced motion — Argos pauses CSS, not `motion/react`. Overflowing stories (e.g. Slideshow loop clones) set `parameters.argos.fitToContent: false` for a viewport shot. No Docker, don't commit screenshots; `test:visual` is not a cacheable turbo task (a hit would skip the upload).
 - **Auth is OIDC** (`id-token: write`, no `ARGOS_TOKEN`; tokenless fallback on fork PRs). Make the `argos` status a required check. The Vitest job itself only fails when a story does not render.
-- **Local fixtures, not the CDN** — portable stories hit a real browser; use files under `apps/storybook` instead of remote URLs.
+- **Local fixtures, not the CDN** — portable stories hit a real browser; prefer `OPTIMIZED_IMAGES` / files under `apps/storybook` over picsum/Unsplash. Third-party embeds (Spotify, SoundCloud, YouTube, Vimeo) and remote `<video>` stay out via Storybook's `!test` tag; the Vitest plugin also hides leftover `iframe`/`video` paint via `argosCSS`.
 - **Extra viewports:** Argos modes via `allModes` from `.storybook/modes.ts` + `parameters.argos.modes`. Skip with Storybook's `!test` tag — not a home-grown opt-out.
 - **Chromatic still publishes** Storybook only (snapshots off). Don't hand Argos hosting or Chromatic testing.
 

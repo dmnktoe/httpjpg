@@ -9,8 +9,8 @@ const { envObj, mockStream } = vi.hoisted(() => ({
 
 vi.mock("@httpjpg/env", () => ({ env: envObj }));
 
-vi.mock("@httpjpg/groq", async () => {
-  const actual = await vi.importActual<typeof import("@httpjpg/groq")>("@httpjpg/groq");
+vi.mock("@httpjpg/ai", async () => {
+  const actual = await vi.importActual<typeof import("@httpjpg/ai")>("@httpjpg/ai");
   return {
     ...actual,
     createGroqClient: vi.fn(() => ({ stream: mockStream, complete: vi.fn() })),
@@ -29,7 +29,7 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
-import { createGroqClient, GroqApiError } from "@httpjpg/groq";
+import { createGroqClient, GroqApiError } from "@httpjpg/ai";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { NextRequest, NextResponse } from "next/server";
 

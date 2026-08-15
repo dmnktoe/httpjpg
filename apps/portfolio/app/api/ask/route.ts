@@ -1,5 +1,5 @@
+import { createGroqClient, GroqApiError } from "@httpjpg/ai";
 import { env } from "@httpjpg/env";
-import { createGroqClient, GroqApiError } from "@httpjpg/groq";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { type NextRequest, NextResponse } from "next/server";
 

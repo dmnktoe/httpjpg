@@ -19,13 +19,13 @@ export async function getWidgetConfig(): Promise<WidgetConfig> {
     psnUsername: config?.psn_username,
     psnEnabled: config?.psn_enabled ?? false,
     psnTrophyEnabled: config?.psn_trophy_enabled ?? false,
-    discordEnabled: config?.discord_enabled ?? true,
-    letterboxdEnabled: config?.letterboxd_enabled ?? true,
+    discordEnabled: config?.discord_enabled ?? false,
+    letterboxdEnabled: config?.letterboxd_enabled ?? false,
     discogsEnabled: config?.discogs_enabled ?? false,
     xEnabled: config?.x_enabled ?? false,
-    spotifyEnabled: config?.spotify_enabled ?? true,
+    spotifyEnabled: config?.spotify_enabled ?? false,
     nostalgiaSlideshowEnabled: config?.nostalgia_slideshow_enabled ?? false,
-    askEnabled: config?.ask_enabled ?? true,
+    askEnabled: config?.ask_enabled ?? false,
   };
 }
 
@@ -38,9 +38,9 @@ export interface InterfaceConfig {
 export async function getInterfaceConfig(): Promise<InterfaceConfig> {
   const config = await getConfig();
   return {
-    customCursorEnabled: config?.custom_cursor_enabled ?? true,
-    mouseTrailEnabled: config?.mouse_trail_enabled ?? true,
-    headerScrollVeilEnabled: config?.header_scroll_veil_enabled ?? true,
+    customCursorEnabled: config?.custom_cursor_enabled ?? false,
+    mouseTrailEnabled: config?.mouse_trail_enabled ?? false,
+    headerScrollVeilEnabled: config?.header_scroll_veil_enabled ?? false,
   };
 }
 
@@ -56,11 +56,11 @@ export interface FeatureFlags {
 export async function getFeatureFlags(): Promise<FeatureFlags> {
   const config = await getConfig();
   return {
-    lastUpdatedBadgeEnabled: config?.last_updated_badge_enabled ?? true,
+    lastUpdatedBadgeEnabled: config?.last_updated_badge_enabled ?? false,
     webVitalsBadgeEnabled: config?.web_vitals_badge_enabled ?? false,
     buildBadgeEnabled: config?.build_badge_enabled ?? false,
-    prevNextWorkEnabled: config?.prev_next_work_enabled ?? true,
-    relatedWorkEnabled: config?.related_work_enabled ?? true,
-    rssFeedEnabled: config?.rss_feed_enabled ?? true,
+    prevNextWorkEnabled: config?.prev_next_work_enabled ?? false,
+    relatedWorkEnabled: config?.related_work_enabled ?? false,
+    rssFeedEnabled: config?.rss_feed_enabled ?? false,
   };
 }

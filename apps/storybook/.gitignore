@@ -12,6 +12,3 @@ node_modules/
 
 # Visual regression — Argos owns baselines; local captures stay off git
 screenshots/
-tests/visual/__screenshots__/
-playwright-report/
-test-results/

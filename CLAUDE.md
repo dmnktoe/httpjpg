@@ -19,7 +19,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 - **Panda CSS** (zero-runtime) — `css({})` / `cx()` / token-aware patterns; consumes design tokens from `@httpjpg/tokens`
 - **Storyblok** as CMS — Visual Editor live-bridge in dev, draft mode in production
 - **Sentry** — error reporting via `@httpjpg/observability` for client/server/edge
-- **Vitest** for unit tests (jsdom by default, node env via `// @vitest-environment node` pragma), **Playwright** for E2E in `apps/portfolio/tests/e2e` and for visual regression in `apps/storybook/tests/visual`
+- **Vitest** for unit tests (jsdom by default, node env via `// @vitest-environment node` pragma), **Playwright** for E2E in `apps/portfolio/tests/e2e`, **Argos** + Storybook Vitest for visual regression
 - **oxlint** + **oxfmt** — linting and formatting (no ESLint, no Prettier)
 - **pnpm** workspaces with a catalog for shared versions, **Turbo** for task orchestration
 - **t3-oss/env-nextjs** + **Zod** for env validation in `@httpjpg/env`
@@ -429,18 +429,18 @@ The portfolio site has no forms. If you add one:
 - **Unit tests** — Vitest with `jsdom` environment by default; switch to node per file via `// @vitest-environment node` at the top of the file (see `packages/spotify/src/api.test.ts`). Globals (`describe`, `it`, `expect`, `vi`) are enabled — no need to import from `vitest` unless you need typed helpers like `MockedFunction`. Tests live next to source as `*.test.ts(x)`. Run with `pnpm test` at the root; single root `vitest.config.ts` discovers all package tests.
 - **Component tests** — `@testing-library/react` + `@testing-library/jest-dom/vitest`. Existing examples in `packages/ui/src/components/{box,button,headline}/*.test.tsx`.
 - **E2E** — Playwright specs in `apps/portfolio/tests/e2e`. Run with `pnpm --filter @httpjpg/portfolio test:e2e`.
-- **Visual regression** — Playwright specs in `apps/storybook/tests/visual` capture every story via `@argos-ci/playwright`. Argos stores baselines, diffs, and the review UI. Locally, `pnpm --filter @httpjpg/storybook test:visual` renders and writes `./screenshots` without uploading.
+- **Visual regression** — `@storybook/addon-vitest` plus `@argos-ci/storybook` capture every story. Argos stores baselines, diffs, and the review UI. Locally, `pnpm --filter @httpjpg/storybook test:visual` writes `./screenshots` without uploading.
 - **CI** — `.github/workflows/ci.yml` runs lint → typecheck → test → build → e2e → visual.
 
 ### Visual regression rules
 
 Argos owns the baseline: a build on `main` is the reference, a pull request uploads screenshots and Argos compares. Review and approve diffs in Argos (the `argos` GitHub status), not with a label or a committed snapshot.
 
-- **Official Playwright SDK.** `argosScreenshot` plus the Argos reporter (`uploadToArgos: !!process.env.CI`). Chromium launches with `--disable-lcd-text --font-render-hinting=none` so glyphs match across machines. Don't wrap the suite in Docker and don't commit screenshots. This is also why `test:visual` is not a cacheable turbo task: a cache hit would skip the upload.
-- **Auth is OIDC.** The visual job grants `id-token: write` and does not set `ARGOS_TOKEN`; the SDK falls back to tokenless on fork PRs. Connect the GitHub repo in Argos and enable GitHub OIDC under Project Settings → Authentication. Make the `argos` status a required check so a rejected visual build cannot merge. The Playwright job itself only fails when a story does not render.
-- **Nothing external is fetched.** `prepareStory()` in `tests/visual/lib.ts` answers every non-local request itself: images get a fixed placeholder (so `onLoad` fires and skeletons clear), everything else is aborted. A story that needs the real Storyblok CDN to look right will flake — give it a local fixture instead.
-- **Coverage is tag-driven.** `skip-visual` on a story or meta keeps it out; `visual-mobile` additionally captures it at 390×844. Don't add a bespoke opt-out, and don't disable a story to silence a diff.
-- **Chromatic still runs, but only publishes.** The `chromatic` job uploads the built Storybook so each run has a browsable one; snapshots are switched off in the Chromatic project settings (UI Tests and UI Review), and there is no CLI flag for it. Publishing is unmetered, snapshots are not — that split is the whole point. Don't hand it back the testing role.
+- **Official Storybook SDK.** `@storybook/addon-vitest` turns stories into Vitest browser tests; `argosVitestPlugin` screenshots them (`uploadToArgos: !!process.env.CI`). Chromium launches with `--disable-lcd-text --font-render-hinting=none`. Don't wrap the suite in Docker, don't commit screenshots, and don't add a second Playwright visual spec. This is also why `test:visual` is not a cacheable turbo task: a cache hit would skip the upload.
+- **Auth is OIDC.** The visual job grants `id-token: write` and does not set `ARGOS_TOKEN`; the SDK falls back to tokenless on fork PRs. Connect the GitHub repo in Argos and enable GitHub OIDC under Project Settings → Authentication. Make the `argos` status a required check so a rejected visual build cannot merge. The Vitest job itself only fails when a story does not render.
+- **Local fixtures, not the CDN.** Portable stories run in a real browser, so a Storyblok or Unsplash URL is a live request. A story that needs a specific image to look right should use a file under `apps/storybook` rather than a remote URL — otherwise the capture flakes when the CDN is slow or the asset moves.
+- **Coverage is tag- and mode-driven.** `skip-visual` on a story or meta is excluded by `storybookTest`. Extra viewports go through Argos [story modes](https://argos-ci.com/docs/learn/how-to-guides/visual-coverage/storybook-story-modes): import `allModes` from `.storybook/modes.ts` and set `parameters.argos.modes`. Don't add a bespoke opt-out, and don't disable a story to silence a diff.
+- **Chromatic still runs, but only publishes.** The `chromatic` job uploads the built Storybook so each run has a browsable one; snapshots are switched off in the Chromatic project settings (UI Tests and UI Review), and there is no CLI flag for it. Publishing is unmetered, snapshots are not — that split is the whole point. Don't hand Argos `deploy` the hosting role, and don't hand Chromatic the testing role.
 
 ---
 

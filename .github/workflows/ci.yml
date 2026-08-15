@@ -258,9 +258,10 @@ jobs:
           buildScriptName: build
           exitOnceUploaded: true
 
-  # ── Visual regression: Playwright captures, Argos compares ─────────
+  # ── Visual regression: Storybook Vitest + Argos ───────────────────
   # Always runs (unlike Publish Storybook) so the `argos` GitHub status exists
   # on every PR and can be a required check. Path skipping would leave it pending.
+  # Chromatic still hosts the browsable Storybook; we do not `argos deploy`.
   visual:
     name: Visual Regression
     needs: [guard]

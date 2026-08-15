@@ -100,9 +100,8 @@
       "env": ["PLAYWRIGHT_TEST_BASE_URL"]
     },
     "test:visual": {
-      "dependsOn": ["build"],
-      "cache": false,
-      "outputs": ["playwright-report/**", "test-results/**"]
+      "dependsOn": ["^build"],
+      "cache": false
     },
     "format:check": {
       "inputs": ["**/*.{ts,tsx,js,jsx,json}", ".oxfmtrc.json"],

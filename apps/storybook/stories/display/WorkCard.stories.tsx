@@ -20,8 +20,14 @@ const meta = {
         iframeHeight: 800, // Set explicit height for iframe
       },
     },
+    argos: { fitToContent: false },
   },
   tags: ["autodocs"],
+  args: {
+    // Fixed overlay so glyph paint is deterministic across captures.
+    overlay: "stars" as const,
+    priority: true,
+  },
   argTypes: {
     title: { control: "text", description: "Project title" },
     description: {

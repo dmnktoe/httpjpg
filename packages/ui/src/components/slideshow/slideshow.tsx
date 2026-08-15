@@ -93,6 +93,10 @@ export function Slideshow({
   const [isNearViewport, setIsNearViewport] = useState(false);
   const [unplayableVideos, setUnplayableVideos] = useState<ReadonlySet<string>>(() => new Set());
   const prefersReducedMotion = useReducedMotion();
+  // Blur-up + lazy decode are motion. Under reduced motion (and Argos, which
+  // emulates it) settle immediately so screenshots don't land on a skeleton
+  // or a mid-fade — WorkList stacks many cards and only the first is priority.
+  const blurUp = !disableBlurOnLoad && !prefersReducedMotion;
 
   useEffect(() => {
     const root = rootRef.current;
@@ -250,8 +254,9 @@ export function Slideshow({
                     copyright={image.copyright}
                     copyrightSource={image.copyrightSource}
                     copyrightPosition={image.copyrightPosition || "inline-white"}
-                    blurOnLoad={!disableBlurOnLoad}
+                    blurOnLoad={blurUp}
                     loading={
+                      prefersReducedMotion ||
                       (priority && index === 0) ||
                       (isNearViewport && isNearActive(index, activeIndex, images.length))
                         ? "eager"

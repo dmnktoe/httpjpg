@@ -14,6 +14,10 @@ const meta = {
   component: WorkList,
   parameters: {
     layout: "fullscreen",
+    // Tall stacks of WorkCards overflow the root; viewport shot stays encodable
+    // and matches Slideshow. Cards also settle under reducedMotion (eager, no
+    // blur-up) so Argos does not land on a skeleton for below-the-fold items.
+    argos: { fitToContent: false },
   },
   tags: ["autodocs"],
 } satisfies Meta<typeof WorkList>;
@@ -29,6 +33,8 @@ const sampleWorks = [
       "Comprehensive brand identity system for a modern tech startup. Includes logo design, color palette, typography, and brand guidelines.",
     date: "2024-03-15",
     slug: "brand-identity",
+    overlay: "stars" as const,
+    priority: true,
     images: [
       {
         url: OPTIMIZED_IMAGES.outletStore1,

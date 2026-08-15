@@ -33,8 +33,6 @@ const sampleWorks = [
       "Comprehensive brand identity system for a modern tech startup. Includes logo design, color palette, typography, and brand guidelines.",
     date: "2024-03-15",
     slug: "brand-identity",
-    overlay: "stars" as const,
-    priority: true,
     images: [
       {
         url: OPTIMIZED_IMAGES.outletStore1,
@@ -99,7 +97,11 @@ const sampleWorks = [
       },
     ],
   },
-];
+].map((work) => ({
+  ...work,
+  overlay: "stars" as const,
+  priority: true,
+}));
 
 /**
  * Default work list with multiple projects

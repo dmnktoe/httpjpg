@@ -39,7 +39,13 @@ export function AnimateInView({
     return <div>{children}</div>;
   }
 
-  const beforeAnimationState = prefersReducedMotion ? "hiddenReduced" : "hidden";
+  if (prefersReducedMotion) {
+    return (
+      <div ref={ref} style={cssProp as React.CSSProperties} {...props}>
+        {children}
+      </div>
+    );
+  }
 
   return (
     <m.div
@@ -51,7 +57,7 @@ export function AnimateInView({
         ease: "easeOut",
       }}
       initial="hidden"
-      animate={isInView ? "visible" : beforeAnimationState}
+      animate={isInView ? "visible" : "hidden"}
       style={cssProp as React.CSSProperties}
       {...props}
     >

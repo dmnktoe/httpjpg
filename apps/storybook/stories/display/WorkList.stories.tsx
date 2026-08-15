@@ -14,6 +14,7 @@ const meta = {
   component: WorkList,
   parameters: {
     layout: "fullscreen",
+    argos: { fitToContent: false },
   },
   tags: ["autodocs"],
 } satisfies Meta<typeof WorkList>;
@@ -93,7 +94,11 @@ const sampleWorks = [
       },
     ],
   },
-];
+].map((work) => ({
+  ...work,
+  overlay: "stars" as const,
+  priority: true,
+}));
 
 /**
  * Default work list with multiple projects

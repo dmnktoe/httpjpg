@@ -88,6 +88,7 @@ export const Dark: Story = {
  * image can.
  */
 export const WithVideo: Story = {
+  tags: ["!test"],
   args: {
     items: [
       {

@@ -2,6 +2,18 @@ import { act, fireEvent, render, waitFor } from "@testing-library/react";
 
 import { Slideshow, type SlideshowImage, VIDEO_START_TIMEOUT_MS } from "./slideshow";
 
+const { mockReducedMotion } = vi.hoisted(() => ({
+  mockReducedMotion: vi.fn<() => boolean | null>(() => false),
+}));
+
+vi.mock("motion/react", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("motion/react")>();
+  return {
+    ...actual,
+    useReducedMotion: () => mockReducedMotion(),
+  };
+});
+
 const CLIP_A = "https://a.storyblok.com/f/1/clip-a.mp4";
 const CLIP_B = "https://a.storyblok.com/f/1/clip-b.mp4";
 
@@ -78,6 +90,7 @@ async function expectStuckOn(container: HTMLElement, slide: string) {
 }
 
 beforeEach(() => {
+  mockReducedMotion.mockReturnValue(false);
   playedSources = [];
   pausedSources = [];
   isPlaybackRefused = false;
@@ -440,5 +453,16 @@ describe("Slideshow preloading", () => {
     await expectSlide(container, "02");
 
     expect(loadingFor(container, "Photo 2")).toBe("eager");
+  });
+
+  it("eager-loads every slide under reduced motion without waiting for the viewport", () => {
+    mockReducedMotion.mockReturnValue(true);
+    stubIntersectionObserver();
+
+    const { container } = renderSlideshow(photos(5), { autoplayDelay: NO_AUTOPLAY });
+
+    expect(loadingFor(container, "Photo 0")).toBe("eager");
+    expect(loadingFor(container, "Photo 2")).toBe("eager");
+    expect(loadingFor(container, "Photo 4")).toBe("eager");
   });
 });

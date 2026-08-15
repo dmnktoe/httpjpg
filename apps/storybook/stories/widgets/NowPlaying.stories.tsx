@@ -3,6 +3,8 @@ import { IDLE_GLOW, NowPlaying } from "@httpjpg/now-playing";
 import { Box, Headline, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
+import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
+
 /**
  * NowPlaying component stories
  *
@@ -51,7 +53,7 @@ export const Default: Story = {
   args: {
     title: "Blinding Lights",
     artist: "The Weeknd",
-    artwork: "https://picsum.photos/seed/np1/400/400",
+    artwork: OPTIMIZED_IMAGES.videoStill1Preview,
     isPlaying: true,
     size: "sm",
   },
@@ -64,7 +66,7 @@ export const LongTitle: Story = {
   args: {
     title: "Bohemian Rhapsody (Remastered 2011)",
     artist: "Queen",
-    artwork: "https://picsum.photos/seed/np2/400/400",
+    artwork: OPTIMIZED_IMAGES.videoStill2Preview,
     isPlaying: true,
     size: "sm",
   },
@@ -77,7 +79,7 @@ export const LongArtist: Story = {
   args: {
     title: "One More Time",
     artist: "Daft Punk feat. Romanthony & DJ Sneak",
-    artwork: "https://picsum.photos/seed/np3/400/400",
+    artwork: OPTIMIZED_IMAGES.videoStill3Preview,
     isPlaying: true,
     size: "sm",
   },
@@ -90,7 +92,7 @@ export const BothLong: Story = {
   args: {
     title: "Echoes (Live at Pompeii 1971 - Remastered)",
     artist: "Pink Floyd with the Royal Philharmonic Orchestra",
-    artwork: "https://picsum.photos/seed/np4/400/400",
+    artwork: OPTIMIZED_IMAGES.landscapePreview,
     isPlaying: true,
     size: "sm",
   },
@@ -103,7 +105,7 @@ export const Paused: Story = {
   args: {
     title: "Midnight City",
     artist: "M83",
-    artwork: "https://picsum.photos/seed/np5/400/400",
+    artwork: OPTIMIZED_IMAGES.videoStill1Preview,
     isPlaying: false,
     size: "sm",
   },
@@ -238,7 +240,7 @@ export const PortfolioContext: Story = {
   args: {
     title: "Currently Coding To This",
     artist: "Lo-Fi Hip Hop Beats",
-    artwork: "https://picsum.photos/seed/np11/400/400",
+    artwork: OPTIMIZED_IMAGES.videoStill2Preview,
     isPlaying: true,
     size: "sm",
   },
@@ -288,7 +290,7 @@ export const Playground: Story = {
   args: {
     title: "Your Favorite Song",
     artist: "Your Favorite Artist",
-    artwork: "https://picsum.photos/seed/np13/400/400",
+    artwork: OPTIMIZED_IMAGES.landscapePreview,
     isPlaying: true,
     size: "sm",
   },

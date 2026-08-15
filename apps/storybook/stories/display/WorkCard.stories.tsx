@@ -20,8 +20,13 @@ const meta = {
         iframeHeight: 800, // Set explicit height for iframe
       },
     },
+    argos: { fitToContent: false },
   },
   tags: ["autodocs"],
+  args: {
+    overlay: "stars" as const,
+    priority: true,
+  },
   argTypes: {
     title: { control: "text", description: "Project title" },
     description: {

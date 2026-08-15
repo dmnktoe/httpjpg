@@ -42,6 +42,31 @@ describe("Footer", () => {
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
+  it("renders a visual-testing credit when visualTestingHref is set", () => {
+    render(
+      <Footer
+        showVersion
+        version="v1.3.0"
+        visualTestingHref="https://argos-ci.com/?utm_source=dmnktoe&utm_campaign=oss"
+      />,
+    );
+    const link = screen.getByRole("link", { name: "Argos" });
+    expect(link).toHaveAttribute(
+      "href",
+      "https://argos-ci.com/?utm_source=dmnktoe&utm_campaign=oss",
+    );
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    expect(link.getAttribute("rel")).not.toContain("nofollow");
+  });
+
+  it("renders the visual-testing credit without a version line", () => {
+    render(
+      <Footer visualTestingHref="https://argos-ci.com/?utm_source=dmnktoe&utm_campaign=oss" />,
+    );
+    expect(screen.getByRole("link", { name: "Argos" })).toBeInTheDocument();
+    expect(screen.queryByText("v-dev")).not.toBeInTheDocument();
+  });
+
   it("renders lastUpdated text before version", () => {
     render(<Footer showVersion version="v1.3.0" lastUpdated="last updated 2026-05-27" />);
     const container = screen.getByText(/last updated 2026-05-27/);

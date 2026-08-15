@@ -93,6 +93,7 @@ export function Slideshow({
   const [isNearViewport, setIsNearViewport] = useState(false);
   const [unplayableVideos, setUnplayableVideos] = useState<ReadonlySet<string>>(() => new Set());
   const prefersReducedMotion = useReducedMotion();
+  const blurUp = !disableBlurOnLoad && !prefersReducedMotion;
 
   useEffect(() => {
     const root = rootRef.current;
@@ -250,8 +251,9 @@ export function Slideshow({
                     copyright={image.copyright}
                     copyrightSource={image.copyrightSource}
                     copyrightPosition={image.copyrightPosition || "inline-white"}
-                    blurOnLoad={!disableBlurOnLoad}
+                    blurOnLoad={blurUp}
                     loading={
+                      prefersReducedMotion ||
                       (priority && index === 0) ||
                       (isNearViewport && isNearActive(index, activeIndex, images.length))
                         ? "eager"

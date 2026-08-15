@@ -27,7 +27,7 @@ export interface FooterProps {
   showVersion?: boolean;
   version?: string;
   versionHref?: string;
-  /** Dofollow credit for visual testing (e.g. Argos OSS sponsorship). */
+  /** Credit link shown next to the version line. */
   visualTestingHref?: string;
   visualTestingLabel?: string;
   lastUpdated?: string;

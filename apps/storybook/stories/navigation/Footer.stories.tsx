@@ -46,11 +46,11 @@ const meta = {
     },
     visualTestingHref: {
       control: "text",
-      description: "Dofollow credit link for visual testing (e.g. Argos)",
+      description: "Credit link shown next to the version",
     },
     visualTestingLabel: {
       control: "text",
-      description: "Label for the visual-testing credit",
+      description: "Label for the credit link",
     },
     lastUpdated: {
       control: "text",

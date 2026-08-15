@@ -14,9 +14,6 @@ const meta = {
   component: WorkList,
   parameters: {
     layout: "fullscreen",
-    // Tall stacks of WorkCards overflow the root; viewport shot stays encodable
-    // and matches Slideshow. Cards also settle under reducedMotion (eager, no
-    // blur-up) so Argos does not land on a skeleton for below-the-fold items.
     argos: { fitToContent: false },
   },
   tags: ["autodocs"],

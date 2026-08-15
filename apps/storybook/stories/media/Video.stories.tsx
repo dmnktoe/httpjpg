@@ -54,9 +54,6 @@ type Story = StoryObj<typeof Video>;
 
 /**
  * YouTube video embed
- *
- * Third-party embeds stay out of the Vitest/Argos run — iframe paint timing
- * is nondeterministic across CI screenshots.
  */
 export const YouTube: Story = {
   tags: ["!test"],
@@ -93,9 +90,6 @@ export const Vimeo: Story = {
 
 /**
  * Native video with custom controls
- *
- * Remote mp4 + poster hosts stay out of Argos — Chromium may paint the first
- * decoded frame instead of the poster (or miss the poster entirely).
  */
 export const Native: Story = {
   tags: ["!test"],

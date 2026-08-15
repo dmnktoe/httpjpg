@@ -42,7 +42,7 @@ describe("Footer", () => {
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  it("renders a dofollow visual-testing credit when visualTestingHref is set", () => {
+  it("renders a visual-testing credit when visualTestingHref is set", () => {
     render(
       <Footer
         showVersion

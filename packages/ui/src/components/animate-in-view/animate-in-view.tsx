@@ -39,9 +39,6 @@ export function AnimateInView({
     return <div>{children}</div>;
   }
 
-  // Skip the tween: prefers-reduced-motion, and visual tests that emulate it,
-  // should see the settled content rather than a mid-frame. Argos/Storybook
-  // pause CSS animations, not motion/react JS tweens.
   if (prefersReducedMotion) {
     return (
       <div ref={ref} style={cssProp as React.CSSProperties} {...props}>

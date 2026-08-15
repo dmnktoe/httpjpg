@@ -41,9 +41,6 @@ export default defineConfig({
           }),
           argosVitestPlugin({
             uploadToArgos: !!process.env.CI,
-            // Belt-and-suspenders for any story that still mounts an embed:
-            // third-party iframes and decoded <video> frames are the usual
-            // sources of "changed with no code change" Argos diffs.
             argosCSS: `
               iframe { visibility: hidden !important; }
               video { visibility: hidden !important; }
@@ -60,9 +57,6 @@ export default defineConfig({
               launchOptions: {
                 args: ["--disable-lcd-text", "--font-render-hinting=none"],
               },
-              // Swiper autoplay and motion/react both honour prefers-reduced-motion.
-              // Without this, Argos waits forever for a looping slideshow to be stable
-              // and Chromium drops the screenshot (Page.captureScreenshot).
               contextOptions: {
                 reducedMotion: "reduce",
               },

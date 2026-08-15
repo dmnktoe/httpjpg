@@ -180,6 +180,7 @@ export const Presets: Story = {
 };
 
 export const ExternalPassthrough: Story = {
+  tags: ["!test"],
   args: {
     imageSrc: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800",
     aspectRatio: "auto",

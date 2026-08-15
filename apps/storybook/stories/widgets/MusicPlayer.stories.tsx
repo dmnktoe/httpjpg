@@ -58,9 +58,6 @@ type Story = StoryObj<typeof MusicPlayer>;
  *
  * Embeds a Spotify track player with ASCII decorations.
  * The compact player is smaller and perfect for minimal layouts.
- *
- * Live embeds are out of the Vitest/Argos run — iframe paint timing is
- * nondeterministic across CI screenshots.
  */
 export const SpotifyTrack: Story = {
   tags: ["!test"],

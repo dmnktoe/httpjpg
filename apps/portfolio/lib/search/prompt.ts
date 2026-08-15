@@ -1,4 +1,4 @@
-import type { GroqMessage } from "@httpjpg/groq";
+import type { GroqMessage } from "@httpjpg/ai";
 
 import type { SearchDocument } from "./ranking";
 

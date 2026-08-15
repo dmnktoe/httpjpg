@@ -18,13 +18,13 @@ describe("getWidgetConfig", () => {
       psnUsername: undefined,
       psnEnabled: false,
       psnTrophyEnabled: false,
-      discordEnabled: true,
-      letterboxdEnabled: true,
+      discordEnabled: false,
+      letterboxdEnabled: false,
       discogsEnabled: false,
       xEnabled: false,
-      spotifyEnabled: true,
+      spotifyEnabled: false,
       nostalgiaSlideshowEnabled: false,
-      askEnabled: true,
+      askEnabled: false,
     });
   });
 
@@ -62,25 +62,25 @@ describe("getInterfaceConfig", () => {
     vi.clearAllMocks();
   });
 
-  it("keeps cursor, trail and veil on when no config exists", async () => {
+  it("keeps cursor, trail and veil off when no config exists", async () => {
     mockGetConfig.mockResolvedValue(null);
     await expect(getInterfaceConfig()).resolves.toEqual({
-      customCursorEnabled: true,
-      mouseTrailEnabled: true,
-      headerScrollVeilEnabled: true,
+      customCursorEnabled: false,
+      mouseTrailEnabled: false,
+      headerScrollVeilEnabled: false,
     });
   });
 
   it("honors explicit flags from the config", async () => {
     mockGetConfig.mockResolvedValue({
-      custom_cursor_enabled: false,
-      mouse_trail_enabled: false,
-      header_scroll_veil_enabled: false,
+      custom_cursor_enabled: true,
+      mouse_trail_enabled: true,
+      header_scroll_veil_enabled: true,
     } as never);
     await expect(getInterfaceConfig()).resolves.toEqual({
-      customCursorEnabled: false,
-      mouseTrailEnabled: false,
-      headerScrollVeilEnabled: false,
+      customCursorEnabled: true,
+      mouseTrailEnabled: true,
+      headerScrollVeilEnabled: true,
     });
   });
 });
@@ -90,15 +90,15 @@ describe("getFeatureFlags", () => {
     vi.clearAllMocks();
   });
 
-  it("keeps the established flags on and the opt-in badges off when no config exists", async () => {
+  it("keeps every flag off when no config exists", async () => {
     mockGetConfig.mockResolvedValue(null);
     await expect(getFeatureFlags()).resolves.toEqual({
-      lastUpdatedBadgeEnabled: true,
+      lastUpdatedBadgeEnabled: false,
       webVitalsBadgeEnabled: false,
       buildBadgeEnabled: false,
-      prevNextWorkEnabled: true,
-      relatedWorkEnabled: true,
-      rssFeedEnabled: true,
+      prevNextWorkEnabled: false,
+      relatedWorkEnabled: false,
+      rssFeedEnabled: false,
     });
   });
 

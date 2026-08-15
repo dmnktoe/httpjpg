@@ -60,7 +60,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 │   ├── analytics/               # Google Analytics gtag wrapper
 │   ├── consent/                 # Cookie consent state + banner UI + vendor catalog
 │   ├── env/                     # Env validation (t3-oss + zod), edge-safe loader
-│   ├── groq/                    # Groq chat-completions client (streaming + one-shot)
+│   ├── ai/                      # AI chat-completions client via Groq (streaming + one-shot)
 │   ├── now-playing/             # Draggable "now playing" widget UI
 │   ├── observability/           # Sentry init for client / server / edge
 │   ├── spotify/                 # Spotify API client + useNowPlaying hook + color extraction
@@ -120,7 +120,7 @@ storyblok-utils  ←  storyblok-api    storyblok-richtext  ←  storyblok-ui
 - **`@httpjpg/spotify`** — Spotify Web API client (server-side, uses `Buffer`), `useNowPlaying` polling hook, and `extractVibrantColor` (colorthief wrapper) for album-artwork color extraction.
 - **`@httpjpg/now-playing`** — the actual draggable widget UI. Consumes `@httpjpg/spotify` for color extraction and `@httpjpg/ui` (peer) for `Marquee`. UI-only — no API or hook logic lives here.
 - **`@httpjpg/analytics`** — analytics wrappers (Google Analytics 4 under `src/google/`, privacy-first Umami under `src/umami/`). Thin, env-driven wrappers; both tracker scripts load only behind `analytics` consent (gated in the app via `ConsentGate`). Track-functions follow `track*` naming and fan out to whichever providers are configured.
-- **`@httpjpg/groq`** — Groq chat-completions client. Dependency-free leaf built on `fetch`, so it runs on node and edge alike: `createGroqClient()` returns `complete()` and a streaming `stream()` that yields content deltas via `parseSseStream`. Failures surface as `GroqApiError` (with an `isTransient` flag for 429/5xx) or `GroqNotConfiguredError` when no key is set. Owns no prompts — grounding lives in the app.
+- **`@httpjpg/ai`** — AI chat-completions client (Groq). Dependency-free leaf built on `fetch`, so it runs on node and edge alike: `createGroqClient()` returns `complete()` and a streaming `stream()` that yields content deltas via `parseSseStream`. Failures surface as `GroqApiError` (with an `isTransient` flag for 429/5xx) or `GroqNotConfiguredError` when no key is set. Owns no prompts — grounding lives in the app.
 - **`@httpjpg/observability`** — Sentry init for the three Next runtimes. `getSentryConfig(scope)` resolves DSN, env, production flag, and enabled state per runtime.
 - **`@httpjpg/consent`** — cookie consent state machine (`getConsent`, `setConsent`, `hasVendorConsent`, …), the `CookieBanner` (portal-rendered) + `CookieCategory` + `VendorList` UI, and the vendor catalog (`EXTERNAL_VENDORS`).
 
@@ -356,7 +356,7 @@ The command palette (`⌘K` / `Ctrl+K`) is one feature with two halves, and they
 - **`GET /api/search`** returns `{ results, suggestions }`. **`POST /api/ask`** streams NDJSON — one `sources` line first so the widget can render citations, then `delta` lines, then either a closing `action` line or an in-band `error` line if the upstream fails after the 200 has been sent. Both go through `enforceRateLimit`.
 - **The `action` line is derived, not asked for.** `firstCitedSource()` in `lib/search/citations.ts` reads the first `[n]` out of the finished answer and resolves it against the sources already sent, so the palette can offer "go to X" without a second model call and without any way to invent a link. External and uncited answers get no action; `readAskStream` re-checks that the href is same-origin before yielding it.
 - **AI is optional.** No `GROQ_API_KEY` means `/api/ask` answers 503 and the palette hides the ask affordance; search, autocomplete, and navigation keep working. Never make search depend on the model.
-- **Answers are grounded.** `buildAskMessages()` in `lib/search/prompt.ts` owns the system prompt and numbers the sources for citation. Prompts live in the app, never in `@httpjpg/groq`.
+- **Answers are grounded.** `buildAskMessages()` in `lib/search/prompt.ts` owns the system prompt and numbers the sources for citation. Prompts live in the app, never in `@httpjpg/ai`.
 - **UI split.** `CommandPalette` in `@httpjpg/ui` is presentational and fully controlled (hence its Storybook stories); `AskWidget` in `components/widgets/` owns fetching, debouncing, and aborts. Keep that line — the palette must stay storyable without a network.
 - **Opening it.** `⌘K` / `Ctrl+K`, or the header's `SearchTrigger`. The trigger lives in a different subtree from the widget, so it dispatches the `OPEN_SEARCH_EVENT` window event and `AskWidget` listens — the same arrangement as the Footer's `OPEN_COOKIE_SETTINGS_EVENT`. Never make the trigger keyboard-only: touch visitors have no other way in.
 

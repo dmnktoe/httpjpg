@@ -49,8 +49,9 @@ export const pageBlocks: BlockDef[] = [
         description: "Lists this work in the app's work list. Off leaves it in the sidebar only.",
         tooltip: true,
       }),
-      accentColor: field.colorPicker("Accent Color", {
-        description: "Per-work accent. Pick from the palette or type a hex like #beabf9.",
+      accentColor: field.colorPicker("Project Accent Color", {
+        description:
+          "Tints the iOS app's liquid glass button for this project. Pick from the palette or type a hex.",
         tooltip: true,
       }),
       isDark: field.boolean("Dark Mode"),

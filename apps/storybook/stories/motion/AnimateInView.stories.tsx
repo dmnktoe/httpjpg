@@ -1,6 +1,8 @@
 import { AnimateInView, Box, Headline, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
+import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
+
 /**
  * AnimateInView component stories
  *
@@ -101,7 +103,7 @@ export const Sharpen: Story = {
     children: (
       <Box
         as="img"
-        src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=600&h=400&fit=crop"
+        src={OPTIMIZED_IMAGES.landscapePreview}
         alt="Sample image"
         css={{ w: "600px", h: "400px", objectFit: "cover" }}
       />
@@ -119,7 +121,7 @@ export const ZoomSharpen: Story = {
     children: (
       <Box
         as="img"
-        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop"
+        src={OPTIMIZED_IMAGES.videoStill1Preview}
         alt="Sample image"
         css={{ w: "600px", h: "400px", objectFit: "cover" }}
       />

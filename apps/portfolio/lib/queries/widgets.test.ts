@@ -25,6 +25,7 @@ describe("getWidgetConfig", () => {
       spotifyEnabled: true,
       nostalgiaSlideshowEnabled: false,
       askEnabled: true,
+      stravaEnabled: false,
     });
   });
 
@@ -40,6 +41,7 @@ describe("getWidgetConfig", () => {
       spotify_enabled: false,
       nostalgia_slideshow_enabled: true,
       ask_enabled: false,
+      strava_enabled: true,
     } as never);
 
     await expect(getWidgetConfig()).resolves.toEqual({
@@ -53,6 +55,7 @@ describe("getWidgetConfig", () => {
       spotifyEnabled: false,
       nostalgiaSlideshowEnabled: true,
       askEnabled: false,
+      stravaEnabled: true,
     });
   });
 });

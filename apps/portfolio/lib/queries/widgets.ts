@@ -11,6 +11,7 @@ export interface WidgetConfig {
   spotifyEnabled: boolean;
   nostalgiaSlideshowEnabled: boolean;
   askEnabled: boolean;
+  stravaEnabled: boolean;
 }
 
 export async function getWidgetConfig(): Promise<WidgetConfig> {
@@ -26,6 +27,7 @@ export async function getWidgetConfig(): Promise<WidgetConfig> {
     spotifyEnabled: config?.spotify_enabled ?? true,
     nostalgiaSlideshowEnabled: config?.nostalgia_slideshow_enabled ?? false,
     askEnabled: config?.ask_enabled ?? true,
+    stravaEnabled: config?.strava_enabled ?? false,
   };
 }
 

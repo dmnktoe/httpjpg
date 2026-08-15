@@ -32,6 +32,7 @@ import { DiscordStatus } from "@/components/widgets/discord-status";
 import { LetterboxdStatus } from "@/components/widgets/letterboxd-status";
 import { NowPlayingWidget } from "@/components/widgets/now-playing-widget";
 import { PSNCard } from "@/components/widgets/psn-card";
+import { StravaStatus } from "@/components/widgets/strava-status";
 import { TrophyStatus } from "@/components/widgets/trophy-status";
 import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
@@ -175,6 +176,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                     {widgetConfig.discogsEnabled && <DiscogsStatus />}
                     {widgetConfig.xEnabled && <XStatus />}
                     {widgetConfig.psnTrophyEnabled && <TrophyStatus />}
+                    {widgetConfig.stravaEnabled && <StravaStatus />}
                     <WeatherTime />
                     {flags.webVitalsBadgeEnabled && <WebVitalsBadge />}
                     {flags.buildBadgeEnabled && (

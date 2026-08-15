@@ -153,6 +153,11 @@ export const settingsBlocks: BlockDef[] = [
           tooltip: true,
         }),
         psn_username: field.text("PSN · Username"),
+        strava_enabled: field.boolean("Strava · Today’s Activity", "false", {
+          description:
+            "Footer line with today’s distance (and estimated steps for runs/walks). Needs STRAVA_* env secrets.",
+          tooltip: true,
+        }),
       }),
       ...tabbed("Features", "features", {
         last_updated_badge_enabled: field.boolean("Last-Updated · Footer Badge", "true"),

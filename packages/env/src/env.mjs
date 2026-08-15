@@ -41,6 +41,10 @@ export const env = createEnv({
 
     PSN_NPSSO: z.string().optional(),
 
+    STRAVA_CLIENT_ID: z.string().optional(),
+    STRAVA_CLIENT_SECRET: z.string().optional(),
+    STRAVA_REFRESH_TOKEN: z.string().optional(),
+
     WEATHER_LATITUDE: z.coerce.number().default(51.3127),
     WEATHER_LONGITUDE: z.coerce.number().default(9.4797),
 
@@ -93,6 +97,10 @@ export const env = createEnv({
     SPOTIFY_REFRESH_TOKEN: process.env.SPOTIFY_REFRESH_TOKEN,
 
     PSN_NPSSO: process.env.PSN_NPSSO,
+
+    STRAVA_CLIENT_ID: process.env.STRAVA_CLIENT_ID,
+    STRAVA_CLIENT_SECRET: process.env.STRAVA_CLIENT_SECRET,
+    STRAVA_REFRESH_TOKEN: process.env.STRAVA_REFRESH_TOKEN,
 
     WEATHER_LATITUDE: process.env.WEATHER_LATITUDE,
     WEATHER_LONGITUDE: process.env.WEATHER_LONGITUDE,

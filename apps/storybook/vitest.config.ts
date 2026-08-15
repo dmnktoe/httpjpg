@@ -41,6 +41,9 @@ export default defineConfig({
           }),
           argosVitestPlugin({
             uploadToArgos: !!process.env.CI,
+            // Story render failures still fail the job; Argos upload (quota, API)
+            // must not — the `argos` GitHub status is the visual gate.
+            ignoreUploadFailures: true,
           }),
           holdOptimizeDepsUntilCrawl(),
         ],

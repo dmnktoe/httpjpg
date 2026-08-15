@@ -1,6 +1,8 @@
 import { MusicPlayer } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
+import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
+
 const meta: Meta<typeof MusicPlayer> = {
   title: "Widgets/MusicPlayer",
   component: MusicPlayer,
@@ -56,8 +58,12 @@ type Story = StoryObj<typeof MusicPlayer>;
  *
  * Embeds a Spotify track player with ASCII decorations.
  * The compact player is smaller and perfect for minimal layouts.
+ *
+ * Live embeds are out of the Vitest/Argos run — iframe paint timing is
+ * nondeterministic across CI screenshots.
  */
 export const SpotifyTrack: Story = {
+  tags: ["!test"],
   args: {
     source: "spotify",
     src: "spotify:track:4VAwmUsWjEgK6yAkv2epvG",
@@ -72,6 +78,7 @@ export const SpotifyTrack: Story = {
  * Embeds a Spotify track player with full size display.
  */
 export const SpotifyTrackFull: Story = {
+  tags: ["!test"],
   args: {
     source: "spotify",
     src: "spotify:track:4VAwmUsWjEgK6yAkv2epvG",
@@ -86,6 +93,7 @@ export const SpotifyTrackFull: Story = {
  * Embeds an entire Spotify album with track list.
  */
 export const SpotifyAlbum: Story = {
+  tags: ["!test"],
   args: {
     source: "spotify",
     src: "spotify:album:1DFixLWuPkv3KT3TnV35m3",
@@ -100,6 +108,7 @@ export const SpotifyAlbum: Story = {
  * Embeds a SoundCloud track with ASCII decorations.
  */
 export const SoundCloudTrack: Story = {
+  tags: ["!test"],
   args: {
     source: "soundcloud",
     src: "https://soundcloud.com/te3shay/u-got-swag-forget-the-rest",
@@ -119,7 +128,7 @@ export const MP3Player: Story = {
     src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     title: "Example Track",
     artist: "Example Artist",
-    artwork: "https://via.placeholder.com/300x300/ff5500/ffffff?text=Album+Art",
+    artwork: OPTIMIZED_IMAGES.videoStill1Preview,
     showArtwork: true,
     showInfo: true,
     autoPlay: false,
@@ -173,7 +182,7 @@ export const CustomDecoration: Story = {
     src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     title: "Example Track",
     artist: "Example Artist",
-    artwork: "https://via.placeholder.com/300x300/ff5500/ffffff?text=Album+Art",
+    artwork: OPTIMIZED_IMAGES.videoStill1Preview,
     showArtwork: true,
     showInfo: true,
     autoPlay: false,
@@ -192,7 +201,7 @@ export const WithHeaderFooter: Story = {
     src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     title: "Example Track",
     artist: "Example Artist",
-    artwork: "https://via.placeholder.com/300x300/ff5500/ffffff?text=Album+Art",
+    artwork: OPTIMIZED_IMAGES.videoStill1Preview,
     showArtwork: true,
     showInfo: true,
     autoPlay: false,

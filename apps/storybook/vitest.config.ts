@@ -41,6 +41,13 @@ export default defineConfig({
           }),
           argosVitestPlugin({
             uploadToArgos: !!process.env.CI,
+            // Belt-and-suspenders for any story that still mounts an embed:
+            // third-party iframes and decoded <video> frames are the usual
+            // sources of "changed with no code change" Argos diffs.
+            argosCSS: `
+              iframe { visibility: hidden !important; }
+              video { visibility: hidden !important; }
+            `,
           }),
           holdOptimizeDepsUntilCrawl(),
         ],

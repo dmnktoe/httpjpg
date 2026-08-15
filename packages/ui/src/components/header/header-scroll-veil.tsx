@@ -102,9 +102,14 @@ export function HeaderScrollVeil() {
         height: "calc(100% + 1.5rem)",
         pointerEvents: "none",
         userSelect: "none",
-        "--veil-rgb": "255 255 255",
+        // `--page-veil-rgb` is stamped by VeilTintSync on work pages with an
+        // accentColor; falls back to theme white/black everywhere else.
+        "--veil-rgb": "var(--page-veil-rgb, 255 255 255)",
         "--veil-strength": "1",
-        _pageDark: { "--veil-rgb": "0 0 0", "--veil-strength": "1.08" },
+        _pageDark: {
+          "--veil-rgb": "var(--page-veil-rgb, 0 0 0)",
+          "--veil-strength": "1.08",
+        },
       }}
     >
       <Box

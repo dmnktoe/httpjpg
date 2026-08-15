@@ -49,7 +49,10 @@ export const pageBlocks: BlockDef[] = [
         description: "Lists this work in the app's work list. Off leaves it in the sidebar only.",
         tooltip: true,
       }),
-      accentColor: field.datasource("Accent Color", "color-options"),
+      accentColor: field.datasource("Accent Color", "color-options", {
+        description: "Tints the header scroll veil on this work page.",
+        tooltip: true,
+      }),
       isDark: field.boolean("Dark Mode"),
     },
   },

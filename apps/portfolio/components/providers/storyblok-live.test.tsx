@@ -18,6 +18,7 @@ const story = { content: { component: "page" } } as unknown as ISbStoryData;
 beforeEach(() => {
   vi.clearAllMocks();
   document.documentElement.removeAttribute("data-theme");
+  document.documentElement.style.removeProperty("--page-veil-rgb");
 });
 
 describe("StoryblokLive", () => {
@@ -44,6 +45,7 @@ describe("StoryblokLive", () => {
 
     expect(screen.getByTestId("blok")).toHaveTextContent("page");
     expect(document.documentElement.dataset.theme).toBe("light");
+    expect(document.documentElement.style.getPropertyValue("--page-veil-rgb")).toBe("");
   });
 
   it("syncs the dark theme for dark stories", () => {
@@ -52,5 +54,15 @@ describe("StoryblokLive", () => {
     render(<StoryblokLive story={story} />);
 
     expect(document.documentElement.dataset.theme).toBe("dark");
+  });
+
+  it("tints the header veil from a work accentColor", () => {
+    useStoryblokState.mockReturnValue({
+      content: { component: "work", accentColor: "#84CC16" },
+    });
+
+    render(<StoryblokLive story={story} />);
+
+    expect(document.documentElement.style.getPropertyValue("--page-veil-rgb")).toBe("132 204 22");
   });
 });

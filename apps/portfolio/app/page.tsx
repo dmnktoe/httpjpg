@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 
 import { StoryblokLive } from "@/components/providers/storyblok-live";
 import { ThemeSync } from "@/components/ui/theme-sync";
+import { VeilTintSync } from "@/components/ui/veil-tint-sync";
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
 export default async function HomePage({
@@ -37,6 +38,7 @@ export default async function HomePage({
   return (
     <>
       <ThemeSync theme={pageTheme} />
+      <VeilTintSync color={null} />
       <StoryblokServerComponent blok={story.content} />
     </>
   );

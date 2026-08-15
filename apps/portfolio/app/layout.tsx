@@ -14,7 +14,7 @@ import {
 } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
-import type { PropsWithChildren } from "react";
+import type { CSSProperties, PropsWithChildren } from "react";
 
 import { ConsentGate } from "@/components/providers/consent-gate";
 import { ConsentProvider } from "@/components/providers/consent-provider";
@@ -37,6 +37,7 @@ import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
 import { XStatus } from "@/components/widgets/x-status";
+import { getPageVeilTint, PAGE_VEIL_RGB_VAR } from "@/lib/page-accent";
 import { getPageTheme } from "@/lib/page-theme";
 import {
   getAuthor,
@@ -90,6 +91,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const theme = await getPageTheme();
+  const veilTint = await getPageVeilTint();
   const inStoryblokEditor = await isStoryblokEditor();
   const navigation = await getNavigation();
   const footerConfig = await getFooterConfig();
@@ -106,7 +108,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const version = rawVersion ? formatVersion(rawVersion) : undefined;
 
   return (
-    <html lang={site.htmlLang} data-theme={theme}>
+    <html
+      lang={site.htmlLang}
+      data-theme={theme}
+      style={veilTint ? ({ [PAGE_VEIL_RGB_VAR]: veilTint } as CSSProperties) : undefined}
+    >
       <body style={{ margin: 0, padding: 0 }}>
         {author && (
           <JsonLd

@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { StoryblokLive } from "@/components/providers/storyblok-live";
 import { RelatedWork } from "@/components/ui/related-work";
 import { ThemeSync } from "@/components/ui/theme-sync";
+import { VeilTintSync } from "@/components/ui/veil-tint-sync";
 import { WorkNav } from "@/components/ui/work-nav";
 import { isInternalSlug } from "@/lib/page-theme";
 import { getAuthor, getSiteConfig, getSocialProfiles } from "@/lib/queries/config";
@@ -114,10 +115,12 @@ export default async function DynamicPage({
     }
 
     const pageTheme = story.content?.isDark ? "dark" : "light";
+    const veilColor = isWorkPage ? story.content?.accentColor : null;
 
     return (
       <>
         <ThemeSync theme={pageTheme} />
+        <VeilTintSync color={veilColor} />
         {schemaMarkup && <JsonLd data={schemaMarkup} />}
         <StoryblokServerComponent blok={story.content} />
         {isWorkPage && flags.relatedWorkEnabled && (

@@ -53,6 +53,12 @@ export default defineConfig({
               launchOptions: {
                 args: ["--disable-lcd-text", "--font-render-hinting=none"],
               },
+              // Swiper autoplay and motion/react both honour prefers-reduced-motion.
+              // Without this, Argos waits forever for a looping slideshow to be stable
+              // and Chromium drops the screenshot (Page.captureScreenshot).
+              contextOptions: {
+                reducedMotion: "reduce",
+              },
             }),
             instances: [{ browser: "chromium" }],
           },

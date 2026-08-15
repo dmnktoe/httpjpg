@@ -9,11 +9,6 @@ import {
   type LightboxGalleryValue,
 } from "./lightbox-context";
 
-/**
- * Owns the one lightbox of the page. Mounted in the root layout, it collects
- * every zoomable blok the way `AudioPlayerProvider` collects tracks, so prev /
- * next walk the page instead of a single blok's one-item array.
- */
 export function LightboxProvider({ children }: PropsWithChildren) {
   const registryRef = useRef<LightboxEntry[]>([]);
   const [open, setOpen] = useState(false);
@@ -33,9 +28,6 @@ export function LightboxProvider({ children }: PropsWithChildren) {
     });
     return () => {
       registryRef.current = registryRef.current.filter((item) => item !== entry);
-      // Defer the prune so a re-register in the same tick (caption edit,
-      // Strict Mode remount) can put the id back before the open snapshot
-      // drops it.
       queueMicrotask(() => {
         const ids = new Set(dedupeById(registryRef.current).map((item) => item.id));
         setItems((current) => {

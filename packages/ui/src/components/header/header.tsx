@@ -82,11 +82,8 @@ export function Header({
       <Box
         as="header"
         ref={headerRef}
-        // Body scroll-lock uses position:fixed + a negative top; sticky chrome
-        // would ride that offset off-screen. Pin to the viewport while the
-        // portaled menu is open so the close control stays put. The spacer
-        // above keeps the header's height in flow so freeze() still captures
-        // the scroll offset the user was at.
+        // Pin while the menu is open so the close control stays on screen.
+        // Spacer above keeps header height in flow for scroll-lock restore.
         css={{
           position: mobileMenuIsOpen ? "fixed" : "sticky",
           top: 0,
@@ -176,15 +173,8 @@ function useElementHeight(ref: RefObject<HTMLElement | null>): number {
     if (!node) {
       return;
     }
-
     const measure = () => setHeight(node.getBoundingClientRect().height);
     measure();
-
-    if (typeof ResizeObserver === "undefined") {
-      window.addEventListener("resize", measure);
-      return () => window.removeEventListener("resize", measure);
-    }
-
     const observer = new ResizeObserver(measure);
     observer.observe(node);
     return () => observer.disconnect();

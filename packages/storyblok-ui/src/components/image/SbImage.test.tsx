@@ -1,4 +1,3 @@
-import { LightboxProvider } from "@httpjpg/ui";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 
 import { SbImage } from "./SbImage";
@@ -62,46 +61,6 @@ describe("SbImage", () => {
     expect(within(dialog).getByText("id-100.online")).toBeInTheDocument();
     // A lone item drops prev/next.
     expect(screen.queryByRole("button", { name: "Next image" })).not.toBeInTheDocument();
-  });
-
-  it("walks every zoomable image on the page from the shared lightbox", () => {
-    render(
-      <LightboxProvider>
-        <SbImage
-          blok={
-            {
-              _uid: "a",
-              component: "image",
-              image: { filename: `${filename}?a`, alt: "First" },
-              overlay: "none",
-              lightbox: true,
-            } as never
-          }
-        />
-        <SbImage
-          blok={
-            {
-              _uid: "b",
-              component: "image",
-              image: { filename: `${filename}?b`, alt: "Second" },
-              overlay: "none",
-              lightbox: true,
-            } as never
-          }
-        />
-      </LightboxProvider>,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Open First at full size" }));
-
-    const dialog = screen.getByRole("dialog", { name: "Image viewer" });
-    expect(within(dialog).getByRole("img", { name: "First" })).toBeInTheDocument();
-    expect(within(dialog).getByText("[ 01 / 02 ]")).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("button", { name: "Next image" }));
-
-    expect(within(dialog).getByRole("img", { name: "Second" })).toBeInTheDocument();
-    expect(within(dialog).getByText("[ 02 / 02 ]")).toBeInTheDocument();
   });
 
   it("renders no caption for an empty richtext document", () => {

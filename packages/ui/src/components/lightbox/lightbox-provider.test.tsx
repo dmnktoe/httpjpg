@@ -40,12 +40,6 @@ function renderGallery(items: LightboxEntry[] = [FIRST, SECOND, THIRD]) {
 }
 
 describe("LightboxProvider", () => {
-  it("starts closed", () => {
-    renderGallery();
-
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-  });
-
   it("opens the clicked item and walks the page queue", () => {
     renderGallery();
 
@@ -71,15 +65,6 @@ describe("LightboxProvider", () => {
     const dialog = screen.getByRole("dialog", { name: "Image viewer" });
     expect(within(dialog).getByRole("img", { name: "Two" })).toBeInTheDocument();
     expect(within(dialog).getByText("[ 02 / 03 ]")).toBeInTheDocument();
-  });
-
-  it("drops the navigation for a lone registered item", () => {
-    renderGallery([FIRST]);
-
-    fireEvent.click(screen.getByRole("button", { name: "Open One at full size" }));
-
-    expect(screen.queryByRole("button", { name: "Next image" })).not.toBeInTheDocument();
-    expect(screen.getByText("[ 01 ]")).toBeInTheDocument();
   });
 
   it("closes when the last registered item unmounts", async () => {

@@ -40,15 +40,15 @@ describe("isStoryblokEditorRequest", () => {
   });
 
   it("is true for iframe navigations even without query params", () => {
-    expect(
-      isStoryblokEditorRequest(request("/work/foo", { "sec-fetch-dest": "iframe" })),
-    ).toBe(true);
+    expect(isStoryblokEditorRequest(request("/work/foo", { "sec-fetch-dest": "iframe" }))).toBe(
+      true,
+    );
   });
 
   it("is false for top-level navigations without storyblok params", () => {
-    expect(
-      isStoryblokEditorRequest(request("/work/foo", { "sec-fetch-dest": "document" })),
-    ).toBe(false);
+    expect(isStoryblokEditorRequest(request("/work/foo", { "sec-fetch-dest": "document" }))).toBe(
+      false,
+    );
   });
 });
 

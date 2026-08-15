@@ -43,4 +43,3 @@ test.describe("storyblok proxy (apps/portfolio/proxy.ts)", () => {
     expect(res.headers()["cache-control"]).toMatch(/no-store/);
   });
 });
-

@@ -100,9 +100,9 @@ export function CommandPalette({
       return;
     }
     const previouslyFocused = document.activeElement as HTMLElement | null;
-    inputRef.current?.focus();
+    inputRef.current?.focus({ preventScroll: true });
     return () => {
-      previouslyFocused?.focus?.();
+      previouslyFocused?.focus?.({ preventScroll: true });
     };
   }, [open, isMounted]);
 

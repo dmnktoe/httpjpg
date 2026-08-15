@@ -45,7 +45,7 @@ describe("SbVideo", () => {
             _uid: "5",
             component: "video",
             source: "native",
-            video: { filename: clip, copyright: "2025 Studio" },
+            video: { filename: clip, copyright: "2025 Studio", source: "peach.blender.org" },
             lightbox: true,
           } as never
         }
@@ -60,6 +60,7 @@ describe("SbVideo", () => {
     expect(dialog).toBeInTheDocument();
     // Scoped to the dialog: the inline player carries its own credit too.
     expect(within(dialog).getByText("© 2025 Studio")).toBeInTheDocument();
+    expect(within(dialog).getByText("peach.blender.org")).toBeInTheDocument();
   });
 
   it("pauses the inline player so the two soundtracks cannot stack", () => {

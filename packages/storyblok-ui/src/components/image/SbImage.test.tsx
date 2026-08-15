@@ -26,14 +26,19 @@ describe("SbImage", () => {
     expect(screen.queryByRole("button", { name: /full size/i })).not.toBeInTheDocument();
   });
 
-  it("opens the image at full size, carrying its caption and credit", () => {
+  it("opens the image at full size, carrying its caption, credit and source", () => {
     render(
       <SbImage
         blok={
           {
             _uid: "11",
             component: "image",
-            image: { filename, alt: "A photo", copyright: "2025 Studio" },
+            image: {
+              filename,
+              alt: "A photo",
+              copyright: "2025 Studio",
+              source: "id-100.online",
+            },
             caption: {
               type: "doc",
               content: [{ type: "paragraph", content: [{ type: "text", text: "On the roof" }] }],
@@ -53,6 +58,7 @@ describe("SbImage", () => {
     // Scoped to the dialog: the thumbnail carries its own caption and credit.
     expect(within(dialog).getByText("On the roof")).toBeInTheDocument();
     expect(within(dialog).getByText("© 2025 Studio")).toBeInTheDocument();
+    expect(within(dialog).getByText("id-100.online")).toBeInTheDocument();
     // A lone item drops prev/next.
     expect(screen.queryByRole("button", { name: "Next image" })).not.toBeInTheDocument();
   });

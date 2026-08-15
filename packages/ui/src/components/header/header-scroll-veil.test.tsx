@@ -3,14 +3,23 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { isBodyScrollLocked } from "../../lib/use-body-scroll-lock";
 import { HeaderScrollVeil } from "./header-scroll-veil";
 
+const lockListeners = new Set<() => void>();
+
 vi.mock("../../lib/use-body-scroll-lock", () => ({
   isBodyScrollLocked: vi.fn(() => false),
+  subscribeBodyScrollLock: (listener: () => void) => {
+    lockListeners.add(listener);
+    return () => {
+      lockListeners.delete(listener);
+    };
+  },
 }));
 
 let frames: FrameRequestCallback[] = [];
 
 beforeEach(() => {
   frames = [];
+  lockListeners.clear();
   vi.mocked(isBodyScrollLocked).mockReturnValue(false);
   vi.stubGlobal("scrollY", 0);
   vi.stubGlobal(
@@ -35,6 +44,13 @@ function scrollTo(y: number) {
   }
 }
 
+function setLocked(locked: boolean) {
+  vi.mocked(isBodyScrollLocked).mockReturnValue(locked);
+  for (const listener of lockListeners) {
+    listener();
+  }
+}
+
 function veil() {
   return screen.getByTestId("header-scroll-veil");
 }
@@ -54,7 +70,12 @@ describe("HeaderScrollVeil", () => {
     expect(veil()).toHaveAttribute("aria-hidden", "true");
     expect(progress()).toBe("0.000");
     expect(blur()).toBe("0.000");
-    expect(veil().dataset.veilIdle).toBe("true");
+  });
+
+  it("sizes itself to the sticky header plus the fade tail", () => {
+    render(<HeaderScrollVeil height={120} />);
+
+    expect(veil().style.height).toBe("calc(120px + 1.5rem)");
   });
 
   it("ramps the tint in linearly with scroll and clamps at 1", () => {
@@ -62,7 +83,6 @@ describe("HeaderScrollVeil", () => {
 
     scrollTo(80);
     expect(progress()).toBe("0.500");
-    expect(veil().dataset.veilIdle).toBe("false");
 
     scrollTo(160);
     expect(progress()).toBe("1.000");
@@ -93,27 +113,57 @@ describe("HeaderScrollVeil", () => {
     expect(blur()).toBe("1.000");
   });
 
-  it("holds its value while an overlay locks the body scroll", () => {
+  it("holds the tint while an overlay locks the body and drops only the blur", () => {
     vi.stubGlobal("scrollY", 160);
     render(<HeaderScrollVeil />);
     expect(progress()).toBe("1.000");
+    expect(blur()).toBe("1.000");
 
     vi.mocked(isBodyScrollLocked).mockReturnValue(true);
     scrollTo(0);
     expect(progress()).toBe("1.000");
-    expect(veil().dataset.veilIdle).toBe("false");
+    expect(blur()).toBe("0");
 
     vi.mocked(isBodyScrollLocked).mockReturnValue(false);
     scrollTo(160);
     expect(progress()).toBe("1.000");
+    expect(blur()).toBe("1.000");
+  });
+
+  it("drops the blur when the lock arrives without a scroll event", () => {
+    vi.stubGlobal("scrollY", 160);
+    render(<HeaderScrollVeil />);
+    expect(blur()).toBe("1.000");
+
+    setLocked(true);
+    expect(progress()).toBe("1.000");
+    expect(blur()).toBe("0");
+
+    setLocked(false);
+    expect(progress()).toBe("1.000");
+    expect(blur()).toBe("1.000");
+  });
+
+  it("recomputes from the real scroll position when the lock lifts", () => {
+    vi.stubGlobal("scrollY", 160);
+    render(<HeaderScrollVeil />);
+
+    setLocked(true);
+    vi.stubGlobal("scrollY", 0);
+    setLocked(false);
+
+    expect(progress()).toBe("0.000");
+    expect(blur()).toBe("0.000");
   });
 
   it("drops its scroll listeners on unmount", () => {
     const removeEventListener = vi.spyOn(window, "removeEventListener");
 
     const { unmount } = render(<HeaderScrollVeil />);
+    expect(lockListeners.size).toBe(1);
     unmount();
 
+    expect(lockListeners.size).toBe(0);
     expect(removeEventListener).toHaveBeenCalledWith("scroll", expect.any(Function));
     expect(removeEventListener).toHaveBeenCalledWith("resize", expect.any(Function));
 

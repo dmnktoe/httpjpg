@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
 
-import { isBodyScrollLocked } from "../../lib/use-body-scroll-lock";
+import { isBodyScrollLocked, subscribeBodyScrollLock } from "../../lib/use-body-scroll-lock";
 import { Box } from "../box/box";
 
 const FADE_DISTANCE = 160;
@@ -43,8 +43,18 @@ const TINT_GRADIENT = `linear-gradient(to bottom, ${TINT_STOPS.map(
     `rgb(var(--veil-rgb) / calc(${alpha} * var(--veil-strength))) ${position}%`,
 ).join(", ")})`;
 
-/** Readability scrim that grows in behind the sticky header as the page scrolls. */
-export function HeaderScrollVeil() {
+export interface HeaderScrollVeilProps {
+  /** Sticky header height in px. The fade continues 1.5rem past it. */
+  height?: number;
+}
+
+/**
+ * Frost + tint behind the sticky header. Lives as a `position: fixed` sibling
+ * so `backdrop-filter` is not inside `position: sticky` (that pairing is what
+ * made ⇝HELLO jump and then vanish). Blur layers stay mounted — toggling
+ * `display` is what snapped the header at ~160px of scroll.
+ */
+export function HeaderScrollVeil({ height = 0 }: HeaderScrollVeilProps) {
   const veilRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -58,12 +68,12 @@ export function HeaderScrollVeil() {
     const update = () => {
       raf = 0;
       if (isBodyScrollLocked()) {
+        veil.style.setProperty("--veil-blur", "0");
         return;
       }
       const progress = Math.min(1, Math.max(0, window.scrollY / FADE_DISTANCE));
       veil.style.setProperty("--veil-progress", progress.toFixed(3));
       veil.style.setProperty("--veil-blur", (progress * progress).toFixed(3));
-      veil.dataset.veilIdle = progress === 0 ? "true" : "false";
     };
 
     const schedule = () => {
@@ -74,10 +84,12 @@ export function HeaderScrollVeil() {
     };
 
     update();
+    const unsubscribe = subscribeBodyScrollLock(update);
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule, { passive: true });
 
     return () => {
+      unsubscribe();
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       if (raf) {
@@ -91,15 +103,19 @@ export function HeaderScrollVeil() {
       ref={veilRef}
       aria-hidden="true"
       data-testid="header-scroll-veil"
-      data-veil-idle="true"
-      style={{ "--veil-progress": "0", "--veil-blur": "0" } as CSSProperties}
+      style={
+        {
+          "--veil-progress": "0",
+          "--veil-blur": "0",
+          height: `calc(${height}px + 1.5rem)`,
+        } as CSSProperties
+      }
       css={{
-        position: "absolute",
+        position: "fixed",
         top: 0,
         right: 0,
         left: 0,
-        zIndex: -1,
-        height: "calc(100% + 1.5rem)",
+        zIndex: "header",
         pointerEvents: "none",
         userSelect: "none",
         "--veil-rgb": "255 255 255",
@@ -111,7 +127,6 @@ export function HeaderScrollVeil() {
         css={{
           position: "absolute",
           inset: 0,
-          "[data-veil-idle=true] &": { display: "none" },
           "@media (prefers-reduced-transparency: reduce)": { display: "none" },
         }}
       >
@@ -129,7 +144,6 @@ export function HeaderScrollVeil() {
           position: "absolute",
           inset: 0,
           opacity: "var(--veil-progress, 0)",
-          transition: "opacity 90ms linear",
         }}
         style={{ backgroundImage: TINT_GRADIENT }}
       />

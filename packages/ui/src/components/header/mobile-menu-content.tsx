@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 
 import { Box } from "../box/box";
@@ -55,7 +55,7 @@ export function MobileMenuContent({
         ),
       );
 
-    (getFocusable()[0] ?? panel).focus();
+    (getFocusable()[0] ?? panel).focus({ preventScroll: true });
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -95,13 +95,21 @@ export function MobileMenuContent({
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      previouslyFocused?.focus?.();
+      previouslyFocused?.focus?.({ preventScroll: true });
     };
   }, [isOpen, mounted, setIsOpen]);
 
   const handleMenuItemClick = () => {
     setIsOpen(false);
   };
+
+  function handleBackdropMouseDown() {
+    setIsOpen(false);
+  }
+
+  function handlePanelMouseDown(event: MouseEvent<HTMLDivElement>) {
+    event.stopPropagation();
+  }
 
   if (!mounted) {
     return null;
@@ -110,6 +118,7 @@ export function MobileMenuContent({
   const menu = (
     <Box
       aria-hidden={!isOpen}
+      onMouseDown={handleBackdropMouseDown}
       css={{
         position: "fixed",
         inset: 0,
@@ -124,6 +133,7 @@ export function MobileMenuContent({
     >
       <MobileMenuBackdrop />
       <Box
+        onMouseDown={handlePanelMouseDown}
         css={{
           display: "flex",
           w: { base: "full", md: "96" },

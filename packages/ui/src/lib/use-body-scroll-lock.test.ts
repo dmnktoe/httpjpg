@@ -1,6 +1,10 @@
 import { renderHook } from "@testing-library/react";
 
-import { useBodyScrollLock } from "./use-body-scroll-lock";
+import {
+  isBodyScrollLocked,
+  subscribeBodyScrollLock,
+  useBodyScrollLock,
+} from "./use-body-scroll-lock";
 
 function clearInlineStyles() {
   document.body.removeAttribute("style");
@@ -162,5 +166,42 @@ describe("useBodyScrollLock", () => {
 
     expect(document.documentElement.style.overflow).toBe("scroll");
     expect(document.body.style.position).toBe("relative");
+  });
+
+  it("reports locked before freeze mutates the body, so scroll listeners skip the jump", () => {
+    const listener = vi.fn(() => {
+      expect(isBodyScrollLocked()).toBe(true);
+      expect(document.body.style.position).toBe("");
+    });
+    const unsubscribe = subscribeBodyScrollLock(listener);
+
+    const { unmount } = renderHook(() => useBodyScrollLock(true));
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(document.body.style.position).toBe("fixed");
+    unsubscribe();
+    unmount();
+  });
+
+  it("notifies subscribers when the first holder locks and the last one releases", () => {
+    const listener = vi.fn();
+    const unsubscribe = subscribeBodyScrollLock(listener);
+
+    const menu = renderHook(() => useBodyScrollLock(true));
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(isBodyScrollLocked()).toBe(true);
+
+    const palette = renderHook(() => useBodyScrollLock(true));
+    expect(listener).toHaveBeenCalledTimes(1);
+
+    palette.unmount();
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(isBodyScrollLocked()).toBe(true);
+
+    menu.unmount();
+    expect(listener).toHaveBeenCalledTimes(2);
+    expect(isBodyScrollLocked()).toBe(false);
+
+    unsubscribe();
   });
 });

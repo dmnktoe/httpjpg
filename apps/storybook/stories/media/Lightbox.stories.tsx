@@ -9,6 +9,7 @@ const ITEMS: LightboxItem[] = [
     alt: "Klosterkirche Nordshausen, wide",
     caption: "Time this wild beast in the jungle",
     copyright: "2025 httpjpg",
+    copyrightSource: "id-100.online",
   },
   {
     src: OPTIMIZED_IMAGES.portrait,

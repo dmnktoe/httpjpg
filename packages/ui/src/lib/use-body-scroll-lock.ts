@@ -26,6 +26,34 @@ let previous: LockedStyles | null = null;
 // by one that lengthens it again.
 let capturedScrollY = 0;
 let heldScrollY = 0;
+const lockListeners = new Set<() => void>();
+
+function notifyLockListeners() {
+  for (const listener of lockListeners) {
+    listener();
+  }
+}
+
+function acquire() {
+  lockCount += 1;
+  if (lockCount !== 1) {
+    return;
+  }
+  // Count first so `isBodyScrollLocked()` is already true when freeze mutates
+  // the body — that assignment fires a synthetic scroll to 0, and the header
+  // veil has to skip it rather than treat the jump as real.
+  notifyLockListeners();
+  freeze();
+}
+
+function release() {
+  lockCount -= 1;
+  if (lockCount !== 0) {
+    return;
+  }
+  thaw();
+  notifyLockListeners();
+}
 
 function freeze() {
   const { body, documentElement: html } = document;
@@ -96,6 +124,14 @@ export function isBodyScrollLocked(): boolean {
   return lockCount > 0;
 }
 
+/** Subscribe to lock/unlock transitions. Used by the header veil. */
+export function subscribeBodyScrollLock(listener: () => void): () => void {
+  lockListeners.add(listener);
+  return () => {
+    lockListeners.delete(listener);
+  };
+}
+
 /** Freeze background scrolling while an overlay is open. */
 export function useBodyScrollLock(isLocked: boolean) {
   useEffect(() => {
@@ -103,16 +139,7 @@ export function useBodyScrollLock(isLocked: boolean) {
       return;
     }
 
-    if (lockCount === 0) {
-      freeze();
-    }
-    lockCount += 1;
-
-    return () => {
-      lockCount -= 1;
-      if (lockCount === 0) {
-        thaw();
-      }
-    };
+    acquire();
+    return release;
   }, [isLocked]);
 }

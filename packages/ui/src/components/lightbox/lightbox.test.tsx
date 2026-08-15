@@ -3,7 +3,13 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { Lightbox, type LightboxItem, type LightboxProps } from "./lightbox";
 
 const ITEMS: LightboxItem[] = [
-  { src: "/one.jpg", alt: "One", caption: "The first one", copyright: "2025 Studio" },
+  {
+    src: "/one.jpg",
+    alt: "One",
+    caption: "The first one",
+    copyright: "2025 Studio",
+    copyrightSource: "id-100.online",
+  },
   { src: "/two.jpg", alt: "Two" },
   { src: "/three.jpg", alt: "Three" },
 ];
@@ -55,6 +61,13 @@ describe("Lightbox", () => {
 
     expect(screen.getByText("The first one")).toBeInTheDocument();
     expect(screen.getByText("© 2025 Studio")).toBeInTheDocument();
+    expect(screen.getByText("id-100.online")).toBeInTheDocument();
+  });
+
+  it("renders the asset source even without a copyright text", () => {
+    setup({ items: [{ src: "/one.jpg", alt: "One", copyrightSource: "id-100.online" }] });
+
+    expect(screen.getByText("id-100.online")).toBeInTheDocument();
   });
 
   it("omits the caption bar when the item carries neither", () => {
@@ -166,6 +179,22 @@ describe("Lightbox", () => {
     fireEvent.pointerUp(figure, { clientX: 0 });
 
     expect(props.onIndexChange).not.toHaveBeenCalled();
+  });
+
+  it("restores focus to the opener without scrolling the page", () => {
+    const opener = document.createElement("button");
+    opener.textContent = "open";
+    document.body.append(opener);
+    opener.focus();
+    const focus = vi.spyOn(opener, "focus");
+
+    const { unmount } = render(
+      <Lightbox open items={ITEMS} index={0} onClose={vi.fn()} onIndexChange={vi.fn()} />,
+    );
+    unmount();
+
+    expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+    opener.remove();
   });
 
   it("cycles focus inside the dialog rather than escaping it", () => {

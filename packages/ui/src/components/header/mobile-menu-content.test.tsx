@@ -75,9 +75,26 @@ describe("MobileMenuContent", () => {
     expect(setIsOpen).toHaveBeenCalledWith(false);
   });
 
+  it("closes the menu when the ascii backdrop is pressed but not the panel", () => {
+    const { setIsOpen } = renderMenu();
+
+    fireEvent.mouseDown(screen.getByRole("dialog"));
+    expect(setIsOpen).not.toHaveBeenCalled();
+
+    fireEvent.mouseDown(screen.getByTestId("mobile-menu-backdrop").parentElement as HTMLElement);
+    expect(setIsOpen).toHaveBeenCalledWith(false);
+  });
+
   it("moves keyboard focus into the menu when opened", () => {
     renderMenu();
     expect(screen.getByRole("link", { name: /^HOME$/ })).toHaveFocus();
+  });
+
+  it("does not attach a pulse delay to each backdrop glyph", () => {
+    renderMenu();
+    const glyphs = screen.getByTestId("mobile-menu-backdrop").querySelectorAll("span");
+    expect(glyphs.length).toBeGreaterThan(0);
+    expect([...glyphs].every((node) => !node.hasAttribute("style"))).toBe(true);
   });
 
   it("exposes the panel as a modal dialog", () => {

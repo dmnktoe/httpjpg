@@ -11,6 +11,7 @@ import {
   Header,
   ImagePreview,
   LazyMotionProvider,
+  LightboxProvider,
 } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
@@ -141,9 +142,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 showSearch={widgetConfig.askEnabled}
                 showScrollVeil={interfaceConfig.headerScrollVeilEnabled}
               />
-              <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
-                {children}
-              </Box>
+              <LightboxProvider>
+                <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
+                  {children}
+                </Box>
+              </LightboxProvider>
               <Footer
                 backgroundImage={footerConfig.backgroundImage}
                 footerLinks={footerConfig.footerLinks}

@@ -7,8 +7,11 @@ import {
   Image,
   ImageOverlay,
   Lightbox,
+  type LightboxEntry,
   LightboxTrigger,
   useLightbox,
+  useLightboxEntry,
+  useLightboxGallery,
   useParallax,
 } from "@httpjpg/ui";
 import { memo } from "react";
@@ -38,6 +41,7 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     lightbox = false,
   } = blok;
   const editable = editableAttrs(blok);
+  const gallery = useLightboxGallery();
   const viewer = useLightbox();
 
   const parallaxSpeed = Math.min(Math.max(parallax, 0), 0.4);
@@ -47,6 +51,11 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     disabled: !isParallax,
   });
   const parallaxScale = 1 + parallaxSpeed * 2.4;
+  const altText = alt || image?.alt || image?.title || "";
+  const lightboxItem =
+    lightbox && image?.filename ? lightboxItemFromImage(blok._uid, image, altText, caption) : null;
+
+  useLightboxEntry(lightboxItem);
 
   if (!image?.filename) {
     return null;
@@ -58,7 +67,6 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
   });
   const sizes = sizesFromWidths({ width, widthMd, widthLg });
   const blurDataURL = blurOnLoad ? imagePreset.blur(image.filename, image.focus) : undefined;
-  const altText = alt || image.alt || image.title || "";
 
   const imageEl = (
     <Image
@@ -106,22 +114,21 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
         {lightbox && (
           <LightboxTrigger
             label={altText ? `Open ${altText} at full size` : undefined}
-            onClick={() => viewer.openAt(0)}
+            onClick={() => {
+              if (gallery && lightboxItem) {
+                gallery.openAt(lightboxItem.id);
+                return;
+              }
+              viewer.openAt(0);
+            }}
           />
         )}
       </Box>
       {!!caption?.content?.length && <SbCaption data={caption as SbCaptionProps["data"]} />}
-      {lightbox && (
+      {lightbox && !gallery && lightboxItem && (
         <Lightbox
           open={viewer.open}
-          items={[
-            {
-              src: imagePreset.full(image.filename, image.focus),
-              alt: altText,
-              caption: extractPlainText(caption),
-              copyright: image.copyright || "",
-            },
-          ]}
+          items={[lightboxItem]}
           index={0}
           onClose={viewer.close}
           onIndexChange={viewer.setIndex}
@@ -132,3 +139,26 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
 });
 
 SbImage.displayName = "SbImage";
+
+interface LightboxImageAsset {
+  filename: string;
+  focus?: string;
+  copyright?: string;
+  source?: string;
+}
+
+function lightboxItemFromImage(
+  id: string,
+  image: LightboxImageAsset,
+  altText: string,
+  caption: SbImageData["caption"],
+): LightboxEntry {
+  return {
+    id,
+    src: imagePreset.full(image.filename, image.focus),
+    alt: altText,
+    caption: extractPlainText(caption) || undefined,
+    copyright: image.copyright || undefined,
+    copyrightSource: image.source || undefined,
+  };
+}

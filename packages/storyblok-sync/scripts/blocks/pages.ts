@@ -49,6 +49,7 @@ export const pageBlocks: BlockDef[] = [
         description: "Lists this work in the app's work list. Off leaves it in the sidebar only.",
         tooltip: true,
       }),
+      accentColor: field.datasource("Accent Color", "color-options"),
       isDark: field.boolean("Dark Mode"),
     },
   },

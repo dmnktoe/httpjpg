@@ -1,5 +1,7 @@
 "use client";
 
+import type { CSSProperties } from "react";
+
 import { Box } from "../box/box";
 
 const PATTERN = [
@@ -32,6 +34,17 @@ const CELLS = Array.from({ length: COLS * ROWS }, (_, i) => PATTERN[i % PATTERN.
 
 const CELL_NODES = CELLS.map((char, i) => <span key={i}>{char}</span>);
 
+const LATTICE_STYLE = {
+  position: "absolute",
+  inset: 0,
+  display: "grid",
+  gridTemplateColumns: `repeat(${COLS}, minmax(0, 1fr))`,
+  gridTemplateRows: `repeat(${ROWS}, minmax(0, 1fr))`,
+  placeItems: "center",
+  width: "100%",
+  height: "100%",
+} as const satisfies CSSProperties;
+
 /** Full-viewport ASCII wash behind the mobile menu. */
 export function MobileMenuBackdrop() {
   return (
@@ -48,23 +61,14 @@ export function MobileMenuBackdrop() {
     >
       <Box css={{ position: "absolute", inset: 0, opacity: 0.9, bg: "pageBg" }} />
       <Box
+        style={LATTICE_STYLE}
         css={{
-          position: "absolute",
-          inset: 0,
-          display: "grid",
-          gridTemplateColumns: `repeat(${COLS}, 1fr)`,
-          gridTemplateRows: `repeat(${ROWS}, 1fr)`,
           color: "pageFg",
           opacity: 0.2,
           fontFamily: "mono",
           fontSize: "xs",
           animation: "asciiPulse 4s ease-in-out infinite",
           overflow: "hidden",
-          "& span": {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
           "@media (prefers-reduced-motion: reduce)": { animation: "none" },
         }}
       >

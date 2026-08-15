@@ -13,5 +13,11 @@ describe("MobileMenuBackdrop", () => {
     expect(glyphs[0]).toHaveTextContent("✦");
     expect(glyphs[1]).toHaveTextContent("·");
     expect(glyphs[0]).not.toHaveAttribute("style");
+
+    const lattice = glyphs[0]?.parentElement;
+    const latticeStyle = lattice?.getAttribute("style") ?? "";
+    expect(latticeStyle).toContain("repeat(14");
+    expect(latticeStyle).toContain("repeat(28");
+    expect(lattice).toHaveStyle({ display: "grid", width: "100%", height: "100%" });
   });
 });

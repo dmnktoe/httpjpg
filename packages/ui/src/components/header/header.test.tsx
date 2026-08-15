@@ -114,6 +114,30 @@ describe("Header", () => {
     expect(screen.getByLabelText("Close menu")).toBeVisible();
   });
 
+  it("leaves a spacer in flow while the header is pinned so scroll restore stays put", () => {
+    const rect = {
+      height: 88,
+      width: 320,
+      top: 0,
+      left: 0,
+      bottom: 88,
+      right: 320,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    } as DOMRect;
+    const measure = vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(rect);
+
+    render(<Header nav={NAV} />);
+    openMenu();
+
+    const header = screen.getByRole("banner");
+    const spacer = header.previousElementSibling;
+    expect(spacer).toHaveAttribute("aria-hidden", "true");
+    expect(spacer).toHaveStyle({ height: "88px" });
+    measure.mockRestore();
+  });
+
   it("closes the mobile menu again on a second press and restores the scroll offset", () => {
     vi.stubGlobal("scrollY", 240);
     render(<Header nav={NAV} />);

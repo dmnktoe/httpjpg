@@ -21,10 +21,28 @@ export function LightboxProvider({ children }: PropsWithChildren) {
   const [items, setItems] = useState<LightboxEntry[]>([]);
 
   const registerItem = useCallback((entry: LightboxEntry) => {
-    registryRef.current = [...registryRef.current, entry];
+    registryRef.current = [...registryRef.current.filter((item) => item.id !== entry.id), entry];
+    setItems((current) => {
+      const at = current.findIndex((item) => item.id === entry.id);
+      if (at < 0) {
+        return current;
+      }
+      const next = [...current];
+      next[at] = entry;
+      return next;
+    });
     return () => {
       registryRef.current = registryRef.current.filter((item) => item !== entry);
-      setItems((current) => current.filter((item) => item.id !== entry.id));
+      // Defer the prune so a re-register in the same tick (caption edit,
+      // Strict Mode remount) can put the id back before the open snapshot
+      // drops it.
+      queueMicrotask(() => {
+        const ids = new Set(dedupeById(registryRef.current).map((item) => item.id));
+        setItems((current) => {
+          const next = current.filter((item) => ids.has(item.id));
+          return next.length === current.length ? current : next;
+        });
+      });
     };
   }, []);
 

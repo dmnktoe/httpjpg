@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 
 import { useLightboxEntry, useLightboxGallery, type LightboxEntry } from "./lightbox-context";
 import { LightboxProvider } from "./lightbox-provider";
@@ -82,7 +82,7 @@ describe("LightboxProvider", () => {
     expect(screen.getByText("[ 01 ]")).toBeInTheDocument();
   });
 
-  it("closes when the last registered item unmounts", () => {
+  it("closes when the last registered item unmounts", async () => {
     const { rerender } = renderGallery([FIRST]);
 
     fireEvent.click(screen.getByRole("button", { name: "Open One at full size" }));
@@ -94,6 +94,28 @@ describe("LightboxProvider", () => {
       </LightboxProvider>,
     );
 
+    await act(() => Promise.resolve());
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("keeps the open slide when an entry re-registers", async () => {
+    const { rerender } = renderGallery([FIRST, SECOND]);
+
+    fireEvent.click(screen.getByRole("button", { name: "Open One at full size" }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByText("[ 01 / 02 ]")).toBeInTheDocument();
+
+    rerender(
+      <LightboxProvider>
+        <Thumb item={{ ...FIRST, caption: "updated" }} />
+        <Thumb item={SECOND} />
+      </LightboxProvider>,
+    );
+
+    await act(() => Promise.resolve());
+    const dialog = screen.getByRole("dialog", { name: "Image viewer" });
+    expect(within(dialog).getByRole("img", { name: "One" })).toBeInTheDocument();
+    expect(within(dialog).getByText("[ 01 / 02 ]")).toBeInTheDocument();
+    expect(within(dialog).getByText("updated")).toBeInTheDocument();
   });
 });

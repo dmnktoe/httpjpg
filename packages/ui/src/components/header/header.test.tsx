@@ -100,6 +100,20 @@ describe("Header", () => {
     expect(document.body.style.top).toBe("-240px");
   });
 
+  it("pins the header to the viewport while the menu is open so the close button stays on screen", () => {
+    vi.stubGlobal("scrollY", 240);
+    render(<Header nav={NAV} />);
+
+    const header = screen.getByRole("banner");
+    expect(header.className).toContain("pos_sticky");
+
+    openMenu();
+
+    expect(header.className).toContain("pos_fixed");
+    expect(header.className).not.toContain("pos_sticky");
+    expect(screen.getByLabelText("Close menu")).toBeVisible();
+  });
+
   it("closes the mobile menu again on a second press and restores the scroll offset", () => {
     vi.stubGlobal("scrollY", 240);
     render(<Header nav={NAV} />);

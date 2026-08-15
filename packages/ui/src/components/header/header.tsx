@@ -79,8 +79,11 @@ export function Header({
       <Box
         as="header"
         ref={headerRef}
+        // Body scroll-lock uses position:fixed + a negative top; sticky chrome
+        // would ride that offset off-screen. Pin to the viewport while the
+        // portaled menu is open so the close control stays put.
         css={{
-          position: "sticky",
+          position: mobileMenuIsOpen ? "fixed" : "sticky",
           top: 0,
           right: 0,
           left: 0,

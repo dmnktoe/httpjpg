@@ -49,7 +49,13 @@ export const pageBlocks: BlockDef[] = [
         description: "Lists this work in the app's work list. Off leaves it in the sidebar only.",
         tooltip: true,
       }),
-      accentColor: field.datasource("Accent Color", "color-options"),
+      accentColor: field.text("Project Accent Color", {
+        description:
+          "Serves as the iOS mobile liquid glass button tint. Enter a hex colour (#RGB or #RRGGBB).",
+        tooltip: true,
+        regex: "^(#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3}))?$",
+        max_length: 7,
+      }),
       isDark: field.boolean("Dark Mode"),
     },
   },

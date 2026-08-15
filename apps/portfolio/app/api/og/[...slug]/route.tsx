@@ -32,12 +32,16 @@ interface FontSpec {
   satoriName: string;
 }
 
-// Noto subsets cover the ASCII_DIVIDER_STARS / ASCII_TAPE glyphs Inter can't.
 const FONT_SPECS: readonly FontSpec[] = [
   {
     family: "Inter",
     cssUrl: "https://fonts.googleapis.com/css2?family=Inter&display=swap",
     satoriName: "Sans",
+  },
+  {
+    family: "Anton",
+    cssUrl: "https://fonts.googleapis.com/css2?family=Anton&display=swap",
+    satoriName: "Headline",
   },
   {
     family: "Noto Sans Mono",
@@ -68,7 +72,6 @@ interface SatoriFont {
   style: "normal";
 }
 
-// Shared in-flight promise; cleared on failure so the next request retries.
 let fontsPromise: Promise<SatoriFont[]> | null = null;
 
 function loadFonts(): Promise<SatoriFont[]> {
@@ -136,6 +139,7 @@ function Masthead({ year, slug, p }: { year: string; slug: string[]; p: Palette 
         alignItems: "baseline",
         paddingBottom: spacing[3],
         borderBottom: `2px solid ${p.fg}`,
+        fontFamily: "Sans",
         fontSize: 26,
         letterSpacing: "0.18em",
         textTransform: "uppercase",
@@ -154,7 +158,9 @@ function Headline({ title, size, p }: { title: string; size: number; p: Palette 
     <div
       style={{
         display: "flex",
+        fontFamily: "Headline",
         fontSize: size,
+        fontWeight: 400,
         lineHeight: 0.95,
         letterSpacing: "-0.02em",
         textTransform: "uppercase",
@@ -177,6 +183,7 @@ function Footer({ slug, p, prefix }: { slug: string[]; p: Palette; prefix: strin
         alignItems: "baseline",
         paddingTop: spacing[3],
         borderTop: `2px solid ${p.fg}`,
+        fontFamily: "Sans",
         fontSize: 22,
         letterSpacing: "0.18em",
         textTransform: "uppercase",

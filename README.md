@@ -3,7 +3,6 @@
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/dmnktoe/httpjpg/ci.yml?logo=github&logoColor=fff&label=ci&labelColor=000&style=plastic&branch=main)
 ![GitHub Release](https://img.shields.io/github/v/release/dmnktoe/httpjpg?logo=semanticrelease&logoColor=fff&label=release&labelColor=000&color=00b4f0&style=plastic)
 ![Codecov](https://img.shields.io/codecov/c/github/dmnktoe/httpjpg?logo=codecov&logoColor=fff&label=coverage&labelColor=000&style=plastic)
-[![Covered by Argos Visual Testing](https://argos-ci.com/badge.svg)](https://app.argos-ci.com/dmnktoe/httpjpg/reference)
 
 **next.js · storyblok · panda css · pnpm monorepo**
 
@@ -13,3 +12,7 @@ Brutalist design portfolio built on a 12-column grid. Mono type, hard edges, max
 
 **Domenik Töfflinger** · [@dmnktoe](https://github.com/dmnktoe)<br/>
 **Instagram** · [@icon.icon.iconn](https://instagram.com/icon.icon.iconn)
+
+---
+
+[![Covered by Argos Visual Testing](https://argos-ci.com/badge.svg)](https://app.argos-ci.com/dmnktoe/httpjpg/reference)

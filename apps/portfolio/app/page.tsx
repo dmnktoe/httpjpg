@@ -5,6 +5,7 @@ import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { StoryblokLive } from "@/components/providers/storyblok-live";
+import { AccentSync } from "@/components/ui/accent-sync";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
@@ -37,6 +38,7 @@ export default async function HomePage({
   return (
     <>
       <ThemeSync theme={pageTheme} />
+      <AccentSync />
       <StoryblokServerComponent blok={story.content} />
     </>
   );

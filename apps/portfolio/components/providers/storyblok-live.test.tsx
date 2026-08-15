@@ -2,6 +2,10 @@ const { useStoryblokState } = vi.hoisted(() => ({ useStoryblokState: vi.fn() }))
 
 vi.mock("@storyblok/react", () => ({ useStoryblokState }));
 
+vi.mock("@httpjpg/spotify", () => ({
+  extractVibrantColor: vi.fn().mockResolvedValue(null),
+}));
+
 vi.mock("@storyblok/react/rsc", () => ({
   StoryblokServerComponent: ({ blok }: { blok: { component?: string } }) => (
     <div data-testid="blok">{blok?.component}</div>

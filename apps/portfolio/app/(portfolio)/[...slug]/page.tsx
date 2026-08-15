@@ -1,11 +1,12 @@
 import { env } from "@httpjpg/env";
-import { imagePreset } from "@httpjpg/storyblok-utils";
+import { firstImageFilename, imagePreset } from "@httpjpg/storyblok-utils";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import type { Metadata } from "next";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { StoryblokLive } from "@/components/providers/storyblok-live";
+import { AccentSync } from "@/components/ui/accent-sync";
 import { RelatedWork } from "@/components/ui/related-work";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { WorkNav } from "@/components/ui/work-nav";
@@ -114,10 +115,14 @@ export default async function DynamicPage({
     }
 
     const pageTheme = story.content?.isDark ? "dark" : "light";
+    const accentImageUrl = isWorkPage
+      ? imagePreset.thumb(firstImageFilename(story.content?.images)) || undefined
+      : undefined;
 
     return (
       <>
         <ThemeSync theme={pageTheme} />
+        <AccentSync imageUrl={accentImageUrl} />
         {schemaMarkup && <JsonLd data={schemaMarkup} />}
         <StoryblokServerComponent blok={story.content} />
         {isWorkPage && flags.relatedWorkEnabled && (

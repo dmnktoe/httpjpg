@@ -174,8 +174,18 @@ export default defineConfig({
     "input, button, textarea, select": { font: "inherit" },
     "p, h1, h2, h3, h4, h5, h6": { overflowWrap: "break-word" },
     "header a, header button": { pointerEvents: "auto" },
-    "::selection": { bg: "accent.300", color: "black", textShadow: "none" },
-    "::-moz-selection": { bg: "accent.300", color: "black", textShadow: "none" },
+    // `--page-accent` is stamped by AccentSync on work pages; falls back to the
+    // static lime accent palette everywhere else.
+    "::selection": {
+      bg: "var(--page-accent, {colors.accent.300})",
+      color: "var(--page-accent-fg, black)",
+      textShadow: "none",
+    },
+    "::-moz-selection": {
+      bg: "var(--page-accent, {colors.accent.300})",
+      color: "var(--page-accent-fg, black)",
+      textShadow: "none",
+    },
   },
 
   theme: {

@@ -51,7 +51,7 @@ export const pageBlocks: BlockDef[] = [
       }),
       accentColor: field.colorPicker("Project Accent Color", {
         description:
-          "Tints the iOS app's liquid glass button for this project. Pick from the palette or type a hex.",
+          "Serves as the iOS mobile liquid glass button tint. Pick from the palette or type a hex.",
         tooltip: true,
       }),
       isDark: field.boolean("Dark Mode"),

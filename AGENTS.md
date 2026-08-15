@@ -15,7 +15,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 - **Panda CSS** (zero-runtime) — `css({})` / `cx()` / token-aware patterns; tokens from `@httpjpg/tokens`
 - **Storyblok** — Visual Editor live-bridge in dev, draft mode in production
 - **Sentry** — via `@httpjpg/observability` for client / server / edge
-- **Vitest** (jsdom by default; `// @vitest-environment node` for node) · **Playwright** for E2E (`apps/portfolio/tests/e2e`) and visual (`apps/storybook/tests/visual`)
+- **Vitest** (jsdom by default; `// @vitest-environment node` for node) · **Playwright** for E2E (`apps/portfolio/tests/e2e`) · **Argos** + Storybook Vitest for visual regression
 - **oxlint** + **oxfmt** — no ESLint, no Prettier
 - **pnpm** workspaces with a catalog · **Turbo** for task orchestration
 - **t3-oss/env-nextjs** + **Zod** in `@httpjpg/env`
@@ -41,7 +41,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 │   │   │   ├── page-theme.ts · seo.ts · schema-org.tsx · storyblok.ts · …
 │   │   ├── proxy.ts             # Edge: preview-token, CSP, x-pathname
 │   │   └── instrumentation.ts   # Sentry boot
-│   ├── storybook/               # @httpjpg/ui docs + visual regression
+│   ├── storybook/               # @httpjpg/ui docs + Argos visual regression
 │   └── studio/                  # Dev-only grid editor → Storyblok (port 3001)
 ├── packages/                    # See package table below
 ├── tsconfig/ · tools/ · turbo.json · pnpm-workspace.yaml
@@ -261,17 +261,18 @@ None today. If adding: `react-hook-form` + zod (catalog v4), compose with `@http
 - **Unit:** Vitest, colocated `*.test.ts(x)`, globals on, `pnpm test` (root `vitest.config.ts`).
 - **Component:** `@testing-library/react` + `@testing-library/jest-dom/vitest`.
 - **E2E:** Playwright in `apps/portfolio/tests/e2e` — `pnpm --filter @httpjpg/portfolio test:e2e`.
-- **Visual:** Playwright in `apps/storybook/tests/visual` vs Actions-cache baselines from `main` (not committed). Smoke without compare: `test:visual:smoke`.
+- **Visual:** `@storybook/addon-vitest` + `@argos-ci/storybook` capture every story. Argos stores baselines, diffs, and the review UI. Locally, `pnpm --filter @httpjpg/storybook test:visual` writes `./screenshots` without uploading.
 - **CI:** lint → typecheck → test → build → e2e → visual.
 
 ### Visual regression
 
-- `main` publishes the baseline set to the Actions cache; PRs restore and compare. Diffs upload as `visual-report`.
-- One Docker renderer (`apps/storybook/scripts/visual-docker.sh`); never `{platform}` in snapshot paths; bump Playwright → re-baseline `main` via **Visual Baselines**.
-- Baselines gitignored; only `main` cache is shared across branches. External requests stubbed in `prepareStory()` — use local fixtures, not the Storyblok CDN.
-- Tags: `skip-visual` / `visual-mobile` (390×844). Don't invent opt-outs.
-- Approve with `visual-approved` (API timestamp; reset on every push) — only when every failure is a screenshot mismatch. Missing baseline set → warn/pass; brand-new story → `baselines-added` verdict.
-- Chromatic still publishes Storybook (unmetered); snapshots stay off.
+Argos owns the baseline: `main` is the reference, PRs upload and Argos compares. Review/approve in Argos (`argos` GitHub status) — not a label or committed snapshot.
+
+- **Storybook SDK:** `@storybook/addon-vitest` + `argosVitestPlugin` (`uploadToArgos: !!process.env.CI`). Chromium uses `--disable-lcd-text --font-render-hinting=none` and `reducedMotion: "reduce"` so motion settles before capture. Overflowing stories (e.g. Slideshow loop clones) set `parameters.argos.fitToContent: false` for a viewport shot. No Docker, don't commit screenshots; `test:visual` is not a cacheable turbo task (a hit would skip the upload).
+- **Auth is OIDC** (`id-token: write`, no `ARGOS_TOKEN`; tokenless fallback on fork PRs). Make the `argos` status a required check. The Vitest job itself only fails when a story does not render.
+- **Local fixtures, not the CDN** — portable stories hit a real browser; use files under `apps/storybook` instead of remote URLs.
+- **Extra viewports:** Argos modes via `allModes` from `.storybook/modes.ts` + `parameters.argos.modes`. Skip with Storybook's `!test` tag — not a home-grown opt-out.
+- **Chromatic still publishes** Storybook only (snapshots off). Don't hand Argos hosting or Chromatic testing.
 
 ## Tooling
 
@@ -281,7 +282,7 @@ pnpm dev:portfolio       # portfolio + deps
 pnpm dev:storybook
 pnpm build               # PANDA_PRODUCTION=1 turbo run build
 pnpm type-check · test · lint · lint:fix · format · format:check
-pnpm test:visual · test:visual:update
+pnpm test:visual         # capture story screenshots (uploads to Argos when CI=1)
 ```
 
 - Lint/format clean before commit (Husky + lint-staged). Conventional Commits (commitlint).

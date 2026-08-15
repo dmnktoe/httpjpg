@@ -32,4 +32,15 @@ test.describe("storyblok proxy (apps/portfolio/proxy.ts)", () => {
     });
     expect(res.headers()["cache-control"]).toMatch(/no-store/);
   });
+
+  test("flags iframe navigations as editor sessions even without storyblok params", async ({
+    request,
+  }) => {
+    const res = await request.get("/", {
+      headers: { "sec-fetch-dest": "iframe" },
+      failOnStatusCode: false,
+    });
+    expect(res.headers()["cache-control"]).toMatch(/no-store/);
+  });
 });
+

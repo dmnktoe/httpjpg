@@ -3,6 +3,8 @@ import { validateStoryblokPreviewToken } from "@httpjpg/storyblok-utils";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+import { isStoryblokEditorRequest } from "@/lib/storyblok-editor";
+
 const SECURITY_HEADERS: Record<string, string> = {
   "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
   "Referrer-Policy": "strict-origin-when-cross-origin",
@@ -12,9 +14,8 @@ const SECURITY_HEADERS: Record<string, string> = {
 
 export async function proxy(request: NextRequest) {
   const { searchParams } = request.nextUrl;
-  const storyblokParam = searchParams.get("_storyblok");
   const hasStoryblokToken = searchParams.has("_storyblok_tk[space_id]");
-  const inEditor = Boolean(storyblokParam || hasStoryblokToken);
+  const inEditor = isStoryblokEditorRequest(request);
 
   if (
     hasStoryblokToken &&

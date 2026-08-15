@@ -50,7 +50,7 @@ import { getLastUpdated } from "@/lib/queries/last-updated";
 import { getFeatureFlags, getInterfaceConfig, getWidgetConfig } from "@/lib/queries/widgets";
 import { getRecentWork } from "@/lib/queries/work";
 import { generatePersonSchema, JsonLd } from "@/lib/schema-org";
-import { isStoryblokEditor } from "@/lib/storyblok-editor";
+import { isStoryblokEditor } from "@/lib/is-storyblok-editor";
 
 import "./globals.css";
 

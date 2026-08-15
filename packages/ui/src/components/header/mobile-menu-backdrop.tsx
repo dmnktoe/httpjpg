@@ -2,13 +2,37 @@
 
 import { Box } from "../box/box";
 
-const TILE = "✦ · ⋆ · ☆ · ◆ · ";
-const FIELD = Array.from({ length: 28 }, (_, row) => {
-  const line = TILE.repeat(14);
-  return row % 2 === 0 ? line : line.slice(4);
-}).join("\n");
+const PATTERN = [
+  "✦",
+  "·",
+  "⋆",
+  "·",
+  "☆",
+  "·",
+  "◆",
+  "·",
+  "⋆",
+  "·",
+  "✦",
+  "·",
+  "☆",
+  "·",
+  "◆",
+  "·",
+  "⋆",
+  "·",
+  "✦",
+  "·",
+] as const;
 
-/** Full-viewport ASCII wash behind the mobile menu. One text node, not a cell grid. */
+const COLS = 14;
+const ROWS = 28;
+
+const CELLS = Array.from({ length: COLS * ROWS }, (_, i) => PATTERN[i % PATTERN.length]);
+
+const CELL_NODES = CELLS.map((char, i) => <span key={i}>{char}</span>);
+
+/** Full-viewport ASCII wash behind the mobile menu. */
 export function MobileMenuBackdrop() {
   return (
     <Box
@@ -27,20 +51,24 @@ export function MobileMenuBackdrop() {
         css={{
           position: "absolute",
           inset: 0,
-          p: "2",
+          display: "grid",
+          gridTemplateColumns: `repeat(${COLS}, 1fr)`,
+          gridTemplateRows: `repeat(${ROWS}, 1fr)`,
           color: "pageFg",
           opacity: 0.2,
           fontFamily: "mono",
           fontSize: "xs",
-          lineHeight: "loose",
-          letterSpacing: "0.35em",
-          whiteSpace: "pre",
           animation: "asciiPulse 4s ease-in-out infinite",
           overflow: "hidden",
+          "& span": {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          },
           "@media (prefers-reduced-motion: reduce)": { animation: "none" },
         }}
       >
-        {FIELD}
+        {CELL_NODES}
       </Box>
     </Box>
   );

@@ -80,9 +80,11 @@ describe("MobileMenuContent", () => {
     expect(screen.getByRole("link", { name: /^HOME$/ })).toHaveFocus();
   });
 
-  it("paints the backdrop as a single field rather than a cell per glyph", () => {
+  it("does not attach a pulse delay to each backdrop glyph", () => {
     renderMenu();
-    expect(screen.getByTestId("mobile-menu-backdrop").querySelectorAll("*")).toHaveLength(2);
+    const glyphs = screen.getByTestId("mobile-menu-backdrop").querySelectorAll("span");
+    expect(glyphs.length).toBeGreaterThan(0);
+    expect([...glyphs].every((node) => !node.hasAttribute("style"))).toBe(true);
   });
 
   it("exposes the panel as a modal dialog", () => {

@@ -37,6 +37,7 @@ import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
 import { XStatus } from "@/components/widgets/x-status";
+import { isStoryblokEditor } from "@/lib/is-storyblok-editor";
 import { getPageTheme } from "@/lib/page-theme";
 import {
   getAuthor,
@@ -50,7 +51,6 @@ import { getLastUpdated } from "@/lib/queries/last-updated";
 import { getFeatureFlags, getInterfaceConfig, getWidgetConfig } from "@/lib/queries/widgets";
 import { getRecentWork } from "@/lib/queries/work";
 import { generatePersonSchema, JsonLd } from "@/lib/schema-org";
-import { isStoryblokEditor } from "@/lib/storyblok-editor";
 
 import "./globals.css";
 

@@ -49,7 +49,6 @@ export { validateStoryblokPreviewToken } from "./preview";
 export type {
   StoryblokApiResponse,
   StoryblokBlokData,
-  StoryblokColorField,
   StoryblokImage,
   StoryblokLink,
   StoryblokRichText,

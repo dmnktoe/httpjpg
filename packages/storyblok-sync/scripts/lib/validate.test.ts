@@ -30,21 +30,6 @@ describe("validateLocalSchema", () => {
     expect(result.issues.some((issue) => issue.message.includes("ghost-options"))).toBe(true);
   });
 
-  it("rejects a custom field whose field_type is not a registered plugin", () => {
-    const result = validateLocalSchema([
-      block("tint", { color: field.custom("Color", "ghost-colorpicker") }),
-    ]);
-
-    expect(result.ok).toBe(false);
-    expect(result.issues.some((issue) => issue.message.includes("ghost-colorpicker"))).toBe(true);
-  });
-
-  it("accepts the official colorpicker custom field", () => {
-    const result = validateLocalSchema([block("tint", { color: field.colorPicker("Color") })]);
-
-    expect(result.ok).toBe(true);
-  });
-
   it("rejects a duplicate block name", () => {
     const result = validateLocalSchema([
       block("twin", { title: field.text("Title") }),
@@ -61,7 +46,6 @@ describe("toSchemaLike", () => {
       block("hero", {
         title: field.text("Title", { required: true }),
         body: field.bloks("Body", { whitelist: ["hero"] }),
-        accent: field.colorPicker("Accent"),
       }),
     ]);
 
@@ -72,12 +56,8 @@ describe("toSchemaLike", () => {
         fields: [
           { name: "title", type: "text", required: true },
           { name: "body", type: "bloks", allow: ["hero"] },
-          { name: "accent", type: "custom", field_type: "storyblok-colorpicker" },
         ],
       },
     ]);
-    expect(schema.fieldPlugins).toEqual(
-      expect.arrayContaining([expect.objectContaining({ fieldType: "storyblok-colorpicker" })]),
-    );
   });
 });

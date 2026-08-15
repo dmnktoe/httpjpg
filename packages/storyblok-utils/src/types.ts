@@ -98,8 +98,3 @@ export interface StoryblokRichText {
   type: "doc";
   content: StoryblokRichTextNode[];
 }
-
-/** Value stored by Storyblok's official Colorpicker field plugin (`storyblok-colorpicker`). */
-export interface StoryblokColorField {
-  color: string;
-}

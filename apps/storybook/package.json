@@ -10,7 +10,6 @@
     "preview": "storybook preview",
     "chromatic": "chromatic",
     "test:visual": "vitest run --project=storybook",
-    "test:visual:smoke": "vitest run --project=storybook",
     "type-check": "tsc --noEmit",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix"

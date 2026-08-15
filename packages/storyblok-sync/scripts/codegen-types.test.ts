@@ -131,8 +131,14 @@ describe("fieldToTsType", () => {
     expect(fieldToTsType("x", field({ type: "tab" }))).toBeNull();
   });
 
-  it("returns unknown for unrecognised types", () => {
+  it("maps known custom plugins and leaves others unknown", () => {
+    expect(
+      fieldToTsType("accent", field({ type: "custom", field_type: "storyblok-colorpicker" })),
+    ).toBe("StoryblokColorField");
     expect(fieldToTsType("x", field({ type: "custom_thing" }))).toBe("unknown");
+    expect(fieldToTsType("x", field({ type: "custom", field_type: "ghost-plugin" }))).toBe(
+      "unknown",
+    );
   });
 });
 

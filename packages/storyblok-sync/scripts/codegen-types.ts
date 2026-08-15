@@ -68,6 +68,11 @@ export function fieldToTsType(name: string, field: StoryblokField): string | nul
         return `Array<${union}>`;
       }
       return "StoryblokBlokData[]";
+    case "custom":
+      if (field.field_type === "storyblok-colorpicker") {
+        return "StoryblokColorField";
+      }
+      return "unknown";
     case "tab":
       return null;
     default:
@@ -118,6 +123,7 @@ function renderHeader(): string {
 
 import type {
   StoryblokBlokData,
+  StoryblokColorField,
   StoryblokImage,
   StoryblokLink,
   StoryblokRichText,

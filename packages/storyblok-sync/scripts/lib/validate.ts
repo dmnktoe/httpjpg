@@ -1,9 +1,13 @@
 import { type SchemaFieldLike, type SchemaLike, validateSchema } from "@storyblok/schema";
+import { storyblokColorField } from "@storyblok/schema/field-plugins";
 
 import type { StoryblokField } from "../../src/index";
 import type { BlockDef } from "./block";
 import { allDatasources } from "./datasources";
 import { allBlocks } from "./schema";
+
+/** Field plugins this repo's schemas may reference via `type: "custom"`. */
+const FIELD_PLUGINS = [storyblokColorField] as const;
 
 function toSchemaField(name: string, field: StoryblokField): SchemaFieldLike {
   return {
@@ -38,6 +42,7 @@ export function toSchemaLike(
       name: datasource.name,
       slug: datasource.slug,
     })),
+    fieldPlugins: [...FIELD_PLUGINS],
   };
 }
 

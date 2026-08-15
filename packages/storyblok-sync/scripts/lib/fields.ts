@@ -125,6 +125,24 @@ export const field = {
     display_name,
     keys,
   }),
+  /** Field plugin — `field_type` must match an installed Storyblok app / registered plugin. */
+  custom: (
+    display_name: string,
+    field_type: string,
+    opts: FieldOpts<"custom"> = {},
+  ): FieldOf<"custom"> => ({
+    type: "custom",
+    display_name,
+    field_type,
+    ...opts,
+  }),
+  /** Official Colorpicker app (`storyblok-colorpicker`) — palette + free hex input. */
+  colorPicker: (display_name: string, opts: FieldOpts<"custom"> = {}): FieldOf<"custom"> => ({
+    type: "custom",
+    display_name,
+    field_type: "storyblok-colorpicker",
+    ...opts,
+  }),
 };
 
 /** Group fields under a Storyblok editor tab; keys not in any `tabbed()` stay in the default tab. */

@@ -38,9 +38,6 @@ export default defineConfig({
         plugins: [
           storybookTest({
             configDir: path.join(dirname, ".storybook"),
-            tags: {
-              exclude: ["skip-visual"],
-            },
           }),
           argosVitestPlugin({
             uploadToArgos: !!process.env.CI,

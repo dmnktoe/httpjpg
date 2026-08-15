@@ -14,7 +14,6 @@ const meta = {
   component: NowPlaying,
   parameters: {
     layout: "fullscreen",
-    chromatic: { pauseAnimationAtEnd: true, delay: 500 },
   },
   tags: ["autodocs"],
   argTypes: {

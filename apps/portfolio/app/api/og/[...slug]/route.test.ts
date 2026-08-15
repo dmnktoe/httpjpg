@@ -13,7 +13,7 @@ interface JsxNode {
   type?: unknown;
   props?: { children?: unknown };
 }
-// Force functional components to execute so coverage sees their branches.
+
 function evaluateJsx(node: unknown): void {
   if (!node || typeof node !== "object") return;
   const n = node as JsxNode;
@@ -87,8 +87,6 @@ describe("GET /api/og/[...slug]", () => {
     mockedCapture.mockReset();
   });
 
-  // Font-error tests must run before any happy path so the module-level
-  // fontsPromise cache stays empty.
   it("reports a 500 when the Google Fonts CSS fetch fails", async () => {
     mockedFetchStory.mockResolvedValueOnce(validWorkStory());
     const prev = globalThis.fetch;

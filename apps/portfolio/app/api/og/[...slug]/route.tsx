@@ -32,10 +32,6 @@ interface FontSpec {
   satoriName: string;
 }
 
-// Inter for chrome; Noto subsets cover ASCII_DIVIDER_STARS / ASCII_TAPE glyphs
-// Inter can't. Anton stands in for Impact: Satori cannot embed the proprietary
-// system face the site uses for `headline`, and Anton is the condensed
-// grotesque Google Fonts ships in that slot (SIL OFL).
 const FONT_SPECS: readonly FontSpec[] = [
   {
     family: "Inter",
@@ -76,7 +72,6 @@ interface SatoriFont {
   style: "normal";
 }
 
-// Shared in-flight promise; cleared on failure so the next request retries.
 let fontsPromise: Promise<SatoriFont[]> | null = null;
 
 function loadFonts(): Promise<SatoriFont[]> {

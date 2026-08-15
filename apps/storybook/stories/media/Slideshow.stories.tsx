@@ -12,6 +12,8 @@ const meta = {
   component: Slideshow,
   parameters: {
     layout: "padded",
+    // Loop clones overflow; Argos element screenshots crash Chromium.
+    argos: { fitToContent: false },
   },
   tags: ["autodocs"],
   argTypes: {

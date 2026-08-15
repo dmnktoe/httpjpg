@@ -48,9 +48,8 @@ const meta = {
   component: NowPlaying,
   parameters: {
     layout: "fullscreen",
-    chromatic: { disableSnapshot: true },
   },
-  tags: ["autodocs"],
+  tags: ["autodocs", "!test"],
 } satisfies Meta<typeof NowPlaying>;
 
 export default meta;

@@ -101,6 +101,14 @@ const preview: Preview = {
         { name: "black", value: "#000000" },
       ],
     },
+    viewport: {
+      viewports: {
+        mobile: {
+          name: "Mobile",
+          styles: { width: "390px", height: "844px" },
+        },
+      },
+    },
     docs: {
       theme: brutalistTheme,
     },

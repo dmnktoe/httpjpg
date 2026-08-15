@@ -41,6 +41,7 @@ export default defineConfig({
           }),
           argosVitestPlugin({
             uploadToArgos: !!process.env.CI,
+            ignoreUploadFailures: true,
             argosCSS: `
               iframe { visibility: hidden !important; }
               video { visibility: hidden !important; }

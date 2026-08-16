@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@storyblok/react':
-      specifier: ^7.2.4
-      version: 7.2.4
+      specifier: ^7.3.0
+      version: 7.3.0
     '@testing-library/jest-dom':
       specifier: ^7.0.1
       version: 7.0.1
@@ -166,7 +166,7 @@ importers:
         version: 16.3.0(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@storyblok/react':
         specifier: 'catalog:'
-        version: 7.2.4(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 7.3.0(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next:
         specifier: 'catalog:'
         version: 16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -550,7 +550,7 @@ importers:
         version: link:../ui
       '@storyblok/react':
         specifier: 'catalog:'
-        version: 7.2.4(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 7.3.0(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react:
         specifier: 'catalog:'
         version: 19.2.8
@@ -603,7 +603,7 @@ importers:
         version: link:../ui
       '@storyblok/react':
         specifier: 'catalog:'
-        version: 7.2.4(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 7.3.0(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
     devDependencies:
       '@testing-library/jest-dom':
         specifier: 'catalog:'
@@ -2890,8 +2890,8 @@ packages:
   '@storyblok/preview-bridge@2.2.1':
     resolution: {integrity: sha512-ioES1Y3SHpgKxCBA2LWkuiPpdg14HjqeGDsLQLxnMGLdMDxIkfyPkCDJ3+9Av4otlWojvQANAwgQf/2yW02P9Q==}
 
-  '@storyblok/react@7.2.4':
-    resolution: {integrity: sha512-1Wfj9dWAW8slWo/Y68N8YjX4GNsKTdENKt8JAoHyIh/BZZdrddK42eiiA7gXscvCrfb7jSpLa3EneV6pr7oG3A==}
+  '@storyblok/react@7.3.0':
+    resolution: {integrity: sha512-LmPcJWlMlJnpR3LQfh8yy7XiOWcKZ4H4jN6T8lcQNTEcMiwc8X1FMW3kzelVMuBmzypjjhx0c7wkr3Ag8gL7Mw==}
     peerDependencies:
       next: ^13 || ^14 || ^15 || ^16
       react: ^17 || ^18 || ^19
@@ -2902,6 +2902,9 @@ packages:
 
   '@storyblok/richtext@5.2.1':
     resolution: {integrity: sha512-Lw5DP8hwH3BKTp7ddYAbrZPAYDkM26SvxyC/xOlxCV/FQnFzsBgRAOfRsXr/NvNt9piKWWAYscD2iCZmw6eitA==}
+
+  '@storyblok/richtext@5.3.0':
+    resolution: {integrity: sha512-UiJggZqBV7X4jg8/Z5I+WSFgnoIeobrx42K7BelvK9V0kXxY8hkpalcwcr1zE7HgRgeDF+jW0QPbtnYWY2jYgQ==}
 
   '@storyblok/schema@0.3.0':
     resolution: {integrity: sha512-a4Ys8h2+n6d+pkJqOkjrC0PxYy/NOPgqgIEtCrQPwanQceBRcfLdPxbxowpvKCEATWmGaUikmY+VfQBS76kKfA==}
@@ -7509,10 +7512,10 @@ snapshots:
     dependencies:
       pure-parse: 0.0.0-beta.8
 
-  '@storyblok/react@7.2.4(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@storyblok/react@7.3.0(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@storyblok/js': 6.3.1(@floating-ui/dom@1.8.0)
-      '@storyblok/richtext': 5.2.1(@floating-ui/dom@1.8.0)
+      '@storyblok/richtext': 5.3.0(@floating-ui/dom@1.8.0)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
     optionalDependencies:
@@ -7522,10 +7525,10 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@storyblok/react@7.2.4(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@storyblok/react@7.3.0(@floating-ui/dom@1.8.0)(next@16.3.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.2.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@storyblok/js': 6.3.1(@floating-ui/dom@1.8.0)
-      '@storyblok/richtext': 5.2.1(@floating-ui/dom@1.8.0)
+      '@storyblok/richtext': 5.3.0(@floating-ui/dom@1.8.0)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
     optionalDependencies:
@@ -7536,6 +7539,42 @@ snapshots:
       - utf-8-validate
 
   '@storyblok/richtext@5.2.1(@floating-ui/dom@1.8.0)':
+    dependencies:
+      '@tiptap/core': 3.29.2(@tiptap/pm@3.29.2)
+      '@tiptap/extension-blockquote': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
+      '@tiptap/extension-bold': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/extension-code': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/extension-code-block': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
+      '@tiptap/extension-document': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/extension-emoji': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)(@tiptap/suggestion@3.29.2(@floating-ui/dom@1.8.0)(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2))(emojibase@17.0.0)
+      '@tiptap/extension-hard-break': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/extension-heading': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/extension-highlight': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/extension-horizontal-rule': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
+      '@tiptap/extension-image': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/extension-italic': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/extension-link': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
+      '@tiptap/extension-list': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
+      '@tiptap/extension-paragraph': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/extension-strike': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/extension-subscript': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
+      '@tiptap/extension-superscript': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
+      '@tiptap/extension-table': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
+      '@tiptap/extension-text': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/extension-text-style': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/extension-underline': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))
+      '@tiptap/html': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)(happy-dom@20.11.2)
+      '@tiptap/pm': 3.29.2
+      '@tiptap/suggestion': 3.29.2(@floating-ui/dom@1.8.0)(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)
+      emojibase: 17.0.0
+      happy-dom: 20.11.2
+      markdown-it: 14.3.0
+    transitivePeerDependencies:
+      - '@floating-ui/dom'
+      - bufferutil
+      - utf-8-validate
+
+  '@storyblok/richtext@5.3.0(@floating-ui/dom@1.8.0)':
     dependencies:
       '@tiptap/core': 3.29.2(@tiptap/pm@3.29.2)
       '@tiptap/extension-blockquote': 3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2)

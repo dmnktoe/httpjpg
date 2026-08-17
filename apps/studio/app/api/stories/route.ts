@@ -1,5 +1,6 @@
-import { env } from "@httpjpg/env";
 import { type NextRequest, NextResponse } from "next/server";
+
+import { mapiPath, studioAuth } from "@/lib/mapi";
 
 export const runtime = "nodejs";
 
@@ -12,27 +13,19 @@ interface StoryEntry {
   content_type?: string;
 }
 
-const MAPI = "https://mapi.storyblok.com/v1";
-
 export async function GET(request: NextRequest) {
-  if (env.NODE_ENV !== "development") {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const auth = studioAuth();
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
-  const token = env.STORYBLOK_MANAGEMENT_TOKEN;
-  const spaceId = env.STORYBLOK_SPACE_ID;
-  if (!token || !spaceId) {
-    return NextResponse.json(
-      { error: "STORYBLOK_MANAGEMENT_TOKEN or STORYBLOK_SPACE_ID not set" },
-      { status: 500 },
-    );
-  }
+  const { token, spaceId } = auth;
   const params = request.nextUrl.searchParams;
   const startsWith = params.get("starts_with") ?? "";
   const search = params.get("search") ?? "";
   const page = Number(params.get("page") ?? "1");
   const perPage = Math.min(50, Number(params.get("per_page") ?? "25"));
 
-  const url = new URL(`${MAPI}/spaces/${spaceId}/stories`);
+  const url = new URL(mapiPath(spaceId, "/stories"));
   url.searchParams.set("per_page", String(perPage));
   url.searchParams.set("page", String(page));
   url.searchParams.set("excluding_fields", "body");

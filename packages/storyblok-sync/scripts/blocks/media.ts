@@ -134,7 +134,7 @@ export const mediaBlocks: BlockDef[] = [
     color: "#38b2ac",
     preview_field: "videoUrl",
     schema: withSpacing({
-      video: field.asset("Video File", ["videos"]),
+      video: field.asset("Video File", ["videos"], { allow_external_url: true }),
       videoUrl: field.text("Video URL (YouTube/Vimeo)", {
         description: "Required for the YouTube/Vimeo sources; ignored for Native.",
         tooltip: true,

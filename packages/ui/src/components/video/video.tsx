@@ -9,6 +9,7 @@ import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
 import { CopyrightLabel, type CopyrightPosition } from "../copyright-label/copyright-label";
+import { resolveAspectRatio, resolveMediaAspectRatio } from "./lib";
 import { VideoControls } from "./video-controls";
 
 export type VideoSource = "native" | "youtube" | "vimeo";
@@ -27,6 +28,8 @@ export interface VideoProps extends Omit<VideoHTMLAttributes<HTMLVideoElement>, 
   /** Asset source/credit, shown as a second line below the copyright. */
   copyrightSource?: string;
   copyrightPosition?: CopyrightPosition;
+  mediaWidth?: number;
+  mediaHeight?: number;
   mediaRef?: RefObject<HTMLVideoElement | null>;
   css?: SystemStyleObject;
 }
@@ -74,6 +77,16 @@ const mediaClass = css({
   transition: "opacity 0.5s ease-in-out",
 });
 
+const intrinsicMediaClass = css({
+  display: "block",
+  w: "100%",
+  h: "auto",
+  border: "none",
+  transition: "opacity 0.5s ease-in-out",
+});
+
+const EMBED_DEFAULT_ASPECT_RATIO = "16/9";
+
 export const Video = forwardRef<HTMLDivElement, VideoProps>(
   (
     {
@@ -84,11 +97,13 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       autoPlay = false,
       loop = false,
       muted = false,
-      aspectRatio = "16/9",
-      objectFit = "contain",
+      aspectRatio,
+      objectFit = "cover",
       copyright,
       copyrightSource,
       copyrightPosition = "inline-white",
+      mediaWidth,
+      mediaHeight,
       mediaRef,
       className,
       style,
@@ -102,6 +117,13 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
     const [isLoading, setIsLoading] = useState(true);
     const prefersReducedMotion = useReducedMotion();
     const shouldAutoPlay = autoPlay && !prefersReducedMotion;
+    const isNative = source === "native";
+    const cmsAspectRatio = resolveAspectRatio(aspectRatio);
+    const mediaAspectRatio = resolveMediaAspectRatio(mediaWidth, mediaHeight);
+    const containerAspectRatio =
+      cmsAspectRatio ?? mediaAspectRatio ?? (isNative ? undefined : EMBED_DEFAULT_ASPECT_RATIO);
+    const useIntrinsicLayout = isNative && !containerAspectRatio;
+    const resolvedPoster = poster?.trim() ? poster.trim() : undefined;
 
     const handleReady = useCallback(() => setIsLoading(false), []);
 
@@ -157,7 +179,9 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
           <video
             ref={videoRef}
             src={src}
-            poster={poster}
+            poster={resolvedPoster}
+            width={useIntrinsicLayout ? mediaWidth : undefined}
+            height={useIntrinsicLayout ? mediaHeight : undefined}
             autoPlay={shouldAutoPlay}
             loop={loop}
             muted={muted}
@@ -166,8 +190,12 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
             onLoadedData={handleReady}
             onCanPlay={handleReady}
             onError={handleReady}
-            className={cx(mediaClass, className)}
-            style={{ opacity: isLoading ? 0 : 1, objectFit, ...style }}
+            className={cx(useIntrinsicLayout ? intrinsicMediaClass : mediaClass, className)}
+            style={{
+              opacity: isLoading ? 0 : 1,
+              ...(useIntrinsicLayout ? {} : { objectFit }),
+              ...style,
+            }}
             {...props}
           />
           <VideoControls videoRef={videoRef} show={controls} />
@@ -183,14 +211,17 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
             position: "relative",
             w: "100%",
             overflow: "hidden",
-            aspectRatio,
-            ...(source === "native" && {
-              background: `linear-gradient(135deg, ${token.var("colors.neutral.100")} 0%, ${token.var("colors.neutral.200")} 100%)`,
-            }),
+            ...(containerAspectRatio && { aspectRatio: containerAspectRatio }),
+            ...(isNative &&
+              !useIntrinsicLayout && {
+                background: `linear-gradient(135deg, ${token.var("colors.neutral.100")} 0%, ${token.var("colors.neutral.200")} 100%)`,
+              }),
             ...cssProp,
           }}
         >
-          <Box className={skeletonClass} style={{ opacity: isLoading ? 1 : 0 }} />
+          {!useIntrinsicLayout && (
+            <Box className={skeletonClass} style={{ opacity: isLoading ? 1 : 0 }} />
+          )}
           {media}
           {inline && (
             <CopyrightLabel

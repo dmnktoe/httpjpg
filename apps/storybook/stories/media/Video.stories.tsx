@@ -89,6 +89,21 @@ export const Vimeo: Story = {
 };
 
 /**
+ * Native video at its intrinsic aspect ratio (no fixed box)
+ */
+export const NativeIntrinsic: Story = {
+  tags: ["!test"],
+  args: {
+    src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
+    source: "native",
+    controls: true,
+    autoPlay: false,
+    loop: false,
+    muted: false,
+  },
+};
+
+/**
  * Native video with custom controls
  */
 export const Native: Story = {

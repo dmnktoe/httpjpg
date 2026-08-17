@@ -29,13 +29,31 @@ function resolveSrc(blok: SbVideoProps["blok"]): string {
   return blok.video?.filename || blok.videoUrl || "";
 }
 
+function resolveOptionalString(value?: string): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
+}
+
+function toDimension(value: unknown): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+    return value;
+  }
+  if (typeof value === "string") {
+    const parsed = Number.parseInt(value, 10);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+  return undefined;
+}
+
 export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
   const {
     source = "native",
     video,
     poster,
     caption,
-    aspectRatio = "16/9",
+    aspectRatio,
     controls = true,
     autoPlay,
     loop,
@@ -52,6 +70,9 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
   const viewer = useLightbox();
   const inlineRef = useRef<HTMLVideoElement | null>(null);
   const src = resolveSrc(blok);
+  const resolvedAspectRatio = resolveOptionalString(aspectRatio);
+  const mediaWidth = toDimension(video?.width);
+  const mediaHeight = toDimension(video?.height);
   const lightboxItem =
     lightbox && src && consent ? lightboxItemFromVideo(blok._uid, blok, src) : null;
 
@@ -75,8 +96,10 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
         <Video
           src={src}
           source={source}
-          poster={poster?.filename}
-          aspectRatio={aspectRatio}
+          poster={resolveOptionalString(poster?.filename)}
+          aspectRatio={resolvedAspectRatio}
+          mediaWidth={mediaWidth}
+          mediaHeight={mediaHeight}
           controls={controls}
           autoPlay={autoPlay}
           loop={loop}
@@ -132,8 +155,8 @@ function lightboxItemFromVideo(id: string, blok: SbVideoProps["blok"], src: stri
     copyrightSource: blok.video?.source || undefined,
     video: {
       source: blok.source,
-      poster: blok.poster?.filename,
-      aspectRatio: blok.aspectRatio ?? "16/9",
+      poster: resolveOptionalString(blok.poster?.filename),
+      aspectRatio: resolveOptionalString(blok.aspectRatio),
     },
   };
 }

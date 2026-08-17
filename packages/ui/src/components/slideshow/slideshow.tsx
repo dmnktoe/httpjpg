@@ -23,7 +23,7 @@ import {
   EFFECT_MODULES,
   isNearActive,
   resolveSlideIndex,
-  slideshowNavigationMode,
+  supportsLoop,
   SWIPER_CARDS_EFFECT,
   SWIPER_COVERFLOW_EFFECT,
   SWIPER_CREATIVE_EFFECT,
@@ -126,7 +126,8 @@ export function Slideshow({
   }, []);
 
   const handleSlideChange = useCallback((swiper: SwiperType) => {
-    setActiveIndex(resolveSlideIndex(swiper));
+    const nextIndex = resolveSlideIndex(swiper);
+    setActiveIndex((current) => (current === nextIndex ? current : nextIndex));
   }, []);
 
   const autoplayEnabled = images.length > 1 && !prefersReducedMotion;
@@ -149,16 +150,30 @@ export function Slideshow({
     [holdForVideo],
   );
 
-  const { loop, rewind } = slideshowNavigationMode(effect, images.length);
+  const loopEnabled = images.length > 1 && supportsLoop(effect);
+  const loopInitCorrectedRef = useRef(false);
 
   const handleSwiperInit = useCallback(
     (swiper: SwiperType) => {
       swiperRef.current = swiper;
-      const index = resolveSlideIndex(swiper);
-      setActiveIndex(index);
-      syncAutoplay(swiper, Boolean(images[index]?.videoUrl));
+      syncAutoplay(swiper, Boolean(images[resolveSlideIndex(swiper)]?.videoUrl));
     },
     [images, syncAutoplay],
+  );
+
+  const handleAfterInit = useCallback(
+    (swiper: SwiperType) => {
+      if (!loopEnabled || loopInitCorrectedRef.current) {
+        return;
+      }
+      if (resolveSlideIndex(swiper) === 0) {
+        return;
+      }
+      loopInitCorrectedRef.current = true;
+      swiper.slideToLoop(0, 0, false, true);
+      setActiveIndex(0);
+    },
+    [loopEnabled],
   );
 
   useEffect(() => {
@@ -198,29 +213,44 @@ export function Slideshow({
   return (
     <Box ref={rootRef} css={{ position: "relative", overflow: "visible", ...cssProp }} {...props}>
       <AnimateInView animation={animation} delay={animationDelay}>
-        <Swiper
-          modules={modules}
-          effect={effect}
-          speed={speed}
-          initialSlide={0}
-          spaceBetween={effect === "slide" ? 15 : 0}
-          autoHeight={effect === "fade"}
-          onSwiper={handleSwiperInit}
-          onSlideChange={handleSlideChange}
-          loop={loop}
-          rewind={rewind}
-          autoplay={
-            autoplayEnabled
-              ? { delay: autoplayDelay, disableOnInteraction: false, waitForTransition: false }
-              : false
+        <Box
+          css={
+            effect === "fade"
+              ? {
+                  "& .swiper-slide:not(.swiper-slide-active)": {
+                    opacity: "0 !important",
+                  },
+                }
+              : undefined
           }
-          fadeEffect={SWIPER_FADE_EFFECT}
-          cubeEffect={SWIPER_CUBE_EFFECT}
-          coverflowEffect={SWIPER_COVERFLOW_EFFECT}
-          flipEffect={SWIPER_FLIP_EFFECT}
-          cardsEffect={SWIPER_CARDS_EFFECT}
-          creativeEffect={SWIPER_CREATIVE_EFFECT}
         >
+          <Swiper
+            modules={modules}
+            effect={effect}
+            speed={speed}
+            spaceBetween={effect === "slide" ? 15 : 0}
+            roundLengths
+            onSwiper={handleSwiperInit}
+            onAfterInit={handleAfterInit}
+            onSlideChange={handleSlideChange}
+            loop={loopEnabled}
+            rewind={!loopEnabled && images.length > 1}
+            autoplay={
+              autoplayEnabled
+                ? {
+                    delay: autoplayDelay,
+                    disableOnInteraction: false,
+                    waitForTransition: true,
+                  }
+                : false
+            }
+            fadeEffect={SWIPER_FADE_EFFECT}
+            cubeEffect={SWIPER_CUBE_EFFECT}
+            coverflowEffect={SWIPER_COVERFLOW_EFFECT}
+            flipEffect={SWIPER_FLIP_EFFECT}
+            cardsEffect={SWIPER_CARDS_EFFECT}
+            creativeEffect={SWIPER_CREATIVE_EFFECT}
+          >
           {images.map((image, index) => (
             <SwiperSlide key={index} suppressHydrationWarning>
               <Box
@@ -283,7 +313,8 @@ export function Slideshow({
               </Box>
             </SwiperSlide>
           ))}
-        </Swiper>
+          </Swiper>
+        </Box>
       </AnimateInView>
 
       {showCounter && images.length > 1 && (

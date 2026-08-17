@@ -68,20 +68,9 @@ export const EFFECT_MODULES: Record<SwiperEffect, SwiperModule | undefined> = {
 
 const PRELOAD_RADIUS = 1;
 
-export interface SlideshowNavigationMode {
-  loop: boolean;
-  rewind: boolean;
-}
-
-/** Swiper loop duplicates slides, which breaks fade and can jump on init. */
-export function slideshowNavigationMode(
-  _effect: SwiperEffect,
-  slideCount: number,
-): SlideshowNavigationMode {
-  if (slideCount <= 1) {
-    return { loop: false, rewind: false };
-  }
-  return { loop: false, rewind: true };
+/** Fade stacks slides with opacity; loop duplicates break that effect. */
+export function supportsLoop(effect: SwiperEffect): boolean {
+  return effect !== "fade";
 }
 
 export function resolveSlideIndex(swiper: {

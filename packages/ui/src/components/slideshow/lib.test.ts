@@ -1,14 +1,13 @@
-import { resolveSlideIndex, slideshowNavigationMode } from "./lib";
+import { resolveSlideIndex, supportsLoop } from "./lib";
 
-describe("slideshowNavigationMode", () => {
-  it("disables loop and rewind for a single slide", () => {
-    expect(slideshowNavigationMode("slide", 1)).toEqual({ loop: false, rewind: false });
+describe("supportsLoop", () => {
+  it("allows loop for slide-style effects", () => {
+    expect(supportsLoop("slide")).toBe(true);
+    expect(supportsLoop("cube")).toBe(true);
   });
 
-  it("uses rewind instead of loop for multiple slides", () => {
-    expect(slideshowNavigationMode("slide", 3)).toEqual({ loop: false, rewind: true });
-    expect(slideshowNavigationMode("fade", 3)).toEqual({ loop: false, rewind: true });
-    expect(slideshowNavigationMode("cube", 3)).toEqual({ loop: false, rewind: true });
+  it("disables loop for fade", () => {
+    expect(supportsLoop("fade")).toBe(false);
   });
 });
 

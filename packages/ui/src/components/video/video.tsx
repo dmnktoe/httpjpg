@@ -74,6 +74,16 @@ const mediaClass = css({
   transition: "opacity 0.5s ease-in-out",
 });
 
+const intrinsicMediaClass = css({
+  display: "block",
+  w: "100%",
+  h: "auto",
+  border: "none",
+  transition: "opacity 0.5s ease-in-out",
+});
+
+const EMBED_DEFAULT_ASPECT_RATIO = "16/9";
+
 export const Video = forwardRef<HTMLDivElement, VideoProps>(
   (
     {
@@ -84,8 +94,8 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       autoPlay = false,
       loop = false,
       muted = false,
-      aspectRatio = "16/9",
-      objectFit = "contain",
+      aspectRatio,
+      objectFit = "cover",
       copyright,
       copyrightSource,
       copyrightPosition = "inline-white",
@@ -102,6 +112,10 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
     const [isLoading, setIsLoading] = useState(true);
     const prefersReducedMotion = useReducedMotion();
     const shouldAutoPlay = autoPlay && !prefersReducedMotion;
+    const isNative = source === "native";
+    const hasFixedAspectRatio = Boolean(aspectRatio);
+    const containerAspectRatio = aspectRatio ?? (isNative ? undefined : EMBED_DEFAULT_ASPECT_RATIO);
+    const useIntrinsicLayout = isNative && !hasFixedAspectRatio;
 
     const handleReady = useCallback(() => setIsLoading(false), []);
 
@@ -166,8 +180,12 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
             onLoadedData={handleReady}
             onCanPlay={handleReady}
             onError={handleReady}
-            className={cx(mediaClass, className)}
-            style={{ opacity: isLoading ? 0 : 1, objectFit, ...style }}
+            className={cx(useIntrinsicLayout ? intrinsicMediaClass : mediaClass, className)}
+            style={{
+              opacity: isLoading ? 0 : 1,
+              ...(useIntrinsicLayout ? {} : { objectFit }),
+              ...style,
+            }}
             {...props}
           />
           <VideoControls videoRef={videoRef} show={controls} />
@@ -183,14 +201,17 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
             position: "relative",
             w: "100%",
             overflow: "hidden",
-            aspectRatio,
-            ...(source === "native" && {
-              background: `linear-gradient(135deg, ${token.var("colors.neutral.100")} 0%, ${token.var("colors.neutral.200")} 100%)`,
-            }),
+            ...(containerAspectRatio && { aspectRatio: containerAspectRatio }),
+            ...(isNative &&
+              hasFixedAspectRatio && {
+                background: `linear-gradient(135deg, ${token.var("colors.neutral.100")} 0%, ${token.var("colors.neutral.200")} 100%)`,
+              }),
             ...cssProp,
           }}
         >
-          <Box className={skeletonClass} style={{ opacity: isLoading ? 1 : 0 }} />
+          {!useIntrinsicLayout && (
+            <Box className={skeletonClass} style={{ opacity: isLoading ? 1 : 0 }} />
+          )}
           {media}
           {inline && (
             <CopyrightLabel

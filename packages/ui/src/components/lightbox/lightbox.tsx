@@ -264,7 +264,7 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
                     src={item.src}
                     source={item.video.source}
                     poster={item.video.poster}
-                    aspectRatio={item.video.aspectRatio ?? "16/9"}
+                    aspectRatio={item.video.aspectRatio}
                     controls
                   />
                 </Box>

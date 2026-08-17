@@ -35,7 +35,7 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
     video,
     poster,
     caption,
-    aspectRatio = "16/9",
+    aspectRatio,
     controls = true,
     autoPlay,
     loop,
@@ -133,7 +133,7 @@ function lightboxItemFromVideo(id: string, blok: SbVideoProps["blok"], src: stri
     video: {
       source: blok.source,
       poster: blok.poster?.filename,
-      aspectRatio: blok.aspectRatio ?? "16/9",
+      aspectRatio: blok.aspectRatio,
     },
   };
 }

@@ -52,14 +52,22 @@ describe("Video", () => {
     expect(video.muted).toBe(true);
   });
 
-  it("defaults to object-fit contain and honors the objectFit prop", () => {
-    const { container: contained } = render(<Video src="/clip.mp4" controls={false} />);
-    expect(contained.querySelector("video")).toHaveStyle({ objectFit: "contain" });
-
+  it("defaults to object-fit cover when a fixed aspect ratio is set", () => {
     const { container: covered } = render(
-      <Video src="/clip.mp4" objectFit="cover" controls={false} />,
+      <Video src="/clip.mp4" aspectRatio="16/9" controls={false} />,
     );
     expect(covered.querySelector("video")).toHaveStyle({ objectFit: "cover" });
+
+    const { container: contained } = render(
+      <Video src="/clip.mp4" aspectRatio="16/9" objectFit="contain" controls={false} />,
+    );
+    expect(contained.querySelector("video")).toHaveStyle({ objectFit: "contain" });
+  });
+
+  it("uses intrinsic layout for native video without an aspect ratio", () => {
+    const { container } = render(<Video src="/clip.mp4" controls={false} />);
+    const video = container.querySelector("video") as HTMLVideoElement;
+    expect(video.style.objectFit).toBe("");
   });
 
   it("renders the native controls when controls are enabled", () => {

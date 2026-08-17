@@ -574,8 +574,8 @@ importers:
         specifier: workspace:*
         version: link:../tokens
       '@storyblok/schema':
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: ^0.4.0
+        version: 0.4.0
       dotenv:
         specifier: 'catalog:'
         version: 17.4.2
@@ -2906,8 +2906,8 @@ packages:
   '@storyblok/richtext@5.3.0':
     resolution: {integrity: sha512-UiJggZqBV7X4jg8/Z5I+WSFgnoIeobrx42K7BelvK9V0kXxY8hkpalcwcr1zE7HgRgeDF+jW0QPbtnYWY2jYgQ==}
 
-  '@storyblok/schema@0.3.0':
-    resolution: {integrity: sha512-a4Ys8h2+n6d+pkJqOkjrC0PxYy/NOPgqgIEtCrQPwanQceBRcfLdPxbxowpvKCEATWmGaUikmY+VfQBS76kKfA==}
+  '@storyblok/schema@0.4.0':
+    resolution: {integrity: sha512-pQ1mZJ1mjIdj1uXNjFhv07P7YKTIAdW29K1cERR4X8kNqEq98HViw1YlhJik9LvExBlPlp0ypKb/JjI2ocxHBw==}
 
   '@storybook/addon-docs@10.5.8':
     resolution: {integrity: sha512-NlHiMKW/UvW/uL8HXFDCEVwoH3qZeGYZ/qlWax4d7H471b/T54MBq2KcB4ZrdA785FfIH3numAJdBb5jwn00Mg==}
@@ -7613,7 +7613,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@storyblok/schema@0.3.0':
+  '@storyblok/schema@0.4.0':
     dependencies:
       '@standard-schema/spec': 1.1.0
       zod: 4.4.3

@@ -146,7 +146,7 @@ export const mediaBlocks: BlockDef[] = [
         default_value: "inline-white",
       }),
       ...tabbed("Layout", "layout", {
-        aspectRatio: field.options("Aspect Ratio", inlineOptions.aspectRatio),
+        aspectRatio: field.options("Aspect Ratio", inlineOptions.videoAspectRatio),
       }),
       ...tabbed("Playback", "playback", {
         controls: field.boolean("Show Controls", "true"),

@@ -95,6 +95,7 @@ const gridSpanScale = [
   "full",
 ] as const;
 const aspectRatioScale = ["16/9", "4/3", "1/1", "3/4", "9/16", "21/9"] as const;
+const videoAspectRatioScale = [...aspectRatioScale, "1920/200"] as const;
 const widthScale = ["sm", "md", "lg", "xl", "2xl", "fluid"] as const;
 const imageWidthScale = [
   "10%",
@@ -136,6 +137,7 @@ export const CMS_OPTIONS = {
   gridColumn: gridColumnScale,
   gridSpan: gridSpanScale,
   aspectRatio: aspectRatioScale,
+  videoAspectRatio: videoAspectRatioScale,
   width: widthScale,
   imageWidth: imageWidthScale,
   proseMaxWidth: proseMaxWidthScale,
@@ -154,6 +156,7 @@ export type CmsFontFamily = (typeof fontFamilyScale)[number];
 export type CmsGridColumn = (typeof gridColumnScale)[number];
 export type CmsGridSpan = (typeof gridSpanScale)[number];
 export type CmsAspectRatio = (typeof aspectRatioScale)[number];
+export type CmsVideoAspectRatio = (typeof videoAspectRatioScale)[number];
 export type CmsWidth = (typeof widthScale)[number];
 export type CmsImageWidth = (typeof imageWidthScale)[number];
 export type CmsProseMaxWidth = (typeof proseMaxWidthScale)[number];

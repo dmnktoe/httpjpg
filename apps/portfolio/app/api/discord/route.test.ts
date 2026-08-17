@@ -23,6 +23,8 @@ vi.mock("@/lib/rate-limit", () => ({ enforceRateLimit }));
 
 import type { NextRequest } from "next/server";
 
+import { API_ERROR } from "@/lib/api/errors";
+
 import { GET } from "./route";
 
 const request = {} as NextRequest;
@@ -51,7 +53,7 @@ describe("GET /api/discord", () => {
 
     expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({
-      error: "Discord User ID not configured",
+      error: API_ERROR.notConfigured,
     });
   });
 

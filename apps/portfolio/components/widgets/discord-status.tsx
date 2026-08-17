@@ -2,7 +2,9 @@
 
 import { Box } from "@httpjpg/ui";
 import { token } from "@httpjpg/ui/tokens";
-import { useEffect, useState } from "react";
+
+import { discordPresenceSchema } from "@/lib/api/schemas";
+import { useWidgetQuery } from "@/lib/api/use-widget-query";
 
 const STATUS_COLORS = {
   online: token.var("colors.success.500"),
@@ -19,31 +21,17 @@ const STATUS_EMOJI = {
 };
 
 export function DiscordStatus() {
-  const [status, setStatus] = useState<"online" | "idle" | "dnd" | "offline">("offline");
-  const [activity, setActivity] = useState<string | null>(null);
-  const [playtime, setPlaytime] = useState<string | null>(null);
-  const [activityIcon, setActivityIcon] = useState<string | null>(null);
+  const { data } = useWidgetQuery({
+    endpoint: "/api/discord",
+    schema: discordPresenceSchema,
+    label: "Discord status",
+    intervalMs: 30_000,
+  });
 
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        const response = await fetch("/api/discord");
-        if (response.ok) {
-          const data = await response.json();
-          setStatus(data.status || "offline");
-          setActivity(data.activity || null);
-          setPlaytime(data.activityDetails?.playtime || null);
-          setActivityIcon(data.activityDetails?.icon || null);
-        }
-      } catch (error) {
-        console.error("Failed to fetch Discord status:", error);
-      }
-    };
-
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  const status = data?.status ?? "offline";
+  const activity = data?.activity ?? null;
+  const playtime = data?.activityDetails?.type === "game" ? data.activityDetails.playtime : null;
+  const activityIcon = data?.activityDetails?.type === "game" ? data.activityDetails.icon : null;
 
   return (
     <Box

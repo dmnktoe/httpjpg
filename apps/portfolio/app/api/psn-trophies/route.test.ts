@@ -23,8 +23,13 @@ vi.mock("@httpjpg/storyblok-api", () => ({ getStoryblokApi }));
 vi.mock("@/lib/integrations/psn-trophies", () => ({ fetchRecentTrophies, isPsnUsername }));
 
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
+import { NextRequest } from "next/server";
+
+import { API_ERROR } from "@/lib/api/errors";
 
 import { GET } from "./route";
+
+const request = new NextRequest("http://localhost/api/psn-trophies");
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -43,10 +48,10 @@ describe("GET /api/psn-trophies", () => {
   it("returns 501 when PSN_NPSSO is not configured", async () => {
     mockEnv.PSN_NPSSO = undefined;
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(501);
-    await expect(response.json()).resolves.toMatchObject({ error: "PSN not configured" });
+    await expect(response.json()).resolves.toMatchObject({ error: API_ERROR.notConfigured });
     expect(fetchRecentTrophies).not.toHaveBeenCalled();
   });
 
@@ -58,7 +63,7 @@ describe("GET /api/psn-trophies", () => {
       avatar: "https://example.com/a.png",
     });
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toBe(
@@ -76,7 +81,7 @@ describe("GET /api/psn-trophies", () => {
     isPsnUsername.mockReturnValue(false);
     fetchRecentTrophies.mockResolvedValueOnce({ ok: true, trophies: [] });
 
-    await GET();
+    await GET(request);
 
     expect(fetchRecentTrophies).toHaveBeenCalledWith("npsso-token", undefined);
   });
@@ -85,7 +90,7 @@ describe("GET /api/psn-trophies", () => {
     getStory.mockRejectedValueOnce(new Error("storyblok down"));
     fetchRecentTrophies.mockResolvedValueOnce({ ok: true, trophies: [] });
 
-    await GET();
+    await GET(request);
 
     expect(fetchRecentTrophies).toHaveBeenCalledWith("npsso-token", undefined);
   });
@@ -94,7 +99,7 @@ describe("GET /api/psn-trophies", () => {
     getStory.mockResolvedValueOnce(undefined);
     fetchRecentTrophies.mockResolvedValueOnce({ ok: true, trophies: [] });
 
-    await GET();
+    await GET(request);
 
     expect(fetchRecentTrophies).toHaveBeenCalledWith("npsso-token", undefined);
   });
@@ -109,11 +114,12 @@ describe("GET /api/psn-trophies", () => {
       reportable: false,
     });
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(429);
     await expect(response.json()).resolves.toEqual({
-      error: "PSN trophies unavailable",
+      error: API_ERROR.upstream,
+      message: "rate limited",
       reason: "upstream",
     });
     expect(captureServerException).not.toHaveBeenCalled();
@@ -131,11 +137,12 @@ describe("GET /api/psn-trophies", () => {
       reportable: true,
     });
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toEqual({
-      error: "PSN trophies unavailable",
+      error: API_ERROR.upstream,
+      message: "NPSSO rejected",
       reason: "auth",
     });
     expect(captureServerException).toHaveBeenCalledWith(error, {
@@ -147,10 +154,13 @@ describe("GET /api/psn-trophies", () => {
     getStory.mockResolvedValueOnce({ content: {} });
     fetchRecentTrophies.mockRejectedValueOnce(new Error("boom"));
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(500);
-    await expect(response.json()).resolves.toEqual({ error: "Failed to fetch PSN trophies" });
+    await expect(response.json()).resolves.toEqual({
+      error: API_ERROR.internal,
+      message: "Request failed",
+    });
     expect(captureServerException).toHaveBeenCalledOnce();
   });
 
@@ -159,7 +169,7 @@ describe("GET /api/psn-trophies", () => {
     vi.mocked(draftMode).mockResolvedValueOnce({ isEnabled: true } as never);
     getStory.mockResolvedValueOnce({ content: { psn_username: "dmnktoe" } });
 
-    await GET();
+    await GET(request);
 
     expect(getStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
   });

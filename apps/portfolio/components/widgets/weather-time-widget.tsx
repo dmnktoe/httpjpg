@@ -4,6 +4,9 @@ import { env } from "@httpjpg/env";
 import { Box } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 
+import { weatherResponseSchema } from "@/lib/api/schemas";
+import { useWidgetQuery } from "@/lib/api/use-widget-query";
+
 const HOME_TIMEZONE = "Europe/Berlin";
 
 // The clock reads as "what time it is here", so it stays pinned to the site's home zone
@@ -43,44 +46,20 @@ function formatOffset(): string {
   return name.replace("GMT", "UTC");
 }
 
-interface Weather {
-  temperature: number;
-  emoji: string;
-  condition: string;
-}
-
 export function WeatherTime() {
   const [time, setTime] = useState<string | null>(null);
   const [offset, setOffset] = useState("");
-  const [weather, setWeather] = useState<Weather | null>(null);
+  const { data: weather } = useWidgetQuery({
+    endpoint: "/api/weather",
+    schema: weatherResponseSchema,
+    label: "weather",
+  });
 
   useEffect(() => {
     setOffset(formatOffset());
     setTime(formatTime());
     const interval = setInterval(() => setTime(formatTime()), 1000);
     return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const fetchCurrent = async () => {
-      try {
-        const response = await fetch("/api/weather");
-        if (response.ok) {
-          const data = await response.json();
-          if (typeof data?.emoji === "string") {
-            setWeather({
-              temperature: data.temperature,
-              emoji: data.emoji,
-              condition: data.condition ?? "",
-            });
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch weather:", error);
-      }
-    };
-
-    fetchCurrent();
   }, []);
 
   if (!time) {

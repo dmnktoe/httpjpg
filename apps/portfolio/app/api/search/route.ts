@@ -1,48 +1,26 @@
-import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { type NextRequest, NextResponse } from "next/server";
-
+import { jsonOk } from "@/lib/api/json";
+import { publicGet } from "@/lib/api/route";
+import { parseSearchParams } from "@/lib/api/schemas";
 import { getSearchIndex } from "@/lib/queries/search-index";
-import { enforceRateLimit } from "@/lib/rate-limit";
 import { rankDocuments, suggestCompletions } from "@/lib/search/ranking";
 
-const MAX_QUERY_LENGTH = 120;
-const DEFAULT_LIMIT = 8;
-const MAX_LIMIT = 20;
+export const GET = publicGet(
+  "search",
+  async ({ request }) => {
+    const { query, limit } = parseSearchParams(request.nextUrl.searchParams);
 
-function parseLimit(raw: string | null): number {
-  const parsed = Number.parseInt(raw ?? "", 10);
-  if (!Number.isFinite(parsed) || parsed < 1) {
-    return DEFAULT_LIMIT;
-  }
-  return Math.min(parsed, MAX_LIMIT);
-}
+    if (!query) {
+      return jsonOk({ results: [], suggestions: [] });
+    }
 
-export async function GET(request: NextRequest) {
-  const limited = await enforceRateLimit(request);
-  if (limited) {
-    return limited;
-  }
-
-  const query = (request.nextUrl.searchParams.get("q") ?? "").slice(0, MAX_QUERY_LENGTH).trim();
-  const limit = parseLimit(request.nextUrl.searchParams.get("limit"));
-
-  if (!query) {
-    return NextResponse.json({ results: [], suggestions: [] });
-  }
-
-  try {
     const documents = await getSearchIndex();
-
-    return NextResponse.json(
+    return jsonOk(
       {
         results: rankDocuments(documents, query, limit),
         suggestions: suggestCompletions(documents, query),
       },
-      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
+      { cache: { isDraft: false, maxAge: 300 } },
     );
-  } catch (error) {
-    console.error("Search API error:", error);
-    captureServerException(error, { tags: { route: "search" } });
-    return NextResponse.json({ error: "Search unavailable" }, { status: 500 });
-  }
-}
+  },
+  { withDraft: false },
+);

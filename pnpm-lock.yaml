@@ -60,6 +60,9 @@ catalogs:
     vitest:
       specifier: ^4.1.10
       version: 4.1.10
+    zod:
+      specifier: ^4.4.3
+      version: 4.4.3
 
 importers:
 
@@ -182,6 +185,9 @@ importers:
       sharp:
         specifier: ^0.35.3
         version: 0.35.3(@types/node@24.13.3)
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
     devDependencies:
       '@codecov/nextjs-webpack-plugin':
         specifier: ^2.0.1
@@ -417,7 +423,7 @@ importers:
         specifier: 'catalog:'
         version: 17.4.2
       zod:
-        specifier: ^4.4.3
+        specifier: 'catalog:'
         version: 4.4.3
     devDependencies:
       typescript:

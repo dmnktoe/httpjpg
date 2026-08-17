@@ -1,9 +1,9 @@
 "use client";
 
 import { Box } from "@httpjpg/ui";
-import { useEffect, useState } from "react";
 
-import type { LetterboxdFilm } from "@/lib/integrations/letterboxd";
+import { letterboxdResponseSchema } from "@/lib/api/schemas";
+import { useWidgetQuery } from "@/lib/api/use-widget-query";
 
 // Ratings are 0.5–5 in half steps (★★★★½).
 function formatRating(rating: number): string {
@@ -13,26 +13,12 @@ function formatRating(rating: number): string {
 }
 
 export function LetterboxdStatus() {
-  const [film, setFilm] = useState<LetterboxdFilm | null>(null);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    const fetchFilms = async () => {
-      try {
-        const response = await fetch("/api/letterboxd");
-        if (response.ok) {
-          const data = await response.json();
-          setFilm(data.films?.[0] ?? null);
-        }
-      } catch (error) {
-        console.error("Failed to fetch Letterboxd films:", error);
-      } finally {
-        setLoaded(true);
-      }
-    };
-
-    fetchFilms();
-  }, []);
+  const { data, loaded } = useWidgetQuery({
+    endpoint: "/api/letterboxd",
+    schema: letterboxdResponseSchema,
+    label: "Letterboxd films",
+  });
+  const film = data?.films[0] ?? null;
 
   // Hold the footer line with a loading label while the request is in flight so
   // it doesn't jump when the film pops in; collapse only once we know it's empty.

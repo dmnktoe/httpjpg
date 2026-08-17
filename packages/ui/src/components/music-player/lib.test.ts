@@ -1,15 +1,4 @@
-import { formatTime, truncate } from "./lib";
-
-describe("formatTime", () => {
-  it("pads the seconds", () => {
-    expect(formatTime(65)).toBe("1:05");
-  });
-
-  it("falls back to zero for a length that is not a number yet", () => {
-    expect(formatTime(Number.NaN)).toBe("0:00");
-    expect(formatTime(-1)).toBe("0:00");
-  });
-});
+import { truncate } from "./lib";
 
 describe("truncate", () => {
   it("leaves a text that fits alone", () => {

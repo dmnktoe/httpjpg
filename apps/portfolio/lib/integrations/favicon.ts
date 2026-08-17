@@ -168,8 +168,39 @@ async function readLimited(
     return null;
   }
 
-  const body = new Uint8Array(await response.arrayBuffer());
-  return body.byteLength > maxBytes ? null : body;
+  const reader = response.body?.getReader();
+  if (!reader) {
+    const body = new Uint8Array(await response.arrayBuffer());
+    return body.byteLength > maxBytes ? null : body;
+  }
+
+  const chunks: Uint8Array[] = [];
+  let read = 0;
+  try {
+    while (read <= maxBytes) {
+      const { done, value } = await reader.read();
+      if (done) {
+        break;
+      }
+      read += value.byteLength;
+      if (read > maxBytes) {
+        return null;
+      }
+      chunks.push(value);
+    }
+  } catch {
+    return null;
+  } finally {
+    await reader.cancel().catch(() => {});
+  }
+
+  const body = new Uint8Array(read);
+  let offset = 0;
+  for (const chunk of chunks) {
+    body.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return body;
 }
 
 export function sniffContentType(bytes: Uint8Array): string | null {

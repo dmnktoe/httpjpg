@@ -1,15 +1,14 @@
 const { useStoryblokState } = vi.hoisted(() => ({ useStoryblokState: vi.fn() }));
 
-vi.mock("@storyblok/react", () => ({ useStoryblokState }));
-
-vi.mock("@storyblok/react/rsc", () => ({
-  StoryblokServerComponent: ({ blok }: { blok: { component?: string } }) => (
+vi.mock("@storyblok/react", () => ({
+  useStoryblokState,
+  StoryblokComponent: ({ blok }: { blok: { component?: string } }) => (
     <div data-testid="blok">{blok?.component}</div>
   ),
 }));
 
 import type { ISbStoryData } from "@storyblok/react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 
 import { StoryblokLive } from "./storyblok-live";
 
@@ -37,20 +36,25 @@ describe("StoryblokLive", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("renders the live story and syncs the light theme", () => {
+  it("renders the live story and syncs the light theme after mount", async () => {
     useStoryblokState.mockReturnValue({ content: { component: "page" } });
 
     render(<StoryblokLive story={story} />);
 
-    expect(screen.getByTestId("blok")).toHaveTextContent("page");
+    await waitFor(() => {
+      expect(screen.getByTestId("blok")).toHaveTextContent("page");
+    });
     expect(document.documentElement.dataset.theme).toBe("light");
   });
 
-  it("syncs the dark theme for dark stories", () => {
+  it("syncs the dark theme for dark stories", async () => {
     useStoryblokState.mockReturnValue({ content: { component: "page", isDark: true } });
 
     render(<StoryblokLive story={story} />);
 
+    await waitFor(() => {
+      expect(screen.getByTestId("blok")).toHaveTextContent("page");
+    });
     expect(document.documentElement.dataset.theme).toBe("dark");
   });
 });

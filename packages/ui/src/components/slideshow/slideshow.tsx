@@ -22,6 +22,8 @@ import { Image } from "../image/image";
 import {
   EFFECT_MODULES,
   isNearActive,
+  resolveSlideIndex,
+  slideshowNavigationMode,
   SWIPER_CARDS_EFFECT,
   SWIPER_COVERFLOW_EFFECT,
   SWIPER_CREATIVE_EFFECT,
@@ -124,7 +126,7 @@ export function Slideshow({
   }, []);
 
   const handleSlideChange = useCallback((swiper: SwiperType) => {
-    setActiveIndex(swiper.realIndex ?? 0);
+    setActiveIndex(resolveSlideIndex(swiper));
   }, []);
 
   const autoplayEnabled = images.length > 1 && !prefersReducedMotion;
@@ -147,12 +149,27 @@ export function Slideshow({
     [holdForVideo],
   );
 
+  const { loop, rewind } = slideshowNavigationMode(effect, images.length);
+
   const handleSwiperInit = useCallback(
     (swiper: SwiperType) => {
       swiperRef.current = swiper;
-      syncAutoplay(swiper, Boolean(images[swiper.realIndex ?? 0]?.videoUrl));
+      const index = resolveSlideIndex(swiper);
+      setActiveIndex(index);
+      syncAutoplay(swiper, Boolean(images[index]?.videoUrl));
     },
     [images, syncAutoplay],
+  );
+
+  const handleAfterInit = useCallback(
+    (swiper: SwiperType) => {
+      if (!loop) {
+        return;
+      }
+      swiper.slideToLoop(0, 0);
+      setActiveIndex(resolveSlideIndex(swiper));
+    },
+    [loop],
   );
 
   useEffect(() => {
@@ -196,10 +213,14 @@ export function Slideshow({
           modules={modules}
           effect={effect}
           speed={speed}
-          spaceBetween={15}
+          initialSlide={0}
+          spaceBetween={effect === "slide" ? 15 : 0}
+          autoHeight={effect === "fade"}
           onSwiper={handleSwiperInit}
+          onAfterInit={handleAfterInit}
           onSlideChange={handleSlideChange}
-          loop={images.length > 1}
+          loop={loop}
+          rewind={rewind}
           autoplay={
             autoplayEnabled
               ? { delay: autoplayDelay, disableOnInteraction: false, waitForTransition: false }

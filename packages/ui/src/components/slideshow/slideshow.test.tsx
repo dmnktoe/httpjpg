@@ -117,6 +117,21 @@ afterEach(() => {
 });
 
 describe("Slideshow autoplay", () => {
+  it("starts on the first slide", () => {
+    const { container } = renderSlideshow([IMAGE_A, IMAGE_B], { autoplayDelay: NO_AUTOPLAY });
+
+    expect(activeSlide(container)).toBe("01");
+  });
+
+  it("starts on the first slide with fade effect", () => {
+    const { container } = renderSlideshow([IMAGE_A, IMAGE_B], {
+      effect: "fade",
+      autoplayDelay: NO_AUTOPLAY,
+    });
+
+    expect(activeSlide(container)).toBe("01");
+  });
+
   it("rotates through image slides on its own", async () => {
     const { container } = renderSlideshow([IMAGE_A, IMAGE_B]);
 

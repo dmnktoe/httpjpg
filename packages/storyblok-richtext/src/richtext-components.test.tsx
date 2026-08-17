@@ -20,6 +20,36 @@ describe("richTextComponents · text blocks", () => {
     expect(container.querySelector("p")).toHaveTextContent("hello");
   });
 
+  it("applies paragraph text alignment from Storyblok attrs", () => {
+    const { container: defaultContainer } = renderDoc([
+      { type: "paragraph", content: [text("left")] },
+    ]);
+    const defaultClass = defaultContainer.querySelector("p")?.className;
+
+    const { container } = renderDoc([
+      { type: "paragraph", attrs: { textAlign: "center" }, content: [text("centered")] },
+      { type: "paragraph", attrs: { textAlign: "right" }, content: [text("right")] },
+      { type: "paragraph", attrs: { textAlign: "justify" }, content: [text("justified")] },
+    ]);
+    const paragraphs = container.querySelectorAll("p");
+    expect(paragraphs[0]?.className).not.toBe(defaultClass);
+    expect(paragraphs[1]?.className).not.toBe(defaultClass);
+    expect(paragraphs[2]?.className).not.toBe(defaultClass);
+    expect(paragraphs[0]?.className).not.toBe(paragraphs[1]?.className);
+  });
+
+  it("ignores unknown paragraph text alignment values", () => {
+    const { container: defaultContainer } = renderDoc([
+      { type: "paragraph", content: [text("left")] },
+    ]);
+    const { container } = renderDoc([
+      { type: "paragraph", attrs: { textAlign: "start" }, content: [text("invalid")] },
+    ]);
+    expect(container.querySelector("p")?.className).toBe(
+      defaultContainer.querySelector("p")?.className,
+    );
+  });
+
   it("renders headings at the right level", () => {
     renderDoc([
       { type: "heading", attrs: { level: 1 }, content: [text("One")] },
@@ -34,6 +64,18 @@ describe("richTextComponents · text blocks", () => {
   it("keeps the semantic tag for headings deeper than level 3", () => {
     renderDoc([{ type: "heading", attrs: { level: 4 }, content: [text("Four")] }]);
     expect(screen.getByRole("heading", { level: 4, name: "Four" })).toBeInTheDocument();
+  });
+
+  it("applies heading text alignment from Storyblok attrs", () => {
+    const { container: defaultContainer } = renderDoc([
+      { type: "heading", attrs: { level: 2 }, content: [text("Left")] },
+    ]);
+    const { container } = renderDoc([
+      { type: "heading", attrs: { level: 2, textAlign: "center" }, content: [text("Centered")] },
+    ]);
+    expect(container.querySelector("h2")?.className).not.toBe(
+      defaultContainer.querySelector("h2")?.className,
+    );
   });
 
   it("renders ordered and unordered lists with items", () => {

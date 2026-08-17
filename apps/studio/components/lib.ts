@@ -238,10 +238,10 @@ export interface ExportedGrid {
 interface ExportedGridItem {
   component: "grid_item";
   _uid: string;
-  colStart: number;
+  colStart?: number;
   colStartMd?: number;
   colStartLg?: number;
-  rowStart: number;
+  rowStart?: number;
   rowStartMd?: number;
   rowStartLg?: number;
   colSpan: string;

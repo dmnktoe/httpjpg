@@ -1,4 +1,6 @@
 // @vitest-environment node
+import { describe, expect, it } from "vitest";
+
 import { mapiPath, resolveStudioAuth, STORYBLOK_MAPI } from "./mapi";
 
 describe("resolveStudioAuth", () => {

@@ -5,7 +5,8 @@
     "paths": {
       "@/*": ["./*"],
       "styled-system/*": ["../../packages/ui/styled-system/*"]
-    }
+    },
+    "types": ["node", "vitest/globals"]
   },
   "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

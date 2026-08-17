@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import {
   type BuilderItem,
   deserializeGrid,
@@ -116,7 +118,7 @@ describe("serializeGrid / deserializeGrid", () => {
           content: [{ component: "headline", _uid: "h-2", text: "B" }],
         },
       ],
-    } as ExportedGrid);
+    });
 
     expect(items[0]).toMatchObject({ x: 0, y: 0, w: 8 });
     expect(items[1]).toMatchObject({ x: 0, y: 1, w: 8 });

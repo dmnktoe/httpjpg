@@ -100,7 +100,7 @@ export default defineConfig({
           gridTemplateColumns,
           gridColumn: gridColumnValues,
           gridAutoFlow: CMS_OPTIONS.gridFlow,
-          aspectRatio: CMS_OPTIONS.aspectRatio,
+          aspectRatio: CMS_OPTIONS.videoAspectRatio,
           borderTopStyle: ["solid", "dashed", "dotted"],
           borderBottomStyle: ["solid", "dashed", "dotted"],
           maxWidth: [

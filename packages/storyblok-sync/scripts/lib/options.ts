@@ -17,6 +17,7 @@ const aspectRatioLabels: Record<string, string> = {
   "3/4": "3:4 (Portrait)",
   "9/16": "9:16 (Vertical)",
   "21/9": "21:9 (Ultrawide)",
+  "1920/200": "1920×200 (Stage Banner)",
 };
 
 const proseMaxWidthLabels: Record<string, string> = {
@@ -57,6 +58,10 @@ export const inlineOptions = {
   width: CMS_OPTIONS.width.map((value) => ({ name: widthLabels[value], value })),
   imageWidth: CMS_OPTIONS.imageWidth.map((value) => ({ name: value, value })),
   aspectRatio: CMS_OPTIONS.aspectRatio.map((value) => ({
+    name: aspectRatioLabels[value],
+    value,
+  })),
+  videoAspectRatio: CMS_OPTIONS.videoAspectRatio.map((value) => ({
     name: aspectRatioLabels[value],
     value,
   })),

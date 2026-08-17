@@ -3,6 +3,7 @@
 import { type RefObject, useEffect, useState } from "react";
 import { css } from "styled-system/css";
 
+import { formatTime } from "../../lib/format";
 import { Box } from "../box/box";
 
 export interface VideoControlsProps {
@@ -94,15 +95,6 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
     } else if (isMuted) {
       video.muted = false;
     }
-  };
-
-  const formatTime = (seconds: number) => {
-    if (!Number.isFinite(seconds)) {
-      return "0:00";
-    }
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   return (

@@ -5,12 +5,10 @@ describe("slideshowNavigationMode", () => {
     expect(slideshowNavigationMode("slide", 1)).toEqual({ loop: false, rewind: false });
   });
 
-  it("enables loop for the default slide effect", () => {
-    expect(slideshowNavigationMode("slide", 3)).toEqual({ loop: true, rewind: false });
-  });
-
-  it("uses rewind instead of loop for fade", () => {
+  it("uses rewind instead of loop for multiple slides", () => {
+    expect(slideshowNavigationMode("slide", 3)).toEqual({ loop: false, rewind: true });
     expect(slideshowNavigationMode("fade", 3)).toEqual({ loop: false, rewind: true });
+    expect(slideshowNavigationMode("cube", 3)).toEqual({ loop: false, rewind: true });
   });
 });
 

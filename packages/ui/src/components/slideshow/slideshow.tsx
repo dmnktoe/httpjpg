@@ -161,17 +161,6 @@ export function Slideshow({
     [images, syncAutoplay],
   );
 
-  const handleAfterInit = useCallback(
-    (swiper: SwiperType) => {
-      if (!loop) {
-        return;
-      }
-      swiper.slideToLoop(0, 0);
-      setActiveIndex(resolveSlideIndex(swiper));
-    },
-    [loop],
-  );
-
   useEffect(() => {
     syncAutoplay(swiperRef.current, isVideoSlideActive);
   }, [isVideoSlideActive, syncAutoplay]);
@@ -217,7 +206,6 @@ export function Slideshow({
           spaceBetween={effect === "slide" ? 15 : 0}
           autoHeight={effect === "fade"}
           onSwiper={handleSwiperInit}
-          onAfterInit={handleAfterInit}
           onSlideChange={handleSlideChange}
           loop={loop}
           rewind={rewind}

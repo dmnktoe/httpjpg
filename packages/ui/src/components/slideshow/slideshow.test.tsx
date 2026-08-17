@@ -132,6 +132,17 @@ describe("Slideshow autoplay", () => {
     expect(activeSlide(container)).toBe("01");
   });
 
+  it("does not advance before the autoplay delay", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const { container } = renderSlideshow([IMAGE_A, IMAGE_B], { autoplayDelay: AUTOPLAY_DELAY });
+
+    expect(activeSlide(container)).toBe("01");
+    await act(async () => {
+      vi.advanceTimersByTime(AUTOPLAY_DELAY - 1);
+    });
+    expect(activeSlide(container)).toBe("01");
+  });
+
   it("rotates through image slides on its own", async () => {
     const { container } = renderSlideshow([IMAGE_A, IMAGE_B]);
 

@@ -68,25 +68,20 @@ export const EFFECT_MODULES: Record<SwiperEffect, SwiperModule | undefined> = {
 
 const PRELOAD_RADIUS = 1;
 
-/** Fade stacks slides with opacity; Swiper loop duplicates break that. */
-const LOOP_UNSUPPORTED_EFFECTS = new Set<SwiperEffect>(["fade"]);
-
 export interface SlideshowNavigationMode {
   loop: boolean;
   rewind: boolean;
 }
 
+/** Swiper loop duplicates slides, which breaks fade and can jump on init. */
 export function slideshowNavigationMode(
-  effect: SwiperEffect,
+  _effect: SwiperEffect,
   slideCount: number,
 ): SlideshowNavigationMode {
   if (slideCount <= 1) {
     return { loop: false, rewind: false };
   }
-  if (LOOP_UNSUPPORTED_EFFECTS.has(effect)) {
-    return { loop: false, rewind: true };
-  }
-  return { loop: true, rewind: false };
+  return { loop: false, rewind: true };
 }
 
 export function resolveSlideIndex(swiper: {

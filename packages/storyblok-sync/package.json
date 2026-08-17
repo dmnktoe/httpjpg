@@ -26,7 +26,7 @@
     "@httpjpg/storyblok-utils": "workspace:*",
     "@httpjpg/terminal": "workspace:*",
     "@httpjpg/tokens": "workspace:*",
-    "@storyblok/schema": "^0.3.0",
+    "@storyblok/schema": "^0.4.0",
     "dotenv": "catalog:"
   },
   "devDependencies": {

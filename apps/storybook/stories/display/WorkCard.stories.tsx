@@ -4,9 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { MOCK_TAGGED_WORK, OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
 /**
- * WorkCard component stories
- *
- * Individual portfolio work card with slideshow, animated title, and project details.
+ * One work entry: media, title, date, tags. Headlines stay below page widgets.
  */
 const meta = {
   title: "Display/WorkCard",

@@ -43,7 +43,7 @@ const meta: Meta<typeof Video> = {
     },
     copyrightPosition: {
       control: "select",
-      options: ["below", "overlay"],
+      options: ["below", "overlay", "inline-black", "inline-white"],
       description: "Copyright text position",
     },
   },
@@ -65,7 +65,7 @@ export const YouTube: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2025 YouTube Video",
+    copyright: "2025 YouTube Video",
     copyrightPosition: "below",
   },
 };
@@ -83,7 +83,7 @@ export const Vimeo: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2025 Vimeo Video",
+    copyright: "2025 Vimeo Video",
     copyrightPosition: "below",
   },
 };
@@ -117,7 +117,7 @@ export const Native: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2008 Blender Foundation | www.bigbuckbunny.org",
+    copyright: "2008 Blender Foundation | www.bigbuckbunny.org",
     copyrightPosition: "below",
   },
 };
@@ -136,7 +136,7 @@ export const NativeWithCopyrightSource: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2008 Blender Foundation",
+    copyright: "2008 Blender Foundation",
     copyrightSource: "peach.blender.org",
     copyrightPosition: "below",
   },
@@ -156,7 +156,7 @@ export const NativeWithOverlayCopyright: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2008 Blender Foundation",
+    copyright: "2008 Blender Foundation",
     copyrightPosition: "overlay",
   },
 };

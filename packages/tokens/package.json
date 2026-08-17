@@ -35,6 +35,22 @@
       "types": "./src/shadows.ts",
       "import": "./src/shadows.ts"
     },
+    "./opacity": {
+      "types": "./src/opacity.ts",
+      "import": "./src/opacity.ts"
+    },
+    "./sizes": {
+      "types": "./src/sizes.ts",
+      "import": "./src/sizes.ts"
+    },
+    "./transitions": {
+      "types": "./src/transitions.ts",
+      "import": "./src/transitions.ts"
+    },
+    "./z-index": {
+      "types": "./src/z-index.ts",
+      "import": "./src/z-index.ts"
+    },
     "./dist/tokens.css": "./dist/tokens.css"
   },
   "scripts": {

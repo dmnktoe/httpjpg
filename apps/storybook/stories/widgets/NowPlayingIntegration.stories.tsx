@@ -55,10 +55,8 @@ const meta = {
 export default meta;
 
 /**
- * Live Spotify Data with Vibrant Color
- * Fetches real data from Spotify API and automatically extracts vibrant color from album artwork
- * Component now handles color extraction internally - no manual state management needed!
- * Requires dev server running with SPOTIFY credentials in .env.local
+ * Live Spotify poll. Needs the portfolio dev server and Spotify credentials.
+ * Color extraction is internal — do not pass a glow from here.
  */
 export const LiveData = {
   render: () => {

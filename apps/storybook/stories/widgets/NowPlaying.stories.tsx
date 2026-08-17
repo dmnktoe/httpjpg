@@ -6,10 +6,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
 /**
- * NowPlaying component stories
- *
- * Draggable floating widget with Spotify-inspired glassmorphism design.
- * Features crisp album artwork and iOS-style marquee for long text.
+ * Draggable now-playing chip. Long titles marquee; glow comes from album art.
  */
 const meta = {
   title: "Widgets/NowPlaying",

@@ -13,10 +13,7 @@ const ICON_NAMES: IconName[] = [
 ];
 
 /**
- * Icon component stories
- *
- * Centralized icon system with SVG icons. All icons are scalable
- * and inherit the current text color.
+ * SVG icons from the set. Inherit `currentColor`; size follows font-size unless set.
  */
 const meta = {
   title: "Display/Icon",

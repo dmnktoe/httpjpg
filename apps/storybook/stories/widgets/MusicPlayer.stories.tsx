@@ -3,6 +3,10 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
+/**
+ * Embed (Spotify / SoundCloud) or local MP3. Spotify and SoundCloud stay
+ * out of the page-wide audio queue.
+ */
 const meta: Meta<typeof MusicPlayer> = {
   title: "Widgets/MusicPlayer",
   component: MusicPlayer,
@@ -134,10 +138,7 @@ export const MP3Player: Story = {
 };
 
 /**
- * Minimal MP3 player
- *
- * MP3 player without artwork, showing only controls and minimal info.
- * Perfect for clean, text-focused layouts.
+ * MP3 player without artwork — controls and track info only.
  */
 export const MinimalMP3: Story = {
   args: {

@@ -2,10 +2,7 @@ import { Box, Headline, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
 /**
- * Box component stories
- *
- * Generic container component - the building block for all layouts.
- * Use it as a semantic wrapper with proper styling.
+ * Layout primitive. Pass `css` for one-off styles; `as` changes the element.
  */
 const meta = {
   title: "Layout/Box",

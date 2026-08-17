@@ -2,11 +2,7 @@ import { Box, Footer, Link, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
 /**
- * Footer component stories
- *
- * Generic site footer with background texture support and flexible widget area.
- * The footer is designed to be composable - pass custom content via children
- * or use the default layout with links, widgets, and copyright text.
+ * Site footer. Pass widgets as children; texture is optional.
  */
 const meta = {
   title: "Navigation/Footer",

@@ -2,10 +2,7 @@ import { Box, Headline, MouseTrail, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
 /**
- * MouseTrail component stories
- *
- * ASCII trails that follow the cursor for interactive brutalist backgrounds.
- * Creates fading particle effects with customizable characters.
+ * ASCII particles that follow the pointer. Honors `prefers-reduced-motion`.
  */
 const meta = {
   title: "Motion/MouseTrail",

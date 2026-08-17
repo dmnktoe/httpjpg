@@ -62,6 +62,8 @@ export interface StoryblokImage {
   fieldtype?: "asset";
   content_type?: string;
   is_external_url?: boolean;
+  width?: number | null;
+  height?: number | null;
 }
 
 export interface StoryblokLink {

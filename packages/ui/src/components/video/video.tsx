@@ -9,6 +9,7 @@ import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
 import { CopyrightLabel, type CopyrightPosition } from "../copyright-label/copyright-label";
+import { resolveAspectRatio, resolveMediaAspectRatio } from "./lib";
 import { VideoControls } from "./video-controls";
 
 export type VideoSource = "native" | "youtube" | "vimeo";
@@ -27,6 +28,8 @@ export interface VideoProps extends Omit<VideoHTMLAttributes<HTMLVideoElement>, 
   /** Asset source/credit, shown as a second line below the copyright. */
   copyrightSource?: string;
   copyrightPosition?: CopyrightPosition;
+  mediaWidth?: number;
+  mediaHeight?: number;
   mediaRef?: RefObject<HTMLVideoElement | null>;
   css?: SystemStyleObject;
 }
@@ -99,6 +102,8 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       copyright,
       copyrightSource,
       copyrightPosition = "inline-white",
+      mediaWidth,
+      mediaHeight,
       mediaRef,
       className,
       style,
@@ -113,9 +118,12 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
     const prefersReducedMotion = useReducedMotion();
     const shouldAutoPlay = autoPlay && !prefersReducedMotion;
     const isNative = source === "native";
-    const hasFixedAspectRatio = Boolean(aspectRatio);
-    const containerAspectRatio = aspectRatio ?? (isNative ? undefined : EMBED_DEFAULT_ASPECT_RATIO);
-    const useIntrinsicLayout = isNative && !hasFixedAspectRatio;
+    const cmsAspectRatio = resolveAspectRatio(aspectRatio);
+    const mediaAspectRatio = resolveMediaAspectRatio(mediaWidth, mediaHeight);
+    const containerAspectRatio =
+      cmsAspectRatio ?? mediaAspectRatio ?? (isNative ? undefined : EMBED_DEFAULT_ASPECT_RATIO);
+    const useIntrinsicLayout = isNative && !containerAspectRatio;
+    const resolvedPoster = poster?.trim() ? poster.trim() : undefined;
 
     const handleReady = useCallback(() => setIsLoading(false), []);
 
@@ -171,7 +179,9 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
           <video
             ref={videoRef}
             src={src}
-            poster={poster}
+            poster={resolvedPoster}
+            width={useIntrinsicLayout ? mediaWidth : undefined}
+            height={useIntrinsicLayout ? mediaHeight : undefined}
             autoPlay={shouldAutoPlay}
             loop={loop}
             muted={muted}
@@ -203,7 +213,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
             overflow: "hidden",
             ...(containerAspectRatio && { aspectRatio: containerAspectRatio }),
             ...(isNative &&
-              hasFixedAspectRatio && {
+              !useIntrinsicLayout && {
                 background: `linear-gradient(135deg, ${token.var("colors.neutral.100")} 0%, ${token.var("colors.neutral.200")} 100%)`,
               }),
             ...cssProp,

@@ -70,6 +70,23 @@ describe("Video", () => {
     expect(video.style.objectFit).toBe("");
   });
 
+  it("treats an empty aspect ratio like unset", () => {
+    const { container } = render(<Video src="/clip.mp4" aspectRatio="" controls={false} />);
+    const video = container.querySelector("video") as HTMLVideoElement;
+    expect(video.style.objectFit).toBe("");
+    expect(
+      container.querySelector('[class*="pos_absolute"][class*="inset_0"][class*="z_1"]'),
+    ).toBeNull();
+  });
+
+  it("uses asset dimensions to size the container when no cms ratio is set", () => {
+    const { container } = render(
+      <Video src="/banner.mp4" mediaWidth={1920} mediaHeight={200} controls={false} />,
+    );
+    const video = container.querySelector("video") as HTMLVideoElement;
+    expect(video.style.objectFit).toBe("cover");
+  });
+
   it("renders the native controls when controls are enabled", () => {
     render(<Video src="/clip.mp4" />);
     expect(screen.getByLabelText("Seek")).toBeInTheDocument();

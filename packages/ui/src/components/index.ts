@@ -35,7 +35,6 @@ export * from "./lightbox/lightbox-context";
 export * from "./lightbox/lightbox-provider";
 export * from "./lightbox/lightbox-trigger";
 export * from "./lightbox/use-lightbox";
-export * from "./lightbox/use-page-theme";
 export * from "./link/link";
 export * from "./list/list-item";
 export * from "./list/ordered-list";

@@ -204,32 +204,7 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
                   value={currentTime}
                   onChange={handleSeek}
                   aria-label="Seek"
-                  className={css({
-                    w: "full",
-                    h: "4px",
-                    background: "neutral.200",
-                    borderRadius: "full",
-                    outline: "none",
-                    appearance: "none",
-                    cursor: "pointer",
-                    _hover: { background: "neutral.300" },
-                    "&::-webkit-slider-thumb": {
-                      w: "12px",
-                      h: "12px",
-                      background: "neutral.900",
-                      borderRadius: "full",
-                      appearance: "none",
-                      cursor: "pointer",
-                    },
-                    "&::-moz-range-thumb": {
-                      w: "12px",
-                      h: "12px",
-                      background: "neutral.900",
-                      border: "none",
-                      borderRadius: "full",
-                      cursor: "pointer",
-                    },
-                  })}
+                  className={rangeInputClass("seek")}
                 />
               </Box>
 
@@ -261,32 +236,7 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
                 step="0.01"
                 value={volume}
                 onChange={handleVolumeChange}
-                className={css({
-                  flex: 1,
-                  h: "3px",
-                  background: "neutral.200",
-                  borderRadius: "full",
-                  outline: "none",
-                  appearance: "none",
-                  cursor: "pointer",
-                  _hover: { background: "neutral.300" },
-                  "&::-webkit-slider-thumb": {
-                    w: "10px",
-                    h: "10px",
-                    background: "neutral.900",
-                    borderRadius: "full",
-                    appearance: "none",
-                    cursor: "pointer",
-                  },
-                  "&::-moz-range-thumb": {
-                    w: "10px",
-                    h: "10px",
-                    background: "neutral.900",
-                    border: "none",
-                    borderRadius: "full",
-                    cursor: "pointer",
-                  },
-                })}
+                className={rangeInputClass("volume")}
                 aria-label="Volume"
               />
               <Box css={{ minW: "30px", opacity: 60, fontSize: "xs", textAlign: "right" }}>
@@ -301,3 +251,35 @@ export const MP3Player = forwardRef<HTMLDivElement, MP3PlayerProps>(
 );
 
 MP3Player.displayName = "MP3Player";
+
+function rangeInputClass(kind: "seek" | "volume"): string {
+  const isSeek = kind === "seek";
+  const thumb = isSeek ? "12px" : "10px";
+  return css({
+    flex: isSeek ? undefined : 1,
+    w: isSeek ? "full" : undefined,
+    h: isSeek ? "4px" : "3px",
+    background: "neutral.200",
+    borderRadius: "full",
+    outline: "none",
+    appearance: "none",
+    cursor: "pointer",
+    _hover: { background: "neutral.300" },
+    "&::-webkit-slider-thumb": {
+      w: thumb,
+      h: thumb,
+      background: "neutral.900",
+      borderRadius: "full",
+      appearance: "none",
+      cursor: "pointer",
+    },
+    "&::-moz-range-thumb": {
+      w: thumb,
+      h: thumb,
+      background: "neutral.900",
+      border: "none",
+      borderRadius: "full",
+      cursor: "pointer",
+    },
+  });
+}

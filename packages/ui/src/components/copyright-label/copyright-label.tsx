@@ -7,12 +7,21 @@ import { Box } from "../box/box";
 export type CopyrightPosition = "below" | "overlay" | "inline-black" | "inline-white";
 
 export interface CopyrightLabelProps {
-  /** Copyright text; the © symbol is prepended automatically. */
+  /** Copyright text; the © symbol is prepended unless it is already present. */
   text?: string;
   /** Asset source/credit, rendered on its own line below the copyright. */
   source?: string;
   position?: CopyrightPosition;
   css?: SystemStyleObject;
+}
+
+export function isInlineCopyright(position: CopyrightPosition): boolean {
+  return position !== "below";
+}
+
+function formatCopyright(text: string): string {
+  const trimmed = text.trim();
+  return trimmed.startsWith("©") ? trimmed : `© ${trimmed}`;
 }
 
 export function CopyrightLabel({
@@ -27,7 +36,7 @@ export function CopyrightLabel({
 
   const lines = (
     <>
-      {text ? <>© {text}</> : null}
+      {text ? <>{formatCopyright(text)}</> : null}
       {source ? (
         <Box as="span" css={{ display: "block" }}>
           {source}

@@ -4,7 +4,6 @@ import { useReducedMotion } from "motion/react";
 import type { RefObject, VideoHTMLAttributes } from "react";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { css, cx } from "styled-system/css";
-import { token } from "styled-system/tokens";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
@@ -58,13 +57,25 @@ const skeletonClass = css({
   zIndex: 1,
   w: "100%",
   h: "100%",
-  bg: `linear-gradient(90deg, ${token.var("colors.neutral.100")} 0%, ${token.var("colors.neutral.200")} 50%, ${token.var("colors.neutral.100")} 100%)`,
+  bg: "linear-gradient(90deg, var(--colors-neutral-200) 0%, var(--colors-neutral-300) 50%, var(--colors-neutral-200) 100%)",
   backgroundSize: "200% 100%",
   transition: "opacity 0.5s ease-in-out",
   animation: "shimmer 1.5s ease-in-out infinite",
   pointerEvents: "none",
+  _pageDark: {
+    bg: "linear-gradient(90deg, var(--colors-neutral-800) 0%, var(--colors-neutral-700) 50%, var(--colors-neutral-800) 100%)",
+  },
   "@media (prefers-reduced-motion: reduce)": {
     animation: "none",
+  },
+});
+
+const nativeFrameClass = css({
+  background:
+    "linear-gradient(135deg, var(--colors-neutral-100) 0%, var(--colors-neutral-200) 100%)",
+  _pageDark: {
+    background:
+      "linear-gradient(135deg, var(--colors-neutral-900) 0%, var(--colors-neutral-800) 100%)",
   },
 });
 
@@ -207,15 +218,12 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       <>
         <Box
           ref={ref}
+          className={isNative && !useIntrinsicLayout ? nativeFrameClass : undefined}
           css={{
             position: "relative",
             w: "100%",
             overflow: "hidden",
             ...(containerAspectRatio && { aspectRatio: containerAspectRatio }),
-            ...(isNative &&
-              !useIntrinsicLayout && {
-                background: `linear-gradient(135deg, ${token.var("colors.neutral.100")} 0%, ${token.var("colors.neutral.200")} 100%)`,
-              }),
             ...cssProp,
           }}
         >

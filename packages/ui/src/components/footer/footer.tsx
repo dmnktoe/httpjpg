@@ -27,9 +27,6 @@ export interface FooterProps {
   showVersion?: boolean;
   version?: string;
   versionHref?: string;
-  /** Credit link shown next to the version line. */
-  visualTestingHref?: string;
-  visualTestingLabel?: string;
   lastUpdated?: string;
   css?: SystemStyleObject;
 }
@@ -48,8 +45,6 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       showVersion = false,
       version,
       versionHref,
-      visualTestingHref,
-      visualTestingLabel = "Argos",
       lastUpdated,
       css: cssProp,
       ...props
@@ -152,7 +147,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
 
               {copyrightText && <Box as="span">{copyrightText}</Box>}
 
-              {(widgets || copyrightText || showVersion || visualTestingHref) && (
+              {(widgets || copyrightText || showVersion) && (
                 <Box as="span" css={{ my: "6" }}>
                   {ASCII_DIVIDER_STARS}
                 </Box>
@@ -160,7 +155,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
 
               {widgets && <Box css={{ w: "full" }}>{widgets}</Box>}
 
-              {(showVersion || visualTestingHref) && (
+              {showVersion && (
                 <Box
                   as="span"
                   css={{
@@ -170,39 +165,13 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                     letterSpacing: "0.05em",
                   }}
                 >
-                  {showVersion && (
-                    <>
-                      {lastUpdated && `↻ ${lastUpdated}`}
-                      {lastUpdated && version && " // ✦ // "}
-                      {version ? (
-                        versionHref ? (
-                          <Box
-                            as="a"
-                            href={versionHref}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            css={{
-                              color: "inherit",
-                              textDecoration: "none",
-                              _hover: { textDecoration: "underline" },
-                            }}
-                          >
-                            {version}
-                          </Box>
-                        ) : (
-                          version
-                        )
-                      ) : (
-                        "v-dev"
-                      )}
-                    </>
-                  )}
-                  {visualTestingHref && (
-                    <>
-                      {showVersion && " // "}
+                  {lastUpdated && `↻ ${lastUpdated}`}
+                  {lastUpdated && version && " // ✦ // "}
+                  {version ? (
+                    versionHref ? (
                       <Box
                         as="a"
-                        href={visualTestingHref}
+                        href={versionHref}
                         target="_blank"
                         rel="noopener noreferrer"
                         css={{
@@ -211,9 +180,13 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                           _hover: { textDecoration: "underline" },
                         }}
                       >
-                        {visualTestingLabel}
+                        {version}
                       </Box>
-                    </>
+                    ) : (
+                      version
+                    )
+                  ) : (
+                    "v-dev"
                   )}
                 </Box>
               )}

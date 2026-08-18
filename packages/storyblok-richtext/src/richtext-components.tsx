@@ -11,8 +11,21 @@ import {
 } from "@httpjpg/ui";
 import type { SbReactRichTextComponentMap, SbReactRichTextProps } from "@storyblok/react/rsc";
 
-function ParagraphRenderer({ children }: SbReactRichTextProps<"paragraph">) {
-  return <Paragraph spacing>{children}</Paragraph>;
+type RichTextAlign = "left" | "center" | "right" | "justify";
+
+function resolveTextAlign(value: unknown): RichTextAlign | undefined {
+  if (value === "left" || value === "center" || value === "right" || value === "justify") {
+    return value;
+  }
+  return undefined;
+}
+
+function ParagraphRenderer({ attrs, children }: SbReactRichTextProps<"paragraph">) {
+  return (
+    <Paragraph spacing align={resolveTextAlign(attrs?.textAlign)}>
+      {children}
+    </Paragraph>
+  );
 }
 
 function HeadingRenderer({ attrs, children }: SbReactRichTextProps<"heading">) {
@@ -20,7 +33,13 @@ function HeadingRenderer({ attrs, children }: SbReactRichTextProps<"heading">) {
   const headlineLevel = (level <= 3 ? level : 3) as 1 | 2 | 3;
   const tag = level > 3 ? (`h${level}` as "h4" | "h5" | "h6") : undefined;
   return (
-    <Headline level={headlineLevel} as={tag} marginTop="6" marginBottom="3">
+    <Headline
+      level={headlineLevel}
+      as={tag}
+      marginTop="6"
+      marginBottom="3"
+      align={resolveTextAlign(attrs?.textAlign)}
+    >
       {children}
     </Headline>
   );

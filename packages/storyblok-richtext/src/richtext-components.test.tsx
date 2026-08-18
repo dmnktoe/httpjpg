@@ -1,3 +1,4 @@
+import { Headline, Paragraph } from "@httpjpg/ui";
 import { render, screen } from "@testing-library/react";
 
 import { type ISbRichtext, renderStoryblokRichText } from "./richtext";
@@ -14,10 +15,73 @@ function text(value: string, marks?: unknown[]) {
   return { type: "text", text: value, ...(marks ? { marks } : {}) };
 }
 
+type TextAlign = "left" | "center" | "right" | "justify";
+
+function referenceParagraphClass(align?: TextAlign) {
+  const { container } = render(
+    <Paragraph spacing align={align}>
+      aligned
+    </Paragraph>,
+  );
+  return container.querySelector("p")?.className;
+}
+
+function referenceHeadlineClass(align?: TextAlign) {
+  const { container } = render(
+    <Headline level={2} marginTop="6" marginBottom="3" align={align}>
+      aligned
+    </Headline>,
+  );
+  return container.querySelector("h2")?.className;
+}
+
+function paragraphClassName(textAlign?: TextAlign) {
+  const { container } = renderDoc([
+    {
+      type: "paragraph",
+      ...(textAlign ? { attrs: { textAlign } } : {}),
+      content: [text("aligned")],
+    },
+  ]);
+  return container.querySelector("p")?.className;
+}
+
+function headingClassName(textAlign?: TextAlign) {
+  const { container } = renderDoc([
+    {
+      type: "heading",
+      attrs: { level: 2, ...(textAlign ? { textAlign } : {}) },
+      content: [text("aligned")],
+    },
+  ]);
+  return container.querySelector("h2")?.className;
+}
+
 describe("richTextComponents · text blocks", () => {
   it("renders a paragraph", () => {
     const { container } = renderDoc([{ type: "paragraph", content: [text("hello")] }]);
     expect(container.querySelector("p")).toHaveTextContent("hello");
+  });
+
+  it("applies paragraph text alignment from Storyblok attrs", () => {
+    for (const align of ["center", "right", "justify"] as const) {
+      expect(paragraphClassName(align)).toBe(referenceParagraphClass(align));
+    }
+
+    expect(paragraphClassName()).toBe(referenceParagraphClass("left"));
+    expect(paragraphClassName("left")).toBe(referenceParagraphClass("left"));
+  });
+
+  it("ignores unknown paragraph text alignment values", () => {
+    const { container: defaultContainer } = renderDoc([
+      { type: "paragraph", content: [text("left")] },
+    ]);
+    const { container } = renderDoc([
+      { type: "paragraph", attrs: { textAlign: "start" }, content: [text("invalid")] },
+    ]);
+    expect(container.querySelector("p")?.className).toBe(
+      defaultContainer.querySelector("p")?.className,
+    );
   });
 
   it("renders headings at the right level", () => {
@@ -34,6 +98,14 @@ describe("richTextComponents · text blocks", () => {
   it("keeps the semantic tag for headings deeper than level 3", () => {
     renderDoc([{ type: "heading", attrs: { level: 4 }, content: [text("Four")] }]);
     expect(screen.getByRole("heading", { level: 4, name: "Four" })).toBeInTheDocument();
+  });
+
+  it("applies heading text alignment from Storyblok attrs", () => {
+    for (const align of ["center", "right", "justify"] as const) {
+      expect(headingClassName(align)).toBe(referenceHeadlineClass(align));
+    }
+
+    expect(headingClassName()).toBe(referenceHeadlineClass(undefined));
   });
 
   it("renders ordered and unordered lists with items", () => {

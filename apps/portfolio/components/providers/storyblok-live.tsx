@@ -21,7 +21,11 @@ function useHasMounted() {
   return useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
 }
 
-export function StoryblokLive({ story: initialStory }: { story: ISbStoryData }) {
+export interface StoryblokLiveProps {
+  story: ISbStoryData;
+}
+
+export function StoryblokLive({ story: initialStory }: StoryblokLiveProps) {
   const hasMounted = useHasMounted();
   const story = useStoryblokState(initialStory);
 

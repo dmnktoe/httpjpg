@@ -1,10 +1,21 @@
+interface MockBlok {
+  component?: string;
+  isDark?: boolean;
+}
+
+interface MockStoryblokComponentProps {
+  blok: MockBlok;
+}
+
+function MockStoryblokComponent({ blok }: MockStoryblokComponentProps) {
+  return <div data-testid="blok">{blok?.component}</div>;
+}
+
 const { useStoryblokState } = vi.hoisted(() => ({ useStoryblokState: vi.fn() }));
 
 vi.mock("@storyblok/react", () => ({
   useStoryblokState,
-  StoryblokComponent: ({ blok }: { blok: { component?: string } }) => (
-    <div data-testid="blok">{blok?.component}</div>
-  ),
+  StoryblokComponent: MockStoryblokComponent,
 }));
 
 import type { ISbStoryData } from "@storyblok/react";

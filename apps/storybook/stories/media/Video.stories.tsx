@@ -19,7 +19,16 @@ const meta: Meta<typeof Video> = {
     aspectRatio: {
       control: "select",
       options: ["1/1", "4/3", "16/9", "21/9", "9/16"],
-      description: "Video aspect ratio (or custom number)",
+      description:
+        "Fixed box. Omit on native to use the file's intrinsic size, or mediaWidth/mediaHeight.",
+    },
+    mediaWidth: {
+      control: "number",
+      description: "CMS asset width in px; used when aspectRatio is unset",
+    },
+    mediaHeight: {
+      control: "number",
+      description: "CMS asset height in px; used when aspectRatio is unset",
     },
     controls: {
       control: "boolean",
@@ -89,7 +98,7 @@ export const Vimeo: Story = {
 };
 
 /**
- * Native video at its intrinsic aspect ratio (no fixed box)
+ * Native file without `aspectRatio` — height follows the media, not a fixed box.
  */
 export const NativeIntrinsic: Story = {
   tags: ["!test"],

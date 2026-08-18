@@ -7,10 +7,13 @@
     ":enablePreCommit"
   ],
   "timezone": "Europe/Berlin",
+  "schedule": ["before 10am on monday"],
   "assignees": ["dmnktoe"],
   "reviewers": ["dmnktoe"],
   "labels": ["dependencies"],
   "dependencyDashboard": false,
+  "prConcurrentLimit": 5,
+  "lockFileMaintenance": { "enabled": false },
   "vulnerabilityAlerts": { "labels": ["security"] },
   "packageRules": [
     {
@@ -24,9 +27,10 @@
       "rangeStrategy": "replace"
     },
     {
-      "description": "Dev tooling lands in one PR",
-      "matchDepTypes": ["devDependencies"],
-      "groupName": "dev dependencies"
+      "description": "All non-major npm updates in one PR, including pnpm catalog keys that are not devDependencies",
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "non-major dependencies"
     },
     {
       "description": "React and Next move in lockstep, types included",
@@ -45,6 +49,12 @@
       "matchManagers": ["github-actions"],
       "groupName": "github actions",
       "addLabels": ["ci"]
+    },
+    {
+      "description": "No standalone digest-bump PRs for GitHub Actions — SHA pins refresh on version bumps",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["digest"],
+      "enabled": false
     },
     {
       "description": "Majors need a human",

@@ -40,14 +40,6 @@ const meta = {
       control: "text",
       description: "URL the version links to (underline on hover)",
     },
-    visualTestingHref: {
-      control: "text",
-      description: "Credit link shown next to the version",
-    },
-    visualTestingLabel: {
-      control: "text",
-      description: "Label for the credit link",
-    },
     lastUpdated: {
       control: "text",
       description: "Last-updated text shown before the version",
@@ -72,7 +64,6 @@ export const Default: Story = {
     showVersion: true,
     version: "v1.0.0",
     versionHref: "https://github.com/dmnktoe/httpjpg/releases/tag/v1.0.0",
-    visualTestingHref: "https://argos-ci.com/?utm_source=dmnktoe&utm_campaign=oss",
     lastUpdated: "last updated 2026-05-27",
   },
 };
@@ -106,7 +97,6 @@ export const WithWidgets: Story = {
     showVersion: true,
     version: "v1.0.0",
     versionHref: "https://github.com/dmnktoe/httpjpg/releases/tag/v1.0.0",
-    visualTestingHref: "https://argos-ci.com/?utm_source=dmnktoe&utm_campaign=oss",
   },
 };
 

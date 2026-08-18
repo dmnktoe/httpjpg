@@ -12,7 +12,3 @@ Brutalist design portfolio built on a 12-column grid. Mono type, hard edges, max
 
 **Domenik Töfflinger** · [@dmnktoe](https://github.com/dmnktoe)<br/>
 **Instagram** · [@icon.icon.iconn](https://instagram.com/icon.icon.iconn)
-
----
-
-[![Covered by Argos Visual Testing](https://argos-ci.com/badge.svg)](https://app.argos-ci.com/dmnktoe/httpjpg/reference)

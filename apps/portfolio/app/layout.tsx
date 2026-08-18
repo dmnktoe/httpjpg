@@ -160,7 +160,6 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                     ? `${site.repositoryUrl}/releases/tag/${version}`
                     : undefined
                 }
-                visualTestingHref="https://argos-ci.com/?utm_source=dmnktoe&utm_campaign=oss"
                 lastUpdated={
                   lastUpdated ? `last updated ${formatLastUpdated(lastUpdated)}` : undefined
                 }

@@ -4,6 +4,53 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.0](https://github.com/dmnktoe/httpjpg/compare/v2.7.0...v2.8.0) (2026-08-18)
+
+
+### Added
+
+* **storyblok-sync:** add 1920×200 stage banner aspect ratio for video ([#346](https://github.com/dmnktoe/httpjpg/issues/346)) ([defcd00](https://github.com/dmnktoe/httpjpg/commit/defcd001b941f8de36ab6321273b57f7e49c56ec))
+
+
+### Fixed
+
+* favicon fallback, sideways copyright, and richtext image credits ([#310](https://github.com/dmnktoe/httpjpg/issues/310)) ([4c454dd](https://github.com/dmnktoe/httpjpg/commit/4c454dd3e204c96457cb69b0e213e23da4df7d33))
+* **portfolio:** hide cookie banner in Storyblok editor iframes ([#323](https://github.com/dmnktoe/httpjpg/issues/323)) ([ed9a9da](https://github.com/dmnktoe/httpjpg/commit/ed9a9da5e5fc1d28c8ac3b2ad7705575d6a59376))
+* **portfolio:** set OG titles in Anton to match Impact headlines ([#319](https://github.com/dmnktoe/httpjpg/issues/319)) ([48e8fca](https://github.com/dmnktoe/httpjpg/commit/48e8fca6e009b2ca8c24eb90f50666287cbd2d6b))
+* **portfolio:** stop preloading unused OG image crops ([#309](https://github.com/dmnktoe/httpjpg/issues/309)) ([c60aca3](https://github.com/dmnktoe/httpjpg/commit/c60aca35a10e2c38d227f4965bbebe5ea07e2957))
+* **portfolio:** use featured image for related work and show list thumbs ([#312](https://github.com/dmnktoe/httpjpg/issues/312)) ([9fd37b3](https://github.com/dmnktoe/httpjpg/commit/9fd37b3aba06dc77c9098478f8525f4ffe2cfaf8))
+* **storyblok-richtext:** apply Storyblok textAlign on paragraphs and headings ([#349](https://github.com/dmnktoe/httpjpg/issues/349)) ([46148c1](https://github.com/dmnktoe/httpjpg/commit/46148c131be6ff708bda08c47337b4e7f487f183))
+* **storyblok:** hex colorpicker for work accentColor ([#335](https://github.com/dmnktoe/httpjpg/issues/335)) ([47c5786](https://github.com/dmnktoe/httpjpg/commit/47c5786cb41e871f568cfc4334545892e6835a2d))
+* **storybook:** stabilize Argos visuals after migration ([#331](https://github.com/dmnktoe/httpjpg/issues/331)) ([dd69b21](https://github.com/dmnktoe/httpjpg/commit/dd69b21bcda119e55fc849477427173ec47eff55))
+* **ui:** keep lightbox images in the frame and walk the page ([#313](https://github.com/dmnktoe/httpjpg/issues/313)) ([2d6a247](https://github.com/dmnktoe/httpjpg/commit/2d6a247bc5f32de7b095401ac7384d5d14f4b79f))
+* **ui:** keep work card headlines below page widgets ([#314](https://github.com/dmnktoe/httpjpg/issues/314)) ([36aaeac](https://github.com/dmnktoe/httpjpg/commit/36aaeac26b24fa2c925da1c3450376b3a4d3838e))
+* **ui:** respect page dark mode in video loading skeleton ([#347](https://github.com/dmnktoe/httpjpg/issues/347)) ([32be5a6](https://github.com/dmnktoe/httpjpg/commit/32be5a6301ffd676314be97831ff6727713b3d19))
+* **video:** external URLs + intrinsic height without aspect ratio ([#345](https://github.com/dmnktoe/httpjpg/issues/345)) ([ae42189](https://github.com/dmnktoe/httpjpg/commit/ae421891a65115e03e69eed3f197ee4565507253))
+
+
+### Changed
+
+* daily code quality, Storybook docs, and copyright helpers ([#341](https://github.com/dmnktoe/httpjpg/issues/341)) ([c42424b](https://github.com/dmnktoe/httpjpg/commit/c42424bc96b4551cfac057bb51ca29d83d2740d5))
+* default feature flags to false and rename groq → ai ([#322](https://github.com/dmnktoe/httpjpg/issues/322)) ([96681cf](https://github.com/dmnktoe/httpjpg/commit/96681cf0e8ceb18ae5bb1235984964299ae8c017))
+* **ui:** remove affiliate credit from the footer ([#352](https://github.com/dmnktoe/httpjpg/issues/352)) ([806b523](https://github.com/dmnktoe/httpjpg/commit/806b523821ac94bb14ec6bc7eb7f657b288e3ae5))
+
+
+### Tooling
+
+* move Argos visual testing badge under social links ([#330](https://github.com/dmnktoe/httpjpg/issues/330)) ([47c770e](https://github.com/dmnktoe/httpjpg/commit/47c770e6d54ff18ce590c651de8916a4efce50b1))
+* switch storybook visual regression to Argos ([#320](https://github.com/dmnktoe/httpjpg/issues/320)) ([dcca94d](https://github.com/dmnktoe/httpjpg/commit/dcca94d84ffedaa73f3c2fde5a71b99390c5a667))
+
+
+### Dependencies
+
+* lock file maintenance ([#340](https://github.com/dmnktoe/httpjpg/issues/340)) ([51ceb1a](https://github.com/dmnktoe/httpjpg/commit/51ceb1a2d2eee33aee22acf13326d3e007447964))
+* update dependency @arcjet/next to ^1.10.0 ([#321](https://github.com/dmnktoe/httpjpg/issues/321)) ([32367e4](https://github.com/dmnktoe/httpjpg/commit/32367e4239e15dbabf6abb29b2abf9b91078e9e1))
+* update dependency @storyblok/react to ^7.3.0 ([#337](https://github.com/dmnktoe/httpjpg/issues/337)) ([e5cf937](https://github.com/dmnktoe/httpjpg/commit/e5cf93722b67e40bc09f825752afda41ff5f51bc))
+* update dependency @storyblok/schema to ^0.4.0 ([#338](https://github.com/dmnktoe/httpjpg/issues/338)) ([1fb7d77](https://github.com/dmnktoe/httpjpg/commit/1fb7d77b827b8e9ecff3dab812febc875928be9b))
+* update dependency storyblok-js-client to ^7.7.4 ([#336](https://github.com/dmnktoe/httpjpg/issues/336)) ([d5d3bd6](https://github.com/dmnktoe/httpjpg/commit/d5d3bd6e45001304ceeac94cf1bf5ce97f6f18c3))
+* update dependency turbo to ^2.10.10 ([#342](https://github.com/dmnktoe/httpjpg/issues/342)) ([60b84d1](https://github.com/dmnktoe/httpjpg/commit/60b84d1ebef09604fe87dffe76d3e45cccb00f45))
+* update react + next to ^16.3.1 ([#339](https://github.com/dmnktoe/httpjpg/issues/339)) ([830894c](https://github.com/dmnktoe/httpjpg/commit/830894cc4262b6bda1aa9622772c65db6368acee))
+
 ## [2.7.0](https://github.com/dmnktoe/httpjpg/compare/v2.6.1...v2.7.0) (2026-08-14)
 
 

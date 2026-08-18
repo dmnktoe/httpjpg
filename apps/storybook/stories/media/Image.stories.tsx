@@ -5,10 +5,7 @@ import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 import { OBJECT_FIT_OPTIONS } from "../shared/storybook-helpers";
 
 /**
- * Image component stories
- *
- * A powerful image component with copyright support and blur-up loading.
- * Perfect for brutalist portfolio websites and Storyblok integration.
+ * Blur-up image with optional credit. `CopyrightLabel` prepends ©.
  */
 const meta = {
   title: "Media/Image",

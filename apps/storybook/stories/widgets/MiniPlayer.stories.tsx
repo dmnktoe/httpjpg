@@ -1,6 +1,10 @@
 import { MiniPlayer } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
+/**
+ * Header transport for the page-wide audio queue. Fully controlled here;
+ * on the site it is wired through `AudioPlayerProvider`.
+ */
 const meta: Meta<typeof MiniPlayer> = {
   title: "Widgets/MiniPlayer",
   component: MiniPlayer,

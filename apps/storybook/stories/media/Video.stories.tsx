@@ -19,7 +19,16 @@ const meta: Meta<typeof Video> = {
     aspectRatio: {
       control: "select",
       options: ["1/1", "4/3", "16/9", "21/9", "9/16"],
-      description: "Video aspect ratio (or custom number)",
+      description:
+        "Fixed box. Omit on native to use the file's intrinsic size, or mediaWidth/mediaHeight.",
+    },
+    mediaWidth: {
+      control: "number",
+      description: "CMS asset width in px; used when aspectRatio is unset",
+    },
+    mediaHeight: {
+      control: "number",
+      description: "CMS asset height in px; used when aspectRatio is unset",
     },
     controls: {
       control: "boolean",
@@ -43,7 +52,7 @@ const meta: Meta<typeof Video> = {
     },
     copyrightPosition: {
       control: "select",
-      options: ["below", "overlay"],
+      options: ["below", "overlay", "inline-black", "inline-white"],
       description: "Copyright text position",
     },
   },
@@ -65,7 +74,7 @@ export const YouTube: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2025 YouTube Video",
+    copyright: "2025 YouTube Video",
     copyrightPosition: "below",
   },
 };
@@ -83,13 +92,13 @@ export const Vimeo: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2025 Vimeo Video",
+    copyright: "2025 Vimeo Video",
     copyrightPosition: "below",
   },
 };
 
 /**
- * Native video at its intrinsic aspect ratio (no fixed box)
+ * Native file without `aspectRatio` — height follows the media, not a fixed box.
  */
 export const NativeIntrinsic: Story = {
   tags: ["!test"],
@@ -117,7 +126,7 @@ export const Native: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2008 Blender Foundation | www.bigbuckbunny.org",
+    copyright: "2008 Blender Foundation | www.bigbuckbunny.org",
     copyrightPosition: "below",
   },
 };
@@ -136,7 +145,7 @@ export const NativeWithCopyrightSource: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2008 Blender Foundation",
+    copyright: "2008 Blender Foundation",
     copyrightSource: "peach.blender.org",
     copyrightPosition: "below",
   },
@@ -156,7 +165,7 @@ export const NativeWithOverlayCopyright: Story = {
     autoPlay: false,
     loop: false,
     muted: false,
-    copyright: "© 2008 Blender Foundation",
+    copyright: "2008 Blender Foundation",
     copyrightPosition: "overlay",
   },
 };

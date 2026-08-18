@@ -275,8 +275,12 @@ describe("CommandPalette", () => {
 
   it("asks when the footer button is pressed", () => {
     const props = setup();
+    const ask = screen.getByRole("button", { name: /ask/i });
 
-    fireEvent.click(screen.getByRole("button", { name: /ask/i }));
+    fireEvent.mouseDown(ask);
+    expect(document.activeElement).toBe(input());
+
+    fireEvent.click(ask);
 
     expect(props.onAsk).toHaveBeenCalledWith("poster");
   });

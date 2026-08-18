@@ -4,10 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
 /**
- * AnimateInView component stories
- *
- * Scroll-triggered animations using Framer Motion. Respects user's
- * reduced motion preferences for accessibility.
+ * Scroll-triggered entrance via `motion/react`. Skips the tween under reduced motion.
  */
 const meta = {
   title: "Motion/AnimateInView",

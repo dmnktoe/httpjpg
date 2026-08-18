@@ -9,7 +9,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 ## Stack
 
 - **TypeScript** — strict mode, `interface` for object shapes, no `enum`
-- **Node.js** ≥ 22.12 (pinned via `.nvmrc` to 22.22.3), ESM-only (`"type": "module"` in every workspace package; the private root `package.json` does not declare it)
+- **Node.js** ≥ 22.12 (pinned via `.nvmrc` to 24.19.0), ESM-only (`"type": "module"` in every workspace package; the private root `package.json` does not declare it)
 - **Next.js 16** App Router — Server Components by default, route handlers in `app/api/*`
 - **React 19** — functional components only
 - **Panda CSS** (zero-runtime) — `css({})` / `cx()` / token-aware patterns; tokens from `@httpjpg/tokens`
@@ -49,26 +49,28 @@ When generating or updating code: read neighboring files first, prefer the exist
 
 ### Packages
 
-| Package | Role |
-| --- | --- |
-| `@httpjpg/portfolio` | Deployed site: routes, widgets, queries, SEO, integrations |
-| `@httpjpg/storybook` | Storybook host — not deployed |
-| `@httpjpg/studio` | Dev grid editor; API routes 404 outside development |
-| `@httpjpg/env` | Env contract (`t3-oss` + zod); leaf — edge-safe loader |
-| `@httpjpg/tokens` | Design tokens + `dist/tokens.css`; leaf |
-| `@httpjpg/ui` | Panda component library (`styled-system/`, primitives, widgets). Tooltip positioning via `@floating-ui/react-dom` — don't hand-roll |
-| `@httpjpg/storyblok-utils` | Runtime types, `CMS_OPTIONS`, image presets, plain-text extraction, preview-token validation, `STORYBLOK_RELATIONS` |
-| `@httpjpg/storyblok-api` | Raw CDN client (`getStoryblokApi`) — no Next coupling |
-| `@httpjpg/storyblok-next` | Cached `fetchStory()` (`unstable_cache`, 1 h, draft bypass) + `CACHE_TAGS` |
-| `@httpjpg/storyblok-richtext` | Richtext → React via `@storyblok/react` + UI tag map |
-| `@httpjpg/storyblok-ui` | `Sb*` blok components; re-exports utils types; `storyblokInit` / `apiPlugin` |
-| `@httpjpg/storyblok-sync` | CLI: push schemas/datasources from `CMS_OPTIONS` + tokens — not imported at runtime |
-| `@httpjpg/spotify` | Spotify API + `useNowPlaying` + vibrant color extraction |
-| `@httpjpg/now-playing` | Draggable widget UI (`@httpjpg/ui` peer for `Marquee`) — UI only |
-| `@httpjpg/analytics` | GA4 + Umami wrappers; load behind `analytics` consent via `ConsentGate` |
-| `@httpjpg/ai` | Groq chat client (`createGroqClient`, streaming, `GroqApiError`); prompts live in the app |
-| `@httpjpg/observability` | Sentry init for client / server / edge |
-| `@httpjpg/consent` | Consent state machine + banner UI + `EXTERNAL_VENDORS` |
+| Package                       | Role                                                                                                                                |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `@httpjpg/portfolio`          | Deployed site: routes, widgets, queries, SEO, integrations                                                                          |
+| `@httpjpg/storybook`          | Storybook host — not deployed                                                                                                       |
+| `@httpjpg/studio`             | Dev grid editor; API routes 404 outside development                                                                                 |
+| `@httpjpg/env`                | Env contract (`t3-oss` + zod); leaf — edge-safe loader                                                                              |
+| `@httpjpg/tokens`             | Design tokens + `dist/tokens.css`; leaf                                                                                             |
+| `@httpjpg/ui`                 | Panda component library (`styled-system/`, primitives, widgets). Tooltip positioning via `@floating-ui/react-dom` — don't hand-roll |
+| `@httpjpg/storyblok-utils`    | Runtime types, `CMS_OPTIONS`, image presets, plain-text extraction, preview-token validation, `STORYBLOK_RELATIONS`                 |
+| `@httpjpg/storyblok-api`      | Raw CDN client (`getStoryblokApi`) — no Next coupling                                                                               |
+| `@httpjpg/storyblok-next`     | Cached `fetchStory()` (`unstable_cache`, 1 h, draft bypass) + `CACHE_TAGS`                                                          |
+| `@httpjpg/storyblok-richtext` | Richtext → React via `@storyblok/react` + UI tag map                                                                                |
+| `@httpjpg/storyblok-ui`       | `Sb*` blok components; re-exports utils types; `storyblokInit` / `apiPlugin`                                                        |
+| `@httpjpg/storyblok-sync`     | CLI: push schemas/datasources from `CMS_OPTIONS` + tokens — not imported at runtime                                                 |
+| `@httpjpg/spotify`            | Spotify API + `useNowPlaying` + vibrant color extraction                                                                            |
+| `@httpjpg/now-playing`        | Draggable widget UI (`@httpjpg/ui` peer for `Marquee`) — UI only                                                                    |
+| `@httpjpg/analytics`          | GA4 + Umami wrappers; load behind `analytics` consent via `ConsentGate`                                                             |
+| `@httpjpg/ai`                 | Groq chat client (`createGroqClient`, streaming, `GroqApiError`); prompts live in the app                                           |
+| `@httpjpg/observability`      | Sentry init for client / server / edge                                                                                              |
+| `@httpjpg/consent`            | Consent state machine + banner UI + `EXTERNAL_VENDORS`                                                                              |
+| `@httpjpg/terminal`           | Shared terminal output style for the repo's dev CLIs                                                                                |
+| `@httpjpg/credentials`        | Dev CLIs to mint/verify Spotify + PSN credentials (`pnpm creds:spotify` / `creds:psn`)                                              |
 
 Storyblok layering:
 
@@ -129,15 +131,15 @@ WorkCard.displayName = "WorkCard";
 
 ### Naming
 
-| Kind | Style | Example |
-| --- | --- | --- |
-| Components / types | PascalCase | `WorkCard`, `SbButtonProps` |
-| Hooks | `use*` | `useNowPlaying` |
-| Vars / fns | camelCase | `formatYear` |
-| Module const data | SCREAMING_SNAKE | `STORYBLOK_RELATIONS` |
-| Module const handles | camelCase | `tagRenderers` |
-| Booleans | `is*` / `has*` / `can*` locally; noun props (`disabled`) | |
-| Handlers | `handle*` local / `on*` prop | |
+| Kind                 | Style                                                    | Example                     |
+| -------------------- | -------------------------------------------------------- | --------------------------- |
+| Components / types   | PascalCase                                               | `WorkCard`, `SbButtonProps` |
+| Hooks                | `use*`                                                   | `useNowPlaying`             |
+| Vars / fns           | camelCase                                                | `formatYear`                |
+| Module const data    | SCREAMING_SNAKE                                          | `STORYBLOK_RELATIONS`       |
+| Module const handles | camelCase                                                | `tagRenderers`              |
+| Booleans             | `is*` / `has*` / `can*` locally; noun props (`disabled`) |                             |
+| Handlers             | `handle*` local / `on*` prop                             |                             |
 
 Dirs and most source files: kebab-case. Subcomponents: `<parent>-<child>.tsx`. Helpers: `lib.ts` (or scoped). Tests: `<source>.test.ts(x)`. Stories: `<Component>.stories.tsx`.
 
@@ -280,6 +282,7 @@ Argos owns the baseline: `main` is the reference, PRs upload and Argos compares.
 pnpm dev                 # all watchers
 pnpm dev:portfolio       # portfolio + deps
 pnpm dev:storybook
+pnpm dev:studio          # grid editor on :3001
 pnpm build               # PANDA_PRODUCTION=1 turbo run build
 pnpm type-check · test · lint · lint:fix · format · format:check
 pnpm test:visual         # capture story screenshots (uploads to Argos when CI=1)
@@ -296,16 +299,16 @@ Automated by release-please. One repo version (root `package.json`); workspace p
 
 Loop: conventional commit on `main` → release-please opens/updates one release PR → **human curates** the changelog (prose, not commit subjects) → merge tags `v*`, GitHub Release, Sentry release. Curate late — regen overwrites. `### Removed` is manual. Override with `Release-As: x.y.z` in a commit body.
 
-| Type | Section | Bump |
-| --- | --- | --- |
-| `feat` | Added | minor |
-| `fix` | Fixed | patch |
-| `refactor` / `style` / `revert` | Changed | patch |
-| `perf` | Performance | patch |
-| `build` / `ci` / `docs` / `test` | Tooling | patch |
-| `deps` | Dependencies | patch |
-| `chore` | hidden | patch |
-| `BREAKING CHANGE:` | BREAKING | major |
+| Type                             | Section      | Bump  |
+| -------------------------------- | ------------ | ----- |
+| `feat`                           | Added        | minor |
+| `fix`                            | Fixed        | patch |
+| `refactor` / `style` / `revert`  | Changed      | patch |
+| `perf`                           | Performance  | patch |
+| `build` / `ci` / `docs` / `test` | Tooling      | patch |
+| `deps`                           | Dependencies | patch |
+| `chore`                          | hidden       | patch |
+| `BREAKING CHANGE:`               | BREAKING     | major |
 
 Every conventional commit bumps at least patch (`hidden` only hides from the changelog). Renovate uses `deps:`.
 

@@ -2,10 +2,7 @@ import { Box, Marquee } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
 /**
- * Marquee component stories
- *
- * Infinite scrolling text component for announcements,
- * ASCII art, and brutalist navigation elements.
+ * Infinite scroll of children. Pauses on hover; stops under reduced motion.
  */
 const meta = {
   title: "Motion/Marquee",

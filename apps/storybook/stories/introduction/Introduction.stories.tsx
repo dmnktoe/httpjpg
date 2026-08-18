@@ -238,12 +238,18 @@ export default function MyPage() {
               {[
                 { cat: "Layout", items: "Box · Grid · Container · Stack · Section · Page" },
                 { cat: "Typography", items: "Headline · Paragraph · Link · AsciiArt" },
-                { cat: "Media", items: "Image · Video · Slideshow · ScrollClipImage" },
-                { cat: "Display", items: "Accordion · Callout · CodeBlock · Stats · List" },
-                { cat: "Inputs", items: "Button · IconButton · Loading" },
-                { cat: "Navigation", items: "Header · Footer · NavLink" },
+                { cat: "Media", items: "Image · Video · Slideshow · ScrollClipImage · Lightbox" },
+                {
+                  cat: "Display",
+                  items: "Accordion · Callout · CodeBlock · Stats · List · Tag · CopyrightLabel",
+                },
+                { cat: "Inputs", items: "Button · IconButton · Loading · Checkbox" },
+                { cat: "Navigation", items: "Header · Footer · NavLink · SearchTrigger" },
                 { cat: "Motion", items: "CustomCursor · MouseTrail · AnimateInView · Marquee" },
-                { cat: "Widgets", items: "MusicPlayer · NowPlaying" },
+                {
+                  cat: "Widgets",
+                  items: "MusicPlayer · NowPlaying · MiniPlayer · CommandPalette",
+                },
                 { cat: "Decoration", items: "Divider · ImageOverlay · FloatingPreviewBadge" },
               ].map((g) => (
                 <Box key={g.cat} css={{ p: "4", borderColor: "pageFg", borderTop: "2px solid" }}>

@@ -2,10 +2,7 @@ import { Slideshow } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
 /**
- * Slideshow component stories
- *
- * Image carousel with Swiper. Supports autoplay, navigation,
- * copyright notices, scroll animations, and slide transitions.
+ * Image/video carousel (Swiper). Reduced motion drops blur-up and loads every slide.
  */
 const meta = {
   title: "Media/Slideshow",

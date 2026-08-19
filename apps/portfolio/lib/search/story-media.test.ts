@@ -90,6 +90,19 @@ describe("collectStoryMedia", () => {
     expect(media.map((item) => item.label)).toEqual(["One", "Two"]);
   });
 
+  it("collects both sides of an image comparison", () => {
+    const media = collectStoryMedia({
+      component: "image_comparison",
+      _uid: "cmp-1",
+      beforeAlt: "Ungraded",
+      afterAlt: "Graded",
+      before: { filename: "https://a.storyblok.com/f/1/2x2/abc/before.jpg" },
+      after: { filename: "https://a.storyblok.com/f/1/2x2/abc/after.jpg" },
+    });
+
+    expect(media.map((item) => item.label)).toEqual(["Ungraded", "Graded"]);
+  });
+
   it("uses a video blok's poster", () => {
     const media = collectStoryMedia({
       component: "video",

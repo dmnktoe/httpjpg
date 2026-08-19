@@ -10,6 +10,10 @@ export { SbGrid, type SbGridProps } from "./components/grid/SbGrid";
 export { SbGridItem, type SbGridItemProps } from "./components/grid-item/SbGridItem";
 export { SbHeadline, type SbHeadlineProps } from "./components/headline/SbHeadline";
 export { SbIcon, type SbIconProps } from "./components/icon/SbIcon";
+export {
+  SbImageComparison,
+  type SbImageComparisonProps,
+} from "./components/image-comparison/SbImageComparison";
 export { SbImage, type SbImageProps } from "./components/image/SbImage";
 export { SbLink, type SbLinkProps } from "./components/link/SbLink";
 export { SbList, type SbListProps } from "./components/list/SbList";

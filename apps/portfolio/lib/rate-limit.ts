@@ -1,6 +1,8 @@
 import arcjet, { fixedWindow, shield } from "@arcjet/next";
 import { env } from "@httpjpg/env";
-import { type NextRequest, NextResponse } from "next/server";
+import type { NextRequest, NextResponse } from "next/server";
+
+import { API_ERROR, jsonError } from "@/lib/api/errors";
 
 // A single shared Arcjet client, created lazily and only when a key is present.
 // Without ARCJET_KEY (local dev, tests, previews) rate limiting is a no-op, so
@@ -40,9 +42,9 @@ export async function enforceRateLimit(request: NextRequest): Promise<NextRespon
     const decision = await aj.protect(request);
     if (decision.isDenied()) {
       const isRateLimit = decision.reason.isRateLimit();
-      return NextResponse.json(
-        { error: isRateLimit ? "rate_limited" : "forbidden" },
-        { status: isRateLimit ? 429 : 403 },
+      return jsonError(
+        isRateLimit ? API_ERROR.rateLimited : API_ERROR.forbidden,
+        isRateLimit ? 429 : 403,
       );
     }
   } catch (error) {

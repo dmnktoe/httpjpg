@@ -1,35 +1,16 @@
 "use client";
 
 import { Box } from "@httpjpg/ui";
-import { useEffect, useState } from "react";
 
-import type { PsnTrophy } from "@/lib/integrations/psn-trophies";
-
-interface TrophyData {
-  trophies: PsnTrophy[];
-  avatar: string | null;
-}
+import { psnTrophiesResponseSchema } from "@/lib/api/schemas";
+import { useWidgetQuery } from "@/lib/api/use-widget-query";
 
 export function TrophyStatus() {
-  const [data, setData] = useState<TrophyData | null>(null);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    const fetchTrophies = async () => {
-      try {
-        const response = await fetch("/api/psn-trophies");
-        if (response.ok) {
-          setData(await response.json());
-        }
-      } catch (error) {
-        console.error("Failed to fetch PSN trophies:", error);
-      } finally {
-        setLoaded(true);
-      }
-    };
-
-    fetchTrophies();
-  }, []);
+  const { data, loaded } = useWidgetQuery({
+    endpoint: "/api/psn-trophies",
+    schema: psnTrophiesResponseSchema,
+    label: "PSN trophies",
+  });
 
   const trophy = data?.trophies?.[0] ?? null;
 

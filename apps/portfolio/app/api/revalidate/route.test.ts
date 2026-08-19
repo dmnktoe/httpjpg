@@ -16,6 +16,8 @@ import { captureServerException } from "@httpjpg/observability/sentry/server.ts"
 import { CACHE_TAGS } from "@httpjpg/storyblok-next";
 import type { NextRequest } from "next/server";
 
+import { API_ERROR } from "@/lib/api/errors";
+
 import { POST } from "./route";
 
 function makeRequest(
@@ -48,7 +50,10 @@ describe("POST /api/revalidate", () => {
     const response = await POST(makeRequest({ action: "published" }));
 
     expect(response.status).toBe(401);
-    await expect(response.json()).resolves.toEqual({ message: "Invalid secret" });
+    await expect(response.json()).resolves.toEqual({
+      error: API_ERROR.unauthorized,
+      message: "Invalid secret",
+    });
     expect(revalidateTag).not.toHaveBeenCalled();
   });
 
@@ -70,7 +75,10 @@ describe("POST /api/revalidate", () => {
     const response = await POST(makeRequest({ action: "published" }, { secret: "s3cret" }));
 
     expect(response.status).toBe(400);
-    await expect(response.json()).resolves.toEqual({ message: "No story slug provided" });
+    await expect(response.json()).resolves.toEqual({
+      error: API_ERROR.invalidRequest,
+      message: "No story slug provided",
+    });
   });
 
   it("revalidates the story tag, the stories tag and the page path", async () => {
@@ -143,8 +151,8 @@ describe("POST /api/revalidate", () => {
 
     expect(response.status).toBe(500);
     await expect(response.json()).resolves.toEqual({
+      error: API_ERROR.internal,
       message: "Error revalidating",
-      error: "bad json",
     });
     expect(captureServerException).toHaveBeenCalledOnce();
   });
@@ -155,6 +163,6 @@ describe("POST /api/revalidate", () => {
 
     const response = await POST(request);
 
-    await expect(response.json()).resolves.toMatchObject({ error: "Unknown error" });
+    await expect(response.json()).resolves.toMatchObject({ error: API_ERROR.internal });
   });
 });

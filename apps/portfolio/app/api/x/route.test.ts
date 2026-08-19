@@ -34,6 +34,8 @@ vi.mock("@/lib/rate-limit", () => ({ enforceRateLimit }));
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import type { NextRequest } from "next/server";
 
+import { API_ERROR } from "@/lib/api/errors";
+
 import { GET } from "./route";
 
 const request = {} as NextRequest;
@@ -106,7 +108,7 @@ describe("GET /api/x", () => {
 
     expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({
-      error: "X username not configured",
+      error: API_ERROR.notConfigured,
     });
   });
 
@@ -120,12 +122,12 @@ describe("GET /api/x", () => {
     expect(fetchXTimeline).not.toHaveBeenCalled();
   });
 
-  it("returns 501 when the config story cannot be read", async () => {
+  it("returns 503 when the config story cannot be read", async () => {
     getStory.mockRejectedValueOnce(new Error("storyblok down"));
 
     const response = await GET(request);
 
-    expect(response.status).toBe(501);
+    expect(response.status).toBe(503);
   });
 
   it("propagates a rate limit from TweetAPI", async () => {

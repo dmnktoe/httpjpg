@@ -54,7 +54,7 @@ describe("WeatherTime", () => {
   });
 
   it("renders a ticking clock, UTC offset, and the weather condition", async () => {
-    mockFetch({ temperature: 18.4, code: 2, emoji: "⛅", condition: "partly cloudy" });
+    mockFetch({ temperature: 18.4, code: 2, emoji: "⛅", condition: "partly cloudy", isDay: true });
     render(<WeatherTime />);
 
     await screen.findByText(/^\d{2}:\d{2}:\d{2}$/);

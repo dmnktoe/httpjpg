@@ -1,21 +1,20 @@
 import { env } from "@httpjpg/env";
-import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { NextResponse } from "next/server";
 
+import { jsonUpstream } from "@/lib/api/errors";
+import { jsonOk } from "@/lib/api/json";
+import { publicGet } from "@/lib/api/route";
 import { fetchWeather } from "@/lib/integrations/weather";
 
-export async function GET() {
-  try {
+export const GET = publicGet(
+  "weather",
+  async () => {
     const result = await fetchWeather(env.WEATHER_LATITUDE, env.WEATHER_LONGITUDE);
     if (!result.ok) {
       console.warn(`Weather fetch failed: ${result.status} - ${result.message}`);
-      return NextResponse.json(
-        { error: "Weather unavailable", message: result.message },
-        { status: result.status },
-      );
+      return jsonUpstream(result.message, result.status);
     }
 
-    return NextResponse.json(
+    return jsonOk(
       {
         temperature: result.temperature,
         code: result.code,
@@ -23,11 +22,8 @@ export async function GET() {
         condition: result.condition,
         isDay: result.isDay,
       },
-      { headers: { "Cache-Control": "public, s-maxage=900, stale-while-revalidate=1800" } },
+      { cache: { isDraft: false, maxAge: 900 } },
     );
-  } catch (error) {
-    console.error("Weather API error:", error);
-    captureServerException(error, { tags: { route: "weather" } });
-    return NextResponse.json({ error: "Failed to fetch weather" }, { status: 500 });
-  }
-}
+  },
+  { withDraft: false },
+);

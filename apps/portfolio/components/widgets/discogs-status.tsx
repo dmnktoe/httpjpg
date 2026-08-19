@@ -1,40 +1,17 @@
 "use client";
 
 import { Box } from "@httpjpg/ui";
-import { useEffect, useState } from "react";
 
-import type { DiscogsRelease } from "@/lib/integrations/discogs";
+import { discogsResponseSchema } from "@/lib/api/schemas";
+import { useWidgetQuery } from "@/lib/api/use-widget-query";
 
 export function DiscogsStatus() {
-  const [release, setRelease] = useState<DiscogsRelease | null>(null);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const fetchCollection = async () => {
-      try {
-        const response = await fetch("/api/discogs", { signal: controller.signal });
-        if (response.ok) {
-          const data = await response.json();
-          setRelease(data.releases?.[0] ?? null);
-        }
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-        console.error("Failed to fetch Discogs collection:", error);
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoaded(true);
-        }
-      }
-    };
-
-    fetchCollection();
-
-    return () => controller.abort();
-  }, []);
+  const { data, loaded } = useWidgetQuery({
+    endpoint: "/api/discogs",
+    schema: discogsResponseSchema,
+    label: "Discogs collection",
+  });
+  const release = data?.releases[0] ?? null;
 
   if (!release) {
     if (loaded) {

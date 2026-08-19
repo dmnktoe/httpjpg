@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
+import { jsonOk } from "@/lib/api/json";
 
 export function GET() {
-  return NextResponse.json({ status: "ok" });
+  return jsonOk({ status: "ok" });
 }

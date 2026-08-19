@@ -2,8 +2,10 @@ import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { CACHE_TAGS } from "@httpjpg/storyblok-next";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { type NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
+import { API_ERROR, jsonError } from "@/lib/api/errors";
+import { jsonOk } from "@/lib/api/json";
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
 interface StoryblokWebhookPayload {
@@ -29,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     if (!secret || secret !== env.STORYBLOK_REVALIDATE_SECRET) {
       console.warn("Revalidation attempt with invalid secret");
-      return NextResponse.json({ message: "Invalid secret" }, { status: 401 });
+      return jsonError(API_ERROR.unauthorized, 401, { message: "Invalid secret" });
     }
 
     const body = (await request.json()) as StoryblokWebhookPayload;
@@ -40,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     if (!storySlug) {
       console.warn("Webhook received without story slug", body);
-      return NextResponse.json({ message: "No story slug provided" }, { status: 400 });
+      return jsonError(API_ERROR.invalidRequest, 400, { message: "No story slug provided" });
     }
     const revalidatedPaths: string[] = [];
     const revalidatedTags: string[] = [];
@@ -69,7 +71,7 @@ export async function POST(request: NextRequest) {
       revalidatedPaths.push("/layout");
     }
 
-    return NextResponse.json({
+    return jsonOk({
       revalidated: true,
       action,
       story: storySlug,
@@ -80,12 +82,6 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[Storyblok Webhook] Revalidation error:", error);
     captureServerException(error, { tags: { route: "revalidate" } });
-    return NextResponse.json(
-      {
-        message: "Error revalidating",
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 },
-    );
+    return jsonError(API_ERROR.internal, 500, { message: "Error revalidating" });
   }
 }

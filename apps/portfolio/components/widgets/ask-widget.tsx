@@ -3,7 +3,6 @@
 import {
   type CommandPaletteAction,
   CommandPalette,
-  type CommandPaletteMediaItem,
   type CommandPaletteResult,
   type CommandPaletteStatus,
   OPEN_SEARCH_EVENT,
@@ -11,6 +10,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { searchResponseSchema } from "@/lib/api/schemas";
 import { type AskNavigateAction, readAskStream } from "@/lib/search/ask-stream";
 
 export interface AskWidgetProps {
@@ -20,18 +20,6 @@ export interface AskWidgetProps {
 
 /** Long enough to skip most intermediate keystrokes, short enough to feel live. */
 const SEARCH_DEBOUNCE_MS = 140;
-
-interface SearchResponse {
-  results?: Array<{
-    id: string;
-    title: string;
-    href: string;
-    kind: "work" | "page";
-    excerpt?: string;
-    media?: CommandPaletteMediaItem[];
-  }>;
-  suggestions?: string[];
-}
 
 export function AskWidget({ askEnabled = true }: AskWidgetProps) {
   const router = useRouter();
@@ -112,14 +100,17 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
         if (!response.ok) {
           throw new Error(`Search failed with ${response.status}`);
         }
-        const data = (await response.json()) as SearchResponse;
+        const parsed = searchResponseSchema.safeParse(await response.json());
         // A superseded search must not write its results, and must not report
         // "idle" over a stream that started after it did.
         if (controller.signal.aborted || searchAbort.current !== controller) {
           return;
         }
-        setResults(data.results ?? []);
-        setSuggestions(data.suggestions ?? []);
+        if (!parsed.success) {
+          throw new Error("Search payload failed validation");
+        }
+        setResults(parsed.data.results);
+        setSuggestions(parsed.data.suggestions);
         setStatus("idle");
       } catch (error) {
         if (controller.signal.aborted || searchAbort.current !== controller) {

@@ -1,43 +1,18 @@
 "use client";
 
 import { Box, Tooltip } from "@httpjpg/ui";
-import { useEffect, useState } from "react";
 
-import type { XPost, XProfile } from "@/lib/integrations/x-posts";
+import { xTimelineSchema } from "@/lib/api/schemas";
+import { useWidgetQuery } from "@/lib/api/use-widget-query";
 
 export function XStatus() {
-  const [timeline, setTimeline] = useState<XTimelineState | null>(null);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const fetchTimeline = async () => {
-      try {
-        const response = await fetch("/api/x", { signal: controller.signal });
-        if (response.ok) {
-          const data = await response.json();
-          const post = data.posts?.[0];
-          if (data.profile && post) {
-            setTimeline({ profile: data.profile, post });
-          }
-        }
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-        console.error("Failed to fetch X posts:", error);
-      } finally {
-        if (!controller.signal.aborted) {
-          setLoaded(true);
-        }
-      }
-    };
-
-    fetchTimeline();
-
-    return () => controller.abort();
-  }, []);
+  const { data, loaded } = useWidgetQuery({
+    endpoint: "/api/x",
+    schema: xTimelineSchema,
+    label: "X posts",
+  });
+  const latest = data?.posts[0];
+  const timeline = data?.profile && latest ? { profile: data.profile, post: latest } : null;
 
   if (!timeline) {
     if (loaded) {
@@ -157,9 +132,4 @@ function formatFollowerCount(value: number): string {
     notation: "compact",
     maximumFractionDigits: 1,
   }).format(value);
-}
-
-interface XTimelineState {
-  profile: XProfile;
-  post: XPost;
 }

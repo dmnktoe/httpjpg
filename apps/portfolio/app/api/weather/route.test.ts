@@ -12,8 +12,13 @@ const { fetchWeather } = vi.hoisted(() => ({ fetchWeather: vi.fn() }));
 vi.mock("@/lib/integrations/weather", () => ({ fetchWeather }));
 
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
+import { NextRequest } from "next/server";
+
+import { API_ERROR } from "@/lib/api/errors";
 
 import { GET } from "./route";
+
+const request = new NextRequest("http://localhost/api/weather");
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -30,7 +35,7 @@ describe("GET /api/weather", () => {
       isDay: true,
     });
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
@@ -44,16 +49,16 @@ describe("GET /api/weather", () => {
   it("propagates the upstream status when the fetch is not ok", async () => {
     fetchWeather.mockResolvedValueOnce({ ok: false, status: 502, message: "bad gateway" });
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(502);
-    await expect(response.json()).resolves.toMatchObject({ error: "Weather unavailable" });
+    await expect(response.json()).resolves.toMatchObject({ error: API_ERROR.upstream });
   });
 
   it("returns a 500 and reports unexpected errors", async () => {
     fetchWeather.mockRejectedValueOnce(new Error("boom"));
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(500);
     expect(captureServerException).toHaveBeenCalledOnce();

@@ -21,8 +21,13 @@ vi.mock("@httpjpg/storyblok-api", () => ({ getStoryblokApi }));
 vi.mock("@/lib/integrations/letterboxd", () => ({ fetchLetterboxdFilms, isLetterboxdUsername }));
 
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
+import { NextRequest } from "next/server";
+
+import { API_ERROR } from "@/lib/api/errors";
 
 import { GET } from "./route";
+
+const request = new NextRequest("http://localhost/api/letterboxd");
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -35,7 +40,7 @@ describe("GET /api/letterboxd", () => {
     getStory.mockResolvedValueOnce({ content: { letterboxd_username: "user" } });
     fetchLetterboxdFilms.mockResolvedValueOnce({ ok: true, films: [{ title: "Dune" }] });
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({ films: [{ title: "Dune" }] });
@@ -44,11 +49,11 @@ describe("GET /api/letterboxd", () => {
   it("returns 501 when no username is configured", async () => {
     getStory.mockResolvedValueOnce({ content: {} });
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({
-      error: "Letterboxd username not configured",
+      error: API_ERROR.notConfigured,
     });
   });
 
@@ -56,7 +61,7 @@ describe("GET /api/letterboxd", () => {
     getStory.mockResolvedValueOnce({ content: { letterboxd_username: "bad name" } });
     isLetterboxdUsername.mockReturnValue(false);
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(501);
   });
@@ -65,7 +70,7 @@ describe("GET /api/letterboxd", () => {
     getStory.mockResolvedValueOnce({ content: { letterboxd_username: "user" } });
     fetchLetterboxdFilms.mockResolvedValueOnce({ ok: false, status: 503, message: "down" });
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(503);
   });
@@ -74,7 +79,7 @@ describe("GET /api/letterboxd", () => {
     getStory.mockResolvedValueOnce({ content: { letterboxd_username: "user" } });
     fetchLetterboxdFilms.mockRejectedValueOnce(new Error("boom"));
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(500);
     expect(captureServerException).toHaveBeenCalledOnce();
@@ -85,7 +90,7 @@ describe("GET /api/letterboxd", () => {
     vi.mocked(draftMode).mockResolvedValueOnce({ isEnabled: true } as never);
     getStory.mockResolvedValueOnce({ content: { letterboxd_username: "user" } });
 
-    await GET();
+    await GET(request);
 
     expect(getStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
   });

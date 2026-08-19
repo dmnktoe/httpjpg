@@ -1,60 +1,24 @@
-import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { getStoryblokApi } from "@httpjpg/storyblok-api";
-import type { SbConfigStory } from "@httpjpg/storyblok-ui";
-import { draftMode } from "next/headers";
-import { NextResponse } from "next/server";
-
-import { widgetCacheHeaders } from "@/lib/cache-headers";
+import { CONFIG_FIELDS, requireConfigField } from "@/lib/api/config-field";
+import { jsonUpstream } from "@/lib/api/errors";
+import { jsonOk } from "@/lib/api/json";
+import { publicGet } from "@/lib/api/route";
 import { fetchLetterboxdFilms, isLetterboxdUsername } from "@/lib/integrations/letterboxd";
 
-async function resolveUsername(isDraft: boolean): Promise<string | undefined> {
-  try {
-    const story = await getStoryblokApi({ draftMode: isDraft }).getStory({
-      slug: "config",
-    });
-    const config = story?.content as SbConfigStory | undefined;
-    const username = config?.letterboxd_username;
-    if (username && !isLetterboxdUsername(username)) {
-      console.warn("Ignoring malformed letterboxd_username from Storyblok config");
-      return undefined;
-    }
-    return username;
-  } catch (error) {
-    console.warn("Failed to fetch Letterboxd config from Storyblok:", error);
-    return undefined;
+export const GET = publicGet("letterboxd", async ({ isDraft }) => {
+  const config = await requireConfigField(
+    CONFIG_FIELDS.letterboxdUsername,
+    isLetterboxdUsername,
+    isDraft,
+  );
+  if (!config.ok) {
+    return config.response;
   }
-}
 
-export async function GET() {
-  const { isEnabled: isDraft } = await draftMode();
-  try {
-    const username = await resolveUsername(isDraft);
-    if (!username) {
-      return NextResponse.json(
-        {
-          error: "Letterboxd username not configured",
-          message: "Set letterboxd_username in Storyblok config",
-        },
-        { status: 501 },
-      );
-    }
-
-    const result = await fetchLetterboxdFilms(username);
-    if (!result.ok) {
-      console.warn(`Letterboxd RSS error: ${result.status} - ${result.message}`);
-      return NextResponse.json(
-        { error: "Letterboxd unavailable", message: result.message },
-        { status: result.status },
-      );
-    }
-
-    return NextResponse.json(
-      { films: result.films },
-      { headers: widgetCacheHeaders(isDraft, 300) },
-    );
-  } catch (error) {
-    console.error("Letterboxd API error:", error);
-    captureServerException(error, { tags: { route: "letterboxd" } });
-    return NextResponse.json({ error: "Failed to fetch Letterboxd films" }, { status: 500 });
+  const result = await fetchLetterboxdFilms(config.value);
+  if (!result.ok) {
+    console.warn(`Letterboxd RSS error: ${result.status} - ${result.message}`);
+    return jsonUpstream(result.message, result.status);
   }
-}
+
+  return jsonOk({ films: result.films }, { cache: { isDraft, maxAge: 300 } });
+});

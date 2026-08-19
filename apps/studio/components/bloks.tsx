@@ -1,7 +1,16 @@
 "use client";
 
 import { CMS_OPTIONS } from "@httpjpg/storyblok-utils";
-import { Button, Headline, Image, Marquee, MusicPlayer, Paragraph, Video } from "@httpjpg/ui";
+import {
+  Button,
+  Headline,
+  Image,
+  ImageComparisonSlider,
+  Marquee,
+  MusicPlayer,
+  Paragraph,
+  Video,
+} from "@httpjpg/ui";
 import type { ReactNode } from "react";
 import { css } from "styled-system/css";
 
@@ -286,6 +295,39 @@ const video: BlokPlugin = {
     ),
 };
 
+const imageComparison: BlokPlugin = {
+  type: "image_comparison",
+  label: "Image Comparison",
+  group: "Media",
+  defaultSize: { w: 12, h: 6 },
+  defaults: { beforeUrl: "", afterUrl: "" },
+  fields: [
+    { key: "beforeUrl", label: "Before URL", type: "assetUrl" },
+    { key: "afterUrl", label: "After URL", type: "assetUrl" },
+  ],
+  serialize: (d) => ({
+    before: d.beforeUrl ? { filename: str(d.beforeUrl) } : null,
+    after: d.afterUrl ? { filename: str(d.afterUrl) } : null,
+  }),
+  deserialize: (b) => {
+    const before = b.before as { filename?: string } | null | undefined;
+    const after = b.after as { filename?: string } | null | undefined;
+    return { beforeUrl: str(before?.filename), afterUrl: str(after?.filename) };
+  },
+  preview: (d) =>
+    d.beforeUrl && d.afterUrl ? (
+      <ImageComparisonSlider
+        beforeSrc={str(d.beforeUrl)}
+        afterSrc={str(d.afterUrl)}
+        beforeAlt=""
+        afterAlt=""
+        aspectRatio="16/9"
+      />
+    ) : (
+      <Placeholder label="COMPARE" sub="before / after" />
+    ),
+};
+
 const slideshow: BlokPlugin = {
   type: "slideshow",
   label: "Slideshow",
@@ -376,6 +418,7 @@ export const BLOK_REGISTRY: BlokPlugin[] = [
   button,
   richtext,
   image,
+  imageComparison,
   video,
   slideshow,
   marquee,

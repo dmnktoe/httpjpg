@@ -51,7 +51,7 @@ export function FooterStatusLine({
         maxWidth: "full",
         minHeight: "5",
         color: "inherit",
-        opacity: 0.8,
+        opacity: 80,
         fontFamily: "mono",
         fontSize: "xs",
         textDecoration: "none",
@@ -59,12 +59,12 @@ export function FooterStatusLine({
       }}
     >
       {label && (
-        <Box as="span" css={{ flexShrink: 0, opacity: 0.6 }}>
+        <Box as="span" css={{ flexShrink: 0, opacity: 60 }}>
           {label}:
         </Box>
       )}
       {loading ? (
-        <Box as="span" css={{ opacity: 0.5 }}>
+        <Box as="span" css={{ opacity: 50 }}>
           loading ...
         </Box>
       ) : (

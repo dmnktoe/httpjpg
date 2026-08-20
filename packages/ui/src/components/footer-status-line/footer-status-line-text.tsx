@@ -1,11 +1,14 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
 
-export interface FooterStatusLineTextProps {
+export interface FooterStatusLineTextProps extends Omit<
+  HTMLAttributes<HTMLSpanElement>,
+  "css" | "children"
+> {
   /** Caps the run before it pushes the rest of the line out of view. */
   maxWidth?: string;
   /** Detail that should not shrink, like a year or a rating. */
@@ -26,10 +29,12 @@ export function FooterStatusLineText({
   dim = false,
   children,
   css: cssProp,
+  ...props
 }: FooterStatusLineTextProps) {
   return (
     <Box
       as="span"
+      {...props}
       css={{
         ...(fixed
           ? { flexShrink: 0, whiteSpace: "nowrap" }

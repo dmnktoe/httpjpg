@@ -1,10 +1,12 @@
 "use client";
 
+import type { HTMLAttributes } from "react";
+
 import { Box } from "../box/box";
 
 export type FooterStatusLineThumbShape = "square" | "rounded" | "circle";
 
-export interface FooterStatusLineThumbProps {
+export interface FooterStatusLineThumbProps extends HTMLAttributes<HTMLSpanElement> {
   src: string;
   /**
    * Empty by default: these sit beside text that already names the thing, so
@@ -37,10 +39,12 @@ export function FooterStatusLineThumb({
   shape = "rounded",
   fit = "cover",
   pixelated = false,
+  ...props
 }: FooterStatusLineThumbProps) {
   return (
     <Box
       as="span"
+      {...props}
       css={{
         display: "inline-block",
         flexShrink: 0,

@@ -8,24 +8,22 @@ import {
 } from "@httpjpg/ui";
 
 import type { PsnTrophy } from "@/lib/integrations/psn-trophies";
-import { useWidgetData } from "@/lib/use-widget-data";
 
-interface TrophyResponse {
-  trophies?: PsnTrophy[];
+export interface TrophyStatusProps {
+  trophy: PsnTrophy | null;
   avatar?: string | null;
+  /** False while the request is in flight, so the line holds instead of collapsing. */
+  loaded: boolean;
 }
 
-export function TrophyStatus() {
-  const { data, loaded } = useWidgetData<TrophyResponse>("/api/psn-trophies");
-  const trophy = data?.trophies?.[0] ?? null;
-
+export function TrophyStatus({ trophy, avatar, loaded }: TrophyStatusProps) {
   if (!trophy) {
     return loaded ? null : <FooterStatusLine loading />;
   }
 
   return (
     <FooterStatusLine href={trophy.url}>
-      {data?.avatar && <FooterStatusLineThumb src={data.avatar} size="4" shape="circle" />}
+      {avatar && <FooterStatusLineThumb src={avatar} size="4" shape="circle" />}
       {trophy.image && (
         <FooterStatusLineThumb src={trophy.image} size="4" shape="square" fit="contain" />
       )}

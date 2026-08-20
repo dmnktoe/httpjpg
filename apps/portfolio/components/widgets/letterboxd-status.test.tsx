@@ -1,5 +1,5 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 
 import type { LetterboxdFilm } from "@/lib/integrations/letterboxd";
 
@@ -16,90 +16,62 @@ const film: LetterboxdFilm = {
   poster: "https://example.com/poster.jpg",
 };
 
-function mockFetch(payload: unknown, ok = true) {
-  const fetchMock = vi.fn().mockResolvedValue({
-    ok,
-    json: async () => payload,
-  });
-  vi.stubGlobal("fetch", fetchMock);
-  return fetchMock;
-}
+afterEach(cleanup);
 
 describe("LetterboxdStatus", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  it("holds a loading label until the data arrives", () => {
+    render(<LetterboxdStatus film={null} loaded={false} />);
 
-  afterEach(() => {
-    cleanup();
-    vi.unstubAllGlobals();
-  });
-
-  it("shows a loading label while loading, then collapses when there is no film", async () => {
-    mockFetch({ films: [] });
-    const { container } = render(<LetterboxdStatus />);
     // A loading line holds the footer in place during the request.
     expect(screen.getByText("loading ...")).toBeInTheDocument();
-    await waitFor(() => expect(container).toBeEmptyDOMElement());
   });
 
-  it("renders the latest film with its poster but no hover preview", async () => {
-    mockFetch({ films: [film] });
-    render(<LetterboxdStatus />);
+  it("collapses once loaded with no film", () => {
+    const { container } = render(<LetterboxdStatus film={null} loaded />);
 
-    await screen.findByText(film.title);
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renders the latest film with its poster but no hover preview", () => {
+    render(<LetterboxdStatus film={film} loaded />);
 
     const poster = document.querySelector(`img[src="${film.poster}"]`);
     expect(poster).toBeInTheDocument();
     expect(document.querySelectorAll("[data-preview-image]")).toHaveLength(0);
 
-    const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", film.url);
+    expect(screen.getByRole("link")).toHaveAttribute("href", film.url);
   });
 
-  it("formats half-star ratings", async () => {
-    mockFetch({ films: [film] });
-    render(<LetterboxdStatus />);
+  it("formats half-star ratings", () => {
+    render(<LetterboxdStatus film={film} loaded />);
 
-    expect(await screen.findByText("★★★★½")).toBeInTheDocument();
+    expect(screen.getByText("★★★★½")).toBeInTheDocument();
   });
 
-  it("formats whole-star ratings without a half step", async () => {
-    mockFetch({ films: [{ ...film, rating: 3 }] });
-    render(<LetterboxdStatus />);
+  it("formats whole-star ratings without a half step", () => {
+    render(<LetterboxdStatus film={{ ...film, rating: 3 }} loaded />);
 
-    expect(await screen.findByText("★★★")).toBeInTheDocument();
+    expect(screen.getByText("★★★")).toBeInTheDocument();
   });
 
-  it("omits the rating when none is present", async () => {
-    mockFetch({ films: [{ ...film, rating: null }] });
-    render(<LetterboxdStatus />);
+  it("omits the rating when none is present", () => {
+    render(<LetterboxdStatus film={{ ...film, rating: null }} loaded />);
 
-    await screen.findByText(film.title);
     expect(screen.queryByText(/★/)).not.toBeInTheDocument();
   });
 
-  it("renders the liked heart when the film is liked", async () => {
-    mockFetch({ films: [{ ...film, liked: true }] });
-    render(<LetterboxdStatus />);
+  it("renders the liked heart when the film is liked", () => {
+    render(<LetterboxdStatus film={{ ...film, liked: true }} loaded />);
 
-    expect(await screen.findByLabelText("liked")).toBeInTheDocument();
+    expect(screen.getByLabelText("liked")).toBeInTheDocument();
   });
 
-  it("keeps the line unbreakable, letting only the title ellipsize", async () => {
-    mockFetch({ films: [{ ...film, liked: true }] });
-    render(<LetterboxdStatus />);
+  it("keeps the line unbreakable, letting only the title ellipsize", () => {
+    render(<LetterboxdStatus film={{ ...film, liked: true }} loaded />);
 
-    expect(await screen.findByText(film.title)).toHaveClass("min-w_0");
+    expect(screen.getByText(film.title)).toHaveClass("min-w_0");
     expect(screen.getByText("★★★★½")).toHaveClass("flex-sh_0", "white-space_nowrap");
     expect(screen.getByText("2001")).toHaveClass("flex-sh_0");
     expect(screen.getByLabelText("liked")).toHaveClass("flex-sh_0");
-  });
-
-  it("renders nothing when the request fails", async () => {
-    mockFetch({}, false);
-    const { container } = render(<LetterboxdStatus />);
-
-    await waitFor(() => expect(container).toBeEmptyDOMElement());
   });
 });

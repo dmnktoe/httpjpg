@@ -1,4 +1,5 @@
 import { fetchLetterboxdFilms, isLetterboxdUsername } from "@/lib/integrations/letterboxd";
+import { WIDGET_MAX_AGE } from "@/lib/queries/widget-status";
 import {
   resolveWidgetSetting,
   widgetConfigUnavailable,
@@ -27,6 +28,6 @@ export const GET = widgetRoute(
       return widgetUpstreamError("Letterboxd", result);
     }
 
-    return widgetPayload({ films: result.films }, { isDraft, maxAge: 300 });
+    return widgetPayload({ films: result.films }, { isDraft, maxAge: WIDGET_MAX_AGE.letterboxd });
   },
 );

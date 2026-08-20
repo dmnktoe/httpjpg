@@ -1,4 +1,5 @@
 import { fetchDiscordPresence, isDiscordUserId } from "@/lib/integrations/discord";
+import { WIDGET_MAX_AGE } from "@/lib/queries/widget-status";
 import {
   resolveWidgetSetting,
   widgetConfigUnavailable,
@@ -27,6 +28,6 @@ export const GET = widgetRoute(
       return widgetUpstreamError("Lanyard API", result);
     }
 
-    return widgetPayload(result.presence, { isDraft, maxAge: 30 });
+    return widgetPayload(result.presence, { isDraft, maxAge: WIDGET_MAX_AGE.discord });
   },
 );

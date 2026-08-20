@@ -1,5 +1,5 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 
 import type { XPost, XProfile } from "@/lib/integrations/x-posts";
 
@@ -23,57 +23,50 @@ const post: XPost = {
   isQuote: false,
 };
 
-function mockFetch(payload: unknown, ok = true) {
-  const fetchMock = vi.fn().mockResolvedValue({ ok, json: async () => payload });
-  vi.stubGlobal("fetch", fetchMock);
-  return fetchMock;
-}
+afterEach(cleanup);
 
 describe("XStatus", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  afterEach(() => {
-    cleanup();
-    vi.unstubAllGlobals();
-    vi.restoreAllMocks();
-  });
-
-  it("holds a loading label, then collapses when there is no post", async () => {
-    mockFetch({ profile, posts: [] });
-    const { container } = render(<XStatus />);
+  it("holds a loading label until the data arrives", () => {
+    render(<XStatus profile={null} post={null} loaded={false} />);
 
     expect(screen.getByText("loading ...")).toBeInTheDocument();
-    await waitFor(() => expect(container).toBeEmptyDOMElement());
   });
 
-  it("renders the avatar, the follower count and the latest post", async () => {
-    mockFetch({ profile, posts: [post] });
-    render(<XStatus />);
+  it("collapses once loaded with no post", () => {
+    const { container } = render(<XStatus profile={profile} post={null} loaded />);
 
-    expect(await screen.findByText("Hello world")).toBeInTheDocument();
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("collapses when there is a post but no profile", () => {
+    const { container } = render(<XStatus profile={null} post={post} loaded />);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renders the avatar, the follower count and the latest post", () => {
+    render(<XStatus profile={profile} post={post} loaded />);
+
+    expect(screen.getByText("Hello world")).toBeInTheDocument();
     expect(screen.getByText("(1.2K)")).toBeInTheDocument();
     expect(document.querySelector(`img[src="${profile.avatar}"]`)).toBeInTheDocument();
     expect(screen.getByRole("link")).toHaveAttribute("href", post.url);
   });
 
-  it("compacts large follower counts and spells small ones out", async () => {
-    mockFetch({ profile: { ...profile, followerCount: 226995885 }, posts: [post] });
-    const { unmount } = render(<XStatus />);
-    expect(await screen.findByText("(227M)")).toBeInTheDocument();
+  it("compacts large follower counts and spells small ones out", () => {
+    const { unmount } = render(
+      <XStatus profile={{ ...profile, followerCount: 226995885 }} post={post} loaded />,
+    );
+    expect(screen.getByText("(227M)")).toBeInTheDocument();
     unmount();
 
-    mockFetch({ profile: { ...profile, followerCount: 42 }, posts: [post] });
-    render(<XStatus />);
-    expect(await screen.findByText("(42)")).toBeInTheDocument();
+    render(<XStatus profile={{ ...profile, followerCount: 42 }} post={post} loaded />);
+    expect(screen.getByText("(42)")).toBeInTheDocument();
   });
 
-  it("reveals the handle in a tooltip when the avatar is hovered", async () => {
-    mockFetch({ profile, posts: [post] });
-    render(<XStatus />);
+  it("reveals the handle in a tooltip when the avatar is hovered", () => {
+    render(<XStatus profile={profile} post={post} loaded />);
 
-    await screen.findByText("Hello world");
     const avatar = document.querySelector(`img[src="${profile.avatar}"]`) as HTMLElement;
     const trigger = avatar.parentElement as HTMLElement;
 
@@ -86,80 +79,48 @@ describe("XStatus", () => {
     expect(trigger.getAttribute("aria-describedby")).toBe(screen.getByRole("tooltip").id);
   });
 
-  it("labels the follower count with the exact number for screen readers", async () => {
-    mockFetch({ profile, posts: [post] });
-    render(<XStatus />);
+  it("labels the follower count with the exact number for screen readers", () => {
+    render(<XStatus profile={profile} post={post} loaded />);
 
-    expect(await screen.findByLabelText("1234 followers")).toBeInTheDocument();
+    expect(screen.getByLabelText("1234 followers")).toBeInTheDocument();
   });
 
-  it("omits the follower count when the API did not report one", async () => {
-    mockFetch({ profile: { ...profile, followerCount: null }, posts: [post] });
-    render(<XStatus />);
+  it("omits the follower count when the API did not report one", () => {
+    render(<XStatus profile={{ ...profile, followerCount: null }} post={post} loaded />);
 
-    await screen.findByText("Hello world");
     expect(screen.queryByText(/^\(/)).not.toBeInTheDocument();
   });
 
-  it("renders without an avatar when the profile has none", async () => {
-    mockFetch({ profile: { ...profile, avatar: null }, posts: [post] });
-    render(<XStatus />);
+  it("renders without an avatar when the profile has none", () => {
+    render(<XStatus profile={{ ...profile, avatar: null }} post={post} loaded />);
 
-    await screen.findByText("Hello world");
     expect(document.querySelector("img")).not.toBeInTheDocument();
     expect(screen.getByText("(1.2K)")).toBeInTheDocument();
   });
 
-  it("marks quote posts and posts with media", async () => {
-    mockFetch({ profile, posts: [{ ...post, isQuote: true, hasMedia: true }] });
-    render(<XStatus />);
+  it("marks quote posts and posts with media", () => {
+    render(<XStatus profile={profile} post={{ ...post, isQuote: true, hasMedia: true }} loaded />);
 
-    expect(await screen.findByLabelText("quote post")).toBeInTheDocument();
+    expect(screen.getByLabelText("quote post")).toBeInTheDocument();
     expect(screen.getByLabelText("has media")).toBeInTheDocument();
   });
 
-  it("omits the markers for a plain text post", async () => {
-    mockFetch({ profile, posts: [post] });
-    render(<XStatus />);
+  it("omits the markers for a plain text post", () => {
+    render(<XStatus profile={profile} post={post} loaded />);
 
-    await screen.findByText("Hello world");
     expect(screen.queryByLabelText("quote post")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("has media")).not.toBeInTheDocument();
   });
 
-  it("keeps the line unbreakable, letting only the post ellipsize", async () => {
-    mockFetch({ profile, posts: [{ ...post, isQuote: true, hasMedia: true }] });
-    render(<XStatus />);
+  it("keeps the line unbreakable, letting only the post ellipsize", () => {
+    render(<XStatus profile={profile} post={{ ...post, isQuote: true, hasMedia: true }} loaded />);
 
-    expect(await screen.findByText("Hello world")).toHaveClass("min-w_0");
+    expect(screen.getByText("Hello world")).toHaveClass("min-w_0");
     expect(screen.getByText("(1.2K)")).toHaveClass("flex-sh_0");
     expect(screen.getByLabelText("quote post")).toHaveClass("flex-sh_0");
     expect(screen.getByLabelText("has media")).toHaveClass("flex-sh_0");
 
     const avatar = document.querySelector(`img[src="${profile.avatar}"]`) as HTMLElement;
     expect(avatar.parentElement?.parentElement).toHaveClass("flex-sh_0");
-  });
-
-  it("collapses when the payload carries a post but no profile", async () => {
-    mockFetch({ posts: [post] });
-    const { container } = render(<XStatus />);
-
-    await waitFor(() => expect(container).toBeEmptyDOMElement());
-  });
-
-  it("renders nothing when the request fails", async () => {
-    mockFetch({}, false);
-    const { container } = render(<XStatus />);
-
-    await waitFor(() => expect(container).toBeEmptyDOMElement());
-  });
-
-  it("renders nothing when the request throws", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
-    vi.spyOn(console, "error").mockImplementation(() => {});
-
-    const { container } = render(<XStatus />);
-
-    await waitFor(() => expect(container).toBeEmptyDOMElement());
   });
 });

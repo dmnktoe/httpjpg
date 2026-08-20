@@ -8,16 +8,14 @@ import {
 } from "@httpjpg/ui";
 
 import type { DiscogsRelease } from "@/lib/integrations/discogs";
-import { useWidgetData } from "@/lib/use-widget-data";
 
-interface DiscogsResponse {
-  releases?: DiscogsRelease[];
+export interface DiscogsStatusProps {
+  release: DiscogsRelease | null;
+  /** False while the request is in flight, so the line holds instead of collapsing. */
+  loaded: boolean;
 }
 
-export function DiscogsStatus() {
-  const { data, loaded } = useWidgetData<DiscogsResponse>("/api/discogs");
-  const release = data?.releases?.[0] ?? null;
-
+export function DiscogsStatus({ release, loaded }: DiscogsStatusProps) {
   if (!release) {
     return loaded ? null : <FooterStatusLine label="discogs" loading />;
   }

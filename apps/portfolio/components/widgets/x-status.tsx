@@ -10,11 +10,12 @@ import {
 } from "@httpjpg/ui";
 
 import type { XPost, XProfile } from "@/lib/integrations/x-posts";
-import { useWidgetData } from "@/lib/use-widget-data";
 
-interface XResponse {
-  profile?: XProfile;
-  posts?: XPost[];
+export interface XStatusProps {
+  profile: XProfile | null;
+  post: XPost | null;
+  /** False while the request is in flight, so the line holds instead of collapsing. */
+  loaded: boolean;
 }
 
 function formatFollowerCount(value: number): string {
@@ -24,11 +25,7 @@ function formatFollowerCount(value: number): string {
   }).format(value);
 }
 
-export function XStatus() {
-  const { data, loaded } = useWidgetData<XResponse>("/api/x");
-  const profile = data?.profile;
-  const post = data?.posts?.[0];
-
+export function XStatus({ profile, post, loaded }: XStatusProps) {
   if (!profile || !post) {
     return loaded ? null : <FooterStatusLine label="x" loading />;
   }

@@ -8,10 +8,11 @@ import {
 } from "@httpjpg/ui";
 
 import type { LetterboxdFilm } from "@/lib/integrations/letterboxd";
-import { useWidgetData } from "@/lib/use-widget-data";
 
-interface LetterboxdResponse {
-  films?: LetterboxdFilm[];
+export interface LetterboxdStatusProps {
+  film: LetterboxdFilm | null;
+  /** False while the request is in flight, so the line holds instead of collapsing. */
+  loaded: boolean;
 }
 
 // Ratings are 0.5–5 in half steps (★★★★½).
@@ -21,10 +22,7 @@ function formatRating(rating: number): string {
   return "★".repeat(full) + half;
 }
 
-export function LetterboxdStatus() {
-  const { data, loaded } = useWidgetData<LetterboxdResponse>("/api/letterboxd");
-  const film = data?.films?.[0] ?? null;
-
+export function LetterboxdStatus({ film, loaded }: LetterboxdStatusProps) {
   if (!film) {
     return loaded ? null : <FooterStatusLine label="letterboxd" loading />;
   }

@@ -9,8 +9,6 @@ import {
 } from "@httpjpg/ui";
 import { token } from "@httpjpg/ui/tokens";
 
-import { useWidgetData } from "@/lib/use-widget-data";
-
 const STATUS = { online: "online", idle: "idle", dnd: "dnd", offline: "offline" } as const;
 type DiscordStatusValue = (typeof STATUS)[keyof typeof STATUS];
 
@@ -28,26 +26,27 @@ const STATUS_EMOJI: Record<DiscordStatusValue, string> = {
   offline: "⚫",
 };
 
-interface DiscordPresence {
+export interface DiscordPresence {
   status?: DiscordStatusValue;
   activity?: string | null;
   activityDetails?: { playtime?: string | null; icon?: string | null };
 }
 
-/** Presence changes minute to minute, so this is the one status line that polls. */
-const POLL_MS = 30_000;
+export interface DiscordStatusProps {
+  presence: DiscordPresence | null;
+  /** False while the first request is in flight; the line must not claim "offline" yet. */
+  loaded: boolean;
+}
 
-export function DiscordStatus() {
-  const { data, loaded } = useWidgetData<DiscordPresence>("/api/discord", { pollMs: POLL_MS });
-
+export function DiscordStatus({ presence, loaded }: DiscordStatusProps) {
   if (!loaded) {
     return <FooterStatusLine label="discord" loading />;
   }
 
-  const status = data?.status ?? STATUS.offline;
-  const activity = data?.activity || null;
-  const playtime = data?.activityDetails?.playtime || null;
-  const activityIcon = data?.activityDetails?.icon || null;
+  const status = presence?.status ?? STATUS.offline;
+  const activity = presence?.activity || null;
+  const playtime = presence?.activityDetails?.playtime || null;
+  const activityIcon = presence?.activityDetails?.icon || null;
 
   return (
     <FooterStatusLine label="discord">

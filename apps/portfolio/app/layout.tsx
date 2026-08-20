@@ -28,16 +28,12 @@ import { PreviewNotification } from "@/components/ui/preview-notification";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AskWidget } from "@/components/widgets/ask-widget";
 import { BuildBadge } from "@/components/widgets/build-badge";
-import { DiscogsStatus } from "@/components/widgets/discogs-status";
-import { DiscordStatus } from "@/components/widgets/discord-status";
-import { LetterboxdStatus } from "@/components/widgets/letterboxd-status";
+import { FooterStatus } from "@/components/widgets/footer-status";
 import { NowPlayingWidget } from "@/components/widgets/now-playing-widget";
 import { PSNCard } from "@/components/widgets/psn-card";
-import { TrophyStatus } from "@/components/widgets/trophy-status";
 import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
-import { XStatus } from "@/components/widgets/x-status";
 import { isStoryblokEditor } from "@/lib/is-storyblok-editor";
 import { getPageTheme } from "@/lib/page-theme";
 import {
@@ -173,11 +169,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                       w: "full",
                     }}
                   >
-                    {widgetConfig.discordEnabled && <DiscordStatus />}
-                    {widgetConfig.letterboxdEnabled && <LetterboxdStatus />}
-                    {widgetConfig.discogsEnabled && <DiscogsStatus />}
-                    {widgetConfig.xEnabled && <XStatus />}
-                    {widgetConfig.psnTrophyEnabled && <TrophyStatus />}
+                    <FooterStatus
+                      discordEnabled={widgetConfig.discordEnabled}
+                      letterboxdEnabled={widgetConfig.letterboxdEnabled}
+                      discogsEnabled={widgetConfig.discogsEnabled}
+                      xEnabled={widgetConfig.xEnabled}
+                      trophiesEnabled={widgetConfig.psnTrophyEnabled}
+                    />
                     <WeatherTime />
                     {flags.webVitalsBadgeEnabled && <WebVitalsBadge />}
                     {flags.buildBadgeEnabled && (

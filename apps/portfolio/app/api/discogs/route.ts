@@ -1,4 +1,5 @@
 import { fetchDiscogsCollection, isDiscogsUsername } from "@/lib/integrations/discogs";
+import { WIDGET_MAX_AGE } from "@/lib/queries/widget-status";
 import {
   resolveWidgetSetting,
   widgetConfigUnavailable,
@@ -27,6 +28,9 @@ export const GET = widgetRoute(
       return widgetUpstreamError("Discogs", result);
     }
 
-    return widgetPayload({ releases: result.releases }, { isDraft, maxAge: 900 });
+    return widgetPayload(
+      { releases: result.releases },
+      { isDraft, maxAge: WIDGET_MAX_AGE.discogs },
+    );
   },
 );

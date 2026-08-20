@@ -3,6 +3,7 @@ import { captureServerException } from "@httpjpg/observability/sentry/server.ts"
 import { NextResponse } from "next/server";
 
 import { fetchRecentTrophies, isPsnUsername } from "@/lib/integrations/psn-trophies";
+import { WIDGET_MAX_AGE } from "@/lib/queries/widget-status";
 import {
   resolveWidgetSetting,
   settingValue,
@@ -43,7 +44,7 @@ export const GET = widgetRoute(
 
     return widgetPayload(
       { trophies: result.trophies, avatar: result.avatar },
-      { isDraft, maxAge: 300 },
+      { isDraft, maxAge: WIDGET_MAX_AGE.psnTrophies },
     );
   },
 );

@@ -1,6 +1,7 @@
 import { env } from "@httpjpg/env";
 
 import { fetchXTimeline, isXUsername } from "@/lib/integrations/x-posts";
+import { WIDGET_MAX_AGE } from "@/lib/queries/widget-status";
 import {
   resolveWidgetSetting,
   widgetConfigUnavailable,
@@ -34,5 +35,5 @@ export const GET = widgetRoute({ route: "x", label: "X posts" }, async ({ isDraf
     return widgetUpstreamError("X", result);
   }
 
-  return widgetPayload(result.timeline, { isDraft, maxAge: 3600 });
+  return widgetPayload(result.timeline, { isDraft, maxAge: WIDGET_MAX_AGE.x });
 });

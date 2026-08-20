@@ -1,6 +1,7 @@
 import { env } from "@httpjpg/env";
 
 import { fetchWeather } from "@/lib/integrations/weather";
+import { WIDGET_MAX_AGE } from "@/lib/queries/widget-status";
 import { widgetPayload, widgetRoute, widgetUpstreamError } from "@/lib/widget-route";
 
 export const GET = widgetRoute({ route: "weather", label: "weather" }, async ({ isDraft }) => {
@@ -17,6 +18,6 @@ export const GET = widgetRoute({ route: "weather", label: "weather" }, async ({ 
       condition: result.condition,
       isDay: result.isDay,
     },
-    { isDraft, maxAge: 900 },
+    { isDraft, maxAge: WIDGET_MAX_AGE.weather },
   );
 });

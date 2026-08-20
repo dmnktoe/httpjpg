@@ -83,7 +83,15 @@ const loadTrophies = unstable_cache(
   { revalidate: WIDGET_MAX_AGE.psnTrophies },
 );
 
-/** The setting when it is present and passes its validator, `undefined` otherwise. */
+/**
+ * The setting when it is present and passes its validator, `undefined`
+ * otherwise.
+ *
+ * Deliberately narrower than `resolveWidgetSetting()` in lib/widget-route.ts:
+ * that one also distinguishes "config unreadable" from "field empty" so the
+ * dedicated routes can answer 503 rather than 501. The envelope has no status
+ * to report, so a widget it cannot load simply leaves its line out.
+ */
 function readSetting(
   value: string | undefined,
   validate: (candidate: string) => boolean,
@@ -91,8 +99,8 @@ function readSetting(
   return value && validate(value) ? value : undefined;
 }
 
-/** Resolves a loader to its value, or null if it is off or threw. */
-async function settle<T>(loader: Promise<T | null> | undefined, label: string): Promise<T | null> {
+/** Resolves one loader, keeping a thrown upstream from taking the envelope down. */
+async function settle<T>(label: string, loader: Promise<T | null> | null): Promise<T | null> {
   if (!loader) {
     return null;
   }
@@ -118,29 +126,27 @@ export async function getWidgetStatus(): Promise<WidgetStatus> {
   const letterboxdUser = readSetting(config?.letterboxd_username, isLetterboxdUsername);
   const discogsUser = readSetting(config?.discogs_username, isDiscogsUsername);
   const xUser = readSetting(config?.x_username, isXUsername);
+  // Unlike the others this one is optional: it narrows the lookup, and the
+  // widget still works without it as long as PSN_NPSSO is set.
   const psnUser = readSetting(config?.psn_username, isPsnUsername);
 
+  // Started outside Promise.all so each condition narrows its own username,
+  // and so a widget that is switched off never opens a request at all.
+  const xApiKey = env.TWEETAPI_KEY;
+  const npsso = env.PSN_NPSSO;
+
+  const letterboxdLoad =
+    config?.letterboxd_enabled && letterboxdUser ? loadLetterboxd(letterboxdUser) : null;
+  const discogsLoad = config?.discogs_enabled && discogsUser ? loadDiscogs(discogsUser) : null;
+  const xLoad =
+    config?.x_enabled && xUser && xApiKey ? loadX(xUser, env.TWEETAPI_API_URL, xApiKey) : null;
+  const trophiesLoad = config?.psn_trophy_enabled && npsso ? loadTrophies(npsso, psnUser) : null;
+
   const [letterboxd, discogs, x, trophies] = await Promise.all([
-    settle(
-      config?.letterboxd_enabled && letterboxdUser ? loadLetterboxd(letterboxdUser) : undefined,
-      "letterboxd",
-    ),
-    settle(
-      config?.discogs_enabled && discogsUser ? loadDiscogs(discogsUser) : undefined,
-      "discogs",
-    ),
-    settle(
-      config?.x_enabled && xUser && env.TWEETAPI_KEY
-        ? loadX(xUser, env.TWEETAPI_API_URL, env.TWEETAPI_KEY)
-        : undefined,
-      "x",
-    ),
-    settle(
-      config?.psn_trophy_enabled && env.PSN_NPSSO
-        ? loadTrophies(env.PSN_NPSSO, psnUser)
-        : undefined,
-      "psn-trophies",
-    ),
+    settle("letterboxd", letterboxdLoad),
+    settle("discogs", discogsLoad),
+    settle("x", xLoad),
+    settle("psn-trophies", trophiesLoad),
   ]);
 
   return { letterboxd, discogs, x, trophies };

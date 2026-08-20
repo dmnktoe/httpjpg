@@ -52,6 +52,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": r("./apps/portfolio"),
+      // Listed before the package root so the subpath export still resolves;
+      // the generic alias would otherwise send it to a src/tokens that is generated elsewhere.
+      "@httpjpg/ui/tokens": r("./packages/ui/styled-system/tokens"),
       "@httpjpg/ui": r("./packages/ui/src"),
       "styled-system": r("./packages/ui/styled-system"),
     },

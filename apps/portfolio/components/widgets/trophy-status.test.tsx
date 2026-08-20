@@ -1,5 +1,5 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 
 import type { PsnTrophy } from "@/lib/integrations/psn-trophies";
 
@@ -26,37 +26,25 @@ const trophyB: PsnTrophy = {
 
 const AVATAR = "https://avatar.test/l.png";
 
-function mockFetch(payload: unknown, ok = true) {
-  const fetchMock = vi.fn().mockResolvedValue({
-    ok,
-    json: async () => payload,
-  });
-  vi.stubGlobal("fetch", fetchMock);
-  return fetchMock;
-}
+afterEach(cleanup);
 
 describe("TrophyStatus", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  it("holds a loading label until the data arrives", () => {
+    render(<TrophyStatus trophy={null} avatar={null} loaded={false} />);
 
-  afterEach(() => {
-    cleanup();
-    vi.unstubAllGlobals();
-  });
-
-  it("shows a loading label while loading, then collapses when there are no trophies", async () => {
-    mockFetch({ trophies: [], avatar: null });
-    const { container } = render(<TrophyStatus />);
     expect(screen.getByText("loading ...")).toBeInTheDocument();
-    await waitFor(() => expect(container).toBeEmptyDOMElement());
   });
 
-  it("renders only the latest trophy with its tier sprite and image", async () => {
-    mockFetch({ trophies: [trophyA, trophyB], avatar: AVATAR });
-    render(<TrophyStatus />);
+  it("collapses once loaded with no trophies", () => {
+    const { container } = render(<TrophyStatus trophy={null} avatar={null} loaded />);
 
-    await screen.findByText(trophyA.name);
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renders the trophy with its tier sprite and image", () => {
+    render(<TrophyStatus trophy={trophyA} avatar={AVATAR} loaded />);
+
+    expect(screen.getByText(trophyA.name)).toBeInTheDocument();
     expect(screen.queryByText(trophyB.name)).not.toBeInTheDocument();
 
     const sprite = screen.getByAltText("platinum trophy");
@@ -64,23 +52,20 @@ describe("TrophyStatus", () => {
     expect(sprite).toHaveStyle({ imageRendering: "pixelated" });
 
     expect(document.querySelector(`img[src="${trophyA.image}"]`)).toBeInTheDocument();
-
-    const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", trophyA.url);
+    expect(screen.getByRole("link")).toHaveAttribute("href", trophyA.url);
   });
 
-  it("renders the PSN avatar and no hover preview", async () => {
-    mockFetch({ trophies: [trophyA, trophyB], avatar: AVATAR });
-    render(<TrophyStatus />);
+  it("renders the PSN avatar and no hover preview", () => {
+    render(<TrophyStatus trophy={trophyA} avatar={AVATAR} loaded />);
 
-    await screen.findByText(trophyA.name);
     expect(document.querySelector(`img[src="${AVATAR}"]`)).toBeInTheDocument();
     expect(document.querySelectorAll("[data-preview-image]")).toHaveLength(0);
   });
 
-  it("renders nothing when the request fails", async () => {
-    mockFetch({}, false);
-    const { container } = render(<TrophyStatus />);
-    await waitFor(() => expect(container).toBeEmptyDOMElement());
+  it("renders without an avatar when PSN did not return one", () => {
+    render(<TrophyStatus trophy={trophyA} avatar={null} loaded />);
+
+    expect(document.querySelector(`img[src="${AVATAR}"]`)).not.toBeInTheDocument();
+    expect(screen.getByText(trophyA.name)).toBeInTheDocument();
   });
 });

@@ -45,12 +45,12 @@ export function XStatus({ profile, post, loaded }: XStatusProps) {
       <FooterStatusLineSeparator />
       <FooterStatusLineText maxWidth="260px">{post.text}</FooterStatusLineText>
       {post.isQuote && (
-        <Box as="span" aria-label="quote post" css={{ flexShrink: 0, opacity: 0.4 }}>
+        <Box as="span" aria-label="quote post" css={{ flexShrink: 0, opacity: 40 }}>
           ❝
         </Box>
       )}
       {post.hasMedia && (
-        <Box as="span" aria-label="has media" css={{ flexShrink: 0, opacity: 0.5 }}>
+        <Box as="span" aria-label="has media" css={{ flexShrink: 0, opacity: 50 }}>
           ▣
         </Box>
       )}

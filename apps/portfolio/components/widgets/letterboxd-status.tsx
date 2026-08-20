@@ -37,7 +37,7 @@ export function LetterboxdStatus({ film, loaded }: LetterboxdStatusProps) {
         </FooterStatusLineText>
       )}
       {film.liked && (
-        <FooterStatusLineText fixed aria-label="liked" css={{ color: "accent.500", opacity: 0.8 }}>
+        <FooterStatusLineText fixed aria-label="liked" css={{ color: "accent.500", opacity: 80 }}>
           ♥
         </FooterStatusLineText>
       )}

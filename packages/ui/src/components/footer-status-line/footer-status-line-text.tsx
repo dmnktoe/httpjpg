@@ -45,7 +45,7 @@ export function FooterStatusLineText({
               whiteSpace: "nowrap",
               overflow: "hidden",
             }),
-        opacity: dim ? 0.5 : 0.7,
+        opacity: dim ? 50 : 70,
         ...cssProp,
       }}
     >

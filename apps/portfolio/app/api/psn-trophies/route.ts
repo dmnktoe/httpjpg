@@ -1,48 +1,34 @@
 import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { getStoryblokApi } from "@httpjpg/storyblok-api";
-import type { SbConfigStory } from "@httpjpg/storyblok-ui";
-import { draftMode } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { widgetCacheHeaders } from "@/lib/cache-headers";
 import { fetchRecentTrophies, isPsnUsername } from "@/lib/integrations/psn-trophies";
+import {
+  resolveWidgetSetting,
+  settingValue,
+  widgetMissingEnv,
+  widgetPayload,
+  widgetRoute,
+} from "@/lib/widget-route";
 
-async function resolveUsername(isDraft: boolean): Promise<string | undefined> {
-  try {
-    const story = await getStoryblokApi({ draftMode: isDraft }).getStory({
-      slug: "config",
-    });
-    const config = story?.content as SbConfigStory | undefined;
-    const username = config?.psn_username;
-    if (username && !isPsnUsername(username)) {
-      console.warn("Ignoring malformed psn_username from Storyblok config");
-      return undefined;
-    }
-    return username;
-  } catch (error) {
-    console.warn("Failed to fetch PSN config from Storyblok:", error);
-    return undefined;
-  }
-}
-
-export async function GET() {
-  const { isEnabled: isDraft } = await draftMode();
-  try {
+export const GET = widgetRoute(
+  { route: "psn-trophies", label: "PSN trophies" },
+  async ({ isDraft }) => {
     if (!env.PSN_NPSSO) {
-      return NextResponse.json(
-        {
-          error: "PSN not configured",
-          message: "Set PSN_NPSSO to enable the trophy widget",
-        },
-        { status: 501 },
-      );
+      return widgetMissingEnv("PSN", "PSN_NPSSO");
     }
 
-    const username = await resolveUsername(isDraft);
+    // The username only narrows the lookup, so an unset or unreadable config
+    // still yields trophies for the account behind PSN_NPSSO.
+    const username = await resolveWidgetSetting({
+      field: "psn_username",
+      validate: isPsnUsername,
+    });
 
-    const result = await fetchRecentTrophies(env.PSN_NPSSO, username);
+    const result = await fetchRecentTrophies(env.PSN_NPSSO, settingValue(username));
     if (!result.ok) {
+      // PSN fails in ways worth telling apart, so this route reports its own
+      // reason instead of the shared upstream shape.
       if (result.reportable) {
         console.warn(`PSN trophy fetch failed (${result.reason}): ${result.message}`, result.error);
         captureServerException(result.error, {
@@ -55,13 +41,9 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json(
+    return widgetPayload(
       { trophies: result.trophies, avatar: result.avatar },
-      { headers: widgetCacheHeaders(isDraft, 300) },
+      { isDraft, maxAge: 300 },
     );
-  } catch (error) {
-    console.error("PSN trophies API error:", error);
-    captureServerException(error, { tags: { route: "psn-trophies" } });
-    return NextResponse.json({ error: "Failed to fetch PSN trophies" }, { status: 500 });
-  }
-}
+  },
+);

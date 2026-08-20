@@ -11,24 +11,27 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
-const { getStory, getStoryblokApi, fetchRecentTrophies, isPsnUsername } = vi.hoisted(() => ({
-  getStory: vi.fn(),
-  getStoryblokApi: vi.fn(),
+const { getConfig, enforceRateLimit, fetchRecentTrophies, isPsnUsername } = vi.hoisted(() => ({
+  getConfig: vi.fn(),
+  enforceRateLimit: vi.fn(async (): Promise<Response | null> => null),
   fetchRecentTrophies: vi.fn(),
   isPsnUsername: vi.fn(() => true),
 }));
 
-vi.mock("@httpjpg/storyblok-api", () => ({ getStoryblokApi }));
-
+vi.mock("@/lib/queries/config", () => ({ getConfig }));
+vi.mock("@/lib/rate-limit", () => ({ enforceRateLimit }));
 vi.mock("@/lib/integrations/psn-trophies", () => ({ fetchRecentTrophies, isPsnUsername }));
 
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
+import type { NextRequest } from "next/server";
 
 import { GET } from "./route";
 
+const request = {} as NextRequest;
+
 beforeEach(() => {
   vi.clearAllMocks();
-  getStoryblokApi.mockReturnValue({ getStory });
+  enforceRateLimit.mockResolvedValue(null);
   mockEnv.PSN_NPSSO = "npsso-token";
   isPsnUsername.mockReturnValue(true);
   vi.spyOn(console, "warn").mockImplementation(() => {});
@@ -43,7 +46,7 @@ describe("GET /api/psn-trophies", () => {
   it("returns 501 when PSN_NPSSO is not configured", async () => {
     mockEnv.PSN_NPSSO = undefined;
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({ error: "PSN not configured" });
@@ -51,14 +54,14 @@ describe("GET /api/psn-trophies", () => {
   });
 
   it("returns trophies with a cache header", async () => {
-    getStory.mockResolvedValueOnce({ content: { psn_username: "player" } });
+    getConfig.mockResolvedValueOnce({ psn_username: "player" });
     fetchRecentTrophies.mockResolvedValueOnce({
       ok: true,
       trophies: [{ name: "Platinum" }],
       avatar: "https://example.com/a.png",
     });
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toBe(
@@ -72,35 +75,35 @@ describe("GET /api/psn-trophies", () => {
   });
 
   it("ignores a malformed username from the Storyblok config", async () => {
-    getStory.mockResolvedValueOnce({ content: { psn_username: "bad name" } });
+    getConfig.mockResolvedValueOnce({ psn_username: "bad name" });
     isPsnUsername.mockReturnValue(false);
     fetchRecentTrophies.mockResolvedValueOnce({ ok: true, trophies: [] });
 
-    await GET();
+    await GET(request);
 
     expect(fetchRecentTrophies).toHaveBeenCalledWith("npsso-token", undefined);
   });
 
   it("falls back to no username when the config story cannot be read", async () => {
-    getStory.mockRejectedValueOnce(new Error("storyblok down"));
+    getConfig.mockResolvedValueOnce(null);
     fetchRecentTrophies.mockResolvedValueOnce({ ok: true, trophies: [] });
 
-    await GET();
+    await GET(request);
 
     expect(fetchRecentTrophies).toHaveBeenCalledWith("npsso-token", undefined);
   });
 
-  it("falls back to no username when the config story has no content", async () => {
-    getStory.mockResolvedValueOnce(undefined);
+  it("falls back to no username when the config story is empty", async () => {
+    getConfig.mockResolvedValueOnce({});
     fetchRecentTrophies.mockResolvedValueOnce({ ok: true, trophies: [] });
 
-    await GET();
+    await GET(request);
 
     expect(fetchRecentTrophies).toHaveBeenCalledWith("npsso-token", undefined);
   });
 
   it("propagates the upstream status and reason when the trophy fetch fails", async () => {
-    getStory.mockResolvedValueOnce({ content: {} });
+    getConfig.mockResolvedValueOnce({});
     fetchRecentTrophies.mockResolvedValueOnce({
       ok: false,
       status: 429,
@@ -109,7 +112,7 @@ describe("GET /api/psn-trophies", () => {
       reportable: false,
     });
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(429);
     await expect(response.json()).resolves.toEqual({
@@ -121,7 +124,7 @@ describe("GET /api/psn-trophies", () => {
 
   it("reports a reportable failure to Sentry tagged with its reason", async () => {
     const error = new Error("NPSSO rejected");
-    getStory.mockResolvedValueOnce({ content: {} });
+    getConfig.mockResolvedValueOnce({});
     fetchRecentTrophies.mockResolvedValueOnce({
       ok: false,
       status: 503,
@@ -131,7 +134,7 @@ describe("GET /api/psn-trophies", () => {
       reportable: true,
     });
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toEqual({
@@ -144,23 +147,33 @@ describe("GET /api/psn-trophies", () => {
   });
 
   it("reports unexpected errors and returns a 500", async () => {
-    getStory.mockResolvedValueOnce({ content: {} });
+    getConfig.mockResolvedValueOnce({});
     fetchRecentTrophies.mockRejectedValueOnce(new Error("boom"));
 
-    const response = await GET();
+    const response = await GET(request);
 
     expect(response.status).toBe(500);
     await expect(response.json()).resolves.toEqual({ error: "Failed to fetch PSN trophies" });
     expect(captureServerException).toHaveBeenCalledOnce();
   });
 
-  it("reads the config through the request's draft mode", async () => {
+  it("keeps draft responses out of shared caches", async () => {
     const { draftMode } = await import("next/headers");
     vi.mocked(draftMode).mockResolvedValueOnce({ isEnabled: true } as never);
-    getStory.mockResolvedValueOnce({ content: { psn_username: "dmnktoe" } });
+    getConfig.mockResolvedValueOnce({ psn_username: "dmnktoe" });
+    fetchRecentTrophies.mockResolvedValueOnce({ ok: true, trophies: [], avatar: null });
 
-    await GET();
+    const response = await GET(request);
 
-    expect(getStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+  });
+
+  it("short-circuits when rate limited", async () => {
+    enforceRateLimit.mockResolvedValueOnce(new Response(null, { status: 429 }) as never);
+
+    const response = await GET(request);
+
+    expect(response.status).toBe(429);
+    expect(fetchRecentTrophies).not.toHaveBeenCalled();
   });
 });

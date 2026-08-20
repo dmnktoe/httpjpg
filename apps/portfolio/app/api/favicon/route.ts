@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { fetchFavicon } from "@/lib/integrations/favicon";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -40,6 +41,13 @@ function parseSize(value: string | null): number {
 }
 
 export async function GET(request: NextRequest) {
+  // This proxy fetches whatever host the query string names, so it is the one
+  // widget-adjacent route most worth putting behind the limiter.
+  const limited = await enforceRateLimit(request);
+  if (limited) {
+    return limited;
+  }
+
   const { searchParams } = request.nextUrl;
   const url = searchParams.get("url");
   if (!url) {

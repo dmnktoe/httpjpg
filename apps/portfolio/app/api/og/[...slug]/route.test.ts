@@ -9,6 +9,11 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
 vi.mock("@/lib/og-ascii", () => ({
   imageToAscii: vi.fn(async () => ({ text: "ascii", cols: 1, rows: 1 })),
 }));
+
+const { enforceRateLimit } = vi.hoisted(() => ({
+  enforceRateLimit: vi.fn(async (): Promise<Response | null> => null),
+}));
+vi.mock("@/lib/rate-limit", () => ({ enforceRateLimit }));
 interface JsxNode {
   type?: unknown;
   props?: { children?: unknown };
@@ -56,6 +61,8 @@ afterAll(() => {
   globalThis.fetch = originalFetch;
 });
 
+import type { NextRequest } from "next/server";
+
 const { fetchStory } = (await import("@httpjpg/storyblok-next")) as typeof StoryblokNext;
 const { captureServerException } =
   (await import("@httpjpg/observability/sentry/server.ts")) as typeof Observability;
@@ -65,7 +72,7 @@ const mockedFetchStory = vi.mocked(fetchStory);
 const mockedCapture = vi.mocked(captureServerException);
 
 function callGET(slug: string[]) {
-  return GET(new Request("https://example.com/api/og/" + slug.join("/")), {
+  return GET(new Request("https://example.com/api/og/" + slug.join("/")) as NextRequest, {
     params: Promise.resolve({ slug }),
   });
 }
@@ -85,6 +92,17 @@ describe("GET /api/og/[...slug]", () => {
   beforeEach(() => {
     mockedFetchStory.mockReset();
     mockedCapture.mockReset();
+    enforceRateLimit.mockReset();
+    enforceRateLimit.mockResolvedValue(null);
+  });
+
+  it("short-circuits when rate limited", async () => {
+    enforceRateLimit.mockResolvedValueOnce(new Response(null, { status: 429 }) as never);
+
+    const res = await callGET(["work", "my-project"]);
+
+    expect(res.status).toBe(429);
+    expect(mockedFetchStory).not.toHaveBeenCalled();
   });
 
   it("reports a 500 when the Google Fonts CSS fetch fails", async () => {

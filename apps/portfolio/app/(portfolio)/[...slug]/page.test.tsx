@@ -131,6 +131,34 @@ describe("generateMetadata", () => {
 
     expect(getCachedStory).toHaveBeenCalledWith("about", { draftMode: true });
   });
+
+  it("fetches drafts when the visual editor query is present", async () => {
+    getCachedStory.mockResolvedValueOnce({ slug: "about", content: { component: "page" } });
+
+    await generateMetadata({
+      params: params(["about"]),
+      searchParams: search({ _storyblok: "1" }),
+    });
+
+    expect(getCachedStory).toHaveBeenCalledWith("about", { draftMode: true });
+  });
+
+  it("requests the German CV and stamps hreflang alternates", async () => {
+    getCachedStory.mockResolvedValueOnce({
+      slug: "cv",
+      content: { component: "page", title: "Lebenslauf" },
+    });
+
+    const metadata = await generateMetadata({ params: params(["de", "cv"]) });
+
+    expect(getCachedStory).toHaveBeenCalledWith("cv", { draftMode: false, language: "de" });
+    expect(metadata.title).toBe("Lebenslauf");
+    expect(metadata.alternates).toEqual({
+      canonical: "/de/cv",
+      languages: { en: "/cv", de: "/de/cv", "x-default": "/cv" },
+    });
+    expect(metadata.openGraph).toEqual(expect.objectContaining({ locale: "de_DE", url: "/de/cv" }));
+  });
 });
 
 describe("DynamicPage", () => {
@@ -285,5 +313,63 @@ describe("DynamicPage", () => {
       expect.stringContaining("about"),
       expect.objectContaining({ error: "kaputt" }),
     );
+  });
+
+  it("renders the language picker on the English CV", async () => {
+    getCachedStory.mockResolvedValueOnce({
+      slug: "cv",
+      content: { component: "page", title: "CV" },
+    });
+
+    render(await DynamicPage({ params: params(["cv"]), searchParams: search() }));
+
+    expect(screen.getByRole("navigation", { name: "Language" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "DE" })).toHaveAttribute("href", "/de/cv");
+    expect(getCachedStory).toHaveBeenCalledWith("cv", { draftMode: false });
+  });
+
+  it("fetches the German story for /de/cv and points EN back at /cv", async () => {
+    getCachedStory.mockResolvedValueOnce({
+      slug: "cv",
+      content: { component: "page", title: "Lebenslauf" },
+    });
+
+    render(await DynamicPage({ params: params(["de", "cv"]), searchParams: search() }));
+
+    expect(getCachedStory).toHaveBeenCalledWith("cv", { draftMode: false, language: "de" });
+    expect(screen.getByRole("link", { name: "EN" })).toHaveAttribute("href", "/cv");
+    expect(screen.getByText("DE")).toHaveAttribute("aria-current", "page");
+  });
+
+  it("honors _storyblok_lang in the visual editor without rendering the picker", async () => {
+    getCachedStory.mockResolvedValueOnce({ content: { component: "page" } });
+
+    render(
+      await DynamicPage({
+        params: params(["cv"]),
+        searchParams: search({ _storyblok: "1", _storyblok_lang: "de" }),
+      }),
+    );
+
+    expect(getCachedStory).toHaveBeenCalledWith("cv", { draftMode: true, language: "de" });
+    expect(screen.getByTestId("live")).toBeInTheDocument();
+    expect(screen.queryByRole("navigation", { name: "Language" })).not.toBeInTheDocument();
+  });
+
+  it("ignores a public _storyblok_lang query on /cv", async () => {
+    getCachedStory.mockResolvedValueOnce({
+      slug: "cv",
+      content: { component: "page", title: "CV" },
+    });
+
+    render(
+      await DynamicPage({
+        params: params(["cv"]),
+        searchParams: search({ _storyblok_lang: "de" }),
+      }),
+    );
+
+    expect(getCachedStory).toHaveBeenCalledWith("cv", { draftMode: false });
+    expect(screen.getByText("EN")).toHaveAttribute("aria-current", "page");
   });
 });

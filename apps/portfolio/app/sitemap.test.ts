@@ -92,4 +92,31 @@ describe("sitemap", () => {
     expect(entries[0].url).toBe("https://example.test");
     expect(captureServerException).toHaveBeenCalledOnce();
   });
+
+  it("lists both CV locales with hreflang alternates", async () => {
+    getStories.mockResolvedValueOnce({
+      stories: [
+        {
+          slug: "cv",
+          full_slug: "cv",
+          first_published_at: "2024-01-01",
+          published_at: "2024-02-01",
+          is_startpage: false,
+        },
+      ],
+    });
+
+    const entries = await sitemap();
+    const en = entries.find((entry) => entry.url === "https://example.test/cv");
+    const de = entries.find((entry) => entry.url === "https://example.test/de/cv");
+
+    expect(en).toBeDefined();
+    expect(de).toBeDefined();
+    expect(en?.alternates?.languages).toEqual({
+      en: "https://example.test/cv",
+      de: "https://example.test/de/cv",
+      "x-default": "https://example.test/cv",
+    });
+    expect(de?.alternates?.languages).toEqual(en?.alternates?.languages);
+  });
 });

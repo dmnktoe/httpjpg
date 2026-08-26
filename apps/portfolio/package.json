@@ -31,10 +31,10 @@
     "@httpjpg/storyblok-utils": "workspace:*",
     "@httpjpg/tokens": "workspace:*",
     "@httpjpg/ui": "workspace:*",
-    "@next/third-parties": "^16.3.1",
+    "@next/third-parties": "^16.3.2",
     "@storyblok/react": "catalog:",
     "next": "catalog:",
-    "psn-api": "^2.18.0",
+    "psn-api": "^2.18.1",
     "react": "catalog:",
     "react-dom": "catalog:",
     "sharp": "^0.35.4"

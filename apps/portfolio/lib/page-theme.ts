@@ -1,5 +1,6 @@
 import { draftMode, headers } from "next/headers";
 
+import { splitLocaleSlug } from "./locale";
 import { getCachedStory } from "./queries/work";
 import { STORYBLOK_EDITOR_HEADER } from "./storyblok-editor";
 import { STORYBLOK_SLUGS } from "./storyblok-slugs";
@@ -23,7 +24,8 @@ export async function getPageTheme(): Promise<PageTheme> {
   }
   const pathname = reqHeaders.get("x-pathname") ?? "/";
   const trimmed = pathname.replace(/^\/+|\/+$/g, "");
-  const slug = trimmed || STORYBLOK_SLUGS.HOME;
+  const { slug: localeSlug } = splitLocaleSlug(trimmed ? trimmed.split("/") : []);
+  const slug = localeSlug || STORYBLOK_SLUGS.HOME;
   if (isInternalSlug(slug)) {
     return "light";
   }

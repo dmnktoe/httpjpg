@@ -3,6 +3,8 @@ import { captureServerException } from "@httpjpg/observability/sentry/server.ts"
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import type { MetadataRoute } from "next";
 
+import { LOCALIZED_SLUGS, localeAlternates, localizedPath } from "@/lib/locale";
+
 interface SitemapStory {
   slug: string;
   full_slug: string;
@@ -39,12 +41,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .filter((story) => !story.is_startpage) // No folders
       .filter((story) => !EXCLUDED_SLUGS.includes(story.slug))
       .filter((story) => !story.content?.external_only)
-      .map((story) => ({
-        url: `${baseUrl}/${story.full_slug}`,
-        lastModified: new Date(story.published_at || story.first_published_at),
-        changeFrequency: story.full_slug.startsWith("work/") ? "monthly" : "weekly",
-        priority: story.full_slug === "home" ? 1 : 0.8,
-      }));
+      .flatMap((story) => {
+        const lastModified = new Date(story.published_at || story.first_published_at);
+        const changeFrequency = story.full_slug.startsWith("work/") ? "monthly" : "weekly";
+        const languages = localeAlternates(story.full_slug);
+        const alternates = languages
+          ? {
+              languages: Object.fromEntries(
+                Object.entries(languages).map(([lang, path]) => [lang, `${baseUrl}${path}`]),
+              ),
+            }
+          : undefined;
+        const shared = {
+          lastModified,
+          changeFrequency: changeFrequency as MetadataRoute.Sitemap[number]["changeFrequency"],
+          priority: story.full_slug === "home" ? 1 : 0.8,
+          ...(alternates ? { alternates } : {}),
+        };
+        const english: MetadataRoute.Sitemap[number] = {
+          url: `${baseUrl}${localizedPath("en", story.full_slug)}`,
+          ...shared,
+        };
+        if (!LOCALIZED_SLUGS.has(story.full_slug)) {
+          return [english];
+        }
+        return [english, { url: `${baseUrl}${localizedPath("de", story.full_slug)}`, ...shared }];
+      });
 
     // Add home page
     entries.unshift({

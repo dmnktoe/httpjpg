@@ -13,4 +13,8 @@ describe("STORYBLOK_SLUGS", () => {
     expect(STORYBLOK_SLUGS.WORK_PREFIX).toBe("work/");
     expect(STORYBLOK_SLUGS.WORK_PREFIX.endsWith("/")).toBe(true);
   });
+
+  it("exposes the CV slug used for field-level i18n", () => {
+    expect(STORYBLOK_SLUGS.CV).toBe("cv");
+  });
 });

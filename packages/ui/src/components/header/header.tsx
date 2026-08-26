@@ -55,12 +55,13 @@ export function Header({
   const headerRef = useRef<HTMLElement>(null);
   const headerHeight = useElementHeight(headerRef);
   const pathname = usePathname();
+  const [menuPathname, setMenuPathname] = useState(pathname);
+  if (pathname !== menuPathname) {
+    setMenuPathname(pathname);
+    setMobileMenuIsOpen(false);
+  }
 
   useBodyScrollLock(mobileMenuIsOpen);
-
-  useEffect(() => {
-    setMobileMenuIsOpen(false);
-  }, [pathname]);
 
   useEffect(() => {
     const media = window.matchMedia("(min-width: 1024px)");

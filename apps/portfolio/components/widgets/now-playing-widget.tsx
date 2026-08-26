@@ -3,9 +3,8 @@
 import { trackNowPlayingClick } from "@httpjpg/analytics";
 import { IDLE_GLOW, NowPlaying } from "@httpjpg/now-playing";
 import { useNowPlaying } from "@httpjpg/spotify";
-import { Box } from "@httpjpg/ui";
+import { Box, useHasMounted } from "@httpjpg/ui";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 const IDLE_ARTWORK =
@@ -22,15 +21,11 @@ const DANGER_COLOR = "rgba(239, 68, 68, 0.9)";
 const DANGER_TEXT_COLOR = "#ef4444";
 
 function NowPlayingWidgetComponent() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHasMounted();
   const { data, isLoading, errorCode } = useNowPlaying({
     endpoint: "/api/spotify/now-playing",
     pollInterval: 10000,
   });
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!mounted) {
     return null;

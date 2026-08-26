@@ -1,7 +1,7 @@
 "use client";
 
 import { CookieBanner } from "@httpjpg/consent";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 /**
  * Cookie banner entry point. Hidden inside iframes: CSP only allows framing by
@@ -9,17 +9,23 @@ import { useEffect, useState } from "react";
  * (so the server-side gate in `layout.tsx` alone is not enough).
  */
 export function ConsentProvider() {
-  const [showBanner, setShowBanner] = useState(false);
-
-  useEffect(() => {
-    if (window.self === window.top) {
-      setShowBanner(true);
-    }
-  }, []);
+  const showBanner = useSyncExternalStore(subscribeNever, getIsTopWindow, getServerFalse);
 
   if (!showBanner) {
     return null;
   }
 
   return <CookieBanner />;
+}
+
+function subscribeNever() {
+  return () => {};
+}
+
+function getIsTopWindow() {
+  return window.self === window.top;
+}
+
+function getServerFalse() {
+  return false;
 }

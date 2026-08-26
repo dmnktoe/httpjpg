@@ -61,6 +61,9 @@ export function Canvas({
 }: CanvasProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const itemsRef = useRef(items);
+  // Latest items for pointer handlers; writing the ref during render is the
+  // React-recommended way to keep it current without an extra effect.
+  // oxlint-disable-next-line react/refs
   itemsRef.current = items;
   const [drag, setDrag] = useState<DragState | null>(null);
   const [hoverCell, setHoverCell] = useState<{ x: number; y: number } | null>(null);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { css } from "styled-system/css";
 
 import { Canvas } from "./canvas";
@@ -26,11 +26,9 @@ export function GridBuilder({ pushEnabled, siteUrl }: GridBuilderProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [importOpen, setImportOpen] = useState(false);
 
-  useEffect(() => {
-    if (selectedId && !items.some((it) => it.id === selectedId)) {
-      setSelectedId(null);
-    }
-  }, [items, selectedId]);
+  if (selectedId && !items.some((it) => it.id === selectedId)) {
+    setSelectedId(null);
+  }
 
   const setItems = useCallback(
     (next: BuilderItem[] | ((prev: BuilderItem[]) => BuilderItem[])) => {

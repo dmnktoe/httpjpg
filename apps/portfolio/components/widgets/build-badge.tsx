@@ -1,7 +1,7 @@
 "use client";
 
 import { Box } from "@httpjpg/ui";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 import { formatRelativeTime } from "@/lib/relative-time";
 
@@ -13,13 +13,8 @@ export interface BuildBadgeProps {
 }
 
 export function BuildBadge({ repositoryUrl, version, buildTime, commitSha }: BuildBadgeProps) {
-  const [deployedAt, setDeployedAt] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (buildTime) {
-      setDeployedAt(formatRelativeTime(buildTime, Date.now()));
-    }
-  }, [buildTime]);
+  const now = useSyncExternalStore(subscribeNever, getClientNow, getServerNow);
+  const deployedAt = buildTime && now > 0 ? formatRelativeTime(buildTime, now) : null;
 
   if (!version && !commitSha && !buildTime) {
     return null;
@@ -92,3 +87,18 @@ export function BuildBadge({ repositoryUrl, version, buildTime, commitSha }: Bui
 }
 
 const SHORT_SHA_LENGTH = 7;
+
+function subscribeNever() {
+  return () => {};
+}
+
+let cachedNow = 0;
+
+function getClientNow() {
+  cachedNow ||= Date.now();
+  return cachedNow;
+}
+
+function getServerNow() {
+  return 0;
+}

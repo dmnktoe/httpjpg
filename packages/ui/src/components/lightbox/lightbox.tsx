@@ -2,11 +2,12 @@
 
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import type { KeyboardEvent, MouseEvent, PointerEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { css } from "styled-system/css";
 
 import { useBodyScrollLock } from "../../lib/use-body-scroll-lock";
+import { useHasMounted } from "../../lib/use-has-mounted";
 import { Box } from "../box/box";
 import { Video, type VideoSource } from "../video/video";
 import { LightboxBar } from "./lightbox-bar";
@@ -60,17 +61,13 @@ const EXIT_TRANSITION = { duration: 0.12, ease: "easeIn" } as const;
 const SWIPE_THRESHOLD = 48;
 
 export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: LightboxProps) {
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useHasMounted();
   const dialogRef = useRef<HTMLDivElement>(null);
   const swipeOriginRef = useRef<number | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const resolvedTheme = usePageTheme(theme);
 
   useBodyScrollLock(open);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const count = items.length;
   const safeIndex = count > 0 ? Math.min(Math.max(index, 0), count - 1) : 0;

@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useHasMounted } from "@httpjpg/ui";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import {
   type BuilderItem,
@@ -73,6 +74,28 @@ function writeStored(state: StudioState) {
   }
 }
 
+let cachedSnapshot: StudioState = INITIAL;
+let cacheHydrated = false;
+
+function getStoredSnapshot(): StudioState {
+  if (typeof window === "undefined") return INITIAL;
+  if (!cacheHydrated) {
+    cachedSnapshot = readStored() ?? INITIAL;
+    cacheHydrated = true;
+  }
+  return cachedSnapshot;
+}
+
+function subscribeStored(onStoreChange: () => void) {
+  function handleStorage(event: StorageEvent) {
+    if (event.key !== STORAGE_KEY) return;
+    cachedSnapshot = readStored() ?? INITIAL;
+    onStoreChange();
+  }
+  window.addEventListener("storage", handleStorage);
+  return () => window.removeEventListener("storage", handleStorage);
+}
+
 export interface StudioStore {
   state: StudioState;
   set(updater: (prev: StudioState) => StudioState, opts?: { transient?: boolean }): void;
@@ -86,17 +109,15 @@ export interface StudioStore {
 }
 
 export function useStudioState(): StudioStore {
-  const [state, setState] = useState<StudioState>(INITIAL);
-  const [ready, setReady] = useState(false);
+  const ready = useHasMounted();
+  const persisted = useSyncExternalStore(subscribeStored, getStoredSnapshot, () => INITIAL);
+  const [override, setOverride] = useState<StudioState | null>(null);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+  const state = override ?? persisted;
+
   const past = useRef<StudioState[]>([]);
   const future = useRef<StudioState[]>([]);
-  const [historyVersion, bumpHistory] = useState(0);
-
-  useEffect(() => {
-    const stored = readStored();
-    if (stored) setState(stored);
-    setReady(true);
-  }, []);
 
   useEffect(() => {
     if (ready) writeStored(state);
@@ -104,62 +125,70 @@ export function useStudioState(): StudioStore {
 
   const set = useCallback(
     (updater: (prev: StudioState) => StudioState, opts: { transient?: boolean } = {}) => {
-      setState((prev) => {
-        const next = updater(prev);
-        if (next === prev) return prev;
+      setOverride((prev) => {
+        const base = prev ?? persisted;
+        const next = updater(base);
+        if (next === base) return prev;
         if (!opts.transient) {
-          past.current.push(prev);
+          past.current.push(base);
           if (past.current.length > HISTORY_LIMIT) past.current.shift();
           future.current = [];
-          bumpHistory((v) => v + 1);
+          setCanUndo(true);
+          setCanRedo(false);
         }
         return next;
       });
     },
-    [],
+    [persisted],
   );
 
-  const replace = useCallback((next: StudioState) => {
-    setState((prev) => {
-      past.current.push(prev);
-      if (past.current.length > HISTORY_LIMIT) past.current.shift();
-      future.current = [];
-      bumpHistory((v) => v + 1);
-      return next;
-    });
-  }, []);
+  const replace = useCallback(
+    (next: StudioState) => {
+      setOverride((prev) => {
+        const base = prev ?? persisted;
+        past.current.push(base);
+        if (past.current.length > HISTORY_LIMIT) past.current.shift();
+        future.current = [];
+        setCanUndo(true);
+        setCanRedo(false);
+        return next;
+      });
+    },
+    [persisted],
+  );
 
   const reset = useCallback(() => {
-    setState((prev) => {
-      past.current.push(prev);
+    setOverride((prev) => {
+      const base = prev ?? persisted;
+      past.current.push(base);
       future.current = [];
-      bumpHistory((v) => v + 1);
+      setCanUndo(true);
+      setCanRedo(false);
       return INITIAL;
     });
-  }, []);
+  }, [persisted]);
 
   const undo = useCallback(() => {
     const prev = past.current.pop();
     if (!prev) return;
-    setState((current) => {
-      future.current.push(current);
+    setOverride((current) => {
+      future.current.push(current ?? persisted);
       return prev;
     });
-    bumpHistory((v) => v + 1);
-  }, []);
+    setCanUndo(past.current.length > 0);
+    setCanRedo(true);
+  }, [persisted]);
 
   const redo = useCallback(() => {
     const next = future.current.pop();
     if (!next) return;
-    setState((current) => {
-      past.current.push(current);
+    setOverride((current) => {
+      past.current.push(current ?? persisted);
       return next;
     });
-    bumpHistory((v) => v + 1);
-  }, []);
-
-  // historyVersion is read solely to bind canUndo/canRedo recomputation to render cycles
-  void historyVersion;
+    setCanUndo(true);
+    setCanRedo(future.current.length > 0);
+  }, [persisted]);
 
   return {
     state,
@@ -168,8 +197,8 @@ export function useStudioState(): StudioStore {
     reset,
     undo,
     redo,
-    canUndo: past.current.length > 0,
-    canRedo: future.current.length > 0,
+    canUndo,
+    canRedo,
     ready,
   };
 }

@@ -1,12 +1,13 @@
 "use client";
 
-import { Box, Button, OPEN_COOKIE_SETTINGS_EVENT } from "@httpjpg/ui";
+import { Box, Button, OPEN_COOKIE_SETTINGS_EVENT, useHasMounted } from "@httpjpg/ui";
 import { type ReactNode, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { getConsent, hasConsent, setConsent } from "../consent";
+import { getConsent, setConsent } from "../consent";
 import type { ConsentCategory, ConsentState } from "../types";
 import { DEFAULT_CONSENT_STATE, EXTERNAL_VENDORS, REQUIRED_CATEGORIES } from "../types";
+import { useConsent } from "../use-consent";
 import { ConsentCategoryList } from "./consent-category-list";
 
 interface CookieBannerProps {
@@ -16,30 +17,29 @@ interface CookieBannerProps {
 }
 
 export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: CookieBannerProps) {
-  const [isVisible, setIsVisible] = useState(false);
+  const mounted = useHasMounted();
+  const savedConsent = useConsent();
   const [showDetails, setShowDetails] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());
   const [consent, setConsentState] = useState<ConsentState>(DEFAULT_CONSENT_STATE);
-  const [mounted, setMounted] = useState(false);
+  const [forceOpen, setForceOpen] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  const [seededFrom, setSeededFrom] = useState<ConsentState | null>(null);
+
+  if (savedConsent && seededFrom === null) {
+    setConsentState(savedConsent);
+    setSeededFrom(savedConsent);
+  }
 
   useEffect(() => {
-    setMounted(true);
-    if (!hasConsent()) {
-      setIsVisible(true);
-    } else {
-      const savedConsent = getConsent();
-      if (savedConsent) {
-        setConsentState(savedConsent);
-      }
-    }
-
     const handleOpenSettings = () => {
-      const savedConsent = getConsent();
-      if (savedConsent) {
-        setConsentState(savedConsent);
+      const stored = getConsent();
+      if (stored) {
+        setConsentState(stored);
       }
       setShowDetails(true);
-      setIsVisible(true);
+      setForceOpen(true);
+      setDismissed(false);
     };
 
     window.addEventListener(OPEN_COOKIE_SETTINGS_EVENT, handleOpenSettings);
@@ -54,19 +54,22 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
       media: true,
     };
     setConsent(fullConsent);
-    setIsVisible(false);
+    setDismissed(true);
+    setForceOpen(false);
     onAcceptAll?.(fullConsent);
   };
 
   const handleRejectAll = () => {
     setConsent(DEFAULT_CONSENT_STATE);
-    setIsVisible(false);
+    setDismissed(true);
+    setForceOpen(false);
     onRejectAll?.();
   };
 
   const handleSavePreferences = () => {
     setConsent(consent);
-    setIsVisible(false);
+    setDismissed(true);
+    setForceOpen(false);
     onSavePreferences?.(consent);
   };
 
@@ -95,7 +98,9 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
     ([key, vendor]) => key !== "generic-media" && !REQUIRED_CATEGORIES.has(vendor.category),
   ).length;
 
-  if (!isVisible || !mounted) {
+  const isVisible = mounted && !dismissed && (forceOpen || savedConsent === null);
+
+  if (!isVisible) {
     return null;
   }
 

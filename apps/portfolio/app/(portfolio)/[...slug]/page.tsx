@@ -102,94 +102,9 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
 
   const livePreview = isEnabled || isVisualEditor;
 
+  let story;
   try {
-    const story = await getCachedStory(slug, storyOpts(fetchDraft, locale));
-    if (!story) {
-      return notFound();
-    }
-
-    if (livePreview) {
-      return (
-        <>
-          <LocaleSync lang={locale} />
-          <StoryblokLive story={story} />
-        </>
-      );
-    }
-
-    const isWorkPage = story.content?.component === "work";
-    const flags = await getFeatureFlags();
-
-    let schemaMarkup = null;
-    let adjacent: Awaited<ReturnType<typeof getAdjacentWork>> = {};
-    let related: Awaited<ReturnType<typeof getRelatedWork>> = { tags: [], related: [] };
-
-    if (isWorkPage) {
-      const site = await getSiteConfig();
-      const siteAuthor = await getAuthor();
-      const author = siteAuthor
-        ? {
-            "@type": "Person" as const,
-            name: siteAuthor.name,
-            url: siteAuthor.url,
-            sameAs: await getSocialProfiles(),
-          }
-        : undefined;
-
-      const meta = extractStoryMetadata(story);
-      const images = story.content?.images?.map((img: { filename: string; focus?: string }) =>
-        imagePreset.og(img.filename, img.focus),
-      );
-
-      schemaMarkup = generateCreativeWorkSchema({
-        name: meta.title,
-        description: meta.description || undefined,
-        image: images?.[0] || images,
-        url: `${env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")}${localizedPath(locale, slug)}`,
-        datePublished: story.first_published_at,
-        dateModified: story.published_at,
-        author,
-        inLanguage: schemaLanguage(locale, site.language),
-      });
-
-      [adjacent, related] = await Promise.all([
-        flags.prevNextWorkEnabled ? getAdjacentWork(story.slug) : Promise.resolve({}),
-        flags.relatedWorkEnabled ? getRelatedWork(`/${slug}`) : Promise.resolve(related),
-      ]);
-    }
-
-    const pageTheme = story.content?.isDark ? "dark" : "light";
-    const showLanguagePicker = LOCALIZED_SLUGS.has(slug);
-
-    return (
-      <>
-        <ThemeSync theme={pageTheme} />
-        <LocaleSync lang={locale} />
-        {schemaMarkup && <JsonLd data={schemaMarkup} />}
-        {showLanguagePicker && (
-          <Box
-            css={{
-              display: "flex",
-              justifyContent: "flex-end",
-              w: "full",
-              maxW: "768px",
-              mx: "auto",
-              px: { base: "4", md: "6", lg: "8" },
-              pt: { base: "8", md: "10" },
-            }}
-          >
-            <LanguagePicker locale={locale} slug={slug} />
-          </Box>
-        )}
-        <StoryblokServerComponent blok={story.content} />
-        {isWorkPage && flags.relatedWorkEnabled && (
-          <RelatedWork {...related} isPreview={fetchDraft} />
-        )}
-        {isWorkPage && flags.prevNextWorkEnabled && (
-          <WorkNav prev={adjacent.prev} next={adjacent.next} />
-        )}
-      </>
-    );
+    story = await getCachedStory(slug, storyOpts(fetchDraft, locale));
   } catch (error) {
     console.error(`[DynamicPage] Error loading story "${slug}":`, {
       error: error instanceof Error ? error.message : String(error),
@@ -198,6 +113,93 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
     });
     throw error;
   }
+
+  if (!story) {
+    return notFound();
+  }
+
+  if (livePreview) {
+    return (
+      <>
+        <LocaleSync lang={locale} />
+        <StoryblokLive story={story} />
+      </>
+    );
+  }
+
+  const isWorkPage = story.content?.component === "work";
+  const flags = await getFeatureFlags();
+
+  let schemaMarkup = null;
+  let adjacent: Awaited<ReturnType<typeof getAdjacentWork>> = {};
+  let related: Awaited<ReturnType<typeof getRelatedWork>> = { tags: [], related: [] };
+
+  if (isWorkPage) {
+    const site = await getSiteConfig();
+    const siteAuthor = await getAuthor();
+    const author = siteAuthor
+      ? {
+          "@type": "Person" as const,
+          name: siteAuthor.name,
+          url: siteAuthor.url,
+          sameAs: await getSocialProfiles(),
+        }
+      : undefined;
+
+    const meta = extractStoryMetadata(story);
+    const images = story.content?.images?.map((img: { filename: string; focus?: string }) =>
+      imagePreset.og(img.filename, img.focus),
+    );
+
+    schemaMarkup = generateCreativeWorkSchema({
+      name: meta.title,
+      description: meta.description || undefined,
+      image: images?.[0] || images,
+      url: `${env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")}${localizedPath(locale, slug)}`,
+      datePublished: story.first_published_at,
+      dateModified: story.published_at,
+      author,
+      inLanguage: schemaLanguage(locale, site.language),
+    });
+
+    [adjacent, related] = await Promise.all([
+      flags.prevNextWorkEnabled ? getAdjacentWork(story.slug) : Promise.resolve({}),
+      flags.relatedWorkEnabled ? getRelatedWork(`/${slug}`) : Promise.resolve(related),
+    ]);
+  }
+
+  const pageTheme = story.content?.isDark ? "dark" : "light";
+  const showLanguagePicker = LOCALIZED_SLUGS.has(slug);
+
+  return (
+    <>
+      <ThemeSync theme={pageTheme} />
+      <LocaleSync lang={locale} />
+      {schemaMarkup && <JsonLd data={schemaMarkup} />}
+      {showLanguagePicker && (
+        <Box
+          css={{
+            display: "flex",
+            justifyContent: "flex-end",
+            w: "full",
+            maxW: "768px",
+            mx: "auto",
+            px: { base: "4", md: "6", lg: "8" },
+            pt: { base: "8", md: "10" },
+          }}
+        >
+          <LanguagePicker locale={locale} slug={slug} />
+        </Box>
+      )}
+      <StoryblokServerComponent blok={story.content} />
+      {isWorkPage && flags.relatedWorkEnabled && (
+        <RelatedWork {...related} isPreview={fetchDraft} />
+      )}
+      {isWorkPage && flags.prevNextWorkEnabled && (
+        <WorkNav prev={adjacent.prev} next={adjacent.next} />
+      )}
+    </>
+  );
 }
 
 export const dynamic = "force-dynamic";

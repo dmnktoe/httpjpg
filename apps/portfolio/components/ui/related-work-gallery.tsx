@@ -1,7 +1,7 @@
 "use client";
 
 import { Box } from "@httpjpg/ui";
-import { useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 import type { RelatedWorkItem } from "@/lib/queries/related-work";
 
@@ -18,27 +18,20 @@ const STORAGE_KEY = "httpjpg:related-work-view";
 
 const DEFAULT_VIEW: RelatedWorkView = "list";
 
+const listeners = new Set<() => void>();
+let snapshotRaw: string | null | undefined;
+let snapshotView: RelatedWorkView = DEFAULT_VIEW;
+
 export interface RelatedWorkGalleryProps {
   items: RelatedWorkItem[];
 }
 
 export function RelatedWorkGallery({ items }: RelatedWorkGalleryProps) {
-  const [view, setView] = useState<RelatedWorkView>(DEFAULT_VIEW);
+  const view = useSyncExternalStore(subscribeView, getViewSnapshot, getServerView);
 
-  // Read after mount rather than in the initial state: the server cannot know
-  // the stored choice, so a grid reader gets one frame of list instead of a
-  // hydration mismatch.
-  useEffect(() => {
-    const stored = readStoredView();
-    if (stored) {
-      setView(stored);
-    }
-  }, []);
-
-  const handleChange = (next: RelatedWorkView) => {
-    setView(next);
+  const handleChange = useCallback((next: RelatedWorkView) => {
     writeStoredView(next);
-  };
+  }, []);
 
   return (
     <Box>
@@ -73,17 +66,33 @@ export function RelatedWorkGallery({ items }: RelatedWorkGalleryProps) {
   );
 }
 
-function isView(value: string | null): value is RelatedWorkView {
-  return RELATED_WORK_VIEWS.includes(value as RelatedWorkView);
+function subscribeView(onStoreChange: () => void) {
+  listeners.add(onStoreChange);
+  return () => {
+    listeners.delete(onStoreChange);
+  };
 }
 
-function readStoredView(): RelatedWorkView | null {
+function getViewSnapshot(): RelatedWorkView {
+  let raw: string | null = null;
   try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    return isView(stored) ? stored : null;
+    raw = window.localStorage.getItem(STORAGE_KEY);
   } catch {
-    return null;
+    raw = null;
   }
+  if (raw !== snapshotRaw) {
+    snapshotRaw = raw;
+    snapshotView = isView(raw) ? raw : DEFAULT_VIEW;
+  }
+  return snapshotView;
+}
+
+function getServerView(): RelatedWorkView {
+  return DEFAULT_VIEW;
+}
+
+function isView(value: string | null): value is RelatedWorkView {
+  return RELATED_WORK_VIEWS.includes(value as RelatedWorkView);
 }
 
 function writeStoredView(view: RelatedWorkView) {
@@ -91,5 +100,10 @@ function writeStoredView(view: RelatedWorkView) {
     window.localStorage.setItem(STORAGE_KEY, view);
   } catch {
     // Quota or private-mode failures are non-fatal.
+  }
+  snapshotRaw = view;
+  snapshotView = view;
+  for (const listener of listeners) {
+    listener();
   }
 }

@@ -1,6 +1,6 @@
 import { clearConsent, CookieBanner } from "@httpjpg/consent";
 import type { ConsentState } from "@httpjpg/consent";
-import { Box, Headline, Paragraph } from "@httpjpg/ui";
+import { Box, Headline, OPEN_COOKIE_SETTINGS_EVENT, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState } from "react";
 import { fn } from "storybook/test";
@@ -14,6 +14,9 @@ const meta = {
     onAcceptAll: fn(),
     onRejectAll: fn(),
     onSavePreferences: fn(),
+  },
+  async beforeEach() {
+    clearConsent();
   },
 } satisfies Meta<typeof CookieBanner>;
 
@@ -37,15 +40,9 @@ function CookieBannerDemo({
   const [instance, setInstance] = useState(0);
 
   useEffect(() => {
-    clearConsent();
-    setInstance((n) => n + 1);
-  }, []);
-
-  useEffect(() => {
-    if (openSettings && instance > 0) {
-      window.dispatchEvent(new Event("openCookieSettings"));
-    }
-  }, [openSettings, instance]);
+    if (!openSettings) return;
+    window.dispatchEvent(new Event(OPEN_COOKIE_SETTINGS_EVENT));
+  }, [openSettings]);
 
   const rearm = () => {
     clearConsent();

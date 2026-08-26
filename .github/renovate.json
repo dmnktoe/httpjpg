@@ -26,7 +26,14 @@
     {
       "description": "Dev tooling lands in one PR",
       "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
       "groupName": "dev dependencies"
+    },
+    {
+      "description": "Production deps land in one PR",
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "production dependencies"
     },
     {
       "description": "React and Next move in lockstep, types included",

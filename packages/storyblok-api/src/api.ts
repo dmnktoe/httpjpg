@@ -9,6 +9,10 @@ export interface StoryParams {
   slug: string;
   resolve_relations?: string[];
   resolve_links?: "url" | "story";
+  /** Field-level translation code (`de`). Omit for the space default. */
+  language?: string;
+  /** Fills untranslated fields. Defaults to `default` when `language` is set. */
+  fallback_lang?: string;
 }
 
 export interface StoriesParams {
@@ -53,6 +57,12 @@ export function getStoryblokApi(config: StoryblokConfig = {}) {
         version,
         resolve_relations: params.resolve_relations?.join(","),
         resolve_links: params.resolve_links,
+        ...(params.language
+          ? {
+              language: params.language,
+              fallback_lang: params.fallback_lang ?? "default",
+            }
+          : {}),
       });
       return response.data.story;
     } catch (error) {

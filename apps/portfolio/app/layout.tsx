@@ -15,6 +15,7 @@ import {
 } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import type { PropsWithChildren } from "react";
 
 import { ConsentGate } from "@/components/providers/consent-gate";
@@ -39,6 +40,7 @@ import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
 import { XStatus } from "@/components/widgets/x-status";
 import { isStoryblokEditor } from "@/lib/is-storyblok-editor";
+import { htmlLangForPath } from "@/lib/locale";
 import { getPageTheme } from "@/lib/page-theme";
 import {
   getAuthor,
@@ -105,9 +107,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   const rawVersion = env.NEXT_PUBLIC_APP_VERSION;
   const version = rawVersion ? formatVersion(rawVersion) : undefined;
+  const pathname = (await headers()).get("x-pathname") ?? "/";
+  const htmlLang = htmlLangForPath(pathname, site.htmlLang);
 
   return (
-    <html lang={site.htmlLang} data-theme={theme}>
+    <html lang={htmlLang} data-theme={theme}>
       <body style={{ margin: 0, padding: 0 }}>
         {author && (
           <JsonLd

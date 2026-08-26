@@ -90,6 +90,31 @@ describe("getStory", () => {
     expect(mockGet.mock.calls[0][1]).toMatchObject({ resolve_relations: undefined });
   });
 
+  it("forwards language with a default fallback_lang", async () => {
+    mockGet.mockResolvedValueOnce({ data: { story: {} } });
+    await getStoryblokApi().getStory({ slug: "cv", language: "de" });
+    expect(mockGet).toHaveBeenCalledWith(
+      "cdn/stories/cv",
+      expect.objectContaining({ language: "de", fallback_lang: "default" }),
+    );
+  });
+
+  it("lets the caller override fallback_lang", async () => {
+    mockGet.mockResolvedValueOnce({ data: { story: {} } });
+    await getStoryblokApi().getStory({ slug: "cv", language: "de", fallback_lang: "en" });
+    expect(mockGet).toHaveBeenCalledWith(
+      "cdn/stories/cv",
+      expect.objectContaining({ language: "de", fallback_lang: "en" }),
+    );
+  });
+
+  it("omits language params when none are given", async () => {
+    mockGet.mockResolvedValueOnce({ data: { story: {} } });
+    await getStoryblokApi().getStory({ slug: "cv" });
+    expect(mockGet.mock.calls[0][1]).not.toHaveProperty("language");
+    expect(mockGet.mock.calls[0][1]).not.toHaveProperty("fallback_lang");
+  });
+
   it.each([404, 401, 403])("returns null without logging on a %i", async (status) => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     mockGet.mockRejectedValueOnce({ status });

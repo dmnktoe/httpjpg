@@ -57,7 +57,7 @@ describe("fetchStory · production", () => {
     expect(getStoryblokApi).toHaveBeenCalledWith();
     expect(cacheMock).toHaveBeenCalledTimes(1);
     const [, keys, options] = cacheMock.mock.calls[0];
-    expect(keys).toEqual(["story-home", "relations-"]);
+    expect(keys).toEqual(["story-home", "relations-", "lang-default"]);
     expect(options).toEqual({
       tags: ["story-home", "stories"],
       revalidate: 3600,
@@ -72,7 +72,7 @@ describe("fetchStory · production", () => {
   it("sorts relations so call order does not change the cache key", async () => {
     await fetchStory("home", { resolveRelations: ["c", "a", "b"] });
     const [, keys] = cacheMock.mock.calls[0];
-    expect(keys).toEqual(["story-home", "relations-a,b,c"]);
+    expect(keys).toEqual(["story-home", "relations-a,b,c", "lang-default"]);
     expect(getStory).toHaveBeenCalledWith({ slug: "home", resolve_relations: ["a", "b", "c"] });
   });
 
@@ -80,5 +80,37 @@ describe("fetchStory · production", () => {
     await fetchStory("home", { resolveRelations: ["a", "b"] });
     await fetchStory("home", { resolveRelations: ["b", "a"] });
     expect(cacheMock.mock.calls[0][1]).toEqual(cacheMock.mock.calls[1][1]);
+  });
+
+  it("namespaces the cache key by language", async () => {
+    await fetchStory("cv", { language: "de" });
+    const [, keys] = cacheMock.mock.calls[0];
+    expect(keys).toEqual(["story-cv", "relations-", "lang-de"]);
+    expect(getStory).toHaveBeenCalledWith({
+      slug: "cv",
+      resolve_relations: undefined,
+      language: "de",
+    });
+  });
+});
+
+describe("fetchStory · language fallback", () => {
+  it("retries the default language when the translated fetch returns null", async () => {
+    getStory.mockResolvedValueOnce(null).mockResolvedValueOnce({ slug: "cv" });
+    const result = await fetchStory("cv", { draftMode: true, language: "de" });
+    expect(result).toEqual({ slug: "cv" });
+    expect(getStory).toHaveBeenNthCalledWith(1, {
+      slug: "cv",
+      resolve_relations: undefined,
+      language: "de",
+    });
+    expect(getStory).toHaveBeenNthCalledWith(2, { slug: "cv", resolve_relations: undefined });
+  });
+
+  it("does not retry when the default language is already requested", async () => {
+    getStory.mockResolvedValueOnce(null);
+    const result = await fetchStory("missing", { draftMode: true });
+    expect(result).toBeNull();
+    expect(getStory).toHaveBeenCalledTimes(1);
   });
 });

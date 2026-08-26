@@ -19,7 +19,8 @@ const STORAGE_KEY = "httpjpg:related-work-view";
 const DEFAULT_VIEW: RelatedWorkView = "list";
 
 const listeners = new Set<() => void>();
-let cachedView: RelatedWorkView | null = null;
+let snapshotRaw: string | null | undefined;
+let snapshotView: RelatedWorkView = DEFAULT_VIEW;
 
 export interface RelatedWorkGalleryProps {
   items: RelatedWorkItem[];
@@ -73,8 +74,17 @@ function subscribeView(onStoreChange: () => void) {
 }
 
 function getViewSnapshot(): RelatedWorkView {
-  cachedView ??= readStoredView() ?? DEFAULT_VIEW;
-  return cachedView;
+  let raw: string | null = null;
+  try {
+    raw = window.localStorage.getItem(STORAGE_KEY);
+  } catch {
+    raw = null;
+  }
+  if (raw !== snapshotRaw) {
+    snapshotRaw = raw;
+    snapshotView = isView(raw) ? raw : DEFAULT_VIEW;
+  }
+  return snapshotView;
 }
 
 function getServerView(): RelatedWorkView {
@@ -85,22 +95,14 @@ function isView(value: string | null): value is RelatedWorkView {
   return RELATED_WORK_VIEWS.includes(value as RelatedWorkView);
 }
 
-function readStoredView(): RelatedWorkView | null {
-  try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    return isView(stored) ? stored : null;
-  } catch {
-    return null;
-  }
-}
-
 function writeStoredView(view: RelatedWorkView) {
   try {
     window.localStorage.setItem(STORAGE_KEY, view);
   } catch {
     // Quota or private-mode failures are non-fatal.
   }
-  cachedView = view;
+  snapshotRaw = view;
+  snapshotView = view;
   for (const listener of listeners) {
     listener();
   }

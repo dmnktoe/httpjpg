@@ -126,7 +126,12 @@ describe("SbGridItem", () => {
       />,
     );
 
-    expect(container.firstElementChild).toHaveStyle({ gridColumn: "2 / 6", gridRow: "1 / 3" });
+    expect(container.firstElementChild).toHaveStyle({
+      gridColumn: "2 / 6",
+      gridRow: "1 / 3",
+      alignSelf: "center",
+      justifySelf: "end",
+    });
   });
 
   it("hides the item at the lg breakpoint", () => {

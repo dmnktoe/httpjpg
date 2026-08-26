@@ -101,8 +101,8 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
       colEnd={colEnd}
       rowStart={rowStart}
       rowEnd={rowEnd}
-      alignSelf={alignSelf}
-      justifySelf={justifySelf}
+      alignSelf={alignSelf || undefined}
+      justifySelf={justifySelf || undefined}
       className={cx(responsive, visibility)}
       style={styleVars}
     >

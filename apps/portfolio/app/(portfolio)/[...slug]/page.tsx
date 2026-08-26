@@ -62,72 +62,9 @@ export default async function DynamicPage({
   const needsLivePreview = isEnabled || isVisualEditor;
   const fetchDraft = needsLivePreview || IS_DEV;
 
+  let story;
   try {
-    const story = await getCachedStory(fullSlug, { draftMode: fetchDraft });
-    if (!story) {
-      return notFound();
-    }
-
-    if (needsLivePreview) {
-      return <StoryblokLive story={story} />;
-    }
-
-    const isWorkPage = story.content?.component === "work";
-    const flags = await getFeatureFlags();
-
-    let schemaMarkup = null;
-    let adjacent: Awaited<ReturnType<typeof getAdjacentWork>> = {};
-    let related: Awaited<ReturnType<typeof getRelatedWork>> = { tags: [], related: [] };
-
-    if (isWorkPage) {
-      const site = await getSiteConfig();
-      const siteAuthor = await getAuthor();
-      const author = siteAuthor
-        ? {
-            "@type": "Person" as const,
-            name: siteAuthor.name,
-            url: siteAuthor.url,
-            sameAs: await getSocialProfiles(),
-          }
-        : undefined;
-
-      const meta = extractStoryMetadata(story);
-      const images = story.content?.images?.map((img: { filename: string; focus?: string }) =>
-        imagePreset.og(img.filename, img.focus),
-      );
-
-      schemaMarkup = generateCreativeWorkSchema({
-        name: meta.title,
-        description: meta.description || undefined,
-        image: images?.[0] || images,
-        url: `${env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")}/${fullSlug}`,
-        datePublished: story.first_published_at,
-        dateModified: story.published_at,
-        author,
-        inLanguage: site.language,
-      });
-
-      [adjacent, related] = await Promise.all([
-        flags.prevNextWorkEnabled ? getAdjacentWork(story.slug) : Promise.resolve({}),
-        flags.relatedWorkEnabled ? getRelatedWork(`/${fullSlug}`) : Promise.resolve(related),
-      ]);
-    }
-
-    const pageTheme = story.content?.isDark ? "dark" : "light";
-
-    return (
-      <>
-        <ThemeSync theme={pageTheme} />
-        {schemaMarkup && <JsonLd data={schemaMarkup} />}
-        <StoryblokServerComponent blok={story.content} />
-        {isWorkPage && flags.relatedWorkEnabled && (
-          <RelatedWork {...related} isPreview={fetchDraft} />
-        )}
-        {isWorkPage && flags.prevNextWorkEnabled && (
-          <WorkNav prev={adjacent.prev} next={adjacent.next} />
-        )}
-      </>
-    );
+    story = await getCachedStory(fullSlug, { draftMode: fetchDraft });
   } catch (error) {
     console.error(`[DynamicPage] Error loading story "${fullSlug}":`, {
       error: error instanceof Error ? error.message : String(error),
@@ -136,6 +73,71 @@ export default async function DynamicPage({
     });
     throw error;
   }
+
+  if (!story) {
+    return notFound();
+  }
+
+  if (needsLivePreview) {
+    return <StoryblokLive story={story} />;
+  }
+
+  const isWorkPage = story.content?.component === "work";
+  const flags = await getFeatureFlags();
+
+  let schemaMarkup = null;
+  let adjacent: Awaited<ReturnType<typeof getAdjacentWork>> = {};
+  let related: Awaited<ReturnType<typeof getRelatedWork>> = { tags: [], related: [] };
+
+  if (isWorkPage) {
+    const site = await getSiteConfig();
+    const siteAuthor = await getAuthor();
+    const author = siteAuthor
+      ? {
+          "@type": "Person" as const,
+          name: siteAuthor.name,
+          url: siteAuthor.url,
+          sameAs: await getSocialProfiles(),
+        }
+      : undefined;
+
+    const meta = extractStoryMetadata(story);
+    const images = story.content?.images?.map((img: { filename: string; focus?: string }) =>
+      imagePreset.og(img.filename, img.focus),
+    );
+
+    schemaMarkup = generateCreativeWorkSchema({
+      name: meta.title,
+      description: meta.description || undefined,
+      image: images?.[0] || images,
+      url: `${env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")}/${fullSlug}`,
+      datePublished: story.first_published_at,
+      dateModified: story.published_at,
+      author,
+      inLanguage: site.language,
+    });
+
+    [adjacent, related] = await Promise.all([
+      flags.prevNextWorkEnabled ? getAdjacentWork(story.slug) : Promise.resolve({}),
+      flags.relatedWorkEnabled ? getRelatedWork(`/${fullSlug}`) : Promise.resolve(related),
+    ]);
+  }
+
+  const pageTheme = story.content?.isDark ? "dark" : "light";
+
+  return (
+    <>
+      <ThemeSync theme={pageTheme} />
+      {schemaMarkup && <JsonLd data={schemaMarkup} />}
+      <StoryblokServerComponent blok={story.content} />
+      {isWorkPage && flags.relatedWorkEnabled && (
+        <RelatedWork {...related} isPreview={fetchDraft} />
+      )}
+      {isWorkPage && flags.prevNextWorkEnabled && (
+        <WorkNav prev={adjacent.prev} next={adjacent.next} />
+      )}
+    </>
+  );
 }
 
 export const dynamic = "force-dynamic";

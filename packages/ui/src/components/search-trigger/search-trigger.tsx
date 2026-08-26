@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import { token } from "styled-system/tokens";
 import type { SystemStyleObject } from "styled-system/types";
 
@@ -28,16 +28,8 @@ export function SearchTrigger({ onTrigger, label = "search", css: cssProp }: Sea
   // Undefined means "not resolved yet", and renders nothing at all. The label
   // and the shortcut are two different final states, so showing either one
   // before the platform is known would swap the text under the reader's eyes.
-  const [caption, setCaption] = useState<string>();
-
-  useEffect(() => {
-    if (window.matchMedia("(pointer: coarse)").matches) {
-      setCaption(label);
-      return;
-    }
-    const modifier = /mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent) ? "⌘" : "^";
-    setCaption(`${modifier}+𝙆`);
-  }, [label]);
+  const isCoarse = useSyncExternalStore(subscribePointer, getCoarseSnapshot, getServerUnknown);
+  const isApple = useSyncExternalStore(subscribeNever, getAppleSnapshot, getServerUnknown);
 
   const handleClick = useCallback(() => {
     if (onTrigger) {
@@ -47,9 +39,11 @@ export function SearchTrigger({ onTrigger, label = "search", css: cssProp }: Sea
     window.dispatchEvent(new CustomEvent(OPEN_SEARCH_EVENT));
   }, [onTrigger]);
 
-  if (!caption) {
+  if (isCoarse === null || isApple === null) {
     return null;
   }
+
+  const caption = isCoarse ? label : `${isApple ? "⌘" : "^"}+𝙆`;
 
   return (
     <Box
@@ -89,4 +83,26 @@ export function SearchTrigger({ onTrigger, label = "search", css: cssProp }: Sea
       />
     </Box>
   );
+}
+
+function subscribePointer(onStoreChange: () => void) {
+  const media = window.matchMedia("(pointer: coarse)");
+  media.addEventListener("change", onStoreChange);
+  return () => media.removeEventListener("change", onStoreChange);
+}
+
+function subscribeNever() {
+  return () => {};
+}
+
+function getCoarseSnapshot(): boolean | null {
+  return window.matchMedia("(pointer: coarse)").matches;
+}
+
+function getAppleSnapshot(): boolean | null {
+  return /mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent);
+}
+
+function getServerUnknown(): boolean | null {
+  return null;
 }

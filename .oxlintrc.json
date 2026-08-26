@@ -24,10 +24,6 @@
     ],
     "react/react-in-jsx-scope": "off",
     "react-hooks/exhaustive-deps": "off",
-    "react/error-boundaries": "off",
-    "react/purity": "off",
-    "react/refs": "off",
-    "react/set-state-in-effect": "off",
     "panda/sort-properties": "error"
   },
   "ignorePatterns": [

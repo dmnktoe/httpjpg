@@ -1,10 +1,12 @@
 "use client";
 
 import type { AnchorHTMLAttributes } from "react";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef } from "react";
 import { createPortal } from "react-dom";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
+
+import { useHasMounted } from "../../lib/use-has-mounted";
 
 const MOBILE_SIZE = 40;
 const DESKTOP_HEIGHT = 32;
@@ -34,11 +36,7 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
     { href, label = "preview", className, css: cssProp, style, ...props },
     ref,
   ) {
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-      setMounted(true);
-    }, []);
+    const mounted = useHasMounted();
 
     if (!mounted) {
       return null;

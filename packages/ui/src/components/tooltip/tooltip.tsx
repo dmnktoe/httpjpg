@@ -15,6 +15,7 @@ import {
 import { createPortal } from "react-dom";
 import type { SystemStyleObject } from "styled-system/types";
 
+import { useHasMounted } from "../../lib/use-has-mounted";
 import { Box } from "../box/box";
 
 type TriggerProps = HTMLAttributes<HTMLElement> & { tabIndex?: number };
@@ -46,7 +47,7 @@ export function Tooltip({
   css: cssProp,
 }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useHasMounted();
   const tailRef = useRef<HTMLSpanElement>(null);
   const tooltipId = useId();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -67,13 +68,11 @@ export function Tooltip({
     middleware: [
       flip(),
       shift({ padding: VIEWPORT_PADDING }),
+      // floating-ui's arrow middleware takes the ref object, not `.current`.
+      // oxlint-disable-next-line react/refs
       arrow({ element: tailRef, padding: TAIL_PADDING }),
     ],
   });
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!isVisible || !elements.reference || !elements.floating) {
@@ -160,6 +159,7 @@ export function Tooltip({
   const bubble = (
     <Box
       as="span"
+      // oxlint-disable-next-line react/refs -- floating-ui assigns the floating node
       ref={refs.setFloating}
       id={tooltipId}
       role="tooltip"
@@ -195,6 +195,7 @@ export function Tooltip({
   return (
     <Box
       as="span"
+      // oxlint-disable-next-line react/refs -- floating-ui assigns the reference node
       ref={refs.setReference}
       className={className}
       css={{
@@ -203,15 +204,18 @@ export function Tooltip({
         ...cssProp,
       }}
     >
-      {cloneElement(trigger, {
-        "aria-describedby": isVisible ? tooltipId : undefined,
-        tabIndex: trigger.props.tabIndex ?? 0,
-        onMouseEnter: handleMouseEnter,
-        onMouseLeave: handleHide,
-        onFocus: handleShow,
-        onBlur: handleHide,
-        onKeyDown: handleKeyDown,
-      })}
+      {
+        // oxlint-disable-next-line react/refs -- cloneElement copies the child's ref
+        cloneElement(trigger, {
+          "aria-describedby": isVisible ? tooltipId : undefined,
+          tabIndex: trigger.props.tabIndex ?? 0,
+          onMouseEnter: handleMouseEnter,
+          onMouseLeave: handleHide,
+          onFocus: handleShow,
+          onBlur: handleHide,
+          onKeyDown: handleKeyDown,
+        })
+      }
       {isMounted && createPortal(bubble, document.body)}
     </Box>
   );

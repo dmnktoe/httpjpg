@@ -2,7 +2,7 @@
 
 import type { SbWorkListData } from "@httpjpg/storyblok-utils";
 import { WorkList } from "@httpjpg/ui";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useState } from "react";
 
 import { editableAttrs, spacingCss } from "../../lib/use-blok";
 import { parseCols, resolveStories, toWorkCardProps, type WorkStory } from "./lib";
@@ -13,12 +13,8 @@ export interface SbWorkListProps {
 
 export const SbWorkList = memo(function SbWorkList({ blok }: SbWorkListProps) {
   const work = blok.work as Array<string | WorkStory> | undefined;
-  const cacheRef = useRef<Map<string, WorkStory>>(new Map());
-  const [stories, setStories] = useState<WorkStory[]>(() => resolveStories(work, cacheRef.current));
-
-  useEffect(() => {
-    setStories(resolveStories(work, cacheRef.current));
-  }, [work]);
+  const [cache] = useState(() => new Map<string, WorkStory>());
+  const stories = resolveStories(work, cache);
 
   if (!stories.length) {
     return null;

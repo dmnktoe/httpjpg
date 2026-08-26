@@ -11,17 +11,16 @@ export interface MarqueeTextProps {
 export const MarqueeText = React.memo(({ children, speed = 10 }: MarqueeTextProps) => {
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const [isMeasuring, setIsMeasuring] = useState(true);
-  const [currentText, setCurrentText] = useState(children);
   const textRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [prevChildren, setPrevChildren] = useState(children);
+  if (children !== prevChildren) {
+    setPrevChildren(children);
+    setIsMeasuring(true);
+    setShouldAnimate(false);
+  }
 
   useEffect(() => {
-    if (currentText !== children) {
-      setCurrentText(children);
-      setIsMeasuring(true);
-      setShouldAnimate(false);
-    }
-
     const checkOverflow = () => {
       if (textRef.current && containerRef.current) {
         const textWidth = textRef.current.scrollWidth;
@@ -38,7 +37,7 @@ export const MarqueeText = React.memo(({ children, speed = 10 }: MarqueeTextProp
       window.removeEventListener("resize", checkOverflow);
       clearTimeout(timeoutId);
     };
-  }, [children, currentText]);
+  }, [children]);
 
   if (isMeasuring || !shouldAnimate) {
     return (

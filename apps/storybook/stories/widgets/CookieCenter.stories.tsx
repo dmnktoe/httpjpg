@@ -2,8 +2,14 @@ import { clearConsent, CookieCenter, setConsent } from "@httpjpg/consent";
 import type { ConsentState } from "@httpjpg/consent";
 import { Box, Container, Headline, Paragraph } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
-import { useEffect, useState } from "react";
 import { fn } from "storybook/test";
+
+const PREVIOUS_CONSENT: ConsentState = {
+  analytics: true,
+  monitoring: true,
+  preferences: true,
+  media: false,
+};
 
 const meta = {
   title: "Widgets/CookieCenter",
@@ -20,25 +26,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 interface CookieCenterDemoProps {
-  seed?: ConsentState;
   onSave?: (consent: ConsentState) => void;
 }
 
-function CookieCenterDemo({ seed, onSave }: CookieCenterDemoProps) {
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    clearConsent();
-    if (seed) {
-      setConsent(seed);
-    }
-    setIsReady(true);
-  }, [seed]);
-
-  if (!isReady) {
-    return null;
-  }
-
+function CookieCenterDemo({ onSave }: CookieCenterDemoProps) {
   return (
     <Container size="md">
       <Headline level={2}>Cookie center</Headline>
@@ -54,14 +45,16 @@ function CookieCenterDemo({ seed, onSave }: CookieCenterDemoProps) {
 }
 
 export const Default: Story = {
+  async beforeEach() {
+    clearConsent();
+  },
   render: (args) => <CookieCenterDemo {...args} />,
 };
 
 export const PreviouslyConsented: Story = {
-  render: (args) => (
-    <CookieCenterDemo
-      {...args}
-      seed={{ analytics: true, monitoring: true, preferences: true, media: false }}
-    />
-  ),
+  async beforeEach() {
+    clearConsent();
+    setConsent(PREVIOUS_CONSENT);
+  },
+  render: (args) => <CookieCenterDemo {...args} />,
 };

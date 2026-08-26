@@ -2,7 +2,7 @@
 
 import { env } from "@httpjpg/env";
 import { Box } from "@httpjpg/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 const HOME_TIMEZONE = "Europe/Berlin";
 
@@ -49,17 +49,46 @@ interface Weather {
   condition: string;
 }
 
-export function WeatherTime() {
-  const [time, setTime] = useState<string | null>(null);
-  const [offset, setOffset] = useState("");
-  const [weather, setWeather] = useState<Weather | null>(null);
+const clockListeners = new Set<() => void>();
+let clockTime = "";
+let clockOffset = "";
+let clockTimer: ReturnType<typeof setInterval> | null = null;
 
-  useEffect(() => {
-    setOffset(formatOffset());
-    setTime(formatTime());
-    const interval = setInterval(() => setTime(formatTime()), 1000);
-    return () => clearInterval(interval);
-  }, []);
+function emitClock() {
+  clockTime = formatTime();
+  clockOffset = formatOffset();
+  for (const listener of clockListeners) {
+    listener();
+  }
+}
+
+function subscribeClock(onStoreChange: () => void) {
+  clockListeners.add(onStoreChange);
+  if (clockTimer === null) {
+    emitClock();
+    clockTimer = setInterval(emitClock, 1000);
+  }
+  return () => {
+    clockListeners.delete(onStoreChange);
+    if (clockListeners.size === 0 && clockTimer !== null) {
+      clearInterval(clockTimer);
+      clockTimer = null;
+    }
+  };
+}
+
+export function WeatherTime() {
+  const time = useSyncExternalStore(
+    subscribeClock,
+    () => clockTime,
+    () => null,
+  );
+  const offset = useSyncExternalStore(
+    subscribeClock,
+    () => clockOffset,
+    () => "",
+  );
+  const [weather, setWeather] = useState<Weather | null>(null);
 
   useEffect(() => {
     const fetchCurrent = async () => {

@@ -30,11 +30,12 @@ export function ImagePreview({ width = 100, offset = { x: 5, y: 5 } }: ImagePrev
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-
-  useEffect(() => {
+  const [previewPathname, setPreviewPathname] = useState(pathname);
+  if (pathname !== previewPathname) {
+    setPreviewPathname(pathname);
     setIsVisible(false);
     setPreviewImage("");
-  }, [pathname]);
+  }
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {

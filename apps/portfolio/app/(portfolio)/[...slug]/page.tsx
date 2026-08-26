@@ -19,6 +19,7 @@ import {
   localizedPath,
   ogLocale,
   resolvePageLocale,
+  schemaLanguage,
   storyblokLanguageParam,
 } from "@/lib/locale";
 import { isInternalSlug } from "@/lib/page-theme";
@@ -49,12 +50,13 @@ async function resolvePageRequest(
 ) {
   const { slug: segments } = await params;
   const search = searchParams ? await searchParams : {};
+  const { isEnabled } = await draftMode();
+  const isVisualEditor = Boolean(search._storyblok || search._draft);
   const { locale, slug } = resolvePageLocale({
     segments,
     storyblokLang: search._storyblok_lang,
+    visualEditor: isVisualEditor,
   });
-  const { isEnabled } = await draftMode();
-  const isVisualEditor = Boolean(search._storyblok || search._draft);
   const fetchDraft = isEnabled || isVisualEditor || IS_DEV;
   return { locale, slug, fetchDraft, isVisualEditor, isEnabled };
 }
@@ -147,7 +149,7 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
         datePublished: story.first_published_at,
         dateModified: story.published_at,
         author,
-        inLanguage: site.language,
+        inLanguage: schemaLanguage(locale, site.language),
       });
 
       [adjacent, related] = await Promise.all([

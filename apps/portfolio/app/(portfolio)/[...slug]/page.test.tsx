@@ -355,4 +355,21 @@ describe("DynamicPage", () => {
     expect(screen.getByTestId("live")).toBeInTheDocument();
     expect(screen.queryByRole("navigation", { name: "Language" })).not.toBeInTheDocument();
   });
+
+  it("ignores a public _storyblok_lang query on /cv", async () => {
+    getCachedStory.mockResolvedValueOnce({
+      slug: "cv",
+      content: { component: "page", title: "CV" },
+    });
+
+    render(
+      await DynamicPage({
+        params: params(["cv"]),
+        searchParams: search({ _storyblok_lang: "de" }),
+      }),
+    );
+
+    expect(getCachedStory).toHaveBeenCalledWith("cv", { draftMode: false });
+    expect(screen.getByText("EN")).toHaveAttribute("aria-current", "page");
+  });
 });

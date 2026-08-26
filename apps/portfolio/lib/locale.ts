@@ -22,6 +22,11 @@ export function ogLocale(locale: AppLocale): string {
   return locale === "de" ? "de_DE" : "en_US";
 }
 
+/** schema.org `inLanguage` (BCP 47). English keeps the CMS site language. */
+export function schemaLanguage(locale: AppLocale, fallback?: string): string {
+  return locale === "de" ? "de-DE" : fallback || "en-US";
+}
+
 export function firstSearchParam(value: string | string[] | undefined): string | undefined {
   if (Array.isArray(value)) {
     return value[0];
@@ -84,9 +89,10 @@ export function localeAlternates(slug: string): Record<string, string> | undefin
 export function resolvePageLocale(args: {
   segments?: readonly string[];
   storyblokLang?: string | string[];
+  visualEditor?: boolean;
 }): LocaleSlug {
   const split = splitLocaleSlug(args.segments);
-  if (args.storyblokLang !== undefined) {
+  if (args.visualEditor && args.storyblokLang !== undefined) {
     return { locale: localeFromStoryblokLang(args.storyblokLang), slug: split.slug };
   }
   return split;

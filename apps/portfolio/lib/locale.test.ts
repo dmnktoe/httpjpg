@@ -8,6 +8,7 @@ import {
   localizedPath,
   ogLocale,
   resolvePageLocale,
+  schemaLanguage,
   splitLocaleSlug,
   storyblokLanguageParam,
 } from "./locale";
@@ -39,6 +40,17 @@ describe("ogLocale", () => {
   it("maps app locales onto Open Graph locale tags", () => {
     expect(ogLocale("en")).toBe("en_US");
     expect(ogLocale("de")).toBe("de_DE");
+  });
+});
+
+describe("schemaLanguage", () => {
+  it("keeps the CMS site language for English", () => {
+    expect(schemaLanguage("en", "en-US")).toBe("en-US");
+    expect(schemaLanguage("en")).toBe("en-US");
+  });
+
+  it("maps German onto BCP 47", () => {
+    expect(schemaLanguage("de", "en-US")).toBe("de-DE");
   });
 });
 
@@ -132,11 +144,32 @@ describe("resolvePageLocale", () => {
   });
 
   it("lets the Visual Editor language override the path", () => {
-    expect(resolvePageLocale({ segments: ["cv"], storyblokLang: "de" })).toEqual({
+    expect(
+      resolvePageLocale({ segments: ["cv"], storyblokLang: "de", visualEditor: true }),
+    ).toEqual({
       locale: "de",
       slug: "cv",
     });
-    expect(resolvePageLocale({ segments: ["de", "cv"], storyblokLang: "default" })).toEqual({
+    expect(
+      resolvePageLocale({
+        segments: ["de", "cv"],
+        storyblokLang: "default",
+        visualEditor: true,
+      }),
+    ).toEqual({
+      locale: "en",
+      slug: "cv",
+    });
+  });
+
+  it("ignores a public _storyblok_lang query so the path locale wins", () => {
+    expect(resolvePageLocale({ segments: ["cv"], storyblokLang: "de" })).toEqual({
+      locale: "en",
+      slug: "cv",
+    });
+    expect(
+      resolvePageLocale({ segments: ["cv"], storyblokLang: "de", visualEditor: false }),
+    ).toEqual({
       locale: "en",
       slug: "cv",
     });

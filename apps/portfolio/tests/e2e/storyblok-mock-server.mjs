@@ -85,7 +85,13 @@ const CONFIG = baseStory("config", {
 
 const STORIES = { home: HOME, config: CONFIG };
 
-function getStory(slug) {
+function getStory(slug, language) {
+  if (slug === "cv") {
+    if (language === "de") {
+      return baseStory("cv", pageContent("Lebenslauf", "Deutscher Lebenslauf fuer httpjpg."));
+    }
+    return baseStory("cv", pageContent("CV", "English CV for httpjpg."));
+  }
   return (
     STORIES[slug] ?? baseStory(slug, pageContent("Fixture page", `httpjpg fixture page: ${slug}.`))
   );
@@ -97,7 +103,8 @@ function sendJson(res, status, body, headers = {}) {
 }
 
 const server = createServer((req, res) => {
-  const { pathname } = new URL(req.url ?? "/", `http://127.0.0.1:${PORT}`);
+  const url = new URL(req.url ?? "/", `http://127.0.0.1:${PORT}`);
+  const { pathname, searchParams } = url;
 
   if (pathname === "/health") {
     res.writeHead(200, { "content-type": "text/plain" });
@@ -127,7 +134,7 @@ const server = createServer((req, res) => {
   }
   if (rest.startsWith("stories/")) {
     const slug = decodeURIComponent(rest.slice("stories/".length));
-    sendJson(res, 200, { story: getStory(slug) });
+    sendJson(res, 200, { story: getStory(slug, searchParams.get("language")) });
     return;
   }
 

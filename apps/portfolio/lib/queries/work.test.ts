@@ -57,6 +57,16 @@ describe("getCachedStory", () => {
       resolveRelations: ["work_list.work"],
     });
   });
+
+  it("forwards a non-default language through to fetchStory", async () => {
+    mockFetchStory.mockResolvedValue({ uuid: "u" } as never);
+    await getCachedStory("cv", { draftMode: false, language: "de" });
+    expect(mockFetchStory).toHaveBeenCalledWith("cv", {
+      draftMode: false,
+      resolveRelations: ["work_list.work"],
+      language: "de",
+    });
+  });
 });
 
 describe("getRecentWork", () => {

@@ -90,6 +90,13 @@ describe("getPageTheme", () => {
     expect(mockGetCachedStory).toHaveBeenCalledWith("work/foo", { draftMode: false });
   });
 
+  it("strips the public locale prefix before fetching the story", async () => {
+    mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/de/cv" }) as never);
+    mockGetCachedStory.mockResolvedValue({ content: {} } as never);
+    await getPageTheme();
+    expect(mockGetCachedStory).toHaveBeenCalledWith("cv", { draftMode: false });
+  });
+
   it("fetches the draft version when draft mode is enabled", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/home" }) as never);
     mockDraftMode.mockResolvedValue({ isEnabled: true } as never);

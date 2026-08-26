@@ -63,12 +63,15 @@ function toWorkItem(story: WorkStory, publishedUuids: Set<string>): WorkItem {
 }
 
 /** Dedupes the per-request Storyblok call across `generateMetadata` + page. */
-export const getCachedStory = cache(async (fullSlug: string, opts: { draftMode: boolean }) => {
-  return fetchStory(fullSlug, {
-    draftMode: opts.draftMode,
-    resolveRelations: [STORYBLOK_RELATIONS.WORK_LIST],
-  });
-});
+export const getCachedStory = cache(
+  async (fullSlug: string, opts: { draftMode: boolean; language?: string }) => {
+    return fetchStory(fullSlug, {
+      draftMode: opts.draftMode,
+      resolveRelations: [STORYBLOK_RELATIONS.WORK_LIST],
+      ...(opts.language ? { language: opts.language } : {}),
+    });
+  },
+);
 
 export async function getRecentWork(): Promise<{
   projectsWork: WorkItem[];

@@ -49,7 +49,7 @@ describe("GET /api/psn-trophies", () => {
     const response = await GET(request);
 
     expect(response.status).toBe(501);
-    await expect(response.json()).resolves.toMatchObject({ error: "PSN not configured" });
+    await expect(response.json()).resolves.toMatchObject({ error: "not_configured" });
     expect(fetchRecentTrophies).not.toHaveBeenCalled();
   });
 
@@ -116,7 +116,8 @@ describe("GET /api/psn-trophies", () => {
 
     expect(response.status).toBe(429);
     await expect(response.json()).resolves.toEqual({
-      error: "PSN trophies unavailable",
+      error: "upstream_unavailable",
+      message: "Failed to fetch PSN trophies",
       reason: "upstream",
     });
     expect(captureServerException).not.toHaveBeenCalled();
@@ -138,7 +139,8 @@ describe("GET /api/psn-trophies", () => {
 
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toEqual({
-      error: "PSN trophies unavailable",
+      error: "upstream_unavailable",
+      message: "Failed to fetch PSN trophies",
       reason: "auth",
     });
     expect(captureServerException).toHaveBeenCalledWith(error, {
@@ -153,7 +155,10 @@ describe("GET /api/psn-trophies", () => {
     const response = await GET(request);
 
     expect(response.status).toBe(500);
-    await expect(response.json()).resolves.toEqual({ error: "Failed to fetch PSN trophies" });
+    await expect(response.json()).resolves.toEqual({
+      error: "internal_error",
+      message: "Failed to fetch PSN trophies",
+    });
     expect(captureServerException).toHaveBeenCalledOnce();
   });
 

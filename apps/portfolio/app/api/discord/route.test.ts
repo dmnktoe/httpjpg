@@ -56,7 +56,7 @@ describe("GET /api/discord", () => {
 
     expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({
-      error: "Discord User ID not configured",
+      error: "not_configured",
     });
   });
 
@@ -66,7 +66,7 @@ describe("GET /api/discord", () => {
     const response = await GET(request);
 
     expect(response.status).toBe(503);
-    await expect(response.json()).resolves.toMatchObject({ error: "Config unavailable" });
+    await expect(response.json()).resolves.toMatchObject({ error: "config_unavailable" });
   });
 
   it("ignores a malformed user id from config", async () => {
@@ -104,7 +104,10 @@ describe("GET /api/discord", () => {
     const response = await GET(request);
 
     expect(response.status).toBe(500);
-    await expect(response.json()).resolves.toEqual({ error: "Failed to fetch Discord status" });
+    await expect(response.json()).resolves.toEqual({
+      error: "internal_error",
+      message: "Failed to fetch Discord status",
+    });
     expect(captureServerException).toHaveBeenCalledOnce();
   });
 });

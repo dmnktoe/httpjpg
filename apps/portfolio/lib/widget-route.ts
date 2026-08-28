@@ -3,6 +3,7 @@ import type { SbConfigStory } from "@httpjpg/storyblok-ui";
 import { draftMode } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
+import { API_ERROR, type ApiErrorBody, jsonError } from "./api-error";
 import { widgetCacheHeaders } from "./cache-headers";
 import { getConfig } from "./queries/config";
 import { enforceRateLimit } from "./rate-limit";
@@ -71,39 +72,33 @@ export function widgetPayload(
 }
 
 /** 503 — the config story could not be read, so we cannot tell if the widget is on. */
-export function widgetConfigUnavailable(): NextResponse {
-  return NextResponse.json(
-    { error: "Config unavailable", message: "Could not load the Storyblok config story" },
-    { status: 503 },
-  );
+export function widgetConfigUnavailable(): NextResponse<ApiErrorBody> {
+  return jsonError(API_ERROR.configUnavailable, 503, {
+    message: "Could not load the Storyblok config story",
+  });
 }
 
 /** 501 — the editor has not filled the field in, so the widget stays off. */
-export function widgetNotConfigured(label: string, field: string): NextResponse {
-  return NextResponse.json(
-    { error: `${label} not configured`, message: `Set ${field} in the Storyblok config story` },
-    { status: 501 },
-  );
+export function widgetNotConfigured(label: string, field: string): NextResponse<ApiErrorBody> {
+  return jsonError(API_ERROR.notConfigured, 501, {
+    message: `${label} is missing: set ${field} in the Storyblok config story`,
+  });
 }
 
 /** 501 — a server env var the widget needs is not set. */
-export function widgetMissingEnv(label: string, variable: string): NextResponse {
-  return NextResponse.json(
-    { error: `${label} not configured`, message: `Set ${variable} to enable this widget` },
-    { status: 501 },
-  );
+export function widgetMissingEnv(label: string, variable: string): NextResponse<ApiErrorBody> {
+  return jsonError(API_ERROR.notConfigured, 501, {
+    message: `${label} is missing: set ${variable} to enable this widget`,
+  });
 }
 
 /** Propagates an upstream failure's status so the client can tell 404 from 504. */
 export function widgetUpstreamError(
   label: string,
   failure: { status: number; message: string },
-): NextResponse {
+): NextResponse<ApiErrorBody> {
   console.warn(`${label} error: ${failure.status} - ${failure.message}`);
-  return NextResponse.json(
-    { error: `${label} unavailable`, message: failure.message },
-    { status: failure.status },
-  );
+  return jsonError(API_ERROR.upstream, failure.status, { message: failure.message });
 }
 
 export interface WidgetRouteContext {
@@ -143,7 +138,7 @@ export function widgetRoute(
     } catch (error) {
       console.error(`${route} API error:`, error);
       captureServerException(error, { tags: { route } });
-      return NextResponse.json({ error: `Failed to fetch ${label}` }, { status: 500 });
+      return jsonError(API_ERROR.internal, 500, { message: `Failed to fetch ${label}` });
     }
   };
 }

@@ -66,7 +66,7 @@ describe("GET /api/letterboxd", () => {
 
     expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({
-      error: "Letterboxd username not configured",
+      error: "not_configured",
     });
   });
 

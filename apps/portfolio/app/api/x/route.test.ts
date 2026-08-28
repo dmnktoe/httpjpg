@@ -107,7 +107,7 @@ describe("GET /api/x", () => {
 
     expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({
-      error: "X username not configured",
+      error: "not_configured",
     });
   });
 

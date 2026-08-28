@@ -1,7 +1,7 @@
 import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { NextResponse } from "next/server";
 
+import { API_ERROR, jsonError } from "@/lib/api-error";
 import { fetchRecentTrophies, isPsnUsername } from "@/lib/integrations/psn-trophies";
 import { WIDGET_MAX_AGE } from "@/lib/queries/widget-status";
 import {
@@ -28,18 +28,18 @@ export const GET = widgetRoute(
 
     const result = await fetchRecentTrophies(env.PSN_NPSSO, settingValue(username));
     if (!result.ok) {
-      // PSN fails in ways worth telling apart, so this route reports its own
-      // reason instead of the shared upstream shape.
+      // PSN fails in ways worth telling apart, so the upstream error carries
+      // the reason alongside the shared code.
       if (result.reportable) {
         console.warn(`PSN trophy fetch failed (${result.reason}): ${result.message}`, result.error);
         captureServerException(result.error, {
           tags: { route: "psn-trophies", reason: result.reason },
         });
       }
-      return NextResponse.json(
-        { error: "PSN trophies unavailable", reason: result.reason },
-        { status: result.status },
-      );
+      return jsonError(API_ERROR.upstream, result.status, {
+        message: "Failed to fetch PSN trophies",
+        reason: result.reason,
+      });
     }
 
     return widgetPayload(

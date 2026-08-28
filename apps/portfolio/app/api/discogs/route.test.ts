@@ -83,7 +83,7 @@ describe("GET /api/discogs", () => {
 
     expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({
-      error: "Discogs username not configured",
+      error: "not_configured",
     });
   });
 
@@ -103,7 +103,7 @@ describe("GET /api/discogs", () => {
     const response = await GET(request);
 
     expect(response.status).toBe(503);
-    await expect(response.json()).resolves.toMatchObject({ error: "Config unavailable" });
+    await expect(response.json()).resolves.toMatchObject({ error: "config_unavailable" });
   });
 
   it("short-circuits when rate limited", async () => {

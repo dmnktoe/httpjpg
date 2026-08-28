@@ -1,8 +1,9 @@
 import { createGroqClient, GroqApiError } from "@httpjpg/ai";
 import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { type NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
+import { API_ERROR, jsonError } from "@/lib/api-error";
 import { getSearchIndex } from "@/lib/queries/search-index";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { firstCitedSource } from "@/lib/search/citations";
@@ -58,25 +59,24 @@ export async function POST(request: NextRequest) {
   }
 
   if (!env.GROQ_API_KEY) {
-    return NextResponse.json(
-      { error: "ai_unavailable", message: "Ask is not configured on this deployment" },
-      { status: 503 },
-    );
+    return jsonError(API_ERROR.aiUnavailable, 503, {
+      message: "Ask is not configured on this deployment",
+    });
   }
 
   let body: AskBody;
   try {
     body = (await request.json()) as AskBody;
   } catch {
-    return NextResponse.json({ error: "invalid_json" }, { status: 400 });
+    return jsonError(API_ERROR.invalidJson, 400);
   }
 
   const question = typeof body.question === "string" ? body.question.trim() : "";
   if (!question) {
-    return NextResponse.json({ error: "missing_question" }, { status: 400 });
+    return jsonError(API_ERROR.missingQuestion, 400);
   }
   if (question.length > MAX_QUESTION_LENGTH) {
-    return NextResponse.json({ error: "question_too_long" }, { status: 413 });
+    return jsonError(API_ERROR.questionTooLong, 413);
   }
 
   let sources: AskSource[] = [];
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Ask retrieval failed:", error);
     captureServerException(error, { tags: { route: "ask" } });
-    return NextResponse.json({ error: "retrieval_failed" }, { status: 500 });
+    return jsonError(API_ERROR.retrievalFailed, 500);
   }
 
   // With nothing retrieved the model can only say it does not know, so say it

@@ -65,7 +65,7 @@ describe("GET /api/weather", () => {
     const response = await GET(request);
 
     expect(response.status).toBe(502);
-    await expect(response.json()).resolves.toMatchObject({ error: "Weather unavailable" });
+    await expect(response.json()).resolves.toMatchObject({ error: "upstream_unavailable" });
   });
 
   it("short-circuits when rate limited", async () => {

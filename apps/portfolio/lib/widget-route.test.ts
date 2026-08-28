@@ -116,7 +116,7 @@ describe("widgetUpstreamError", () => {
 
     expect(response.status).toBe(404);
     await expect(response.json()).resolves.toEqual({
-      error: "Discogs unavailable",
+      error: "upstream_unavailable",
       message: "private",
     });
   });
@@ -160,7 +160,10 @@ describe("widgetRoute", () => {
     const response = await widgetRoute({ route: "demo", label: "demo data" }, handler)(request);
 
     expect(response.status).toBe(500);
-    await expect(response.json()).resolves.toEqual({ error: "Failed to fetch demo data" });
+    await expect(response.json()).resolves.toEqual({
+      error: "internal_error",
+      message: "Failed to fetch demo data",
+    });
     expect(captureServerException).toHaveBeenCalledWith(expect.any(Error), {
       tags: { route: "demo" },
     });

@@ -19,9 +19,13 @@ function getClient() {
       rules: [
         // Block common attacks (SQLi, path traversal, …) on these endpoints.
         shield({ mode: "LIVE" }),
-        // Generous per-IP budget: the widgets poll every 10–30s, so 60/min is
-        // comfortably above legitimate use while stopping scripted abuse.
-        fixedWindow({ mode: "LIVE", window: "60s", max: 60 }),
+        // One shared per-IP budget covers every limited route. A single page
+        // load already fans out well past 60: the favicon proxy fires once per
+        // external link, the footer widgets poll every 10–30s, and search runs
+        // as the user types. 60/min throttled genuine visitors with 429s, so
+        // lift it to a ceiling that still catches scripted abuse (hundreds+/min)
+        // but clears real first-load bursts.
+        fixedWindow({ mode: "LIVE", window: "60s", max: 200 }),
       ],
     });
   }

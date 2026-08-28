@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface UseWidgetDataOptions {
   /**
@@ -35,14 +35,10 @@ export function useWidgetData<T>(
   { pollMs, enabled = true }: UseWidgetDataOptions = {},
 ): WidgetData<T> {
   const [data, setData] = useState<T | null>(null);
-  const [loaded, setLoaded] = useState(false);
-  // Kept in a ref so the polling effect does not re-subscribe when it changes.
-  const pollRef = useRef(pollMs);
-  pollRef.current = pollMs;
+  const [fetched, setFetched] = useState(false);
 
   useEffect(() => {
     if (!enabled) {
-      setLoaded(true);
       return;
     }
 
@@ -50,11 +46,10 @@ export function useWidgetData<T>(
     let timer: ReturnType<typeof setTimeout> | undefined;
 
     const schedule = () => {
-      const interval = pollRef.current;
-      if (interval === undefined || controller.signal.aborted) {
+      if (pollMs === undefined || controller.signal.aborted) {
         return;
       }
-      timer = setTimeout(run, interval);
+      timer = setTimeout(run, pollMs);
     };
 
     async function run() {
@@ -78,13 +73,13 @@ export function useWidgetData<T>(
       }
 
       if (!controller.signal.aborted) {
-        setLoaded(true);
+        setFetched(true);
         schedule();
       }
     }
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible" && pollRef.current !== undefined) {
+      if (document.visibilityState === "visible" && pollMs !== undefined) {
         clearTimeout(timer);
         run();
       }
@@ -98,7 +93,7 @@ export function useWidgetData<T>(
       clearTimeout(timer);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [url, enabled]);
+  }, [url, enabled, pollMs]);
 
-  return { data, loaded };
+  return { data, loaded: !enabled || fetched };
 }

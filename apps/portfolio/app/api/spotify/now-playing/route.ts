@@ -9,6 +9,7 @@ import {
 } from "@httpjpg/spotify";
 import { type NextRequest, NextResponse } from "next/server";
 
+import { API_ERROR, jsonError } from "@/lib/api-error";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "edge";
@@ -55,10 +56,10 @@ export async function GET(request: NextRequest) {
 
     console.error("Spotify API error:", error);
     captureEdgeException(error, { route: "spotify/now-playing" });
-    return NextResponse.json(
-      { error: "internal_error", message: "Failed to fetch now playing" },
-      { status: 500, headers: CORS_HEADERS },
-    );
+    return jsonError(API_ERROR.internal, 500, {
+      message: "Failed to fetch now playing",
+      headers: CORS_HEADERS,
+    });
   }
 }
 

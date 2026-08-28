@@ -16,20 +16,16 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
-const { getStory, getStoryblokApi, fetchXTimeline, isXUsername, enforceRateLimit } = vi.hoisted(
-  () => ({
-    getStory: vi.fn(),
-    getStoryblokApi: vi.fn(),
-    fetchXTimeline: vi.fn(),
-    isXUsername: vi.fn(() => true),
-    enforceRateLimit: vi.fn(async (): Promise<Response | null> => null),
-  }),
-);
+const { getConfig, fetchXTimeline, isXUsername, enforceRateLimit } = vi.hoisted(() => ({
+  getConfig: vi.fn(),
+  fetchXTimeline: vi.fn(),
+  isXUsername: vi.fn(() => true),
+  enforceRateLimit: vi.fn(async (): Promise<Response | null> => null),
+}));
 
-vi.mock("@httpjpg/storyblok-api", () => ({ getStoryblokApi }));
-
-vi.mock("@/lib/integrations/x-posts", () => ({ fetchXTimeline, isXUsername }));
+vi.mock("@/lib/queries/config", () => ({ getConfig }));
 vi.mock("@/lib/rate-limit", () => ({ enforceRateLimit }));
+vi.mock("@/lib/integrations/x-posts", () => ({ fetchXTimeline, isXUsername }));
 
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import type { NextRequest } from "next/server";
@@ -40,15 +36,20 @@ const request = {} as NextRequest;
 
 beforeEach(() => {
   vi.clearAllMocks();
-  getStoryblokApi.mockReturnValue({ getStory });
   env.TWEETAPI_KEY = "secret";
   isXUsername.mockReturnValue(true);
   enforceRateLimit.mockResolvedValue(null);
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+  vi.spyOn(console, "error").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 describe("GET /api/x", () => {
   it("returns the timeline when configured", async () => {
-    getStory.mockResolvedValueOnce({ content: { x_username: "dmnktoe" } });
+    getConfig.mockResolvedValueOnce({ x_username: "dmnktoe" });
     fetchXTimeline.mockResolvedValueOnce({
       ok: true,
       timeline: { profile: { username: "dmnktoe" }, posts: [{ text: "Hello" }] },
@@ -69,7 +70,7 @@ describe("GET /api/x", () => {
   });
 
   it("caches the response for an hour", async () => {
-    getStory.mockResolvedValueOnce({ content: { x_username: "dmnktoe" } });
+    getConfig.mockResolvedValueOnce({ x_username: "dmnktoe" });
     fetchXTimeline.mockResolvedValueOnce({
       ok: true,
       timeline: { profile: {}, posts: [] },
@@ -87,7 +88,7 @@ describe("GET /api/x", () => {
     const response = await GET(request);
 
     expect(response.status).toBe(429);
-    expect(getStory).not.toHaveBeenCalled();
+    expect(getConfig).not.toHaveBeenCalled();
   });
 
   it("returns 501 without an api key, before touching Storyblok", async () => {
@@ -96,22 +97,22 @@ describe("GET /api/x", () => {
     const response = await GET(request);
 
     expect(response.status).toBe(501);
-    expect(getStory).not.toHaveBeenCalled();
+    expect(getConfig).not.toHaveBeenCalled();
   });
 
   it("returns 501 when no username is configured", async () => {
-    getStory.mockResolvedValueOnce({ content: {} });
+    getConfig.mockResolvedValueOnce({});
 
     const response = await GET(request);
 
     expect(response.status).toBe(501);
     await expect(response.json()).resolves.toMatchObject({
-      error: "X username not configured",
+      error: "not_configured",
     });
   });
 
   it("ignores a malformed username from config", async () => {
-    getStory.mockResolvedValueOnce({ content: { x_username: "../admin" } });
+    getConfig.mockResolvedValueOnce({ x_username: "../admin" });
     isXUsername.mockReturnValue(false);
 
     const response = await GET(request);
@@ -120,16 +121,16 @@ describe("GET /api/x", () => {
     expect(fetchXTimeline).not.toHaveBeenCalled();
   });
 
-  it("returns 501 when the config story cannot be read", async () => {
-    getStory.mockRejectedValueOnce(new Error("storyblok down"));
+  it("returns 503 when the config story cannot be read", async () => {
+    getConfig.mockResolvedValueOnce(null);
 
     const response = await GET(request);
 
-    expect(response.status).toBe(501);
+    expect(response.status).toBe(503);
   });
 
   it("propagates a rate limit from TweetAPI", async () => {
-    getStory.mockResolvedValueOnce({ content: { x_username: "dmnktoe" } });
+    getConfig.mockResolvedValueOnce({ x_username: "dmnktoe" });
     fetchXTimeline.mockResolvedValueOnce({ ok: false, status: 429, message: "rate limit" });
 
     const response = await GET(request);
@@ -139,7 +140,7 @@ describe("GET /api/x", () => {
   });
 
   it("reports unexpected errors and returns a 500", async () => {
-    getStory.mockResolvedValueOnce({ content: { x_username: "dmnktoe" } });
+    getConfig.mockResolvedValueOnce({ x_username: "dmnktoe" });
     fetchXTimeline.mockRejectedValueOnce(new Error("boom"));
 
     const response = await GET(request);
@@ -148,13 +149,14 @@ describe("GET /api/x", () => {
     expect(captureServerException).toHaveBeenCalledOnce();
   });
 
-  it("reads the config through the request's draft mode", async () => {
+  it("keeps draft responses out of shared caches", async () => {
     const { draftMode } = await import("next/headers");
     vi.mocked(draftMode).mockResolvedValueOnce({ isEnabled: true } as never);
-    getStory.mockResolvedValueOnce({ content: { x_username: "dmnktoe" } });
+    getConfig.mockResolvedValueOnce({ x_username: "dmnktoe" });
+    fetchXTimeline.mockResolvedValueOnce({ ok: true, timeline: { profile: {}, posts: [] } });
 
-    await GET(request);
+    const response = await GET(request);
 
-    expect(getStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   });
 });

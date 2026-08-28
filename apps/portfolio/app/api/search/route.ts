@@ -1,6 +1,7 @@
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { type NextRequest, NextResponse } from "next/server";
 
+import { API_ERROR, jsonError } from "@/lib/api-error";
 import { getSearchIndex } from "@/lib/queries/search-index";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { rankDocuments, suggestCompletions } from "@/lib/search/ranking";
@@ -43,6 +44,6 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Search API error:", error);
     captureServerException(error, { tags: { route: "search" } });
-    return NextResponse.json({ error: "Search unavailable" }, { status: 500 });
+    return jsonError(API_ERROR.internal, 500, { message: "Failed to run the search" });
   }
 }

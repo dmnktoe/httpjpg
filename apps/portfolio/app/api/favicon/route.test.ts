@@ -3,8 +3,12 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
-const { fetchFavicon } = vi.hoisted(() => ({ fetchFavicon: vi.fn() }));
+const { fetchFavicon, enforceRateLimit } = vi.hoisted(() => ({
+  fetchFavicon: vi.fn(),
+  enforceRateLimit: vi.fn(async (): Promise<Response | null> => null),
+}));
 vi.mock("@/lib/integrations/favicon", () => ({ fetchFavicon }));
+vi.mock("@/lib/rate-limit", () => ({ enforceRateLimit }));
 
 import { inflateSync } from "node:zlib";
 
@@ -19,9 +23,19 @@ function request(query: string): NextRequest {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  enforceRateLimit.mockResolvedValue(null);
 });
 
 describe("GET /api/favicon", () => {
+  it("short-circuits when rate limited", async () => {
+    enforceRateLimit.mockResolvedValueOnce(new Response(null, { status: 429 }) as never);
+
+    const response = await GET(request("?url=https%3A%2F%2Fexample.com%2F"));
+
+    expect(response.status).toBe(429);
+    expect(fetchFavicon).not.toHaveBeenCalled();
+  });
+
   it("streams the resolved icon with a long cache", async () => {
     const body = Uint8Array.from([0x89, 0x50, 0x4e, 0x47]);
     fetchFavicon.mockResolvedValueOnce({

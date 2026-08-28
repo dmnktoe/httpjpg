@@ -5,6 +5,7 @@ import { colors } from "@httpjpg/tokens/colors";
 import { spacing } from "@httpjpg/tokens/spacing";
 import { ASCII_DIVIDER_STARS, ASCII_TAPE } from "@httpjpg/ui";
 import { ImageResponse } from "next/og";
+import type { NextRequest } from "next/server";
 
 import { imageToAscii } from "@/lib/og-ascii";
 import {
@@ -17,6 +18,7 @@ import {
   toOgAsciiSampleUrl,
   toOgImageUrl,
 } from "@/lib/og-work-meta";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const revalidate = 3600;
@@ -343,7 +345,14 @@ function PageLayout({ slug, title, titleSize, year, p, imageUrl }: LayoutArgs) {
   );
 }
 
-export async function GET(_req: Request, ctx: { params: Promise<{ slug: string[] }> }) {
+export async function GET(request: NextRequest, ctx: { params: Promise<{ slug: string[] }> }) {
+  // Rendering a card downloads the story's hero image and rasterises it, so an
+  // unthrottled crawler here is expensive in a way the other routes are not.
+  const limited = await enforceRateLimit(request);
+  if (limited) {
+    return limited;
+  }
+
   const { slug } = await ctx.params;
   const fullSlug = slug.join("/");
   try {

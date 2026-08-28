@@ -1,123 +1,76 @@
 "use client";
 
-import { Box } from "@httpjpg/ui";
+import {
+  Box,
+  FooterStatusLine,
+  FooterStatusLineSeparator,
+  FooterStatusLineText,
+  FooterStatusLineThumb,
+} from "@httpjpg/ui";
 import { token } from "@httpjpg/ui/tokens";
-import { useEffect, useState } from "react";
 
-const STATUS_COLORS = {
+const STATUS = { online: "online", idle: "idle", dnd: "dnd", offline: "offline" } as const;
+type DiscordStatusValue = (typeof STATUS)[keyof typeof STATUS];
+
+const STATUS_COLORS: Record<DiscordStatusValue, string> = {
   online: token.var("colors.success.500"),
   idle: token.var("colors.warning.500"),
   dnd: token.var("colors.danger.500"),
   offline: token.var("colors.neutral.500"),
 };
 
-const STATUS_EMOJI = {
+const STATUS_EMOJI: Record<DiscordStatusValue, string> = {
   online: "🟢",
   idle: "🟡",
   dnd: "🔴",
   offline: "⚫",
 };
 
-export function DiscordStatus() {
-  const [status, setStatus] = useState<"online" | "idle" | "dnd" | "offline">("offline");
-  const [activity, setActivity] = useState<string | null>(null);
-  const [playtime, setPlaytime] = useState<string | null>(null);
-  const [activityIcon, setActivityIcon] = useState<string | null>(null);
+export interface DiscordPresence {
+  status?: DiscordStatusValue;
+  activity?: string | null;
+  activityDetails?: { playtime?: string | null; icon?: string | null };
+}
 
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        const response = await fetch("/api/discord");
-        if (response.ok) {
-          const data = await response.json();
-          setStatus(data.status || "offline");
-          setActivity(data.activity || null);
-          setPlaytime(data.activityDetails?.playtime || null);
-          setActivityIcon(data.activityDetails?.icon || null);
-        }
-      } catch (error) {
-        console.error("Failed to fetch Discord status:", error);
-      }
-    };
+export interface DiscordStatusProps {
+  presence: DiscordPresence | null;
+  /** False while the first request is in flight; the line must not claim "offline" yet. */
+  loaded: boolean;
+}
 
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 30000);
-    return () => clearInterval(interval);
-  }, []);
+export function DiscordStatus({ presence, loaded }: DiscordStatusProps) {
+  if (!loaded) {
+    return <FooterStatusLine label="discord" loading />;
+  }
+
+  const status = presence?.status ?? STATUS.offline;
+  const activity = presence?.activity || null;
+  const playtime = presence?.activityDetails?.playtime || null;
+  const activityIcon = presence?.activityDetails?.icon || null;
 
   return (
-    <Box
-      css={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 2,
-        opacity: 80,
-        fontFamily: "mono",
-        fontSize: "xs",
-      }}
-    >
-      <Box as="span" css={{ opacity: 60 }}>
-        discord:
+    <FooterStatusLine label="discord">
+      <Box as="span" aria-hidden="true">
+        {STATUS_EMOJI[status]}
       </Box>
-      <Box as="span">{STATUS_EMOJI[status]}</Box>
-      <Box as="span" style={{ color: STATUS_COLORS[status] }}>
+      <Box as="span" css={{ flexShrink: 0 }} style={{ color: STATUS_COLORS[status] }}>
         {status}
       </Box>
       {activity && (
         <>
-          <Box as="span" css={{ opacity: 50 }}>
-            ·
-          </Box>
-          {activityIcon && (
-            <Box
-              as="span"
-              css={{
-                display: "inline-block",
-                width: "3",
-                height: "3",
-                marginRight: "1",
-                verticalAlign: "middle",
-                borderRadius: "sm",
-                overflow: "hidden",
-              }}
-            >
-              <img
-                src={activityIcon}
-                alt=""
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  display: "block",
-                }}
-              />
-            </Box>
-          )}
-          <Box
-            as="span"
-            css={{
-              maxWidth: "200px",
-              opacity: 70,
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-            }}
-          >
-            {activity}
-          </Box>
+          <FooterStatusLineSeparator />
+          {activityIcon && <FooterStatusLineThumb src={activityIcon} />}
+          <FooterStatusLineText>{activity}</FooterStatusLineText>
           {playtime && (
             <>
-              <Box as="span" css={{ opacity: 50 }}>
-                ·
-              </Box>
-              <Box as="span" css={{ opacity: 60 }}>
+              <FooterStatusLineSeparator />
+              <FooterStatusLineText fixed dim>
                 {playtime}
-              </Box>
+              </FooterStatusLineText>
             </>
           )}
         </>
       )}
-    </Box>
+    </FooterStatusLine>
   );
 }

@@ -30,7 +30,7 @@ export function TrophyStatus({ trophy, avatar, loaded }: TrophyStatusProps) {
       <FooterStatusLineThumb
         src={`/images/trophies/${trophy.type}.png`}
         alt={`${trophy.type} trophy`}
-        size="3.5"
+        size="3"
         shape="square"
         fit="contain"
         pixelated

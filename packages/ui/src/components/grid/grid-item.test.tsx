@@ -83,6 +83,16 @@ describe("GridItem", () => {
   it("applies self-alignment props", () => {
     render(<GridItem alignSelf="center" justifySelf="end" data-testid="item" />);
 
-    expect(screen.getByTestId("item").className).not.toBe("");
+    expect(screen.getByTestId("item")).toHaveStyle({
+      alignSelf: "center",
+      justifySelf: "end",
+    });
+  });
+
+  it("ignores empty CMS self-alignment strings", () => {
+    render(<GridItem alignSelf={"" as "center"} justifySelf={"" as "end"} data-testid="item" />);
+
+    expect(screen.getByTestId("item").style.alignSelf).toBe("");
+    expect(screen.getByTestId("item").style.justifySelf).toBe("");
   });
 });

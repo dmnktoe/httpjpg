@@ -90,10 +90,16 @@ export const layoutBlocks: BlockDef[] = [
         columnGap: field.datasource("Column Gap", "spacing-options"),
       }),
       ...tabbed("Alignment", "alignment", {
-        align: field.options("Align Items", labelize(CMS_OPTIONS.alignItems)),
-        justify: field.options("Justify Items", labelize(CMS_OPTIONS.justifyItems)),
+        align: field.options("Align Items", labelize(CMS_OPTIONS.alignItems), {
+          default_value: "stretch",
+        }),
+        justify: field.options("Justify Items", labelize(CMS_OPTIONS.justifyItems), {
+          default_value: "stretch",
+        }),
         justifyContent: field.options("Justify Content", labelize(CMS_OPTIONS.justifyContent)),
-        flow: field.options("Auto Flow", labelize(CMS_OPTIONS.gridFlow)),
+        flow: field.options("Auto Flow", labelize(CMS_OPTIONS.gridFlow), {
+          default_value: "row",
+        }),
       }),
     }),
   },

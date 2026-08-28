@@ -79,10 +79,10 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
       gap={gap}
       rowGap={rowGap}
       columnGap={columnGap}
-      align={align as GridProps["align"]}
-      justify={justify}
-      justifyContent={justifyContent}
-      flow={flow}
+      align={align || undefined}
+      justify={justify || undefined}
+      justifyContent={justifyContent || undefined}
+      flow={flow || undefined}
       className={responsive}
       style={styleVars}
     >

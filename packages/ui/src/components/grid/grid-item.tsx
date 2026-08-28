@@ -49,11 +49,14 @@ export const GridItem = forwardRef<HTMLDivElement, GridItemProps>(
     return (
       <div
         ref={ref}
-        className={cx(
-          css({ boxSizing: "border-box", alignSelf, justifySelf, ...cssProp }),
-          className,
-        )}
-        style={{ gridColumn, gridRow, ...style }}
+        className={cx(css({ boxSizing: "border-box", ...cssProp }), className)}
+        style={{
+          gridColumn,
+          gridRow,
+          ...(alignSelf ? { alignSelf } : {}),
+          ...(justifySelf ? { justifySelf } : {}),
+          ...style,
+        }}
         {...props}
       >
         {children}

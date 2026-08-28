@@ -1,6 +1,6 @@
 "use client";
 
-import type { HTMLAttributes, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
@@ -21,16 +21,26 @@ const GRID_COLUMNS_MAP = {
   auto: "repeat(auto-fit, minmax(200px, 1fr))",
 } as const;
 
+/** CMS uses `row-dense`; CSS grid-auto-flow requires a space (`row dense`). */
+const GRID_AUTO_FLOW = {
+  row: "row",
+  column: "column",
+  "row-dense": "row dense",
+  "column-dense": "column dense",
+} as const;
+
+type GridFlow = keyof typeof GRID_AUTO_FLOW;
+
 export interface GridProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   columns?: keyof typeof GRID_COLUMNS_MAP;
   gap?: string | number;
   rowGap?: string | number;
   columnGap?: string | number;
-  align?: "start" | "center" | "end" | "stretch";
+  align?: "start" | "center" | "end" | "stretch" | "baseline";
   justify?: "start" | "center" | "end" | "stretch";
   justifyContent?: "start" | "center" | "end" | "space-between" | "space-around" | "space-evenly";
-  flow?: "row" | "column" | "row-dense" | "column-dense";
+  flow?: GridFlow;
   fullWidth?: boolean;
   css?: SystemStyleObject;
 }
@@ -50,6 +60,7 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
       fullWidth = false,
       className,
       css: cssProp,
+      style,
       ...props
     },
     ref,
@@ -63,15 +74,18 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
           gap: rowGap || columnGap ? undefined : gap,
           rowGap: rowGap || gap,
           columnGap: columnGap || gap,
-          alignItems: align,
-          justifyItems: justify,
-          justifyContent,
-          gridAutoFlow: flow,
           w: fullWidth ? "full" : undefined,
           ...cssProp,
         }),
         className,
       )}
+      style={{
+        alignItems: align || "stretch",
+        justifyItems: justify || "stretch",
+        ...(justifyContent ? { justifyContent } : {}),
+        gridAutoFlow: toGridAutoFlow(flow),
+        ...style,
+      }}
       {...props}
     >
       {children}
@@ -80,3 +94,10 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
 );
 
 Grid.displayName = "Grid";
+
+function toGridAutoFlow(flow: string | undefined): CSSProperties["gridAutoFlow"] {
+  if (flow && flow in GRID_AUTO_FLOW) {
+    return GRID_AUTO_FLOW[flow as GridFlow];
+  }
+  return GRID_AUTO_FLOW.row;
+}

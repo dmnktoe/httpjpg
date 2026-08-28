@@ -26,6 +26,32 @@ describe("SbGrid", () => {
     expect(container.firstChild).not.toBeNull();
   });
 
+  it("applies Storyblok alignment fields onto the grid", () => {
+    const { container } = render(
+      <SbGrid
+        blok={
+          {
+            _uid: "4",
+            component: "grid",
+            columns: "2",
+            align: "center",
+            justify: "end",
+            justifyContent: "space-between",
+            flow: "row-dense",
+            items: [{ _uid: "i1", component: "headline", text: "Hi" }],
+          } as never
+        }
+      />,
+    );
+
+    expect(container.firstElementChild).toHaveStyle({
+      alignItems: "center",
+      justifyItems: "end",
+      justifyContent: "space-between",
+      gridAutoFlow: "row dense",
+    });
+  });
+
   it("falls back to a single column for auto layouts", () => {
     const { container } = render(
       <SbGrid

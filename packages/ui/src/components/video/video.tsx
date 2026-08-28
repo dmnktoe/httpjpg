@@ -153,6 +153,18 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       }
     }, [muted]);
 
+    const isFirstSrc = useRef(true);
+    useEffect(() => {
+      if (isFirstSrc.current) {
+        isFirstSrc.current = false;
+        return;
+      }
+      const video = videoRef.current;
+      if (!video || !isNative) return;
+      setIsLoading(true);
+      video.load();
+    }, [src, isNative]);
+
     const hasCredit = Boolean(copyright || copyrightSource);
     const inline = hasCredit && isInlineCopyright(copyrightPosition);
 

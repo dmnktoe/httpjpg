@@ -13,7 +13,7 @@ export interface BuildBadgeProps {
 }
 
 export function BuildBadge({ repositoryUrl, version, buildTime, commitSha }: BuildBadgeProps) {
-  const now = useSyncExternalStore(subscribeNever, getClientNow, getServerNow);
+  const now = useSyncExternalStore(subscribeClock, getClientNow, getServerNow);
   const deployedAt = buildTime && now > 0 ? formatRelativeTime(buildTime, now) : null;
 
   if (!version && !commitSha && !buildTime) {
@@ -88,14 +88,22 @@ export function BuildBadge({ repositoryUrl, version, buildTime, commitSha }: Bui
 
 const SHORT_SHA_LENGTH = 7;
 
-function subscribeNever() {
-  return () => {};
+let cachedNow = 0;
+let clockSubscribers = 0;
+
+function subscribeClock(onStoreChange: () => void) {
+  if (clockSubscribers === 0) {
+    cachedNow = Date.now();
+    onStoreChange();
+  }
+  clockSubscribers += 1;
+  return () => {
+    clockSubscribers -= 1;
+    if (clockSubscribers === 0) cachedNow = 0;
+  };
 }
 
-let cachedNow = 0;
-
 function getClientNow() {
-  cachedNow ||= Date.now();
   return cachedNow;
 }
 

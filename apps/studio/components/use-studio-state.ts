@@ -1,7 +1,7 @@
 "use client";
 
 import { useHasMounted } from "@httpjpg/ui";
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useReducer, useSyncExternalStore } from "react";
 
 import {
   type BuilderItem,
@@ -72,10 +72,19 @@ function writeStored(state: StudioState) {
   } catch {
     // Quota or private-mode failures are non-fatal.
   }
+  publishSnapshot(state);
 }
 
 let cachedSnapshot: StudioState = INITIAL;
 let cacheHydrated = false;
+const storeListeners = new Set<() => void>();
+
+function publishSnapshot(next: StudioState) {
+  cacheHydrated = true;
+  if (cachedSnapshot === next) return;
+  cachedSnapshot = next;
+  for (const listener of storeListeners) listener();
+}
 
 function getStoredSnapshot(): StudioState {
   if (typeof window === "undefined") return INITIAL;
@@ -89,16 +98,82 @@ function getStoredSnapshot(): StudioState {
 function subscribeStored(onStoreChange: () => void) {
   function handleStorage(event: StorageEvent) {
     if (event.key !== STORAGE_KEY) return;
-    cachedSnapshot = readStored() ?? INITIAL;
-    onStoreChange();
+    publishSnapshot(readStored() ?? INITIAL);
   }
+  storeListeners.add(onStoreChange);
   window.addEventListener("storage", handleStorage);
-  return () => window.removeEventListener("storage", handleStorage);
+  return () => {
+    storeListeners.delete(onStoreChange);
+    window.removeEventListener("storage", handleStorage);
+  };
+}
+
+interface SetOptions {
+  transient?: boolean;
+}
+
+interface StudioHistory {
+  override: StudioState | null;
+  past: StudioState[];
+  future: StudioState[];
+}
+
+const EMPTY_HISTORY: StudioHistory = { override: null, past: [], future: [] };
+
+type HistoryAction =
+  | {
+      type: "set";
+      base: StudioState;
+      updater: (prev: StudioState) => StudioState;
+      transient: boolean;
+    }
+  | { type: "replace"; base: StudioState; next: StudioState }
+  | { type: "reset"; base: StudioState }
+  | { type: "undo"; base: StudioState }
+  | { type: "redo"; base: StudioState };
+
+function pushPast(past: StudioState[], entry: StudioState): StudioState[] {
+  const next = [...past, entry];
+  return next.length > HISTORY_LIMIT ? next.slice(next.length - HISTORY_LIMIT) : next;
+}
+
+function reduceHistory(history: StudioHistory, action: HistoryAction): StudioHistory {
+  const current = history.override ?? action.base;
+  switch (action.type) {
+    case "set": {
+      const next = action.updater(current);
+      if (next === current) return history;
+      if (action.transient) return { ...history, override: next };
+      return { override: next, past: pushPast(history.past, current), future: [] };
+    }
+    case "replace":
+      return { override: action.next, past: pushPast(history.past, current), future: [] };
+    case "reset":
+      return { override: INITIAL, past: pushPast(history.past, current), future: [] };
+    case "undo": {
+      const previous = history.past.at(-1);
+      if (!previous) return history;
+      return {
+        override: previous,
+        past: history.past.slice(0, -1),
+        future: [...history.future, current],
+      };
+    }
+    case "redo": {
+      const next = history.future.at(-1);
+      if (!next) return history;
+      return {
+        override: next,
+        past: pushPast(history.past, current),
+        future: history.future.slice(0, -1),
+      };
+    }
+  }
 }
 
 export interface StudioStore {
   state: StudioState;
-  set(updater: (prev: StudioState) => StudioState, opts?: { transient?: boolean }): void;
+  set(updater: (prev: StudioState) => StudioState, opts?: SetOptions): void;
   replace(next: StudioState): void;
   reset(): void;
   undo(): void;
@@ -111,83 +186,37 @@ export interface StudioStore {
 export function useStudioState(): StudioStore {
   const ready = useHasMounted();
   const persisted = useSyncExternalStore(subscribeStored, getStoredSnapshot, () => INITIAL);
-  const [override, setOverride] = useState<StudioState | null>(null);
-  const [canUndo, setCanUndo] = useState(false);
-  const [canRedo, setCanRedo] = useState(false);
-  const state = override ?? persisted;
-
-  const past = useRef<StudioState[]>([]);
-  const future = useRef<StudioState[]>([]);
+  const [history, dispatch] = useReducer(reduceHistory, EMPTY_HISTORY);
+  const state = history.override ?? persisted;
 
   useEffect(() => {
     if (ready) writeStored(state);
   }, [state, ready]);
 
   const set = useCallback(
-    (updater: (prev: StudioState) => StudioState, opts: { transient?: boolean } = {}) => {
-      setOverride((prev) => {
-        const base = prev ?? persisted;
-        const next = updater(base);
-        if (next === base) return prev;
-        if (!opts.transient) {
-          past.current.push(base);
-          if (past.current.length > HISTORY_LIMIT) past.current.shift();
-          future.current = [];
-          setCanUndo(true);
-          setCanRedo(false);
-        }
-        return next;
-      });
+    (updater: (prev: StudioState) => StudioState, opts: SetOptions = {}) => {
+      dispatch({ type: "set", base: persisted, updater, transient: opts.transient ?? false });
     },
     [persisted],
   );
 
   const replace = useCallback(
     (next: StudioState) => {
-      setOverride((prev) => {
-        const base = prev ?? persisted;
-        past.current.push(base);
-        if (past.current.length > HISTORY_LIMIT) past.current.shift();
-        future.current = [];
-        setCanUndo(true);
-        setCanRedo(false);
-        return next;
-      });
+      dispatch({ type: "replace", base: persisted, next });
     },
     [persisted],
   );
 
   const reset = useCallback(() => {
-    setOverride((prev) => {
-      const base = prev ?? persisted;
-      past.current.push(base);
-      future.current = [];
-      setCanUndo(true);
-      setCanRedo(false);
-      return INITIAL;
-    });
+    dispatch({ type: "reset", base: persisted });
   }, [persisted]);
 
   const undo = useCallback(() => {
-    const prev = past.current.pop();
-    if (!prev) return;
-    setOverride((current) => {
-      future.current.push(current ?? persisted);
-      return prev;
-    });
-    setCanUndo(past.current.length > 0);
-    setCanRedo(true);
+    dispatch({ type: "undo", base: persisted });
   }, [persisted]);
 
   const redo = useCallback(() => {
-    const next = future.current.pop();
-    if (!next) return;
-    setOverride((current) => {
-      past.current.push(current ?? persisted);
-      return next;
-    });
-    setCanUndo(true);
-    setCanRedo(future.current.length > 0);
+    dispatch({ type: "redo", base: persisted });
   }, [persisted]);
 
   return {
@@ -197,8 +226,8 @@ export function useStudioState(): StudioStore {
     reset,
     undo,
     redo,
-    canUndo,
-    canRedo,
+    canUndo: history.past.length > 0,
+    canRedo: history.future.length > 0,
     ready,
   };
 }

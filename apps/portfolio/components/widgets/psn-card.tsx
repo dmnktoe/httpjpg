@@ -1,18 +1,13 @@
 "use client";
 
-import { Box, Image } from "@httpjpg/ui";
-import { useEffect, useState } from "react";
+import { Box, Image, useHasMounted } from "@httpjpg/ui";
 
 export interface PSNCardProps {
   username?: string;
 }
 
 export function PSNCard({ username }: PSNCardProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useHasMounted();
 
   if (!mounted || !username) {
     return null;

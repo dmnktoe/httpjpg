@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useEffect, useMemo, useRef } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
@@ -54,7 +54,7 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
     },
     ref,
   ) => {
-    const [embedUrl, setEmbedUrl] = useState("");
+    const embedUrl = embedUrlFor(source, src);
     const player = useAudioPlayer();
     const track = useMemo(() => ({ src, title, artist, artwork }), [src, title, artist, artwork]);
     // mp3 is the only source the site itself plays; the embeds bring their own
@@ -72,17 +72,6 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
       hasAutoPlayed.current = true;
       player?.play(track);
     }, [autoPlay, isQueued, player, track]);
-
-    useEffect(() => {
-      if (source === "spotify") {
-        const { type, id } = getSpotifyId(src);
-        setEmbedUrl(`https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0`);
-      } else if (source === "soundcloud") {
-        setEmbedUrl(
-          `https://w.soundcloud.com/player/?url=${encodeURIComponent(src)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`,
-        );
-      }
-    }, [source, src]);
 
     const containerStyles = css.raw({
       p: 4,
@@ -217,3 +206,14 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
 );
 
 MusicPlayer.displayName = "MusicPlayer";
+
+function embedUrlFor(source: MusicSource, src: string): string {
+  if (source === "spotify") {
+    const { type, id } = getSpotifyId(src);
+    return `https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0`;
+  }
+  if (source === "soundcloud") {
+    return `https://w.soundcloud.com/player/?url=${encodeURIComponent(src)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`;
+  }
+  return "";
+}

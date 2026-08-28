@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Button } from "@httpjpg/ui";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 import { setConsent } from "../consent";
 import type { ConsentCategory, ConsentState } from "../types";
@@ -31,24 +31,11 @@ export function CookieCenter({ onSave }: CookieCenterProps) {
   const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());
   const [isSaved, setIsSaved] = useState(false);
   const [hasEdits, setHasEdits] = useState(false);
-  const syncedRef = useRef<ConsentState | null>(externalConsent);
 
-  // Reflect consent changed elsewhere (e.g. the cookie banner on this page),
-  // but never clobber unsaved edits, and ignore the echo of our own save.
-  useEffect(() => {
-    if (!externalConsent) {
-      return;
-    }
-    if (syncedRef.current && consentEquals(externalConsent, syncedRef.current)) {
-      return;
-    }
-    if (hasEdits) {
-      return;
-    }
-    syncedRef.current = externalConsent;
+  if (externalConsent && !hasEdits && !consentEquals(externalConsent, consent)) {
     setConsentState(externalConsent);
     setIsSaved(false);
-  }, [externalConsent, hasEdits]);
+  }
 
   const toggleCategory = (category: ConsentCategory) => {
     if (REQUIRED_CATEGORIES.has(category)) {
@@ -72,7 +59,6 @@ export function CookieCenter({ onSave }: CookieCenterProps) {
   };
 
   const persist = (next: ConsentState) => {
-    syncedRef.current = next;
     setConsentState(next);
     setConsent(next);
     setIsSaved(true);

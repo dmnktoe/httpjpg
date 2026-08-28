@@ -21,14 +21,21 @@ export function AssetPicker({ open, onClose, onPick }: AssetPickerProps) {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [perPage, setPerPage] = useState(24);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(open);
   const [error, setError] = useState<string | null>(null);
+  const requestKey = `${open}:${page}:${search}`;
+  const [prevRequestKey, setPrevRequestKey] = useState(requestKey);
+  if (requestKey !== prevRequestKey) {
+    setPrevRequestKey(requestKey);
+    if (open) {
+      setLoading(true);
+      setError(null);
+    }
+  }
 
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
-    setLoading(true);
-    setError(null);
     const params = new URLSearchParams({ page: String(page), per_page: "24" });
     if (search) params.set("search", search);
     fetch(`/api/assets?${params}`)
@@ -156,14 +163,21 @@ export function StoryPicker({ open, startsWith, onClose, onPick }: StoryPickerPr
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [perPage, setPerPage] = useState(25);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(open);
   const [error, setError] = useState<string | null>(null);
+  const requestKey = `${open}:${page}:${search}:${startsWith ?? ""}`;
+  const [prevRequestKey, setPrevRequestKey] = useState(requestKey);
+  if (requestKey !== prevRequestKey) {
+    setPrevRequestKey(requestKey);
+    if (open) {
+      setLoading(true);
+      setError(null);
+    }
+  }
 
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
-    setLoading(true);
-    setError(null);
     const params = new URLSearchParams({ page: String(page), per_page: "25" });
     if (search) params.set("search", search);
     if (startsWith) params.set("starts_with", startsWith);

@@ -1,6 +1,6 @@
 "use client";
 
-import { type PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type PropsWithChildren, useCallback, useMemo, useRef, useState } from "react";
 
 import { Lightbox } from "./lightbox";
 import {
@@ -51,11 +51,7 @@ export function LightboxProvider({ children }: PropsWithChildren) {
 
   const close = useCallback(() => setOpen(false), []);
 
-  useEffect(() => {
-    if (open && items.length === 0) {
-      setOpen(false);
-    }
-  }, [open, items.length]);
+  const isOpen = open && items.length > 0;
 
   const value = useMemo<LightboxGalleryValue>(
     () => ({ openAt, registerItem }),
@@ -65,7 +61,13 @@ export function LightboxProvider({ children }: PropsWithChildren) {
   return (
     <LightboxGalleryContext.Provider value={value}>
       {children}
-      <Lightbox open={open} items={items} index={index} onClose={close} onIndexChange={setIndex} />
+      <Lightbox
+        open={isOpen}
+        items={items}
+        index={index}
+        onClose={close}
+        onIndexChange={setIndex}
+      />
     </LightboxGalleryContext.Provider>
   );
 }

@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import { css } from "styled-system/css";
 
 import { useBodyScrollLock } from "../../lib/use-body-scroll-lock";
+import { useHasMounted } from "../../lib/use-has-mounted";
 import { Box } from "../box/box";
 import {
   type CommandPaletteAction,
@@ -79,21 +80,19 @@ export function CommandPalette({
   onAction,
 }: CommandPaletteProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useHasMounted();
   const inputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
   useBodyScrollLock(open);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   const resultKey = results.map((result) => result.id).join("|");
-  useEffect(() => {
+  const [prevResultKey, setPrevResultKey] = useState(resultKey);
+  if (resultKey !== prevResultKey) {
+    setPrevResultKey(resultKey);
     setActiveIndex(0);
-  }, [resultKey]);
+  }
 
   useEffect(() => {
     if (!open || !isMounted) {

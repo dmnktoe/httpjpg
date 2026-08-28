@@ -31,6 +31,7 @@ export function MouseTrail({
   css: cssProp,
 }: MouseTrailProps) {
   const [particles, setParticles] = useState<TrailParticle[]>([]);
+  const [now, setNow] = useState(0);
   const particleIdRef = useRef(0);
   const prefersReducedMotion = useReducedMotion();
 
@@ -70,8 +71,9 @@ export function MouseTrail({
     };
 
     const cleanupParticles = () => {
-      const now = Date.now();
-      setParticles((prev) => prev.filter((p) => now - p.timestamp < lifetime));
+      const t = Date.now();
+      setNow(t);
+      setParticles((prev) => prev.filter((p) => t - p.timestamp < lifetime));
       rafId = requestAnimationFrame(cleanupParticles);
     };
 
@@ -102,7 +104,7 @@ export function MouseTrail({
       }}
     >
       {particles.map((particle) => {
-        const age = Date.now() - particle.timestamp;
+        const age = now - particle.timestamp;
         const opacity = Math.max(0, 1 - age / lifetime);
 
         return (

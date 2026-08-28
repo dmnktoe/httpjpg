@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import { Box } from "../box/box";
 
@@ -16,9 +16,11 @@ export function ExpandableLinks<T>({
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
-  useEffect(() => {
+  const [linksPathname, setLinksPathname] = useState(pathname);
+  if (pathname !== linksPathname) {
+    setLinksPathname(pathname);
     setIsExpanded(false);
-  }, [pathname]);
+  }
   const initial = items.slice(0, INITIAL_WORK_COUNT);
   const extras = items.slice(INITIAL_WORK_COUNT);
   const remaining = extras.length;

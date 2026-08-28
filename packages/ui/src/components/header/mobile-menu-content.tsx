@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useRef, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 
+import { useHasMounted } from "../../lib/use-has-mounted";
 import { Box } from "../box/box";
 import type { HeaderProps } from "./header";
 import { MobileMenuBackdrop } from "./mobile-menu-backdrop";
@@ -21,13 +22,9 @@ export function MobileMenuContent({
   projectsWork = [],
   websitesWork = [],
 }: MobileMenuContentProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHasMounted();
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (isOpen && scrollRef.current) {

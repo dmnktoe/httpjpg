@@ -1,21 +1,20 @@
 "use client";
 
 import { Box } from "@httpjpg/ui";
-import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useSyncExternalStore } from "react";
 
 function PreviewNotificationContent() {
-  const [isPreview, setIsPreview] = useState(false);
-  const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const isDraftMode = document.cookie.includes("__prerender_bypass");
-    const hasStoryblokParam = searchParams?.has("_storyblok");
-    const hasDraftParam = searchParams?.has("_draft");
-
-    setIsPreview(isDraftMode || hasStoryblokParam || hasDraftParam);
-  }, [pathname, searchParams]);
+  const cookiePreview = useSyncExternalStore(
+    subscribeNever,
+    getDraftCookieSnapshot,
+    getServerFalse,
+  );
+  const isPreview =
+    cookiePreview ||
+    searchParams?.has("_storyblok") === true ||
+    searchParams?.has("_draft") === true;
 
   if (!isPreview) {
     return null;
@@ -69,4 +68,16 @@ export function PreviewNotification() {
       <PreviewNotificationContent />
     </Suspense>
   );
+}
+
+function subscribeNever() {
+  return () => {};
+}
+
+function getDraftCookieSnapshot() {
+  return document.cookie.includes("__prerender_bypass");
+}
+
+function getServerFalse() {
+  return false;
 }

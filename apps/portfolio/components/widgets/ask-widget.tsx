@@ -56,6 +56,12 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     setStatus("idle");
   }, []);
 
+  const [menuPathname, setMenuPathname] = useState(pathname);
+  if (pathname !== menuPathname) {
+    setMenuPathname(pathname);
+    setIsOpen(false);
+  }
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "k" && (event.metaKey || event.ctrlKey)) {
@@ -66,13 +72,6 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
-
-  // The palette lives in the layout, so it survives navigation. Anything that
-  // changes the route while it is open — a source link, the back button —
-  // should leave it behind, the same way the header drops its mobile menu.
-  useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
 
   useEffect(() => {
     const handleOpen = () => setIsOpen(true);
@@ -87,24 +86,28 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     };
   }, []);
 
+  const trimmedQuery = isOpen ? query.trim() : "";
+  if (!trimmedQuery && (results.length > 0 || suggestions.length > 0 || status !== "idle")) {
+    setResults([]);
+    setSuggestions([]);
+    setStatus("idle");
+  }
+
   useEffect(() => {
     if (!isOpen) {
       return;
     }
     const trimmed = query.trim();
     if (!trimmed) {
-      setResults([]);
-      setSuggestions([]);
-      setStatus("idle");
       return;
     }
 
     const controller = new AbortController();
     searchAbort.current?.abort();
     searchAbort.current = controller;
-    setStatus("searching");
 
     const timer = setTimeout(async () => {
+      setStatus("searching");
       try {
         const response = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`, {
           signal: controller.signal,

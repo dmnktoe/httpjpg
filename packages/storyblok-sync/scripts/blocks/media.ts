@@ -127,6 +127,56 @@ export const mediaBlocks: BlockDef[] = [
     }),
   },
   {
+    name: "image_comparison",
+    display_name: "Image Comparison",
+    group: "Media",
+    icon: "block-image",
+    color: "#38b2ac",
+    preview_tmpl: "{beforeLabel} / {afterLabel}",
+    schema: withSpacing({
+      before: field.asset("Before Image", ["images"], { required: true }),
+      after: field.asset("After Image", ["images"], { required: true }),
+      beforeAlt: field.text("Before Alt Text", {
+        translatable: true,
+        description: "Describe the before image for screen readers.",
+        tooltip: true,
+      }),
+      afterAlt: field.text("After Alt Text", {
+        translatable: true,
+        description: "Describe the after image for screen readers.",
+        tooltip: true,
+      }),
+      caption: field.richtext("Caption", { translatable: true }),
+      ...tabbed("Layout", "layout", {
+        aspectRatio: field.options("Aspect Ratio", inlineOptions.aspectRatio),
+        width: field.options("Width", inlineOptions.imageWidth, { default_value: "100%" }),
+        widthMd: field.options("Width (Tablet)", inlineOptions.imageWidth),
+        widthLg: field.options("Width (Desktop)", inlineOptions.imageWidth),
+        orientation: field.options(
+          "Orientation",
+          [
+            { name: "Horizontal", value: "horizontal" },
+            { name: "Vertical", value: "vertical" },
+          ],
+          { default_value: "horizontal" },
+        ),
+        initialPosition: field.number("Start Position (%)", { default_value: "50" }),
+      }),
+      ...tabbed("Chrome", "chrome", {
+        beforeLabel: field.text("Before Label", {
+          default_value: "BEFORE",
+          translatable: true,
+        }),
+        afterLabel: field.text("After Label", {
+          default_value: "AFTER",
+          translatable: true,
+        }),
+        showLabels: field.boolean("Show Side Labels", "true"),
+        showPosition: field.boolean("Show Position Readout", "true"),
+      }),
+    }),
+  },
+  {
     name: "video",
     display_name: "Video",
     group: "Media",

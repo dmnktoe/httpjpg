@@ -29,6 +29,7 @@ export * from "./header/header";
 export * from "./headline/headline";
 export * from "./icon-button/icon-button";
 export * from "./icon/icon";
+export * from "./image-comparison-slider/image-comparison-slider";
 export * from "./image-overlay/image-overlay";
 export * from "./image-overlay/use-parallax";
 export * from "./image-preview/image-preview";

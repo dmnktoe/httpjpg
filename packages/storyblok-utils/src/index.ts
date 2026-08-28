@@ -19,6 +19,7 @@ export type {
   SbGridItemData,
   SbHeadlineData,
   SbIconData,
+  SbImageComparisonData,
   SbImageData,
   SbLinkData,
   SbListData,

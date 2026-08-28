@@ -86,6 +86,23 @@ function collectFromBlok(blok: BlokLike): SearchMedia[] {
       const media = imageFromAsset(blok.image, uid, label);
       return media ? [media] : [];
     }
+    case "image_comparison": {
+      const before = isAsset(blok.before)
+        ? imageFromAsset(
+            blok.before,
+            `${uid}-before`,
+            text(blok.beforeAlt) || text(blok.beforeLabel) || captionText(blok.caption),
+          )
+        : null;
+      const after = isAsset(blok.after)
+        ? imageFromAsset(
+            blok.after,
+            `${uid}-after`,
+            text(blok.afterAlt) || text(blok.afterLabel) || captionText(blok.caption),
+          )
+        : null;
+      return [before, after].filter((media): media is SearchMedia => media !== null);
+    }
     case "video": {
       if (!isAsset(blok.poster) || !blok.poster.filename) {
         return [];

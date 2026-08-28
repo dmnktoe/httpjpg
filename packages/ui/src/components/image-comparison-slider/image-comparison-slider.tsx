@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChangeEvent, PointerEvent } from "react";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { css } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
@@ -84,11 +84,15 @@ export function ImageComparisonSlider({
   const draggingRef = useRef(false);
   const [position, setPosition] = useState(() => clampPosition(initialPosition));
   const [dragging, setDragging] = useState(false);
+  const [lastInitial, setLastInitial] = useState(initialPosition);
   const inputId = useId();
 
-  useEffect(() => {
+  // Follow a changed `initialPosition` (e.g. a live CMS edit) during render
+  // rather than in an effect, which would cascade an extra commit.
+  if (lastInitial !== initialPosition) {
+    setLastInitial(initialPosition);
     setPosition(clampPosition(initialPosition));
-  }, [initialPosition]);
+  }
 
   const updateFromClient = useCallback(
     (clientX: number, clientY: number) => {

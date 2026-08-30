@@ -37,11 +37,11 @@
     "@types/react-dom": "catalog:",
     "@vitest/browser": "catalog:",
     "@vitest/browser-playwright": "catalog:",
-    "chromatic": "^18.5.0",
+    "chromatic": "^18.6.1",
     "motion": "^13.1.1",
     "playwright": "^1.62.1",
     "storybook": "^10.5.10",
-    "swiper": "^14.1.0",
+    "swiper": "^14.2.0",
     "typescript": "catalog:",
     "vite": "^8.2.2",
     "vitest": "catalog:"

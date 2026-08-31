@@ -154,10 +154,11 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
 
       if (!shouldAutoPlay) return;
 
+      const media = video;
       function tryPlay() {
-        if (!video.paused) return;
+        if (!media.paused) return;
         try {
-          void video.play()?.catch(() => {
+          void media.play()?.catch(() => {
             // Autoplay can race metadata; loadeddata / canplay retry below.
           });
         } catch {
@@ -166,11 +167,11 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       }
 
       tryPlay();
-      video.addEventListener("loadeddata", tryPlay);
-      video.addEventListener("canplay", tryPlay);
+      media.addEventListener("loadeddata", tryPlay);
+      media.addEventListener("canplay", tryPlay);
       return () => {
-        video.removeEventListener("loadeddata", tryPlay);
-        video.removeEventListener("canplay", tryPlay);
+        media.removeEventListener("loadeddata", tryPlay);
+        media.removeEventListener("canplay", tryPlay);
       };
     }, [muted, shouldAutoPlay]);
 

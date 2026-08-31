@@ -43,7 +43,7 @@ catalogs:
       specifier: ^30.0.1
       version: 30.0.1
     next:
-      specifier: ^16.3.2
+      specifier: ^16.3.3
       version: 16.3.3
     react:
       specifier: ^19.2.8
@@ -162,7 +162,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       '@next/third-parties':
-        specifier: ^16.3.2
+        specifier: ^16.3.3
         version: 16.3.3(next@16.3.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@storyblok/react':
         specifier: 'catalog:'
@@ -8206,7 +8206,7 @@ snapshots:
       '@vue/shared': 3.5.25
       estree-walker: 2.0.2
       magic-string: 0.30.21
-      postcss: 8.5.14
+      postcss: 8.5.26
       source-map-js: 1.2.1
 
   '@vue/compiler-ssr@3.5.25':

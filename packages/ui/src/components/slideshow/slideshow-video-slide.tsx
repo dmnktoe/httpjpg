@@ -23,6 +23,7 @@ export interface SlideshowVideoSlideProps {
   isActive: boolean;
   onFinished: () => void;
   onUnplayable: (videoUrl: string) => void;
+  onReady?: () => void;
 }
 
 export function SlideshowVideoSlide({
@@ -33,6 +34,7 @@ export function SlideshowVideoSlide({
   isActive,
   onFinished,
   onUnplayable,
+  onReady,
 }: SlideshowVideoSlideProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -121,6 +123,7 @@ export function SlideshowVideoSlide({
       muted
       loop={!holdUntilEnded}
       controls={false}
+      onReady={onReady}
       css={{
         w: "full",
         h: "full",

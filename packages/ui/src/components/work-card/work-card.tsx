@@ -71,7 +71,6 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
         <Box css={{ zIndex: "docked", overflow: "visible" }}>
           <Slideshow
             speed={0}
-            animation="sharpen"
             images={images}
             priority={priority}
             sizes={sizes}

@@ -11,22 +11,7 @@ import {
   type CopyrightPosition,
   isInlineCopyright,
 } from "../copyright-label/copyright-label";
-
-const skeletonClass = css({
-  position: "absolute",
-  inset: 0,
-  zIndex: 1,
-  w: "100%",
-  h: "100%",
-  bg: "linear-gradient(90deg, var(--colors-neutral-200) 0%, var(--colors-neutral-300) 50%, var(--colors-neutral-200) 100%)",
-  backgroundSize: "200% 100%",
-  transition: "opacity 0.4s ease-in-out",
-  animation: "shimmer 1.5s ease-in-out infinite",
-  pointerEvents: "none",
-  _pageDark: {
-    bg: "linear-gradient(90deg, var(--colors-neutral-800) 0%, var(--colors-neutral-700) 50%, var(--colors-neutral-800) 100%)",
-  },
-});
+import { MediaSkeleton } from "../media-skeleton/media-skeleton";
 
 export interface ImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "css"> {
   src: string;
@@ -43,6 +28,8 @@ export interface ImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "c
   fetchPriority?: "auto" | "high" | "low";
   srcSet?: string;
   sizes?: string;
+  /** Fires once the high-res image is shown (or has failed). */
+  onReady?: () => void;
   css?: SystemStyleObject;
 }
 
@@ -65,6 +52,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       style,
       css: cssProp,
       onLoad,
+      onReady,
       ...props
     },
     ref,
@@ -109,6 +97,12 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       }
     }, [isInView, src, srcSet]);
 
+    useEffect(() => {
+      if (highResLoaded) {
+        onReady?.();
+      }
+    }, [highResLoaded, onReady]);
+
     if (!src) {
       return null;
     }
@@ -145,13 +139,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
             ...cssProp,
           }}
         >
-          {showSkeleton && (
-            <div
-              aria-hidden="true"
-              className={skeletonClass}
-              style={{ opacity: highResLoaded ? 0 : 1 }}
-            />
-          )}
+          {showSkeleton && <MediaSkeleton visible={!highResLoaded} />}
 
           {showBlur && (
             <img

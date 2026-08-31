@@ -26,7 +26,7 @@ const meta = {
         "slideUp",
         "slideDown",
       ],
-      description: "Entrance animation type for the entire slideshow",
+      description: "Entrance tween after the first slide is ready. Never applied to the skeleton.",
       table: {
         defaultValue: { summary: "none" },
       },

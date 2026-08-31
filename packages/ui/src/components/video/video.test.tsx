@@ -39,6 +39,13 @@ describe("Video", () => {
     expect(video).toHaveStyle({ opacity: "1" });
   });
 
+  it("notifies when the media is ready", () => {
+    const onReady = vi.fn();
+    const { container } = render(<Video src="/clip.mp4" controls={false} onReady={onReady} />);
+    fireEvent.loadedData(container.querySelector("video") as HTMLVideoElement);
+    expect(onReady).toHaveBeenCalledOnce();
+  });
+
   it("falls back to the poster instead of a stuck skeleton when the video errors", () => {
     const { container } = render(<Video src="/broken.mp4" poster="/poster.png" controls={false} />);
     const video = container.querySelector("video") as HTMLVideoElement;

@@ -12,7 +12,8 @@ import {
   type CopyrightPosition,
   isInlineCopyright,
 } from "../copyright-label/copyright-label";
-import { resolveAspectRatio, resolveMediaAspectRatio } from "./lib";
+import { MediaSkeleton } from "../media-skeleton/media-skeleton";
+import { getVimeoId, getYouTubeId, resolveAspectRatio, resolveMediaAspectRatio } from "./lib";
 import { VideoControls } from "./video-controls";
 
 export type VideoSource = "native" | "youtube" | "vimeo";
@@ -34,45 +35,10 @@ export interface VideoProps extends Omit<VideoHTMLAttributes<HTMLVideoElement>, 
   mediaWidth?: number;
   mediaHeight?: number;
   mediaRef?: RefObject<HTMLVideoElement | null>;
+  /** Fires once the media is shown (or has failed). */
+  onReady?: () => void;
   css?: SystemStyleObject;
 }
-
-function getYouTubeId(url: string): string {
-  if (url.length === 11 && !url.includes("/") && !url.includes("?")) {
-    return url;
-  }
-  const match = url.match(
-    /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/,
-  );
-  return match && match[7].length === 11 ? match[7] : url;
-}
-
-function getVimeoId(url: string): string {
-  if (/^\d+$/.test(url)) {
-    return url;
-  }
-  const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-  return match ? match[1] : url;
-}
-
-const skeletonClass = css({
-  position: "absolute",
-  inset: 0,
-  zIndex: 1,
-  w: "100%",
-  h: "100%",
-  bg: "linear-gradient(90deg, var(--colors-neutral-200) 0%, var(--colors-neutral-300) 50%, var(--colors-neutral-200) 100%)",
-  backgroundSize: "200% 100%",
-  transition: "opacity 0.5s ease-in-out",
-  animation: "shimmer 1.5s ease-in-out infinite",
-  pointerEvents: "none",
-  _pageDark: {
-    bg: "linear-gradient(90deg, var(--colors-neutral-800) 0%, var(--colors-neutral-700) 50%, var(--colors-neutral-800) 100%)",
-  },
-  "@media (prefers-reduced-motion: reduce)": {
-    animation: "none",
-  },
-});
 
 const nativeFrameClass = css({
   background:
@@ -120,6 +86,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       mediaWidth,
       mediaHeight,
       mediaRef,
+      onReady,
       className,
       style,
       css: cssProp,
@@ -140,7 +107,10 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
     const useIntrinsicLayout = isNative && !containerAspectRatio;
     const resolvedPoster = poster?.trim() ? poster.trim() : undefined;
 
-    const handleReady = useCallback(() => setIsLoading(false), []);
+    const handleReady = useCallback(() => {
+      setIsLoading(false);
+      onReady?.();
+    }, [onReady]);
 
     useEffect(() => {
       const video = videoRef.current;
@@ -149,7 +119,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       // autoplay; assign it imperatively so muted autoplay is honored.
       video.muted = muted;
       if (video.readyState >= 2) {
-        setIsLoading(false);
+        handleReady();
       }
 
       if (!shouldAutoPlay) return;
@@ -173,7 +143,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
         media.removeEventListener("loadeddata", tryPlay);
         media.removeEventListener("canplay", tryPlay);
       };
-    }, [muted, shouldAutoPlay]);
+    }, [handleReady, muted, shouldAutoPlay]);
 
     const isFirstSrc = useRef(true);
     useEffect(() => {
@@ -261,9 +231,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
             ...cssProp,
           }}
         >
-          {!useIntrinsicLayout && (
-            <Box className={skeletonClass} style={{ opacity: isLoading ? 1 : 0 }} />
-          )}
+          {!useIntrinsicLayout && <MediaSkeleton visible={isLoading} />}
           {media}
           {inline && (
             <CopyrightLabel

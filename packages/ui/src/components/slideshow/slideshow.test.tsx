@@ -380,10 +380,10 @@ describe("Slideshow waitForVideo opt-outs", () => {
     expect(videoFor(container, CLIP_A).loop).toBe(true);
   });
 
-  it("does not hijack playback of a lone video", () => {
+  it("starts a lone video itself, since the autoplay attribute is unreliable after a client-side navigation", async () => {
     renderSlideshow([VIDEO_A]);
 
-    expect(playedSources).toHaveLength(0);
+    await waitFor(() => expect(playedSources.filter((src) => src === CLIP_A)).toHaveLength(1));
     expect(pausedSources).toHaveLength(0);
   });
 });

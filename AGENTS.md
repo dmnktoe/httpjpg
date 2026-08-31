@@ -9,7 +9,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 ## Stack
 
 - **TypeScript** — strict mode, `interface` for object shapes, no `enum`
-- **Node.js** ≥ 22.12 (pinned via `.nvmrc` to 24.19.0), ESM-only (`"type": "module"` in every workspace package; the private root `package.json` does not declare it)
+- **Node.js** ≥ 22.12 (pinned via `.nvmrc` to 24.20.0), ESM-only (`"type": "module"` in every workspace package; the private root `package.json` does not declare it)
 - **Next.js 16** App Router — Server Components by default, route handlers in `app/api/*`
 - **React 19** — functional components only
 - **Panda CSS** (zero-runtime) — `css({})` / `cx()` / token-aware patterns; tokens from `@httpjpg/tokens`
@@ -227,6 +227,10 @@ Controlled vocabulary, not free text.
 - Related work: rarity-weighted shared tags (`relatedDocuments`). Untagged → no neighbours; padding with unrelated work would duplicate prev/next. Empty state shows a one-line diagnostic only in draft / `pnpm dev`.
 - Separate axes: `tag_list` (Projects / Websites nav in `lib/queries/work.ts`) vs `content.tags` (topic vocabulary). Don't mix.
 
+## Locales
+
+A few stories (currently CV) are bilingual. English stays at `/cv`; German is `/de/cv`. `LOCALIZED_SLUGS` in `lib/locale.ts` is the allowlist — don't prefix every route. Visual Editor uses `_storyblok_lang`; the public site uses the path prefix. `LanguagePicker` only renders on those slugs.
+
 ## Page-wide audio
 
 Audio outlives client navigations (like the iOS app's `AudioPlayerModel`).
@@ -236,6 +240,10 @@ Audio outlives client navigations (like the iOS app's `AudioPlayerModel`).
 - Bloks register tracks via `useAudioQueueEntry`; they don't own playback. With a provider, mp3 mode renders `AudioTrackRow`; without, falls back to `MP3Player`. Spotify / SoundCloud embeds stay out of the queue.
 - `play()` snapshots the registry so next/prev survive unmount. Header: `MiniPlayerSlot` / controlled `MiniPlayer` (nothing until something is loaded).
 - Record links home via client `Link` — a document reload would stop playback. `navigator.mediaSession` for lock-screen transport.
+
+## Footer status widgets
+
+Live footer lines (Discord, Discogs, Letterboxd, X, PSN) render through `FooterStatusLine` in `@httpjpg/ui`. Don't invent a second status row.
 
 ## Lightbox
 

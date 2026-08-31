@@ -1,5 +1,6 @@
-import { env } from "@httpjpg/env";
 import { type NextRequest, NextResponse } from "next/server";
+
+import { mapiPath, studioAuth } from "@/lib/mapi";
 
 export const runtime = "nodejs";
 
@@ -19,20 +20,12 @@ interface StoryblokStory {
   content: Record<string, unknown> & { body?: unknown[] };
 }
 
-const MAPI = "https://mapi.storyblok.com/v1";
-
 export async function POST(request: NextRequest) {
-  if (env.NODE_ENV !== "development") {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const auth = studioAuth();
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
-  const token = env.STORYBLOK_MANAGEMENT_TOKEN;
-  const spaceId = env.STORYBLOK_SPACE_ID;
-  if (!token || !spaceId) {
-    return NextResponse.json(
-      { error: "STORYBLOK_MANAGEMENT_TOKEN or STORYBLOK_SPACE_ID not set" },
-      { status: 500 },
-    );
-  }
+  const { token, spaceId } = auth;
 
   let payload: PushPayload;
   try {
@@ -46,7 +39,7 @@ export async function POST(request: NextRequest) {
 
   const headers = { Authorization: token, "content-type": "application/json" };
 
-  const lookupUrl = `${MAPI}/spaces/${spaceId}/stories?with_slug=${encodeURIComponent(payload.slug)}`;
+  const lookupUrl = `${mapiPath(spaceId, "/stories")}?with_slug=${encodeURIComponent(payload.slug)}`;
   const lookup = await fetch(lookupUrl, { headers, cache: "no-store" });
   if (!lookup.ok) {
     return NextResponse.json(
@@ -60,7 +53,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: `No story with slug "${payload.slug}"` }, { status: 404 });
   }
 
-  const detail = await fetch(`${MAPI}/spaces/${spaceId}/stories/${story.id}`, {
+  const detail = await fetch(mapiPath(spaceId, `/stories/${story.id}`), {
     headers,
     cache: "no-store",
   });
@@ -112,7 +105,7 @@ export async function POST(request: NextRequest) {
 
   content.body = body;
 
-  const update = await fetch(`${MAPI}/spaces/${spaceId}/stories/${story.id}`, {
+  const update = await fetch(mapiPath(spaceId, `/stories/${story.id}`), {
     method: "PUT",
     headers,
     body: JSON.stringify({ story: { ...target, content } }),

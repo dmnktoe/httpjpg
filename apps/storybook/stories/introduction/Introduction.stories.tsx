@@ -238,7 +238,11 @@ export default function MyPage() {
               {[
                 { cat: "Layout", items: "Box · Grid · Container · Stack · Section · Page" },
                 { cat: "Typography", items: "Headline · Paragraph · Link · AsciiArt" },
-                { cat: "Media", items: "Image · Video · Slideshow · ScrollClipImage · Lightbox" },
+                {
+                  cat: "Media",
+                  items:
+                    "Image · Video · Slideshow · ScrollClipImage · Lightbox · ImageComparisonSlider",
+                },
                 {
                   cat: "Display",
                   items: "Accordion · Callout · CodeBlock · Stats · List · Tag · CopyrightLabel",
@@ -248,7 +252,8 @@ export default function MyPage() {
                 { cat: "Motion", items: "CustomCursor · MouseTrail · AnimateInView · Marquee" },
                 {
                   cat: "Widgets",
-                  items: "MusicPlayer · NowPlaying · MiniPlayer · CommandPalette",
+                  items:
+                    "MusicPlayer · NowPlaying · MiniPlayer · CommandPalette · FooterStatusLine",
                 },
                 { cat: "Decoration", items: "Divider · ImageOverlay · FloatingPreviewBadge" },
               ].map((g) => (

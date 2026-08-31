@@ -1,4 +1,4 @@
-import { formatGlyphDigits, formatYear } from "./format";
+import { formatGlyphDigits, formatTime, formatYear } from "./format";
 
 describe("formatYear", () => {
   it("returns null for a missing date", () => {
@@ -39,5 +39,16 @@ describe("formatGlyphDigits", () => {
   it("keeps multi-digit counts in order", () => {
     expect(formatGlyphDigits(0)).toBe("⊘");
     expect(formatGlyphDigits(12)).toBe("\u{1D7D9}ϩ");
+  });
+});
+
+describe("formatTime", () => {
+  it("pads the seconds", () => {
+    expect(formatTime(65)).toBe("1:05");
+  });
+
+  it("falls back to zero for a length that is not a number yet", () => {
+    expect(formatTime(Number.NaN)).toBe("0:00");
+    expect(formatTime(-1)).toBe("0:00");
   });
 });

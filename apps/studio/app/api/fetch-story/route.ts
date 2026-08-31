@@ -1,5 +1,6 @@
-import { env } from "@httpjpg/env";
 import { type NextRequest, NextResponse } from "next/server";
+
+import { mapiPath, studioAuth } from "@/lib/mapi";
 
 export const runtime = "nodejs";
 
@@ -9,20 +10,12 @@ interface StoryblokStory {
   content?: Record<string, unknown> & { body?: unknown[] };
 }
 
-const MAPI = "https://mapi.storyblok.com/v1";
-
 export async function GET(request: NextRequest) {
-  if (env.NODE_ENV !== "development") {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const auth = studioAuth();
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
-  const token = env.STORYBLOK_MANAGEMENT_TOKEN;
-  const spaceId = env.STORYBLOK_SPACE_ID;
-  if (!token || !spaceId) {
-    return NextResponse.json(
-      { error: "STORYBLOK_MANAGEMENT_TOKEN or STORYBLOK_SPACE_ID not set" },
-      { status: 500 },
-    );
-  }
+  const { token, spaceId } = auth;
   const slug = request.nextUrl.searchParams.get("slug");
   if (!slug) {
     return NextResponse.json({ error: "Missing slug" }, { status: 400 });
@@ -31,7 +24,7 @@ export async function GET(request: NextRequest) {
   const headers = { Authorization: token };
 
   const lookup = await fetch(
-    `${MAPI}/spaces/${spaceId}/stories?with_slug=${encodeURIComponent(slug)}`,
+    `${mapiPath(spaceId, "/stories")}?with_slug=${encodeURIComponent(slug)}`,
     { headers, cache: "no-store" },
   );
   if (!lookup.ok) {
@@ -46,7 +39,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: `No story with slug "${slug}"` }, { status: 404 });
   }
 
-  const detail = await fetch(`${MAPI}/spaces/${spaceId}/stories/${story.id}`, {
+  const detail = await fetch(mapiPath(spaceId, `/stories/${story.id}`), {
     headers,
     cache: "no-store",
   });

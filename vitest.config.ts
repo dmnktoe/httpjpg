@@ -16,6 +16,7 @@ export default defineConfig({
       "packages/*/scripts/**/*.{test,spec}.{ts,tsx}",
       "apps/*/src/**/*.{test,spec}.{ts,tsx}",
       "apps/portfolio/{lib,app,components}/**/*.{test,spec}.{ts,tsx}",
+      "apps/studio/{components,lib,app}/**/*.{test,spec}.{ts,tsx}",
     ],
     exclude: ["**/node_modules/**", "**/dist/**", "**/.next/**", "**/tests/e2e/**"],
     css: false,

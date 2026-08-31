@@ -80,16 +80,4 @@ describe("AnimateInView", () => {
     expect(screen.getByText("Hello")).toBeInTheDocument();
     expect(lastMotionProps.current).toBeNull();
   });
-
-  it("stays visible while ready is false so a loader is not hidden", () => {
-    mockInView.mockReturnValue(false);
-    render(
-      <AnimateInView animation="sharpen" ready={false}>
-        Hello
-      </AnimateInView>,
-    );
-
-    expect(lastMotionProps.current?.initial).toBe("visible");
-    expect(lastMotionProps.current?.animate).toBe("visible");
-  });
 });

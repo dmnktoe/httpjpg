@@ -28,8 +28,6 @@ export interface ImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "c
   fetchPriority?: "auto" | "high" | "low";
   srcSet?: string;
   sizes?: string;
-  /** Fires once the high-res image is shown (or has failed). */
-  onReady?: () => void;
   css?: SystemStyleObject;
 }
 
@@ -52,7 +50,6 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
       style,
       css: cssProp,
       onLoad,
-      onReady,
       ...props
     },
     ref,
@@ -96,12 +93,6 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
         setHighResLoaded(true);
       }
     }, [isInView, src, srcSet]);
-
-    useEffect(() => {
-      if (highResLoaded) {
-        onReady?.();
-      }
-    }, [highResLoaded, onReady]);
 
     if (!src) {
       return null;

@@ -21,9 +21,7 @@ export interface SlideshowVideoSlideProps {
   aspectRatio: string;
   holdUntilEnded: boolean;
   isActive: boolean;
-  onFinished: () => void;
-  onUnplayable: (videoUrl: string) => void;
-  onReady?: () => void;
+  onDone: () => void;
 }
 
 export function SlideshowVideoSlide({
@@ -32,9 +30,7 @@ export function SlideshowVideoSlide({
   aspectRatio,
   holdUntilEnded,
   isActive,
-  onFinished,
-  onUnplayable,
-  onReady,
+  onDone,
 }: SlideshowVideoSlideProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const prefersReducedMotion = useReducedMotion();
@@ -69,48 +65,24 @@ export function SlideshowVideoSlide({
       }
       isDone = true;
       clearTimeout(startTimer);
-      onFinished();
+      onDone();
     };
-    const giveUp = () => {
-      if (isDone) {
-        return;
-      }
-      onUnplayable(videoUrl);
-      finish();
-    };
+
     const cancelTimeout = () => clearTimeout(startTimer);
-    const tryPlay = () => {
-      if (isDone || !video.paused) {
-        return;
-      }
-      void video.play?.()?.catch((error: unknown) => {
-        if (error instanceof Error && error.name === "AbortError") {
-          return;
-        }
-        giveUp();
-      });
-    };
-
-    startTimer = setTimeout(giveUp, VIDEO_START_TIMEOUT_MS);
-
+    startTimer = setTimeout(finish, VIDEO_START_TIMEOUT_MS);
     video.addEventListener("ended", finish);
-    video.addEventListener("error", giveUp);
+    video.addEventListener("error", finish);
     video.addEventListener("playing", cancelTimeout);
-    video.addEventListener("loadeddata", tryPlay);
-    video.addEventListener("canplay", tryPlay);
     rewind(video);
-    tryPlay();
 
     return () => {
       isDone = true;
       clearTimeout(startTimer);
       video.removeEventListener("ended", finish);
-      video.removeEventListener("error", giveUp);
+      video.removeEventListener("error", finish);
       video.removeEventListener("playing", cancelTimeout);
-      video.removeEventListener("loadeddata", tryPlay);
-      video.removeEventListener("canplay", tryPlay);
     };
-  }, [holdUntilEnded, isActive, onFinished, onUnplayable, videoUrl]);
+  }, [holdUntilEnded, isActive, onDone]);
 
   return (
     <Video
@@ -123,7 +95,6 @@ export function SlideshowVideoSlide({
       muted
       loop={!holdUntilEnded}
       controls={false}
-      onReady={onReady}
       css={{
         w: "full",
         h: "full",

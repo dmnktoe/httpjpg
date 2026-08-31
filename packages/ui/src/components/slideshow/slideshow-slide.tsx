@@ -17,9 +17,7 @@ export interface SlideshowSlideProps {
   overlay: OverlayPattern;
   overlayInset: number;
   holdUntilEnded: boolean;
-  onVideoFinished: () => void;
-  onVideoUnplayable: (videoUrl: string) => void;
-  onReady?: () => void;
+  onVideoDone: () => void;
 }
 
 export function SlideshowSlide({
@@ -34,9 +32,7 @@ export function SlideshowSlide({
   overlay,
   overlayInset,
   holdUntilEnded,
-  onVideoFinished,
-  onVideoUnplayable,
-  onReady,
+  onVideoDone,
 }: SlideshowSlideProps) {
   return (
     <Box
@@ -54,9 +50,7 @@ export function SlideshowSlide({
             aspectRatio={aspectRatio}
             holdUntilEnded={holdUntilEnded}
             isActive={isActive}
-            onFinished={onVideoFinished}
-            onUnplayable={onVideoUnplayable}
-            onReady={onReady}
+            onDone={onVideoDone}
           />
           {(image.copyright || image.copyrightSource) && (
             <CopyrightLabel
@@ -80,7 +74,6 @@ export function SlideshowSlide({
           blurOnLoad={blurOnLoad}
           loading={loading}
           fetchPriority={fetchPriority}
-          onReady={onReady}
         />
       )}
       {overlay !== "none" && !image.videoUrl && (

@@ -14,8 +14,6 @@ export interface AnimateInViewProps {
   once?: boolean;
   duration?: number;
   delay?: number;
-  /** Stay fully visible until true so a skeleton is never hidden by the tween. */
-  ready?: boolean;
   children: ReactNode;
   css?: SystemStyleObject;
 }
@@ -25,7 +23,6 @@ export function AnimateInView({
   once = true,
   duration = 0.6,
   delay,
-  ready = true,
   children,
   css: cssProp,
   ...props
@@ -38,7 +35,6 @@ export function AnimateInView({
     amount: 0.01,
   });
   const variants = animation && animation !== "none" ? AnimationMap[animation] : undefined;
-  const show = isInView || !ready;
 
   if (!variants || prefersReducedMotion) {
     return (
@@ -57,8 +53,8 @@ export function AnimateInView({
         duration,
         ease: "easeOut",
       }}
-      initial={ready ? "hidden" : "visible"}
-      animate={show ? "visible" : "hidden"}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
       style={cssProp as CSSProperties}
       {...props}
     >

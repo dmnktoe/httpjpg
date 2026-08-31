@@ -35,8 +35,6 @@ export interface VideoProps extends Omit<VideoHTMLAttributes<HTMLVideoElement>, 
   mediaWidth?: number;
   mediaHeight?: number;
   mediaRef?: RefObject<HTMLVideoElement | null>;
-  /** Fires once the media is shown (or has failed). */
-  onReady?: () => void;
   css?: SystemStyleObject;
 }
 
@@ -86,7 +84,6 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       mediaWidth,
       mediaHeight,
       mediaRef,
-      onReady,
       className,
       style,
       css: cssProp,
@@ -109,8 +106,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
 
     const handleReady = useCallback(() => {
       setIsLoading(false);
-      onReady?.();
-    }, [onReady]);
+    }, []);
 
     useEffect(() => {
       const video = videoRef.current;

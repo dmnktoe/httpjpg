@@ -157,15 +157,6 @@ describe("Image", () => {
     expect(onLoad).toHaveBeenCalledOnce();
   });
 
-  it("notifies when the high-res image is ready", () => {
-    const onReady = vi.fn();
-    render(<Image src="/photo.jpg" alt="ready" blurOnLoad onReady={onReady} />);
-
-    fireEvent.load(screen.getByAltText("ready"));
-
-    expect(onReady).toHaveBeenCalledOnce();
-  });
-
   it("settles into the loaded state when the image errors", () => {
     render(<Image src="/broken.jpg" alt="broken" blurOnLoad blurDataURL={BLUR} />);
 

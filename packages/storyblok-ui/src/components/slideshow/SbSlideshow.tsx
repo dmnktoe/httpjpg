@@ -16,8 +16,6 @@ export const SbSlideshow = memo(function SbSlideshow({ blok }: SbSlideshowProps)
     autoplayDelay = 7000,
     speed = 300,
     showNavigation = true,
-    animation = "none",
-    animationDelay = 0,
     overlay = "random",
     showCounter = true,
   } = blok;
@@ -36,8 +34,6 @@ export const SbSlideshow = memo(function SbSlideshow({ blok }: SbSlideshowProps)
         autoplayDelay={autoplayDelay}
         speed={speed}
         showNavigation={showNavigation}
-        animation={animation}
-        animationDelay={animationDelay}
         overlay={overlay}
         showCounter={showCounter}
       />

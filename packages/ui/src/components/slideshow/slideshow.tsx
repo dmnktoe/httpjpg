@@ -14,13 +14,10 @@ import "swiper/css/effect-cards";
 import "swiper/css/effect-creative";
 import type { Swiper as SwiperType } from "swiper/types";
 
-import { AnimateInView, type AnimationType } from "../animate-in-view/animate-in-view";
 import { Box } from "../box/box";
 import type { OverlayPattern } from "../image-overlay/image-overlay";
 import {
   EFFECT_MODULES,
-  isNearActive,
-  resolveAnimation,
   SWIPER_CARDS_EFFECT,
   SWIPER_COVERFLOW_EFFECT,
   SWIPER_CREATIVE_EFFECT,
@@ -39,8 +36,6 @@ export { VIDEO_START_TIMEOUT_MS } from "./slideshow-video-slide";
 
 export interface SlideshowProps {
   images: SlideshowImage[];
-  animation?: AnimationType;
-  animationDelay?: number;
   effect?: SwiperEffect;
   aspectRatio?: string;
   autoplayDelay?: number;
@@ -58,8 +53,6 @@ export interface SlideshowProps {
 
 export function Slideshow({
   images,
-  animation: animationProp = "none",
-  animationDelay,
   effect = "slide",
   aspectRatio = "16/9",
   autoplayDelay = 7000,
@@ -75,35 +68,13 @@ export function Slideshow({
   css: cssProp,
   ...props
 }: SlideshowProps) {
-  const animation = resolveAnimation(animationProp);
   const swiperRef = useRef<SwiperType | null>(null);
-  const rootRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isNearViewport, setIsNearViewport] = useState(false);
-  const [unplayableVideos, setUnplayableVideos] = useState<ReadonlySet<string>>(() => new Set());
   const prefersReducedMotion = useReducedMotion();
   const blurUp = !disableBlurOnLoad && !prefersReducedMotion;
-  const [firstMediaReady, setFirstMediaReady] = useState(!blurUp);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) {
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setIsNearViewport(true);
-            observer.disconnect();
-          }
-        }
-      },
-      { rootMargin: "400px" },
-    );
-    observer.observe(root);
-    return () => observer.disconnect();
-  }, []);
+  const autoplayEnabled = images.length > 1 && !prefersReducedMotion;
+  const holdForVideo = waitForVideo && autoplayEnabled;
+  const isVideoSlideActive = Boolean(images[activeIndex]?.videoUrl);
 
   const handlePrev = useCallback(() => {
     swiperRef.current?.slidePrev();
@@ -117,14 +88,9 @@ export function Slideshow({
     setActiveIndex(swiper.realIndex ?? 0);
   }, []);
 
-  const handleFirstMediaReady = useCallback(() => {
-    setFirstMediaReady(true);
+  const handleVideoDone = useCallback(() => {
+    swiperRef.current?.slideNext();
   }, []);
-
-  const autoplayEnabled = images.length > 1 && !prefersReducedMotion;
-  const holdForVideo = waitForVideo && autoplayEnabled;
-  const activeVideoUrl = images[activeIndex]?.videoUrl;
-  const isVideoSlideActive = Boolean(activeVideoUrl) && !unplayableVideos.has(activeVideoUrl ?? "");
 
   const syncAutoplay = useCallback(
     (swiper: SwiperType | null, isVideoSlide: boolean) => {
@@ -153,91 +119,52 @@ export function Slideshow({
     syncAutoplay(swiperRef.current, isVideoSlideActive);
   }, [isVideoSlideActive, syncAutoplay]);
 
-  const handleVideoFinished = useCallback(() => {
-    swiperRef.current?.slideNext();
-  }, []);
-
-  const handleVideoUnplayable = useCallback((videoUrl: string) => {
-    setUnplayableVideos((current) => {
-      if (current.has(videoUrl)) {
-        return current;
-      }
-      const next = new Set(current);
-      next.add(videoUrl);
-      return next;
-    });
-  }, []);
-
-  const hasPlayableSlide = images.some(
-    (image) => !image.videoUrl || !unplayableVideos.has(image.videoUrl),
-  );
-  useEffect(() => {
-    if (!hasPlayableSlide || !activeVideoUrl || !unplayableVideos.has(activeVideoUrl)) {
-      return;
-    }
-    swiperRef.current?.slideNext();
-  }, [activeVideoUrl, hasPlayableSlide, unplayableVideos]);
-
   const modules = useMemo(() => {
     const effectModule = EFFECT_MODULES[effect];
     return [...(autoplayEnabled ? [Autoplay] : []), ...(effectModule ? [effectModule] : [])];
   }, [autoplayEnabled, effect]);
 
   return (
-    <Box ref={rootRef} css={{ position: "relative", overflow: "visible", ...cssProp }} {...props}>
-      <AnimateInView animation={animation} delay={animationDelay} ready={firstMediaReady}>
-        <Swiper
-          modules={modules}
-          effect={effect}
-          speed={speed}
-          spaceBetween={15}
-          onSwiper={handleSwiperInit}
-          onSlideChange={handleSlideChange}
-          loop={images.length > 1}
-          autoplay={
-            autoplayEnabled
-              ? { delay: autoplayDelay, disableOnInteraction: false, waitForTransition: false }
-              : false
-          }
-          fadeEffect={SWIPER_FADE_EFFECT}
-          cubeEffect={SWIPER_CUBE_EFFECT}
-          coverflowEffect={SWIPER_COVERFLOW_EFFECT}
-          flipEffect={SWIPER_FLIP_EFFECT}
-          cardsEffect={SWIPER_CARDS_EFFECT}
-          creativeEffect={SWIPER_CREATIVE_EFFECT}
-        >
-          {images.map((image, index) => (
-            <SwiperSlide key={index} suppressHydrationWarning>
-              <SlideshowSlide
-                image={image}
-                index={index}
-                aspectRatio={aspectRatio}
-                isActive={activeIndex === index}
-                blurOnLoad={blurUp}
-                loading={
-                  prefersReducedMotion ||
-                  (priority && index === 0) ||
-                  (isNearViewport && isNearActive(index, activeIndex, images.length))
-                    ? "eager"
-                    : "lazy"
-                }
-                fetchPriority={priority && index === 0 ? "high" : "auto"}
-                sizes={sizes}
-                overlay={overlay}
-                overlayInset={overlayInset}
-                holdUntilEnded={
-                  holdForVideo &&
-                  Boolean(image.videoUrl) &&
-                  !unplayableVideos.has(image.videoUrl ?? "")
-                }
-                onVideoFinished={handleVideoFinished}
-                onVideoUnplayable={handleVideoUnplayable}
-                onReady={index === 0 ? handleFirstMediaReady : undefined}
-              />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </AnimateInView>
+    <Box css={{ position: "relative", overflow: "visible", ...cssProp }} {...props}>
+      <Swiper
+        modules={modules}
+        effect={effect}
+        speed={speed}
+        spaceBetween={15}
+        onSwiper={handleSwiperInit}
+        onSlideChange={handleSlideChange}
+        loop={images.length > 1}
+        autoplay={
+          autoplayEnabled
+            ? { delay: autoplayDelay, disableOnInteraction: false, waitForTransition: false }
+            : false
+        }
+        fadeEffect={SWIPER_FADE_EFFECT}
+        cubeEffect={SWIPER_CUBE_EFFECT}
+        coverflowEffect={SWIPER_COVERFLOW_EFFECT}
+        flipEffect={SWIPER_FLIP_EFFECT}
+        cardsEffect={SWIPER_CARDS_EFFECT}
+        creativeEffect={SWIPER_CREATIVE_EFFECT}
+      >
+        {images.map((image, index) => (
+          <SwiperSlide key={index} suppressHydrationWarning>
+            <SlideshowSlide
+              image={image}
+              index={index}
+              aspectRatio={aspectRatio}
+              isActive={activeIndex === index}
+              blurOnLoad={blurUp}
+              loading={prefersReducedMotion || (priority && index === 0) ? "eager" : "lazy"}
+              fetchPriority={priority && index === 0 ? "high" : "auto"}
+              sizes={sizes}
+              overlay={overlay}
+              overlayInset={overlayInset}
+              holdUntilEnded={holdForVideo && Boolean(image.videoUrl)}
+              onVideoDone={handleVideoDone}
+            />
+          </SwiperSlide>
+        ))}
+      </Swiper>
 
       {showCounter && images.length > 1 && (
         <SlideshowCounter activeIndex={activeIndex} total={images.length} />

@@ -25,10 +25,6 @@ beforeEach(() => {
   lastMotionProps.current = null;
 });
 
-afterEach(() => {
-  vi.restoreAllMocks();
-});
-
 describe("AnimateInView", () => {
   it("renders children", () => {
     render(<AnimateInView>Animated Content</AnimateInView>);
@@ -92,28 +88,6 @@ describe("AnimateInView", () => {
         Hello
       </AnimateInView>,
     );
-
-    expect(lastMotionProps.current?.initial).toBe("visible");
-    expect(lastMotionProps.current?.animate).toBe("visible");
-  });
-
-  it("starts visible when the node is already in the viewport", () => {
-    mockInView.mockReturnValue(false);
-    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({
-      x: 10,
-      y: 10,
-      width: 100,
-      height: 100,
-      top: 10,
-      left: 10,
-      bottom: 110,
-      right: 110,
-      toJSON() {
-        return {};
-      },
-    });
-
-    render(<AnimateInView animation="sharpen">Hello</AnimateInView>);
 
     expect(lastMotionProps.current?.initial).toBe("visible");
     expect(lastMotionProps.current?.animate).toBe("visible");

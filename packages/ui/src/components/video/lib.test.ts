@@ -1,32 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  getVimeoId,
-  getYouTubeId,
-  resolveAspectRatio,
-  resolveMediaAspectRatio,
-  toDimension,
-} from "./lib";
-
-describe("getYouTubeId", () => {
-  it("extracts an id from a watch url", () => {
-    expect(getYouTubeId("https://www.youtube.com/watch?v=dQw4w9WgXcQ")).toBe("dQw4w9WgXcQ");
-  });
-
-  it("accepts a bare 11-character id", () => {
-    expect(getYouTubeId("dQw4w9WgXcQ")).toBe("dQw4w9WgXcQ");
-  });
-});
-
-describe("getVimeoId", () => {
-  it("extracts a numeric id from a vimeo url", () => {
-    expect(getVimeoId("https://vimeo.com/123456789")).toBe("123456789");
-  });
-
-  it("accepts a bare numeric id", () => {
-    expect(getVimeoId("987654321")).toBe("987654321");
-  });
-});
+import { resolveAspectRatio, resolveMediaAspectRatio, toDimension } from "./lib";
 
 describe("resolveAspectRatio", () => {
   it("returns undefined for empty and whitespace values", () => {

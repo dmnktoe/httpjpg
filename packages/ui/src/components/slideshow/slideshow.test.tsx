@@ -178,7 +178,9 @@ describe("Slideshow autoplay", () => {
     fireEvent.click(getByLabelText("Previous slide"));
     await expectSlide(container, "01");
 
-    await waitFor(() => expect(playedSources.filter((src) => src === CLIP_A)).toHaveLength(2));
+    await waitFor(() =>
+      expect(playedSources.filter((src) => src === CLIP_A).length).toBeGreaterThanOrEqual(2),
+    );
     await expectStuckOn(container, "01");
   });
 
@@ -231,8 +233,20 @@ describe("Slideshow video playback", () => {
     await expectSlide(container, "02");
     await expectSlide(container, "01");
 
-    await waitFor(() => expect(playedSources.filter((src) => src === CLIP_A)).toHaveLength(2));
+    await waitFor(() =>
+      expect(playedSources.filter((src) => src === CLIP_A).length).toBeGreaterThanOrEqual(2),
+    );
     expect(video.currentTime).toBe(0);
+  });
+
+  it("still plays when rewinding throws before metadata is ready", async () => {
+    vi.spyOn(HTMLMediaElement.prototype, "currentTime", "set").mockImplementation(() => {
+      throw new DOMException("The element's readyState is HAVE_NOTHING", "InvalidStateError");
+    });
+
+    renderSlideshow([VIDEO_A, IMAGE_A], { autoplayDelay: NO_AUTOPLAY });
+
+    await waitFor(() => expect(playedSources).toContain(CLIP_A));
   });
 });
 
@@ -380,10 +394,10 @@ describe("Slideshow waitForVideo opt-outs", () => {
     expect(videoFor(container, CLIP_A).loop).toBe(true);
   });
 
-  it("starts a lone video itself, since the autoplay attribute is unreliable after a client-side navigation", async () => {
+  it("does not pause or rewind a lone video", async () => {
     renderSlideshow([VIDEO_A]);
 
-    await waitFor(() => expect(playedSources.filter((src) => src === CLIP_A)).toHaveLength(1));
+    await waitFor(() => expect(playedSources).toContain(CLIP_A));
     expect(pausedSources).toHaveLength(0);
   });
 });

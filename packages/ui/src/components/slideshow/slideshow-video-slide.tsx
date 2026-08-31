@@ -7,6 +7,14 @@ import { Video } from "../video/video";
 
 export const VIDEO_START_TIMEOUT_MS = 8000;
 
+function rewind(video: HTMLVideoElement) {
+  try {
+    video.currentTime = 0;
+  } catch {
+    // currentTime throws before metadata is ready and would abort play().
+  }
+}
+
 export interface SlideshowVideoSlideProps {
   videoUrl: string;
   videoPoster?: string;
@@ -47,7 +55,7 @@ export function SlideshowVideoSlide({
     }
     if (!isActive) {
       video.pause();
-      video.currentTime = 0;
+      rewind(video);
       return;
     }
 
@@ -69,14 +77,27 @@ export function SlideshowVideoSlide({
       finish();
     };
     const cancelTimeout = () => clearTimeout(startTimer);
+    const tryPlay = () => {
+      if (isDone || !video.paused) {
+        return;
+      }
+      void video.play?.()?.catch((error: unknown) => {
+        if (error instanceof Error && error.name === "AbortError") {
+          return;
+        }
+        giveUp();
+      });
+    };
 
     startTimer = setTimeout(giveUp, VIDEO_START_TIMEOUT_MS);
 
     video.addEventListener("ended", finish);
     video.addEventListener("error", giveUp);
     video.addEventListener("playing", cancelTimeout);
-    video.currentTime = 0;
-    video.play?.()?.catch(giveUp);
+    video.addEventListener("loadeddata", tryPlay);
+    video.addEventListener("canplay", tryPlay);
+    rewind(video);
+    tryPlay();
 
     return () => {
       isDone = true;
@@ -84,6 +105,8 @@ export function SlideshowVideoSlide({
       video.removeEventListener("ended", finish);
       video.removeEventListener("error", giveUp);
       video.removeEventListener("playing", cancelTimeout);
+      video.removeEventListener("loadeddata", tryPlay);
+      video.removeEventListener("canplay", tryPlay);
     };
   }, [holdUntilEnded, isActive, onFinished, onUnplayable, videoUrl]);
 

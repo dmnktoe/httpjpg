@@ -151,7 +151,28 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       if (video.readyState >= 2) {
         setIsLoading(false);
       }
-    }, [muted]);
+
+      if (!shouldAutoPlay) return;
+
+      function tryPlay() {
+        if (!video.paused) return;
+        try {
+          void video.play()?.catch(() => {
+            // Autoplay can race metadata; loadeddata / canplay retry below.
+          });
+        } catch {
+          // jsdom and some browsers throw synchronously when play is blocked.
+        }
+      }
+
+      tryPlay();
+      video.addEventListener("loadeddata", tryPlay);
+      video.addEventListener("canplay", tryPlay);
+      return () => {
+        video.removeEventListener("loadeddata", tryPlay);
+        video.removeEventListener("canplay", tryPlay);
+      };
+    }, [muted, shouldAutoPlay]);
 
     const isFirstSrc = useRef(true);
     useEffect(() => {

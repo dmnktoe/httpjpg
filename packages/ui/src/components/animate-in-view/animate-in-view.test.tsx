@@ -17,12 +17,16 @@ vi.mock("motion/react", () => ({
   },
 }));
 
-import { AnimateInView } from "./animate-in-view";
+import { AnimateInView, type AnimationType } from "./animate-in-view";
 
 beforeEach(() => {
   mockReducedMotion.mockReturnValue(false);
   mockInView.mockReturnValue(true);
   lastMotionProps.current = null;
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 describe("AnimateInView", () => {
@@ -72,5 +76,34 @@ describe("AnimateInView", () => {
 
     expect(screen.getByText("Hello")).toBeInTheDocument();
     expect(lastMotionProps.current).toBeNull();
+  });
+
+  it("renders children without a tween when animation is empty", () => {
+    render(<AnimateInView animation={"" as AnimationType}>Hello</AnimateInView>);
+
+    expect(screen.getByText("Hello")).toBeInTheDocument();
+    expect(lastMotionProps.current).toBeNull();
+  });
+
+  it("starts visible when the node is already in the viewport", () => {
+    mockInView.mockReturnValue(false);
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({
+      x: 10,
+      y: 10,
+      width: 100,
+      height: 100,
+      top: 10,
+      left: 10,
+      bottom: 110,
+      right: 110,
+      toJSON() {
+        return {};
+      },
+    });
+
+    render(<AnimateInView animation="sharpen">Hello</AnimateInView>);
+
+    expect(lastMotionProps.current?.initial).toBe("visible");
+    expect(lastMotionProps.current?.animate).toBe("visible");
   });
 });

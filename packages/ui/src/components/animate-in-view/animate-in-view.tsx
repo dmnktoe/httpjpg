@@ -2,7 +2,7 @@
 
 import { m, useInView, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
-import { useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { AnimationMap, type AnimationType } from "./animation-map";
@@ -18,6 +18,14 @@ export interface AnimateInViewProps {
   css?: SystemStyleObject;
 }
 
+function isInViewport(el: HTMLElement): boolean {
+  const rect = el.getBoundingClientRect();
+  if (rect.width === 0 && rect.height === 0) {
+    return false;
+  }
+  return rect.bottom > 0 && rect.right > 0 && rect.top < innerHeight && rect.left < innerWidth;
+}
+
 export function AnimateInView({
   animation = "zoomIn",
   once = true,
@@ -29,17 +37,58 @@ export function AnimateInView({
 }: AnimateInViewProps) {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const isInView = useInView(ref, {
+  const observerInView = useInView(ref, {
     once,
-    margin: "0px 0px -100px 0px",
-    amount: 0.3,
+    margin: "0px 0px -40px 0px",
+    amount: 0.01,
   });
+  const [alreadyVisible, setAlreadyVisible] = useState(false);
 
-  if (animation === "none") {
-    return <div>{children}</div>;
-  }
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (el && isInViewport(el)) {
+      setAlreadyVisible(true);
+    }
+  }, []);
 
-  if (prefersReducedMotion) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || isInViewport(el)) {
+      return;
+    }
+
+    let observer: IntersectionObserver | undefined;
+    if (typeof IntersectionObserver !== "undefined") {
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            setAlreadyVisible(true);
+            observer?.disconnect();
+          }
+        },
+        { threshold: 0 },
+      );
+      observer.observe(el);
+    }
+
+    // Next.js can keep streamed content in a hidden slot for ~300ms before
+    // swapping it in; re-check after that so sharpen does not stay stuck.
+    const timeoutId = window.setTimeout(() => {
+      if (isInViewport(el)) {
+        setAlreadyVisible(true);
+      }
+    }, 400);
+
+    return () => {
+      observer?.disconnect();
+      window.clearTimeout(timeoutId);
+    };
+  }, []);
+
+  const variants = animation && animation !== "none" ? AnimationMap[animation] : undefined;
+  const isInView = observerInView || alreadyVisible;
+
+  if (!variants || prefersReducedMotion) {
     return (
       <div ref={ref} style={cssProp as React.CSSProperties} {...props}>
         {children}
@@ -50,13 +99,13 @@ export function AnimateInView({
   return (
     <m.div
       ref={ref}
-      variants={AnimationMap[animation]}
+      variants={variants}
       transition={{
         delay,
         duration,
         ease: "easeOut",
       }}
-      initial="hidden"
+      initial={alreadyVisible ? "visible" : "hidden"}
       animate={isInView ? "visible" : "hidden"}
       style={cssProp as React.CSSProperties}
       {...props}

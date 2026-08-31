@@ -15,6 +15,7 @@ import {
 const skeletonClass = css({
   position: "absolute",
   inset: 0,
+  zIndex: 1,
   w: "100%",
   h: "100%",
   bg: "linear-gradient(90deg, var(--colors-neutral-200) 0%, var(--colors-neutral-300) 50%, var(--colors-neutral-200) 100%)",
@@ -160,6 +161,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
               className={css({
                 position: "absolute",
                 inset: 0,
+                zIndex: 1,
                 width: "100%",
                 height: "100%",
                 filter: "blur(20px)",

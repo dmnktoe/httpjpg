@@ -262,6 +262,16 @@ describe("Image", () => {
       expect(container.querySelector('[aria-hidden="true"]')).toBeInTheDocument();
     });
 
+    it("paints the skeleton above the hidden image so the frame is not blank", () => {
+      const { container } = render(<Image src="/photo.jpg" alt="skeleton" blurOnLoad />);
+      const image = screen.getByAltText("skeleton");
+      const skeleton = container.querySelector('[aria-hidden="true"]');
+
+      expect(image).toHaveStyle({ opacity: "0" });
+      expect(skeleton).toBeInTheDocument();
+      expect(skeleton?.className).toMatch(/z_1/);
+    });
+
     it("does not observe anything when blur-up is off", () => {
       const observers = stubIntersectionObserver();
       render(<Image src="/photo.jpg" alt="eager" />);

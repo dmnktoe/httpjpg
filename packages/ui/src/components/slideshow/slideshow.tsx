@@ -70,7 +70,7 @@ export interface SlideshowProps {
 
 export function Slideshow({
   images,
-  animation = "none",
+  animation: animationProp = "none",
   animationDelay,
   effect = "slide",
   aspectRatio = "16/9",
@@ -87,6 +87,7 @@ export function Slideshow({
   css: cssProp,
   ...props
 }: SlideshowProps) {
+  const animation = animationProp || "none";
   const swiperRef = useRef<SwiperType | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);

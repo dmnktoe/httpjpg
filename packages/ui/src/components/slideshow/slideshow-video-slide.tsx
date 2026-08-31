@@ -1,6 +1,5 @@
 "use client";
 
-import { useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
 
 import { Video } from "../video/video";
@@ -33,18 +32,6 @@ export function SlideshowVideoSlide({
   onDone,
 }: SlideshowVideoSlideProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const prefersReducedMotion = useReducedMotion();
-
-  // When the slideshow is not managing playback — a lone video, or waitForVideo
-  // off — the clip relies on its autoplay attribute, which browsers ignore for a
-  // <video> created during a client-side navigation. Start it ourselves so it
-  // plays on arrival like it does on a hard load; reduced motion opts out.
-  useEffect(() => {
-    if (holdUntilEnded || !isActive || prefersReducedMotion) {
-      return;
-    }
-    videoRef.current?.play?.()?.catch(() => {});
-  }, [holdUntilEnded, isActive, prefersReducedMotion, videoUrl]);
 
   useEffect(() => {
     const video = videoRef.current;

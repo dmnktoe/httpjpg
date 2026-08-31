@@ -16,7 +16,26 @@ import type {
   SwiperModule,
 } from "swiper/types";
 
+import type { AnimationType } from "../animate-in-view/animation-map";
+import type { CopyrightPosition } from "../copyright-label/copyright-label";
+
 export type SwiperEffect = "slide" | "fade" | "cube" | "coverflow" | "flip" | "cards" | "creative";
+
+export interface SlideshowImage {
+  url: string;
+  alt: string;
+  copyright?: string;
+  copyrightSource?: string;
+  copyrightPosition?: CopyrightPosition;
+  focus?: string;
+  videoUrl?: string;
+  videoPoster?: string;
+  srcSet?: string;
+}
+
+export function resolveAnimation(value?: string): AnimationType {
+  return value ? (value as AnimationType) : "none";
+}
 
 export const SWIPER_FADE_EFFECT: FadeEffectOptions = {
   crossFade: true,

@@ -16,38 +16,26 @@ import type { Swiper as SwiperType } from "swiper/types";
 
 import { AnimateInView, type AnimationType } from "../animate-in-view/animate-in-view";
 import { Box } from "../box/box";
-import { CopyrightLabel, type CopyrightPosition } from "../copyright-label/copyright-label";
-import { ImageOverlay, type OverlayPattern } from "../image-overlay/image-overlay";
-import { Image } from "../image/image";
+import type { OverlayPattern } from "../image-overlay/image-overlay";
 import {
   EFFECT_MODULES,
   isNearActive,
+  resolveAnimation,
   SWIPER_CARDS_EFFECT,
   SWIPER_COVERFLOW_EFFECT,
   SWIPER_CREATIVE_EFFECT,
   SWIPER_CUBE_EFFECT,
   SWIPER_FADE_EFFECT,
   SWIPER_FLIP_EFFECT,
+  type SlideshowImage,
   type SwiperEffect,
 } from "./lib";
 import { SlideshowCounter } from "./slideshow-counter";
 import { SlideshowNav } from "./slideshow-nav";
-import { SlideshowVideoSlide } from "./slideshow-video-slide";
+import { SlideshowSlide } from "./slideshow-slide";
 
-export type { SwiperEffect };
+export type { SlideshowImage, SwiperEffect };
 export { VIDEO_START_TIMEOUT_MS } from "./slideshow-video-slide";
-
-export interface SlideshowImage {
-  url: string;
-  alt: string;
-  copyright?: string;
-  copyrightSource?: string;
-  copyrightPosition?: CopyrightPosition;
-  focus?: string;
-  videoUrl?: string;
-  videoPoster?: string;
-  srcSet?: string;
-}
 
 export interface SlideshowProps {
   images: SlideshowImage[];
@@ -87,7 +75,7 @@ export function Slideshow({
   css: cssProp,
   ...props
 }: SlideshowProps) {
-  const animation = animationProp || "none";
+  const animation = resolveAnimation(animationProp);
   const swiperRef = useRef<SwiperType | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -220,60 +208,32 @@ export function Slideshow({
         >
           {images.map((image, index) => (
             <SwiperSlide key={index} suppressHydrationWarning>
-              <Box css={{ position: "relative", w: "full", h: "full" }}>
-                {image.videoUrl ? (
-                  <>
-                    <SlideshowVideoSlide
-                      videoUrl={image.videoUrl}
-                      videoPoster={image.videoPoster}
-                      aspectRatio={aspectRatio}
-                      holdUntilEnded={holdForVideo && !unplayableVideos.has(image.videoUrl)}
-                      isActive={activeIndex === index}
-                      onFinished={handleVideoFinished}
-                      onUnplayable={handleVideoUnplayable}
-                      onReady={index === 0 ? handleFirstMediaReady : undefined}
-                    />
-                    {(image.copyright || image.copyrightSource) && (
-                      <CopyrightLabel
-                        text={image.copyright}
-                        source={image.copyrightSource}
-                        position={image.copyrightPosition || "inline-black"}
-                      />
-                    )}
-                  </>
-                ) : (
-                  <Image
-                    src={image.url}
-                    srcSet={image.srcSet}
-                    sizes={sizes}
-                    alt={image.alt}
-                    aspectRatio={aspectRatio}
-                    objectFit="cover"
-                    copyright={image.copyright}
-                    copyrightSource={image.copyrightSource}
-                    copyrightPosition={image.copyrightPosition || "inline-white"}
-                    blurOnLoad={blurUp}
-                    loading={
-                      prefersReducedMotion ||
-                      (priority && index === 0) ||
-                      (isNearViewport && isNearActive(index, activeIndex, images.length))
-                        ? "eager"
-                        : "lazy"
-                    }
-                    fetchPriority={priority && index === 0 ? "high" : "auto"}
-                    onReady={index === 0 ? handleFirstMediaReady : undefined}
-                  />
-                )}
-                {overlay !== "none" && !image.videoUrl && (
-                  <ImageOverlay
-                    pattern={overlay}
-                    seed={image.url || image.alt || `slide-${index}`}
-                    color="white"
-                    opacity={0.85}
-                    inset={overlayInset}
-                  />
-                )}
-              </Box>
+              <SlideshowSlide
+                image={image}
+                index={index}
+                aspectRatio={aspectRatio}
+                isActive={activeIndex === index}
+                blurOnLoad={blurUp}
+                loading={
+                  prefersReducedMotion ||
+                  (priority && index === 0) ||
+                  (isNearViewport && isNearActive(index, activeIndex, images.length))
+                    ? "eager"
+                    : "lazy"
+                }
+                fetchPriority={priority && index === 0 ? "high" : "auto"}
+                sizes={sizes}
+                overlay={overlay}
+                overlayInset={overlayInset}
+                holdUntilEnded={
+                  holdForVideo &&
+                  Boolean(image.videoUrl) &&
+                  !unplayableVideos.has(image.videoUrl ?? "")
+                }
+                onVideoFinished={handleVideoFinished}
+                onVideoUnplayable={handleVideoUnplayable}
+                onReady={index === 0 ? handleFirstMediaReady : undefined}
+              />
             </SwiperSlide>
           ))}
         </Swiper>

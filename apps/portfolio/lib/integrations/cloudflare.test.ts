@@ -132,6 +132,41 @@ describe("fetchCloudflareAnalytics", () => {
       cachedRequests: 1104,
       threats: 48,
     });
+
+    const body = JSON.parse(String(mockFetch.mock.calls[0]?.[1]?.body)) as { query: string };
+    expect(body.query).toContain("dimensions");
+    expect(body.query).toContain("date");
+  });
+
+  it("picks the newest day when the API returns groups out of order", async () => {
+    mockFetch.mockResolvedValueOnce(
+      graphqlResponse({
+        data: {
+          viewer: {
+            zones: [
+              {
+                httpRequests1dGroups: [
+                  {
+                    dimensions: { date: "2026-08-30" },
+                    sum: { requests: 10, cachedRequests: 9, threats: 1 },
+                  },
+                  {
+                    dimensions: { date: "2026-08-31" },
+                    sum: { requests: 1200, cachedRequests: 1104, threats: 48 },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      }),
+    );
+
+    await expect(fetchCloudflareAnalytics("token", "zone")).resolves.toEqual({
+      requests: 1200,
+      cachedRequests: 1104,
+      threats: 48,
+    });
   });
 
   it("collapses GraphQL errors to null so the colo line still renders", async () => {

@@ -13,6 +13,9 @@ const ANALYTICS_QUERY = `query ZoneHttp($zoneTag: String!, $since: Date!) {
         filter: { date_geq: $since }
         orderBy: [date_DESC]
       ) {
+        dimensions {
+          date
+        }
         sum {
           requests
           cachedRequests
@@ -94,6 +97,7 @@ export function cachedRatio(requests: number, cachedRequests: number): number | 
 
 interface GraphqlZone {
   httpRequests1dGroups?: Array<{
+    dimensions?: { date?: string };
     sum?: {
       requests?: number;
       cachedRequests?: number;
@@ -118,8 +122,10 @@ function utcDateDaysAgo(days: number): string {
 }
 
 function firstDaySum(zones: GraphqlZone[] | undefined): CloudflareAnalytics | null {
-  const groups = zones?.[0]?.httpRequests1dGroups;
-  if (!groups?.length) {
+  const groups = [...(zones?.[0]?.httpRequests1dGroups ?? [])].sort((a, b) =>
+    (b.dimensions?.date ?? "").localeCompare(a.dimensions?.date ?? ""),
+  );
+  if (!groups.length) {
     return null;
   }
   for (const group of groups) {

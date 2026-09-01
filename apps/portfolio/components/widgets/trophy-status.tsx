@@ -18,11 +18,11 @@ export interface TrophyStatusProps {
 
 export function TrophyStatus({ trophy, avatar, loaded }: TrophyStatusProps) {
   if (!trophy) {
-    return loaded ? null : <FooterStatusLine loading />;
+    return loaded ? null : <FooterStatusLine label="psn" loading />;
   }
 
   return (
-    <FooterStatusLine href={trophy.url}>
+    <FooterStatusLine label="psn" href={trophy.url}>
       {avatar && <FooterStatusLineThumb src={avatar} size="4" shape="circle" />}
       {trophy.image && (
         <FooterStatusLineThumb src={trophy.image} size="4" shape="square" fit="contain" />

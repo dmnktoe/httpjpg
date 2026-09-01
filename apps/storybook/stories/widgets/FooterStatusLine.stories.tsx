@@ -44,7 +44,7 @@ export const Loading: Story = {
   args: { loading: true },
 };
 
-/** Without a label the line starts straight into its content, as the trophy widget does. */
+/** Without a label the line starts straight into its content. */
 export const Unlabelled: Story = {
   args: {
     label: undefined,
@@ -131,6 +131,7 @@ export const Stacked: Story = {
       </FooterStatusLine>
       <FooterStatusLine label="discogs" loading />
       <FooterStatusLine label="x" loading />
+      <FooterStatusLine label="psn" loading />
     </Box>
   ),
 };

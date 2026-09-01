@@ -32,6 +32,7 @@ describe("TrophyStatus", () => {
   it("holds a loading label until the data arrives", () => {
     render(<TrophyStatus trophy={null} avatar={null} loaded={false} />);
 
+    expect(screen.getByText("psn:")).toBeInTheDocument();
     expect(screen.getByText("loading ...")).toBeInTheDocument();
   });
 
@@ -44,6 +45,7 @@ describe("TrophyStatus", () => {
   it("renders the trophy with its tier sprite and image", () => {
     render(<TrophyStatus trophy={trophyA} avatar={AVATAR} loaded />);
 
+    expect(screen.getByText("psn:")).toBeInTheDocument();
     expect(screen.getByText(trophyA.name)).toBeInTheDocument();
     expect(screen.queryByText(trophyB.name)).not.toBeInTheDocument();
 

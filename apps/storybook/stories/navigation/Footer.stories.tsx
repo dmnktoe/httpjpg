@@ -65,6 +65,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const hideOnMobile = { display: { base: "none", md: "block" } } as const;
+
 /**
  * Default footer with background image
  */
@@ -108,7 +110,7 @@ export const WithWidgets: Story = {
           discord: 🟢 <span style={{ color: "#22C55E" }}>online</span> · Playing Spotify
         </Box>
         <FooterStatusLine href="https://www.cloudflare.com">
-          <FooterStatusLineText fixed dim>
+          <FooterStatusLineText fixed dim css={hideOnMobile}>
             backed & secured by
           </FooterStatusLineText>
           <CloudflareLogo />
@@ -120,12 +122,12 @@ export const WithWidgets: Story = {
           <FooterStatusLineText fixed dim>
             DE
           </FooterStatusLineText>
-          <FooterStatusLineSeparator />
-          <FooterStatusLineText fixed dim>
+          <FooterStatusLineSeparator css={hideOnMobile} />
+          <FooterStatusLineText fixed dim css={hideOnMobile}>
             1.2K blocked
           </FooterStatusLineText>
-          <FooterStatusLineSeparator />
-          <FooterStatusLineText fixed dim>
+          <FooterStatusLineSeparator css={hideOnMobile} />
+          <FooterStatusLineText fixed dim css={hideOnMobile}>
             92% cached
           </FooterStatusLineText>
         </FooterStatusLine>

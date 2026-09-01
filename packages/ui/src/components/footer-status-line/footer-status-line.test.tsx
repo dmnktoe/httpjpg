@@ -64,6 +64,12 @@ describe("FooterStatusLineSeparator", () => {
 
     expect(screen.getByText("·")).toHaveAttribute("aria-hidden", "true");
   });
+
+  it("forwards css onto the mark", () => {
+    render(<FooterStatusLineSeparator css={{ display: { base: "none", md: "block" } }} />);
+
+    expect(screen.getByText("·")).toHaveClass("d_none", "md:d_block");
+  });
 });
 
 describe("FooterStatusLineThumb", () => {

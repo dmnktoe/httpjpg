@@ -12,6 +12,9 @@ import { useWidgetData } from "@/lib/use-widget-data";
 
 const CLOUDFLARE_HREF = "https://www.cloudflare.com";
 
+/** Drop the long label and analytics extras below `md` so the lockup + colo still fit. */
+const hideOnMobile = { display: { base: "none", md: "block" } } as const;
+
 /**
  * Theme-matched footer line under the live widgets. The lockup is always on;
  * colo, country, blocked threats, and cache ratio append once /api/cloudflare
@@ -22,17 +25,21 @@ export function CloudflareStatus() {
 
   return (
     <FooterStatusLine href={CLOUDFLARE_HREF}>
-      <FooterStatusLineText fixed dim>
+      <FooterStatusLineText fixed dim css={hideOnMobile}>
         backed & secured by
       </FooterStatusLineText>
       <CloudflareLogo />
       {data?.colo && <CloudflareStat>{data.colo}</CloudflareStat>}
       {data?.country && <CloudflareStat>{data.country}</CloudflareStat>}
       {data?.threats ? (
-        <CloudflareStat>{`${formatCompactCount(data.threats)} blocked`}</CloudflareStat>
+        <CloudflareStat hideOnMobile>
+          {`${formatCompactCount(data.threats)} blocked`}
+        </CloudflareStat>
       ) : null}
       {data?.cachedRatio != null && (
-        <CloudflareStat>{`${Math.round(data.cachedRatio * 100)}% cached`}</CloudflareStat>
+        <CloudflareStat hideOnMobile>
+          {`${Math.round(data.cachedRatio * 100)}% cached`}
+        </CloudflareStat>
       )}
     </FooterStatusLine>
   );
@@ -40,13 +47,16 @@ export function CloudflareStatus() {
 
 interface CloudflareStatProps {
   children: string;
+  hideOnMobile?: boolean;
 }
 
-function CloudflareStat({ children }: CloudflareStatProps) {
+function CloudflareStat({ children, hideOnMobile: hide }: CloudflareStatProps) {
+  const css = hide ? hideOnMobile : undefined;
+
   return (
     <>
-      <FooterStatusLineSeparator />
-      <FooterStatusLineText fixed dim>
+      <FooterStatusLineSeparator css={css} />
+      <FooterStatusLineText fixed dim css={css}>
         {children}
       </FooterStatusLineText>
     </>

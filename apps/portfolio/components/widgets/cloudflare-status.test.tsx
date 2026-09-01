@@ -70,6 +70,18 @@ describe("CloudflareStatus", () => {
     expect(screen.getByText("92% cached")).toBeInTheDocument();
   });
 
+  it("hides the attribution label and analytics extras below md", async () => {
+    mockFetch({ colo: "FRA", country: "DE", threats: 23, cachedRatio: 0.03 });
+    render(<CloudflareStatus />);
+
+    expect(await screen.findByText("23 blocked")).toBeInTheDocument();
+    expect(screen.getByText("backed & secured by")).toHaveClass("d_none", "md:d_block");
+    expect(screen.getByText("23 blocked")).toHaveClass("d_none", "md:d_block");
+    expect(screen.getByText("3% cached")).toHaveClass("d_none", "md:d_block");
+    expect(screen.getByText("FRA")).not.toHaveClass("d_none");
+    expect(screen.getByText("DE")).not.toHaveClass("d_none");
+  });
+
   it("omits empty extras so a local request still reads as attribution", async () => {
     const fetchMock = mockFetch({
       colo: null,

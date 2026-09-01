@@ -3,8 +3,7 @@
 import React, { forwardRef, useCallback, type ReactNode } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
-import { AsciiArt } from "../ascii-art/ascii-art";
-import { ASCII_DIVIDER_STARS, ASCII_DIVIDER_WAVE } from "../ascii-art/banners";
+import { ASCII_DIVIDER_STARS } from "../ascii-art/banners";
 import { Box } from "../box/box";
 import { Link } from "../link/link";
 import { VStack } from "../stack/stack";
@@ -25,7 +24,7 @@ export interface FooterProps {
   showCookieSettings?: boolean;
   cookiePolicyHref?: string;
   widgets?: ReactNode;
-  /** Own section below the widgets, separated by the wave divider. */
+  /** Own section below the widgets (Cloudflare line + wave signoff). */
   userbars?: ReactNode;
   showVersion?: boolean;
   version?: string;
@@ -158,15 +157,6 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
               )}
 
               {widgets && <Box css={{ w: "full" }}>{widgets}</Box>}
-
-              {(widgets || userbars) && (
-                <AsciiArt
-                  label="signoff"
-                  css={{ my: "5", opacity: 0.3, fontSize: "xs", letterSpacing: "0.2em" }}
-                >
-                  {ASCII_DIVIDER_WAVE}
-                </AsciiArt>
-              )}
 
               {userbars && <Box css={{ w: "full" }}>{userbars}</Box>}
 

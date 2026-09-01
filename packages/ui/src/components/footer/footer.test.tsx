@@ -62,10 +62,9 @@ describe("Footer", () => {
   it("renders widgets slot", () => {
     render(<Footer widgets={<div data-testid="widget">Widget</div>} />);
     expect(screen.getByTestId("widget")).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: "signoff" })).toBeInTheDocument();
   });
 
-  it("renders userbars in their own section after the wave separator", () => {
+  it("renders userbars below the widgets slot", () => {
     render(
       <Footer
         widgets={<div data-testid="widget">Widget</div>}
@@ -73,13 +72,6 @@ describe("Footer", () => {
       />,
     );
     expect(screen.getByTestId("userbars")).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: "signoff" })).toBeInTheDocument();
-  });
-
-  it("still draws the signoff wave when only userbars are present", () => {
-    render(<Footer userbars={<div data-testid="userbars">Userbars</div>} />);
-    expect(screen.getByTestId("userbars")).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: "signoff" })).toBeInTheDocument();
   });
 
   it("renders custom children instead of default layout", () => {

@@ -1,4 +1,6 @@
 import {
+  ASCII_DIVIDER_WAVE,
+  AsciiArt,
   Box,
   CloudflareLogo,
   Footer,
@@ -110,6 +112,12 @@ export const WithWidgets: Story = {
           </FooterStatusLineText>
           <CloudflareLogo />
         </FooterStatusLine>
+        <AsciiArt
+          label="signoff"
+          css={{ my: "5", opacity: 0.3, fontSize: "xs", letterSpacing: "0.2em" }}
+        >
+          {ASCII_DIVIDER_WAVE}
+        </AsciiArt>
       </Box>
     ),
     showVersion: true,

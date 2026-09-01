@@ -3,6 +3,8 @@ import "@httpjpg/ui/styles.css";
 import "@/lib/storyblok";
 import { env } from "@httpjpg/env";
 import {
+  ASCII_DIVIDER_WAVE,
+  AsciiArt,
   AudioPlayerProvider,
   Box,
   Footer,
@@ -191,6 +193,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                       />
                     )}
                     <CloudflareStatus />
+                    <AsciiArt
+                      label="signoff"
+                      css={{ my: "5", opacity: 0.3, fontSize: "xs", letterSpacing: "0.2em" }}
+                    >
+                      {ASCII_DIVIDER_WAVE}
+                    </AsciiArt>
                   </Box>
                 }
                 userbars={

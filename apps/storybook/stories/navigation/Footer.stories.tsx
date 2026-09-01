@@ -5,6 +5,7 @@ import {
   CloudflareLogo,
   Footer,
   FooterStatusLine,
+  FooterStatusLineSeparator,
   FooterStatusLineText,
   Link,
   Paragraph,
@@ -111,6 +112,22 @@ export const WithWidgets: Story = {
             backed & secured by
           </FooterStatusLineText>
           <CloudflareLogo />
+          <FooterStatusLineSeparator />
+          <FooterStatusLineText fixed dim>
+            FRA
+          </FooterStatusLineText>
+          <FooterStatusLineSeparator />
+          <FooterStatusLineText fixed dim>
+            DE
+          </FooterStatusLineText>
+          <FooterStatusLineSeparator />
+          <FooterStatusLineText fixed dim>
+            1.2K blocked
+          </FooterStatusLineText>
+          <FooterStatusLineSeparator />
+          <FooterStatusLineText fixed dim>
+            92% cached
+          </FooterStatusLineText>
         </FooterStatusLine>
         <AsciiArt
           label="signoff"

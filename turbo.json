@@ -58,6 +58,8 @@
         "WEATHER_LONGITUDE",
         "TWEETAPI_API_URL",
         "TWEETAPI_KEY",
+        "CLOUDFLARE_API_TOKEN",
+        "CLOUDFLARE_ZONE_ID",
         "ARCJET_KEY",
         "GROQ_API_KEY",
         "GROQ_MODEL"

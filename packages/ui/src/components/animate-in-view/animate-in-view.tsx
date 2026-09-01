@@ -1,7 +1,7 @@
 "use client";
 
 import { m, useInView, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useRef } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
@@ -31,17 +31,14 @@ export function AnimateInView({
   const prefersReducedMotion = useReducedMotion();
   const isInView = useInView(ref, {
     once,
-    margin: "0px 0px -100px 0px",
-    amount: 0.3,
+    margin: "0px 0px -40px 0px",
+    amount: 0.01,
   });
+  const variants = animation && animation !== "none" ? AnimationMap[animation] : undefined;
 
-  if (animation === "none") {
-    return <div>{children}</div>;
-  }
-
-  if (prefersReducedMotion) {
+  if (!variants || prefersReducedMotion) {
     return (
-      <div ref={ref} style={cssProp as React.CSSProperties} {...props}>
+      <div ref={ref} style={cssProp as CSSProperties} {...props}>
         {children}
       </div>
     );
@@ -50,7 +47,7 @@ export function AnimateInView({
   return (
     <m.div
       ref={ref}
-      variants={AnimationMap[animation]}
+      variants={variants}
       transition={{
         delay,
         duration,
@@ -58,7 +55,7 @@ export function AnimateInView({
       }}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      style={cssProp as React.CSSProperties}
+      style={cssProp as CSSProperties}
       {...props}
     >
       {children}

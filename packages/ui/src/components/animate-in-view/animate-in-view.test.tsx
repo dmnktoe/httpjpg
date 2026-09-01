@@ -17,7 +17,7 @@ vi.mock("motion/react", () => ({
   },
 }));
 
-import { AnimateInView } from "./animate-in-view";
+import { AnimateInView, type AnimationType } from "./animate-in-view";
 
 beforeEach(() => {
   mockReducedMotion.mockReturnValue(false);
@@ -69,6 +69,13 @@ describe("AnimateInView", () => {
 
   it("renders children without a tween when animation is none", () => {
     render(<AnimateInView animation="none">Hello</AnimateInView>);
+
+    expect(screen.getByText("Hello")).toBeInTheDocument();
+    expect(lastMotionProps.current).toBeNull();
+  });
+
+  it("renders children without a tween when animation is empty", () => {
+    render(<AnimateInView animation={"" as AnimationType}>Hello</AnimateInView>);
 
     expect(screen.getByText("Hello")).toBeInTheDocument();
     expect(lastMotionProps.current).toBeNull();

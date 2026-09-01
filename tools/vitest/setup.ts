@@ -46,10 +46,8 @@ if (typeof globalThis.matchMedia !== "function") {
   })) as unknown as typeof globalThis.matchMedia;
 }
 
-// jsdom does not implement media playback, so play()/pause()/load() — which the
-// Video component and slideshow video slides call imperatively — throw
-// "Not implemented" and surface as unhandled errors. Stub them as no-ops so a
-// <video> can mount in tests.
+// jsdom does not implement media playback, so play()/pause()/load() — which
+// Video calls imperatively — throw "Not implemented". Stub them as no-ops.
 if (typeof globalThis.HTMLMediaElement !== "undefined") {
   const media = globalThis.HTMLMediaElement.prototype;
   media.play = () => Promise.resolve();

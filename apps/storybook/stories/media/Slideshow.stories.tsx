@@ -13,24 +13,6 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    animation: {
-      control: "select",
-      options: [
-        "none",
-        "fadeIn",
-        "zoomIn",
-        "sharpen",
-        "zoomSharpen",
-        "slideInFromLeft",
-        "slideInFromRight",
-        "slideUp",
-        "slideDown",
-      ],
-      description: "Entrance animation type for the entire slideshow",
-      table: {
-        defaultValue: { summary: "none" },
-      },
-    },
     effect: {
       control: "select",
       options: ["slide", "fade", "cube", "coverflow", "flip", "cards", "creative"],
@@ -66,10 +48,6 @@ const meta = {
       table: {
         defaultValue: { summary: "true" },
       },
-    },
-    animationDelay: {
-      control: { type: "range", min: 0, max: 2, step: 0.1 },
-      description: "Delay before entrance animation begins (seconds)",
     },
     disableBlurOnLoad: {
       control: "boolean",
@@ -143,13 +121,11 @@ export const Default: Story = {
 };
 
 /**
- * With entrance animation and smooth slide transitions
+ * Smooth slide transitions
  */
-export const WithAnimation: Story = {
+export const SmoothSlide: Story = {
   args: {
     images: sampleImages,
-    animation: "sharpen",
-    animationDelay: 0.2,
     speed: 600,
     effect: "slide",
   },

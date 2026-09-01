@@ -11,21 +11,7 @@ import {
   type CopyrightPosition,
   isInlineCopyright,
 } from "../copyright-label/copyright-label";
-
-const skeletonClass = css({
-  position: "absolute",
-  inset: 0,
-  w: "100%",
-  h: "100%",
-  bg: "linear-gradient(90deg, var(--colors-neutral-200) 0%, var(--colors-neutral-300) 50%, var(--colors-neutral-200) 100%)",
-  backgroundSize: "200% 100%",
-  transition: "opacity 0.4s ease-in-out",
-  animation: "shimmer 1.5s ease-in-out infinite",
-  pointerEvents: "none",
-  _pageDark: {
-    bg: "linear-gradient(90deg, var(--colors-neutral-800) 0%, var(--colors-neutral-700) 50%, var(--colors-neutral-800) 100%)",
-  },
-});
+import { MediaSkeleton } from "../media-skeleton/media-skeleton";
 
 export interface ImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "css"> {
   src: string;
@@ -144,13 +130,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
             ...cssProp,
           }}
         >
-          {showSkeleton && (
-            <div
-              aria-hidden="true"
-              className={skeletonClass}
-              style={{ opacity: highResLoaded ? 0 : 1 }}
-            />
-          )}
+          {showSkeleton && <MediaSkeleton visible={!highResLoaded} />}
 
           {showBlur && (
             <img
@@ -160,11 +140,13 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
               className={css({
                 position: "absolute",
                 inset: 0,
+                zIndex: 1,
                 width: "100%",
                 height: "100%",
                 filter: "blur(20px)",
                 transform: "scale(1.1)",
                 transition: "opacity 0.3s ease-in-out",
+                pointerEvents: "none",
                 objectFit: "cover",
               })}
               style={{ opacity: highResLoaded ? 0 : 1 }}

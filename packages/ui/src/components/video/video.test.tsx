@@ -52,6 +52,15 @@ describe("Video", () => {
     expect(video.muted).toBe(true);
   });
 
+  it("kicks muted autoplay on mount so remounts start playing", () => {
+    const play = vi.spyOn(window.HTMLMediaElement.prototype, "play").mockResolvedValue(undefined);
+
+    render(<Video src="/clip.mp4" autoPlay muted controls={false} />);
+
+    expect(play).toHaveBeenCalled();
+    play.mockRestore();
+  });
+
   it("defaults to object-fit cover when a fixed aspect ratio is set", () => {
     const { container: covered } = render(
       <Video src="/clip.mp4" aspectRatio="16/9" controls={false} />,

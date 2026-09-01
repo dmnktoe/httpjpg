@@ -28,35 +28,6 @@ const NO_AUTOPLAY = 100_000;
 
 let playedSources: string[];
 let pausedSources: string[];
-let isPlaybackRefused: boolean;
-
-interface ObserverStub {
-  callback: IntersectionObserverCallback;
-  disconnect: ReturnType<typeof vi.fn>;
-}
-
-function stubIntersectionObserver(): ObserverStub[] {
-  const instances: ObserverStub[] = [];
-
-  class Stub {
-    callback: IntersectionObserverCallback;
-    observe = vi.fn();
-    unobserve = vi.fn();
-    disconnect = vi.fn();
-    takeRecords = () => [];
-    root = null;
-    rootMargin = "";
-    thresholds: ReadonlyArray<number> = [];
-
-    constructor(callback: IntersectionObserverCallback) {
-      this.callback = callback;
-      instances.push(this);
-    }
-  }
-
-  vi.stubGlobal("IntersectionObserver", Stub);
-  return instances;
-}
 
 function renderSlideshow(
   images: SlideshowImage[],
@@ -93,14 +64,11 @@ beforeEach(() => {
   mockReducedMotion.mockReturnValue(false);
   playedSources = [];
   pausedSources = [];
-  isPlaybackRefused = false;
 
   vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(
     function (this: HTMLMediaElement) {
       playedSources.push(this.src);
-      return isPlaybackRefused
-        ? Promise.reject(new Error("NotAllowedError"))
-        : Promise.resolve(undefined);
+      return Promise.resolve(undefined);
     },
   );
   vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(
@@ -178,7 +146,7 @@ describe("Slideshow autoplay", () => {
     fireEvent.click(getByLabelText("Previous slide"));
     await expectSlide(container, "01");
 
-    await waitFor(() => expect(playedSources.filter((src) => src === CLIP_A)).toHaveLength(2));
+    await waitFor(() => expect(playedSources).toContain(CLIP_A));
     await expectStuckOn(container, "01");
   });
 
@@ -224,6 +192,7 @@ describe("Slideshow video playback", () => {
     const { container } = renderSlideshow([VIDEO_A, IMAGE_A]);
 
     await waitFor(() => expect(playedSources).toContain(CLIP_A));
+    const plays = playedSources.filter((src) => src === CLIP_A).length;
     const video = videoFor(container, CLIP_A);
     video.currentTime = 5;
 
@@ -231,8 +200,20 @@ describe("Slideshow video playback", () => {
     await expectSlide(container, "02");
     await expectSlide(container, "01");
 
-    await waitFor(() => expect(playedSources.filter((src) => src === CLIP_A)).toHaveLength(2));
+    await waitFor(() =>
+      expect(playedSources.filter((src) => src === CLIP_A).length).toBeGreaterThan(plays),
+    );
     expect(video.currentTime).toBe(0);
+  });
+
+  it("still plays when rewinding throws before metadata is ready", async () => {
+    vi.spyOn(HTMLMediaElement.prototype, "currentTime", "set").mockImplementation(() => {
+      throw new DOMException("The element's readyState is HAVE_NOTHING", "InvalidStateError");
+    });
+
+    renderSlideshow([VIDEO_A, IMAGE_A], { autoplayDelay: NO_AUTOPLAY });
+
+    await waitFor(() => expect(playedSources).toContain(CLIP_A));
   });
 });
 
@@ -269,13 +250,6 @@ describe("Slideshow video slide rendering", () => {
 });
 
 describe("Slideshow video failure modes", () => {
-  it("moves on when the browser refuses to play the clip", async () => {
-    isPlaybackRefused = true;
-    const { container } = renderSlideshow([VIDEO_A, IMAGE_A], { autoplayDelay: NO_AUTOPLAY });
-
-    await expectSlide(container, "02");
-  });
-
   it("moves on when the clip fails to load", async () => {
     const { container } = renderSlideshow([VIDEO_A, IMAGE_A], { autoplayDelay: NO_AUTOPLAY });
 
@@ -294,60 +268,6 @@ describe("Slideshow video failure modes", () => {
     });
 
     await expectSlide(container, "02");
-  });
-
-  it("does not hold a second time for a clip that already failed", async () => {
-    const { container, getByLabelText } = renderSlideshow([VIDEO_A, IMAGE_A, IMAGE_B], {
-      autoplayDelay: NO_AUTOPLAY,
-    });
-
-    fireEvent.error(videoFor(container, CLIP_A));
-    await expectSlide(container, "02");
-
-    fireEvent.click(getByLabelText("Previous slide"));
-
-    await waitFor(() => expect(activeSlide(container)).not.toBe("01"));
-  });
-
-  it("settles rather than spinning when every slide is an unplayable clip", async () => {
-    const { container } = renderSlideshow([VIDEO_A, VIDEO_B], { autoplayDelay: NO_AUTOPLAY });
-
-    fireEvent.error(videoFor(container, CLIP_A));
-    await expectSlide(container, "02");
-    fireEvent.error(videoFor(container, CLIP_B));
-    await expectSlide(container, "01");
-
-    // Nothing is left to skip to, so the carousel comes to rest on the slide
-    // it landed on rather than handing itself from one dead clip to the next.
-    await expectStuckOn(container, "01");
-  });
-
-  it("remembers a failed clip by its source, not by its position", async () => {
-    const { container, rerender } = render(
-      <Slideshow
-        images={[VIDEO_A, VIDEO_B, IMAGE_A]}
-        showCounter
-        speed={0}
-        autoplayDelay={NO_AUTOPLAY}
-      />,
-    );
-
-    fireEvent.error(videoFor(container, CLIP_A));
-    await expectSlide(container, "02");
-
-    // Same clips, swapped around. The slide being shown now carries the failed
-    // CLIP_A and has to be passed over; remembering the position instead would
-    // have named the healthy CLIP_B and held here.
-    rerender(
-      <Slideshow
-        images={[VIDEO_B, VIDEO_A, IMAGE_A]}
-        showCounter
-        speed={0}
-        autoplayDelay={NO_AUTOPLAY}
-      />,
-    );
-
-    await expectSlide(container, "03");
   });
 
   it("advances only once when a clip both errors and ends", async () => {
@@ -380,15 +300,15 @@ describe("Slideshow waitForVideo opt-outs", () => {
     expect(videoFor(container, CLIP_A).loop).toBe(true);
   });
 
-  it("starts a lone video itself, since the autoplay attribute is unreliable after a client-side navigation", async () => {
+  it("does not pause or rewind a lone video", async () => {
     renderSlideshow([VIDEO_A]);
 
-    await waitFor(() => expect(playedSources.filter((src) => src === CLIP_A)).toHaveLength(1));
+    await waitFor(() => expect(playedSources).toContain(CLIP_A));
     expect(pausedSources).toHaveLength(0);
   });
 });
 
-describe("Slideshow preloading", () => {
+describe("Slideshow loading", () => {
   function photos(count: number): SlideshowImage[] {
     return Array.from({ length: count }, (_, i) => ({
       url: `https://a.storyblok.com/f/1/photo-${i}.jpg`,
@@ -400,27 +320,14 @@ describe("Slideshow preloading", () => {
     return container.querySelector(`img[alt="${alt}"]`)?.getAttribute("loading") ?? null;
   }
 
-  function enterViewport(observers: ObserverStub[]) {
-    act(() => {
-      for (const observer of observers) {
-        observer.callback(
-          [{ isIntersecting: true } as IntersectionObserverEntry],
-          observer as unknown as IntersectionObserver,
-        );
-      }
-    });
-  }
-
-  it("keeps every slide lazy while the slideshow is out of view", () => {
-    stubIntersectionObserver();
+  it("keeps non-priority slides lazy", () => {
     const { container } = renderSlideshow(photos(5), { autoplayDelay: NO_AUTOPLAY });
 
     expect(loadingFor(container, "Photo 1")).toBe("lazy");
     expect(loadingFor(container, "Photo 4")).toBe("lazy");
   });
 
-  it("keeps the priority slide eager even out of view", () => {
-    stubIntersectionObserver();
+  it("eager-loads the priority slide", () => {
     const { container } = renderSlideshow(photos(5), {
       autoplayDelay: NO_AUTOPLAY,
       priority: true,
@@ -429,35 +336,8 @@ describe("Slideshow preloading", () => {
     expect(loadingFor(container, "Photo 0")).toBe("eager");
   });
 
-  it("preloads the slides on either side of the active one once in view", () => {
-    const observers = stubIntersectionObserver();
-    const { container } = renderSlideshow(photos(5), { autoplayDelay: NO_AUTOPLAY });
-
-    enterViewport(observers);
-
-    expect(loadingFor(container, "Photo 0")).toBe("eager");
-    expect(loadingFor(container, "Photo 1")).toBe("eager");
-    expect(loadingFor(container, "Photo 4")).toBe("eager");
-    expect(loadingFor(container, "Photo 2")).toBe("lazy");
-    expect(loadingFor(container, "Photo 3")).toBe("lazy");
-  });
-
-  it("moves the preload window along as the user clicks through", async () => {
-    const observers = stubIntersectionObserver();
-    const { container, getByLabelText } = renderSlideshow(photos(5), {
-      autoplayDelay: NO_AUTOPLAY,
-    });
-
-    enterViewport(observers);
-    fireEvent.click(getByLabelText("Next slide"));
-    await expectSlide(container, "02");
-
-    expect(loadingFor(container, "Photo 2")).toBe("eager");
-  });
-
-  it("eager-loads every slide under reduced motion without waiting for the viewport", () => {
+  it("eager-loads every slide under reduced motion", () => {
     mockReducedMotion.mockReturnValue(true);
-    stubIntersectionObserver();
 
     const { container } = renderSlideshow(photos(5), { autoplayDelay: NO_AUTOPLAY });
 

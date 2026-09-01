@@ -16,7 +16,21 @@ import type {
   SwiperModule,
 } from "swiper/types";
 
+import type { CopyrightPosition } from "../copyright-label/copyright-label";
+
 export type SwiperEffect = "slide" | "fade" | "cube" | "coverflow" | "flip" | "cards" | "creative";
+
+export interface SlideshowImage {
+  url: string;
+  alt: string;
+  copyright?: string;
+  copyrightSource?: string;
+  copyrightPosition?: CopyrightPosition;
+  focus?: string;
+  videoUrl?: string;
+  videoPoster?: string;
+  srcSet?: string;
+}
 
 export const SWIPER_FADE_EFFECT: FadeEffectOptions = {
   crossFade: true,
@@ -65,10 +79,3 @@ export const EFFECT_MODULES: Record<SwiperEffect, SwiperModule | undefined> = {
   cards: EffectCards,
   creative: EffectCreative,
 };
-
-const PRELOAD_RADIUS = 1;
-
-export function isNearActive(index: number, activeIndex: number, total: number): boolean {
-  const distance = Math.abs(index - activeIndex);
-  return Math.min(distance, total - distance) <= PRELOAD_RADIUS;
-}

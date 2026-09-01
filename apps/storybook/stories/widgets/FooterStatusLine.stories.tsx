@@ -44,7 +44,7 @@ export const Loading: Story = {
   args: { loading: true },
 };
 
-/** Without a label the line starts straight into its content. */
+/** Without a label the line starts straight into its content, as the trophy widget does. */
 export const Unlabelled: Story = {
   args: {
     label: undefined,

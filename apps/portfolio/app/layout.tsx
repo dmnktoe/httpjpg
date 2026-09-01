@@ -3,8 +3,6 @@ import "@httpjpg/ui/styles.css";
 import "@/lib/storyblok";
 import { env } from "@httpjpg/env";
 import {
-  ASCII_DIVIDER_WAVE,
-  AsciiArt,
   AudioPlayerProvider,
   Box,
   Footer,
@@ -12,6 +10,7 @@ import {
   ImagePreview,
   LazyMotionProvider,
   LightboxProvider,
+  Userbars,
 } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
@@ -29,6 +28,7 @@ import { PreviewNotification } from "@/components/ui/preview-notification";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AskWidget } from "@/components/widgets/ask-widget";
 import { BuildBadge } from "@/components/widgets/build-badge";
+import { CloudflareStatus } from "@/components/widgets/cloudflare-status";
 import { FooterStatus } from "@/components/widgets/footer-status";
 import { NowPlayingWidget } from "@/components/widgets/now-playing-widget";
 import { PSNCard } from "@/components/widgets/psn-card";
@@ -190,13 +190,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                         commitSha={env.NEXT_PUBLIC_COMMIT_SHA}
                       />
                     )}
-                    <AsciiArt
-                      label="signoff"
-                      css={{ my: "5", opacity: 0.3, fontSize: "xs", letterSpacing: "0.2em" }}
-                    >
-                      {ASCII_DIVIDER_WAVE}
-                    </AsciiArt>
+                    <CloudflareStatus />
                   </Box>
+                }
+                userbars={
+                  footerConfig.userbars.length > 0 ? (
+                    <Userbars items={footerConfig.userbars} />
+                  ) : undefined
                 }
               />
             </StoryblokProvider>

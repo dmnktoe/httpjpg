@@ -15,6 +15,7 @@ export type {
   SbContainerData,
   SbDividerData,
   SbFooterConfigData,
+  SbUserbarData,
   SbGridData,
   SbGridItemData,
   SbHeadlineData,

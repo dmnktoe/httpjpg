@@ -1,7 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
   "plugins": ["typescript", "react", "import", "jsx-a11y", "oxc"],
-  "jsPlugins": ["./tools/oxlint/panda-sort-properties.mjs"],
+  "jsPlugins": [
+    "./tools/oxlint/panda-sort-properties.mjs",
+    "./tools/oxlint/panda-no-token-var.mjs"
+  ],
   "categories": {
     "correctness": "error",
     "perf": "off",
@@ -24,7 +27,8 @@
     ],
     "react/react-in-jsx-scope": "off",
     "react-hooks/exhaustive-deps": "off",
-    "panda/sort-properties": "error"
+    "panda/sort-properties": "error",
+    "panda-tokens/no-token-var": "error"
   },
   "ignorePatterns": [
     "**/node_modules/**",

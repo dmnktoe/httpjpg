@@ -202,6 +202,39 @@ describe("getFooterConfig", () => {
       { src: "https://cdn/mac.png", alt: "from asset" },
     ]);
   });
+
+  it("does not link a userbar to / when the multilink has no destination", async () => {
+    setupGetStory(async () => ({
+      content: {
+        footer_config: [
+          {
+            userbars: [
+              {
+                image: { filename: "https://cdn/empty-object.png" },
+                link: {},
+              },
+              {
+                image: { filename: "https://cdn/empty-story.png" },
+                link: { linktype: "story" },
+              },
+              {
+                image: { filename: "https://cdn/home.png" },
+                link: { linktype: "story", cached_url: "/" },
+              },
+            ],
+          },
+        ],
+      },
+    }));
+
+    const footer = await getFooterConfig();
+
+    expect(footer.userbars).toEqual([
+      { src: "https://cdn/empty-object.png", alt: "userbar" },
+      { src: "https://cdn/empty-story.png", alt: "userbar" },
+      { src: "https://cdn/home.png", alt: "userbar", href: "/" },
+    ]);
+  });
 });
 
 describe("getSeoDefaults", () => {

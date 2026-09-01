@@ -20,8 +20,15 @@ describe("storyblokHref", () => {
     );
   });
 
+  it("returns an empty string when a story link has no destination", () => {
+    expect(storyblokHref({} as never)).toBe("");
+    expect(storyblokHref({ linktype: "story" } as never)).toBe("");
+    expect(storyblokHref({ linktype: "story", cached_url: "" } as never)).toBe("");
+  });
+
   it("normalises a story path to a leading slash", () => {
     expect(storyblokHref({ linktype: "story", cached_url: "work/foo" } as never)).toBe("/work/foo");
+    expect(storyblokHref({ linktype: "story", cached_url: "/" } as never)).toBe("/");
   });
 
   it("keeps an existing leading slash and appends an anchor", () => {

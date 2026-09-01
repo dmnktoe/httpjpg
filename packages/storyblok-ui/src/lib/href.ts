@@ -12,6 +12,9 @@ export function storyblokHref(link?: StoryblokLink): string {
     return url || "";
   }
   const path = cached_url || url || "";
+  if (!path) {
+    return "";
+  }
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
   return anchor ? `${cleanPath}#${anchor}` : cleanPath;
 }

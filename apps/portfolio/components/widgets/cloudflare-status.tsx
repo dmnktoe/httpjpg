@@ -38,7 +38,11 @@ export function CloudflareStatus() {
   );
 }
 
-function CloudflareStat({ children }: { children: string }) {
+interface CloudflareStatProps {
+  children: string;
+}
+
+function CloudflareStat({ children }: CloudflareStatProps) {
   return (
     <>
       <FooterStatusLineSeparator />

@@ -20,16 +20,13 @@ type Story = StoryObj<typeof meta>;
 /** Classic glossy lockup from `public/images/footer/cloudflare_logo.png`. */
 export const Playground: Story = {};
 
-/** How the live attribution line reads under the footer widgets. */
+const hideOnMobile = { display: { base: "none", md: "block" } } as const;
+
+/** How the live footer line reads: location, lockup, then analytics extras. */
 export const AttributionLine: Story = {
   render: () => (
     <Box css={{ display: "flex", flexDirection: "column", alignItems: "center", w: "32rem" }}>
       <FooterStatusLine href="https://www.cloudflare.com">
-        <FooterStatusLineText fixed dim>
-          backed & secured by
-        </FooterStatusLineText>
-        <CloudflareLogo />
-        <FooterStatusLineSeparator />
         <FooterStatusLineText fixed dim>
           FRA
         </FooterStatusLineText>
@@ -38,11 +35,13 @@ export const AttributionLine: Story = {
           DE
         </FooterStatusLineText>
         <FooterStatusLineSeparator />
-        <FooterStatusLineText fixed dim>
+        <CloudflareLogo />
+        <FooterStatusLineSeparator css={hideOnMobile} />
+        <FooterStatusLineText fixed dim css={hideOnMobile}>
           1.2K blocked
         </FooterStatusLineText>
-        <FooterStatusLineSeparator />
-        <FooterStatusLineText fixed dim>
+        <FooterStatusLineSeparator css={hideOnMobile} />
+        <FooterStatusLineText fixed dim css={hideOnMobile}>
           92% cached
         </FooterStatusLineText>
       </FooterStatusLine>

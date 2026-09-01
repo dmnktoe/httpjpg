@@ -65,6 +65,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const hideOnMobile = { display: { base: "none", md: "block" } } as const;
+
 /**
  * Default footer with background image
  */
@@ -109,11 +111,6 @@ export const WithWidgets: Story = {
         </Box>
         <FooterStatusLine href="https://www.cloudflare.com">
           <FooterStatusLineText fixed dim>
-            backed & secured by
-          </FooterStatusLineText>
-          <CloudflareLogo />
-          <FooterStatusLineSeparator />
-          <FooterStatusLineText fixed dim>
             FRA
           </FooterStatusLineText>
           <FooterStatusLineSeparator />
@@ -121,11 +118,13 @@ export const WithWidgets: Story = {
             DE
           </FooterStatusLineText>
           <FooterStatusLineSeparator />
-          <FooterStatusLineText fixed dim>
+          <CloudflareLogo />
+          <FooterStatusLineSeparator css={hideOnMobile} />
+          <FooterStatusLineText fixed dim css={hideOnMobile}>
             1.2K blocked
           </FooterStatusLineText>
-          <FooterStatusLineSeparator />
-          <FooterStatusLineText fixed dim>
+          <FooterStatusLineSeparator css={hideOnMobile} />
+          <FooterStatusLineText fixed dim css={hideOnMobile}>
             92% cached
           </FooterStatusLineText>
         </FooterStatusLine>

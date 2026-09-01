@@ -17,7 +17,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Official horizontal lockup. The wordmark inherits the page foreground. */
+/** Classic glossy lockup from `public/images/footer/cloudflare_logo.png`. */
 export const Playground: Story = {};
 
 /** How the live attribution line reads under the footer widgets. */

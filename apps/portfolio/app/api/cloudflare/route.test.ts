@@ -67,6 +67,8 @@ beforeEach(() => {
     requests: 1200,
     cachedRequests: 1104,
     threats: 48,
+    colo: "AMS",
+    country: "NL",
   });
   vi.spyOn(console, "warn").mockImplementation(() => {});
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -106,6 +108,21 @@ describe("GET /api/cloudflare", () => {
       cachedRatio: null,
     });
     expect(fetchCloudflareAnalytics).not.toHaveBeenCalled();
+  });
+
+  it("falls back to zone colo and country when CF headers are missing", async () => {
+    headerState.ray = null;
+    headerState.country = null;
+
+    const response = await GET(request);
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      colo: "AMS",
+      country: "NL",
+      threats: 48,
+      cachedRatio: 0.92,
+    });
   });
 
   it("skips GraphQL when the zone id is not 32 hex chars", async () => {

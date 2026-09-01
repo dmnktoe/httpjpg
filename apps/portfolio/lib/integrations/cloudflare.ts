@@ -5,7 +5,7 @@ const ZONE_ID = /^[a-f0-9]{32}$/i;
 const COLO = /^[A-Z]{3}$/;
 const COUNTRY = /^[A-Z]{2}$/;
 
-const ANALYTICS_QUERY = `query ZoneHttp($zoneTag: String!, $since: Date!) {
+const ANALYTICS_QUERY = `query ZoneHttp($zoneTag: String!, $since: Date!, $sinceTime: Time!) {
   viewer {
     zones(filter: { zoneTag: $zoneTag }) {
       httpRequests1dGroups(
@@ -20,6 +20,19 @@ const ANALYTICS_QUERY = `query ZoneHttp($zoneTag: String!, $since: Date!) {
           requests
           cachedRequests
           threats
+          countryMap {
+            clientCountryName
+            requests
+          }
+        }
+      }
+      colos: httpRequestsAdaptiveGroups(
+        limit: 1
+        orderBy: [count_DESC]
+        filter: { datetime_geq: $sinceTime }
+      ) {
+        dimensions {
+          coloCode
         }
       }
     }
@@ -35,6 +48,10 @@ export interface CloudflareAnalytics {
   requests: number;
   cachedRequests: number;
   threats: number;
+  /** Busiest eyeball colo in the window; used when CF-Ray is missing. */
+  colo: string | null;
+  /** Top client country that day; used when CF-IPCountry is missing. */
+  country: string | null;
 }
 
 export interface CloudflareStatusPayload {
@@ -81,8 +98,8 @@ export function cloudflareStatusPayload(
   analytics: CloudflareAnalytics | null,
 ): CloudflareStatusPayload {
   return {
-    colo: edge.colo,
-    country: edge.country,
+    colo: edge.colo ?? analytics?.colo ?? null,
+    country: edge.country ?? analytics?.country ?? null,
     threats: analytics && analytics.threats > 0 ? analytics.threats : null,
     cachedRatio: analytics ? cachedRatio(analytics.requests, analytics.cachedRequests) : null,
   };
@@ -95,6 +112,11 @@ export function cachedRatio(requests: number, cachedRequests: number): number | 
   return cachedRequests / requests;
 }
 
+interface GraphqlCountryRow {
+  clientCountryName?: string;
+  requests?: number;
+}
+
 interface GraphqlZone {
   httpRequests1dGroups?: Array<{
     dimensions?: { date?: string };
@@ -102,7 +124,11 @@ interface GraphqlZone {
       requests?: number;
       cachedRequests?: number;
       threats?: number;
+      countryMap?: GraphqlCountryRow[];
     };
+  }>;
+  colos?: Array<{
+    dimensions?: { coloCode?: string };
   }>;
 }
 
@@ -121,8 +147,35 @@ function utcDateDaysAgo(days: number): string {
   return date.toISOString().slice(0, 10);
 }
 
-function firstDaySum(zones: GraphqlZone[] | undefined): CloudflareAnalytics | null {
-  const groups = [...(zones?.[0]?.httpRequests1dGroups ?? [])].sort((a, b) =>
+function coloFromCode(value: string | null | undefined): string | null {
+  if (!value) {
+    return null;
+  }
+  const colo = value.trim().toUpperCase();
+  return COLO.test(colo) ? colo : null;
+}
+
+function topCountry(rows: GraphqlCountryRow[] | undefined): string | null {
+  if (!rows?.length) {
+    return null;
+  }
+  let best: { code: string; requests: number } | null = null;
+  for (const row of rows) {
+    const code = parseCfCountry(row.clientCountryName);
+    const requests = row.requests ?? 0;
+    if (!code || requests <= 0) {
+      continue;
+    }
+    if (!best || requests > best.requests) {
+      best = { code, requests };
+    }
+  }
+  return best?.code ?? null;
+}
+
+function analyticsFromGraphql(zones: GraphqlZone[] | undefined): CloudflareAnalytics | null {
+  const zone = zones?.[0];
+  const groups = [...(zone?.httpRequests1dGroups ?? [])].sort((a, b) =>
     (b.dimensions?.date ?? "").localeCompare(a.dimensions?.date ?? ""),
   );
   if (!groups.length) {
@@ -137,6 +190,8 @@ function firstDaySum(zones: GraphqlZone[] | undefined): CloudflareAnalytics | nu
       requests,
       cachedRequests: group.sum?.cachedRequests ?? 0,
       threats: group.sum?.threats ?? 0,
+      colo: coloFromCode(zone?.colos?.[0]?.dimensions?.coloCode),
+      country: topCountry(group.sum?.countryMap),
     };
   }
   return null;
@@ -159,7 +214,11 @@ export async function fetchCloudflareAnalytics(
     },
     body: JSON.stringify({
       query: ANALYTICS_QUERY,
-      variables: { zoneTag: zoneId, since: utcDateDaysAgo(2) },
+      variables: {
+        zoneTag: zoneId,
+        since: utcDateDaysAgo(2),
+        sinceTime: `${utcDateDaysAgo(2)}T00:00:00Z`,
+      },
     }),
     hint: "Check CLOUDFLARE_API_TOKEN (Zone Analytics Read) and CLOUDFLARE_ZONE_ID.",
   });
@@ -178,5 +237,5 @@ export async function fetchCloudflareAnalytics(
     return null;
   }
 
-  return firstDaySum(parsed.data.data?.viewer?.zones);
+  return analyticsFromGraphql(parsed.data.data?.viewer?.zones);
 }

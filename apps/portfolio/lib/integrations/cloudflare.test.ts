@@ -86,6 +86,29 @@ describe("cloudflareStatusPayload", () => {
     });
   });
 
+  it("fills colo and country from analytics when the request never hit Cloudflare", () => {
+    expect(
+      cloudflareStatusPayload(
+        { colo: null, country: null },
+        { requests: 1200, cachedRequests: 1104, threats: 48, colo: "FRA", country: "DE" },
+      ),
+    ).toEqual({
+      colo: "FRA",
+      country: "DE",
+      threats: 48,
+      cachedRatio: 0.92,
+    });
+  });
+
+  it("prefers the visitor edge over zone totals", () => {
+    expect(
+      cloudflareStatusPayload(
+        { colo: "SJC", country: "US" },
+        { requests: 1200, cachedRequests: 1104, threats: 48, colo: "FRA", country: "DE" },
+      ),
+    ).toMatchObject({ colo: "SJC", country: "US" });
+  });
+
   it("omits analytics fields when the GraphQL read did not land", () => {
     expect(cloudflareStatusPayload({ colo: "SJC", country: null }, null)).toEqual({
       colo: "SJC",
@@ -131,11 +154,15 @@ describe("fetchCloudflareAnalytics", () => {
       requests: 1200,
       cachedRequests: 1104,
       threats: 48,
+      colo: null,
+      country: null,
     });
 
     const body = JSON.parse(String(mockFetch.mock.calls[0]?.[1]?.body)) as { query: string };
     expect(body.query).toContain("dimensions");
     expect(body.query).toContain("date");
+    expect(body.query).toContain("countryMap");
+    expect(body.query).toContain("coloCode");
   });
 
   it("picks the newest day when the API returns groups out of order", async () => {
@@ -166,6 +193,47 @@ describe("fetchCloudflareAnalytics", () => {
       requests: 1200,
       cachedRequests: 1104,
       threats: 48,
+      colo: null,
+      country: null,
+    });
+  });
+
+  it("reads the busiest colo and country when the request has no CF headers", async () => {
+    mockFetch.mockResolvedValueOnce(
+      graphqlResponse({
+        data: {
+          viewer: {
+            zones: [
+              {
+                httpRequests1dGroups: [
+                  {
+                    dimensions: { date: "2026-08-31" },
+                    sum: {
+                      requests: 1200,
+                      cachedRequests: 1104,
+                      threats: 48,
+                      countryMap: [
+                        { clientCountryName: "T1", requests: 900 },
+                        { clientCountryName: "DE", requests: 200 },
+                        { clientCountryName: "US", requests: 80 },
+                      ],
+                    },
+                  },
+                ],
+                colos: [{ dimensions: { coloCode: "fra" } }],
+              },
+            ],
+          },
+        },
+      }),
+    );
+
+    await expect(fetchCloudflareAnalytics("token", "zone")).resolves.toEqual({
+      requests: 1200,
+      cachedRequests: 1104,
+      threats: 48,
+      colo: "FRA",
+      country: "DE",
     });
   });
 

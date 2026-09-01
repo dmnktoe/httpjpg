@@ -73,6 +73,28 @@ export const settingsBlocks: BlockDef[] = [
       copyright_text: field.text("Copyright Text"),
       footer_links: field.bloks("Footer Links", { whitelist: ["menu_link"] }),
       background_image: field.asset("Background Image", ["images"]),
+      userbars: field.bloks("Userbars", { whitelist: ["userbar"] }),
+    },
+  },
+  {
+    name: "userbar",
+    display_name: "Userbar",
+    group: "Settings",
+    icon: "block-image",
+    color: "#8b5cf6",
+    preview_field: "alt",
+    schema: {
+      image: field.asset("Image", ["images"], {
+        required: true,
+        description: "Classic 350×19 userbar. Displayed at native size, unsmoothed.",
+        tooltip: true,
+      }),
+      alt: field.text("Alt Text", {
+        translatable: true,
+        description: 'Falls back to the asset alt, then to "userbar".',
+        tooltip: true,
+      }),
+      link: field.multilink("Link"),
     },
   },
   {

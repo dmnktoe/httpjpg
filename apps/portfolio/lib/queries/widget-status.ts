@@ -27,6 +27,7 @@ export const WIDGET_MAX_AGE = {
   discogs: 900,
   psnTrophies: 300,
   x: 3600,
+  cloudflare: 900,
 } as const;
 
 /**

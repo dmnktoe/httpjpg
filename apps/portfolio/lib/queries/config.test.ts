@@ -158,6 +158,7 @@ describe("getFooterConfig", () => {
     setupGetStory(async () => ({ content: {} }));
     await expect(getFooterConfig()).resolves.toEqual({
       backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
+      userbars: [],
     });
   });
 
@@ -171,6 +172,19 @@ describe("getFooterConfig", () => {
               { label: "Imprint", link: { linktype: "story", cached_url: "imprint" } },
             ],
             background_image: { filename: "https://cdn/footer.png" },
+            userbars: [
+              {
+                image: { filename: "https://cdn/wav.png", alt: "wav" },
+                alt: ".WAV AUDIO FORMAT USER",
+                link: { linktype: "url", url: "https://example.com/wav" },
+              },
+              {
+                image: { filename: "https://cdn/mac.png", alt: "from asset" },
+              },
+              {
+                alt: "missing image",
+              },
+            ],
           },
         ],
       },
@@ -179,6 +193,47 @@ describe("getFooterConfig", () => {
     expect(footer.copyrightText).toBe("© 2026");
     expect(footer.backgroundImage).toBe("https://cdn/footer.png");
     expect(footer.footerLinks).toEqual([{ name: "Imprint", href: "/imprint", isExternal: false }]);
+    expect(footer.userbars).toEqual([
+      {
+        src: "https://cdn/wav.png",
+        alt: ".WAV AUDIO FORMAT USER",
+        href: "https://example.com/wav",
+      },
+      { src: "https://cdn/mac.png", alt: "from asset" },
+    ]);
+  });
+
+  it("does not link a userbar to / when the multilink has no destination", async () => {
+    setupGetStory(async () => ({
+      content: {
+        footer_config: [
+          {
+            userbars: [
+              {
+                image: { filename: "https://cdn/empty-object.png" },
+                link: {},
+              },
+              {
+                image: { filename: "https://cdn/empty-story.png" },
+                link: { linktype: "story" },
+              },
+              {
+                image: { filename: "https://cdn/home.png" },
+                link: { linktype: "story", cached_url: "/" },
+              },
+            ],
+          },
+        ],
+      },
+    }));
+
+    const footer = await getFooterConfig();
+
+    expect(footer.userbars).toEqual([
+      { src: "https://cdn/empty-object.png", alt: "userbar" },
+      { src: "https://cdn/empty-story.png", alt: "userbar" },
+      { src: "https://cdn/home.png", alt: "userbar", href: "/" },
+    ]);
   });
 });
 

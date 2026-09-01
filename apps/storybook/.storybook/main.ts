@@ -19,6 +19,8 @@ const config: StorybookConfig = {
     name: "@storybook/react-vite",
     options: {},
   },
+  // Same public files the site serves, so `/images/footer/cloudflare_logo.png` resolves.
+  staticDirs: [path.resolve(__dirname, "../../portfolio/public")],
   core: {
     disableTelemetry: true,
   },

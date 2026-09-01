@@ -64,6 +64,16 @@ describe("Footer", () => {
     expect(screen.getByTestId("widget")).toBeInTheDocument();
   });
 
+  it("renders userbars below the widgets slot", () => {
+    render(
+      <Footer
+        widgets={<div data-testid="widget">Widget</div>}
+        userbars={<div data-testid="userbars">Userbars</div>}
+      />,
+    );
+    expect(screen.getByTestId("userbars")).toBeInTheDocument();
+  });
+
   it("renders custom children instead of default layout", () => {
     render(<Footer>Custom footer content</Footer>);
     expect(screen.getByText("Custom footer content")).toBeInTheDocument();

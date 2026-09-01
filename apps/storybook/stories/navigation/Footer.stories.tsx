@@ -1,4 +1,15 @@
-import { Box, Footer, Link, Paragraph } from "@httpjpg/ui";
+import {
+  ASCII_DIVIDER_WAVE,
+  AsciiArt,
+  Box,
+  CloudflareLogo,
+  Footer,
+  FooterStatusLine,
+  FooterStatusLineSeparator,
+  FooterStatusLineText,
+  Link,
+  Paragraph,
+} from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
 /**
@@ -27,6 +38,10 @@ const meta = {
     widgets: {
       control: false,
       description: "Widget area content (badges, status, etc.)",
+    },
+    userbars: {
+      control: false,
+      description: "Classic 350×19 userbars, shown below the wave divider",
     },
     showVersion: {
       control: "boolean",
@@ -92,6 +107,34 @@ export const WithWidgets: Story = {
         <Box css={{ opacity: 0.8, fontFamily: "mono", fontSize: "xs" }}>
           discord: 🟢 <span style={{ color: "#22C55E" }}>online</span> · Playing Spotify
         </Box>
+        <FooterStatusLine href="https://www.cloudflare.com">
+          <FooterStatusLineText fixed dim>
+            backed & secured by
+          </FooterStatusLineText>
+          <CloudflareLogo />
+          <FooterStatusLineSeparator />
+          <FooterStatusLineText fixed dim>
+            FRA
+          </FooterStatusLineText>
+          <FooterStatusLineSeparator />
+          <FooterStatusLineText fixed dim>
+            DE
+          </FooterStatusLineText>
+          <FooterStatusLineSeparator />
+          <FooterStatusLineText fixed dim>
+            1.2K blocked
+          </FooterStatusLineText>
+          <FooterStatusLineSeparator />
+          <FooterStatusLineText fixed dim>
+            92% cached
+          </FooterStatusLineText>
+        </FooterStatusLine>
+        <AsciiArt
+          label="signoff"
+          css={{ my: "5", opacity: 0.3, fontSize: "xs", letterSpacing: "0.2em" }}
+        >
+          {ASCII_DIVIDER_WAVE}
+        </AsciiArt>
       </Box>
     ),
     showVersion: true,

@@ -2,7 +2,8 @@ import { captureServerException } from "@httpjpg/observability/sentry/server.ts"
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { CACHE_TAGS } from "@httpjpg/storyblok-next";
 import { type MenuLink, type SbConfigStory, storyblokHref } from "@httpjpg/storyblok-ui";
-import { isExternalLink, type NavItem } from "@httpjpg/ui";
+import type { SbUserbarData } from "@httpjpg/storyblok-utils";
+import { isExternalLink, type NavItem, type UserbarItem } from "@httpjpg/ui";
 import { unstable_cache } from "next/cache";
 import { draftMode } from "next/headers";
 
@@ -56,10 +57,11 @@ export async function getFooterConfig(): Promise<{
   copyrightText?: string;
   footerLinks?: NavItem[];
   backgroundImage?: string;
+  userbars: UserbarItem[];
 }> {
   const footerConfig = (await getConfig())?.footer_config?.[0];
   if (!footerConfig) {
-    return { backgroundImage: "https://www.httpjpg.com/images/footer_bg.png" };
+    return { backgroundImage: "https://www.httpjpg.com/images/footer_bg.png", userbars: [] };
   }
   return {
     copyrightText: footerConfig.copyright_text,
@@ -67,7 +69,29 @@ export async function getFooterConfig(): Promise<{
       ?.map(toNavItem)
       .filter((item): item is NavItem => item !== null),
     backgroundImage: footerConfig.background_image?.filename,
+    userbars: toUserbars(footerConfig.userbars),
   };
+}
+
+function toUserbars(bloks: SbUserbarData[] | undefined): UserbarItem[] {
+  if (!bloks?.length) {
+    return [];
+  }
+  const items: UserbarItem[] = [];
+  for (const blok of bloks) {
+    const image = blok.image;
+    const src = image?.filename;
+    if (!src) {
+      continue;
+    }
+    const href = storyblokHref(blok.link);
+    items.push({
+      src,
+      alt: blok.alt || image.alt || "userbar",
+      ...(href ? { href } : {}),
+    });
+  }
+  return items;
 }
 
 /**

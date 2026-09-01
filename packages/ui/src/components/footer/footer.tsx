@@ -24,6 +24,8 @@ export interface FooterProps {
   showCookieSettings?: boolean;
   cookiePolicyHref?: string;
   widgets?: ReactNode;
+  /** Own section below the widgets (Cloudflare line + wave signoff). */
+  userbars?: ReactNode;
   showVersion?: boolean;
   version?: string;
   versionHref?: string;
@@ -42,6 +44,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       showCookieSettings = false,
       cookiePolicyHref,
       widgets,
+      userbars,
       showVersion = false,
       version,
       versionHref,
@@ -147,13 +150,15 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
 
               {copyrightText && <Box as="span">{copyrightText}</Box>}
 
-              {(widgets || copyrightText || showVersion) && (
+              {(widgets || userbars || copyrightText || showVersion) && (
                 <Box as="span" css={{ my: "6" }}>
                   {ASCII_DIVIDER_STARS}
                 </Box>
               )}
 
               {widgets && <Box css={{ w: "full" }}>{widgets}</Box>}
+
+              {userbars && <Box css={{ w: "full" }}>{userbars}</Box>}
 
               {showVersion && (
                 <Box

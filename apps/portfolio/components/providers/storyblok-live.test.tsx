@@ -28,6 +28,7 @@ const story = { content: { component: "page" } } as unknown as ISbStoryData;
 beforeEach(() => {
   vi.clearAllMocks();
   document.documentElement.removeAttribute("data-theme");
+  document.documentElement.removeAttribute("data-work-accent");
 });
 
 describe("StoryblokLive", () => {
@@ -56,6 +57,19 @@ describe("StoryblokLive", () => {
       expect(screen.getByTestId("blok")).toHaveTextContent("page");
     });
     expect(document.documentElement.dataset.theme).toBe("light");
+  });
+
+  it("syncs the work accent on a work story", async () => {
+    useStoryblokState.mockReturnValue({
+      content: { component: "work", accentColor: "#ec6839" },
+    });
+
+    render(<StoryblokLive story={story} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("blok")).toHaveTextContent("work");
+    });
+    expect(document.documentElement.dataset.workAccent).toBe("#EC6839");
   });
 
   it("syncs the dark theme for dark stories", async () => {

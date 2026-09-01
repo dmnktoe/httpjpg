@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
 import { NavLink } from "../nav-link/nav-link";
+import { WorkAccentSwatch } from "../work-accent-swatch/work-accent-swatch";
 import type { WorkItem } from "./header";
 
 interface MobileMenuWorkSectionProps {
@@ -55,6 +56,7 @@ export function MobileMenuWorkSection({
                     {year}{" "}
                   </Box>
                 )}
+                <WorkAccentSwatch color={work.accentColor} />
                 {work.title}
               </NavLink>
             );

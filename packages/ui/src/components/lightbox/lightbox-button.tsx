@@ -34,7 +34,7 @@ export function LightboxButton({ children, css: cssProp, ...props }: LightboxBut
         fontFamily: "mono",
         fontSize: "sm",
         lineHeight: 1,
-        color: "pageFg",
+        color: "var(--work-accent, {colors.pageFg})",
         whiteSpace: "nowrap",
         userSelect: "none",
         opacity: 0.7,
@@ -44,7 +44,7 @@ export function LightboxButton({ children, css: cssProp, ...props }: LightboxBut
         _focusVisible: {
           opacity: 1,
           outline: "2px solid",
-          outlineColor: "primary.500",
+          outlineColor: "var(--work-accent, {colors.primary.500})",
           outlineOffset: "2px",
         },
         ...cssProp,

@@ -53,7 +53,9 @@ describe("MouseTrail", () => {
 
     moveMouse(10, 10);
 
-    expect(screen.getByText("✧").style.color).toBe(token.var("colors.pageFg"));
+    expect(screen.getByText("✧").style.color).toBe(
+      `var(--work-accent, ${token.var("colors.pageFg")})`,
+    );
   });
 
   it("applies the configured color and size to each particle", () => {

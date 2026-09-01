@@ -30,6 +30,8 @@ export interface WorkItem {
   isExternal?: boolean;
   externalUrl?: string;
   date?: string;
+  /** Work page Project Accent Color (`#RGB` / `#RRGGBB`). */
+  accentColor?: string;
 }
 
 export interface HeaderProps {

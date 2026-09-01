@@ -1,3 +1,4 @@
+import { parseWorkAccent } from "../../lib/work-accent";
 import { Box } from "../box/box";
 import { Icon } from "../icon/icon";
 import type { WorkCardVariant } from "./work-card";
@@ -7,11 +8,14 @@ export function WorkCardTitle({
   title,
   variant,
   tags,
+  accentColor,
 }: {
   title: string;
   variant: WorkCardVariant;
   tags?: string[];
+  accentColor?: string;
 }) {
+  const accent = parseWorkAccent(accentColor);
   return (
     <Box
       css={{
@@ -45,6 +49,7 @@ export function WorkCardTitle({
         <Icon
           name="arrow-up"
           size="1.25em"
+          style={accent ? { color: accent.hex } : undefined}
           css={{
             display: "inline-block",
             my: "-0.625em",

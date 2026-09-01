@@ -238,6 +238,22 @@ describe("getRecentWork", () => {
     expect(result.projectsWork[0]?.title).toBe("Fallback Name");
   });
 
+  it("forwards the work page accent colour", async () => {
+    setupRecentWork(
+      [
+        workStory({
+          uuid: "tint",
+          slug: "tinted",
+          full_slug: "work/tinted",
+          content: { title: "Tinted", accentColor: "#ec6839" },
+        }),
+      ],
+      [{ ...workStory({ uuid: "tint", slug: "tinted" }), first_published_at: "2026-01-01" }],
+    );
+    const result = await getRecentWork();
+    expect(result.projectsWork[0]?.accentColor).toBe("#ec6839");
+  });
+
   it("returns empty arrays and logs when the API throws", async () => {
     mockGetStoryblokApi.mockReturnValue({
       getStories: vi.fn(async () => {

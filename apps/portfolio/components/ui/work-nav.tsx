@@ -1,13 +1,16 @@
-import { Box, Link } from "@httpjpg/ui";
+import { Box, Link, parseWorkAccent } from "@httpjpg/ui";
 
 import type { AdjacentWork } from "@/lib/queries/work";
 
 export interface WorkNavProps {
   prev?: AdjacentWork;
   next?: AdjacentWork;
+  accent?: string | null;
 }
 
-export function WorkNav({ prev, next }: WorkNavProps) {
+export function WorkNav({ prev, next, accent }: WorkNavProps) {
+  const parsed = parseWorkAccent(accent);
+  const linkColor = parsed ? { color: parsed.hex } : undefined;
   if (!prev && !next) {
     return null;
   }
@@ -31,6 +34,7 @@ export function WorkNav({ prev, next }: WorkNavProps) {
         {prev && (
           <Link
             href={`/work/${prev.slug}`}
+            style={linkColor}
             css={{
               display: "block",
               color: "primary.500",
@@ -52,6 +56,7 @@ export function WorkNav({ prev, next }: WorkNavProps) {
         {next && (
           <Link
             href={`/work/${next.slug}`}
+            style={linkColor}
             css={{
               display: "block",
               color: "primary.500",

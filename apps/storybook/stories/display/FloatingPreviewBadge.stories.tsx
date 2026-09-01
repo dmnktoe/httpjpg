@@ -1,5 +1,6 @@
 import { Box, FloatingPreviewBadge } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import type { CSSProperties, ReactNode } from "react";
 
 const meta = {
   title: "Display/FloatingPreviewBadge",
@@ -27,7 +28,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const Stage = ({ children }: { children: React.ReactNode }) => (
+const Stage = ({ children }: { children: ReactNode }) => (
   <Box
     css={{
       position: "relative",
@@ -65,5 +66,32 @@ export const CustomLabel: Story = {
     <Stage>
       <FloatingPreviewBadge {...args} />
     </Stage>
+  ),
+};
+
+/**
+ * On a work page the badge inherits `--work-accent*` from `html`, the same
+ * tokens that tint the iOS liquid-glass preview button.
+ */
+export const WorkAccent: Story = {
+  args: {
+    href: "https://example.com",
+    label: "preview",
+  },
+  render: (args) => (
+    <Box
+      style={
+        {
+          "--work-accent": "#EC6839",
+          "--work-on-accent": "#ffffff",
+          "--work-accent-fill": "rgba(236, 104, 57, 0.62)",
+          "--work-accent-fill-hover": "rgba(236, 104, 57, 0.78)",
+        } as CSSProperties
+      }
+    >
+      <Stage>
+        <FloatingPreviewBadge {...args} />
+      </Stage>
+    </Box>
   ),
 };

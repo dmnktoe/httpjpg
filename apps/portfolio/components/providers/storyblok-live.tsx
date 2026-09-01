@@ -33,11 +33,17 @@ export function StoryblokLive({ story: initialStory }: StoryblokLiveProps) {
     return null;
   }
 
-  const theme = (story.content as { isDark?: boolean })?.isDark ? "dark" : "light";
+  const content = story.content as {
+    isDark?: boolean;
+    component?: string;
+    accentColor?: string;
+  };
+  const theme = content.isDark ? "dark" : "light";
+  const accent = content.component === "work" ? content.accentColor : null;
 
   return (
     <>
-      <ThemeSync theme={theme} />
+      <ThemeSync theme={theme} accent={accent} />
       {hasMounted ? <StoryblokComponent blok={story.content} /> : null}
     </>
   );

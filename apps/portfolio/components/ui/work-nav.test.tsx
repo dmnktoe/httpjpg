@@ -34,6 +34,19 @@ describe("WorkNav", () => {
     expect(link).toHaveTextContent("next");
   });
 
+  it("tints neighbour links with the current work accent", () => {
+    render(
+      <WorkNav
+        prev={{ slug: "alpha", title: "Alpha" }}
+        next={{ slug: "omega", title: "Omega" }}
+        accent="#ec6839"
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: /Alpha/ })).toHaveStyle({ color: "rgb(236, 104, 57)" });
+    expect(screen.getByRole("link", { name: /Omega/ })).toHaveStyle({ color: "rgb(236, 104, 57)" });
+  });
+
   it("renders both neighbours when provided", () => {
     render(
       <WorkNav prev={{ slug: "alpha", title: "Alpha" }} next={{ slug: "omega", title: "Omega" }} />,

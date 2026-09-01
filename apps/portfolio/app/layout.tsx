@@ -12,12 +12,14 @@ import {
   ImagePreview,
   LazyMotionProvider,
   LightboxProvider,
+  parseWorkAccent,
   Userbars,
+  workAccentCssVars,
 } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import type { PropsWithChildren } from "react";
+import type { CSSProperties, PropsWithChildren } from "react";
 
 import { ConsentGate } from "@/components/providers/consent-gate";
 import { ConsentProvider } from "@/components/providers/consent-provider";
@@ -39,7 +41,7 @@ import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
 import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
 import { isStoryblokEditor } from "@/lib/is-storyblok-editor";
 import { htmlLangForPath } from "@/lib/locale";
-import { getPageTheme } from "@/lib/page-theme";
+import { getPageAccent, getPageTheme } from "@/lib/page-theme";
 import {
   getAuthor,
   getFooterConfig,
@@ -90,7 +92,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const theme = await getPageTheme();
+  const [theme, pageAccent] = await Promise.all([getPageTheme(), getPageAccent()]);
+  const workAccent = parseWorkAccent(pageAccent);
+  const workAccentStyle = workAccentCssVars(workAccent, theme === "dark") as
+    | CSSProperties
+    | undefined;
   const inStoryblokEditor = await isStoryblokEditor();
   const navigation = await getNavigation();
   const footerConfig = await getFooterConfig();
@@ -109,7 +115,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const htmlLang = htmlLangForPath(pathname, site.htmlLang);
 
   return (
-    <html lang={htmlLang} data-theme={theme}>
+    <html
+      lang={htmlLang}
+      data-theme={theme}
+      data-work-accent={workAccent?.hex}
+      style={workAccentStyle}
+    >
       <body style={{ margin: 0, padding: 0 }}>
         {author && (
           <JsonLd

@@ -1,4 +1,5 @@
 import { act, render, screen } from "@testing-library/react";
+import { token } from "styled-system/tokens";
 
 import { MouseTrail } from "./mouse-trail";
 
@@ -52,7 +53,7 @@ describe("MouseTrail", () => {
 
     moveMouse(10, 10);
 
-    expect(screen.getByText("✧").style.color).toBe("var(--colors-page-fg)");
+    expect(screen.getByText("✧").style.color).toBe(token.var("colors.pageFg"));
   });
 
   it("applies the configured color and size to each particle", () => {

@@ -35,7 +35,7 @@ const Stage = ({ children }: { children: React.ReactNode }) => (
       height: "320px",
       backgroundColor: "neutral.100",
       backgroundImage:
-        "linear-gradient(45deg, var(--colors-neutral-200) 25%, transparent 25%), linear-gradient(-45deg, var(--colors-neutral-200) 25%, transparent 25%)",
+        "linear-gradient(45deg, {colors.neutral.200} 25%, transparent 25%), linear-gradient(-45deg, {colors.neutral.200} 25%, transparent 25%)",
       backgroundSize: "24px 24px",
       backgroundPosition: "0 0, 0 12px",
     }}

@@ -2,6 +2,7 @@
 
 import { useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { token } from "styled-system/tokens";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
@@ -27,7 +28,7 @@ export function MouseTrail({
   count = 20,
   lifetime = 1000,
   size = "24px",
-  color = "var(--colors-page-fg)",
+  color = token.var("colors.pageFg"),
   css: cssProp,
 }: MouseTrailProps) {
   const [particles, setParticles] = useState<TrailParticle[]>([]);

@@ -27,7 +27,9 @@ export function ConsentPlaceholder({ vendor, height = "400px", message }: Consen
         fontSize: "sm",
         textAlign: "center",
         whiteSpace: "pre-line",
-        background: "var(--colors-page-muted-bg, rgba(127,127,127,0.06))",
+        // Theme-neutral tint: it has to read as "inert" on both pageBg values,
+        // and no token sits between them.
+        backgroundColor: "rgba(127,127,127,0.06)",
         border: "2px dashed",
         borderColor: "pageBorder",
         borderRadius: "sm",

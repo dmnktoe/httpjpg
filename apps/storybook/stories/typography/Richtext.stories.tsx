@@ -3,6 +3,7 @@ import { StoryblokRichText, type StoryblokRichTextProps } from "@httpjpg/storybl
 type RichtextData = StoryblokRichTextProps["data"];
 import { Box } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { token } from "styled-system/tokens";
 
 import { MOCK_RICHTEXT } from "../shared/storybook-fixtures";
 
@@ -111,7 +112,7 @@ export const AccentColor: Story = {
   args: {
     data: MOCK_RICHTEXT.article as unknown as RichtextData,
     maxWidth: "65ch",
-    color: "var(--colors-primary-500)",
+    color: token.var("colors.primary.500"),
   },
   render: (args) => (
     <Box css={{ p: "6", bg: "pageBg" }}>

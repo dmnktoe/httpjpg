@@ -110,11 +110,6 @@ export const WithWidgets: Story = {
           discord: 🟢 <span style={{ color: "#22C55E" }}>online</span> · Playing Spotify
         </Box>
         <FooterStatusLine href="https://www.cloudflare.com">
-          <FooterStatusLineText fixed dim css={hideOnMobile}>
-            backed & secured by
-          </FooterStatusLineText>
-          <CloudflareLogo />
-          <FooterStatusLineSeparator />
           <FooterStatusLineText fixed dim>
             FRA
           </FooterStatusLineText>
@@ -122,6 +117,8 @@ export const WithWidgets: Story = {
           <FooterStatusLineText fixed dim>
             DE
           </FooterStatusLineText>
+          <FooterStatusLineSeparator />
+          <CloudflareLogo />
           <FooterStatusLineSeparator css={hideOnMobile} />
           <FooterStatusLineText fixed dim css={hideOnMobile}>
             1.2K blocked

@@ -22,16 +22,11 @@ export const Playground: Story = {};
 
 const hideOnMobile = { display: { base: "none", md: "block" } } as const;
 
-/** How the live attribution line reads under the footer widgets. */
+/** How the live footer line reads: location, lockup, then analytics extras. */
 export const AttributionLine: Story = {
   render: () => (
     <Box css={{ display: "flex", flexDirection: "column", alignItems: "center", w: "32rem" }}>
       <FooterStatusLine href="https://www.cloudflare.com">
-        <FooterStatusLineText fixed dim css={hideOnMobile}>
-          backed & secured by
-        </FooterStatusLineText>
-        <CloudflareLogo />
-        <FooterStatusLineSeparator />
         <FooterStatusLineText fixed dim>
           FRA
         </FooterStatusLineText>
@@ -39,6 +34,8 @@ export const AttributionLine: Story = {
         <FooterStatusLineText fixed dim>
           DE
         </FooterStatusLineText>
+        <FooterStatusLineSeparator />
+        <CloudflareLogo />
         <FooterStatusLineSeparator css={hideOnMobile} />
         <FooterStatusLineText fixed dim css={hideOnMobile}>
           1.2K blocked

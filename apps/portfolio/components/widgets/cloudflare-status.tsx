@@ -12,25 +12,26 @@ import { useWidgetData } from "@/lib/use-widget-data";
 
 const CLOUDFLARE_HREF = "https://www.cloudflare.com";
 
-/** Drop the long label and analytics extras below `md` so the lockup + colo still fit. */
+/** Threat / cache extras drop below `md` so colo, country, and the lockup still fit. */
 const hideOnMobile = { display: { base: "none", md: "block" } } as const;
 
 /**
  * Theme-matched footer line under the live widgets. The lockup is always on;
- * colo, country, blocked threats, and cache ratio append once /api/cloudflare
- * lands. The whole row links out to Cloudflare.
+ * colo and country sit to its left, blocked threats and cache ratio to its
+ * right once /api/cloudflare lands. The whole row links out to Cloudflare.
  */
 export function CloudflareStatus() {
   const { data } = useWidgetData<CloudflareStatusPayload>("/api/cloudflare");
+  const hasLocation = Boolean(data?.colo || data?.country);
 
   return (
     <FooterStatusLine href={CLOUDFLARE_HREF}>
-      <FooterStatusLineText fixed dim css={hideOnMobile}>
-        backed & secured by
-      </FooterStatusLineText>
+      {data?.colo && <CloudflareStat separator={false}>{data.colo}</CloudflareStat>}
+      {data?.country && (
+        <CloudflareStat separator={Boolean(data.colo)}>{data.country}</CloudflareStat>
+      )}
+      {hasLocation && <FooterStatusLineSeparator />}
       <CloudflareLogo />
-      {data?.colo && <CloudflareStat>{data.colo}</CloudflareStat>}
-      {data?.country && <CloudflareStat>{data.country}</CloudflareStat>}
       {data?.threats ? (
         <CloudflareStat hideOnMobile>
           {`${formatCompactCount(data.threats)} blocked`}
@@ -48,14 +49,16 @@ export function CloudflareStatus() {
 interface CloudflareStatProps {
   children: string;
   hideOnMobile?: boolean;
+  /** Leading `·`. Off for the first field so the line does not start with a mark. */
+  separator?: boolean;
 }
 
-function CloudflareStat({ children, hideOnMobile: hide }: CloudflareStatProps) {
+function CloudflareStat({ children, hideOnMobile: hide, separator = true }: CloudflareStatProps) {
   const css = hide ? hideOnMobile : undefined;
 
   return (
     <>
-      <FooterStatusLineSeparator css={css} />
+      {separator && <FooterStatusLineSeparator css={css} />}
       <FooterStatusLineText fixed dim css={css}>
         {children}
       </FooterStatusLineText>

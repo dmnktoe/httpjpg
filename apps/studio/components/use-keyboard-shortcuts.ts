@@ -4,11 +4,10 @@ import { useEffect } from "react";
 
 import {
   type BuilderItem,
-  clamp,
-  createItemId,
+  duplicateItem,
   effectiveColumns,
-  effectiveW,
   type GridSettings,
+  nudgeItem,
   type Viewport,
 } from "./lib";
 
@@ -64,13 +63,7 @@ export function useKeyboardShortcuts({
 
       if (mod && (e.key === "d" || e.key === "D")) {
         e.preventDefault();
-        const dup: BuilderItem = {
-          ...item,
-          id: createItemId(),
-          data: { ...item.data },
-          x: clamp(item.x + 1, 0, cols - effectiveW(item, viewport)),
-          y: item.y + 1,
-        };
+        const dup = duplicateItem(item, viewport, cols);
         setItems((prev) => [...prev, dup]);
         setSelectedId(dup.id);
         return;
@@ -93,17 +86,8 @@ export function useKeyboardShortcuts({
       else return;
       e.preventDefault();
 
-      const w = effectiveW(item, viewport);
       setItems((prev) =>
-        prev.map((it) =>
-          it.id === selectedId
-            ? {
-                ...it,
-                x: clamp(it.x + dx, 0, Math.max(0, cols - w)),
-                y: Math.max(0, it.y + dy),
-              }
-            : it,
-        ),
+        prev.map((it) => (it.id === selectedId ? nudgeItem(it, viewport, cols, dx, dy) : it)),
       );
     };
 

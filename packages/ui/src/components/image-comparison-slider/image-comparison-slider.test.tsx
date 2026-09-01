@@ -68,6 +68,10 @@ describe("positionFromClient", () => {
     expect(positionFromClient(-40, 0, FRAME, "horizontal")).toBe(0);
     expect(positionFromClient(400, 0, FRAME, "horizontal")).toBe(100);
   });
+
+  it("returns the default when the frame has no size", () => {
+    expect(positionFromClient(10, 10, { ...FRAME, width: 0, height: 0 }, "horizontal")).toBe(50);
+  });
 });
 
 describe("ImageComparisonSlider", () => {

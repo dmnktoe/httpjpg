@@ -123,6 +123,27 @@ export function patchPosition(viewport: Viewport, x: number, y: number): Partial
   return { x, y };
 }
 
+export function nudgeItem(
+  item: BuilderItem,
+  viewport: Viewport,
+  cols: number,
+  dx: number,
+  dy: number,
+): BuilderItem {
+  const w = effectiveW(item, viewport);
+  const x = clamp(effectiveX(item, viewport) + dx, 0, Math.max(0, cols - w));
+  const y = Math.max(0, effectiveY(item, viewport) + dy);
+  return { ...item, ...patchPosition(viewport, x, y) };
+}
+
+export function duplicateItem(item: BuilderItem, viewport: Viewport, cols: number): BuilderItem {
+  return {
+    ...nudgeItem(item, viewport, cols, 1, 1),
+    id: createItemId(),
+    data: { ...item.data },
+  };
+}
+
 export function effectiveHidden(item: BuilderItem, viewport: Viewport): boolean {
   if (viewport === "lg") return Boolean(item.hiddenLg);
   if (viewport === "md") return Boolean(item.hiddenMd);
@@ -217,10 +238,10 @@ export interface ExportedGrid {
 interface ExportedGridItem {
   component: "grid_item";
   _uid: string;
-  colStart: number;
+  colStart?: number;
   colStartMd?: number;
   colStartLg?: number;
-  rowStart: number;
+  rowStart?: number;
   rowStartMd?: number;
   rowStartLg?: number;
   colSpan: string;

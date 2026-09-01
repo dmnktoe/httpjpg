@@ -65,6 +65,31 @@ function streamedHtmlResponse(head: string, tailBytes: number): Response {
   } as unknown as Response;
 }
 
+function streamedBinaryResponse(bytes: Uint8Array, extraBytes = 0): Response {
+  const chunks = [bytes];
+  if (extraBytes > 0) {
+    chunks.push(new Uint8Array(extraBytes));
+  }
+  let index = 0;
+
+  return {
+    ok: true,
+    status: 200,
+    url: "https://example.com/favicon.ico",
+    headers: new Headers({ "content-type": "application/octet-stream" }),
+    body: {
+      getReader: () => ({
+        read: async () =>
+          index < chunks.length ? { done: false, value: chunks[index++] } : { done: true },
+        cancel: async () => undefined,
+      }),
+    },
+    arrayBuffer: async () => {
+      throw new Error("should stream instead of buffering");
+    },
+  } as unknown as Response;
+}
+
 function notFoundResponse(url = "https://example.com/favicon.ico"): Response {
   return {
     ok: false,
@@ -378,6 +403,25 @@ describe("fetchFavicon", () => {
     } as unknown as Response);
 
     await expect(fetchFavicon("https://example.com/")).resolves.toMatchObject({ ok: false });
+  });
+
+  it("stops reading an icon that exceeds the byte cap without a content-length", async () => {
+    mockFetch
+      .mockResolvedValueOnce(htmlResponse("<head><title>x</title></head>"))
+      .mockResolvedValueOnce(streamedBinaryResponse(ICO, 600 * 1024));
+
+    await expect(fetchFavicon("https://example.com/")).resolves.toMatchObject({ ok: false });
+  });
+
+  it("streams an icon body instead of buffering it whole", async () => {
+    mockFetch
+      .mockResolvedValueOnce(htmlResponse("<head><title>x</title></head>"))
+      .mockResolvedValueOnce(streamedBinaryResponse(ICO));
+
+    await expect(fetchFavicon("https://example.com/")).resolves.toMatchObject({
+      ok: true,
+      contentType: "image/x-icon",
+    });
   });
 
   it("survives a network failure on the page fetch", async () => {

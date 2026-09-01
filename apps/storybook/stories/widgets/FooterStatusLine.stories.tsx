@@ -131,7 +131,6 @@ export const Stacked: Story = {
       </FooterStatusLine>
       <FooterStatusLine label="discogs" loading />
       <FooterStatusLine label="x" loading />
-      <FooterStatusLine label="psn" loading />
     </Box>
   ),
 };

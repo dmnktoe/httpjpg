@@ -4,6 +4,64 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.0](https://github.com/dmnktoe/httpjpg/compare/v2.8.0...v2.9.0) (2026-09-01)
+
+
+### Added
+
+* add footer userbars from Storyblok and a Cloudflare line ([#401](https://github.com/dmnktoe/httpjpg/issues/401)) ([1181a56](https://github.com/dmnktoe/httpjpg/commit/1181a56dc0c4d657af1cac110a2e604404e282ac))
+* **portfolio:** EN | DE language picker on the CV page ([#365](https://github.com/dmnktoe/httpjpg/issues/365)) ([de136e7](https://github.com/dmnktoe/httpjpg/commit/de136e7c17fc54c2a49d10e76aba8b95113c0a34))
+* **ui:** ASCII brutalist image comparison slider ([#358](https://github.com/dmnktoe/httpjpg/issues/358)) ([752a18e](https://github.com/dmnktoe/httpjpg/commit/752a18e202d7734918597465437e1a12b98ef4e6))
+* **ui:** tint work chrome with the project accent color ([#405](https://github.com/dmnktoe/httpjpg/issues/405)) ([be50265](https://github.com/dmnktoe/httpjpg/commit/be50265cdde1f5f49b40f940d3a46d3c11d726b1))
+
+
+### Fixed
+
+* **api:** raise shared rate-limit budget to clear first-load bursts ([#383](https://github.com/dmnktoe/httpjpg/issues/383)) ([40305e9](https://github.com/dmnktoe/httpjpg/commit/40305e9340d9d7176bc47fa2795d1f93107c559f))
+* **portfolio:** add psn prefix label to trophy footer widget ([#398](https://github.com/dmnktoe/httpjpg/issues/398)) ([3c27a78](https://github.com/dmnktoe/httpjpg/commit/3c27a78d2c9431597c418e8e261e7903baa45e2b))
+* **portfolio:** drop Cloudflare label and center the lockup ([#404](https://github.com/dmnktoe/httpjpg/issues/404)) ([215d08b](https://github.com/dmnktoe/httpjpg/commit/215d08ba87309079799bdd064879f2696b4dc320))
+* **portfolio:** restore trophy footer sprite size ([#381](https://github.com/dmnktoe/httpjpg/issues/381)) ([832676b](https://github.com/dmnktoe/httpjpg/commit/832676b65578f6744c47e2f311edccb2ee833b73))
+* **ui:** apply Storyblok grid alignment as real CSS ([#368](https://github.com/dmnktoe/httpjpg/issues/368)) ([0658ec0](https://github.com/dmnktoe/httpjpg/commit/0658ec028a2f020b16f35653a711f931f4e93a1c)), closes [#350](https://github.com/dmnktoe/httpjpg/issues/350)
+* **ui:** keep slideshow entrance off the skeleton ([#393](https://github.com/dmnktoe/httpjpg/issues/393)) ([9fa135c](https://github.com/dmnktoe/httpjpg/commit/9fa135cb07d39f544771a06af43e06189ab96634))
+* **ui:** paint the media skeleton in production builds ([#396](https://github.com/dmnktoe/httpjpg/issues/396)) ([7e4f616](https://github.com/dmnktoe/httpjpg/commit/7e4f616a14c9766d9c5957b27753cd74e8c9b9d7))
+* **ui:** reload native video when its source changes ([#382](https://github.com/dmnktoe/httpjpg/issues/382)) ([69d8a9f](https://github.com/dmnktoe/httpjpg/commit/69d8a9fc1dd59c239ad19bb4e885c1ff51ec7025))
+* **ui:** start a slideshow's lone video after client-side navigation ([#384](https://github.com/dmnktoe/httpjpg/issues/384)) ([9e2b46a](https://github.com/dmnktoe/httpjpg/commit/9e2b46a98e808f00bf9d449003353e9629e1b541))
+
+
+### Changed
+
+* **portfolio:** unify the widget route and footer status layers ([#359](https://github.com/dmnktoe/httpjpg/issues/359)) ([ca59eda](https://github.com/dmnktoe/httpjpg/commit/ca59eda354ab7093cfe317f20c49ce0726ca547c))
+* **ui:** shrink Cloudflare footer logo to 12px ([#402](https://github.com/dmnktoe/httpjpg/issues/402)) ([88ee299](https://github.com/dmnktoe/httpjpg/commit/88ee299f4e3a97c09429937219c1781f0d12ac32))
+* weekly cleanup for studio, formatTime, and Storybook catalog ([#390](https://github.com/dmnktoe/httpjpg/issues/390)) ([f941f62](https://github.com/dmnktoe/httpjpg/commit/f941f62b8478e97902671b9b0363f4467d0f2449))
+
+
+### Dependencies
+
+* group production updates and fix oxlint compiler rules ([#371](https://github.com/dmnktoe/httpjpg/issues/371)) ([e5eb268](https://github.com/dmnktoe/httpjpg/commit/e5eb2688c0297c62cd339d37872ed5e08b327b33))
+* lock file maintenance ([#363](https://github.com/dmnktoe/httpjpg/issues/363)) ([d956337](https://github.com/dmnktoe/httpjpg/commit/d9563378a756284deb295d8acbd0ff0bd558d45e))
+* lock file maintenance ([#388](https://github.com/dmnktoe/httpjpg/issues/388)) ([8dfa6ad](https://github.com/dmnktoe/httpjpg/commit/8dfa6ad253c47ccac96f944a28ba384a39954eef))
+* update chromaui/action digest to 2a0b63f ([#391](https://github.com/dmnktoe/httpjpg/issues/391)) ([adc9398](https://github.com/dmnktoe/httpjpg/commit/adc9398293addf3052377393b1b04693818f849f))
+* update chromaui/action digest to 4cc9881 ([#385](https://github.com/dmnktoe/httpjpg/issues/385)) ([1673140](https://github.com/dmnktoe/httpjpg/commit/16731404d50fdc52a787a4770d9836933ca54a4e))
+* update chromaui/action digest to 69be7d8 ([#373](https://github.com/dmnktoe/httpjpg/issues/373)) ([4261852](https://github.com/dmnktoe/httpjpg/commit/42618523d3a740c22102d51cc89c359730aba319))
+* update chromaui/action digest to fd5e7e8 ([#354](https://github.com/dmnktoe/httpjpg/issues/354)) ([e6536b6](https://github.com/dmnktoe/httpjpg/commit/e6536b61588675143272dc462947710f8bb3169e))
+* update dependency @testing-library/react to ^16.3.3 ([#376](https://github.com/dmnktoe/httpjpg/issues/376)) ([82cd102](https://github.com/dmnktoe/httpjpg/commit/82cd1024415cb0322ca76ee6e0eae2158eb1bd7e))
+* update dependency @types/react-dom to ^19.2.5 ([#372](https://github.com/dmnktoe/httpjpg/issues/372)) ([c904400](https://github.com/dmnktoe/httpjpg/commit/c90440090b7785e566b1c548c4d434e056e3eafd))
+* update dependency @vitejs/plugin-react to ^6.1.0 ([#361](https://github.com/dmnktoe/httpjpg/issues/361)) ([8613b7e](https://github.com/dmnktoe/httpjpg/commit/8613b7e86a78111e92ef9cdbaca9258f7145853f))
+* update dependency @vitejs/plugin-react to ^6.1.1 ([#389](https://github.com/dmnktoe/httpjpg/issues/389)) ([1d24375](https://github.com/dmnktoe/httpjpg/commit/1d24375f0410e13eea6736ba1dc6ec9853807711))
+* update dependency motion to ^13.1.1 ([#362](https://github.com/dmnktoe/httpjpg/issues/362)) ([741a691](https://github.com/dmnktoe/httpjpg/commit/741a691b7f33ae67ae060102441c153a17db92dc))
+* update dependency oxfmt to ^0.65.0 ([#375](https://github.com/dmnktoe/httpjpg/issues/375)) ([bef8b9e](https://github.com/dmnktoe/httpjpg/commit/bef8b9efe267f20efe16bde660f781f8c3fd29a0))
+* update dependency psn-api to ^2.18.1 ([#357](https://github.com/dmnktoe/httpjpg/issues/357)) ([d63d95f](https://github.com/dmnktoe/httpjpg/commit/d63d95f5e8276280d3b60403306fdf0168b50d92))
+* update dev dependencies ([#386](https://github.com/dmnktoe/httpjpg/issues/386)) ([f9d83a9](https://github.com/dmnktoe/httpjpg/commit/f9d83a991b0104e5ec3d6d7190685a3e5e2f6875))
+* update dev dependencies ([#394](https://github.com/dmnktoe/httpjpg/issues/394)) ([da3c7f9](https://github.com/dmnktoe/httpjpg/commit/da3c7f90ddf09678cc3affcc77bc6aba5ccbf361))
+* update node.js to v24.20.0 ([#369](https://github.com/dmnktoe/httpjpg/issues/369)) ([db28a88](https://github.com/dmnktoe/httpjpg/commit/db28a88a177e48ac9b67f990724a69c0318ac7e8))
+* update pnpm to v11.22.0 ([#355](https://github.com/dmnktoe/httpjpg/issues/355)) ([f794099](https://github.com/dmnktoe/httpjpg/commit/f7940998a8ce4fc3a6e5a17cf4df872e65b26d3c))
+* update pnpm to v11.24.0 ([#370](https://github.com/dmnktoe/httpjpg/issues/370)) ([d570966](https://github.com/dmnktoe/httpjpg/commit/d570966d5ee93da6bb59ad6a6c30e71942f9a265))
+* update pnpm to v11.25.0 ([#400](https://github.com/dmnktoe/httpjpg/issues/400)) ([1a3ab60](https://github.com/dmnktoe/httpjpg/commit/1a3ab6076774b2e190cd2bc0a9cdfa6d7b93c8b8))
+* update production dependencies ([#377](https://github.com/dmnktoe/httpjpg/issues/377)) ([310392a](https://github.com/dmnktoe/httpjpg/commit/310392a4665dda008d15faafbc13bca9a17a6718))
+* update react + next to ^16.3.2 ([#364](https://github.com/dmnktoe/httpjpg/issues/364)) ([776606e](https://github.com/dmnktoe/httpjpg/commit/776606e113dfdc438f43da7d5cc8b01ede3f402a))
+* update react + next to ^16.3.3 ([#387](https://github.com/dmnktoe/httpjpg/issues/387)) ([e97cbcc](https://github.com/dmnktoe/httpjpg/commit/e97cbccfd4ac290e006aadad38c5c384f168bed3))
+* update vitest monorepo to ^4.1.11 ([#360](https://github.com/dmnktoe/httpjpg/issues/360)) ([890cbbe](https://github.com/dmnktoe/httpjpg/commit/890cbbeda4136b4bfd78d1d6b5233fca0049ff34))
+
 ## [2.8.0](https://github.com/dmnktoe/httpjpg/compare/v2.7.0...v2.8.0) (2026-08-18)
 
 

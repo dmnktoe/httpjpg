@@ -146,6 +146,7 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
                 filter: "blur(20px)",
                 transform: "scale(1.1)",
                 transition: "opacity 0.3s ease-in-out",
+                pointerEvents: "none",
                 objectFit: "cover",
               })}
               style={{ opacity: highResLoaded ? 0 : 1 }}

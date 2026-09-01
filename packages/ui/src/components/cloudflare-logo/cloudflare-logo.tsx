@@ -17,7 +17,7 @@ export interface CloudflareLogoProps extends Omit<
 > {
   /** Public URL of the classic lockup PNG. */
   src?: string;
-  /** Rendered height; width scales with the lockup. @default "16px" */
+  /** Rendered height; width scales with the lockup. @default "12px" */
   height?: string;
   css?: SystemStyleObject;
 }
@@ -28,7 +28,7 @@ export interface CloudflareLogoProps extends Omit<
  */
 export const CloudflareLogo = forwardRef<HTMLImageElement, CloudflareLogoProps>(
   function CloudflareLogo(
-    { src = CLOUDFLARE_LOGO_SRC, height = "16px", css: cssProp, style, ...props },
+    { src = CLOUDFLARE_LOGO_SRC, height = "12px", css: cssProp, style, ...props },
     ref,
   ) {
     return (

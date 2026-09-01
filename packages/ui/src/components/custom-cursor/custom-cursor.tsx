@@ -18,7 +18,7 @@ export interface CustomCursorProps {
 
 export function CustomCursor({
   size = 24,
-  color = token.var("colors.pageFg"),
+  color = `var(--work-accent, ${token.var("colors.pageFg")})`,
   showLabel = true,
   symbol = "✦",
   css: cssProp,

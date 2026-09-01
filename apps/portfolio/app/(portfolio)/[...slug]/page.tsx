@@ -169,11 +169,13 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
   }
 
   const pageTheme = story.content?.isDark ? "dark" : "light";
+  const pageAccent =
+    isWorkPage && typeof story.content?.accentColor === "string" ? story.content.accentColor : null;
   const showLanguagePicker = LOCALIZED_SLUGS.has(slug);
 
   return (
     <>
-      <ThemeSync theme={pageTheme} />
+      <ThemeSync theme={pageTheme} accent={pageAccent} />
       <LocaleSync lang={locale} />
       {schemaMarkup && <JsonLd data={schemaMarkup} />}
       {showLanguagePicker && (
@@ -196,7 +198,7 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
         <RelatedWork {...related} isPreview={fetchDraft} />
       )}
       {isWorkPage && flags.prevNextWorkEnabled && (
-        <WorkNav prev={adjacent.prev} next={adjacent.next} />
+        <WorkNav prev={adjacent.prev} next={adjacent.next} accent={pageAccent} />
       )}
     </>
   );

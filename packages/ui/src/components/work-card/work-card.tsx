@@ -30,6 +30,8 @@ export interface WorkCardProps {
   overlay?: OverlayPattern;
   /** Pushes the overlay particles inward over the image. @default 6 */
   overlayInset?: number;
+  /** Work page Project Accent Color — tints the title arrow and slug link. */
+  accentColor?: string;
   css?: SystemStyleObject;
 }
 
@@ -49,6 +51,7 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
       tags,
       overlay = "random",
       overlayInset = 6,
+      accentColor,
       css: cssProp,
       ...props
     },
@@ -87,13 +90,14 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
               gap: "2",
             }}
           >
-            <WorkCardTitle title={title} variant={variant} tags={tags} />
+            <WorkCardTitle title={title} variant={variant} tags={tags} accentColor={accentColor} />
             <WorkCardContent
               description={showDescription ? description : undefined}
               date={date}
               dateEnd={dateEnd}
               slug={slug}
               baseUrl={baseUrl}
+              accentColor={accentColor}
             />
           </Box>
         </Box>

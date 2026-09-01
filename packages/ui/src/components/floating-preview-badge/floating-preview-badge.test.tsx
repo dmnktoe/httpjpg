@@ -71,6 +71,14 @@ describe("FloatingPreviewBadge", () => {
     expect(link).toHaveAttribute("id", "external-preview");
   });
 
+  it("paints the portalled badge with the work accent so it survives the portal", () => {
+    render(<FloatingPreviewBadge href={HREF} accentColor="#ec6839" />);
+    const link = screen.getByRole("link") as HTMLAnchorElement;
+    expect(link.style.getPropertyValue("--work-accent")).toBe("#EC6839");
+    expect(link.style.getPropertyValue("--work-on-accent")).toBe("#ffffff");
+    expect(link.style.getPropertyValue("--work-accent-fill")).toBe("rgba(236, 104, 57, 0.62)");
+  });
+
   it("lets a caller override the inline style without losing backdrop-filter", () => {
     render(<FloatingPreviewBadge href={HREF} style={{ opacity: 0.5 }} />);
     const link = screen.getByRole("link") as HTMLAnchorElement;

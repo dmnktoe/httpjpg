@@ -27,13 +27,15 @@ describe("SbPageWork", () => {
             component: "page_work",
             external_only: true,
             link: { linktype: "url", url: "https://external.dev" },
+            accentColor: "#ec6839",
           } as never
         }
       />,
     );
     // FloatingPreviewBadge portals into document.body.
-    const badge = document.querySelector('a[href="https://external.dev"]');
+    const badge = document.querySelector('a[href="https://external.dev"]') as HTMLAnchorElement;
     expect(badge).not.toBeNull();
+    expect(badge.style.getPropertyValue("--work-accent")).toBe("#EC6839");
   });
 
   it("ignores non-external links for the preview badge", () => {

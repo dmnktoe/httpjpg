@@ -11,7 +11,7 @@ vi.mock("./queries/work", () => ({
 
 import { draftMode, headers } from "next/headers";
 
-import { getPageTheme, isInternalSlug } from "./page-theme";
+import { getPageAccent, getPageTheme, isInternalSlug } from "./page-theme";
 import { getCachedStory } from "./queries/work";
 
 const mockHeaders = vi.mocked(headers);
@@ -123,5 +123,45 @@ describe("getPageTheme", () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/work/foo" }) as never);
     mockGetCachedStory.mockResolvedValue(null as never);
     await expect(getPageTheme()).resolves.toBe("light");
+  });
+});
+
+describe("getPageAccent", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubEnv("NODE_ENV", "test");
+    mockDraftMode.mockResolvedValue({ isEnabled: false } as Awaited<ReturnType<typeof draftMode>>);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("returns null in the Storyblok editor without fetching", async () => {
+    mockHeaders.mockResolvedValue(headerMap({ "x-storyblok-editor": "1" }) as never);
+    await expect(getPageAccent()).resolves.toBeNull();
+    expect(mockGetCachedStory).not.toHaveBeenCalled();
+  });
+
+  it("returns the work page hex and ignores other components", async () => {
+    mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/work/sentiment" }) as never);
+    mockGetCachedStory.mockResolvedValue({
+      content: { component: "work", accentColor: "#ec6839" },
+    } as never);
+    await expect(getPageAccent()).resolves.toBe("#ec6839");
+  });
+
+  it("returns null on a regular page even if a leftover hex is present", async () => {
+    mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/about" }) as never);
+    mockGetCachedStory.mockResolvedValue({
+      content: { component: "page", accentColor: "#ec6839" },
+    } as never);
+    await expect(getPageAccent()).resolves.toBeNull();
+  });
+
+  it("returns null when the work page has no accent", async () => {
+    mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/work/foo" }) as never);
+    mockGetCachedStory.mockResolvedValue({ content: { component: "work" } } as never);
+    await expect(getPageAccent()).resolves.toBeNull();
   });
 });

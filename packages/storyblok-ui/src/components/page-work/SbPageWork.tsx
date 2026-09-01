@@ -19,13 +19,13 @@ function isExternalPreviewLink(link?: StoryblokLink): link is StoryblokLink & { 
 }
 
 export const SbPageWork = memo(function SbPageWork({ blok }: SbPageWorkProps) {
-  const { body, external_only, link } = blok;
+  const { body, external_only, link, accentColor } = blok;
   const previewHref = isExternalPreviewLink(link) ? storyblokHref(link) : null;
   return (
     <Box {...editableAttrs(blok)}>
       {!external_only &&
         body?.map((child) => <StoryblokServerComponent key={child._uid} blok={child} />)}
-      {previewHref && <FloatingPreviewBadge href={previewHref} />}
+      {previewHref && <FloatingPreviewBadge href={previewHref} accentColor={accentColor} />}
     </Box>
   );
 });

@@ -28,7 +28,7 @@ export function MouseTrail({
   count = 20,
   lifetime = 1000,
   size = "24px",
-  color = token.var("colors.pageFg"),
+  color = `var(--work-accent, ${token.var("colors.pageFg")})`,
   css: cssProp,
 }: MouseTrailProps) {
   const [particles, setParticles] = useState<TrailParticle[]>([]);

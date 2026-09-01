@@ -1,12 +1,13 @@
 "use client";
 
-import type { AnchorHTMLAttributes } from "react";
+import type { AnchorHTMLAttributes, CSSProperties } from "react";
 import { forwardRef } from "react";
 import { createPortal } from "react-dom";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { useHasMounted } from "../../lib/use-has-mounted";
+import { parseWorkAccent, workAccentCssVars } from "../../lib/work-accent";
 
 const MOBILE_SIZE = 40;
 const DESKTOP_HEIGHT = 32;
@@ -21,6 +22,8 @@ export interface FloatingPreviewBadgeProps extends Omit<
 > {
   href: string;
   label?: string;
+  /** Work page Project Accent Color. Set on the portalled node so it does not depend on `html`. */
+  accentColor?: string | null;
   css?: SystemStyleObject;
 }
 
@@ -33,7 +36,7 @@ const arrowClass = css({
 
 export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPreviewBadgeProps>(
   function FloatingPreviewBadge(
-    { href, label = "preview", className, css: cssProp, style, ...props },
+    { href, label = "preview", accentColor, className, css: cssProp, style, ...props },
     ref,
   ) {
     const mounted = useHasMounted();
@@ -41,6 +44,8 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
     if (!mounted) {
       return null;
     }
+
+    const accentVars = workAccentCssVars(parseWorkAccent(accentColor));
 
     const anchor = (
       <a
@@ -50,6 +55,7 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
         rel="noopener noreferrer"
         aria-label={`${label} — open external preview`}
         style={{
+          ...(accentVars as CSSProperties | undefined),
           backdropFilter: BACKDROP_FILTER,
           WebkitBackdropFilter: BACKDROP_FILTER,
           ...style,
@@ -67,7 +73,7 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
             width: `${MOBILE_SIZE}px`,
             height: `${MOBILE_SIZE}px`,
             marginInline: "auto",
-            color: "white",
+            color: "var(--work-on-accent, white)",
             fontFamily: "mono",
             fontSize: "sm",
             fontWeight: "normal",
@@ -75,8 +81,8 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
             letterSpacing: "wider",
             textDecoration: "none",
             whiteSpace: "nowrap",
-            backgroundColor: "rgba(0, 0, 0, 0.32)",
-            border: "1px solid rgba(255, 255, 255, 0.28)",
+            backgroundColor: "var(--work-accent-fill, rgba(0, 0, 0, 0.32))",
+            border: "1px solid var(--work-accent, rgba(255, 255, 255, 0.28))",
             borderRadius: "full",
             boxShadow:
               "0 8px 32px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.30), inset 0 -1px 0 0 rgba(0, 0, 0, 0.25)",
@@ -85,8 +91,8 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
             textShadow: "0 1px 2px rgba(0, 0, 0, 0.6), 0 0 6px rgba(0, 0, 0, 0.3)",
             sm: { width: "fit-content", height: `${DESKTOP_HEIGHT}px`, paddingInline: "4" },
             _hover: {
-              backgroundColor: "rgba(0, 0, 0, 0.42)",
-              borderColor: "rgba(255, 255, 255, 0.45)",
+              backgroundColor: "var(--work-accent-fill-hover, rgba(0, 0, 0, 0.42))",
+              borderColor: "var(--work-accent, rgba(255, 255, 255, 0.45))",
               boxShadow:
                 "0 12px 40px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.40), inset 0 -1px 0 0 rgba(0, 0, 0, 0.25)",
               transform: "translateY(-1px)",

@@ -28,4 +28,11 @@
   p {
     line-height: 1.5;
   }
+
+  html[data-work-accent] ::selection,
+  html[data-work-accent] ::-moz-selection {
+    background-color: var(--work-accent);
+    color: var(--work-on-accent);
+    text-shadow: none;
+  }
 }

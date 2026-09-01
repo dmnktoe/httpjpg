@@ -67,6 +67,5 @@ export * from "./tag/tag-button";
 export * from "./tooltip/tooltip";
 export * from "./userbars/userbars";
 export * from "./video/video";
-export * from "./work-accent-swatch/work-accent-swatch";
 export * from "./work-card/work-card";
 export * from "./work-list/work-list";

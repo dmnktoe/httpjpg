@@ -51,7 +51,7 @@ export const pageBlocks: BlockDef[] = [
       }),
       accentColor: field.text("Project Accent Color", {
         description:
-          "Hex colour (#RGB or #RRGGBB). Tints the iOS liquid-glass chrome and the site chrome on this work page — preview badge, card arrow, header chip, selection.",
+          "Hex colour (#RGB or #RRGGBB). Tints the iOS liquid-glass chrome and the site chrome on this work page — preview badge, card arrow, selection.",
         tooltip: true,
         regex: "^(#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3}))?$",
         max_length: 7,

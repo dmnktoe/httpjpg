@@ -204,27 +204,6 @@ describe("Navigation", () => {
     expect(sources).toEqual(["/api/favicon?url=https%3A%2F%2Facme.com%2Flaunch&sz=16"]);
   });
 
-  it("renders a project accent chip next to work that carries one", () => {
-    const { container } = render(
-      <Navigation
-        nav={[]}
-        projectsWork={[
-          {
-            id: "p-accent",
-            slug: "sentiment",
-            title: "SENTIMENT",
-            isExternal: false,
-            accentColor: "#ec6839",
-          },
-        ]}
-      />,
-    );
-
-    const swatch = container.querySelector("[data-work-accent-swatch]");
-    expect(swatch).not.toBeNull();
-    expect(swatch).toHaveStyle({ backgroundColor: "rgb(236, 104, 57)" });
-  });
-
   it("expands personal and client columns independently", () => {
     render(
       <Navigation nav={nav} projectsWork={makeWork(8, "p")} websitesWork={makeWork(7, "c")} />,

@@ -16,7 +16,6 @@ export interface WorkItem {
   isExternal: boolean;
   externalUrl?: string;
   date?: string;
-  accentColor?: string;
 }
 
 export interface AdjacentWork {
@@ -36,7 +35,6 @@ interface WorkStory {
     external_only?: boolean;
     link?: { url?: string; cached_url?: string };
     images?: Array<{ filename?: string; content_type?: string }>;
-    accentColor?: string;
   };
 }
 
@@ -61,7 +59,6 @@ function toWorkItem(story: WorkStory, publishedUuids: Set<string>): WorkItem {
     isExternal: externalOnly,
     externalUrl,
     date: story.content?.date,
-    accentColor: story.content?.accentColor,
   };
 }
 

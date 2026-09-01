@@ -1,7 +1,6 @@
 import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
 import { NavLink } from "../nav-link/nav-link";
-import { WorkAccentSwatch } from "../work-accent-swatch/work-accent-swatch";
 import { Favicon } from "./favicon";
 import type { WorkItem } from "./header";
 
@@ -39,10 +38,6 @@ export function WorkNavLink({ work, variant }: WorkNavLinkProps) {
             {year}{" "}
           </Box>
         )}
-        <WorkAccentSwatch
-          color={work.accentColor}
-          css={{ display: { base: "none", md: "inline-block" } }}
-        />
         <Favicon href={work.externalUrl ?? (work.isExternal ? work.slug : "")} />
         {work.title}
       </Box>

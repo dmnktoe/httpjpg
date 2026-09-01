@@ -355,7 +355,7 @@ function CanvasItem({
         border: "1px solid",
         borderColor: selected ? "pageFg" : "pageBorder",
         borderStyle: hidden ? "dashed" : "solid",
-        boxShadow: selected ? "inset 0 0 0 1px var(--colors-page-fg)" : "none",
+        boxShadow: selected ? "inset 0 0 0 1px {colors.pageFg}" : "none",
       })}
       style={{
         gridColumn: `${x + 1} / span ${w}`,

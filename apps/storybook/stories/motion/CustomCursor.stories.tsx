@@ -25,7 +25,7 @@ const meta = {
       control: "color",
       description: "Cursor color (any CSS color or var())",
       table: {
-        defaultValue: { summary: "var(--colors-page-fg)" },
+        defaultValue: { summary: 'token.var("colors.pageFg")' },
       },
     },
     symbol: {

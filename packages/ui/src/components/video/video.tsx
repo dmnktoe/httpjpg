@@ -39,11 +39,9 @@ export interface VideoProps extends Omit<VideoHTMLAttributes<HTMLVideoElement>, 
 }
 
 const nativeFrameClass = css({
-  background:
-    "linear-gradient(135deg, var(--colors-neutral-100) 0%, var(--colors-neutral-200) 100%)",
+  backgroundImage: "linear-gradient(135deg, {colors.neutral.100} 0%, {colors.neutral.200} 100%)",
   _pageDark: {
-    background:
-      "linear-gradient(135deg, var(--colors-neutral-900) 0%, var(--colors-neutral-800) 100%)",
+    backgroundImage: "linear-gradient(135deg, {colors.neutral.900} 0%, {colors.neutral.800} 100%)",
   },
 });
 

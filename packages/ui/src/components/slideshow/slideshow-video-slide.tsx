@@ -14,6 +14,17 @@ function rewind(video: HTMLVideoElement) {
   }
 }
 
+function releaseSource(video: HTMLVideoElement) {
+  video.pause();
+  rewind(video);
+  video.preload = "none";
+  try {
+    video.load();
+  } catch {
+    // load() can throw while a previous load is still settling.
+  }
+}
+
 export interface SlideshowVideoSlideProps {
   videoUrl: string;
   videoPoster?: string;
@@ -39,10 +50,11 @@ export function SlideshowVideoSlide({
       return;
     }
     if (!isActive) {
-      video.pause();
-      rewind(video);
+      releaseSource(video);
       return;
     }
+
+    video.preload = "metadata";
 
     let isDone = false;
     let startTimer: ReturnType<typeof setTimeout>;

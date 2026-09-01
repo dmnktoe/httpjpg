@@ -1,8 +1,14 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { createRef } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { Video } from "./video";
+
+// Spies land on HTMLMediaElement.prototype, so without this a spy created in
+// one test keeps recording calls made by the next one.
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 vi.hoisted(() => {
   vi.stubGlobal(
@@ -59,6 +65,28 @@ describe("Video", () => {
 
     expect(play).toHaveBeenCalled();
     play.mockRestore();
+  });
+
+  it("drops the source on unmount so a client-side navigation cancels the transfer", () => {
+    const load = vi.spyOn(window.HTMLMediaElement.prototype, "load").mockImplementation(() => {});
+    const pause = vi.spyOn(window.HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
+    const { container, unmount } = render(<Video src="/clip.mp4" controls={false} />);
+    const video = container.querySelector("video") as HTMLVideoElement;
+
+    unmount();
+
+    expect(pause).toHaveBeenCalled();
+    expect(video.hasAttribute("src")).toBe(false);
+    expect(load).toHaveBeenCalled();
+  });
+
+  it("leaves embeds alone on unmount", () => {
+    const load = vi.spyOn(window.HTMLMediaElement.prototype, "load").mockImplementation(() => {});
+    const { unmount } = render(<Video src="abcdefghijk" source="youtube" controls={false} />);
+
+    unmount();
+
+    expect(load).not.toHaveBeenCalled();
   });
 
   it("defaults to object-fit cover when a fixed aspect ratio is set", () => {

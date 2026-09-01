@@ -206,6 +206,31 @@ describe("Slideshow video playback", () => {
     expect(video.currentTime).toBe(0);
   });
 
+  it("stops the transfer for a clip the carousel has moved past", async () => {
+    const load = vi.spyOn(HTMLMediaElement.prototype, "load").mockImplementation(() => {});
+    const { container } = renderSlideshow([VIDEO_A, IMAGE_A]);
+
+    const video = videoFor(container, CLIP_A);
+    fireEvent.ended(video);
+    await expectSlide(container, "02");
+
+    expect(video.preload).toBe("none");
+    expect(load).toHaveBeenCalled();
+  });
+
+  it("loads the clip again when its slide comes back around", async () => {
+    vi.spyOn(HTMLMediaElement.prototype, "load").mockImplementation(() => {});
+    const { container } = renderSlideshow([VIDEO_A, IMAGE_A]);
+
+    const video = videoFor(container, CLIP_A);
+    fireEvent.ended(video);
+    await expectSlide(container, "02");
+    expect(video.preload).toBe("none");
+
+    await expectSlide(container, "01");
+    expect(video.preload).toBe("metadata");
+  });
+
   it("still plays when rewinding throws before metadata is ready", async () => {
     vi.spyOn(HTMLMediaElement.prototype, "currentTime", "set").mockImplementation(() => {
       throw new DOMException("The element's readyState is HAVE_NOTHING", "InvalidStateError");

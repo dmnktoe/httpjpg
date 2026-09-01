@@ -1,6 +1,6 @@
 import { Box, FloatingPreviewBadge } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 const meta = {
   title: "Display/FloatingPreviewBadge",
@@ -21,6 +21,10 @@ const meta = {
       control: "text",
       description: "Label shown inside the pill on desktop",
       table: { defaultValue: { summary: "preview" } },
+    },
+    accentColor: {
+      control: "color",
+      description: "Work page Project Accent Color — tints the portalled glass pill",
     },
   },
 } satisfies Meta<typeof FloatingPreviewBadge>;
@@ -70,28 +74,18 @@ export const CustomLabel: Story = {
 };
 
 /**
- * On a work page the badge inherits `--work-accent*` from `html`, the same
- * tokens that tint the iOS liquid-glass preview button.
+ * The same hex that tints iOS liquid-glass icons. Set on the portalled node
+ * so the pill does not depend on `html` custom properties.
  */
 export const WorkAccent: Story = {
   args: {
     href: "https://example.com",
     label: "preview",
+    accentColor: "#EC6839",
   },
   render: (args) => (
-    <Box
-      style={
-        {
-          "--work-accent": "#EC6839",
-          "--work-on-accent": "#ffffff",
-          "--work-accent-fill": "rgba(236, 104, 57, 0.62)",
-          "--work-accent-fill-hover": "rgba(236, 104, 57, 0.78)",
-        } as CSSProperties
-      }
-    >
-      <Stage>
-        <FloatingPreviewBadge {...args} />
-      </Stage>
-    </Box>
+    <Stage>
+      <FloatingPreviewBadge {...args} />
+    </Stage>
   ),
 };

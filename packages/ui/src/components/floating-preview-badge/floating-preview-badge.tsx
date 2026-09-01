@@ -1,12 +1,13 @@
 "use client";
 
-import type { AnchorHTMLAttributes } from "react";
+import type { AnchorHTMLAttributes, CSSProperties } from "react";
 import { forwardRef } from "react";
 import { createPortal } from "react-dom";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { useHasMounted } from "../../lib/use-has-mounted";
+import { parseWorkAccent, workAccentCssVars } from "../../lib/work-accent";
 
 const MOBILE_SIZE = 40;
 const DESKTOP_HEIGHT = 32;
@@ -21,6 +22,8 @@ export interface FloatingPreviewBadgeProps extends Omit<
 > {
   href: string;
   label?: string;
+  /** Work page Project Accent Color. Set on the portalled node so it does not depend on `html`. */
+  accentColor?: string | null;
   css?: SystemStyleObject;
 }
 
@@ -33,7 +36,7 @@ const arrowClass = css({
 
 export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPreviewBadgeProps>(
   function FloatingPreviewBadge(
-    { href, label = "preview", className, css: cssProp, style, ...props },
+    { href, label = "preview", accentColor, className, css: cssProp, style, ...props },
     ref,
   ) {
     const mounted = useHasMounted();
@@ -41,6 +44,8 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
     if (!mounted) {
       return null;
     }
+
+    const accentVars = workAccentCssVars(parseWorkAccent(accentColor));
 
     const anchor = (
       <a
@@ -50,6 +55,7 @@ export const FloatingPreviewBadge = forwardRef<HTMLAnchorElement, FloatingPrevie
         rel="noopener noreferrer"
         aria-label={`${label} — open external preview`}
         style={{
+          ...(accentVars as CSSProperties | undefined),
           backdropFilter: BACKDROP_FILTER,
           WebkitBackdropFilter: BACKDROP_FILTER,
           ...style,

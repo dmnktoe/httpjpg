@@ -121,7 +121,7 @@ describe("SbImage", () => {
           {
             _uid: "12",
             component: "image",
-            image: { filename, title: "Untitled still" },
+            image: { filename },
             lightbox: true,
             blurOnLoad: true,
             overlay: "none",

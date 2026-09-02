@@ -227,13 +227,13 @@ describe("Inspector", () => {
 
     rerender(
       <Inspector
-        item={headline({ hMd: 12 })}
+        item={headline({ wMd: 12 })}
         viewport="md"
         onChange={onChange}
         onDataChange={vi.fn()}
       />,
     );
-    expect(screen.getByLabelText("Row Span")).toHaveValue("full");
+    expect(screen.getByLabelText("Col Span")).toHaveValue("full");
   });
 
   it("picks an asset from the media dialog", async () => {

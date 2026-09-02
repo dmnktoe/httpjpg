@@ -76,7 +76,7 @@ describe("AssetPicker", () => {
       }),
     );
     const { unmount, rerender } = render(<AssetPicker open onClose={vi.fn()} onPick={vi.fn()} />);
-    await waitFor(() => expect(screen.getByRole("img")).toHaveAttribute("alt", ""));
+    await waitFor(() => expect(document.querySelector("img")).toHaveAttribute("alt", ""));
     fireEvent.click(screen.getByRole("button", { name: "Next" }));
     fireEvent.click(screen.getByRole("button", { name: "Prev" }));
 

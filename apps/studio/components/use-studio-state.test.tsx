@@ -11,6 +11,7 @@ async function loadHook() {
 describe("useStudioState", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    vi.restoreAllMocks();
   });
 
   it("starts empty and persists edits", async () => {

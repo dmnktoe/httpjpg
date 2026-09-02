@@ -86,6 +86,7 @@ describe("GridBuilder", () => {
 
   it("duplicates the selected block from the keyboard", () => {
     render(<GridBuilder pushEnabled={false} siteUrl="https://httpjpg.com" />);
+    fireEvent.click(screen.getByRole("button", { name: "Clear" }));
     const canvas = screen.getByRole("application", { name: "Grid canvas" });
     Object.defineProperty(canvas, "clientWidth", { value: 1200, configurable: true });
     vi.spyOn(canvas, "getBoundingClientRect").mockReturnValue({

@@ -231,4 +231,14 @@ describe("ImageComparisonSlider", () => {
     expect(screen.getByRole("slider")).toHaveValue("80");
     expect(screen.getByText("[ 080 / 100 ]")).toBeInTheDocument();
   });
+
+  it("passes srcSet through and returns nothing without an after source", () => {
+    renderSlider({ beforeSrcSet: "/before-2x.jpg", afterSrcSet: "/after-2x.jpg", sizes: "100vw" });
+    expect(screen.getByAltText("Before photo")).toHaveAttribute("srcset", "/before-2x.jpg");
+
+    const { container } = render(
+      <ImageComparisonSlider beforeSrc="/before.jpg" afterSrc="" beforeAlt="A" afterAlt="B" />,
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
 });

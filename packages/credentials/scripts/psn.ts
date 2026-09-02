@@ -14,33 +14,16 @@ import psnApi from "psn-api";
 
 import { ask, hasFlag, readOption, reportSecret } from "./lib/cli";
 import { parseNpsso } from "./lib/npsso";
+import {
+  diagnoseRejection,
+  formatDate,
+  npssoExpiry,
+  NPSSO_LIFETIME_DAYS,
+  SSO_COOKIE_URL,
+} from "./lib/psn-auth";
 
 const { exchangeCodeForAccessToken, exchangeNpssoForCode, getProfileFromAccountId, getUserTitles } =
   psnApi;
-
-const SSO_COOKIE_URL = "https://ca.account.sony.com/api/v1/ssocookie";
-const AUTHORIZE_URL = "https://ca.account.sony.com/api/authz/v3/oauth/authorize";
-
-const NPSSO_LIFETIME_DAYS = 60;
-
-function formatDate(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
-
-async function diagnoseRejection(): Promise<string> {
-  try {
-    const response = await fetch(`${AUTHORIZE_URL}?response_type=code`, {
-      headers: { Cookie: "npsso=probe" },
-      redirect: "manual",
-    });
-    if (response.status >= 300 && response.status < 400) {
-      return "sony is reachable · the npsso itself is expired or malformed";
-    }
-    return `sony answered ${response.status} instead of a redirect · a network or proxy is interfering, the npsso may be fine`;
-  } catch (error) {
-    return `sony unreachable (${(error as Error).message}) · check the network before blaming the npsso`;
-  }
-}
 
 async function resolveNpsso(argv: string[]): Promise<string> {
   const fromFlag = readOption(argv, "npsso");
@@ -96,7 +79,7 @@ async function main(): Promise<void> {
     warn("token works, trophy list unreadable");
   }
 
-  const expiresOn = new Date(Date.now() + NPSSO_LIFETIME_DAYS * 86_400_000);
+  const expiresOn = npssoExpiry();
   step(
     `~${NPSSO_LIFETIME_DAYS} day lifetime · if minted today, lapses around ${formatDate(expiresOn)}`,
   );

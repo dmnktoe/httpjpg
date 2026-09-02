@@ -36,6 +36,15 @@ describe("widthCss", () => {
       width: { base: "100%", md: "50%", lg: "30%" },
     });
   });
+
+  it("fills missing base/md from the next smaller set value", () => {
+    expect(widthCss({ widthMd: "50%" })).toEqual({
+      width: { base: undefined, md: "50%", lg: "50%" },
+    });
+    expect(spacingCss({ ptLg: "8" } as never)).toEqual({
+      pt: { base: undefined, md: undefined, lg: "8" },
+    });
+  });
 });
 
 describe("sizesFromWidths", () => {
@@ -47,6 +56,10 @@ describe("sizesFromWidths", () => {
     expect(sizesFromWidths({ width: "100%", widthMd: "50%", widthLg: "30%" })).toBe(
       "(min-width: 1024px) 30vw, (min-width: 768px) 50vw, 100vw",
     );
+  });
+
+  it("includes only the breakpoints that are set", () => {
+    expect(sizesFromWidths({ widthMd: "50%" })).toBe("(min-width: 768px) 50vw, 100vw");
   });
 });
 

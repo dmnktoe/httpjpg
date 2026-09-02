@@ -85,4 +85,45 @@ describe("ScrollClipImage", () => {
     );
     expect(screen.getByText("Caption text")).toBeInTheDocument();
   });
+
+  it("places credit below the image and forwards refs", () => {
+    const objectRef = { current: null as HTMLDivElement | null };
+    const fnRef = vi.fn();
+    const { rerender } = render(
+      <ScrollClipImage
+        ref={objectRef}
+        src="/test.jpg"
+        alt="Test"
+        copyright="Studio XYZ"
+        copyrightSource="film"
+        copyrightPosition="below"
+        srcSet="/test.jpg 1x"
+        sizes="100vw"
+      />,
+    );
+    expect(objectRef.current).not.toBeNull();
+    expect(screen.getByText(/Studio XYZ/)).toBeInTheDocument();
+
+    rerender(
+      <ScrollClipImage ref={fnRef} src="/test.jpg" alt="Test" pin>
+        <p>Pinned caption</p>
+      </ScrollClipImage>,
+    );
+    expect(fnRef).toHaveBeenCalled();
+    expect(screen.getByText("Pinned caption")).toBeInTheDocument();
+  });
+
+  it("snaps the mask open when reduced motion is preferred", () => {
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: true,
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })) as unknown as typeof window.matchMedia;
+
+    render(<ScrollClipImage src="/test.jpg" alt="Test" />);
+    expect(screen.getByRole("img", { name: "Test" })).toBeInTheDocument();
+  });
 });

@@ -101,4 +101,45 @@ describe("useParallax", () => {
     expect(observerCallback).toBeNull();
     expect(offsetOf(container)).toBe(0);
   });
+
+  it("does nothing when the ref never attaches", () => {
+    function Detached() {
+      const { offset } = useParallax<HTMLDivElement>({ speed: 0.2 });
+      return <div data-testid="el" data-offset={offset} />;
+    }
+    render(<Detached />);
+    expect(observerCallback).toBeNull();
+  });
+
+  it("coalesces scroll updates onto one animation frame", () => {
+    const raf = vi.spyOn(window, "requestAnimationFrame").mockImplementation(() => 1);
+    render(<Harness speed={0.2} rect={rectFrom(-100, 200)} />);
+    intersect();
+    act(() => {
+      window.dispatchEvent(new Event("scroll"));
+      window.dispatchEvent(new Event("scroll"));
+    });
+    expect(raf).toHaveBeenCalledTimes(1);
+  });
+
+  it("ignores scroll while the element is offscreen", () => {
+    const raf = vi.spyOn(window, "requestAnimationFrame").mockImplementation(() => 1);
+    render(<Harness speed={0.2} rect={rectFrom(-100, 200)} />);
+    act(() => observerCallback?.([{ isIntersecting: false }]));
+    act(() => {
+      window.dispatchEvent(new Event("scroll"));
+    });
+    expect(raf).not.toHaveBeenCalled();
+  });
+
+  it("falls back to documentElement height when innerHeight is 0", () => {
+    window.innerHeight = 0;
+    Object.defineProperty(document.documentElement, "clientHeight", {
+      value: 800,
+      configurable: true,
+    });
+    const { container } = render(<Harness speed={0.2} rect={rectFrom(400, 200)} />);
+    intersect();
+    expect(offsetOf(container)).toBeCloseTo(0);
+  });
 });

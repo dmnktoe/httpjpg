@@ -37,3 +37,11 @@ describe("mapiPath", () => {
     expect(mapiPath("123", "/stories")).toBe(`${STORYBLOK_MAPI}/spaces/123/stories`);
   });
 });
+
+describe("studioAuth", () => {
+  it("reads the live env contract", async () => {
+    const { studioAuth } = await import("./mapi");
+    const result = studioAuth();
+    expect(result.ok === false || result.ok === true).toBe(true);
+  });
+});

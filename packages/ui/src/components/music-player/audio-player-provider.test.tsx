@@ -298,6 +298,59 @@ describe("AudioPlayerProvider", () => {
 
     expect(audioElement()).toHaveAttribute("aria-label", "One");
   });
+
+  it("plays a track that was never registered on the page", () => {
+    stubPlayback();
+    function Ghost() {
+      const player = useAudioPlayer();
+      return (
+        <button type="button" onClick={() => player?.play({ src: "/ghost.mp3", title: "Ghost" })}>
+          ghost
+        </button>
+      );
+    }
+    render(
+      <AudioPlayerProvider>
+        <Ghost />
+        <Transport />
+      </AudioPlayerProvider>,
+    );
+    fireEvent.click(screen.getByText("ghost"));
+    expect(state("current")).toBe("/ghost.mp3");
+  });
+
+  it("keeps the first registration when the same src mounts twice", () => {
+    stubPlayback();
+    renderQueue([FIRST, FIRST]);
+    fireEvent.click(screen.getAllByText("play /one.mp3")[0]!);
+    expect(state("current")).toBe("/one.mp3");
+  });
+
+  it("treats a blocked play() as still paused and a NaN duration as zero", () => {
+    vi.spyOn(window.HTMLMediaElement.prototype, "play").mockRejectedValue(new Error("blocked"));
+    vi.spyOn(window.HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
+    renderQueue();
+    fireEvent.click(screen.getByText("play /one.mp3"));
+    expect(state("playing")).toBe("false");
+
+    const audio = audioElement();
+    Object.defineProperty(audio, "duration", { value: Number.NaN, configurable: true });
+    emit("loadedmetadata");
+    expect(state("time")).toBe("0/0");
+  });
+
+  it("keeps an explicit href and falls back to untitled without a title", () => {
+    stubPlayback();
+    render(
+      <AudioPlayerProvider>
+        <QueueEntry track={{ src: "/one.mp3", title: "", href: "/custom", artwork: "/art.jpg" }} />
+        <Transport />
+      </AudioPlayerProvider>,
+    );
+    fireEvent.click(screen.getByText("play /one.mp3"));
+    expect(state("page")).toBe("/custom");
+    expect(audioElement()).toHaveAttribute("aria-label", "Audio player");
+  });
 });
 
 describe("AudioPlayerProvider media session", () => {
@@ -343,5 +396,28 @@ describe("AudioPlayerProvider media session", () => {
       init: { title: "One", artist: "Nova", artwork: undefined },
     });
     expect(session.playbackState).toBe("playing");
+  });
+
+  it("falls back to untitled and includes artwork when present", () => {
+    stubPlayback();
+    render(
+      <AudioPlayerProvider>
+        <QueueEntry track={{ src: "/one.mp3", title: "", artwork: "/art.jpg" }} />
+        <Transport />
+      </AudioPlayerProvider>,
+    );
+    fireEvent.click(screen.getByText("play /one.mp3"));
+    expect(session.metadata).toMatchObject({
+      init: { title: "untitled", artwork: [{ src: "/art.jpg" }] },
+    });
+  });
+
+  it("skips metadata when MediaMetadata is missing", () => {
+    vi.unstubAllGlobals();
+    Object.defineProperty(navigator, "mediaSession", { value: session, configurable: true });
+    stubPlayback();
+    renderQueue();
+    fireEvent.click(screen.getByText("play /one.mp3"));
+    expect(session.playbackState).toBe("paused");
   });
 });

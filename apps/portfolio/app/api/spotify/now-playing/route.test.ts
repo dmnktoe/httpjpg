@@ -32,7 +32,9 @@ vi.mock("@httpjpg/spotify", async (importActual) => {
 });
 
 import { captureEdgeException } from "@httpjpg/observability/sentry/edge.ts";
-import { SpotifyForbiddenError } from "@httpjpg/spotify";
+import { SpotifyForbiddenError, SpotifyUnauthorizedError } from "@httpjpg/spotify";
+
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 import { GET, OPTIONS } from "./route";
 
@@ -82,6 +84,27 @@ describe("GET /api/spotify/now-playing", () => {
     expect(response.status).toBe(500);
     await expect(response.json()).resolves.toMatchObject({ error: "internal_error" });
     expect(captureEdgeException).toHaveBeenCalledOnce();
+  });
+
+  it("retries once after an expired access token", async () => {
+    getCurrentlyPlaying
+      .mockRejectedValueOnce(new SpotifyUnauthorizedError())
+      .mockResolvedValueOnce({ title: "Song", isPlaying: false });
+
+    const response = await GET(request);
+
+    expect(response.status).toBe(200);
+    expect(getAccessToken).toHaveBeenCalledTimes(2);
+    await expect(response.json()).resolves.toEqual({ data: { title: "Song", isPlaying: false } });
+  });
+
+  it("returns a rate-limit response when the limiter fires", async () => {
+    vi.mocked(enforceRateLimit).mockResolvedValueOnce(
+      new Response("slow down", { status: 429 }) as never,
+    );
+    const response = await GET(request);
+    expect(response.status).toBe(429);
+    expect(getCurrentlyPlaying).not.toHaveBeenCalled();
   });
 
   it("answers CORS preflight requests", async () => {

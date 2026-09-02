@@ -137,4 +137,63 @@ describe("collectStoryMedia", () => {
 
     expect(media[0].thumb).toBe("https://example.com/cover.jpg");
   });
+
+  it("covers the remaining blok and walk edges", () => {
+    expect(collectStoryMedia(null)).toEqual([]);
+    expect(collectStoryMedia("plain")).toEqual([]);
+    expect(collectStoryMedia({ component: "image" })).toEqual([]);
+    expect(collectStoryMedia({ component: "scroll_clip_image" })).toEqual([]);
+    expect(collectStoryMedia({ component: "video" })).toEqual([]);
+    expect(collectStoryMedia({ component: "slideshow" })).toEqual([]);
+    expect(collectStoryMedia({ component: "image_comparison" })).toEqual([]);
+    expect(
+      collectStoryMedia({
+        component: "image",
+        image: { filename: "https://a.storyblok.com/f/1/clip.mp4" },
+      }),
+    ).toEqual([]);
+    expect(
+      collectStoryMedia({
+        component: "image",
+        _uid: "img",
+        image: { filename: "https://a.storyblok.com/f/1/a.jpg", title: "From title" },
+      })[0].label,
+    ).toBe("From title");
+
+    const comparison = collectStoryMedia({
+      component: "image_comparison",
+      _uid: "c",
+      beforeLabel: "Before",
+      afterLabel: "After",
+      caption: {
+        type: "doc",
+        content: [{ type: "paragraph", content: [{ type: "text", text: "Cap" }] }],
+      },
+      before: { filename: "https://a.storyblok.com/f/1/b.jpg" },
+      after: { filename: "https://a.storyblok.com/f/1/a.jpg" },
+    });
+    expect(comparison.map((item) => item.label)).toEqual(["Before", "After"]);
+
+    expect(
+      collectStoryMedia({
+        component: "video",
+        poster: { filename: "https://a.storyblok.com/f/1/p.jpg" },
+        caption: {
+          type: "doc",
+          content: [{ type: "paragraph", content: [{ type: "text", text: "Take" }] }],
+        },
+      })[0].label,
+    ).toBe("Take");
+
+    expect(
+      collectStoryMedia({
+        component: "slideshow",
+        images: [null, { filename: "https://a.storyblok.com/f/1/s.jpg", alt: "Slide" }],
+      }).map((item) => item.label),
+    ).toEqual(["Slide"]);
+
+    expect(collectStoryMedia({ component: "music_player", title: "Solo" })[0].label).toBe("Solo");
+    expect(collectStoryMedia({ component: "music_player", artist: "Band" })[0].label).toBe("Band");
+    expect(collectStoryMedia({ nested: [1, { skip: true }] })).toEqual([]);
+  });
 });

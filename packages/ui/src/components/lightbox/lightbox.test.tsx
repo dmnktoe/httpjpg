@@ -286,6 +286,11 @@ describe("Lightbox", () => {
     expect(document.querySelector("iframe")).toBeInTheDocument();
   });
 
+  it("plays a video item that omits source as native", () => {
+    setup({ items: [{ src: "/clip.mp4", alt: "A clip", video: {} }] });
+    expect(document.querySelector("video")).toBeInTheDocument();
+  });
+
   it("honours an explicit theme over the page's", () => {
     document.documentElement.setAttribute("data-theme", "dark");
     try {

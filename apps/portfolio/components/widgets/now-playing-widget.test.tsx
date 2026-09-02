@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const useNowPlaying = vi.fn();
@@ -59,5 +59,18 @@ describe("NowPlayingWidget", () => {
 
     expect(await screen.findByText("Song")).toBeInTheDocument();
     expect(screen.getByText("Artist")).toBeInTheDocument();
+  });
+
+  it("renders the idle copy while loading and after a click", async () => {
+    const { trackNowPlayingClick } = await import("@httpjpg/analytics");
+    useNowPlaying.mockReturnValue({ data: null, isLoading: true, errorCode: null });
+    const { rerender } = render(<NowPlayingWidget />);
+    expect(await screen.findByText("Loading...")).toBeInTheDocument();
+
+    useNowPlaying.mockReturnValue({ data: null, isLoading: false, errorCode: null });
+    rerender(<NowPlayingWidget />);
+    expect(await screen.findByText(/#welovemusic/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button"));
+    expect(trackNowPlayingClick).toHaveBeenCalled();
   });
 });

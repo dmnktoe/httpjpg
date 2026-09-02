@@ -39,4 +39,18 @@ describe("GET /api/exit-draft", () => {
 
     expect(response.headers.get("location")).toContain("/work");
   });
+
+  it("falls back to / when there is no redirect or referer", async () => {
+    const response = await GET(new NextRequest("http://localhost/api/exit-draft"));
+    expect(response.headers.get("location")).toBe("http://localhost/");
+  });
+
+  it("redirects home when draftMode throws", async () => {
+    const { draftMode } = await import("next/headers");
+    vi.mocked(draftMode).mockRejectedValueOnce(new Error("boom"));
+    const { captureServerException } = await import("@httpjpg/observability/sentry/server.ts");
+    const response = await GET(new NextRequest("http://localhost/api/exit-draft"));
+    expect(response.headers.get("location")).toBe("http://localhost/");
+    expect(captureServerException).toHaveBeenCalled();
+  });
 });

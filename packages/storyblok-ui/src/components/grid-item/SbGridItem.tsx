@@ -4,7 +4,8 @@ import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo, type CSSProperties } from "react";
 import { css, cx } from "styled-system/css";
 
-import { editableAttrs } from "../../lib/use-blok";
+import { BlokMotion } from "../../lib/blok-motion";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 type Span = GridItemProps["colSpan"];
 
@@ -57,6 +58,9 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
     hiddenBase,
     hiddenMd,
     hiddenLg,
+    zIndex,
+    animation,
+    animationDelay,
   } = blok;
   const editable = editableAttrs(blok);
 
@@ -104,11 +108,17 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
       alignSelf={alignSelf || undefined}
       justifySelf={justifySelf || undefined}
       className={cx(responsive, visibility)}
-      style={styleVars}
+      css={{ overflow: "visible", ...spacingCss(blok) }}
+      style={{
+        ...styleVars,
+        ...(Number.isFinite(Number(zIndex)) ? { zIndex: Number(zIndex) } : {}),
+      }}
     >
-      {content?.map((child) => (
-        <StoryblokServerComponent key={child._uid} blok={child} />
-      ))}
+      <BlokMotion animation={animation} delay={animationDelay}>
+        {content?.map((child) => (
+          <StoryblokServerComponent key={child._uid} blok={child} />
+        ))}
+      </BlokMotion>
     </GridItem>
   );
 });

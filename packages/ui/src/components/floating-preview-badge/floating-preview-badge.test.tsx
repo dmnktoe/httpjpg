@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 
 import { FloatingPreviewBadge } from "./floating-preview-badge";
@@ -14,10 +14,10 @@ describe("FloatingPreviewBadge", () => {
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  it("portals the anchor directly into document.body, not the render container", () => {
+  it("portals the cluster directly into document.body, not the render container", () => {
     const { container } = render(<FloatingPreviewBadge href={HREF} />);
-    expect(container.querySelector("a")).toBeNull();
-    expect(document.body.querySelector(`a[href='${HREF}']`)).not.toBeNull();
+    expect(container.querySelector("[data-page-badge]")).toBeNull();
+    expect(document.body.querySelector("[data-page-badge]")).not.toBeNull();
   });
 
   it("uses the default 'preview' label in the aria-label", () => {
@@ -52,37 +52,113 @@ describe("FloatingPreviewBadge", () => {
     expect(link.style.backdropFilter).toMatch(/saturate/);
   });
 
-  it("forwards refs to the underlying anchor", () => {
-    const ref = createRef<HTMLAnchorElement>();
+  it("forwards refs to the cluster", () => {
+    const ref = createRef<HTMLDivElement>();
     render(<FloatingPreviewBadge href={HREF} ref={ref} />);
     expect(ref.current).not.toBeNull();
-    expect(ref.current?.tagName).toBe("A");
-    expect(ref.current?.href).toBe(`${HREF}`);
+    expect(ref.current?.tagName).toBe("DIV");
+    expect(ref.current).toHaveAttribute("data-page-badge");
   });
 
   it("merges a custom className with the generated styles", () => {
     render(<FloatingPreviewBadge href={HREF} className="my-badge" />);
-    expect(screen.getByRole("link")).toHaveClass("my-badge");
+    expect(document.body.querySelector("[data-page-badge]")).toHaveClass("my-badge");
   });
 
-  it("forwards arbitrary anchor props through to the element", () => {
-    render(<FloatingPreviewBadge href={HREF} data-testid="badge" id="external-preview" />);
-    const link = screen.getByTestId("badge");
-    expect(link).toHaveAttribute("id", "external-preview");
-  });
-
-  it("paints the portalled badge with the work accent so it survives the portal", () => {
+  it("paints the portalled cluster with the work accent so it survives the portal", () => {
     render(<FloatingPreviewBadge href={HREF} accentColor="#ec6839" />);
-    const link = screen.getByRole("link") as HTMLAnchorElement;
-    expect(link.style.getPropertyValue("--work-accent")).toBe("#EC6839");
-    expect(link.style.getPropertyValue("--work-on-accent")).toBe("#ffffff");
-    expect(link.style.getPropertyValue("--work-accent-fill")).toBe("rgba(236, 104, 57, 0.62)");
+    const cluster = document.body.querySelector("[data-page-badge]") as HTMLElement;
+    expect(cluster.style.getPropertyValue("--work-accent")).toBe("#EC6839");
+    expect(cluster.style.getPropertyValue("--work-on-accent")).toBe("#ffffff");
+    expect(cluster.style.getPropertyValue("--work-accent-fill")).toBe("rgba(236, 104, 57, 0.62)");
   });
 
-  it("lets a caller override the inline style without losing backdrop-filter", () => {
+  it("lets a caller override the inline style without losing accent vars", () => {
     render(<FloatingPreviewBadge href={HREF} style={{ opacity: 0.5 }} />);
-    const link = screen.getByRole("link") as HTMLAnchorElement;
-    expect(link.style.opacity).toBe("0.5");
-    expect(link.style.backdropFilter).toMatch(/blur/);
+    const cluster = document.body.querySelector("[data-page-badge]") as HTMLElement;
+    expect(cluster.style.opacity).toBe("0.5");
+  });
+
+  it("renders extra editor actions beside the preview", () => {
+    render(
+      <FloatingPreviewBadge
+        href={HREF}
+        actions={[
+          {
+            href: "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
+            label: "edit",
+            glyph: "✎",
+            ariaLabel: "Edit in Storyblok",
+          },
+        ]}
+      />,
+    );
+    expect(screen.getByRole("link", { name: /open external preview/ })).toHaveAttribute(
+      "href",
+      HREF,
+    );
+    expect(screen.getByRole("link", { name: "Edit in Storyblok" })).toHaveAttribute(
+      "href",
+      "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
+    );
+  });
+
+  it("renders editor actions without a preview href", () => {
+    render(
+      <FloatingPreviewBadge
+        actions={[
+          {
+            href: "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
+            label: "edit",
+            glyph: "✎",
+            ariaLabel: "Edit in Storyblok",
+          },
+        ]}
+      />,
+    );
+    expect(screen.queryByRole("link", { name: /open external preview/ })).toBeNull();
+    expect(screen.getByRole("link", { name: "Edit in Storyblok" })).not.toBeNull();
+  });
+
+  it("toggles the 12-column overlay from the grid pill", () => {
+    render(<FloatingPreviewBadge href={HREF} gridToggle />);
+    expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Show 12-column overlay (G)" }));
+    expect(document.body.querySelector("[data-editor-grid]")).not.toBeNull();
+    expect(document.body.querySelector("[data-editor-grid]")?.textContent).toContain("[ 01 ]");
+    fireEvent.click(screen.getByRole("button", { name: "Hide 12-column overlay (G)" }));
+    expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
+  });
+
+  it("toggles the overlay with G and closes it with Escape", () => {
+    render(<FloatingPreviewBadge href={HREF} gridToggle />);
+    fireEvent.keyDown(window, { key: "g" });
+    expect(document.body.querySelector("[data-editor-grid]")).not.toBeNull();
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
+  });
+
+  it("renders a same-tab exit-draft pill", () => {
+    render(
+      <FloatingPreviewBadge
+        actions={[
+          {
+            href: "/api/exit-draft",
+            label: "exit",
+            glyph: "×",
+            ariaLabel: "Exit draft preview",
+            external: false,
+          },
+        ]}
+      />,
+    );
+    const link = screen.getByRole("link", { name: "Exit draft preview" });
+    expect(link).toHaveAttribute("href", "/api/exit-draft");
+    expect(link).not.toHaveAttribute("target");
+  });
+
+  it("renders nothing when there is no preview, action, or grid toggle", () => {
+    render(<FloatingPreviewBadge />);
+    expect(document.body.querySelector("[data-page-badge]")).toBeNull();
   });
 });

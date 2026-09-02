@@ -38,17 +38,19 @@ test.describe("FloatingPreviewBadge", () => {
     await expect(badge).toHaveAttribute("rel", "noopener noreferrer");
     await expect(badge).toHaveAttribute("href", /^https?:\/\//);
 
-    const parentTag = await badge.evaluate((node) => node.parentElement?.tagName ?? "");
-    expect(parentTag).toBe("BODY");
+    const cluster = page.locator("[data-page-badge]");
+    await expect(cluster).toHaveCount(1);
+    const clusterParent = await cluster.evaluate((node) => node.parentElement?.tagName ?? "");
+    expect(clusterParent).toBe("BODY");
 
     await expect(badge).toContainText("↗");
 
-    const box = await badge.boundingBox();
+    const box = await cluster.boundingBox();
     expect(box).not.toBeNull();
     const viewport = page.viewportSize();
     if (box && viewport) {
-      const badgeCenterX = box.x + box.width / 2;
-      expect(Math.abs(badgeCenterX - viewport.width / 2)).toBeLessThan(10);
+      const clusterCenterX = box.x + box.width / 2;
+      expect(Math.abs(clusterCenterX - viewport.width / 2)).toBeLessThan(10);
       expect(viewport.height - (box.y + box.height)).toBeLessThan(viewport.height / 3);
     }
   });

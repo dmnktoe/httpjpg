@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
 import { SbPageWork } from "./SbPageWork";
 
@@ -36,6 +36,32 @@ describe("SbPageWork", () => {
     const badge = document.querySelector('a[href="https://external.dev"]') as HTMLAnchorElement;
     expect(badge).not.toBeNull();
     expect(badge.style.getPropertyValue("--work-accent")).toBe("#EC6839");
+  });
+
+  it("adds an edit pill when the draft _editable comment is present", () => {
+    render(
+      <SbPageWork
+        blok={
+          {
+            _uid: "4",
+            component: "page_work",
+            _editable: '<!--#storyblok#{"space":"99","id":"42"}-->',
+            link: { linktype: "url", url: "https://external.dev" },
+          } as never
+        }
+      />,
+    );
+    expect(document.body.querySelector('a[href="https://external.dev"]')).not.toBeNull();
+    expect(
+      document.body.querySelector(
+        'a[href="https://app.storyblok.com/#/me/spaces/99/stories/0/0/42"]',
+      ),
+    ).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Show 12-column overlay (G)" })).not.toBeNull();
+    expect(screen.getByRole("link", { name: "Exit draft preview" })).toHaveAttribute(
+      "href",
+      "/api/exit-draft",
+    );
   });
 
   it("ignores non-external links for the preview badge", () => {

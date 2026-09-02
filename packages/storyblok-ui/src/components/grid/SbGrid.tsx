@@ -4,6 +4,7 @@ import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo, type CSSProperties } from "react";
 import { css } from "styled-system/css";
 
+import { BlokMotion } from "../../lib/blok-motion";
 import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 type ColCount = NonNullable<GridProps["columns"]>;
@@ -51,6 +52,8 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
     justify,
     justifyContent,
     flow,
+    animation,
+    animationDelay,
   } = blok;
   const editable = editableAttrs(blok);
 
@@ -73,23 +76,26 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
   });
 
   return (
-    <Grid
-      {...editable}
-      columns={toCols(columns) ?? 1}
-      gap={gap}
-      rowGap={rowGap}
-      columnGap={columnGap}
-      align={align || undefined}
-      justify={justify || undefined}
-      justifyContent={justifyContent || undefined}
-      flow={flow || undefined}
-      className={responsive}
-      style={styleVars}
-    >
-      {items.map((item) => (
-        <StoryblokServerComponent key={item._uid} blok={item} />
-      ))}
-    </Grid>
+    <BlokMotion animation={animation} delay={animationDelay}>
+      <Grid
+        {...editable}
+        columns={toCols(columns) ?? 1}
+        gap={gap}
+        rowGap={rowGap}
+        columnGap={columnGap}
+        align={align || undefined}
+        justify={justify || undefined}
+        justifyContent={justifyContent || undefined}
+        flow={flow || undefined}
+        className={responsive}
+        style={styleVars}
+        css={{ overflow: "visible" }}
+      >
+        {items.map((item) => (
+          <StoryblokServerComponent key={item._uid} blok={item} />
+        ))}
+      </Grid>
+    </BlokMotion>
   );
 });
 

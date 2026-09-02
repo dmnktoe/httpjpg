@@ -12,6 +12,23 @@ describe("validateLocalSchema", () => {
     expect(validateLocalSchema().ok).toBe(true);
   });
 
+  it("registers the signed margin datasource used by spacing tabs", () => {
+    const schema = toSchemaLike();
+    expect(schema.datasources.some((ds) => ds.slug === "margin-options")).toBe(true);
+    const gridItem = schema.blocks.find((block) => block.name === "grid_item");
+    expect(
+      gridItem?.fields.some(
+        (field) => field.name === "ml" && field.datasource === "margin-options",
+      ),
+    ).toBe(true);
+    expect(
+      gridItem?.fields.some(
+        (field) => field.name === "pt" && field.datasource === "spacing-options",
+      ),
+    ).toBe(true);
+    expect(gridItem?.fields.some((field) => field.name === "animation")).toBe(true);
+  });
+
   it("rejects a bloks whitelist pointing at an unknown block", () => {
     const result = validateLocalSchema([
       block("grid", { items: field.bloks("Items", { whitelist: ["ghost_block"] }) }),

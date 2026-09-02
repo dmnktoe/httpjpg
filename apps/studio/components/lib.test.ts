@@ -8,8 +8,10 @@ import {
   type ExportedGrid,
   findGridsInBody,
   GRID_COLS,
+  MARGIN_OPTIONS,
   nudgeItem,
   serializeGrid,
+  spacingToPx,
 } from "./lib";
 
 function item(overrides: Partial<BuilderItem> = {}): BuilderItem {
@@ -156,5 +158,27 @@ describe("nudgeItem / duplicateItem", () => {
     expect(dup.data).toEqual(source.data);
     expect(dup.data).not.toBe(source.data);
     expect(dup).toMatchObject({ x: 1, y: 1, xLg: 3, yLg: 5 });
+  });
+});
+
+describe("spacingToPx", () => {
+  it("resolves a positive token to its rem value", () => {
+    expect(spacingToPx("4")).toBe("1rem");
+  });
+
+  it("negates the rem value for a signed token", () => {
+    expect(spacingToPx("-4")).toBe("-1rem");
+    expect(spacingToPx("-0")).toBeUndefined();
+  });
+
+  it("returns undefined for an unknown key", () => {
+    expect(spacingToPx()).toBeUndefined();
+    expect(spacingToPx("not-a-token")).toBeUndefined();
+  });
+});
+
+describe("MARGIN_OPTIONS", () => {
+  it("includes signed pull-out values that SPACING_OPTIONS does not", () => {
+    expect(MARGIN_OPTIONS.some((option) => option.value === "-4")).toBe(true);
   });
 });

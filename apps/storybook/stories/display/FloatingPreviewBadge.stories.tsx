@@ -77,6 +77,34 @@ export const CustomLabel: Story = {
  * The same hex that tints iOS liquid-glass icons. Set on the portalled node
  * so the pill does not depend on `html` custom properties.
  */
+export const EditorActions: Story = {
+  args: {
+    href: "https://example.com",
+    label: "preview",
+    gridToggle: true,
+    actions: [
+      {
+        href: "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
+        label: "edit",
+        glyph: "✎",
+        ariaLabel: "Edit in Storyblok",
+      },
+      {
+        href: "/api/exit-draft",
+        label: "exit",
+        glyph: "×",
+        ariaLabel: "Exit draft preview",
+        external: false,
+      },
+    ],
+  },
+  render: (args) => (
+    <Stage>
+      <FloatingPreviewBadge {...args} />
+    </Stage>
+  ),
+};
+
 export const WorkAccent: Story = {
   args: {
     href: "https://example.com",

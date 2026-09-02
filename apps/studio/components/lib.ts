@@ -10,13 +10,18 @@ export const GRID_COLS = 12;
 export const ROW_HEIGHT_PX = 40;
 export const MIN_ROWS = 30;
 
-/** Pixel value for each CMS spacing token key (e.g., "4" → "1rem"). */
+/** Pixel value for each CMS spacing token key (e.g., "4" → "1rem", "-4" → "-1rem"). */
 const SPACING_PX: Record<string, string> = Object.fromEntries(
   Object.entries(spacing).map(([key, value]) => [key, value]),
 );
 
 export function spacingToPx(key?: string): string | undefined {
   if (!key) return undefined;
+  if (key.startsWith("-")) {
+    const positive = SPACING_PX[key.slice(1)];
+    if (!positive) return undefined;
+    return positive === "0" ? "0" : `-${positive}`;
+  }
   return SPACING_PX[key];
 }
 
@@ -169,13 +174,17 @@ export const ALIGN_SELF_OPTIONS = [EMPTY_OPTION, ...labelize(CMS_OPTIONS.alignIt
 
 export const JUSTIFY_SELF_OPTIONS = [EMPTY_OPTION, ...labelize(CMS_OPTIONS.justifyItems)];
 
-export const SPACING_OPTIONS = [
-  EMPTY_OPTION,
-  ...CMS_OPTIONS.spacing.map((key) => ({
+function spacingOption(key: string) {
+  const px = spacingToPx(key);
+  return {
     value: key,
-    label: SPACING_PX[key] ? `${key} (${SPACING_PX[key]})` : key,
-  })),
-];
+    label: px ? `${key} (${px})` : key,
+  };
+}
+
+export const SPACING_OPTIONS = [EMPTY_OPTION, ...CMS_OPTIONS.spacing.map(spacingOption)];
+
+export const MARGIN_OPTIONS = [EMPTY_OPTION, ...CMS_OPTIONS.margin.map(spacingOption)];
 
 export const GRID_SPAN_OPTIONS = [
   EMPTY_OPTION,

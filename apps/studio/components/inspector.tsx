@@ -19,6 +19,7 @@ import {
   hiddenFieldForViewport,
   type ItemSpacing,
   JUSTIFY_SELF_OPTIONS,
+  MARGIN_OPTIONS,
   SPACING_OPTIONS,
   type SpacingSet,
   type SpacingSide,
@@ -515,7 +516,7 @@ function SpacingField({
     <SelectField
       label={SIDE_LABEL[side]}
       value={own}
-      options={SPACING_OPTIONS}
+      options={side.startsWith("m") ? MARGIN_OPTIONS : SPACING_OPTIONS}
       onChange={(v) => onChange(side, v)}
       hint={hint}
     />

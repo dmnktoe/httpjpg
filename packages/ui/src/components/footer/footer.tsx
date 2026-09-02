@@ -164,9 +164,9 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
                 <Box
                   as="span"
                   css={{
-                    opacity: 0.4,
                     fontFamily: "mono",
                     fontSize: "xs",
+                    fontWeight: "bold",
                     letterSpacing: "0.05em",
                   }}
                 >

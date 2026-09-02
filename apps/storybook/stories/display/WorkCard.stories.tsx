@@ -78,10 +78,6 @@ const meta = {
       description: "Push overlay particles inward by N percent",
       table: { defaultValue: { summary: "6" } },
     },
-    accentColor: {
-      control: "color",
-      description: "Work page Project Accent Color — tints the title arrow and slug link",
-    },
     priority: {
       control: "boolean",
       description: "Mark the card's first slide as LCP (eager + fetchpriority=high)",
@@ -258,17 +254,6 @@ export const Minimal: Story = {
  */
 export const WithTags: Story = {
   args: MOCK_TAGGED_WORK,
-};
-
-/**
- * Project Accent Color tints the title arrow and the slug link — the web
- * counterpart to the iOS liquid-glass icon tint.
- */
-export const WithAccent: Story = {
-  args: {
-    ...MOCK_TAGGED_WORK,
-    accentColor: "#EC6839",
-  },
 };
 
 /**

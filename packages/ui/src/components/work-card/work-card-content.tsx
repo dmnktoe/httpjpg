@@ -11,14 +11,12 @@ export function WorkCardContent({
   dateEnd,
   slug,
   baseUrl,
-  accentColor,
 }: {
   description?: ReactNode;
   date?: string | Date;
   dateEnd?: string | Date;
   slug: string;
   baseUrl: string;
-  accentColor?: string;
 }) {
   return (
     <Box css={{ w: { base: "full", xl: "1/2" } }}>
@@ -38,13 +36,7 @@ export function WorkCardContent({
           </Paragraph>
         )}
         <Box>
-          <WorkCardMeta
-            date={date}
-            dateEnd={dateEnd}
-            slug={slug}
-            baseUrl={baseUrl}
-            accentColor={accentColor}
-          />
+          <WorkCardMeta date={date} dateEnd={dateEnd} slug={slug} baseUrl={baseUrl} />
         </Box>
       </VStack>
     </Box>

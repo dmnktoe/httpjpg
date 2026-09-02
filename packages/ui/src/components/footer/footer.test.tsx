@@ -99,4 +99,20 @@ describe("Footer", () => {
     render(<Footer />);
     expect(screen.queryByText("Cookie Settings")).not.toBeInTheDocument();
   });
+
+  it("paints a background, marks external links, and links the cookie policy", () => {
+    render(
+      <Footer
+        backgroundImage="/bg.jpg"
+        showCookieSettings
+        cookiePolicyHref="/cookie-policy"
+        footerLinks={[{ name: "X", href: "https://x.com", isExternal: true }]}
+      />,
+    );
+    expect(screen.getByRole("link", { name: "X" })).toHaveAttribute("href", "https://x.com");
+    expect(screen.getByRole("link", { name: "Cookie Policy" })).toHaveAttribute(
+      "href",
+      "/cookie-policy",
+    );
+  });
 });

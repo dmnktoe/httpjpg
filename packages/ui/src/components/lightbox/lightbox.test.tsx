@@ -291,6 +291,31 @@ describe("Lightbox", () => {
     expect(document.querySelector("video")).toBeInTheDocument();
   });
 
+  it("passes srcSet and a video poster through", () => {
+    const { unmount } = render(
+      <Lightbox
+        open
+        items={[{ src: "/one.jpg", alt: "One", srcSet: "/one-2x.jpg 2x", sizes: "100vw" }]}
+        index={0}
+        onClose={vi.fn()}
+        onIndexChange={vi.fn()}
+      />,
+    );
+    expect(screen.getByRole("img", { name: "One" })).toHaveAttribute("srcset", "/one-2x.jpg 2x");
+    unmount();
+
+    setup({
+      items: [
+        {
+          src: "/clip.mp4",
+          alt: "A clip",
+          video: { source: "native", poster: "/poster.jpg", aspectRatio: "4/3" },
+        },
+      ],
+    });
+    expect(document.querySelector("video")).toHaveAttribute("poster", "/poster.jpg");
+  });
+
   it("honours an explicit theme over the page's", () => {
     document.documentElement.setAttribute("data-theme", "dark");
     try {

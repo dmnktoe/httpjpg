@@ -109,7 +109,8 @@ describe("GridBuilder", () => {
     });
     fireEvent.keyDown(window, { key: "d", metaKey: true });
     expect(screen.getByText("2 items")).toBeInTheDocument();
-    fireEvent.keyDown(window, { key: "Delete" });
+    fireEvent.click(screen.getByRole("button", { name: "Undo" }));
     expect(screen.getByText("1 items")).toBeInTheDocument();
+    expect(screen.getByText(/Select an item on the canvas/)).toBeInTheDocument();
   });
 });

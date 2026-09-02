@@ -359,4 +359,14 @@ describe("AskWidget", () => {
     });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
+
+  it("treats an ask response without a body as a generic failure", async () => {
+    mockFetch({ askOk: true, askBody: null });
+    render(<AskWidget />);
+    openPalette();
+    await type("what is this?");
+    await waitFor(() => expect(screen.getByRole("button", { name: /ask/i })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole("button", { name: /ask/i }));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/answer failed/i));
+  });
 });

@@ -97,4 +97,15 @@ describe("relatedDocuments", () => {
 
     expect(relatedDocuments([current, ...others], current, 2)).toHaveLength(2);
   });
+
+  it("breaks a remaining tie alphabetically and skips untagged neighbours", () => {
+    const current = doc("current", ["ios"]);
+    const alpha = doc("alpha", ["ios"], { date: "2020-01-01" });
+    const beta = doc("beta", ["ios"], { date: "2020-01-01" });
+    const untagged = { ...doc("ghost", []), tagValues: undefined, href: "/work/current" };
+
+    expect(
+      relatedDocuments([current, beta, alpha, untagged], current).map((item) => item.id),
+    ).toEqual(["alpha", "beta"]);
+  });
 });

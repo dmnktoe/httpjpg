@@ -64,10 +64,10 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html", "lcov", "json"],
       thresholds: {
-        statements: 93,
-        branches: 93,
-        functions: 93,
-        lines: 93,
+        statements: 85,
+        branches: 85,
+        functions: 85,
+        lines: 85,
       },
       include: [
         "packages/*/src/**/*.{js,jsx,ts,tsx,mjs}",

@@ -38,16 +38,6 @@ describe("toWorkCardProps", () => {
     expect(props.date).toBe("2024-01-01");
   });
 
-  it("forwards the work page accent colour onto the card", () => {
-    const story: WorkStory = {
-      name: "Name",
-      slug: "s",
-      full_slug: "work/s",
-      content: { title: "Accented", accentColor: "#ec6839" },
-    };
-    expect(toWorkCardProps(story).accentColor).toBe("#ec6839");
-  });
-
   it("returns undefined tags when the story carries none", () => {
     const story: WorkStory = { name: "Name", slug: "s", full_slug: "work/s" };
     expect(toWorkCardProps(story).tags).toBeUndefined();

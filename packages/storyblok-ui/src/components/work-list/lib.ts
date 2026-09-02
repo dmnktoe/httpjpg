@@ -13,7 +13,6 @@ export interface WorkStory {
     tags?: string[];
     date?: string;
     date_end?: string;
-    accentColor?: string;
   };
 }
 
@@ -38,7 +37,6 @@ export function toWorkCardProps(story: WorkStory) {
     dateEnd: story.content?.date_end,
     baseUrl: BASE_URL,
     tags: tags.length ? tags : undefined,
-    accentColor: story.content?.accentColor,
   };
 }
 

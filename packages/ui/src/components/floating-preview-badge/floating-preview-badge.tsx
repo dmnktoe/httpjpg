@@ -121,6 +121,9 @@ export const FloatingPreviewBadge = forwardRef<HTMLDivElement, FloatingPreviewBa
   ) {
     const mounted = useHasMounted();
     const [gridOpen, setGridOpen] = useState(false);
+    if (!gridToggle && gridOpen) {
+      setGridOpen(false);
+    }
 
     useEffect(() => {
       if (!gridToggle) {
@@ -220,7 +223,7 @@ export const FloatingPreviewBadge = forwardRef<HTMLDivElement, FloatingPreviewBa
     return createPortal(
       <>
         {cluster}
-        {gridOpen ? <EditorGridOverlay /> : null}
+        {gridToggle && gridOpen ? <EditorGridOverlay /> : null}
       </>,
       document.body,
     );

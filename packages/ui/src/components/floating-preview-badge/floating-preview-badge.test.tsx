@@ -130,6 +130,14 @@ describe("FloatingPreviewBadge", () => {
     expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
   });
 
+  it("closes the overlay when gridToggle is turned off", () => {
+    const { rerender } = render(<FloatingPreviewBadge href={HREF} gridToggle />);
+    fireEvent.click(screen.getByRole("button", { name: "Show 12-column overlay (G)" }));
+    expect(document.body.querySelector("[data-editor-grid]")).not.toBeNull();
+    rerender(<FloatingPreviewBadge href={HREF} gridToggle={false} />);
+    expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
+  });
+
   it("toggles the overlay with G and closes it with Escape", () => {
     render(<FloatingPreviewBadge href={HREF} gridToggle />);
     fireEvent.keyDown(window, { key: "g" });

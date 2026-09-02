@@ -23,18 +23,24 @@ export function EditorGridOverlay() {
           className={css({
             position: "relative",
             height: "100%",
-            opacity: 0.06,
-            backgroundColor: "pageFg",
-            _pageDark: { opacity: 0.1 },
           })}
         >
+          <div
+            className={css({
+              position: "absolute",
+              inset: "0",
+              opacity: 0.06,
+              backgroundColor: "pageFg",
+              _pageDark: { opacity: 0.1 },
+            })}
+          />
           <span
             className={css({
               position: "sticky",
               top: "3",
               display: "block",
               color: "pageFg",
-              opacity: 0.55,
+              opacity: 0.45,
               fontFamily: "mono",
               fontSize: "xs",
               letterSpacing: "wider",

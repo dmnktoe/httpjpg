@@ -135,7 +135,7 @@ describe("WorkList · tag filter", () => {
         showDividers
         header={<div>Header</div>}
         footer={<div>Footer</div>}
-        variant="overlay"
+        variant="featured"
       />,
     );
     expect(screen.getByText("Header")).toBeInTheDocument();

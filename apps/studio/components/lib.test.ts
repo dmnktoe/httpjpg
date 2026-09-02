@@ -295,7 +295,7 @@ describe("deserializeGrid edge cases", () => {
           content: [],
         },
       ],
-    });
+    } as unknown as ExportedGrid);
 
     expect(settings.columns).toBe(GRID_COLS);
     expect(settings.columnsMd).toBe(GRID_COLS);

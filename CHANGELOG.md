@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.1](https://github.com/dmnktoe/httpjpg/compare/v2.9.0...v2.9.1) (2026-09-02)
+
+
+### Fixed
+
+* **ui:** drop accent tint from the work card arrow and slug link ([#410](https://github.com/dmnktoe/httpjpg/issues/410)) ([c498f8a](https://github.com/dmnktoe/httpjpg/commit/c498f8ab4ee20cc53024bc8eee74aea433dc0e0d))
+
+
+### Changed
+
+* bold and black `last updated` notice ([#409](https://github.com/dmnktoe/httpjpg/issues/409)) ([0d2d637](https://github.com/dmnktoe/httpjpg/commit/0d2d6371b9d30d1878633cee376a3a8d10a4d9b8))
+
+
+### Dependencies
+
+* update dependency tsx to ^4.23.13 ([#406](https://github.com/dmnktoe/httpjpg/issues/406)) ([63bb853](https://github.com/dmnktoe/httpjpg/commit/63bb853013cc98d7aa86ac5f95ad834e73301004))
+* update react + next to ^16.3.4 ([#407](https://github.com/dmnktoe/httpjpg/issues/407)) ([60d29e5](https://github.com/dmnktoe/httpjpg/commit/60d29e5aa69bd0c2ccd7b30a5389763e32574b75))
+
 ## [2.9.0](https://github.com/dmnktoe/httpjpg/compare/v2.8.0...v2.9.0) (2026-09-01)
 
 

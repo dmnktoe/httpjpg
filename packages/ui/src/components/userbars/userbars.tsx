@@ -2,21 +2,8 @@
 
 import type { SystemStyleObject } from "styled-system/types";
 
-import { isExternalLink } from "../../lib/is-external-link";
+import { isExternalLink, isSafeHref } from "../../lib/is-external-link";
 import { Box } from "../box/box";
-
-const SAFE_SCHEMES = ["http", "https", "mailto", "tel"];
-
-function isSafeHref(href: string): boolean {
-  const cleaned = Array.from(href)
-    .filter((char) => {
-      const code = char.charCodeAt(0);
-      return code > 0x20 && code !== 0x7f;
-    })
-    .join("");
-  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(cleaned);
-  return !scheme || SAFE_SCHEMES.includes(scheme[1].toLowerCase());
-}
 
 /** Classic forum userbar canvas. Images keep this size and stay unsmoothed. */
 export const USERBAR_WIDTH = 350;

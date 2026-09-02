@@ -27,6 +27,14 @@ function renderSlider(props: Partial<Parameters<typeof ImageComparisonSlider>[0]
   );
 }
 
+function mockFrame(slider: HTMLElement): void {
+  const frame = slider.parentElement;
+  if (!frame) {
+    throw new Error("expected a frame around the range input");
+  }
+  vi.spyOn(frame, "getBoundingClientRect").mockReturnValue(FRAME);
+}
+
 describe("clampPosition", () => {
   it("keeps values inside 0–100", () => {
     expect(clampPosition(-10)).toBe(0);
@@ -116,11 +124,7 @@ describe("ImageComparisonSlider", () => {
   it("seeks from a pointer down on the frame", () => {
     renderSlider();
     const slider = screen.getByRole("slider");
-    const frame = slider.parentElement;
-    if (!frame) {
-      throw new Error("expected a frame around the range input");
-    }
-    vi.spyOn(frame, "getBoundingClientRect").mockReturnValue(FRAME);
+    mockFrame(slider);
 
     fireEvent.pointerDown(slider, { button: 0, clientX: 50, clientY: 40 });
 
@@ -139,5 +143,92 @@ describe("ImageComparisonSlider", () => {
 
     expect(screen.getByRole("slider")).toHaveAttribute("aria-orientation", "vertical");
     expect(screen.getByText("[ ↕ ]")).toBeInTheDocument();
+  });
+
+  it("tracks pointer movement after a drag starts", () => {
+    renderSlider();
+    const slider = screen.getByRole("slider");
+    mockFrame(slider);
+
+    fireEvent.pointerDown(slider, { button: 0, clientX: 50, clientY: 40 });
+    fireEvent.pointerMove(slider, { clientX: 150, clientY: 40 });
+
+    expect(slider).toHaveValue("75");
+    expect(screen.getByText("[ 075 / 100 ]")).toBeInTheDocument();
+  });
+
+  it("ignores pointer movement before a drag starts", () => {
+    renderSlider();
+    const slider = screen.getByRole("slider");
+    mockFrame(slider);
+
+    fireEvent.pointerMove(slider, { clientX: 150, clientY: 40 });
+
+    expect(slider).toHaveValue("50");
+  });
+
+  it("ignores a non-primary pointer button", () => {
+    renderSlider();
+    const slider = screen.getByRole("slider");
+    mockFrame(slider);
+
+    fireEvent.pointerDown(slider, { button: 1, clientX: 50, clientY: 40 });
+
+    expect(slider).toHaveValue("50");
+  });
+
+  it("ignores range changes while a drag is in progress", () => {
+    renderSlider();
+    const slider = screen.getByRole("slider");
+    mockFrame(slider);
+
+    fireEvent.pointerDown(slider, { button: 0, clientX: 50, clientY: 40 });
+    fireEvent.change(slider, { target: { value: "90" } });
+
+    expect(slider).toHaveValue("25");
+  });
+
+  it("releases the drag on pointer up so the range can change again", () => {
+    renderSlider();
+    const slider = screen.getByRole("slider");
+    mockFrame(slider);
+
+    fireEvent.pointerDown(slider, { button: 0, clientX: 50, clientY: 40 });
+    fireEvent.pointerUp(slider);
+    fireEvent.change(slider, { target: { value: "90" } });
+
+    expect(slider).toHaveValue("90");
+  });
+
+  it("releases the drag on pointer cancel", () => {
+    renderSlider();
+    const slider = screen.getByRole("slider");
+    mockFrame(slider);
+
+    fireEvent.pointerDown(slider, { button: 0, clientX: 50, clientY: 40 });
+    fireEvent.pointerCancel(slider);
+    fireEvent.change(slider, { target: { value: "12" } });
+
+    expect(slider).toHaveValue("12");
+  });
+
+  it("follows a new initialPosition during a live edit", () => {
+    const { rerender } = renderSlider({ initialPosition: 20 });
+    const slider = screen.getByRole("slider");
+
+    expect(slider).toHaveValue("20");
+
+    rerender(
+      <ImageComparisonSlider
+        beforeSrc="/before.jpg"
+        afterSrc="/after.jpg"
+        beforeAlt="Before photo"
+        afterAlt="After photo"
+        initialPosition={80}
+      />,
+    );
+
+    expect(screen.getByRole("slider")).toHaveValue("80");
+    expect(screen.getByText("[ 080 / 100 ]")).toBeInTheDocument();
   });
 });

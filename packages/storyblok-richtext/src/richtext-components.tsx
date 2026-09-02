@@ -3,6 +3,7 @@ import {
   CopyrightLabel,
   Divider,
   Headline,
+  isSafeHref,
   Link,
   ListItem,
   OrderedList,
@@ -169,19 +170,6 @@ function EmojiRenderer({ attrs }: SbReactRichTextProps<"emoji">) {
     );
   }
   return <>{emoji ?? null}</>;
-}
-
-const SAFE_SCHEMES = ["http", "https", "mailto", "tel"];
-
-function isSafeHref(href: string): boolean {
-  const cleaned = Array.from(href)
-    .filter((char) => {
-      const code = char.charCodeAt(0);
-      return code > 0x20 && code !== 0x7f;
-    })
-    .join("");
-  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(cleaned);
-  return !scheme || SAFE_SCHEMES.includes(scheme[1].toLowerCase());
 }
 
 function LinkRenderer({ attrs, children }: SbReactRichTextProps<"link">) {

@@ -243,7 +243,11 @@ Audio outlives client navigations (like the iOS app's `AudioPlayerModel`).
 
 ## Footer status widgets
 
-Live footer lines (Discord, Discogs, Letterboxd, X, PSN) render through `FooterStatusLine` in `@httpjpg/ui`. Don't invent a second status row.
+Live footer lines (Discord, Discogs, Letterboxd, X, PSN, Cloudflare) render through `FooterStatusLine` in `@httpjpg/ui`. Don't invent a second status row. Classic 350×19 userbars sit below the wave via `Userbars`, sourced from the config story — not a status line.
+
+## Work accent
+
+Work pages may set a Project Accent Color (`#RGB` / `#RRGGBB`). `parseWorkAccent` / `applyWorkAccent` in `@httpjpg/ui` write `--work-accent`, `--work-on-accent`, and `--work-accent-fill*` on `<html>` via `ThemeSync`. Cursor, trail, lightbox chrome, and work-card titles read those vars — don't invent a second palette.
 
 ## Lightbox
 

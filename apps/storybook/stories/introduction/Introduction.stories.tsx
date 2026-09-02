@@ -253,7 +253,7 @@ export default function MyPage() {
                 {
                   cat: "Widgets",
                   items:
-                    "MusicPlayer · NowPlaying · MiniPlayer · CommandPalette · FooterStatusLine",
+                    "MusicPlayer · NowPlaying · MiniPlayer · CommandPalette · FooterStatusLine · CloudflareLogo · Userbars",
                 },
                 { cat: "Decoration", items: "Divider · ImageOverlay · FloatingPreviewBadge" },
               ].map((g) => (

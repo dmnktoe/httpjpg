@@ -19,6 +19,10 @@ const ITEMS = [
   { src: userbarSrc("POWERED BY NEXT.JS", "#111111", "#f97316"), alt: "Powered by Next.js" },
 ];
 
+/**
+ * Classic 350×19 forum userbars, stacked at native size and unsmoothed.
+ * An `href` wraps a bar; `javascript:` and other unsafe schemes are dropped.
+ */
 const meta = {
   title: "Widgets/Userbars",
   component: Userbars,

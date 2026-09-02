@@ -84,6 +84,12 @@ export const EditorActions: Story = {
     gridToggle: true,
     actions: [
       {
+        label: "draft",
+        glyph: "🔍",
+        ariaLabel: "Preview mode — unpublished content",
+        presentational: true,
+      },
+      {
         href: "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
         label: "edit",
         glyph: "✎",

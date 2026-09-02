@@ -1,6 +1,12 @@
+import { resetPreviewBadgeStore } from "@httpjpg/ui";
 import { render, screen } from "@testing-library/react";
+import { afterEach } from "vitest";
 
 import { SbPageWork } from "./SbPageWork";
+
+afterEach(() => {
+  resetPreviewBadgeStore();
+});
 
 describe("SbPageWork", () => {
   it("renders body bloks", () => {
@@ -58,6 +64,7 @@ describe("SbPageWork", () => {
         'a[href="https://app.storyblok.com/#/me/spaces/99/stories/0/0/42"]',
       ),
     ).not.toBeNull();
+    expect(screen.getByRole("status", { name: /preview mode/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Show 12-column overlay (G)" })).not.toBeNull();
     expect(screen.getByRole("link", { name: "Exit draft preview" })).toHaveAttribute(
       "href",

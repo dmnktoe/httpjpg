@@ -138,6 +138,24 @@ describe("FloatingPreviewBadge", () => {
     expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
   });
 
+  it("renders a presentational draft status pill", () => {
+    render(
+      <FloatingPreviewBadge
+        actions={[
+          {
+            label: "draft",
+            glyph: "🔍",
+            ariaLabel: "Preview mode — unpublished content",
+            presentational: true,
+          },
+        ]}
+      />,
+    );
+    const status = screen.getByRole("status", { name: /preview mode/i });
+    expect(status.tagName).toBe("OUTPUT");
+    expect(status).toHaveTextContent("draft");
+  });
+
   it("renders a same-tab exit-draft pill", () => {
     render(
       <FloatingPreviewBadge

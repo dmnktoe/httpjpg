@@ -1,5 +1,5 @@
 import { storyblokEditorHrefFromEditable } from "@httpjpg/storyblok-utils";
-import type { FloatingBadgeAction } from "@httpjpg/ui";
+import { editorBadgeActions, type FloatingBadgeAction } from "@httpjpg/ui";
 
 export interface DraftEditorChrome {
   editHref: string | null;
@@ -17,21 +17,6 @@ export function draftEditorChrome(editable?: unknown): DraftEditorChrome {
   return {
     editHref,
     gridToggle: true,
-    actions: [
-      {
-        href: editHref,
-        label: "edit",
-        glyph: "✎",
-        ariaLabel: "Edit in Storyblok",
-      },
-      {
-        href: "/api/exit-draft",
-        label: "exit",
-        glyph: "×",
-        ariaLabel: "Exit draft preview",
-        external: false,
-        hideInIframe: true,
-      },
-    ],
+    actions: editorBadgeActions(editHref),
   };
 }

@@ -1,5 +1,5 @@
 import type { SbPageData } from "@httpjpg/storyblok-utils";
-import { Box, FloatingPreviewBadge } from "@httpjpg/ui";
+import { Box, PreviewBadgeBridge } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
@@ -21,9 +21,7 @@ export const SbPage = memo(function SbPage({ blok }: SbPageProps) {
       {body?.map((child) => (
         <StoryblokServerComponent key={child._uid} blok={child} />
       ))}
-      {chrome.editHref ? (
-        <FloatingPreviewBadge gridToggle={chrome.gridToggle} actions={chrome.actions} />
-      ) : null}
+      <PreviewBadgeBridge editHref={chrome.editHref} />
     </Box>
   );
 });

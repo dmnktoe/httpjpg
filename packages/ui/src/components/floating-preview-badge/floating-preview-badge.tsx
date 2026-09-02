@@ -28,6 +28,8 @@ export interface FloatingBadgeAction {
   external?: boolean;
   /** Hide inside the Storyblok Visual Editor iframe (e.g. exit-draft). */
   hideInIframe?: boolean;
+  /** Status pill (draft). Renders a `span`, not a control. */
+  presentational?: boolean;
 }
 
 export interface FloatingPreviewBadgeProps {
@@ -83,6 +85,12 @@ const pillClass = css({
 const pressedClass = css({
   backgroundColor: "var(--work-accent-fill-hover, rgba(0, 0, 0, 0.42))",
   borderColor: "var(--work-accent, rgba(255, 255, 255, 0.55))",
+});
+
+const presentationalClass = css({
+  cursor: "default",
+  _hover: { boxShadow: "inherit", transform: "none" },
+  _active: { transform: "none" },
 });
 
 const glyphClass = css({
@@ -221,7 +229,11 @@ export const FloatingPreviewBadge = forwardRef<HTMLDivElement, FloatingPreviewBa
 
 function BadgePill({ action, kawaii }: { action: FloatingBadgeAction; kawaii: boolean }) {
   const shared = {
-    className: cx(pillClass, action.pressed && pressedClass),
+    className: cx(
+      pillClass,
+      action.pressed && pressedClass,
+      action.presentational && presentationalClass,
+    ),
     style: { backdropFilter: BACKDROP_FILTER, WebkitBackdropFilter: BACKDROP_FILTER },
     "aria-label": action.ariaLabel,
     title: action.ariaLabel,
@@ -238,6 +250,10 @@ function BadgePill({ action, kawaii }: { action: FloatingBadgeAction; kawaii: bo
       </span>
     </>
   );
+
+  if (action.presentational) {
+    return <output {...shared}>{inner}</output>;
+  }
 
   if (action.href) {
     const external = action.external ?? /^https?:\/\//i.test(action.href);

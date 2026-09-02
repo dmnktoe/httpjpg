@@ -1,5 +1,5 @@
 import { type SbWorkData, type StoryblokLink } from "@httpjpg/storyblok-utils";
-import { Box, FloatingPreviewBadge } from "@httpjpg/ui";
+import { Box, PreviewBadgeBridge } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
@@ -27,11 +27,10 @@ export const SbPageWork = memo(function SbPageWork({ blok }: SbPageWorkProps) {
     <Box {...editableAttrs(blok)}>
       {!external_only &&
         body?.map((child) => <StoryblokServerComponent key={child._uid} blok={child} />)}
-      <FloatingPreviewBadge
-        href={previewHref ?? undefined}
+      <PreviewBadgeBridge
+        previewHref={previewHref}
+        editHref={chrome.editHref}
         accentColor={accentColor}
-        gridToggle={chrome.gridToggle}
-        actions={chrome.actions}
       />
     </Box>
   );

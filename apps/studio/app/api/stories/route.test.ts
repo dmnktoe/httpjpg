@@ -4,7 +4,7 @@ const { studioAuth } = vi.hoisted(() => ({
   studioAuth: vi.fn(),
 }));
 
-vi.mock("../../../lib/mapi", () => ({
+vi.mock("@/lib/mapi", () => ({
   studioAuth,
   mapiPath: (spaceId: string, path: string) =>
     `https://mapi.storyblok.com/v1/spaces/${spaceId}${path}`,

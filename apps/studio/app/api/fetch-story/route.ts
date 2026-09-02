@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-import { mapiPath, studioAuth } from "../../../lib/mapi";
+import { mapiPath, studioAuth } from "@/lib/mapi";
 
 export const runtime = "nodejs";
 

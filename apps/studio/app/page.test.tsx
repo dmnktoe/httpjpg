@@ -1,4 +1,4 @@
-vi.mock("../components/grid-builder", () => ({
+vi.mock("@/components/grid-builder", () => ({
   GridBuilder: ({ pushEnabled, siteUrl }: { pushEnabled: boolean; siteUrl: string }) => (
     <div data-testid="grid-builder" data-push={String(pushEnabled)} data-url={siteUrl} />
   ),

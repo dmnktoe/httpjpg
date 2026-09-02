@@ -1,11 +1,30 @@
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import react from "@vitejs/plugin-react";
-import { defineConfig, type AliasOptions } from "vitest/config";
+import { defineConfig, type AliasOptions, type Plugin } from "vitest/config";
 
-const r = (path: string) => fileURLToPath(new URL(path, import.meta.url));
+const r = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 
 const PORTFOLIO_ROOT = r("./apps/portfolio");
+const STUDIO_ROOT = r("./apps/studio");
+
+function appAtAlias(): Plugin {
+  return {
+    name: "app-at-alias",
+    enforce: "pre",
+    async resolveId(id, importer, options) {
+      if (!id.startsWith("@/")) {
+        return;
+      }
+      const fromStudio =
+        typeof importer === "string" &&
+        importer.includes(`${path.sep}apps${path.sep}studio${path.sep}`);
+      const absolute = path.resolve(fromStudio ? STUDIO_ROOT : PORTFOLIO_ROOT, id.slice(2));
+      return this.resolve(absolute, importer, { ...options, skipSelf: true });
+    },
+  };
+}
 
 const alias: AliasOptions = [
   {
@@ -24,14 +43,10 @@ const alias: AliasOptions = [
     find: "styled-system",
     replacement: r("./packages/ui/styled-system"),
   },
-  {
-    find: "@",
-    replacement: PORTFOLIO_ROOT,
-  },
 ];
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [appAtAlias(), react()],
   test: {
     globals: true,
     environment: "jsdom",

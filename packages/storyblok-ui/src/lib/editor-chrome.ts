@@ -8,8 +8,9 @@ export interface DraftEditorChrome {
 }
 
 /** Edit + exit pills for draft / Visual Editor payloads (`_editable` present). */
-export function draftEditorChrome(editable?: string): DraftEditorChrome {
-  const editHref = storyblokEditorHrefFromEditable(editable);
+export function draftEditorChrome(editable?: unknown): DraftEditorChrome {
+  const raw = typeof editable === "string" ? editable : undefined;
+  const editHref = storyblokEditorHrefFromEditable(raw);
   if (!editHref) {
     return { editHref: null, gridToggle: false, actions: undefined };
   }

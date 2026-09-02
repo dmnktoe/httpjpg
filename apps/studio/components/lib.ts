@@ -18,9 +18,11 @@ const SPACING_PX: Record<string, string> = Object.fromEntries(
 export function spacingToPx(key?: string): string | undefined {
   if (!key) return undefined;
   if (key.startsWith("-")) {
-    const positive = SPACING_PX[key.slice(1)];
+    const unsigned = key.slice(1);
+    if (!unsigned || unsigned === "0") return undefined;
+    const positive = SPACING_PX[unsigned];
     if (!positive) return undefined;
-    return positive === "0" ? "0" : `-${positive}`;
+    return `-${positive}`;
   }
   return SPACING_PX[key];
 }

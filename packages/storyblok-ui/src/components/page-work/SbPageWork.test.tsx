@@ -32,10 +32,11 @@ describe("SbPageWork", () => {
         }
       />,
     );
-    // FloatingPreviewBadge portals into document.body.
-    const badge = document.querySelector('a[href="https://external.dev"]') as HTMLAnchorElement;
-    expect(badge).not.toBeNull();
-    expect(badge.style.getPropertyValue("--work-accent")).toBe("#EC6839");
+    // FloatingPreviewBadge portals the cluster into document.body.
+    const link = document.querySelector('a[href="https://external.dev"]') as HTMLAnchorElement;
+    expect(link).not.toBeNull();
+    const cluster = document.body.querySelector("[data-page-badge]") as HTMLElement;
+    expect(cluster.style.getPropertyValue("--work-accent")).toBe("#EC6839");
   });
 
   it("adds an edit pill when the draft _editable comment is present", () => {

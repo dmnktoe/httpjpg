@@ -14,7 +14,7 @@ export interface DatasourceWithEntries {
 
 function spacingEntryName(key: string): string {
   const unsigned = key.startsWith("-") ? key.slice(1) : key;
-  const rem = spacing[unsigned as keyof typeof spacing];
+  const rem = (spacing as Record<string, string>)[unsigned];
   return rem ? `${key} (${key.startsWith("-") ? `-${rem}` : rem})` : key;
 }
 

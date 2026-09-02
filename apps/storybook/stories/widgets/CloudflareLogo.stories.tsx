@@ -7,6 +7,10 @@ import {
 } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
+/**
+ * Classic glossy Cloudflare lockup for a footer status line. Default height
+ * is 12px; width scales with the PNG.
+ */
 const meta = {
   title: "Widgets/CloudflareLogo",
   component: CloudflareLogo,

@@ -11,7 +11,8 @@ import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
 /**
  * One line of the footer's live status stack (Discord, Discogs, Letterboxd,
- * X, PSN). Every widget renders through this so the stack keeps one rhythm.
+ * X, PSN, Cloudflare). Every widget renders through this so the stack keeps
+ * one rhythm.
  */
 const meta = {
   title: "Widgets/FooterStatusLine",

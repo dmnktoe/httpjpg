@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { createRef } from "react";
 
 import { FloatingPreviewBadge } from "./floating-preview-badge";
@@ -79,7 +79,7 @@ describe("FloatingPreviewBadge", () => {
     expect(cluster.style.opacity).toBe("0.5");
   });
 
-  it("renders extra editor actions beside the preview", () => {
+  it("renders extra actions beside the preview", () => {
     render(
       <FloatingPreviewBadge
         href={HREF}
@@ -103,7 +103,7 @@ describe("FloatingPreviewBadge", () => {
     );
   });
 
-  it("renders editor actions without a preview href", () => {
+  it("renders actions without a preview href", () => {
     render(
       <FloatingPreviewBadge
         actions={[
@@ -118,32 +118,6 @@ describe("FloatingPreviewBadge", () => {
     );
     expect(screen.queryByRole("link", { name: /open external preview/ })).toBeNull();
     expect(screen.getByRole("link", { name: "Edit in Storyblok" })).not.toBeNull();
-  });
-
-  it("toggles the 12-column overlay from the grid pill", () => {
-    render(<FloatingPreviewBadge href={HREF} gridToggle />);
-    expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Show 12-column overlay (G)" }));
-    expect(document.body.querySelector("[data-editor-grid]")).not.toBeNull();
-    expect(document.body.querySelector("[data-editor-grid]")?.textContent).toContain("[ 01 ]");
-    fireEvent.click(screen.getByRole("button", { name: "Hide 12-column overlay (G)" }));
-    expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
-  });
-
-  it("closes the overlay when gridToggle is turned off", () => {
-    const { rerender } = render(<FloatingPreviewBadge href={HREF} gridToggle />);
-    fireEvent.click(screen.getByRole("button", { name: "Show 12-column overlay (G)" }));
-    expect(document.body.querySelector("[data-editor-grid]")).not.toBeNull();
-    rerender(<FloatingPreviewBadge href={HREF} gridToggle={false} />);
-    expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
-  });
-
-  it("toggles the overlay with G and closes it with Escape", () => {
-    render(<FloatingPreviewBadge href={HREF} gridToggle />);
-    fireEvent.keyDown(window, { key: "g" });
-    expect(document.body.querySelector("[data-editor-grid]")).not.toBeNull();
-    fireEvent.keyDown(window, { key: "Escape" });
-    expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
   });
 
   it("renders a presentational draft status pill", () => {
@@ -183,7 +157,7 @@ describe("FloatingPreviewBadge", () => {
     expect(link).not.toHaveAttribute("target");
   });
 
-  it("renders nothing when there is no preview, action, or grid toggle", () => {
+  it("renders nothing when there is no preview or action", () => {
     render(<FloatingPreviewBadge />);
     expect(document.body.querySelector("[data-page-badge]")).toBeNull();
   });

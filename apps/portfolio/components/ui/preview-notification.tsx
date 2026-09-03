@@ -1,8 +1,7 @@
 "use client";
 
 import {
-  editorBadgeActions,
-  FloatingPreviewBadge,
+  EditorChrome,
   getPreviewBadgeSlot,
   type PreviewBadgeSlot,
   registerPreviewBadgeHost,
@@ -36,11 +35,10 @@ function PreviewNotificationContent() {
   }
 
   return (
-    <FloatingPreviewBadge
-      href={slot.previewHref}
+    <EditorChrome
+      previewHref={slot.previewHref}
+      editHref={slot.editHref}
       accentColor={slot.accentColor}
-      gridToggle
-      actions={editorBadgeActions(slot.editHref)}
     />
   );
 }

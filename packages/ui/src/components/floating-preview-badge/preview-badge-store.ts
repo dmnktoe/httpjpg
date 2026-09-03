@@ -1,4 +1,3 @@
-/** Slot pages publish to the layout `EditorChrome` host. Not editor UI itself. */
 export interface PreviewBadgeSlot {
   previewHref?: string;
   editHref?: string | null;

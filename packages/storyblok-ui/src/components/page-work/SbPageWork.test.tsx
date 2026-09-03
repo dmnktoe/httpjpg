@@ -72,23 +72,6 @@ describe("SbPageWork", () => {
     );
   });
 
-  it("shows editor chrome without a preview pill when the work has no live URL", () => {
-    render(
-      <SbPageWork
-        blok={
-          {
-            _uid: "5",
-            component: "page_work",
-            _editable: '<!--#storyblok#{"space":"1","id":"2"}-->',
-          } as never
-        }
-      />,
-    );
-    expect(document.body.querySelector('a[aria-label*="open external preview"]')).toBeNull();
-    expect(screen.getByRole("status", { name: /preview mode/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Edit in Storyblok" })).toBeInTheDocument();
-  });
-
   it("ignores non-external links for the preview badge", () => {
     render(
       <SbPageWork

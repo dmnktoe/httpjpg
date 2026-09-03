@@ -19,7 +19,6 @@ export * from "./copyright-label/copyright-label";
 export * from "./custom-cursor/custom-cursor";
 export * from "./divider/divider";
 export * from "./floating-preview-badge/editor-badge-actions";
-export * from "./floating-preview-badge/editor-chrome";
 export * from "./floating-preview-badge/floating-preview-badge";
 export * from "./floating-preview-badge/preview-badge-bridge";
 export * from "./floating-preview-badge/preview-badge-store";

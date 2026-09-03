@@ -71,21 +71,6 @@ describe("PreviewNotification", () => {
     expect(screen.getByRole("status", { name: /preview mode/i })).toBeInTheDocument();
   });
 
-  it("does not invent a preview pill when the work page has no live URL", () => {
-    document.cookie = "__prerender_bypass=token";
-
-    render(
-      <>
-        <PreviewNotification />
-        <PreviewBadgeBridge editHref="https://app.storyblok.com/#/me/spaces/7/stories/0/0/9" />
-      </>,
-    );
-
-    expect(screen.queryByRole("link", { name: /open external preview/ })).toBeNull();
-    expect(screen.getByRole("link", { name: "Edit in Storyblok" })).toBeInTheDocument();
-    expect(screen.getByRole("status", { name: /preview mode/i })).toBeInTheDocument();
-  });
-
   it("folds page edit + preview href into the same cluster", () => {
     document.cookie = "__prerender_bypass=token";
 

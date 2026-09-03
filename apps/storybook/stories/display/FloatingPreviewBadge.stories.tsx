@@ -1,4 +1,4 @@
-import { Box, EditorChrome, FloatingPreviewBadge } from "@httpjpg/ui";
+import { Box, FloatingPreviewBadge } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ReactNode } from "react";
 
@@ -15,11 +15,11 @@ const meta = {
   argTypes: {
     href: {
       control: "text",
-      description: "Work-page live URL. Omit when the story has no external link.",
+      description: "External URL the badge points to",
     },
     label: {
       control: "text",
-      description: "Label shown inside the preview pill on desktop",
+      description: "Label shown inside the pill on desktop",
       table: { defaultValue: { summary: "preview" } },
     },
     accentColor: {
@@ -73,30 +73,44 @@ export const CustomLabel: Story = {
   ),
 };
 
-/** Draft / Visual Editor chrome. Preview is optional content; grid lives here. */
-export const EditorActions: Story = {
-  render: () => (
-    <Stage>
-      <EditorChrome
-        previewHref="https://example.com"
-        editHref="https://app.storyblok.com/#/me/spaces/1/stories/0/0/2"
-      />
-    </Stage>
-  ),
-};
-
-export const DraftWithoutWorkUrl: Story = {
-  render: () => (
-    <Stage>
-      <EditorChrome editHref="https://app.storyblok.com/#/me/spaces/1/stories/0/0/2" />
-    </Stage>
-  ),
-};
-
 /**
  * The same hex that tints iOS liquid-glass icons. Set on the portalled node
  * so the pill does not depend on `html` custom properties.
  */
+export const EditorActions: Story = {
+  args: {
+    href: "https://example.com",
+    label: "preview",
+    gridToggle: true,
+    actions: [
+      {
+        label: "draft",
+        glyph: "🔍",
+        ariaLabel: "Preview mode — unpublished content",
+        presentational: true,
+      },
+      {
+        href: "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
+        label: "edit",
+        glyph: "✎",
+        ariaLabel: "Edit in Storyblok",
+      },
+      {
+        href: "/api/exit-draft",
+        label: "exit",
+        glyph: "×",
+        ariaLabel: "Exit draft preview",
+        external: false,
+      },
+    ],
+  },
+  render: (args) => (
+    <Stage>
+      <FloatingPreviewBadge {...args} />
+    </Stage>
+  ),
+};
+
 export const WorkAccent: Story = {
   args: {
     href: "https://example.com",

@@ -41,8 +41,9 @@ describe("SbPageWork", () => {
     // FloatingPreviewBadge portals the cluster into document.body.
     const link = document.querySelector('a[href="https://external.dev"]') as HTMLAnchorElement;
     expect(link).not.toBeNull();
+    expect(link.style.getPropertyValue("--work-accent")).toBe("#EC6839");
     const cluster = document.body.querySelector("[data-page-badge]") as HTMLElement;
-    expect(cluster.style.getPropertyValue("--work-accent")).toBe("#EC6839");
+    expect(cluster.style.getPropertyValue("--work-accent")).toBe("");
   });
 
   it("adds an edit pill when the draft _editable comment is present", () => {

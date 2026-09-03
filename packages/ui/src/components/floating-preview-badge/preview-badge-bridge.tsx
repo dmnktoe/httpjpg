@@ -2,7 +2,7 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 
-import { editorBadgeActions } from "./editor-badge-actions";
+import { EditorChrome } from "./editor-chrome";
 import { FloatingPreviewBadge } from "./floating-preview-badge";
 import {
   getPreviewBadgeHosted,
@@ -11,7 +11,9 @@ import {
 } from "./preview-badge-store";
 
 export interface PreviewBadgeBridgeProps {
+  /** Work-page live URL. Content-owned. */
   previewHref?: string | null;
+  /** Visual Editor href from `_editable`. Not a work-link. */
   editHref?: string | null;
   accentColor?: string | null;
 }
@@ -21,8 +23,9 @@ function getServerFalse() {
 }
 
 /**
- * Pages publish slot data to the layout host (`PreviewNotification`).
- * Without a host (tests, Storybook) this renders the badge itself.
+ * Pages publish content/CMS slot data to the layout `EditorChrome` host.
+ * Without a host: published work renders only the preview pill; draft
+ * fallbacks render `EditorChrome` (tests / Storybook).
  */
 export function PreviewBadgeBridge({
   previewHref,
@@ -45,14 +48,7 @@ export function PreviewBadgeBridge({
   }
 
   if (editHref) {
-    return (
-      <FloatingPreviewBadge
-        href={previewHref ?? undefined}
-        accentColor={accentColor}
-        gridToggle
-        actions={editorBadgeActions(editHref)}
-      />
-    );
+    return <EditorChrome previewHref={previewHref} editHref={editHref} accentColor={accentColor} />;
   }
 
   if (previewHref) {

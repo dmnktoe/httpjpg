@@ -1,14 +1,13 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef } from "react";
 import { createPortal } from "react-dom";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { useHasMounted } from "../../lib/use-has-mounted";
 import { parseWorkAccent, workAccentCssVars } from "../../lib/work-accent";
-import { EditorGridOverlay } from "./editor-grid-overlay";
 
 const MOBILE_SIZE = 40;
 const DESKTOP_HEIGHT = 32;
@@ -28,18 +27,18 @@ export interface FloatingBadgeAction {
   external?: boolean;
   /** Hide inside the Storyblok Visual Editor iframe (e.g. exit-draft). */
   hideInIframe?: boolean;
-  /** Status pill (draft). Renders a `span`, not a control. */
+  /** Status pill (draft). Renders an `output`, not a control. */
   presentational?: boolean;
+  /** Tint this pill with the badge `accentColor`. Preview only — editor tools stay neutral. */
+  accented?: boolean;
 }
 
 export interface FloatingPreviewBadgeProps {
+  /** Work-page live URL. Content-owned; omit when the story has no external link. */
   href?: string;
   label?: string;
-  /** Extra pills (edit, grid overlay, …). Rendered beside the preview when `href` is set. */
   actions?: FloatingBadgeAction[];
-  /** Show a 12-col overlay toggle. Draft / Visual Editor only. */
-  gridToggle?: boolean;
-  /** Work page Project Accent Color. Set on the portalled node so it does not depend on `html`. */
+  /** Work page Project Accent Color. Applied only to the preview pill, not the cluster. */
   accentColor?: string | null;
   css?: SystemStyleObject;
   className?: string;
@@ -105,49 +104,13 @@ const labelClass = css({
   sm: { display: "inline" },
 });
 
+/** Dumb pill cluster. Preview URL is `href`; editor chrome is composed by `EditorChrome`. */
 export const FloatingPreviewBadge = forwardRef<HTMLDivElement, FloatingPreviewBadgeProps>(
   function FloatingPreviewBadge(
-    {
-      href,
-      label = "preview",
-      actions,
-      gridToggle = false,
-      accentColor,
-      className,
-      css: cssProp,
-      style,
-    },
+    { href, label = "preview", actions, accentColor, className, css: cssProp, style },
     ref,
   ) {
     const mounted = useHasMounted();
-    const [gridOpen, setGridOpen] = useState(false);
-    if (!gridToggle && gridOpen) {
-      setGridOpen(false);
-    }
-
-    useEffect(() => {
-      if (!gridToggle) {
-        return;
-      }
-      function handleKey(event: KeyboardEvent) {
-        if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) {
-          return;
-        }
-        if (isTypingTarget(event.target)) {
-          return;
-        }
-        if (event.key === "Escape") {
-          setGridOpen(false);
-          return;
-        }
-        if (event.key === "g" || event.key === "G") {
-          event.preventDefault();
-          setGridOpen((open) => !open);
-        }
-      }
-      window.addEventListener("keydown", handleKey);
-      return () => window.removeEventListener("keydown", handleKey);
-    }, [gridToggle]);
 
     if (!mounted) {
       return null;
@@ -156,15 +119,9 @@ export const FloatingPreviewBadge = forwardRef<HTMLDivElement, FloatingPreviewBa
     const inIframe = window.self !== window.top;
     const extra = (actions ?? []).filter((action) => !(action.hideInIframe && inIframe));
     const hasPreview = Boolean(href);
-    if (!hasPreview && extra.length === 0 && !gridToggle) {
+    if (!hasPreview && extra.length === 0) {
       return null;
     }
-
-    const accentVars = workAccentCssVars(parseWorkAccent(accentColor));
-    const clusterStyle = {
-      ...(accentVars as CSSProperties | undefined),
-      ...style,
-    };
 
     const pills: FloatingBadgeAction[] = [
       ...(hasPreview && href
@@ -174,28 +131,18 @@ export const FloatingPreviewBadge = forwardRef<HTMLDivElement, FloatingPreviewBa
               label,
               glyph: "↗",
               ariaLabel: `${label} — open external preview`,
+              accented: true,
             } satisfies FloatingBadgeAction,
           ]
         : []),
       ...extra,
-      ...(gridToggle
-        ? [
-            {
-              label: "grid",
-              glyph: "⊞",
-              ariaLabel: gridOpen ? "Hide 12-column overlay (G)" : "Show 12-column overlay (G)",
-              pressed: gridOpen,
-              onClick: () => setGridOpen((open) => !open),
-            } satisfies FloatingBadgeAction,
-          ]
-        : []),
     ];
 
-    const cluster = (
+    return createPortal(
       <div
         ref={ref}
         data-page-badge=""
-        style={clusterStyle}
+        style={style}
         className={cx(
           css({
             position: "fixed",
@@ -215,29 +162,41 @@ export const FloatingPreviewBadge = forwardRef<HTMLDivElement, FloatingPreviewBa
         )}
       >
         {pills.map((action) => (
-          <BadgePill key={action.ariaLabel} action={action} kawaii={action.glyph === "↗"} />
+          <BadgePill
+            key={action.ariaLabel}
+            action={action}
+            accentColor={accentColor}
+            kawaii={action.glyph === "↗"}
+          />
         ))}
-      </div>
-    );
-
-    return createPortal(
-      <>
-        {cluster}
-        {gridToggle && gridOpen ? <EditorGridOverlay /> : null}
-      </>,
+      </div>,
       document.body,
     );
   },
 );
 
-function BadgePill({ action, kawaii }: { action: FloatingBadgeAction; kawaii: boolean }) {
+function BadgePill({
+  action,
+  accentColor,
+  kawaii,
+}: {
+  action: FloatingBadgeAction;
+  accentColor?: string | null;
+  kawaii: boolean;
+}) {
+  const accentVars = action.accented ? workAccentCssVars(parseWorkAccent(accentColor)) : undefined;
+
   const shared = {
     className: cx(
       pillClass,
       action.pressed && pressedClass,
       action.presentational && presentationalClass,
     ),
-    style: { backdropFilter: BACKDROP_FILTER, WebkitBackdropFilter: BACKDROP_FILTER },
+    style: {
+      backdropFilter: BACKDROP_FILTER,
+      WebkitBackdropFilter: BACKDROP_FILTER,
+      ...accentVars,
+    } as CSSProperties,
     "aria-label": action.ariaLabel,
     title: action.ariaLabel,
     "aria-pressed": action.pressed,
@@ -276,12 +235,4 @@ function BadgePill({ action, kawaii }: { action: FloatingBadgeAction; kawaii: bo
       {inner}
     </button>
   );
-}
-
-function isTypingTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) {
-    return false;
-  }
-  const tag = target.tagName;
-  return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable;
 }

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { createRef } from "react";
 
 import { FloatingPreviewBadge } from "./floating-preview-badge";
@@ -65,15 +65,39 @@ describe("FloatingPreviewBadge", () => {
     expect(document.body.querySelector("[data-page-badge]")).toHaveClass("my-badge");
   });
 
-  it("paints the portalled cluster with the work accent so it survives the portal", () => {
+  it("paints the preview pill with the work accent, not the cluster", () => {
     render(<FloatingPreviewBadge href={HREF} accentColor="#ec6839" />);
     const cluster = document.body.querySelector("[data-page-badge]") as HTMLElement;
-    expect(cluster.style.getPropertyValue("--work-accent")).toBe("#EC6839");
-    expect(cluster.style.getPropertyValue("--work-on-accent")).toBe("#ffffff");
-    expect(cluster.style.getPropertyValue("--work-accent-fill")).toBe("rgba(236, 104, 57, 0.62)");
+    expect(cluster.style.getPropertyValue("--work-accent")).toBe("");
+    const preview = screen.getByRole("link", { name: /open external preview/ });
+    expect(preview.style.getPropertyValue("--work-accent")).toBe("#EC6839");
+    expect(preview.style.getPropertyValue("--work-on-accent")).toBe("#ffffff");
+    expect(preview.style.getPropertyValue("--work-accent-fill")).toBe("rgba(236, 104, 57, 0.62)");
   });
 
-  it("lets a caller override the inline style without losing accent vars", () => {
+  it("does not tint neighboring editor pills when a preview accent is set", () => {
+    render(
+      <FloatingPreviewBadge
+        href={HREF}
+        accentColor="#ec6839"
+        actions={[
+          {
+            href: "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
+            label: "edit",
+            glyph: "✎",
+            ariaLabel: "Edit in Storyblok",
+          },
+        ]}
+      />,
+    );
+    expect(
+      screen
+        .getByRole("link", { name: "Edit in Storyblok" })
+        .style.getPropertyValue("--work-accent"),
+    ).toBe("");
+  });
+
+  it("lets a caller override the cluster inline style", () => {
     render(<FloatingPreviewBadge href={HREF} style={{ opacity: 0.5 }} />);
     const cluster = document.body.querySelector("[data-page-badge]") as HTMLElement;
     expect(cluster.style.opacity).toBe("0.5");
@@ -103,7 +127,7 @@ describe("FloatingPreviewBadge", () => {
     );
   });
 
-  it("renders editor actions without a preview href", () => {
+  it("renders actions without a preview href", () => {
     render(
       <FloatingPreviewBadge
         actions={[
@@ -118,32 +142,6 @@ describe("FloatingPreviewBadge", () => {
     );
     expect(screen.queryByRole("link", { name: /open external preview/ })).toBeNull();
     expect(screen.getByRole("link", { name: "Edit in Storyblok" })).not.toBeNull();
-  });
-
-  it("toggles the 12-column overlay from the grid pill", () => {
-    render(<FloatingPreviewBadge href={HREF} gridToggle />);
-    expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Show 12-column overlay (G)" }));
-    expect(document.body.querySelector("[data-editor-grid]")).not.toBeNull();
-    expect(document.body.querySelector("[data-editor-grid]")?.textContent).toContain("[ 01 ]");
-    fireEvent.click(screen.getByRole("button", { name: "Hide 12-column overlay (G)" }));
-    expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
-  });
-
-  it("closes the overlay when gridToggle is turned off", () => {
-    const { rerender } = render(<FloatingPreviewBadge href={HREF} gridToggle />);
-    fireEvent.click(screen.getByRole("button", { name: "Show 12-column overlay (G)" }));
-    expect(document.body.querySelector("[data-editor-grid]")).not.toBeNull();
-    rerender(<FloatingPreviewBadge href={HREF} gridToggle={false} />);
-    expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
-  });
-
-  it("toggles the overlay with G and closes it with Escape", () => {
-    render(<FloatingPreviewBadge href={HREF} gridToggle />);
-    fireEvent.keyDown(window, { key: "g" });
-    expect(document.body.querySelector("[data-editor-grid]")).not.toBeNull();
-    fireEvent.keyDown(window, { key: "Escape" });
-    expect(document.body.querySelector("[data-editor-grid]")).toBeNull();
   });
 
   it("renders a presentational draft status pill", () => {
@@ -183,7 +181,7 @@ describe("FloatingPreviewBadge", () => {
     expect(link).not.toHaveAttribute("target");
   });
 
-  it("renders nothing when there is no preview, action, or grid toggle", () => {
+  it("renders nothing when there is no preview or action", () => {
     render(<FloatingPreviewBadge />);
     expect(document.body.querySelector("[data-page-badge]")).toBeNull();
   });

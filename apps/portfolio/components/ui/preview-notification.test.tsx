@@ -80,6 +80,7 @@ describe("PreviewNotification", () => {
         <PreviewBadgeBridge
           previewHref="https://external.dev"
           editHref="https://app.storyblok.com/#/me/spaces/7/stories/0/0/9"
+          accentColor="#ec6839"
         />
       </>,
     );
@@ -94,5 +95,13 @@ describe("PreviewNotification", () => {
       "https://app.storyblok.com/#/me/spaces/7/stories/0/0/9",
     );
     expect(screen.getByRole("status", { name: /preview mode/i })).toBeInTheDocument();
+    expect(
+      screen
+        .getByRole("link", { name: /open external preview/ })
+        .style.getPropertyValue("--work-accent"),
+    ).toBe("#EC6839");
+    expect(
+      screen.getByRole("status", { name: /preview mode/i }).style.getPropertyValue("--work-accent"),
+    ).toBe("");
   });
 });

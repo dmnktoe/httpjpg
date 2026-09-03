@@ -1,4 +1,4 @@
-import { Box, FloatingPreviewBadge } from "@httpjpg/ui";
+import { Box, EditorChrome, FloatingPreviewBadge } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ReactNode } from "react";
 
@@ -15,16 +15,16 @@ const meta = {
   argTypes: {
     href: {
       control: "text",
-      description: "External URL the badge points to",
+      description: "Work-page live URL. Omit when the story has no external link.",
     },
     label: {
       control: "text",
-      description: "Label shown inside the pill on desktop",
+      description: "Label shown inside the preview pill on desktop",
       table: { defaultValue: { summary: "preview" } },
     },
     accentColor: {
       control: "color",
-      description: "Work page Project Accent Color — tints the portalled glass pill",
+      description: "Work page Project Accent Color — tints the preview pill only",
     },
   },
 } satisfies Meta<typeof FloatingPreviewBadge>;
@@ -73,44 +73,31 @@ export const CustomLabel: Story = {
   ),
 };
 
-/**
- * The same hex that tints iOS liquid-glass icons. Set on the portalled node
- * so the pill does not depend on `html` custom properties.
- */
+/** Draft / Visual Editor chrome. Preview is optional content; grid lives here. */
 export const EditorActions: Story = {
-  args: {
-    href: "https://example.com",
-    label: "preview",
-    gridToggle: true,
-    actions: [
-      {
-        label: "draft",
-        glyph: "🔍",
-        ariaLabel: "Preview mode — unpublished content",
-        presentational: true,
-      },
-      {
-        href: "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
-        label: "edit",
-        glyph: "✎",
-        ariaLabel: "Edit in Storyblok",
-      },
-      {
-        href: "/api/exit-draft",
-        label: "exit",
-        glyph: "×",
-        ariaLabel: "Exit draft preview",
-        external: false,
-      },
-    ],
-  },
-  render: (args) => (
+  render: () => (
     <Stage>
-      <FloatingPreviewBadge {...args} />
+      <EditorChrome
+        previewHref="https://example.com"
+        editHref="https://app.storyblok.com/#/me/spaces/1/stories/0/0/2"
+        accentColor="#EC6839"
+      />
     </Stage>
   ),
 };
 
+export const DraftWithoutWorkUrl: Story = {
+  render: () => (
+    <Stage>
+      <EditorChrome editHref="https://app.storyblok.com/#/me/spaces/1/stories/0/0/2" />
+    </Stage>
+  ),
+};
+
+/**
+ * The same hex that tints iOS liquid-glass icons. Set on the preview pill
+ * so the tint does not leak onto editor tools in the same row.
+ */
 export const WorkAccent: Story = {
   args: {
     href: "https://example.com",

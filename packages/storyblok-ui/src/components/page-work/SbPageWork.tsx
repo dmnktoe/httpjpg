@@ -3,7 +3,7 @@ import { Box, PreviewBadgeBridge } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
-import { draftEditorChrome } from "../../lib/editor-chrome";
+import { editHrefFromEditable } from "../../lib/editor-chrome";
 import { storyblokHref } from "../../lib/href";
 import { editableAttrs } from "../../lib/use-blok";
 
@@ -22,14 +22,13 @@ function isExternalPreviewLink(link?: StoryblokLink): link is StoryblokLink & { 
 export const SbPageWork = memo(function SbPageWork({ blok }: SbPageWorkProps) {
   const { body, external_only, link, accentColor } = blok;
   const previewHref = isExternalPreviewLink(link) ? storyblokHref(link) : null;
-  const chrome = draftEditorChrome(blok._editable);
   return (
     <Box {...editableAttrs(blok)}>
       {!external_only &&
         body?.map((child) => <StoryblokServerComponent key={child._uid} blok={child} />)}
       <PreviewBadgeBridge
         previewHref={previewHref}
-        editHref={chrome.editHref}
+        editHref={editHrefFromEditable(blok._editable)}
         accentColor={accentColor}
       />
     </Box>

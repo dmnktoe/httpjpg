@@ -270,4 +270,103 @@ describe("AskWidget", () => {
     await waitFor(() => expect(screen.getAllByRole("option")).toHaveLength(2));
     expect(screen.queryByRole("button", { name: /ask/i })).not.toBeInTheDocument();
   });
+
+  it("toggles with Ctrl+K and follows a cited action", async () => {
+    mockFetch({
+      askBody: ndjson([
+        { type: "delta", text: "See this." },
+        {
+          type: "action",
+          action: {
+            type: "navigate",
+            href: "/work/brutalist",
+            title: "Brutalist Portfolio",
+            kind: "work",
+          },
+        },
+      ]),
+    });
+    render(<AskWidget />);
+    fireEvent.keyDown(window, { key: "k", ctrlKey: true });
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+    await type("what is this?");
+    await waitFor(() => expect(screen.getByRole("button", { name: /ask/i })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole("button", { name: /ask/i }));
+    await waitFor(() => expect(screen.getByText("See this.")).toBeInTheDocument());
+    fireEvent.click(screen.getByRole("button", { name: /go to Brutalist Portfolio/ }));
+    expect(mockPush).toHaveBeenCalledWith("/work/brutalist");
+  });
+
+  it("treats a missing search payload as empty and reports a thrown ask", async () => {
+    mockFetch({ search: {} });
+    render(<AskWidget />);
+    openPalette();
+    await type("brutal");
+    await waitFor(() => expect(screen.getByText("no matches")).toBeInTheDocument());
+
+    mockFetch({
+      askOk: true,
+      askBody: ndjson([{ type: "error", error: "nope" }]),
+    });
+    await type("what is this?");
+    await waitFor(() => expect(screen.getByRole("button", { name: /ask/i })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole("button", { name: /ask/i }));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/answer failed/i));
+  });
+
+  it("reports a network failure from ask", async () => {
+    const fetchMock = vi.fn(async (url: string) => {
+      if (String(url).startsWith("/api/ask")) {
+        throw new Error("offline");
+      }
+      return { ok: true, status: 200, json: async () => SEARCH_PAYLOAD };
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    render(<AskWidget />);
+    openPalette();
+    await type("what is this?");
+    await waitFor(() => expect(screen.getByRole("button", { name: /ask/i })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole("button", { name: /ask/i }));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/answer failed/i));
+  });
+
+  it("applies a suggestion and ignores an aborted in-flight search", async () => {
+    render(<AskWidget />);
+    openPalette();
+    await type("brutal");
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Brutalist Portfolio" })).toBeInTheDocument(),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Brutalist Portfolio" }));
+    expect(screen.getByRole("combobox")).toHaveValue("Brutalist Portfolio");
+
+    let resolveSearch: ((value: unknown) => void) | undefined;
+    const pending = new Promise((resolve) => {
+      resolveSearch = resolve;
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => pending),
+    );
+    await type("later");
+    openPalette();
+    resolveSearch?.({
+      ok: true,
+      status: 200,
+      json: async () => SEARCH_PAYLOAD,
+    });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("treats an ask response without a body as a generic failure", async () => {
+    mockFetch({ askOk: true, askBody: null });
+    render(<AskWidget />);
+    openPalette();
+    await type("what is this?");
+    await waitFor(() => expect(screen.getByRole("button", { name: /ask/i })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole("button", { name: /ask/i }));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/answer failed/i));
+  });
 });

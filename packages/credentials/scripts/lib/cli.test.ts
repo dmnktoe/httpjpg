@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-import { ENV_FILE, hasFlag, readOption, writeEnvVar } from "./cli";
+import { ask, ENV_FILE, hasFlag, readOption, reportSecret, writeEnvVar } from "./cli";
 
 function tempEnvFile(contents?: string): string {
   const file = join(mkdtempSync(join(tmpdir(), "credentials-")), ".env.local");
@@ -83,5 +83,34 @@ describe("writeEnvVar", () => {
     const written = readFileSync(file, "utf8");
     expect(written).toContain('LEGACY_PSN_NPSSO="other"');
     expect(written).toContain('PSN_NPSSO="abc"');
+  });
+});
+
+describe("ask", () => {
+  it("exits when stdin is not a TTY", async () => {
+    const original = process.stdin.isTTY;
+    Object.defineProperty(process.stdin, "isTTY", { configurable: true, value: false });
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    const exit = vi.spyOn(process, "exit").mockImplementation((() => {
+      throw new Error("exit");
+    }) as never);
+
+    await expect(ask("client id")).rejects.toThrow("exit");
+    expect(exit).toHaveBeenCalledWith(1);
+    expect(error.mock.calls.join(" ")).toContain("client id");
+
+    error.mockRestore();
+    exit.mockRestore();
+    Object.defineProperty(process.stdin, "isTTY", { configurable: true, value: original });
+  });
+});
+
+describe("reportSecret", () => {
+  it("prints the value and tells the user to pass --write when not writing", () => {
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    reportSecret("PSN_NPSSO", "abc", false);
+    expect(log.mock.calls.flat().join("\n")).toContain('PSN_NPSSO="abc"');
+    expect(log.mock.calls.flat().join("\n")).toContain("--write");
+    log.mockRestore();
   });
 });

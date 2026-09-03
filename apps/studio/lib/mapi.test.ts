@@ -1,7 +1,8 @@
 // @vitest-environment node
+import { env } from "@httpjpg/env";
 import { describe, expect, it } from "vitest";
 
-import { mapiPath, resolveStudioAuth, STORYBLOK_MAPI } from "./mapi";
+import { mapiPath, resolveStudioAuth, studioAuth, STORYBLOK_MAPI } from "./mapi";
 
 describe("resolveStudioAuth", () => {
   it("404s outside development so the routes stay local-only", () => {
@@ -35,5 +36,11 @@ describe("resolveStudioAuth", () => {
 describe("mapiPath", () => {
   it("builds a Management API URL under the space", () => {
     expect(mapiPath("123", "/stories")).toBe(`${STORYBLOK_MAPI}/spaces/123/stories`);
+  });
+});
+
+describe("studioAuth", () => {
+  it("wraps the live env contract", () => {
+    expect(studioAuth()).toEqual(resolveStudioAuth(env));
   });
 });

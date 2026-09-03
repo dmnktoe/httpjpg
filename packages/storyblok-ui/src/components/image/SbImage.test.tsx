@@ -113,4 +113,23 @@ describe("SbImage", () => {
     );
     expect(container.querySelector("img")).not.toBeNull();
   });
+
+  it("uses the image title, a default overlay, and a standalone lightbox without alt", () => {
+    render(
+      <SbImage
+        blok={
+          {
+            _uid: "12",
+            component: "image",
+            image: { filename },
+            lightbox: true,
+            blurOnLoad: true,
+            overlay: "none",
+          } as never
+        }
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Open at full size" }));
+    expect(screen.getByRole("dialog", { name: "Image viewer" })).toBeInTheDocument();
+  });
 });

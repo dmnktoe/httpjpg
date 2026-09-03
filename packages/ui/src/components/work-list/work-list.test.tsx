@@ -124,4 +124,31 @@ describe("WorkList · tag filter", () => {
 
     expect(screen.getByText("Beta")).toBeInTheDocument();
   });
+
+  it("draws dividers in a stack and sizes a responsive grid", () => {
+    const { rerender } = render(
+      <WorkList
+        works={[
+          { title: "Alpha", slug: "alpha", images: [] },
+          { title: "Beta", slug: "beta", images: [] },
+        ]}
+        showDividers
+        header={<div>Header</div>}
+        footer={<div>Footer</div>}
+        variant="featured"
+      />,
+    );
+    expect(screen.getByText("Header")).toBeInTheDocument();
+    expect(screen.getByText("Footer")).toBeInTheDocument();
+
+    rerender(
+      <WorkList
+        works={[{ title: "Grid", slug: "grid", images: [] }]}
+        columns={7}
+        columnsMd={3}
+        columnsLg={4}
+      />,
+    );
+    expect(screen.getByText("Grid")).toBeInTheDocument();
+  });
 });

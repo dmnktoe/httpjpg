@@ -4,6 +4,11 @@ import { describe, expect, it, vi } from "vitest";
 
 import { Video } from "./video";
 
+const { mockReducedMotion } = vi.hoisted(() => ({
+  mockReducedMotion: vi.fn(() => false),
+}));
+vi.mock("motion/react", () => ({ useReducedMotion: () => mockReducedMotion() }));
+
 vi.hoisted(() => {
   vi.stubGlobal(
     "matchMedia",
@@ -267,5 +272,35 @@ describe("Video", () => {
       render(<Video src="/clip.mp4" controls={false} copyrightPosition="below" />);
       expect(screen.queryByText(/httpjpg/)).not.toBeInTheDocument();
     });
+
+    it("renders a source line without a copyright text", () => {
+      render(
+        <Video
+          src="/clip.mp4"
+          controls={false}
+          copyrightSource="film archive"
+          copyrightPosition="below"
+        />,
+      );
+      expect(screen.getByText(/film archive/)).toBeInTheDocument();
+    });
+  });
+
+  it("reloads when the native src changes", () => {
+    const load = vi.spyOn(window.HTMLMediaElement.prototype, "load").mockImplementation(() => {});
+    const { rerender } = render(<Video src="/one.mp4" controls={false} />);
+    load.mockClear();
+    rerender(<Video src="/two.mp4" controls={false} />);
+    expect(load).toHaveBeenCalled();
+    load.mockRestore();
+  });
+
+  it("skips autoplay when reduced motion is preferred", () => {
+    mockReducedMotion.mockReturnValue(true);
+    const play = vi.spyOn(window.HTMLMediaElement.prototype, "play").mockResolvedValue(undefined);
+    render(<Video src="/clip.mp4" autoPlay muted controls={false} />);
+    expect(play).not.toHaveBeenCalled();
+    play.mockRestore();
+    mockReducedMotion.mockReturnValue(false);
   });
 });

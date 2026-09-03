@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 
 import { storyblokRequest } from "../../src/index";
-import { fetchComponentIds } from "./block";
+import { fetchComponentIds, upsertBlock } from "./block";
 
 vi.mock("../../src/index", () => ({
   storyblokRequest: vi.fn(),
@@ -49,5 +49,70 @@ describe("fetchComponentIds", () => {
     mockRequest.mockRejectedValueOnce(new Error("boom"));
 
     await expect(fetchComponentIds()).rejects.toThrow("boom");
+  });
+});
+
+const def = {
+  name: "headline",
+  display_name: "Headline",
+  group: "Content" as const,
+  icon: "block-text-c",
+  color: "#000",
+  schema: {},
+};
+
+describe("upsertBlock", () => {
+  beforeEach(() => {
+    mockRequest.mockReset();
+  });
+
+  it("PUTs when the component already exists", async () => {
+    mockRequest
+      .mockResolvedValueOnce({
+        component_groups: [{ uuid: "g-content", name: "Content" }],
+      })
+      .mockResolvedValueOnce({});
+
+    await upsertBlock(def, new Map([["headline", 42]]));
+
+    expect(mockRequest).toHaveBeenCalledWith("/components/42", "PUT", {
+      component: expect.objectContaining({
+        id: 42,
+        name: "headline",
+        component_group_uuid: "g-content",
+      }),
+    });
+  });
+
+  it("POSTs when the component is new", async () => {
+    mockRequest.mockResolvedValueOnce({});
+
+    await upsertBlock(
+      { ...def, name: "brand_new", preview_field: "text", preview_tmpl: "{text}" },
+      new Map(),
+    );
+
+    expect(mockRequest).toHaveBeenCalledWith("/components", "POST", {
+      component: expect.objectContaining({
+        name: "brand_new",
+        is_nestable: true,
+        preview_field: "text",
+        preview_tmpl: "{text}",
+      }),
+    });
+  });
+
+  it("POSTs a root block even when the group list is empty", async () => {
+    mockRequest.mockReset();
+    mockRequest.mockResolvedValueOnce({ component_groups: [] }).mockResolvedValueOnce({});
+
+    await upsertBlock(
+      { ...def, name: "page", display_name: "", group: "Pages", is_root: true },
+      new Map(),
+    );
+
+    expect(mockRequest).toHaveBeenCalledWith("/components", "POST", {
+      component: expect.objectContaining({ is_root: true, is_nestable: false }),
+    });
   });
 });

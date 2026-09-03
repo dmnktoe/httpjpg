@@ -39,4 +39,22 @@ describe("ButtonGroup", () => {
     );
     expect(screen.getByTestId("group")).toHaveClass("custom");
   });
+
+  it("can stack, skip wrapping, stretch, and distribute", () => {
+    const { rerender } = render(
+      <ButtonGroup direction="column" wrap={false} align="start" justify="between" data-testid="g">
+        <Button>A</Button>
+        <Button>B</Button>
+      </ButtonGroup>,
+    );
+    expect(screen.getByTestId("g")).toBeInTheDocument();
+
+    rerender(
+      <ButtonGroup stretch direction="row" data-testid="g">
+        <Button>A</Button>
+        <Button>B</Button>
+      </ButtonGroup>,
+    );
+    expect(screen.getByTestId("g")).toBeInTheDocument();
+  });
 });

@@ -151,4 +151,53 @@ describe("useNowPlaying", () => {
 
     expect(fetchMock).not.toHaveBeenCalled();
   });
+
+  it("treats a successful empty payload as idle with no track", async () => {
+    mockFetch(200, {});
+
+    const { result } = renderHook(() => useNowPlaying({ endpoint: "/np", pollInterval: 100000 }));
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.data).toBeNull();
+    expect(result.current.error).toBeNull();
+  });
+
+  it("uses fallback messages when the payload omits them", async () => {
+    mockFetch(200, { unavailable: "premium_missing" });
+
+    const { result } = renderHook(() => useNowPlaying({ endpoint: "/np", pollInterval: 100000 }));
+
+    await waitFor(() => expect(result.current.errorCode).toBe("premium_missing"));
+    expect(result.current.error?.message).toBe("Now playing is unavailable");
+  });
+
+  it("uses the status text when a failed response has no message", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 502,
+        statusText: "Bad Gateway",
+        json: async () => {
+          throw new Error("not json");
+        },
+      }),
+    );
+
+    const { result } = renderHook(() => useNowPlaying({ endpoint: "/np", pollInterval: 100000 }));
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.errorCode).toBe("fetch_error");
+    expect(result.current.error?.message).toBe("Failed to fetch: Bad Gateway");
+  });
+
+  it("wraps a non-Error throw as a network_error", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue("nope"));
+
+    const { result } = renderHook(() => useNowPlaying({ endpoint: "/np", pollInterval: 100000 }));
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.errorCode).toBe("network_error");
+    expect(result.current.error?.message).toBe("Unknown error");
+  });
 });

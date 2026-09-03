@@ -13,4 +13,9 @@ describe("WorkCardDate", () => {
     render(<WorkCardDate date="2024-01-01" dateEnd="2024-12-31" />);
     expect(screen.getByText("→")).toBeInTheDocument();
   });
+
+  it("accepts Date objects for a range", () => {
+    render(<WorkCardDate date={new Date("2024-03-15")} dateEnd={new Date("2024-04-01")} />);
+    expect(screen.getByText("→")).toBeInTheDocument();
+  });
 });

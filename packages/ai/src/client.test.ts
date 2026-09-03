@@ -189,3 +189,11 @@ describe("GroqApiError", () => {
     expect(new GroqApiError(400, "bad request").isTransient).toBe(false);
   });
 });
+
+describe("GroqNotConfiguredError", () => {
+  it("uses a stable name so callers can degrade instead of 500", () => {
+    const error = new GroqNotConfiguredError();
+    expect(error.name).toBe("GroqNotConfiguredError");
+    expect(error.message).toContain("GROQ_API_KEY");
+  });
+});

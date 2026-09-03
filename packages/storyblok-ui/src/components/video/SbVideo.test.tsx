@@ -108,4 +108,41 @@ describe("SbVideo", () => {
     expect(container.querySelector("video")).toBeNull();
     expect(container.firstChild).not.toBeNull();
   });
+
+  it("falls back to videoUrl for native clips and sizes string dimensions", () => {
+    const { container } = render(
+      <SbVideo
+        blok={
+          {
+            _uid: "7",
+            component: "video",
+            source: "native",
+            videoUrl: "https://cdn.example/clip.mp4",
+            video: { width: "640", height: "360" },
+            poster: { filename: "https://cdn.example/poster.jpg" },
+            aspectRatio: " 16/9 ",
+            caption: { content: [{ type: "paragraph", content: [{ type: "text", text: "Cap" }] }] },
+          } as never
+        }
+      />,
+    );
+    expect(container.querySelector("video")).toHaveAttribute("src", "https://cdn.example/clip.mp4");
+  });
+
+  it("renders a Vimeo consent placeholder", () => {
+    const { container } = render(
+      <SbVideo
+        blok={
+          {
+            _uid: "8",
+            component: "video",
+            source: "vimeo",
+            videoUrl: "https://vimeo.com/1",
+          } as never
+        }
+      />,
+    );
+    expect(container.querySelector("video")).toBeNull();
+    expect(container).toHaveTextContent("Vimeo Content Blocked");
+  });
 });

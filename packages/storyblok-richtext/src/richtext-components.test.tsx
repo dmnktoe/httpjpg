@@ -311,4 +311,49 @@ describe("richTextComponents · images", () => {
     expect(screen.getByText("© Studio")).toBeInTheDocument();
     expect(screen.getByText("flickr.com/x")).toBeInTheDocument();
   });
+
+  it("covers remaining image, heading, emoji and link edges", () => {
+    const { container: emptyImage } = renderDoc([{ type: "image", attrs: {} }]);
+    expect(emptyImage.querySelector("img")).toBeNull();
+
+    renderDoc([
+      { type: "heading", content: [text("Default")] },
+      {
+        type: "heading",
+        attrs: { level: 6, textAlign: "start" },
+        content: [text("Six")],
+      },
+      {
+        type: "image",
+        attrs: {
+          src: "https://a.storyblok.com/f/1/0x0/abc/zero.jpg",
+          meta_data: { alt: "meta-alt", title: "meta-title", source: "meta-source" },
+        },
+      },
+      {
+        type: "paragraph",
+        content: [
+          { type: "emoji", attrs: { emoji: "✦" } },
+          { type: "emoji", attrs: { name: "spark" } },
+          {
+            type: "link",
+            attrs: { href: "/about", target: "_self" },
+            content: [text("self")],
+          },
+          {
+            type: "link",
+            attrs: { href: "javascript:alert(1)" },
+            content: [text("unsafe")],
+          },
+        ],
+      },
+    ]);
+
+    expect(screen.getByRole("heading", { level: 1, name: "Default" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 6, name: "Six" })).toBeInTheDocument();
+    expect(screen.getByAltText("meta-alt")).not.toHaveAttribute("width");
+    expect(screen.getByRole("link", { name: "self" })).toHaveAttribute("target", "_self");
+    expect(screen.queryByRole("link", { name: "unsafe" })).toBeNull();
+    expect(screen.getByText(/unsafe/)).toBeInTheDocument();
+  });
 });

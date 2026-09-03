@@ -6,7 +6,7 @@
       "@/*": ["./*"],
       "styled-system/*": ["../../packages/ui/styled-system/*"]
     },
-    "types": ["node", "vitest/globals"]
+    "types": ["node", "@testing-library/jest-dom", "vitest/globals"]
   },
   "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

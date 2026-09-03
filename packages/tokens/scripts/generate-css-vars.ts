@@ -8,41 +8,12 @@ import { borderRadius } from "../src/border-radius.js";
 import { colors } from "../src/colors.js";
 import { shadows } from "../src/shadows.js";
 import { spacing } from "../src/spacing.js";
+import { renderTokensCss } from "./lib/css-vars";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-function toKebabCase(str: string): string {
-  return str.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-}
-
-function generateCSSVariables(tokens: Record<string, any>, prefix: string, parentKey = ""): string {
-  const lines: string[] = [];
-
-  for (const [key, value] of Object.entries(tokens)) {
-    const fullKey = parentKey ? `${parentKey}-${key}` : key;
-
-    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-      lines.push(generateCSSVariables(value, prefix, fullKey));
-    } else {
-      const cssVarName = `--${prefix}-${toKebabCase(fullKey)}`;
-      lines.push(`\t${cssVarName}: ${value};`);
-    }
-  }
-
-  return lines.join("\n");
-}
-
-const cssContent = `:root {
-${generateCSSVariables(colors, "color")}
-
-${generateCSSVariables(spacing, "spacing")}
-
-${generateCSSVariables(borderRadius, "radius")}
-
-${generateCSSVariables(shadows, "shadow")}
-}
-`;
+const cssContent = renderTokensCss({ colors, spacing, borderRadius, shadows });
 
 const distDir = join(__dirname, "..", "dist");
 const outputPath = join(distDir, "tokens.css");

@@ -64,6 +64,15 @@ describe("consent storage", () => {
     expect(hasVendorConsent("spotify")).toBe(true);
   });
 
+  it("returns false for vendors before any cookie is set", () => {
+    expect(hasVendorConsent("youtube")).toBe(false);
+  });
+
+  it("treats a non-object consent payload as missing", () => {
+    writeRawCookie(JSON.stringify({ v: CONSENT_VERSION, consent: "nope" }));
+    expect(getConsent()).toBeNull();
+  });
+
   it("dispatches a consentChange event on set and clear", () => {
     const events: Array<ConsentState | null> = [];
     const listener = (event: Event) =>

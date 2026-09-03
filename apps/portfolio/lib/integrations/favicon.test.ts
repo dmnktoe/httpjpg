@@ -146,6 +146,8 @@ describe("isPrivateAddress", () => {
     expect(isPrivateAddress("93.184.216.34")).toBe(false);
     expect(isPrivateAddress("172.32.0.1")).toBe(false);
     expect(isPrivateAddress("2606:4700::1")).toBe(false);
+    expect(isPrivateAddress("192.0.0.1")).toBe(true);
+    expect(isPrivateAddress("198.19.1.1")).toBe(true);
   });
 
   it("treats malformed input as private", () => {
@@ -165,6 +167,17 @@ describe("sniffContentType", () => {
   it("returns null for HTML error pages and short bodies", () => {
     expect(sniffContentType(new TextEncoder().encode("<!doctype html><html>404"))).toBeNull();
     expect(sniffContentType(Uint8Array.from([0x00]))).toBeNull();
+  });
+
+  it("recognises bmp, webp and xml-wrapped svg", () => {
+    expect(sniffContentType(Uint8Array.from([0x42, 0x4d, 0x00, 0x00]))).toBe("image/bmp");
+    const webp = new Uint8Array(12);
+    webp.set([0x52, 0x49, 0x46, 0x46], 0);
+    webp.set([0x57, 0x45, 0x42, 0x50], 8);
+    expect(sniffContentType(webp)).toBe("image/webp");
+    expect(
+      sniffContentType(new TextEncoder().encode('<?xml version="1.0"?><svg xmlns="x"/>')),
+    ).toBe("image/svg+xml");
   });
 });
 
@@ -428,5 +441,143 @@ describe("fetchFavicon", () => {
     mockFetch.mockRejectedValueOnce(new Error("boom")).mockResolvedValueOnce(binaryResponse(ICO));
 
     await expect(fetchFavicon("https://example.com/")).resolves.toMatchObject({ ok: true });
+  });
+
+  it("rejects localhost and hosts whose DNS lookup fails", async () => {
+    await expect(fetchFavicon("https://localhost/")).resolves.toMatchObject({ ok: false });
+    lookup.mockRejectedValueOnce(new Error("ENOTFOUND"));
+    await expect(fetchFavicon("https://missing.example/")).resolves.toMatchObject({ ok: false });
+  });
+
+  it("follows a 302 without a location as a terminal response", async () => {
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 302,
+      url: "https://example.com/",
+      headers: new Headers(),
+      arrayBuffer: async () => new ArrayBuffer(0),
+    } as unknown as Response);
+
+    await expect(fetchFavicon("https://example.com/")).resolves.toMatchObject({ ok: false });
+  });
+
+  it("skips a non-html page body and invalid icon hrefs", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      url: "https://example.com/",
+      headers: new Headers({ "content-type": "application/json" }),
+      arrayBuffer: async () => new TextEncoder().encode("{}").buffer,
+    } as unknown as Response);
+
+    await expect(fetchFavicon("https://example.com/")).resolves.toMatchObject({ ok: false });
+  });
+
+  it("decodes a percent-encoded svg data url and ignores non-images", async () => {
+    const svg = encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+    mockFetch.mockResolvedValueOnce(
+      htmlResponse(`<head><link rel="icon" href="data:image/svg+xml,${svg}"></head>`),
+    );
+    await expect(fetchFavicon("https://example.com/")).resolves.toMatchObject({
+      ok: true,
+      contentType: "image/svg+xml",
+    });
+
+    mockFetch.mockResolvedValueOnce(
+      htmlResponse(`<head><link rel="icon" href="data:text/plain,hello"></head>`),
+    );
+    await expect(fetchFavicon("https://example.com/")).resolves.toMatchObject({ ok: false });
+  });
+
+  it("prefers sizes=any over a too-small bitmap", async () => {
+    mockFetch
+      .mockResolvedValueOnce(
+        htmlResponse(`
+          <head>
+            <link rel="icon" sizes="16x16" href="/small.png">
+            <link rel="icon" sizes="any" href="/vector.svg">
+          </head>
+        `),
+      )
+      .mockResolvedValueOnce(binaryResponse(PNG));
+
+    await fetchFavicon("https://example.com/", 32);
+    expect(mockFetch.mock.calls[1][0]).toMatchObject({ href: "https://example.com/vector.svg" });
+  });
+
+  it("gives up on a redirect to a non-http location", async () => {
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 302,
+      url: "https://example.com/",
+      headers: new Headers({ location: "ftp://files.example/icon.ico" }),
+      arrayBuffer: async () => new ArrayBuffer(0),
+    } as unknown as Response);
+
+    await expect(fetchFavicon("https://example.com/")).resolves.toMatchObject({ ok: false });
+  });
+
+  it("treats a throwing body reader as a failed icon", async () => {
+    mockFetch
+      .mockResolvedValueOnce(htmlResponse("<head><title>x</title></head>"))
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        url: "https://example.com/favicon.ico",
+        headers: new Headers({ "content-type": "image/x-icon" }),
+        body: {
+          getReader: () => ({
+            read: async () => {
+              throw new Error("stream");
+            },
+            cancel: async () => {
+              throw new Error("cancel");
+            },
+          }),
+        },
+        arrayBuffer: async () => new ArrayBuffer(0),
+      } as unknown as Response);
+
+    await expect(fetchFavicon("https://example.com/")).resolves.toMatchObject({ ok: false });
+  });
+
+  it("sniffs a Windows cursor and ranks apple-touch below a covering icon", async () => {
+    const cursor = Uint8Array.from([0x00, 0x00, 0x02, 0x00]);
+    expect(sniffContentType(cursor)).toBe("image/x-icon");
+
+    mockFetch
+      .mockResolvedValueOnce(
+        htmlResponse(`
+          <head>
+            <link rel="apple-touch-icon" sizes="180x180" href="/apple.png">
+            <link rel="icon" sizes="32x32" href="/icon.png">
+          </head>
+        `),
+      )
+      .mockResolvedValueOnce(binaryResponse(PNG, "https://example.com/icon.png"));
+
+    await fetchFavicon("https://example.com/", 32);
+    expect(String(mockFetch.mock.calls[1][0])).toContain("icon.png");
+  });
+
+  it("falls back to a directory favicon.ico and skips a javascript icon href", async () => {
+    mockFetch
+      .mockResolvedValueOnce(
+        htmlResponse(`<head><link rel="icon" href="javascript:alert(1)"></head>`),
+      )
+      .mockResolvedValueOnce(notFoundResponse("https://example.com/blog/favicon.ico"))
+      .mockResolvedValueOnce(binaryResponse(ICO, "https://example.com/favicon.ico"));
+
+    await expect(fetchFavicon("https://example.com/blog/post")).resolves.toMatchObject({
+      ok: true,
+      contentType: "image/x-icon",
+    });
+  });
+
+  it("flags fc/fe ipv6 unique-local and link-local ranges", () => {
+    expect(isPrivateAddress("fc00::1")).toBe(true);
+    expect(isPrivateAddress("fe90::1")).toBe(true);
+    expect(isPrivateAddress("fea0::1")).toBe(true);
+    expect(isPrivateAddress("feb0::1")).toBe(true);
   });
 });

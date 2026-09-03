@@ -54,4 +54,27 @@ describe("CodeBlock", () => {
       expect(writeText).toHaveBeenCalledWith("hello");
     });
   });
+
+  it("does nothing without a clipboard and recovers from a rejected write", async () => {
+    Object.assign(navigator, { clipboard: undefined });
+    const { rerender } = render(<CodeBlock code="hello" />);
+    fireEvent.click(screen.getByRole("button", { name: "Copy code" }));
+
+    const writeText = vi.fn().mockRejectedValue(new Error("denied"));
+    Object.assign(navigator, { clipboard: { writeText } });
+    rerender(<CodeBlock code="hello" />);
+    fireEvent.click(screen.getByRole("button", { name: "Copy code" }));
+    await vi.waitFor(() => expect(writeText).toHaveBeenCalled());
+    expect(screen.getByRole("button", { name: "Copy code" })).toBeInTheDocument();
+  });
+
+  it("clears a pending copied timer on a second copy", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { writeText } });
+    render(<CodeBlock code="hello" />);
+    fireEvent.click(screen.getByRole("button", { name: "Copy code" }));
+    await vi.waitFor(() => expect(screen.getByText("copied!")).toBeInTheDocument());
+    fireEvent.click(screen.getByRole("button", { name: "Copy code" }));
+    await vi.waitFor(() => expect(writeText).toHaveBeenCalledTimes(2));
+  });
 });

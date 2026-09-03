@@ -5,12 +5,6 @@ import { createPortal } from "react-dom";
 
 import { useHasMounted } from "../../lib/use-has-mounted";
 import { FloatingBadge, type FloatingBadgeAction } from "../floating-badge/floating-badge";
-import {
-  DRAFT_STATUS_ACTION,
-  editBadgeAction,
-  EXIT_DRAFT_ACTION,
-  gridBadgeAction,
-} from "./editor-chrome-actions";
 import { EditorGridOverlay } from "./editor-chrome-overlay";
 
 export interface EditorChromeProps {
@@ -18,13 +12,27 @@ export interface EditorChromeProps {
   editHref?: string | null;
 }
 
-export interface EditorChromeModel {
+const DRAFT_STATUS: FloatingBadgeAction = {
+  label: "draft",
+  glyph: "🔍",
+  ariaLabel: "Preview mode — unpublished content",
+  presentational: true,
+};
+
+const EXIT_DRAFT: FloatingBadgeAction = {
+  href: "/api/exit-draft",
+  label: "exit",
+  glyph: "×",
+  ariaLabel: "Exit draft preview",
+  external: false,
+  hideInIframe: true,
+};
+
+/** Draft / edit / exit / grid. No work URL, no accent. */
+export function useEditorChrome(editHref?: string | null): {
   actions: FloatingBadgeAction[];
   overlay: ReactNode;
-}
-
-/** Draft / edit / exit / grid overlay. No work URL, no accent. */
-export function useEditorChrome(editHref?: string | null): EditorChromeModel {
+} {
   const mounted = useHasMounted();
   const [gridOpen, setGridOpen] = useState(false);
 
@@ -51,10 +59,25 @@ export function useEditorChrome(editHref?: string | null): EditorChromeModel {
 
   return {
     actions: [
-      DRAFT_STATUS_ACTION,
-      ...(editHref ? [editBadgeAction(editHref)] : []),
-      EXIT_DRAFT_ACTION,
-      gridBadgeAction(gridOpen, () => setGridOpen((open) => !open)),
+      DRAFT_STATUS,
+      ...(editHref
+        ? [
+            {
+              href: editHref,
+              label: "edit",
+              glyph: "✎",
+              ariaLabel: "Edit in Storyblok",
+            } satisfies FloatingBadgeAction,
+          ]
+        : []),
+      EXIT_DRAFT,
+      {
+        label: "grid",
+        glyph: "⊞",
+        ariaLabel: gridOpen ? "Hide 12-column overlay (G)" : "Show 12-column overlay (G)",
+        pressed: gridOpen,
+        onClick: () => setGridOpen((open) => !open),
+      },
     ],
     overlay: mounted && gridOpen ? createPortal(<EditorGridOverlay />, document.body) : null,
   };

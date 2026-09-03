@@ -1,4 +1,4 @@
-import { PageBadge, resetPageBadgeStore } from "@httpjpg/ui";
+import { PageBadge } from "@httpjpg/ui";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -26,13 +26,11 @@ describe("DraftChrome", () => {
   beforeEach(() => {
     searchParamKeys = new Set();
     clearCookies();
-    resetPageBadgeStore();
   });
 
   afterEach(() => {
     cleanup();
     clearCookies();
-    resetPageBadgeStore();
   });
 
   it("renders nothing outside of draft mode", () => {
@@ -75,14 +73,13 @@ describe("DraftChrome", () => {
     document.cookie = "__prerender_bypass=token";
 
     render(
-      <>
-        <DraftChrome />
+      <DraftChrome>
         <PageBadge
           href="https://external.dev"
           editHref="https://app.storyblok.com/#/me/spaces/7/stories/0/0/9"
           accentColor="#ec6839"
         />
-      </>,
+      </DraftChrome>,
     );
 
     expect(document.body.querySelectorAll("[data-page-badge]")).toHaveLength(1);

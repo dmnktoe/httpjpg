@@ -18,13 +18,14 @@ export * from "./container/container";
 export * from "./copyright-label/copyright-label";
 export * from "./custom-cursor/custom-cursor";
 export * from "./divider/divider";
-export * from "./editor-chrome/editor-chrome";
-export * from "./editor-chrome/editor-chrome-actions";
-export * from "./floating-badge/floating-badge";
-export * from "./floating-badge/work-preview-action";
-export * from "./page-badge/page-badge";
-export * from "./page-badge/page-badge-cluster";
-export * from "./page-badge/page-badge-store";
+export { EditorChrome, type EditorChromeProps } from "./editor-chrome/editor-chrome";
+export {
+  FloatingBadge,
+  type FloatingBadgeAction,
+  type FloatingBadgeProps,
+} from "./floating-badge/floating-badge";
+export { workPreviewAction } from "./floating-badge/work-preview-action";
+export { PageBadge, PageBadgeProvider, type PageBadgeProps } from "./page-badge/page-badge";
 export * from "./footer/footer";
 export * from "./footer-status-line/footer-status-line";
 export * from "./footer-status-line/footer-status-line-separator";

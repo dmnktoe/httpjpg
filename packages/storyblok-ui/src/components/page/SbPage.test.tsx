@@ -1,12 +1,6 @@
-import { resetPageBadgeStore } from "@httpjpg/ui";
 import { render, screen } from "@testing-library/react";
-import { afterEach } from "vitest";
 
 import { SbPage } from "./SbPage";
-
-afterEach(() => {
-  resetPageBadgeStore();
-});
 
 describe("SbPage", () => {
   it("renders a light page by default", () => {

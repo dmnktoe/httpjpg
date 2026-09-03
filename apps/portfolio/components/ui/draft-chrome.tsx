@@ -1,50 +1,38 @@
 "use client";
 
-import {
-  getPageBadgeSlot,
-  type PageBadgeSlot,
-  PageBadgeCluster,
-  registerPageBadgeHost,
-  subscribePageBadge,
-} from "@httpjpg/ui";
+import { PageBadgeProvider } from "@httpjpg/ui";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useSyncExternalStore } from "react";
+import { Suspense, useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 
-function DraftChromeContent() {
+function DraftQueryDetector({ onChange }: { onChange: (draft: boolean) => void }) {
   const searchParams = useSearchParams();
-  const cookiePreview = useSyncExternalStore(
-    subscribeNever,
-    getDraftCookieSnapshot,
-    getServerFalse,
-  );
-  const slot = useSyncExternalStore(subscribePageBadge, getPageBadgeSlot, getEmptySlot);
-  const isDraft =
-    cookiePreview ||
-    searchParams?.has("_storyblok") === true ||
-    searchParams?.has("_draft") === true;
+  const queryDraft =
+    searchParams?.has("_storyblok") === true || searchParams?.has("_draft") === true;
 
   useEffect(() => {
-    if (!isDraft) {
-      return;
-    }
-    return registerPageBadgeHost();
-  }, [isDraft]);
+    onChange(queryDraft);
+  }, [onChange, queryDraft]);
 
-  if (!isDraft) {
-    return null;
-  }
+  return null;
+}
+
+function DraftChromeView({ children }: { children?: ReactNode }) {
+  const cookieDraft = useSyncExternalStore(subscribeNever, getDraftCookieSnapshot, getServerFalse);
+  const [queryDraft, setQueryDraft] = useState(false);
+  const isDraft = cookieDraft || queryDraft;
 
   return (
-    <PageBadgeCluster href={slot.href} editHref={slot.editHref} accentColor={slot.accentColor} />
+    <>
+      <Suspense fallback={null}>
+        <DraftQueryDetector onChange={setQueryDraft} />
+      </Suspense>
+      {isDraft ? <PageBadgeProvider>{children}</PageBadgeProvider> : children}
+    </>
   );
 }
 
-export function DraftChrome() {
-  return (
-    <Suspense fallback={null}>
-      <DraftChromeContent />
-    </Suspense>
-  );
+export function DraftChrome({ children }: { children?: ReactNode }) {
+  return <DraftChromeView>{children}</DraftChromeView>;
 }
 
 function subscribeNever() {
@@ -57,8 +45,4 @@ function getDraftCookieSnapshot() {
 
 function getServerFalse() {
   return false;
-}
-
-function getEmptySlot(): PageBadgeSlot {
-  return {};
 }

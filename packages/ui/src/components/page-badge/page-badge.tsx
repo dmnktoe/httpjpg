@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
+import { useEditorChrome } from "../editor-chrome/editor-chrome";
 import { FloatingBadge } from "../floating-badge/floating-badge";
 import { workPreviewAction } from "../floating-badge/work-preview-action";
-import { PageBadgeCluster } from "./page-badge-cluster";
-import { getPageBadgeHosted, setPageBadgeSlot, subscribePageBadge } from "./page-badge-store";
 
 export interface PageBadgeProps {
   /** Work-page live URL. */
@@ -15,34 +14,53 @@ export interface PageBadgeProps {
   accentColor?: string | null;
 }
 
-function getServerFalse() {
-  return false;
+const PageBadgeContext = createContext<((slot: PageBadgeProps) => void) | null>(null);
+
+function PageBadgeRow({ href, editHref, accentColor }: PageBadgeProps) {
+  const editor = useEditorChrome(editHref);
+  return (
+    <>
+      <FloatingBadge
+        accentColor={accentColor}
+        actions={[...(href ? [workPreviewAction(href)] : []), ...editor.actions]}
+      />
+      {editor.overlay}
+    </>
+  );
+}
+
+/** Layout host: draws one pill row and swallows nested `PageBadge`s. */
+export function PageBadgeProvider({ children }: { children?: ReactNode }) {
+  const [slot, setSlot] = useState<PageBadgeProps>({});
+  return (
+    <PageBadgeContext.Provider value={setSlot}>
+      {children}
+      <PageBadgeRow {...slot} />
+    </PageBadgeContext.Provider>
+  );
 }
 
 /**
- * Pages publish work URL / accent / edit href to the layout `DraftChrome` host.
- * Without a host: a live URL renders the work pill; `_editable` renders draft chrome.
+ * Publishes work URL / accent / edit href. Renders pills only when no
+ * `PageBadgeProvider` is mounted (tests, Storybook, published work pages).
  */
 export function PageBadge({ href, editHref, accentColor }: PageBadgeProps) {
-  const hosted = useSyncExternalStore(subscribePageBadge, getPageBadgeHosted, getServerFalse);
+  const setSlot = useContext(PageBadgeContext);
 
   useEffect(() => {
-    setPageBadgeSlot({
-      href: href ?? undefined,
-      editHref,
-      accentColor,
-    });
-    return () => setPageBadgeSlot({});
-  }, [href, editHref, accentColor]);
+    if (!setSlot) {
+      return;
+    }
+    setSlot({ href, editHref, accentColor });
+    return () => setSlot({});
+  }, [setSlot, href, editHref, accentColor]);
 
-  if (hosted) {
+  if (setSlot) {
     return null;
   }
 
   if (editHref) {
-    return (
-      <PageBadgeCluster href={href ?? undefined} editHref={editHref} accentColor={accentColor} />
-    );
+    return <PageBadgeRow href={href} editHref={editHref} accentColor={accentColor} />;
   }
 
   if (href) {

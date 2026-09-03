@@ -1,12 +1,6 @@
-import { resetPageBadgeStore } from "@httpjpg/ui";
 import { render, screen } from "@testing-library/react";
-import { afterEach } from "vitest";
 
 import { SbPageWork } from "./SbPageWork";
-
-afterEach(() => {
-  resetPageBadgeStore();
-});
 
 describe("SbPageWork", () => {
   it("renders body bloks", () => {

@@ -12,6 +12,12 @@ export interface DatasourceWithEntries {
   entries: DatasourceEntry[];
 }
 
+function spacingEntryName(key: string): string {
+  const unsigned = key.startsWith("-") ? key.slice(1) : key;
+  const rem = (spacing as Record<string, string>)[unsigned];
+  return rem ? `${key} (${key.startsWith("-") ? `-${rem}` : rem})` : key;
+}
+
 function spacingDs(): DatasourceWithEntries {
   return {
     datasource: { name: "Spacing Options", slug: "spacing-options" },
@@ -19,7 +25,20 @@ function spacingDs(): DatasourceWithEntries {
       .slice()
       .sort((a, b) => Number(a) - Number(b))
       .map((key) => ({
-        name: `${key} (${spacing[key as unknown as keyof typeof spacing]})`,
+        name: spacingEntryName(key),
+        value: key,
+      })),
+  };
+}
+
+function marginDs(): DatasourceWithEntries {
+  return {
+    datasource: { name: "Margin Options", slug: "margin-options" },
+    entries: CMS_OPTIONS.margin
+      .slice()
+      .sort((a, b) => Number(a) - Number(b))
+      .map((key) => ({
+        name: spacingEntryName(key),
         value: key,
       })),
   };
@@ -40,5 +59,5 @@ function workTagsDs(): DatasourceWithEntries {
 }
 
 export function allDatasources(): DatasourceWithEntries[] {
-  return [spacingDs(), colorDs(), workTagsDs()];
+  return [spacingDs(), marginDs(), colorDs(), workTagsDs()];
 }

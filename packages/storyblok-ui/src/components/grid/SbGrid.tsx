@@ -85,6 +85,7 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
       flow={flow || undefined}
       className={responsive}
       style={styleVars}
+      css={{ overflow: "visible" }}
     >
       {items.map((item) => (
         <StoryblokServerComponent key={item._uid} blok={item} />

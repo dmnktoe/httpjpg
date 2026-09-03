@@ -1,37 +1,40 @@
-import { Box, FloatingPreviewBadge } from "@httpjpg/ui";
+import { Box, EditorChrome } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ReactNode } from "react";
 
+/**
+ * Draft / Visual Editor chrome. Owns draft, edit, exit, and the 12-col grid.
+ * Optional work preview is composed into the same row; accent tints only that pill.
+ */
 const meta = {
-  title: "Display/FloatingPreviewBadge",
-  component: FloatingPreviewBadge,
+  title: "Display/EditorChrome",
+  component: EditorChrome,
   parameters: {
     layout: "fullscreen",
     docs: {
       story: { inline: false, iframeHeight: 360 },
       description: {
         component:
-          "Work-page live URL pill. Draft / edit / exit / grid are `EditorChrome`, not variants of this.",
+          "Layout-owned draft chrome. Preview ↗ is optional content from the page, not an editor control.",
       },
     },
   },
   tags: ["autodocs"],
   argTypes: {
-    href: {
+    previewHref: {
       control: "text",
       description: "Work-page live URL. Omit when the story has no external link.",
     },
-    label: {
+    editHref: {
       control: "text",
-      description: "Label shown inside the preview pill on desktop",
-      table: { defaultValue: { summary: "preview" } },
+      description: "Visual Editor deep-link from `_editable`.",
     },
     accentColor: {
       control: "color",
-      description: "Work page Project Accent Color — tints the preview pill only",
+      description: "Tints the preview pill only. Editor tools stay on the default glass.",
     },
   },
-} satisfies Meta<typeof FloatingPreviewBadge>;
+} satisfies Meta<typeof EditorChrome>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -55,42 +58,24 @@ const Stage = ({ children }: { children: ReactNode }) => (
 
 export const Default: Story = {
   args: {
-    href: "https://example.com",
-    label: "preview",
+    editHref: "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
   },
   render: (args) => (
     <Stage>
-      <FloatingPreviewBadge {...args} />
+      <EditorChrome {...args} />
     </Stage>
   ),
 };
 
-export const CustomLabel: Story = {
+export const WithWorkPreview: Story = {
   args: {
-    href: "https://example.com",
-    label: "DEMO",
-  },
-  render: (args) => (
-    <Stage>
-      <FloatingPreviewBadge {...args} />
-    </Stage>
-  ),
-};
-
-/**
- * The same hex that tints iOS liquid-glass icons. Set on the preview pill
- * so the tint does not leak onto editor tools when `EditorChrome` composes
- * both into one row.
- */
-export const WorkAccent: Story = {
-  args: {
-    href: "https://example.com",
-    label: "preview",
+    previewHref: "https://example.com",
+    editHref: "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
     accentColor: "#EC6839",
   },
   render: (args) => (
     <Stage>
-      <FloatingPreviewBadge {...args} />
+      <EditorChrome {...args} />
     </Stage>
   ),
 };

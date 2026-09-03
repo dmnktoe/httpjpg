@@ -2,6 +2,7 @@ import { CMS_OPTIONS } from "@httpjpg/storyblok-utils";
 
 import type { BlockDef } from "../lib/block";
 import { field, labelize, tabbed } from "../lib/fields";
+import { withMotion } from "../lib/motion";
 import { inlineOptions } from "../lib/options";
 import { withSpacing } from "../lib/spacing";
 
@@ -22,39 +23,41 @@ export const layoutBlocks: BlockDef[] = [
     group: "Layout",
     icon: "block-section",
     color: "#4a5568",
-    schema: withSpacing({
-      content: field.bloks("Content", {
-        required: true,
-        whitelist: [
-          "container",
-          "grid",
-          "headline",
-          "paragraph",
-          "richtext",
-          "button",
-          "button_group",
-          "divider",
-          "link",
-          "icon",
-          "list",
-          "accordion",
-          "callout",
-          "code_block",
-          "stats",
-          "badges",
-        ],
-      }),
-      bgColor: field.datasource("Background Color", "color-options"),
-      ...tabbed("Container", "container", {
-        useContainer: field.boolean("Wrap in Container"),
-        containerSize: field.options("Container Size", inlineOptions.width, {
-          default_value: "2xl",
+    schema: withSpacing(
+      withMotion({
+        content: field.bloks("Content", {
+          required: true,
+          whitelist: [
+            "container",
+            "grid",
+            "headline",
+            "paragraph",
+            "richtext",
+            "button",
+            "button_group",
+            "divider",
+            "link",
+            "icon",
+            "list",
+            "accordion",
+            "callout",
+            "code_block",
+            "stats",
+            "badges",
+          ],
         }),
-        containerAlign: field.options("Container Align", CONTAINER_ALIGN_OPTIONS, {
-          default_value: "center",
+        bgColor: field.datasource("Background Color", "color-options"),
+        ...tabbed("Container", "container", {
+          useContainer: field.boolean("Wrap in Container"),
+          containerSize: field.options("Container Size", inlineOptions.width, {
+            default_value: "2xl",
+          }),
+          containerAlign: field.options("Container Align", CONTAINER_ALIGN_OPTIONS, {
+            default_value: "center",
+          }),
         }),
       }),
-    }),
+    ),
   },
   {
     name: "container",
@@ -62,14 +65,16 @@ export const layoutBlocks: BlockDef[] = [
     group: "Layout",
     icon: "block-container",
     color: "#4a5568",
-    schema: withSpacing({
-      body: field.bloks("Body", { required: true }),
-      width: field.options("Container Size", inlineOptions.width, {
-        default_value: "lg",
+    schema: withSpacing(
+      withMotion({
+        body: field.bloks("Body", { required: true }),
+        width: field.options("Container Size", inlineOptions.width, {
+          default_value: "lg",
+        }),
+        center: field.boolean("Center", "true"),
+        bgColor: field.datasource("Background Color", "color-options"),
       }),
-      center: field.boolean("Center", "true"),
-      bgColor: field.datasource("Background Color", "color-options"),
-    }),
+    ),
   },
   {
     name: "grid",
@@ -77,31 +82,33 @@ export const layoutBlocks: BlockDef[] = [
     group: "Layout",
     icon: "block-grid",
     color: "#4a5568",
-    schema: withSpacing({
-      items: field.bloks("Grid Items", { required: true }),
-      ...tabbed("Columns", "columns", {
-        columns: field.options("Columns", inlineOptions.gridColumn),
-        columnsMd: field.options("Columns (Tablet)", inlineOptions.gridColumn),
-        columnsLg: field.options("Columns (Desktop)", inlineOptions.gridColumn),
-      }),
-      ...tabbed("Gaps", "gaps", {
-        gap: field.datasource("Gap", "spacing-options"),
-        rowGap: field.datasource("Row Gap", "spacing-options"),
-        columnGap: field.datasource("Column Gap", "spacing-options"),
-      }),
-      ...tabbed("Alignment", "alignment", {
-        align: field.options("Align Items", labelize(CMS_OPTIONS.alignItems), {
-          default_value: "stretch",
+    schema: withSpacing(
+      withMotion({
+        items: field.bloks("Grid Items", { required: true }),
+        ...tabbed("Columns", "columns", {
+          columns: field.options("Columns", inlineOptions.gridColumn),
+          columnsMd: field.options("Columns (Tablet)", inlineOptions.gridColumn),
+          columnsLg: field.options("Columns (Desktop)", inlineOptions.gridColumn),
         }),
-        justify: field.options("Justify Items", labelize(CMS_OPTIONS.justifyItems), {
-          default_value: "stretch",
+        ...tabbed("Gaps", "gaps", {
+          gap: field.datasource("Gap", "spacing-options"),
+          rowGap: field.datasource("Row Gap", "spacing-options"),
+          columnGap: field.datasource("Column Gap", "spacing-options"),
         }),
-        justifyContent: field.options("Justify Content", labelize(CMS_OPTIONS.justifyContent)),
-        flow: field.options("Auto Flow", labelize(CMS_OPTIONS.gridFlow), {
-          default_value: "row",
+        ...tabbed("Alignment", "alignment", {
+          align: field.options("Align Items", labelize(CMS_OPTIONS.alignItems), {
+            default_value: "stretch",
+          }),
+          justify: field.options("Justify Items", labelize(CMS_OPTIONS.justifyItems), {
+            default_value: "stretch",
+          }),
+          justifyContent: field.options("Justify Content", labelize(CMS_OPTIONS.justifyContent)),
+          flow: field.options("Auto Flow", labelize(CMS_OPTIONS.gridFlow), {
+            default_value: "row",
+          }),
         }),
       }),
-    }),
+    ),
   },
   {
     name: "grid_item",
@@ -109,7 +116,7 @@ export const layoutBlocks: BlockDef[] = [
     group: "Layout",
     icon: "block-square",
     color: "#4a5568",
-    schema: {
+    schema: withMotion({
       content: field.bloks("Content"),
       ...tabbed("Span", "span", {
         colSpan: field.options("Column Span", GRID_SPAN_OPTIONS),
@@ -138,6 +145,6 @@ export const layoutBlocks: BlockDef[] = [
         hiddenMd: field.boolean("Hide on Tablet"),
         hiddenLg: field.boolean("Hide on Desktop"),
       }),
-    },
+    }),
   },
 ];

@@ -3,6 +3,7 @@ import { Container } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
+import { BlokMotion } from "../../lib/blok-motion";
 import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbContainerProps {
@@ -10,21 +11,23 @@ export interface SbContainerProps {
 }
 
 export const SbContainer = memo(function SbContainer({ blok }: SbContainerProps) {
-  const { body, width = "lg", center = true, bgColor } = blok;
+  const { body, width = "lg", center = true, bgColor, animation, animationDelay } = blok;
   if (!body?.length) {
     return null;
   }
   return (
-    <Container
-      {...editableAttrs(blok)}
-      size={width}
-      center={center}
-      css={{ backgroundColor: bgColor, ...spacingCss(blok) }}
-    >
-      {body.map((child) => (
-        <StoryblokServerComponent key={child._uid} blok={child} />
-      ))}
-    </Container>
+    <BlokMotion animation={animation} delay={animationDelay}>
+      <Container
+        {...editableAttrs(blok)}
+        size={width}
+        center={center}
+        css={{ backgroundColor: bgColor, ...spacingCss(blok) }}
+      >
+        {body.map((child) => (
+          <StoryblokServerComponent key={child._uid} blok={child} />
+        ))}
+      </Container>
+    </BlokMotion>
   );
 });
 

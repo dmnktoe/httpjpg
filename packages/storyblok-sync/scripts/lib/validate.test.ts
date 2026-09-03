@@ -12,6 +12,14 @@ describe("validateLocalSchema", () => {
     expect(validateLocalSchema().ok).toBe(true);
   });
 
+  it("adds an entrance-animation field on layout bloks", () => {
+    const schema = toSchemaLike();
+    const section = schema.blocks.find((block) => block.name === "section");
+    const gridItem = schema.blocks.find((block) => block.name === "grid_item");
+    expect(section?.fields.some((field) => field.name === "animation")).toBe(true);
+    expect(gridItem?.fields.some((field) => field.name === "animation")).toBe(true);
+  });
+
   it("rejects a bloks whitelist pointing at an unknown block", () => {
     const result = validateLocalSchema([
       block("grid", { items: field.bloks("Items", { whitelist: ["ghost_block"] }) }),

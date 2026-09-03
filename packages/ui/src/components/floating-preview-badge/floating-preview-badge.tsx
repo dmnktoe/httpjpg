@@ -45,7 +45,11 @@ export interface FloatingPreviewBadgeProps {
   style?: CSSProperties;
 }
 
+const SHEEN_GRADIENT =
+  "linear-gradient(165deg, color-mix(in srgb, var(--work-accent, #ffffff) 36%, transparent) 0%, color-mix(in srgb, var(--work-accent, #ffffff) 8%, transparent) 40%, rgba(0, 0, 0, 0.16) 100%)";
+
 const pillClass = css({
+  position: "relative",
   display: "inline-flex",
   justifyContent: "center",
   alignItems: "center",
@@ -68,17 +72,37 @@ const pillClass = css({
     "transform 150ms ease-out, box-shadow 200ms ease-out, background-color 200ms ease-out, border-color 200ms ease-out",
   appearance: "none",
   cursor: "pointer",
+  overflow: "hidden",
+  isolation: "isolate",
   textShadow: "0 1px 2px rgba(0, 0, 0, 0.6), 0 0 6px rgba(0, 0, 0, 0.3)",
   sm: { width: "fit-content", height: `${DESKTOP_HEIGHT}px`, paddingInline: "4" },
+  _after: {
+    position: "absolute",
+    inset: "0",
+    content: '""',
+    opacity: 0.85,
+    backgroundImage: SHEEN_GRADIENT,
+    borderRadius: "inherit",
+    transition: "opacity 200ms ease-out",
+    pointerEvents: "none",
+  },
   _hover: {
     backgroundColor: "var(--work-accent-fill-hover, rgba(0, 0, 0, 0.42))",
     borderColor: "var(--work-accent, rgba(255, 255, 255, 0.45))",
     boxShadow:
       "0 12px 40px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.40), inset 0 -1px 0 0 rgba(0, 0, 0, 0.25)",
     transform: "translateY(-1px)",
+    _after: { opacity: 1 },
   },
   _active: { transform: "translateY(1px)" },
   _focusVisible: { outline: "2px solid", outlineColor: "primary.500", outlineOffset: "2px" },
+});
+
+const contentClass = css({
+  position: "relative",
+  zIndex: 1,
+  display: "inline-flex",
+  alignItems: "center",
 });
 
 const pressedClass = css({
@@ -203,14 +227,14 @@ function BadgePill({
   };
 
   const inner = (
-    <>
+    <span className={contentClass}>
       <span className={labelClass}>
         {kawaii ? desktopPrefix(action.label) : `${action.label} `}
       </span>
       <span aria-hidden="true" className={glyphClass}>
         {action.glyph}
       </span>
-    </>
+    </span>
   );
 
   if (action.presentational) {

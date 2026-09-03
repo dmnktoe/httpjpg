@@ -2,9 +2,8 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-import { useEditorChrome } from "../editor-chrome/editor-chrome";
-import { FloatingBadge } from "../floating-badge/floating-badge";
-import { workPreviewAction } from "../floating-badge/work-preview-action";
+import { useEditorChrome } from "./editor-chrome";
+import { FloatingBadge, workPreviewAction } from "./floating-badge";
 
 export interface PageBadgeProps {
   /** Work-page live URL. */

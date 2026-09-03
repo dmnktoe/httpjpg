@@ -1,8 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { createRef } from "react";
 
-import { FloatingBadge } from "./floating-badge";
-import { workPreviewAction } from "./work-preview-action";
+import { FloatingBadge, workPreviewAction } from "./floating-badge";
 
 const HREF = "https://example.com/preview";
 const PREVIEW = workPreviewAction(HREF);

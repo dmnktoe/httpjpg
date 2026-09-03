@@ -18,14 +18,14 @@ export * from "./container/container";
 export * from "./copyright-label/copyright-label";
 export * from "./custom-cursor/custom-cursor";
 export * from "./divider/divider";
-export { EditorChrome, type EditorChromeProps } from "./editor-chrome/editor-chrome";
+export { EditorChrome, type EditorChromeProps } from "./floating-badge/editor-chrome";
 export {
   FloatingBadge,
   type FloatingBadgeAction,
   type FloatingBadgeProps,
+  workPreviewAction,
 } from "./floating-badge/floating-badge";
-export { workPreviewAction } from "./floating-badge/work-preview-action";
-export { PageBadge, PageBadgeProvider, type PageBadgeProps } from "./page-badge/page-badge";
+export { PageBadge, PageBadgeProvider, type PageBadgeProps } from "./floating-badge/page-badge";
 export * from "./footer/footer";
 export * from "./footer-status-line/footer-status-line";
 export * from "./footer-status-line/footer-status-line-separator";

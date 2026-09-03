@@ -134,6 +134,23 @@ describe("SbGridItem", () => {
     });
   });
 
+  it("applies signed spacing and a stacking z-index", () => {
+    const { container } = render(
+      <SbGridItem
+        blok={
+          {
+            _uid: "12",
+            component: "grid_item",
+            ml: "-4",
+            zIndex: 2,
+          } as never
+        }
+      />,
+    );
+    const item = container.firstElementChild as HTMLElement;
+    expect(item).toHaveStyle({ zIndex: "2" });
+  });
+
   it("hides the item at the lg breakpoint", () => {
     const { container } = render(
       <SbGridItem blok={{ _uid: "11", component: "grid_item", hiddenLg: true } as never} />,

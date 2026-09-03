@@ -89,6 +89,14 @@ describe("SbGridItem", () => {
     expect(item).toHaveStyle({ alignSelf: "center", justifySelf: "end" });
   });
 
+  it("applies signed spacing and a stacking z-index", () => {
+    const { item } = renderItem({ ml: "-4", zIndex: 2 });
+
+    expect(item).toHaveStyle({ zIndex: "2" });
+    expect(item.className).toContain("jpg-ml_var(--sb-ml)");
+    expect(item.style.getPropertyValue("--sb-ml")).toBe("calc(var(--jpg-spacing-4) * -1)");
+  });
+
   it("hides the item per breakpoint", () => {
     const { item } = renderItem({ hiddenLg: true });
 

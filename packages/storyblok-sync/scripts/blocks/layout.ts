@@ -116,35 +116,41 @@ export const layoutBlocks: BlockDef[] = [
     group: "Layout",
     icon: "block-square",
     color: "#4a5568",
-    schema: withMotion({
-      content: field.bloks("Content"),
-      ...tabbed("Span", "span", {
-        colSpan: field.options("Column Span", GRID_SPAN_OPTIONS),
-        colSpanMd: field.options("Column Span (Tablet)", GRID_SPAN_OPTIONS),
-        colSpanLg: field.options("Column Span (Desktop)", GRID_SPAN_OPTIONS),
-        rowSpan: field.options("Row Span", GRID_SPAN_OPTIONS),
-        rowSpanMd: field.options("Row Span (Tablet)", GRID_SPAN_OPTIONS),
-        rowSpanLg: field.options("Row Span (Desktop)", GRID_SPAN_OPTIONS),
+    schema: withSpacing(
+      withMotion({
+        content: field.bloks("Content"),
+        ...tabbed("Span", "span", {
+          colSpan: field.options("Column Span", GRID_SPAN_OPTIONS),
+          colSpanMd: field.options("Column Span (Tablet)", GRID_SPAN_OPTIONS),
+          colSpanLg: field.options("Column Span (Desktop)", GRID_SPAN_OPTIONS),
+          rowSpan: field.options("Row Span", GRID_SPAN_OPTIONS),
+          rowSpanMd: field.options("Row Span (Tablet)", GRID_SPAN_OPTIONS),
+          rowSpanLg: field.options("Row Span (Desktop)", GRID_SPAN_OPTIONS),
+        }),
+        ...tabbed("Position", "position", {
+          colStart: field.number("Column Start"),
+          colStartMd: field.number("Column Start (Tablet)"),
+          colStartLg: field.number("Column Start (Desktop)"),
+          colEnd: field.number("Column End"),
+          rowStart: field.number("Row Start"),
+          rowStartMd: field.number("Row Start (Tablet)"),
+          rowStartLg: field.number("Row Start (Desktop)"),
+          rowEnd: field.number("Row End"),
+        }),
+        ...tabbed("Alignment", "alignment", {
+          alignSelf: field.options("Align Self", labelize(CMS_OPTIONS.alignItems)),
+          justifySelf: field.options("Justify Self", labelize(CMS_OPTIONS.justifyItems)),
+          zIndex: field.number("Z-Index", {
+            description: "Stacking order when items overlap (negative margin pull-out).",
+            tooltip: true,
+          }),
+        }),
+        ...tabbed("Visibility", "visibility", {
+          hiddenBase: field.boolean("Hide on Mobile"),
+          hiddenMd: field.boolean("Hide on Tablet"),
+          hiddenLg: field.boolean("Hide on Desktop"),
+        }),
       }),
-      ...tabbed("Position", "position", {
-        colStart: field.number("Column Start"),
-        colStartMd: field.number("Column Start (Tablet)"),
-        colStartLg: field.number("Column Start (Desktop)"),
-        colEnd: field.number("Column End"),
-        rowStart: field.number("Row Start"),
-        rowStartMd: field.number("Row Start (Tablet)"),
-        rowStartLg: field.number("Row Start (Desktop)"),
-        rowEnd: field.number("Row End"),
-      }),
-      ...tabbed("Alignment", "alignment", {
-        alignSelf: field.options("Align Self", labelize(CMS_OPTIONS.alignItems)),
-        justifySelf: field.options("Justify Self", labelize(CMS_OPTIONS.justifyItems)),
-      }),
-      ...tabbed("Visibility", "visibility", {
-        hiddenBase: field.boolean("Hide on Mobile"),
-        hiddenMd: field.boolean("Hide on Tablet"),
-        hiddenLg: field.boolean("Hide on Desktop"),
-      }),
-    }),
+    ),
   },
 ];

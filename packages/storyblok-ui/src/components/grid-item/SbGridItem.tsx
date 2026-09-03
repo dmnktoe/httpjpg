@@ -5,14 +5,15 @@ import { memo } from "react";
 import { css } from "styled-system/css";
 
 import { EntranceMotion } from "../../lib/entrance-motion";
-import { editableAttrs } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbGridItemProps {
   blok: SbGridItemData;
 }
 
 export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
-  const { content, alignSelf, justifySelf, hiddenBase, hiddenMd, hiddenLg } = blok;
+  const { content, alignSelf, justifySelf, hiddenBase, hiddenMd, hiddenLg, zIndex } = blok;
+  const spacing = spacingStyle(blok);
 
   const visibility = css({
     display: hiddenBase ? "none" : undefined,
@@ -44,6 +45,11 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
       alignSelf={alignSelf || undefined}
       justifySelf={justifySelf || undefined}
       className={visibility}
+      css={spacing.css}
+      style={{
+        ...spacing.style,
+        ...(Number.isFinite(Number(zIndex)) ? { zIndex: Number(zIndex) } : {}),
+      }}
     >
       {/* Animate inside the cell: an outer wrapper would become the grid child and drop the placement. */}
       <EntranceMotion blok={blok}>

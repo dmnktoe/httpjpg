@@ -29,10 +29,8 @@ const meta = {
       control: "text",
       description: "Visual Editor deep-link from `_editable`.",
     },
-    accentColor: {
-      control: "color",
-      description: "Tints the preview pill only. Editor tools stay on the default glass.",
-    },
+    previewLabel: { table: { disable: true } },
+    accentColor: { table: { disable: true } },
   },
 } satisfies Meta<typeof EditorChrome>;
 
@@ -71,11 +69,10 @@ export const WithWorkPreview: Story = {
   args: {
     previewHref: "https://example.com",
     editHref: "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
-    accentColor: "#EC6839",
   },
   render: (args) => (
     <Stage>
-      <EditorChrome {...args} />
+      <EditorChrome {...args} accentColor="#EC6839" />
     </Stage>
   ),
 };

@@ -3,6 +3,7 @@ import { Section } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
+import { EntranceMotion } from "../../lib/entrance-motion";
 import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbSectionProps {
@@ -15,17 +16,19 @@ export const SbSection = memo(function SbSection({ blok }: SbSectionProps) {
     return null;
   }
   return (
-    <Section
-      {...editableAttrs(blok)}
-      useContainer={useContainer}
-      containerSize={containerSize}
-      containerAlign={containerAlign}
-      css={{ backgroundColor: bgColor, ...spacingCss(blok) }}
-    >
-      {content.map((child) => (
-        <StoryblokServerComponent key={child._uid} blok={child} />
-      ))}
-    </Section>
+    <EntranceMotion blok={blok}>
+      <Section
+        {...editableAttrs(blok)}
+        useContainer={useContainer}
+        containerSize={containerSize}
+        containerAlign={containerAlign}
+        css={{ backgroundColor: bgColor, ...spacingCss(blok) }}
+      >
+        {content.map((child) => (
+          <StoryblokServerComponent key={child._uid} blok={child} />
+        ))}
+      </Section>
+    </EntranceMotion>
   );
 });
 

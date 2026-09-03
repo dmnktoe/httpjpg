@@ -21,14 +21,11 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    previewHref: {
-      control: "text",
-      description: "Work-page live URL. Omit when the story has no external link.",
-    },
     editHref: {
       control: "text",
       description: "Visual Editor deep-link from `_editable`.",
     },
+    previewHref: { table: { disable: true } },
     previewLabel: { table: { disable: true } },
     accentColor: { table: { disable: true } },
   },
@@ -67,12 +64,11 @@ export const Default: Story = {
 
 export const WithWorkPreview: Story = {
   args: {
-    previewHref: "https://example.com",
     editHref: "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
   },
   render: (args) => (
     <Stage>
-      <EditorChrome {...args} accentColor="#EC6839" />
+      <EditorChrome {...args} previewHref="https://example.com" accentColor="#EC6839" />
     </Stage>
   ),
 };

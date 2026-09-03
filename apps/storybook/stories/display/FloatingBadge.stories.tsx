@@ -1,27 +1,27 @@
-import { Box, EditorChrome } from "@httpjpg/ui";
+import { Box, FloatingBadge, workPreviewAction } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ReactNode } from "react";
 
-/**
- * Draft status, Storyblok edit, exit, and a 12-column overlay. Shortcut G toggles the overlay.
- */
 const meta = {
-  title: "Display/EditorChrome",
-  component: EditorChrome,
+  title: "Display/FloatingBadge",
+  component: FloatingBadge,
   parameters: {
     layout: "fullscreen",
     docs: {
       story: { inline: false, iframeHeight: 360 },
+      description: {
+        component: "Portalled glass pills. `accentColor` tints pills marked `accented`.",
+      },
     },
   },
   tags: ["autodocs"],
   argTypes: {
-    editHref: {
-      control: "text",
-      description: "Visual Editor deep-link from `_editable`.",
+    accentColor: {
+      control: "color",
+      description: "Work page Project Accent Color — tints accented pills only",
     },
   },
-} satisfies Meta<typeof EditorChrome>;
+} satisfies Meta<typeof FloatingBadge>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -44,12 +44,28 @@ const Stage = ({ children }: { children: ReactNode }) => (
 );
 
 export const Default: Story = {
+  render: () => (
+    <Stage>
+      <FloatingBadge actions={[workPreviewAction("https://example.com")]} />
+    </Stage>
+  ),
+};
+
+export const CustomLabel: Story = {
+  render: () => (
+    <Stage>
+      <FloatingBadge actions={[workPreviewAction("https://example.com", "DEMO")]} />
+    </Stage>
+  ),
+};
+
+export const WorkAccent: Story = {
   args: {
-    editHref: "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
+    accentColor: "#EC6839",
   },
   render: (args) => (
     <Stage>
-      <EditorChrome {...args} />
+      <FloatingBadge {...args} actions={[workPreviewAction("https://example.com")]} />
     </Stage>
   ),
 };

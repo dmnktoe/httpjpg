@@ -1,52 +1,48 @@
 "use client";
 
 import {
-  EditorChrome,
-  getPreviewBadgeSlot,
-  type PreviewBadgeSlot,
-  registerPreviewBadgeHost,
-  subscribePreviewBadge,
+  getPageBadgeSlot,
+  type PageBadgeSlot,
+  PageBadgeCluster,
+  registerPageBadgeHost,
+  subscribePageBadge,
 } from "@httpjpg/ui";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useSyncExternalStore } from "react";
 
-function PreviewNotificationContent() {
+function DraftChromeContent() {
   const searchParams = useSearchParams();
   const cookiePreview = useSyncExternalStore(
     subscribeNever,
     getDraftCookieSnapshot,
     getServerFalse,
   );
-  const slot = useSyncExternalStore(subscribePreviewBadge, getPreviewBadgeSlot, getEmptySlot);
-  const isPreview =
+  const slot = useSyncExternalStore(subscribePageBadge, getPageBadgeSlot, getEmptySlot);
+  const isDraft =
     cookiePreview ||
     searchParams?.has("_storyblok") === true ||
     searchParams?.has("_draft") === true;
 
   useEffect(() => {
-    if (!isPreview) {
+    if (!isDraft) {
       return;
     }
-    return registerPreviewBadgeHost();
-  }, [isPreview]);
+    return registerPageBadgeHost();
+  }, [isDraft]);
 
-  if (!isPreview) {
+  if (!isDraft) {
     return null;
   }
 
   return (
-    <EditorChrome
-      previewHref={slot.previewHref}
-      editHref={slot.editHref}
-      accentColor={slot.accentColor}
-    />
+    <PageBadgeCluster href={slot.href} editHref={slot.editHref} accentColor={slot.accentColor} />
   );
 }
 
-export function PreviewNotification() {
+export function DraftChrome() {
   return (
     <Suspense fallback={null}>
-      <PreviewNotificationContent />
+      <DraftChromeContent />
     </Suspense>
   );
 }
@@ -63,6 +59,6 @@ function getServerFalse() {
   return false;
 }
 
-function getEmptySlot(): PreviewBadgeSlot {
+function getEmptySlot(): PageBadgeSlot {
   return {};
 }

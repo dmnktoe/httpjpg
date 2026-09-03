@@ -27,8 +27,8 @@ import { StoryblokProvider } from "@/components/providers/storyblok-provider";
 import { UmamiAnalytics } from "@/components/providers/umami-analytics";
 import { ConsoleBanner } from "@/components/ui/console-banner";
 import { CustomCursorWrapper } from "@/components/ui/custom-cursor-wrapper";
+import { DraftChrome } from "@/components/ui/draft-chrome";
 import { NostalgiaSlideshow } from "@/components/ui/nostalgia-slideshow";
-import { PreviewNotification } from "@/components/ui/preview-notification";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AskWidget } from "@/components/widgets/ask-widget";
 import { BuildBadge } from "@/components/widgets/build-badge";
@@ -147,7 +147,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
               {widgetConfig.psnEnabled && <PSNCard username={widgetConfig.psnUsername} />}
               {widgetConfig.askEnabled && <AskWidget askEnabled={Boolean(env.GROQ_API_KEY)} />}
-              <PreviewNotification />
+              <DraftChrome />
               <Header
                 nav={navigation}
                 projectsWork={projectsWork}

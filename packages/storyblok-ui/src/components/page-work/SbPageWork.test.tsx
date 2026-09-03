@@ -1,11 +1,11 @@
-import { resetPreviewBadgeStore } from "@httpjpg/ui";
+import { resetPageBadgeStore } from "@httpjpg/ui";
 import { render, screen } from "@testing-library/react";
 import { afterEach } from "vitest";
 
 import { SbPageWork } from "./SbPageWork";
 
 afterEach(() => {
-  resetPreviewBadgeStore();
+  resetPageBadgeStore();
 });
 
 describe("SbPageWork", () => {
@@ -38,7 +38,7 @@ describe("SbPageWork", () => {
         }
       />,
     );
-    // FloatingPreviewBadge portals the cluster into document.body.
+    // PageBadge portals the cluster into document.body.
     const link = document.querySelector('a[href="https://external.dev"]') as HTMLAnchorElement;
     expect(link).not.toBeNull();
     expect(link.style.getPropertyValue("--work-accent")).toBe("#EC6839");

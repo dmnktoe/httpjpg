@@ -1,4 +1,4 @@
-import { PreviewBadgeBridge, resetPreviewBadgeStore } from "@httpjpg/ui";
+import { PageBadge, resetPageBadgeStore } from "@httpjpg/ui";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -11,7 +11,7 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
-import { PreviewNotification } from "./preview-notification";
+import { DraftChrome } from "./draft-chrome";
 
 function clearCookies() {
   for (const cookie of document.cookie.split(";")) {
@@ -22,30 +22,30 @@ function clearCookies() {
   }
 }
 
-describe("PreviewNotification", () => {
+describe("DraftChrome", () => {
   beforeEach(() => {
     searchParamKeys = new Set();
     clearCookies();
-    resetPreviewBadgeStore();
+    resetPageBadgeStore();
   });
 
   afterEach(() => {
     cleanup();
     clearCookies();
-    resetPreviewBadgeStore();
+    resetPageBadgeStore();
   });
 
-  it("renders nothing outside of preview mode", () => {
-    render(<PreviewNotification />);
+  it("renders nothing outside of draft mode", () => {
+    render(<DraftChrome />);
 
     expect(screen.queryByRole("status", { name: /preview mode/i })).toBeNull();
     expect(document.body.querySelector("[data-page-badge]")).toBeNull();
   });
 
-  it("renders the draft cluster when the draft-bypass cookie is present", () => {
+  it("renders draft chrome when the draft-bypass cookie is present", () => {
     document.cookie = "__prerender_bypass=token";
 
-    render(<PreviewNotification />);
+    render(<DraftChrome />);
 
     expect(screen.getByRole("status", { name: /preview mode/i })).toHaveTextContent("draft");
     expect(screen.getByRole("link", { name: "Exit draft preview" })).toHaveAttribute(
@@ -55,30 +55,30 @@ describe("PreviewNotification", () => {
     expect(screen.getByRole("button", { name: "Show 12-column overlay (G)" })).not.toBeNull();
   });
 
-  it("renders the cluster when the _storyblok query param is present", () => {
+  it("renders draft chrome when the _storyblok query param is present", () => {
     searchParamKeys = new Set(["_storyblok"]);
 
-    render(<PreviewNotification />);
+    render(<DraftChrome />);
 
     expect(screen.getByRole("status", { name: /preview mode/i })).toBeInTheDocument();
   });
 
-  it("renders the cluster when the _draft query param is present", () => {
+  it("renders draft chrome when the _draft query param is present", () => {
     searchParamKeys = new Set(["_draft"]);
 
-    render(<PreviewNotification />);
+    render(<DraftChrome />);
 
     expect(screen.getByRole("status", { name: /preview mode/i })).toBeInTheDocument();
   });
 
-  it("folds page edit + preview href into the same cluster", () => {
+  it("puts the work URL and editor pills in one cluster", () => {
     document.cookie = "__prerender_bypass=token";
 
     render(
       <>
-        <PreviewNotification />
-        <PreviewBadgeBridge
-          previewHref="https://external.dev"
+        <DraftChrome />
+        <PageBadge
+          href="https://external.dev"
           editHref="https://app.storyblok.com/#/me/spaces/7/stories/0/0/9"
           accentColor="#ec6839"
         />

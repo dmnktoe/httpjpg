@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 const BADGE_SELECTOR = "a[aria-label$='open external preview']";
 
-test.describe("FloatingPreviewBadge", () => {
+test.describe("work preview badge", () => {
   test("home page never renders a preview badge", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(BADGE_SELECTOR)).toHaveCount(0);

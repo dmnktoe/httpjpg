@@ -1,4 +1,4 @@
-import type { FloatingBadgeAction } from "./floating-preview-badge";
+import type { FloatingBadgeAction } from "../floating-badge/floating-badge";
 
 export const DRAFT_STATUS_ACTION = {
   label: "draft",
@@ -15,16 +15,6 @@ export const EXIT_DRAFT_ACTION = {
   external: false,
   hideInIframe: true,
 } satisfies FloatingBadgeAction;
-
-export function previewBadgeAction(href: string, label = "preview"): FloatingBadgeAction {
-  return {
-    href,
-    label,
-    glyph: "↗",
-    ariaLabel: `${label} — open external preview`,
-    accented: true,
-  };
-}
 
 export function editBadgeAction(href: string): FloatingBadgeAction {
   return {

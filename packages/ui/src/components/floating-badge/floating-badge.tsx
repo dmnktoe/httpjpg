@@ -27,18 +27,15 @@ export interface FloatingBadgeAction {
   external?: boolean;
   /** Hide inside the Storyblok Visual Editor iframe (e.g. exit-draft). */
   hideInIframe?: boolean;
-  /** Status pill (draft). Renders an `output`, not a control. */
+  /** Status pill. Renders an `output`, not a control. */
   presentational?: boolean;
-  /** Tint this pill with the badge `accentColor`. Preview only — editor tools stay neutral. */
+  /** Tint this pill with `accentColor`. Work preview only. */
   accented?: boolean;
 }
 
-export interface FloatingPreviewBadgeProps {
-  /** Work-page live URL. Content-owned; omit when the story has no external link. */
-  href?: string;
-  label?: string;
+export interface FloatingBadgeProps {
   actions?: FloatingBadgeAction[];
-  /** Work page Project Accent Color. Applied only to the preview pill, not the cluster. */
+  /** Applied only to pills with `accented`. Editor tools stay on the default glass. */
   accentColor?: string | null;
   css?: SystemStyleObject;
   className?: string;
@@ -128,76 +125,58 @@ const labelClass = css({
   sm: { display: "inline" },
 });
 
-/** Dumb pill cluster. Preview URL is `href`; editor chrome is composed by `EditorChrome`. */
-export const FloatingPreviewBadge = forwardRef<HTMLDivElement, FloatingPreviewBadgeProps>(
-  function FloatingPreviewBadge(
-    { href, label = "preview", actions, accentColor, className, css: cssProp, style },
-    ref,
-  ) {
-    const mounted = useHasMounted();
+/** Portalled glass pills. Accent tints only pills with `accented`. */
+export const FloatingBadge = forwardRef<HTMLDivElement, FloatingBadgeProps>(function FloatingBadge(
+  { actions, accentColor, className, css: cssProp, style },
+  ref,
+) {
+  const mounted = useHasMounted();
 
-    if (!mounted) {
-      return null;
-    }
+  if (!mounted) {
+    return null;
+  }
 
-    const inIframe = window.self !== window.top;
-    const extra = (actions ?? []).filter((action) => !(action.hideInIframe && inIframe));
-    const hasPreview = Boolean(href);
-    if (!hasPreview && extra.length === 0) {
-      return null;
-    }
+  const inIframe = window.self !== window.top;
+  const pills = (actions ?? []).filter((action) => !(action.hideInIframe && inIframe));
+  if (pills.length === 0) {
+    return null;
+  }
 
-    const pills: FloatingBadgeAction[] = [
-      ...(hasPreview && href
-        ? [
-            {
-              href,
-              label,
-              glyph: "↗",
-              ariaLabel: `${label} — open external preview`,
-              accented: true,
-            } satisfies FloatingBadgeAction,
-          ]
-        : []),
-      ...extra,
-    ];
-
-    return createPortal(
-      <div
-        ref={ref}
-        data-page-badge=""
-        style={style}
-        className={cx(
-          css({
-            position: "fixed",
-            right: "0",
-            bottom: "12",
-            left: "0",
-            zIndex: "previewBadge",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "2",
-            pointerEvents: "none",
-            "& > *": { pointerEvents: "auto" },
-          }),
-          cssProp && css(cssProp),
-          className,
-        )}
-      >
-        {pills.map((action) => (
-          <BadgePill
-            key={action.ariaLabel}
-            action={action}
-            accentColor={accentColor}
-            kawaii={action.glyph === "↗"}
-          />
-        ))}
-      </div>,
-      document.body,
-    );
-  },
-);
+  return createPortal(
+    <div
+      ref={ref}
+      data-page-badge=""
+      style={style}
+      className={cx(
+        css({
+          position: "fixed",
+          right: "0",
+          bottom: "12",
+          left: "0",
+          zIndex: "previewBadge",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "2",
+          pointerEvents: "none",
+          "& > *": { pointerEvents: "auto" },
+        }),
+        cssProp && css(cssProp),
+        className,
+      )}
+    >
+      {pills.map((action) => (
+        <BadgePill
+          key={action.ariaLabel}
+          action={action}
+          accentColor={accentColor}
+          kawaii={action.glyph === "↗"}
+        />
+      ))}
+    </div>,
+    document.body,
+  );
+});
 
 function BadgePill({
   action,

@@ -257,7 +257,7 @@ export default function MyPage() {
                 },
                 {
                   cat: "Decoration",
-                  items: "Divider · ImageOverlay · FloatingPreviewBadge · EditorChrome",
+                  items: "Divider · ImageOverlay · FloatingBadge · EditorChrome",
                 },
               ].map((g) => (
                 <Box key={g.cat} css={{ p: "4", borderColor: "pageFg", borderTop: "2px solid" }}>

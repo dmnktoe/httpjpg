@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.3](https://github.com/dmnktoe/httpjpg/compare/v2.9.2...v2.9.3) (2026-09-03)
+
+
+### Tooling
+
+* raise coverage to 93% and include credentials and studio ([#415](https://github.com/dmnktoe/httpjpg/issues/415)) ([5fad6f3](https://github.com/dmnktoe/httpjpg/commit/5fad6f3abfb86b8d7ddefb03e539fcbff5f07b8c))
+
 ## [2.9.2](https://github.com/dmnktoe/httpjpg/compare/v2.9.1...v2.9.2) (2026-09-02)
 
 

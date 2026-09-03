@@ -1,10 +1,18 @@
 // @vitest-environment node
 
 import { randomUUID } from "node:crypto";
+import { EventEmitter } from "node:events";
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const { spawnMock } = vi.hoisted(() => ({ spawnMock: vi.fn() }));
+
+vi.mock("node:child_process", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("node:child_process")>();
+  return { ...actual, spawn: spawnMock };
+});
 
 import {
   awaitCallback,
@@ -131,8 +139,23 @@ describe("reportAccount", () => {
 });
 
 describe("openBrowser", () => {
+  beforeEach(() => {
+    spawnMock.mockReset();
+  });
+
   it("does not throw when the opener cannot be spawned", () => {
+    spawnMock.mockImplementation(() => {
+      throw new Error("ENOENT");
+    });
     expect(() => openBrowser("https://example.com")).not.toThrow();
+  });
+
+  it("swallows a child-process error event", () => {
+    const child = Object.assign(new EventEmitter(), { unref: vi.fn() });
+    spawnMock.mockReturnValue(child);
+    expect(() => openBrowser("https://example.com")).not.toThrow();
+    child.emit("error", new Error("fail"));
+    expect(child.unref).toHaveBeenCalled();
   });
 });
 

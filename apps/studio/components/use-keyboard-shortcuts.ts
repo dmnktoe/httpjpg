@@ -40,6 +40,8 @@ export function useKeyboardShortcuts({
 }: Args): void {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (isEditableTarget(e.target)) return;
+
       const mod = e.metaKey || e.ctrlKey;
 
       if (mod && (e.key === "z" || e.key === "Z")) {
@@ -54,7 +56,6 @@ export function useKeyboardShortcuts({
         return;
       }
 
-      if (isEditableTarget(e.target)) return;
       if (!selectedId) return;
       const item = items.find((it) => it.id === selectedId);
       if (!item) return;

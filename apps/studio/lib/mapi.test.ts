@@ -1,7 +1,8 @@
 // @vitest-environment node
+import { env } from "@httpjpg/env";
 import { describe, expect, it } from "vitest";
 
-import { mapiPath, resolveStudioAuth, STORYBLOK_MAPI } from "./mapi";
+import { mapiPath, resolveStudioAuth, studioAuth, STORYBLOK_MAPI } from "./mapi";
 
 describe("resolveStudioAuth", () => {
   it("404s outside development so the routes stay local-only", () => {
@@ -39,9 +40,7 @@ describe("mapiPath", () => {
 });
 
 describe("studioAuth", () => {
-  it("reads the live env contract", async () => {
-    const { studioAuth } = await import("./mapi");
-    const result = studioAuth();
-    expect(result.ok === false || result.ok === true).toBe(true);
+  it("wraps the live env contract", () => {
+    expect(studioAuth()).toEqual(resolveStudioAuth(env));
   });
 });

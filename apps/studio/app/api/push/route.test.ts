@@ -55,26 +55,24 @@ describe("POST /api/push", () => {
   });
 
   it("appends a grid onto the story body", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi
-        .fn()
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({ stories: [{ id: 9, full_slug: "work/demo", content: {} }] }),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({
-            story: {
-              id: 9,
-              full_slug: "work/demo",
-              content: { body: [{ component: "headline" }] },
-            },
-          }),
-        })
-        .mockResolvedValueOnce({ ok: true, json: async () => ({}) }),
-    );
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ stories: [{ id: 9, full_slug: "work/demo", content: {} }] }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          story: {
+            id: 9,
+            full_slug: "work/demo",
+            content: { body: [{ component: "headline" }] },
+          },
+        }),
+      })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({}) });
+    vi.stubGlobal("fetch", fetchImpl);
     const response = await POST(post({ slug: "work/demo", grid: GRID }));
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
@@ -82,6 +80,12 @@ describe("POST /api/push", () => {
       action: "appended",
       index: 1,
     });
+    const update = fetchImpl.mock.calls[2] as [string, RequestInit];
+    expect(update[1].method).toBe("PUT");
+    const sent = JSON.parse(String(update[1].body)) as {
+      story: { content: { body: unknown[] } };
+    };
+    expect(sent.story.content.body).toEqual([{ component: "headline" }, GRID]);
   });
 
   it("replaces by uid and preserves the existing _uid", async () => {

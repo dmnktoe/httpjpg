@@ -102,7 +102,7 @@ describe("relatedDocuments", () => {
     const current = doc("current", ["ios"]);
     const alpha = doc("alpha", ["ios"], { date: "2020-01-01" });
     const beta = doc("beta", ["ios"], { date: "2020-01-01" });
-    const untagged = { ...doc("ghost", []), tagValues: undefined, href: "/work/current" };
+    const untagged = { ...doc("ghost", []), tagValues: undefined };
 
     expect(
       relatedDocuments([current, beta, alpha, untagged], current).map((item) => item.id),

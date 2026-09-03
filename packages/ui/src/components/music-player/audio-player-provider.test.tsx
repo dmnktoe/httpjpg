@@ -81,8 +81,8 @@ function emit(event: string, isPaused?: boolean) {
 function renderQueue(tracks: AudioTrack[] = [FIRST, SECOND]) {
   const result = render(
     <AudioPlayerProvider>
-      {tracks.map((track) => (
-        <QueueEntry key={track.src} track={track} />
+      {tracks.map((track, index) => (
+        <QueueEntry key={`${track.src}-${index}`} track={track} />
       ))}
       <Transport />
     </AudioPlayerProvider>,
@@ -321,9 +321,11 @@ describe("AudioPlayerProvider", () => {
 
   it("keeps the first registration when the same src mounts twice", () => {
     stubPlayback();
-    renderQueue([FIRST, FIRST]);
-    fireEvent.click(screen.getAllByText("play /one.mp3")[0]!);
+    const duplicate: AudioTrack = { src: FIRST.src, title: "One-again", artist: "Other" };
+    renderQueue([FIRST, duplicate]);
+    fireEvent.click(screen.getAllByText("play /one.mp3")[1]!);
     expect(state("current")).toBe("/one.mp3");
+    expect(audioElement()).toHaveAttribute("aria-label", "One");
   });
 
   it("treats a blocked play() as still paused and a NaN duration as zero", () => {

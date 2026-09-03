@@ -126,7 +126,7 @@ describe("SbVideo", () => {
         }
       />,
     );
-    expect(container.querySelector("video")).not.toBeNull();
+    expect(container.querySelector("video")).toHaveAttribute("src", "https://cdn.example/clip.mp4");
   });
 
   it("renders a Vimeo consent placeholder", () => {
@@ -143,6 +143,6 @@ describe("SbVideo", () => {
       />,
     );
     expect(container.querySelector("video")).toBeNull();
-    expect(container.firstChild).not.toBeNull();
+    expect(container).toHaveTextContent("Vimeo Content Blocked");
   });
 });

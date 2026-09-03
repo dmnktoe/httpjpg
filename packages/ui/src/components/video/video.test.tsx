@@ -289,6 +289,7 @@ describe("Video", () => {
   it("reloads when the native src changes", () => {
     const load = vi.spyOn(window.HTMLMediaElement.prototype, "load").mockImplementation(() => {});
     const { rerender } = render(<Video src="/one.mp4" controls={false} />);
+    load.mockClear();
     rerender(<Video src="/two.mp4" controls={false} />);
     expect(load).toHaveBeenCalled();
     load.mockRestore();

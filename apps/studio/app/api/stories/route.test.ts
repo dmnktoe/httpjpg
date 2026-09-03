@@ -44,7 +44,12 @@ describe("GET /api/stories", () => {
     );
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({ ok: true, total: 1, page: 2 });
-    expect(String(fetchImpl.mock.calls[0][0])).toContain("search_term=demo");
+    const params = new URL(String(fetchImpl.mock.calls[0]?.[0])).searchParams;
+    expect(params.get("starts_with")).toBe("work/");
+    expect(params.get("page")).toBe("2");
+    expect(params.get("per_page")).toBe("10");
+    expect(params.get("search_term")).toBe("demo");
+    expect(params.get("excluding_fields")).toBe("body");
   });
 
   it("defaults a missing stories array", async () => {

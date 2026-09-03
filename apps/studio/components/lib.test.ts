@@ -340,15 +340,13 @@ describe("deserializeGrid edge cases", () => {
   });
 
   it("falls back when crypto.randomUUID is missing", () => {
-    const cryptoObj = globalThis.crypto as Crypto & { randomUUID?: () => string };
-    const original = cryptoObj.randomUUID;
-    // @ts-expect-error exercising the no-randomUUID path
-    delete cryptoObj.randomUUID;
+    const original = globalThis.crypto;
+    Object.defineProperty(globalThis, "crypto", { configurable: true, value: {} });
     try {
       const exported = serializeGrid({ columns: 12, gap: "4" }, [item()]);
       expect(exported._uid).toBeTruthy();
     } finally {
-      cryptoObj.randomUUID = original;
+      Object.defineProperty(globalThis, "crypto", { configurable: true, value: original });
     }
   });
 });

@@ -95,6 +95,12 @@ describe("useKeyboardShortcuts", () => {
     div.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
     div.remove();
     expect(setItems).not.toHaveBeenCalled();
+
+    const input = document.createElement("input");
+    document.body.appendChild(input);
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "z", metaKey: true, bubbles: true }));
+    input.remove();
+    expect(onUndo).not.toHaveBeenCalled();
   });
 
   it("no-ops without a selection or when the id is stale", () => {

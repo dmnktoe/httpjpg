@@ -32,16 +32,15 @@ describe("GET /api/assets", () => {
   });
 
   it("lists assets", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => ({ assets: [{ id: 1, filename: "a.jpg" }] }),
-      }),
-    );
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ assets: [{ id: 1, filename: "a.jpg" }] }),
+    });
+    vi.stubGlobal("fetch", fetchImpl);
     const response = await GET(get("/api/assets?search=cover"));
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({ ok: true, assets: [{ id: 1 }] });
+    expect(new URL(String(fetchImpl.mock.calls[0]?.[0])).searchParams.get("search")).toBe("cover");
   });
 
   it("surfaces a Storyblok failure", async () => {
@@ -64,6 +63,7 @@ describe("GET /api/assets", () => {
       page: 2,
       perPage: 10,
     });
-    expect(String(fetchImpl.mock.calls[0][0])).toContain("page=2");
+    expect(new URL(String(fetchImpl.mock.calls[0]?.[0])).searchParams.get("page")).toBe("2");
+    expect(new URL(String(fetchImpl.mock.calls[0]?.[0])).searchParams.get("per_page")).toBe("10");
   });
 });

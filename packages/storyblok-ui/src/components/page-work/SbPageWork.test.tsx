@@ -92,6 +92,6 @@ describe("SbPageWork", () => {
       />,
     );
 
-    expect(screen.queryByRole("group", { name: "Work downloads" })).toBeNull();
+    expect(screen.queryByRole("region", { name: "Work downloads" })).toBeNull();
   });
 });

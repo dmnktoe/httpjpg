@@ -16,14 +16,16 @@ describe("DesktopDownloads", () => {
 
   it("renders nothing when there are no usable items", () => {
     render(<DesktopDownloads items={[{ id: "x", name: "", url: "" }]} />);
-    expect(screen.queryByRole("group", { name: "Work downloads" })).toBeNull();
+    expect(screen.queryByRole("region", { name: "Work downloads" })).toBeNull();
   });
 
   it("portals one icon per file onto document.body", () => {
     const { container } = render(<DesktopDownloads items={ITEMS} />);
 
-    expect(container.querySelector("fieldset")).toBeNull();
-    expect(screen.getByRole("group", { name: "Work downloads" }).parentElement).toBe(document.body);
+    expect(container.querySelector("[data-desktop-downloads]")).toBeNull();
+    expect(screen.getByRole("region", { name: "Work downloads" }).parentElement).toBe(
+      document.body,
+    );
     expect(screen.getByRole("button", { name: "Download Press kit.pdf" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Download Source.zip" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Download Poster" })).toBeInTheDocument();

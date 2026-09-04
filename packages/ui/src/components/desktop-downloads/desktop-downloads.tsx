@@ -15,20 +15,9 @@ export interface DesktopDownloadsProps {
   items: DesktopDownloadItem[];
 }
 
-const srOnlyClass = css({
-  position: "absolute",
-  width: "1px",
-  height: "1px",
-  margin: "-1px",
-  padding: "0",
-  whiteSpace: "nowrap",
-  overflow: "hidden",
-  clipPath: "inset(50%)",
-});
-
 export function DesktopDownloads({ items }: DesktopDownloadsProps) {
   const mounted = useHasMounted();
-  const layerRef = useRef<HTMLFieldSetElement>(null);
+  const layerRef = useRef<HTMLElement>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [topId, setTopId] = useState<string | null>(null);
 
@@ -57,21 +46,18 @@ export function DesktopDownloads({ items }: DesktopDownloadsProps) {
   }
 
   return createPortal(
-    <fieldset
+    <section
       ref={layerRef}
+      aria-label="Work downloads"
+      data-desktop-downloads=""
       className={css({
         position: "fixed",
         inset: "0",
         zIndex: "widget",
-        minWidth: "0",
-        margin: "0",
-        padding: "0",
-        border: "0",
         pointerEvents: "none",
         overflow: "hidden",
       })}
     >
-      <legend className={srOnlyClass}>Work downloads</legend>
       {visible.map((item, index) => (
         <DesktopDownloadIcon
           key={item.id}
@@ -86,7 +72,7 @@ export function DesktopDownloads({ items }: DesktopDownloadsProps) {
           onActivate={() => setSelectedId(item.id)}
         />
       ))}
-    </fieldset>,
+    </section>,
     document.body,
   );
 }

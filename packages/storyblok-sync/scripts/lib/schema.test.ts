@@ -8,5 +8,11 @@ describe("allBlocks", () => {
     expect(groups).toEqual(new Set(["Layout", "Content", "Media", "Pages", "Settings"]));
     expect(blocks.some((b) => b.name === "page")).toBe(true);
     expect(blocks.some((b) => b.name === "grid")).toBe(true);
+    expect(blocks.some((b) => b.name === "download_item")).toBe(true);
+    const work = blocks.find((b) => b.name === "work");
+    expect(work?.schema.downloads).toMatchObject({
+      type: "bloks",
+      component_whitelist: ["download_item"],
+    });
   });
 });

@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
 import { SbPageWork } from "./SbPageWork";
 
@@ -52,5 +52,46 @@ describe("SbPageWork", () => {
     );
     // The badge portals into document.body, so assert against the portal target.
     expect(document.body.querySelector('a[aria-label*="open external preview"]')).toBeNull();
+  });
+
+  it("renders desktop download icons when the work page has files", () => {
+    render(
+      <SbPageWork
+        blok={
+          {
+            _uid: "4",
+            component: "work",
+            downloads: [
+              {
+                _uid: "d1",
+                component: "download_item",
+                name: "Press kit.pdf",
+                url: "https://cdn.example/press.pdf",
+              },
+              { _uid: "d2", component: "download_item", name: "  ", url: "https://cdn.example/x" },
+            ],
+          } as never
+        }
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Download Press kit.pdf" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Download   " })).toBeNull();
+  });
+
+  it("renders no desktop icons when downloads are empty", () => {
+    render(
+      <SbPageWork
+        blok={
+          {
+            _uid: "5",
+            component: "work",
+            downloads: [],
+          } as never
+        }
+      />,
+    );
+
+    expect(screen.queryByRole("group", { name: "Work downloads" })).toBeNull();
   });
 });

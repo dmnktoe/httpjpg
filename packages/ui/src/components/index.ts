@@ -17,6 +17,7 @@ export * from "./command-palette/command-palette";
 export * from "./container/container";
 export * from "./copyright-label/copyright-label";
 export * from "./custom-cursor/custom-cursor";
+export * from "./desktop-downloads/desktop-downloads";
 export * from "./divider/divider";
 export * from "./floating-preview-badge/floating-preview-badge";
 export * from "./footer/footer";

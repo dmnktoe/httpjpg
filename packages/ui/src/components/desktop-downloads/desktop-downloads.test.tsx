@@ -123,6 +123,37 @@ describe("DesktopDownloads", () => {
     expect(icon.style.left).toBe("170px");
   });
 
+  it("ignores pointer ids that do not own the drag", () => {
+    render(<DesktopDownloads items={[ITEMS[0]]} />);
+    const icon = screen.getByRole("button", { name: "Download Press kit.pdf" });
+    const initialLeft = icon.style.left;
+
+    vi.spyOn(icon, "getBoundingClientRect").mockReturnValue({
+      x: 120,
+      y: 80,
+      left: 120,
+      top: 80,
+      width: 76,
+      height: 86,
+      right: 196,
+      bottom: 166,
+      toJSON() {
+        return {};
+      },
+    });
+
+    fireEvent.pointerDown(icon, { button: 0, pointerId: 1, clientX: 130, clientY: 90 });
+    fireEvent.pointerMove(icon, { pointerId: 2, clientX: 400, clientY: 400 });
+    fireEvent.pointerUp(icon, { pointerId: 2 });
+    expect(icon.style.left).toBe(initialLeft);
+
+    fireEvent.pointerMove(icon, { pointerId: 1, clientX: 180, clientY: 140 });
+    expect(icon.style.left).toBe("170px");
+    fireEvent.pointerCancel(icon, { pointerId: 1 });
+    fireEvent.pointerMove(icon, { pointerId: 1, clientX: 400, clientY: 400 });
+    expect(icon.style.left).toBe("170px");
+  });
+
   it("ignores a tiny pointer wiggle so a click still selects", () => {
     render(<DesktopDownloads items={[ITEMS[0]]} />);
     const icon = screen.getByRole("button", { name: "Download Press kit.pdf" });
@@ -155,6 +186,18 @@ describe("DesktopDownloads", () => {
 
     fireEvent.pointerDown(icon, { button: 1, pointerId: 1, clientX: 20, clientY: 20 });
     expect(icon).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("lets a caller force the file kind", () => {
+    render(
+      <DesktopDownloads
+        items={[{ id: "forced", name: "mystery", url: "https://cdn.example/blob", kind: "audio" }]}
+      />,
+    );
+    expect(screen.getByRole("button", { name: "Download mystery" })).toHaveAttribute(
+      "data-file-kind",
+      "audio",
+    );
   });
 
   it("uses a provided icon src instead of the placeholder svg", () => {

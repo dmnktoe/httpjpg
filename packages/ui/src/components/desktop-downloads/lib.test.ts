@@ -26,6 +26,10 @@ describe("extensionOf", () => {
     expect(extensionOf("https://cdn.example/files/presskit")).toBeNull();
     expect(extensionOf(".gitignore")).toBeNull();
   });
+
+  it("strips query and hash from a scheme that URL cannot parse", () => {
+    expect(extensionOf("http://[::1/file.zip?x=1#hash")).toBe("zip");
+  });
 });
 
 describe("fileKindFromSource", () => {

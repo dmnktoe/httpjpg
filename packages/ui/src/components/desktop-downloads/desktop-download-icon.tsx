@@ -45,7 +45,6 @@ export function DesktopDownloadIcon({
   onSelect,
   onActivate,
 }: DesktopDownloadIconProps) {
-  const nodeRef = useRef<HTMLButtonElement>(null);
   const dragRef = useRef<DragSession | null>(null);
   const [offset, setOffset] = useState<{ x: number; y: number } | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -57,10 +56,7 @@ export function DesktopDownloadIcon({
     if (event.button !== 0) {
       return;
     }
-    const node = nodeRef.current;
-    if (!node) {
-      return;
-    }
+    const node = event.currentTarget;
     onSelect();
     const rect = node.getBoundingClientRect();
     dragRef.current = {
@@ -121,7 +117,6 @@ export function DesktopDownloadIcon({
 
   return (
     <button
-      ref={nodeRef}
       type="button"
       data-draggable="true"
       data-file-kind={kind}

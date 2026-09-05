@@ -34,7 +34,7 @@ function sizesAttr(width: number): string {
 
 /** Map the work page's floating_media bloks onto the overlay items. */
 export function workFloatingMedia(blok: SbWorkData): FloatingMediaItem[] {
-  return (blok.floating_media ?? []).flatMap((item) => {
+  return (blok.floating_media ?? []).flatMap((item): FloatingMediaItem[] => {
     const name = item.name?.trim() ?? "";
     const filename = item.file?.filename?.trim() ?? "";
     const url = item.url?.trim() ?? "";

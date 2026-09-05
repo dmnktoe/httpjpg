@@ -19,6 +19,28 @@ export const pageBlocks: BlockDef[] = [
     },
   },
   {
+    name: "download_item",
+    display_name: "Download",
+    group: "Pages",
+    icon: "block-doc",
+    color: "#316ac5",
+    preview_field: "name",
+    schema: {
+      name: field.text("Name", {
+        required: true,
+        translatable: true,
+        description:
+          "Label under the desktop icon. The file extension picks the placeholder glyph.",
+        tooltip: true,
+      }),
+      url: field.text("URL", {
+        required: true,
+        description: "Direct file URL. Double-clicking the icon starts the download.",
+        tooltip: true,
+      }),
+    },
+  },
+  {
     name: "work",
     display_name: "Work Page",
     group: "Pages",
@@ -56,6 +78,12 @@ export const pageBlocks: BlockDef[] = [
         regex: "^(#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3}))?$",
         max_length: 7,
       }),
+      downloads: {
+        ...field.bloks("Downloads", { whitelist: ["download_item"] }),
+        description:
+          "Files scattered across the work page as Windows XP–style desktop icons. Double-click an icon to download.",
+        tooltip: true,
+      },
       isDark: field.boolean("Dark Mode"),
     },
   },

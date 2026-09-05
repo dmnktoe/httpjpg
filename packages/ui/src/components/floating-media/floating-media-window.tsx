@@ -5,12 +5,12 @@ import { css } from "styled-system/css";
 import { Image } from "../image/image";
 import { Video } from "../video/video";
 import {
-  FLOATING_MEDIA_SIZES,
-  FLOATING_MEDIA_WIDTH,
   type FloatingMediaItem,
   type FloatingMediaKind,
   type FloatingMediaPosition,
   floatingMediaAspectRatio,
+  floatingMediaSizesAttr,
+  resolveFloatingMediaFrameWidth,
   resolveFloatingMediaKind,
 } from "./lib";
 import { useFloatingMediaDrag } from "./use-floating-media-drag";
@@ -40,6 +40,7 @@ export function FloatingMediaWindow({
 
   const aspectRatio = floatingMediaAspectRatio(item, kind);
   const alt = item.alt?.trim() || item.name;
+  const frameWidth = resolveFloatingMediaFrameWidth(item.width);
 
   return (
     <figure
@@ -48,6 +49,7 @@ export function FloatingMediaWindow({
       data-draggable="true"
       data-floating-media-item=""
       data-media-kind={kind}
+      data-frame-width={String(frameWidth)}
       data-selected={selected ? "" : undefined}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -70,14 +72,14 @@ export function FloatingMediaWindow({
       })}
       style={{
         zIndex: stackingOrder,
-        width: `min(${FLOATING_MEDIA_WIDTH}px, calc(100vw - 16px))`,
+        width: `min(${frameWidth}px, calc(100vw - 16px))`,
         maxHeight: "min(72vh, 800px)",
         outline: selected ? "1px solid currentColor" : undefined,
         cursor: dragging ? "grabbing" : undefined,
         ...(offset
           ? { left: offset.x, top: offset.y }
           : {
-              left: `clamp(8px, ${position.left}%, calc(100vw - min(${FLOATING_MEDIA_WIDTH}px, calc(100vw - 16px)) - 8px))`,
+              left: `clamp(8px, ${position.left}%, calc(100vw - min(${frameWidth}px, calc(100vw - 16px)) - 8px))`,
               top: `clamp(8px, ${position.top}%, calc(100vh - 120px))`,
             }),
       }}
@@ -137,7 +139,7 @@ export function FloatingMediaWindow({
           <Image
             src={item.src}
             srcSet={item.srcSet}
-            sizes={item.sizes ?? FLOATING_MEDIA_SIZES}
+            sizes={item.sizes ?? floatingMediaSizesAttr(frameWidth)}
             alt={alt}
             aspectRatio={aspectRatio}
             objectFit="contain"

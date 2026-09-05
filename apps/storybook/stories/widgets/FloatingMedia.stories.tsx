@@ -1,4 +1,4 @@
-import { Box, FloatingMedia } from "@httpjpg/ui";
+import { Box, CustomCursor, FloatingMedia } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ReactNode } from "react";
 
@@ -10,19 +10,27 @@ const IMAGES = [
     name: "Landscape",
     src: OPTIMIZED_IMAGES.landscapePreview,
     kind: "image" as const,
+    width: 400,
   },
   {
     id: "still",
     name: "Still 01",
     src: OPTIMIZED_IMAGES.videoStill1Preview,
     kind: "image" as const,
+    width: 240,
   },
-  { id: "store", name: "Outlet", src: OPTIMIZED_IMAGES.outletStore1, kind: "image" as const },
+  {
+    id: "store",
+    name: "Outlet",
+    src: OPTIMIZED_IMAGES.outletStore1,
+    kind: "image" as const,
+    width: 560,
+  },
 ];
 
 /**
- * Work-page images and native videos as 400px draggable frames. Drag the title
- * bar (or the image itself). Video controls stay clickable.
+ * Work-page images and native videos as draggable frames. Width comes from the
+ * CMS dropdown (240–720px). Hover uses the same 👋 cursor as Now Playing.
  */
 const meta = {
   title: "Widgets/FloatingMedia",
@@ -48,6 +56,7 @@ function Stage({ children }: { children: ReactNode }) {
         overflow: "hidden",
       }}
     >
+      <CustomCursor size={18} symbol="✧" />
       {children}
     </Box>
   );
@@ -72,6 +81,7 @@ export const WithVideo: Story = {
         name: "Showreel",
         src: "https://example.com/showreel.mp4",
         kind: "video",
+        width: 400,
       },
     ],
   },

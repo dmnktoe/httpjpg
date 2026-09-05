@@ -29,6 +29,7 @@ describe("workFloatingMedia", () => {
         src: expected.src,
         srcSet: expected.srcSet,
         sizes: "(max-width: 416px) calc(100vw - 16px), 400px",
+        width: 400,
         kind: "image",
         alt: "A still",
         mediaWidth: 800,
@@ -56,6 +57,7 @@ describe("workFloatingMedia", () => {
         id: "v1",
         name: "Showreel",
         src: CLIP,
+        width: 400,
         kind: "video",
         alt: "Showreel",
         mediaWidth: undefined,
@@ -85,6 +87,7 @@ describe("workFloatingMedia", () => {
         id: "u1",
         name: "Poster",
         src: "https://cdn.example/poster.png",
+        width: 400,
         kind: undefined,
         alt: "Poster",
         mediaWidth: undefined,
@@ -95,5 +98,55 @@ describe("workFloatingMedia", () => {
 
   it("returns nothing when the field is missing", () => {
     expect(workFloatingMedia({ _uid: "w", component: "work" } as never)).toEqual([]);
+  });
+
+  it("honours the width dropdown and ignores unknown values", () => {
+    const expected = getResponsiveImage(PHOTO, { widths: [240, 480, 720] });
+
+    expect(
+      workFloatingMedia({
+        _uid: "w",
+        component: "work",
+        floating_media: [
+          {
+            _uid: "i1",
+            component: "floating_item",
+            name: "Still",
+            file: { filename: PHOTO },
+            width: "240",
+          },
+          {
+            _uid: "i2",
+            component: "floating_item",
+            name: "Nope",
+            url: "https://cdn.example/x.png",
+            width: "999",
+          },
+        ],
+      } as never),
+    ).toEqual([
+      {
+        id: "i1",
+        name: "Still",
+        src: expected.src,
+        srcSet: expected.srcSet,
+        sizes: "(max-width: 256px) calc(100vw - 16px), 240px",
+        width: 240,
+        kind: "image",
+        alt: "Still",
+        mediaWidth: undefined,
+        mediaHeight: undefined,
+      },
+      {
+        id: "i2",
+        name: "Nope",
+        src: "https://cdn.example/x.png",
+        width: 400,
+        kind: undefined,
+        alt: "Nope",
+        mediaWidth: undefined,
+        mediaHeight: undefined,
+      },
+    ]);
   });
 });

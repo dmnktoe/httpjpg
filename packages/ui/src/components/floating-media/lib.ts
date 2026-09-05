@@ -10,6 +10,8 @@ export interface FloatingMediaItem {
   src: string;
   /** Overrides extension sniffing. */
   kind?: FloatingMediaKind;
+  /** Frame width in px. Defaults to `FLOATING_MEDIA_WIDTH`. */
+  width?: number;
   alt?: string;
   srcSet?: string;
   sizes?: string;
@@ -27,7 +29,17 @@ export const FLOATING_MEDIA_WIDTH = 400;
 export const FLOATING_MEDIA_MARGIN = 8;
 export const FLOATING_MEDIA_DRAG_THRESHOLD_PX = 4;
 export const FLOATING_MEDIA_TITLEBAR_HEIGHT = 32;
-export const FLOATING_MEDIA_SIZES = "(max-width: 416px) calc(100vw - 16px), 400px";
+
+export function resolveFloatingMediaFrameWidth(width?: number): number {
+  return typeof width === "number" && Number.isFinite(width) && width > 0
+    ? width
+    : FLOATING_MEDIA_WIDTH;
+}
+
+export function floatingMediaSizesAttr(width: number): string {
+  const frame = resolveFloatingMediaFrameWidth(width);
+  return `(max-width: ${frame + 16}px) calc(100vw - 16px), ${frame}px`;
+}
 
 const VIDEO_EXT = /\.(mp4|webm|ogg|mov|avi|mkv)(?:[?#]|$)/i;
 const IMAGE_EXT = /\.(png|jpe?g|gif|webp|svg|avif|bmp|ico)(?:[?#]|$)/i;

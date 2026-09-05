@@ -1,7 +1,12 @@
-import { getResponsiveImage, isVideoAsset, type SbWorkData } from "@httpjpg/storyblok-utils";
+import {
+  CMS_OPTIONS,
+  getResponsiveImage,
+  isVideoAsset,
+  type SbWorkData,
+} from "@httpjpg/storyblok-utils";
 import type { FloatingMediaItem } from "@httpjpg/ui";
 
-const FLOATING_MEDIA_SIZES = "(max-width: 416px) calc(100vw - 16px), 400px";
+const DEFAULT_FRAME_WIDTH = 400;
 
 function toDimension(value: unknown): number | undefined {
   if (typeof value === "number" && Number.isFinite(value) && value > 0) {
@@ -16,6 +21,17 @@ function toDimension(value: unknown): number | undefined {
   return undefined;
 }
 
+function parseFrameWidth(value?: string): number {
+  if (value && (CMS_OPTIONS.floatingMediaWidth as readonly string[]).includes(value)) {
+    return Number.parseInt(value, 10);
+  }
+  return DEFAULT_FRAME_WIDTH;
+}
+
+function sizesAttr(width: number): string {
+  return `(max-width: ${width + 16}px) calc(100vw - 16px), ${width}px`;
+}
+
 /** Map the work page's floating_media bloks onto the overlay items. */
 export function workFloatingMedia(blok: SbWorkData): FloatingMediaItem[] {
   return (blok.floating_media ?? []).flatMap((item) => {
@@ -27,6 +43,7 @@ export function workFloatingMedia(blok: SbWorkData): FloatingMediaItem[] {
       return [];
     }
 
+    const width = parseFrameWidth(item.width);
     const mediaWidth = toDimension(item.file?.width);
     const mediaHeight = toDimension(item.file?.height);
     const alt = item.file?.alt?.trim() || name;
@@ -34,7 +51,7 @@ export function workFloatingMedia(blok: SbWorkData): FloatingMediaItem[] {
     if (item.file && filename && !isVideoAsset(item.file)) {
       const image = getResponsiveImage(filename, {
         focus: item.file.focus,
-        widths: [400, 800, 1200],
+        widths: [width, width * 2, Math.min(width * 3, 1920)],
       });
       return [
         {
@@ -42,7 +59,8 @@ export function workFloatingMedia(blok: SbWorkData): FloatingMediaItem[] {
           name,
           src: image.src,
           srcSet: image.srcSet || undefined,
-          sizes: FLOATING_MEDIA_SIZES,
+          sizes: sizesAttr(width),
+          width,
           kind: "image",
           alt,
           mediaWidth,
@@ -56,6 +74,7 @@ export function workFloatingMedia(blok: SbWorkData): FloatingMediaItem[] {
         id: item._uid,
         name,
         src,
+        width,
         kind: item.file && isVideoAsset(item.file) ? "video" : undefined,
         alt,
         mediaWidth,

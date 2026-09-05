@@ -173,4 +173,17 @@ describe("FloatingMedia", () => {
       "image",
     );
   });
+
+  it("uses the item width for the frame", () => {
+    render(
+      <FloatingMedia
+        items={[{ id: "narrow", name: "Narrow", src: "https://cdn.example/still.png", width: 240 }]}
+      />,
+    );
+    expect(screen.getByRole("figure", { name: "Narrow" })).toHaveAttribute(
+      "data-frame-width",
+      "240",
+    );
+    expect(screen.getByRole("figure", { name: "Narrow" }).style.width).toContain("240px");
+  });
 });

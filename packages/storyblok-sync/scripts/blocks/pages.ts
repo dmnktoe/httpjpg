@@ -2,6 +2,7 @@ import { WORK_TAG_DATASOURCE_SLUG } from "@httpjpg/storyblok-utils";
 
 import type { BlockDef } from "../lib/block";
 import { field } from "../lib/fields";
+import { inlineOptions } from "../lib/options";
 
 export const pageBlocks: BlockDef[] = [
   {
@@ -41,6 +42,9 @@ export const pageBlocks: BlockDef[] = [
         description:
           "Direct image or mp4 URL when the file is not a Storyblok asset. YouTube and Vimeo stay in the regular Video blok.",
         tooltip: true,
+      }),
+      width: field.options("Width", inlineOptions.floatingMediaWidth, {
+        default_value: "400",
       }),
     },
   },
@@ -85,7 +89,7 @@ export const pageBlocks: BlockDef[] = [
       floating_media: {
         ...field.bloks("Floating media", { whitelist: ["floating_item"] }),
         description:
-          "Images and native videos scattered on the work page as 400px draggable frames. Separate from in-flow image/video bloks.",
+          "Images and native videos scattered on the work page as draggable frames. Width is a pixel dropdown (default 400px). Separate from in-flow image/video bloks.",
         tooltip: true,
       },
       isDark: field.boolean("Dark Mode"),

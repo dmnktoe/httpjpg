@@ -14,5 +14,10 @@ describe("allBlocks", () => {
       type: "bloks",
       component_whitelist: ["floating_item"],
     });
+    const item = blocks.find((b) => b.name === "floating_item");
+    expect(item?.schema.width).toMatchObject({
+      type: "option",
+      default_value: "400",
+    });
   });
 });

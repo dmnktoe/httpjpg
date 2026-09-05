@@ -4,7 +4,9 @@ import {
   floatingMediaAspectRatio,
   floatingMediaKindFromSrc,
   floatingMediaPositions,
+  floatingMediaSizesAttr,
   hashSeed,
+  resolveFloatingMediaFrameWidth,
   resolveFloatingMediaKind,
   visibleFloatingMedia,
 } from "./lib";
@@ -104,5 +106,19 @@ describe("clampFloatingMediaPoint", () => {
     expect(clampFloatingMediaPoint(900, 700, 800, 600, { width: 400, height: 250 }).x).toBeLessThan(
       800,
     );
+  });
+});
+
+describe("resolveFloatingMediaFrameWidth", () => {
+  it("falls back to 400 when the width is missing or invalid", () => {
+    expect(resolveFloatingMediaFrameWidth()).toBe(400);
+    expect(resolveFloatingMediaFrameWidth(0)).toBe(400);
+    expect(resolveFloatingMediaFrameWidth(240)).toBe(240);
+  });
+});
+
+describe("floatingMediaSizesAttr", () => {
+  it("matches the frame width", () => {
+    expect(floatingMediaSizesAttr(240)).toBe("(max-width: 256px) calc(100vw - 16px), 240px");
   });
 });

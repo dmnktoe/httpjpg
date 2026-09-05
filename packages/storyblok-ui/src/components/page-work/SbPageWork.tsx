@@ -1,10 +1,11 @@
 import { type SbWorkData, type StoryblokLink } from "@httpjpg/storyblok-utils";
-import { Box, FloatingPreviewBadge } from "@httpjpg/ui";
+import { Box, FloatingMedia, FloatingPreviewBadge } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
 import { storyblokHref } from "../../lib/href";
 import { editableAttrs } from "../../lib/use-blok";
+import { workFloatingMedia } from "./work-floating-media";
 
 export interface SbPageWorkProps {
   blok: SbWorkData;
@@ -21,11 +22,13 @@ function isExternalPreviewLink(link?: StoryblokLink): link is StoryblokLink & { 
 export const SbPageWork = memo(function SbPageWork({ blok }: SbPageWorkProps) {
   const { body, external_only, link, accentColor } = blok;
   const previewHref = isExternalPreviewLink(link) ? storyblokHref(link) : null;
+  const media = workFloatingMedia(blok);
   return (
     <Box {...editableAttrs(blok)}>
       {!external_only &&
         body?.map((child) => <StoryblokServerComponent key={child._uid} blok={child} />)}
       {previewHref && <FloatingPreviewBadge href={previewHref} accentColor={accentColor} />}
+      {media.length > 0 && <FloatingMedia items={media} />}
     </Box>
   );
 });

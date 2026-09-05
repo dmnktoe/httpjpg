@@ -18,6 +18,7 @@ export * from "./container/container";
 export * from "./copyright-label/copyright-label";
 export * from "./custom-cursor/custom-cursor";
 export * from "./divider/divider";
+export * from "./floating-media/floating-media";
 export * from "./floating-preview-badge/floating-preview-badge";
 export * from "./footer/footer";
 export * from "./footer-status-line/footer-status-line";

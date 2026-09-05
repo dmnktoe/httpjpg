@@ -57,6 +57,10 @@ export const OVERLAY_PATTERN_OPTIONS = [
 export const inlineOptions = {
   width: CMS_OPTIONS.width.map((value) => ({ name: widthLabels[value], value })),
   imageWidth: CMS_OPTIONS.imageWidth.map((value) => ({ name: value, value })),
+  floatingMediaWidth: CMS_OPTIONS.floatingMediaWidth.map((value) => ({
+    name: `${value}px`,
+    value,
+  })),
   aspectRatio: CMS_OPTIONS.aspectRatio.map((value) => ({
     name: aspectRatioLabels[value],
     value,

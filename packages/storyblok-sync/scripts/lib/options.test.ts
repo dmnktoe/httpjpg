@@ -4,6 +4,8 @@ import { inlineOptions, OVERLAY_PATTERN_OPTIONS } from "./options";
 describe("inlineOptions", () => {
   it("mirrors the token maps editors pick from", () => {
     expect(inlineOptions.width.length).toBeGreaterThan(0);
+    expect(inlineOptions.imageWidth.some((o) => o.value === "100%")).toBe(true);
+    expect(inlineOptions.floatingMediaWidth).toContainEqual({ name: "400px", value: "400" });
     expect(inlineOptions.aspectRatio.some((o) => o.value === "16/9")).toBe(true);
     expect(inlineOptions.gridColumn[0]).toMatchObject({ value: expect.any(String) });
     expect(inlineOptions.fontSize.length).toBeGreaterThan(0);

@@ -1,4 +1,4 @@
-import { Box, DesktopDownloads } from "@httpjpg/ui";
+import { Box, CustomCursor, DesktopDownloads } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ReactNode } from "react";
 
@@ -12,7 +12,8 @@ const ITEMS = [
 ];
 
 /**
- * Work-page downloads as Windows XP desktop icons. Drag to move; double-click to download.
+ * Work-page downloads as Windows XP desktop icons. Drag to move; double-click
+ * to download. Hover uses the same 👋 cursor as Now Playing.
  */
 const meta = {
   title: "Widgets/DesktopDownloads",
@@ -39,6 +40,7 @@ function XpStage({ children }: { children: ReactNode }) {
       }}
     >
       {children}
+      <CustomCursor size={18} symbol="✧" />
     </Box>
   );
 }

@@ -1,5 +1,6 @@
 import { MiniPlayer } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { fn } from "storybook/test";
 
 /**
  * Header transport for the page-wide audio queue. Fully controlled here;
@@ -22,6 +23,10 @@ const meta: Meta<typeof MiniPlayer> = {
     isPlaying: { control: "boolean", description: "Spins the record and flips the play control" },
     hasNext: { control: "boolean", description: "Enables the next control" },
     hasPrevious: { control: "boolean", description: "Enables the previous control" },
+    onToggle: { action: "toggle" },
+    onNext: { action: "next" },
+    onPrevious: { action: "previous" },
+    onStop: { action: "stop" },
   },
   args: {
     title: "Night Drive",
@@ -31,6 +36,10 @@ const meta: Meta<typeof MiniPlayer> = {
     duration: 185,
     hasNext: true,
     hasPrevious: true,
+    onToggle: fn(),
+    onNext: fn(),
+    onPrevious: fn(),
+    onStop: fn(),
   },
 };
 

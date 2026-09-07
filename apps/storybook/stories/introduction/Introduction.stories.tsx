@@ -236,7 +236,10 @@ export default function MyPage() {
               }}
             >
               {[
-                { cat: "Layout", items: "Box · Grid · Container · Stack · Section · Page" },
+                {
+                  cat: "Layout",
+                  items: "Box · Grid · Center · Container · Stack · Section · Page",
+                },
                 { cat: "Typography", items: "Headline · Paragraph · Link · AsciiArt" },
                 {
                   cat: "Media",

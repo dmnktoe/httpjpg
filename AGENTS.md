@@ -33,7 +33,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 │   │   ├── components/
 │   │   │   ├── providers/       # Consent, Storyblok live, registry init
 │   │   │   ├── ui/              # Layout shell (footer, theme sync, work-nav)
-│   │   │   └── widgets/         # Ask, Discord, PSN, now-playing, weather, vitals
+│   │   │   └── widgets/         # Ask, Discord, Cloudflare, PSN, now-playing, weather, vitals
 │   │   ├── lib/
 │   │   │   ├── queries/         # Storyblok fetchers (config, work, widgets, search-index)
 │   │   │   ├── search/          # Ranking, autocomplete, ask prompt + NDJSON reader
@@ -264,7 +264,7 @@ Same presentational/stateful split as the command palette.
 - Always `import { env } from "@httpjpg/env"` — never raw `process.env` outside `env.mjs` (except `NODE_ENV`).
 - New env: declare in `packages/env/src/env.mjs` + `runtimeEnv` + turbo `globalEnv` / task `env` if build-affecting.
 - Sentry via `capture*Exception` from `@httpjpg/observability/sentry/{client,server,edge}` — not `@sentry/nextjs` directly.
-- Non-CMS app settings: `apps/portfolio/lib/config.ts`. CMS settings: Storyblok config story via `lib/queries/config.ts`.
+- Site identity (name, locale, repo URL) lives on the Storyblok config story via `lib/queries/config.ts` — there is no `lib/config.ts`. Secrets and flags live in `@httpjpg/env`. Build knobs (version, CSP) live in `next.config.ts` / `proxy.ts`.
 
 ## Forms
 
@@ -272,7 +272,7 @@ None today. If adding: `react-hook-form` + zod (catalog v4), compose with `@http
 
 ## Testing
 
-- **Unit:** Vitest, colocated `*.test.ts(x)`, globals on, `pnpm test` (root `vitest.config.ts`).
+- **Unit:** Vitest, colocated `*.test.ts(x)`, globals on, `pnpm test` (root `vitest.config.ts`). Coverage via `pnpm test:coverage` (v8, 85% floor). The include set covers packages plus `apps/portfolio` and `apps/studio`.
 - **Component:** `@testing-library/react` + `@testing-library/jest-dom/vitest`.
 - **E2E:** Playwright in `apps/portfolio/tests/e2e` — `pnpm --filter @httpjpg/portfolio test:e2e`.
 - **Visual:** `@storybook/addon-vitest` + `@argos-ci/storybook` capture every story. Argos stores baselines, diffs, and the review UI. Locally, `pnpm --filter @httpjpg/storybook test:visual` writes `./screenshots` without uploading.

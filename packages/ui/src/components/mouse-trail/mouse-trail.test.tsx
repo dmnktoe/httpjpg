@@ -74,4 +74,49 @@ describe("MouseTrail", () => {
 
     expect(removeEventListener).toHaveBeenCalledWith("mousemove", expect.any(Function));
   });
+
+  it("throttles pointer moves closer together than 30ms", () => {
+    render(<MouseTrail character="✧" />);
+
+    moveMouse(10, 10);
+    expect(screen.getAllByText("✧")).toHaveLength(1);
+
+    clock += 10;
+    act(() => {
+      window.dispatchEvent(new MouseEvent("mousemove", { clientX: 20, clientY: 20 }));
+    });
+    expect(screen.getAllByText("✧")).toHaveLength(1);
+  });
+
+  it("drops the oldest particle once the trail is full", () => {
+    render(<MouseTrail character="✧" count={2} />);
+
+    moveMouse(10, 10);
+    moveMouse(20, 20);
+    moveMouse(30, 30);
+
+    const particles = screen.getAllByText("✧");
+    expect(particles).toHaveLength(2);
+    expect(particles[0]).toHaveStyle({ left: "20px", top: "20px" });
+    expect(particles[1]).toHaveStyle({ left: "30px", top: "30px" });
+  });
+
+  it("expires particles whose lifetime has elapsed", () => {
+    let rafCb: FrameRequestCallback | undefined;
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
+      rafCb = cb;
+      return 1;
+    });
+    vi.spyOn(window, "cancelAnimationFrame").mockImplementation(() => {});
+
+    render(<MouseTrail character="✧" lifetime={100} />);
+    moveMouse(10, 10);
+    expect(screen.getByText("✧")).toBeInTheDocument();
+
+    clock += 200;
+    act(() => {
+      rafCb?.(0);
+    });
+    expect(screen.queryByText("✧")).not.toBeInTheDocument();
+  });
 });

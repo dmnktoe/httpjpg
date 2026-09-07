@@ -24,6 +24,11 @@ describe("getEntryProgress", () => {
   it("is 0 when a taller-than-viewport element still sits below the fold", () => {
     expect(getEntryProgress(rect(800, 2000), 800)).toBe(0);
   });
+
+  it("handles a degenerate viewport with no travel", () => {
+    expect(getEntryProgress(rect(10, 0), 0)).toBe(0);
+    expect(getEntryProgress(rect(0, 0), 0)).toBe(1);
+  });
 });
 
 describe("getPinProgress", () => {

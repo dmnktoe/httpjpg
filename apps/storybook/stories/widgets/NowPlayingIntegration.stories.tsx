@@ -145,7 +145,6 @@ export const LiveData = {
       );
     }
 
-    // Component now handles color extraction automatically! 🎨
     return (
       <>
         <NowPlaying {...data} />

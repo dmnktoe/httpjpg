@@ -111,6 +111,21 @@ describe("MobileMenuContent", () => {
     expect(setIsOpen).toHaveBeenCalledWith(false);
   });
 
+  it("ignores keys that are not Tab or Escape", () => {
+    const { setIsOpen } = renderMenu();
+    const focused = document.activeElement;
+    fireEvent.keyDown(document, { key: "a" });
+    expect(setIsOpen).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(focused);
+  });
+
+  it("keeps Tab on the panel when the menu has no focusable items", () => {
+    renderMenu({ nav: [] });
+    const panel = screen.getByRole("dialog", { name: "Navigation" });
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(panel).toHaveFocus();
+  });
+
   it("does not handle Escape while closed", () => {
     const { setIsOpen } = renderMenu({ isOpen: false });
     fireEvent.keyDown(document, { key: "Escape" });

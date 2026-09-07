@@ -37,4 +37,16 @@ describe("trackUmamiEvent", () => {
 
     expect(trackSpy).not.toHaveBeenCalled();
   });
+
+  it("warns instead of throwing when umami.track rejects the event", () => {
+    trackSpy.mockImplementation(() => {
+      throw new Error("umami down");
+    });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    trackUmamiEvent("now_playing_click");
+
+    expect(warn).toHaveBeenCalledWith("Failed to track Umami event", expect.any(Error));
+    warn.mockRestore();
+  });
 });

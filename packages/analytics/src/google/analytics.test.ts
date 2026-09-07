@@ -41,4 +41,16 @@ describe("trackGoogleEvent", () => {
 
     expect(gtagSpy).not.toHaveBeenCalled();
   });
+
+  it("warns instead of throwing when gtag rejects the event", () => {
+    gtagSpy.mockImplementation(() => {
+      throw new Error("gtag down");
+    });
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    trackGoogleEvent("now_playing_click");
+
+    expect(warn).toHaveBeenCalledWith("Failed to track Google Analytics event", expect.any(Error));
+    warn.mockRestore();
+  });
 });

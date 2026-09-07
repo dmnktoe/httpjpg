@@ -115,6 +115,10 @@ describe("fieldToTsType", () => {
     expect(fieldToTsType("x", f)).toBe('Array<"x" | "y">');
   });
 
+  it("maps options without values → string[]", () => {
+    expect(fieldToTsType("x", field({ type: "options" }))).toBe("string[]");
+  });
+
   it("maps bloks with whitelist → typed array union", () => {
     const f = field({
       type: "bloks",

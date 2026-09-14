@@ -9,7 +9,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "A responsive paragraph component with optimal typography settings for body text. Features adjustable sizing, alignment, and optional max-width constraint for comfortable reading.",
+          "Body copy. `size` follows the type scale; `maxWidth` defaults to a readable measure.",
       },
     },
   },

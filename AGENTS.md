@@ -297,6 +297,7 @@ pnpm dev:storybook
 pnpm dev:studio          # grid editor on :3001
 pnpm build               # PANDA_PRODUCTION=1 turbo run build
 pnpm type-check · test · lint · lint:fix · format · format:check
+pnpm test:coverage       # v8, 85% floor; include set is packages + portfolio + studio
 pnpm test:visual         # capture story screenshots (uploads to Argos when CI=1)
 ```
 

@@ -1,5 +1,11 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 
+const mounted = vi.hoisted(() => ({ current: true }));
+
+vi.mock("../../lib/use-has-mounted", () => ({
+  useHasMounted: () => mounted.current,
+}));
+
 import type { NavItem, WorkItem } from "./header";
 import { MobileMenuContent } from "./mobile-menu-content";
 
@@ -34,6 +40,16 @@ function renderMenu(props: Partial<React.ComponentProps<typeof MobileMenuContent
 }
 
 describe("MobileMenuContent", () => {
+  beforeEach(() => {
+    mounted.current = true;
+  });
+
+  it("renders nothing before the portal can mount", () => {
+    mounted.current = false;
+    const { container } = renderMenu();
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it("renders the nav links with the same inline ribbon as the desktop header", () => {
     renderMenu();
     expect(screen.getByRole("link", { name: /^HOME$/ })).toHaveAttribute("href", "/");

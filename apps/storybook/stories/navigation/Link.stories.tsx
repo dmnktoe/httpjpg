@@ -9,7 +9,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "General-purpose Link component with Next.js Link integration and external link detection. Automatically handles internal routing and external links with proper security attributes. For Storyblok integration, see @httpjpg/storyblok-ui package.",
+          "Internal paths go through Next.js; http(s)/mailto/tel open in a new tab with `rel=noopener`. CMS links live in `@httpjpg/storyblok-ui`.",
       },
     },
   },

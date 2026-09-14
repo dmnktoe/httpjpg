@@ -248,9 +248,10 @@ export default function MyPage() {
                 },
                 {
                   cat: "Display",
-                  items: "Accordion · Callout · CodeBlock · Stats · List · Tag · CopyrightLabel",
+                  items:
+                    "Accordion · Callout · CodeBlock · Stats · List · Tag · WorkCard · CopyrightLabel",
                 },
-                { cat: "Inputs", items: "Button · IconButton · Loading · Checkbox" },
+                { cat: "Inputs", items: "Button · ButtonGroup · IconButton · Loading · Checkbox" },
                 { cat: "Navigation", items: "Header · Footer · NavLink · SearchTrigger" },
                 { cat: "Motion", items: "CustomCursor · MouseTrail · AnimateInView · Marquee" },
                 {

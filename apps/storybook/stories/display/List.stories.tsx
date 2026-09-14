@@ -8,8 +8,7 @@ const meta: Meta<typeof UnorderedList> = {
     layout: "padded",
     docs: {
       description: {
-        component:
-          "Styled list components (UnorderedList, OrderedList, ListItem) with customizable styles and spacing. Perfect for content lists, navigation, and structured data.",
+        component: "Unordered and ordered lists with ASCII markers. Pair with `ListItem`.",
       },
     },
   },

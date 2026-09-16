@@ -19,6 +19,15 @@ describe("collectStoryText", () => {
     expect(collectStoryText(content)).toBe("Poster Series Risograph 2024");
   });
 
+  it("indexes floating media labels via name", () => {
+    const content = {
+      title: "Outlet",
+      floating_media: [{ name: "Showreel", url: "https://cdn.example/reel.mp4" }],
+    };
+
+    expect(collectStoryText(content)).toBe("Outlet Showreel");
+  });
+
   it("ignores plumbing fields like uuids and colors", () => {
     const content = { title: "Kept", _uid: "abc-123", component: "work", color: "#ff0000" };
 

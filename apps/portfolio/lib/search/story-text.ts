@@ -9,6 +9,7 @@ const TEXT_KEYS = new Set([
   "label",
   "caption",
   "alt",
+  "name",
   "quote",
   "value",
   // Track credits: a music player's title already lands via `title`, and

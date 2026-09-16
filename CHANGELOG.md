@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.3](https://github.com/dmnktoe/httpjpg/compare/v2.9.2...v2.9.3) (2026-09-16)
+
+
+### Changed
+
+* weekly cleanup for shared external links, coverage, and story docs ([#429](https://github.com/dmnktoe/httpjpg/issues/429)) ([738a321](https://github.com/dmnktoe/httpjpg/commit/738a321bbf9b8d63aeed55131584a1dd32b53b5e))
+
+
+### Tooling
+
+* raise coverage to 93% and include credentials and studio ([#415](https://github.com/dmnktoe/httpjpg/issues/415)) ([5fad6f3](https://github.com/dmnktoe/httpjpg/commit/5fad6f3abfb86b8d7ddefb03e539fcbff5f07b8c))
+
+
+### Dependencies
+
+* lock file maintenance ([#408](https://github.com/dmnktoe/httpjpg/issues/408)) ([f7e3dbb](https://github.com/dmnktoe/httpjpg/commit/f7e3dbbd7c56cb9b9fcc3bf517deae8f95c85858))
+* update chromaui/action digest to 259eda5 ([#427](https://github.com/dmnktoe/httpjpg/issues/427)) ([e9f22a0](https://github.com/dmnktoe/httpjpg/commit/e9f22a0c8d73487c7efcd51904cad99e10095251))
+* update dev dependencies ([#397](https://github.com/dmnktoe/httpjpg/issues/397)) ([10cfc4d](https://github.com/dmnktoe/httpjpg/commit/10cfc4d7aeffa643bc4d6d168c706e19a439dc0e))
+* update github actions ([#430](https://github.com/dmnktoe/httpjpg/issues/430)) ([7b7361a](https://github.com/dmnktoe/httpjpg/commit/7b7361a4154fda0f21543fbd75143835babd4747))
+* update node.js to v24.21.0 ([#426](https://github.com/dmnktoe/httpjpg/issues/426)) ([089df42](https://github.com/dmnktoe/httpjpg/commit/089df426db0c501e58d641f74081fb7cf351bb48))
+* update pnpm to v11.26.0 ([#428](https://github.com/dmnktoe/httpjpg/issues/428)) ([70d8da8](https://github.com/dmnktoe/httpjpg/commit/70d8da859a3db074316c1163d224194e5476a217))
+* update pnpm to v11.27.0 ([#431](https://github.com/dmnktoe/httpjpg/issues/431)) ([68b9b66](https://github.com/dmnktoe/httpjpg/commit/68b9b66595d5211f653ffbf940bd03d46cdc0593))
+* update production dependencies ([#395](https://github.com/dmnktoe/httpjpg/issues/395)) ([9133340](https://github.com/dmnktoe/httpjpg/commit/9133340beef02b0a451933ef6d537d8b70b4791d))
+* update react + next ([#423](https://github.com/dmnktoe/httpjpg/issues/423)) ([cc69e93](https://github.com/dmnktoe/httpjpg/commit/cc69e934941dd9c93473d37839391dde16501bcb))
+
 ## [2.9.2](https://github.com/dmnktoe/httpjpg/compare/v2.9.1...v2.9.2) (2026-09-02)
 
 

@@ -2,6 +2,7 @@ import { CMS_OPTIONS } from "@httpjpg/storyblok-utils";
 
 import type { BlockDef } from "../lib/block";
 import { field, labelize, tabbed } from "../lib/fields";
+import { withMotion } from "../lib/motion";
 import { inlineOptions, OVERLAY_PATTERN_OPTIONS } from "../lib/options";
 import { withSpacing } from "../lib/spacing";
 
@@ -110,24 +111,26 @@ export const contentBlocks: BlockDef[] = [
     icon: "block-heading-2",
     color: "#2d3748",
     preview_field: "text",
-    schema: withSpacing({
-      text: field.text("Text", { required: true, translatable: true }),
-      level: field.options(
-        "Heading Level",
-        [
-          { name: "H1", value: "1" },
-          { name: "H2", value: "2" },
-          { name: "H3", value: "3" },
-        ],
-        {
-          default_value: "2",
-          description: "Use a single H1 per page; H2/H3 for sub-sections.",
-          tooltip: true,
-        },
-      ),
-      align: field.options("Text Align", labelize(CMS_OPTIONS.textAlign)),
-      color: field.datasource("Text Color", "color-options"),
-    }),
+    schema: withSpacing(
+      withMotion({
+        text: field.text("Text", { required: true, translatable: true }),
+        level: field.options(
+          "Heading Level",
+          [
+            { name: "H1", value: "1" },
+            { name: "H2", value: "2" },
+            { name: "H3", value: "3" },
+          ],
+          {
+            default_value: "2",
+            description: "Use a single H1 per page; H2/H3 for sub-sections.",
+            tooltip: true,
+          },
+        ),
+        align: field.options("Text Align", labelize(CMS_OPTIONS.textAlign)),
+        color: field.datasource("Text Color", "color-options"),
+      }),
+    ),
   },
   {
     name: "paragraph",

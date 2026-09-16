@@ -18,6 +18,7 @@ import {
   findGridsInBody,
   GRID_COLS,
   hiddenFieldForViewport,
+  MARGIN_OPTIONS,
   nudgeItem,
   patchPosition,
   patchSize,
@@ -177,7 +178,13 @@ describe("spacing / effective geometry", () => {
     expect(spacingToPx()).toBeUndefined();
     expect(spacingToPx("")).toBeUndefined();
     expect(spacingToPx("4")).toBe("1rem");
+    expect(spacingToPx("-4")).toBe("-1rem");
+    expect(spacingToPx("-0")).toBeUndefined();
     expect(spacingToPx("not-a-token")).toBeUndefined();
+  });
+
+  it("exposes signed pull-out values on MARGIN_OPTIONS only", () => {
+    expect(MARGIN_OPTIONS.some((option) => option.value === "-4")).toBe(true);
   });
 
   it("cascades spacing, columns, and box geometry across viewports", () => {

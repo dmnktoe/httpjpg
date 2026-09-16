@@ -89,3 +89,5 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
     </button>
   );
 });
+
+IconButton.displayName = "IconButton";

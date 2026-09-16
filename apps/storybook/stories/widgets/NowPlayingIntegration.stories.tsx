@@ -3,7 +3,6 @@ import type { ExtractedColor } from "@httpjpg/spotify";
 import type { Meta } from "@storybook/react";
 import { useEffect, useState } from "react";
 
-// Debug badge to show extracted color info
 const ColorDebugBadge = ({ data }: { data: { artwork: string } | null }) => {
   const [color, setColor] = useState<ExtractedColor | null>(null);
 
@@ -12,7 +11,6 @@ const ColorDebugBadge = ({ data }: { data: { artwork: string } | null }) => {
       return;
     }
 
-    // Use the same extraction method as the component
     import("@httpjpg/spotify").then(({ extractVibrantColor }) => {
       extractVibrantColor(data.artwork).then(setColor);
     });
@@ -145,20 +143,11 @@ export const LiveData = {
       );
     }
 
-    // Component now handles color extraction automatically! 🎨
     return (
       <>
         <NowPlaying {...data} />
         <ColorDebugBadge data={data} />
       </>
     );
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "This story fetches real data from your Spotify account. The NowPlaying component automatically extracts vibrant colors from the artwork and calculates optimal text contrast. No manual color state management needed!",
-      },
-    },
   },
 };

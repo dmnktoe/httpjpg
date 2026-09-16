@@ -6,7 +6,7 @@ import { css, cx } from "styled-system/css";
 import { navLink } from "styled-system/recipes";
 import type { SystemStyleObject } from "styled-system/types";
 
-import { isExternalLink } from "../../lib/is-external-link";
+import { EXTERNAL_LINK_CURSOR, resolveExternalHref } from "../../lib/external-link";
 
 export interface NavLinkProps extends Omit<
   AnchorHTMLAttributes<HTMLAnchorElement>,
@@ -30,34 +30,28 @@ export function NavLink({
   showExternalIcon,
   ...props
 }: NavLinkProps) {
-  const isExternalLink_ = isExternal ?? isExternalLink(href);
-  const shouldShowIcon = showExternalIcon ?? isExternalLink_;
-
-  const externalProps = isExternalLink_
-    ? {
-        target: "_blank",
-        rel: "noopener noreferrer",
-      }
-    : {};
+  const { external, showIcon, rel, target } = resolveExternalHref(
+    href,
+    isExternal,
+    showExternalIcon,
+  );
 
   const recipeClassName = navLink({ variant });
   const customStyles = cssProp ? css(cssProp) : undefined;
   const mergedClassName = cx(recipeClassName, customStyles, className);
 
-  if (isExternalLink_) {
+  if (external) {
     return (
       <a
         href={href}
         className={mergedClassName}
-        style={{
-          cursor:
-            'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><text x="0" y="15" font-size="16">↗</text></svg>\') 10 5, pointer',
-        }}
-        {...externalProps}
+        style={{ cursor: EXTERNAL_LINK_CURSOR }}
+        rel={rel}
+        target={target}
         {...props}
       >
         {children}
-        {shouldShowIcon && (
+        {showIcon && (
           <span
             style={{
               marginLeft: "0.25em",

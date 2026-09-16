@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Specialized navigation link component with decorative prefixes for projects/things work and websites work. Features hover underline and inherits all Link capabilities including Next.js routing and Storyblok compatibility.",
+          "Header work link. `projects` and `websites` variants add a decorative prefix; external URLs follow the same new-tab rules as `Link`.",
       },
     },
   },

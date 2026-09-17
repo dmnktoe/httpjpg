@@ -426,7 +426,7 @@ importers:
         specifier: 'catalog:'
         version: 17.4.2
       zod:
-        specifier: ^4.6.4
+        specifier: ^4.6.5
         version: 4.6.5
     devDependencies:
       typescript:

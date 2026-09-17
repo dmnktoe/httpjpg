@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.4](https://github.com/dmnktoe/httpjpg/compare/v2.9.3...v2.9.4) (2026-09-17)
+
+
+### Dependencies
+
+* update dependency zod to ^4.6.5 ([#434](https://github.com/dmnktoe/httpjpg/issues/434)) ([8afff56](https://github.com/dmnktoe/httpjpg/commit/8afff56767c88e62d3f4ee6b98b2a5c55205c4f8))
+
 ## [2.9.3](https://github.com/dmnktoe/httpjpg/compare/v2.9.2...v2.9.3) (2026-09-16)
 
 

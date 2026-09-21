@@ -99,13 +99,14 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
 
   return (
     <Box
+      // Full-bleed hit area so hovering the video center reveals the bar —
+      // a bottom-only strip stays invisible until the cursor lucks into it.
       css={{
         position: "absolute",
-        right: 0,
-        bottom: 0,
-        left: 0,
+        inset: 0,
         display: "flex",
         flexDirection: "column",
+        justifyContent: "flex-end",
         gap: 2,
         p: 4,
         opacity: 0,

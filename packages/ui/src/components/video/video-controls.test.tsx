@@ -160,13 +160,22 @@ describe("VideoControls", () => {
 
   it("reveals itself on hover and hides again on leave", () => {
     setup();
-    const bar = screen.getByLabelText("Seek").parentElement as HTMLElement;
+    const overlay = screen.getByLabelText("Seek").parentElement as HTMLElement;
 
-    fireEvent.mouseEnter(bar);
-    expect(bar).toHaveStyle({ opacity: "1" });
+    fireEvent.mouseEnter(overlay);
+    expect(overlay).toHaveStyle({ opacity: "1" });
 
-    fireEvent.mouseLeave(bar);
-    expect(bar).toHaveStyle({ opacity: "0" });
+    fireEvent.mouseLeave(overlay);
+    expect(overlay).toHaveStyle({ opacity: "0" });
+  });
+
+  it("exposes a full-bleed overlay so hovering the video center reveals controls", () => {
+    setup();
+    const overlay = screen.getByLabelText("Seek").parentElement as HTMLElement;
+
+    // inset: 0 expands the hit area beyond the bottom bar; without it, the
+    // center of the video never receives mouseenter and the bar stays hidden.
+    expect(overlay.className).toMatch(/inset_0/);
   });
 
   it("detaches its listeners on unmount", () => {

@@ -18,7 +18,7 @@ import {
 } from "@httpjpg/ui";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
+import { draftMode, headers } from "next/headers";
 import type { CSSProperties, PropsWithChildren } from "react";
 
 import { ConsentGate } from "@/components/providers/consent-gate";
@@ -92,7 +92,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const [theme, pageAccent] = await Promise.all([getPageTheme(), getPageAccent()]);
+  const [theme, pageAccent, draft] = await Promise.all([
+    getPageTheme(),
+    getPageAccent(),
+    draftMode(),
+  ]);
   const workAccent = parseWorkAccent(pageAccent);
   const workAccentStyle = workAccentCssVars(workAccent, theme === "dark") as
     | CSSProperties
@@ -154,7 +158,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 showSearch={widgetConfig.askEnabled}
                 showScrollVeil={interfaceConfig.headerScrollVeilEnabled}
               />
-              <DraftChrome>
+              <DraftChrome draftModeEnabled={draft.isEnabled}>
                 <LightboxProvider>
                   <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
                     {children}

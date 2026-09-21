@@ -3,12 +3,8 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
 /**
- * Tag stories
- *
- * The one chip on the site. `Tag` is the static span a work card renders;
- * `TagButton` is the same shape as a button, intended for the work-list filter,
- * which adopts it when that filter is rebuilt.
- * Both share a single `cva` so their padding and radius cannot drift apart.
+ * `Tag` is the static span a work card renders; `TagButton` is the same shape as
+ * a button for the work-list filter. Both share a single `cva`.
  */
 const meta = {
   title: "Display/Tag",

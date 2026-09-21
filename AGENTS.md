@@ -9,7 +9,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 ## Stack
 
 - **TypeScript** — strict mode, `interface` for object shapes, no `enum`
-- **Node.js** ≥ 22.12 (pinned via `.nvmrc` to 24.20.0), ESM-only (`"type": "module"` in every workspace package; the private root `package.json` does not declare it)
+- **Node.js** ≥ 22.12 (pinned via `.nvmrc` to 24.21.0), ESM-only (`"type": "module"` in every workspace package; the private root `package.json` does not declare it)
 - **Next.js 16** App Router — Server Components by default, route handlers in `app/api/*`
 - **React 19** — functional components only
 - **Panda CSS** (zero-runtime) — `css({})` / `cx()` / token-aware patterns; tokens from `@httpjpg/tokens`
@@ -295,6 +295,7 @@ pnpm dev                 # all watchers
 pnpm dev:portfolio       # portfolio + deps
 pnpm dev:storybook
 pnpm dev:studio          # grid editor on :3001
+pnpm dev:https           # portfolio + Storybook over HTTPS
 pnpm build               # PANDA_PRODUCTION=1 turbo run build
 pnpm type-check · test · lint · lint:fix · format · format:check
 pnpm test:coverage       # v8, 85% floor; include set is packages + portfolio + studio

@@ -59,6 +59,16 @@ const meta = {
       control: "text",
       description: "Last-updated text shown before the version",
     },
+    showCookieSettings: {
+      control: "boolean",
+      description:
+        "Shows Cookie Settings; clicks dispatch `openCookieSettings` unless `onCookieSettingsClick` is set",
+      table: { defaultValue: { summary: "false" } },
+    },
+    cookiePolicyHref: {
+      control: "text",
+      description: "Optional Cookie Policy link next to Cookie Settings",
+    },
   },
 } satisfies Meta<typeof Footer>;
 
@@ -67,9 +77,6 @@ type Story = StoryObj<typeof meta>;
 
 const hideOnMobile = { display: { base: "none", md: "block" } } as const;
 
-/**
- * Default footer with background image
- */
 export const Default: Story = {
   args: {
     backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
@@ -82,6 +89,19 @@ export const Default: Story = {
     version: "v1.0.0",
     versionHref: "https://github.com/dmnktoe/httpjpg/releases/tag/v1.0.0",
     lastUpdated: "last updated 2026-05-27",
+  },
+};
+
+export const WithCookieSettings: Story = {
+  args: {
+    backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
+    footerLinks: [
+      { name: "Legal", href: "/legal", isExternal: false },
+      { name: "Privacy", href: "/privacy", isExternal: false },
+    ],
+    copyrightText: "© 2025 httpjpg",
+    showCookieSettings: true,
+    cookiePolicyHref: "/cookie-policy",
   },
 };
 

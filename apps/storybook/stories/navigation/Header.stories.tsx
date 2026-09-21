@@ -31,6 +31,11 @@ const meta = {
       description:
         "Fades a theme-aware scrim with progressive blur in behind the header while scrolling",
     },
+    showSearch: {
+      control: "boolean",
+      description: "Renders the search trigger next to the nav",
+      table: { defaultValue: { summary: "false" } },
+    },
   },
 } satisfies Meta<typeof Header>;
 
@@ -62,9 +67,6 @@ const mockExternalWebsitesWork = [
   },
 ];
 
-/**
- * Basic header with live controls
- */
 export const Basic: Story = {
   args: {
     nav: mockNav,
@@ -73,9 +75,6 @@ export const Basic: Story = {
   },
 };
 
-/**
- * Header with minimal navigation
- */
 export const MinimalNav: Story = {
   args: {
     nav: [
@@ -87,9 +86,6 @@ export const MinimalNav: Story = {
   },
 };
 
-/**
- * Header with external links only
- */
 export const WithExternalLinks: Story = {
   args: {
     nav: [
@@ -114,14 +110,20 @@ export const WithExternalLinks: Story = {
   },
 };
 
-/**
- * Header with no work items
- */
 export const NoWorkItems: Story = {
   args: {
     nav: mockNav,
     projectsWork: [],
     websitesWork: [],
+  },
+};
+
+export const WithSearch: Story = {
+  args: {
+    nav: mockNav,
+    projectsWork: MOCK_HEADER_PROJECTS_WORK,
+    websitesWork: MOCK_HEADER_WEBSITES_WORK,
+    showSearch: true,
   },
 };
 

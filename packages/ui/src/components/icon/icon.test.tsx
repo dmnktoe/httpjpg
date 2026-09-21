@@ -1,21 +1,9 @@
 import { render } from "@testing-library/react";
 
-import { Icon, type IconName } from "./icon";
-
-const NAMES: IconName[] = [
-  "arrow-up",
-  "arrow-down",
-  "arrow-left",
-  "arrow-right",
-  "close",
-  "play",
-  "pause",
-  "volume",
-  "volume-mute",
-];
+import { ICON_NAMES, Icon } from "./icon";
 
 describe("Icon", () => {
-  it.each(NAMES)("renders the %s glyph as a hidden image", (name) => {
+  it.each(ICON_NAMES)("renders the %s glyph as a hidden image", (name) => {
     const { container } = render(<Icon name={name} />);
     const svg = container.querySelector("svg");
     expect(svg).toHaveAttribute("role", "img");

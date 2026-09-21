@@ -32,7 +32,9 @@ function NowPlayingWidgetComponent() {
   }
 
   const handleClick = () => {
-    trackNowPlayingClick();
+    trackNowPlayingClick(
+      data && !errorCode ? { title: data.title, artist: data.artist } : undefined,
+    );
   };
 
   const errorView =

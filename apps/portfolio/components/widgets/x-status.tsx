@@ -1,5 +1,6 @@
 "use client";
 
+import { trackOutboundClick } from "@httpjpg/analytics";
 import {
   Box,
   FooterStatusLine,
@@ -31,7 +32,11 @@ export function XStatus({ profile, post, loaded }: XStatusProps) {
   }
 
   return (
-    <FooterStatusLine label="x" href={post.url}>
+    <FooterStatusLine
+      label="x"
+      href={post.url}
+      onClick={() => trackOutboundClick({ destination: "x", href: post.url })}
+    >
       {profile.avatar && (
         <Tooltip label={`@${profile.username}`} css={{ flexShrink: 0 }}>
           <FooterStatusLineThumb src={profile.avatar} shape="circle" />

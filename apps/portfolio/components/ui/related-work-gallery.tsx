@@ -1,5 +1,6 @@
 "use client";
 
+import { trackRelatedWorkClick, trackRelatedWorkView } from "@httpjpg/analytics";
 import { Box } from "@httpjpg/ui";
 import { useCallback, useSyncExternalStore } from "react";
 
@@ -31,7 +32,15 @@ export function RelatedWorkGallery({ items }: RelatedWorkGalleryProps) {
 
   const handleChange = useCallback((next: RelatedWorkView) => {
     writeStoredView(next);
+    trackRelatedWorkView(next);
   }, []);
+
+  const handleItemClick = useCallback(
+    (href: string) => {
+      trackRelatedWorkClick({ href, view });
+    },
+    [view],
+  );
 
   return (
     <Box>
@@ -52,13 +61,13 @@ export function RelatedWorkGallery({ items }: RelatedWorkGalleryProps) {
           }}
         >
           {items.map((item) => (
-            <RelatedWorkCard key={item.id} {...item} />
+            <RelatedWorkCard key={item.id} {...item} onClick={() => handleItemClick(item.href)} />
           ))}
         </Box>
       ) : (
         <Box as="ul" css={{ mt: "3", listStyle: "none" }}>
           {items.map((item) => (
-            <RelatedWorkRow key={item.id} {...item} />
+            <RelatedWorkRow key={item.id} {...item} onClick={() => handleItemClick(item.href)} />
           ))}
         </Box>
       )}

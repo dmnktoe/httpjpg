@@ -8,7 +8,17 @@ vi.mock("@httpjpg/env", () => ({
   },
 }));
 
-import { trackNowPlayingClick, trackWebVital } from "./events";
+import {
+  trackAskComplete,
+  trackAskSubmit,
+  trackEvent,
+  trackLightboxOpen,
+  trackNowPlayingClick,
+  trackOutboundClick,
+  trackSearchOpen,
+  trackSearchSelect,
+  trackWebVital,
+} from "./events";
 
 describe("analytics event fan-out", () => {
   let gtagSpy: ReturnType<typeof vi.fn>;
@@ -22,25 +32,42 @@ describe("analytics event fan-out", () => {
   });
 
   it("trackNowPlayingClick reaches both providers", () => {
-    trackNowPlayingClick();
+    trackNowPlayingClick({ title: "Song", artist: "Artist" });
 
     expect(gtagSpy).toHaveBeenCalledWith(
       "event",
       "now_playing_click",
-      expect.objectContaining({ event_label: "spotify_widget" }),
+      expect.objectContaining({
+        event_label: "spotify_widget",
+        title: "Song",
+        artist: "Artist",
+      }),
     );
-    expect(umamiSpy).toHaveBeenCalledWith("now_playing_click", { widget: "spotify" });
+    expect(umamiSpy).toHaveBeenCalledWith("now_playing_click", {
+      widget: "spotify",
+      title: "Song",
+      artist: "Artist",
+    });
   });
 
-  it("trackWebVital rounds the value and reaches both providers", () => {
+  it("trackWebVital rounds the value, rates it, and reaches both providers", () => {
     trackWebVital("LCP", 2345.67);
 
     expect(gtagSpy).toHaveBeenCalledWith(
       "event",
       "performance",
-      expect.objectContaining({ event_label: "LCP", value: 2346 }),
+      expect.objectContaining({ event_label: "LCP", value: 2346, rating: "good" }),
     );
-    expect(umamiSpy).toHaveBeenCalledWith("web_vital", { metric: "LCP", value: 2346 });
+    expect(umamiSpy).toHaveBeenCalledWith("web_vital", {
+      metric: "LCP",
+      value: 2346,
+      rating: "good",
+    });
+  });
+
+  it("trackWebVital marks poor LCP correctly", () => {
+    trackWebVital("LCP", 5000);
+    expect(umamiSpy).toHaveBeenCalledWith("web_vital", expect.objectContaining({ rating: "poor" }));
   });
 
   it("a missing provider does not block the other", () => {
@@ -50,5 +77,55 @@ describe("analytics event fan-out", () => {
 
     expect(gtagSpy).not.toHaveBeenCalled();
     expect(umamiSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("trackEvent fans out a generic name and data", () => {
+    trackEvent("custom_thing", { foo: "bar", count: 2 });
+
+    expect(gtagSpy).toHaveBeenCalledWith(
+      "event",
+      "custom_thing",
+      expect.objectContaining({ foo: "bar", count: 2 }),
+    );
+    expect(umamiSpy).toHaveBeenCalledWith("custom_thing", { foo: "bar", count: 2 });
+  });
+
+  it("search and ask helpers send structured payloads", () => {
+    trackSearchOpen("keyboard");
+    trackSearchSelect({ kind: "work", href: "/work/x", queryLength: 4 });
+    trackAskSubmit({ queryLength: 12 });
+    trackAskComplete({ hasAction: true, sourceCount: 3 });
+
+    expect(umamiSpy).toHaveBeenCalledWith("search_open", { source: "keyboard" });
+    expect(umamiSpy).toHaveBeenCalledWith("search_select", {
+      kind: "work",
+      href: "/work/x",
+      query_length: 4,
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("ask_submit", { query_length: 12 });
+    expect(umamiSpy).toHaveBeenCalledWith("ask_complete", {
+      has_action: true,
+      source_count: 3,
+    });
+  });
+
+  it("lightbox and outbound helpers clip long strings", () => {
+    const longHref = `https://example.com/${"a".repeat(600)}`;
+    trackLightboxOpen({ type: "image", index: 1, count: 4 });
+    trackOutboundClick({ destination: "letterboxd", href: longHref });
+
+    expect(umamiSpy).toHaveBeenCalledWith("lightbox_open", {
+      type: "image",
+      index: 1,
+      count: 4,
+    });
+    const outbound = umamiSpy.mock.calls.find((call) => call[0] === "outbound_click");
+    expect(outbound?.[1].href).toHaveLength(480);
+  });
+
+  it("drops undefined values and non-finite numbers from payloads", () => {
+    trackEvent("scrub", { keep: "yes", skip: undefined, bad: Number.NaN });
+
+    expect(umamiSpy).toHaveBeenCalledWith("scrub", { keep: "yes" });
   });
 });

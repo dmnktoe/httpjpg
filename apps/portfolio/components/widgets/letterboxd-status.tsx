@@ -1,5 +1,6 @@
 "use client";
 
+import { trackOutboundClick } from "@httpjpg/analytics";
 import {
   FooterStatusLine,
   FooterStatusLineSeparator,
@@ -28,7 +29,11 @@ export function LetterboxdStatus({ film, loaded }: LetterboxdStatusProps) {
   }
 
   return (
-    <FooterStatusLine label="letterboxd" href={film.url}>
+    <FooterStatusLine
+      label="letterboxd"
+      href={film.url}
+      onClick={() => trackOutboundClick({ destination: "letterboxd", href: film.url })}
+    >
       {film.poster && <FooterStatusLineThumb src={film.poster} aspect="auto" />}
       <FooterStatusLineText>{film.title}</FooterStatusLineText>
       {film.year && (

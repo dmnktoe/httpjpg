@@ -1,3 +1,6 @@
+"use client";
+
+import { trackWorkNavClick } from "@httpjpg/analytics";
 import { Box, Link, parseWorkAccent } from "@httpjpg/ui";
 
 import type { AdjacentWork } from "@/lib/queries/work";
@@ -35,6 +38,7 @@ export function WorkNav({ prev, next, accent }: WorkNavProps) {
           <Link
             href={`/work/${prev.slug}`}
             style={linkColor}
+            onClick={() => trackWorkNavClick({ direction: "prev", slug: prev.slug })}
             css={{
               display: "block",
               color: "primary.500",
@@ -57,6 +61,7 @@ export function WorkNav({ prev, next, accent }: WorkNavProps) {
           <Link
             href={`/work/${next.slug}`}
             style={linkColor}
+            onClick={() => trackWorkNavClick({ direction: "next", slug: next.slug })}
             css={{
               display: "block",
               color: "primary.500",

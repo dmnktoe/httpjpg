@@ -41,7 +41,15 @@ function renderGallery(items: LightboxEntry[] = [FIRST, SECOND, THIRD]) {
 
 describe("LightboxProvider", () => {
   it("opens the clicked item and walks the page queue", () => {
-    renderGallery();
+    const onOpen = vi.fn();
+    const onNavigate = vi.fn();
+    render(
+      <LightboxProvider onOpen={onOpen} onNavigate={onNavigate}>
+        {[FIRST, SECOND, THIRD].map((item) => (
+          <Thumb key={item.id} item={item} />
+        ))}
+      </LightboxProvider>,
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "Open One at full size" }));
 
@@ -50,11 +58,13 @@ describe("LightboxProvider", () => {
     expect(within(dialog).getByText("[ 01 / 03 ]")).toBeInTheDocument();
     expect(within(dialog).getByText("© 2025 Studio")).toBeInTheDocument();
     expect(within(dialog).getByText("id-100.online")).toBeInTheDocument();
+    expect(onOpen).toHaveBeenCalledWith(FIRST, 0, 3);
 
     fireEvent.click(screen.getByRole("button", { name: "Next image" }));
 
     expect(within(dialog).getByRole("img", { name: "Two" })).toBeInTheDocument();
     expect(within(dialog).getByText("[ 02 / 03 ]")).toBeInTheDocument();
+    expect(onNavigate).toHaveBeenCalledWith(SECOND, 1, 3);
   });
 
   it("opens a later item at its index, not at zero", () => {

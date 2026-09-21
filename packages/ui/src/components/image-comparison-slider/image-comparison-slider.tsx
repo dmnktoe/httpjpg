@@ -43,6 +43,8 @@ export interface ImageComparisonSliderProps {
   fetchPriority?: "auto" | "high" | "low";
   /** Accessible name for the slider. Defaults to “Compare {before} and {after}”. */
   label?: string;
+  /** Fires once on the first user interaction with the handle / range input. */
+  onInteract?: () => void;
   css?: SystemStyleObject;
   className?: string;
 }
@@ -77,15 +79,25 @@ export function ImageComparisonSlider({
   objectFit = "cover",
   fetchPriority = "auto",
   label,
+  onInteract,
   css: cssProp,
   className,
 }: ImageComparisonSliderProps) {
   const frameRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
+  const interactedRef = useRef(false);
   const [position, setPosition] = useState(() => clampPosition(initialPosition));
   const [dragging, setDragging] = useState(false);
   const [lastInitial, setLastInitial] = useState(initialPosition);
   const inputId = useId();
+
+  const notifyInteract = useCallback(() => {
+    if (interactedRef.current) {
+      return;
+    }
+    interactedRef.current = true;
+    onInteract?.();
+  }, [onInteract]);
 
   // Follow a changed `initialPosition` (e.g. a live CMS edit) during render
   // rather than in an effect, which would cascade an extra commit.
@@ -109,6 +121,7 @@ export function ImageComparisonSlider({
     if (event.button !== 0) {
       return;
     }
+    notifyInteract();
     draggingRef.current = true;
     setDragging(true);
     event.currentTarget.setPointerCapture?.(event.pointerId);
@@ -135,6 +148,7 @@ export function ImageComparisonSlider({
     if (draggingRef.current) {
       return;
     }
+    notifyInteract();
     setPosition(clampPosition(Number(event.target.value)));
   }
 

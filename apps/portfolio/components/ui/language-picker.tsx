@@ -1,3 +1,6 @@
+"use client";
+
+import { trackLocaleSwitch } from "@httpjpg/analytics";
 import { Box, Link } from "@httpjpg/ui";
 import { css } from "styled-system/css";
 
@@ -57,6 +60,7 @@ export function LanguagePicker({ locale, slug }: LanguagePickerProps) {
                 href={localizedPath(option, slug)}
                 hrefLang={option}
                 lang={option}
+                onClick={() => trackLocaleSwitch({ from: locale, to: option })}
                 css={{ ...optionCss, opacity: 0.45 }}
               >
                 {label}

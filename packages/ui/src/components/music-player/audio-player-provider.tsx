@@ -6,12 +6,23 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { AudioPlayerValue, AudioTrack } from "./audio-player-context";
 import { AudioPlayerContext } from "./audio-player-context";
 
+export interface AudioPlayerProviderProps extends PropsWithChildren {
+  onPlay?: (track: AudioTrack) => void;
+  onPause?: (track: AudioTrack) => void;
+  onSkip?: (direction: "next" | "previous", track: AudioTrack) => void;
+}
+
 /**
  * Owns the one `<audio>` element of the site. It is mounted in the root layout,
  * which App Router keeps alive across client navigations — that, and nothing
  * else, is what makes playback survive a page change.
  */
-export function AudioPlayerProvider({ children }: PropsWithChildren) {
+export function AudioPlayerProvider({
+  children,
+  onPlay,
+  onPause,
+  onSkip,
+}: AudioPlayerProviderProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   // Tracks whose blok is mounted right now, in mount order.
   const registryRef = useRef<AudioTrack[]>([]);
@@ -19,6 +30,16 @@ export function AudioPlayerProvider({ children }: PropsWithChildren) {
   // starts, so navigating away cannot empty it under the running track.
   const queueRef = useRef<AudioTrack[]>([]);
   const trackRef = useRef<AudioTrack | null>(null);
+  const suppressPauseRef = useRef(false);
+  const onPlayRef = useRef(onPlay);
+  const onPauseRef = useRef(onPause);
+  const onSkipRef = useRef(onSkip);
+
+  useEffect(() => {
+    onPlayRef.current = onPlay;
+    onPauseRef.current = onPause;
+    onSkipRef.current = onSkip;
+  }, [onPlay, onPause, onSkip]);
 
   const [track, setTrack] = useState<AudioTrack | null>(null);
   const [queue, setQueue] = useState<AudioTrack[]>([]);
@@ -43,6 +64,7 @@ export function AudioPlayerProvider({ children }: PropsWithChildren) {
     }
 
     if (trackRef.current?.src !== next.src) {
+      suppressPauseRef.current = true;
       trackRef.current = next;
       setTrack(next);
       setCurrentTime(0);
@@ -78,6 +100,7 @@ export function AudioPlayerProvider({ children }: PropsWithChildren) {
       const index = queueRef.current.findIndex((item) => item.src === current.src);
       const target = index >= 0 ? queueRef.current[index + offset] : undefined;
       if (target) {
+        onSkipRef.current?.(offset > 0 ? "next" : "previous", target);
         start(target);
       }
     },
@@ -102,6 +125,7 @@ export function AudioPlayerProvider({ children }: PropsWithChildren) {
 
   const stop = useCallback(() => {
     const audio = audioRef.current;
+    suppressPauseRef.current = true;
     audio?.pause();
     // Drops the buffered resource; the element is reused for the next track.
     audio?.removeAttribute("src");
@@ -131,18 +155,36 @@ export function AudioPlayerProvider({ children }: PropsWithChildren) {
 
     const updateTime = () => setCurrentTime(audio.currentTime);
     const updateDuration = () => setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
-    const syncPlaybackState = () => setIsPlaying(!audio.paused);
+    const handlePlay = () => {
+      suppressPauseRef.current = false;
+      setIsPlaying(true);
+      const current = trackRef.current;
+      if (current) {
+        onPlayRef.current?.(current);
+      }
+    };
+    const handlePause = () => {
+      setIsPlaying(false);
+      if (suppressPauseRef.current) {
+        suppressPauseRef.current = false;
+        return;
+      }
+      const current = trackRef.current;
+      if (current) {
+        onPauseRef.current?.(current);
+      }
+    };
 
     audio.addEventListener("timeupdate", updateTime);
     audio.addEventListener("loadedmetadata", updateDuration);
-    audio.addEventListener("play", syncPlaybackState);
-    audio.addEventListener("pause", syncPlaybackState);
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
 
     return () => {
       audio.removeEventListener("timeupdate", updateTime);
       audio.removeEventListener("loadedmetadata", updateDuration);
-      audio.removeEventListener("play", syncPlaybackState);
-      audio.removeEventListener("pause", syncPlaybackState);
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
     };
   }, []);
 

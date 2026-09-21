@@ -1,7 +1,10 @@
+"use client";
+
+import { trackComparisonInteract } from "@httpjpg/analytics";
 import type { SbImageComparisonData } from "@httpjpg/storyblok-utils";
 import { getResponsiveImage } from "@httpjpg/storyblok-utils";
 import { Box, ImageComparisonSlider } from "@httpjpg/ui";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 
 import { editableAttrs, sizesFromWidths, spacingCss, widthCss } from "../../lib/use-blok";
 import { SbCaption, type SbCaptionProps } from "../caption/SbCaption";
@@ -29,6 +32,10 @@ export const SbImageComparison = memo(function SbImageComparison({ blok }: SbIma
     showPosition = true,
   } = blok;
   const editable = editableAttrs(blok);
+
+  const handleInteract = useCallback(() => {
+    trackComparisonInteract({ orientation });
+  }, [orientation]);
 
   if (!before?.filename || !after?.filename) {
     return null;
@@ -68,6 +75,7 @@ export const SbImageComparison = memo(function SbImageComparison({ blok }: SbIma
         showLabels={showLabels}
         showPosition={showPosition}
         aspectRatio={aspectRatio}
+        onInteract={handleInteract}
       />
       {!!caption?.content?.length && <SbCaption data={caption as SbCaptionProps["data"]} />}
     </Box>

@@ -17,7 +17,7 @@
   "dependencies": {
     "@httpjpg/spotify": "workspace:*",
     "@httpjpg/tokens": "workspace:*",
-    "react-draggable": "^4.7.1"
+    "react-draggable": "^4.7.2"
   },
   "devDependencies": {
     "@httpjpg/ui": "workspace:*",

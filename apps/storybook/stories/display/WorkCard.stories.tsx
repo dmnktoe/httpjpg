@@ -15,7 +15,7 @@ const meta = {
     docs: {
       story: {
         inline: false,
-        iframeHeight: 800, // Set explicit height for iframe
+        iframeHeight: 800,
       },
     },
     argos: { fitToContent: false },

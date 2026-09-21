@@ -21,7 +21,7 @@ const FAQ_ITEMS = [
   {
     id: "fonts",
     title: "What fonts do you use?",
-    content: "Inter for body, JetBrains Mono for code, system serif for accents.",
+    content: "Arial for body, Impact for headlines, system mono for code.",
   },
 ];
 

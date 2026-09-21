@@ -238,9 +238,12 @@ export default function MyPage() {
               {[
                 {
                   cat: "Layout",
-                  items: "Box · Grid · Center · Container · Stack · Section · Page",
+                  items: "Box · Grid · GridItem · Center · Container · Stack · Section · Page",
                 },
-                { cat: "Typography", items: "Headline · Paragraph · Link · AsciiArt" },
+                {
+                  cat: "Typography",
+                  items: "Headline · Paragraph · Link · AsciiArt · ShimmeringText",
+                },
                 {
                   cat: "Media",
                   items:
@@ -249,7 +252,7 @@ export default function MyPage() {
                 {
                   cat: "Display",
                   items:
-                    "Accordion · Callout · CodeBlock · Stats · List · Tag · WorkCard · CopyrightLabel",
+                    "Accordion · Callout · CodeBlock · Stats · List · Tag · WorkCard · CopyrightLabel · Icon · Tooltip · ImagePreview · WorkList · Badges",
                 },
                 { cat: "Inputs", items: "Button · ButtonGroup · IconButton · Loading · Checkbox" },
                 { cat: "Navigation", items: "Header · Footer · NavLink · SearchTrigger" },

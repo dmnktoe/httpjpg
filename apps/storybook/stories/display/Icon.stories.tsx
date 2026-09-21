@@ -1,16 +1,5 @@
-import { Box, Icon, type IconName } from "@httpjpg/ui";
+import { Box, ICON_NAMES, Icon } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
-
-const ICON_NAMES: IconName[] = [
-  "arrow-up",
-  "arrow-down",
-  "arrow-left",
-  "arrow-right",
-  "play",
-  "pause",
-  "volume",
-  "volume-mute",
-];
 
 /**
  * SVG icons from the set. Inherit `currentColor`; size follows font-size unless set.
@@ -25,7 +14,7 @@ const meta = {
   argTypes: {
     name: {
       control: "select",
-      options: ICON_NAMES,
+      options: [...ICON_NAMES],
       description: "Icon name",
     },
     size: {
@@ -41,9 +30,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Playground with live controls
- */
 export const Playground: Story = {
   args: {
     name: "arrow-up",
@@ -51,9 +37,6 @@ export const Playground: Story = {
   },
 };
 
-/**
- * All icons overview
- */
 export const Overview: Story = {
   args: {
     name: "arrow-up",
@@ -96,9 +79,6 @@ export const Overview: Story = {
   ),
 };
 
-/**
- * Different sizes
- */
 export const Sizes: Story = {
   args: {
     name: "arrow-up",
@@ -126,9 +106,6 @@ export const Sizes: Story = {
   ),
 };
 
-/**
- * With colors
- */
 export const Colors: Story = {
   args: {
     name: "arrow-up",
@@ -147,9 +124,6 @@ export const Colors: Story = {
   ),
 };
 
-/**
- * All arrow directions
- */
 export const Arrows: Story = {
   args: {
     name: "arrow-up",

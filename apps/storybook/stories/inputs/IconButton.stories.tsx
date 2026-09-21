@@ -1,4 +1,4 @@
-import { Box, IconButton, Stack } from "@httpjpg/ui";
+import { Box, ICON_NAMES, IconButton, Stack } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
@@ -9,16 +9,7 @@ const meta = {
   argTypes: {
     icon: {
       control: "select",
-      options: [
-        "arrow-up",
-        "arrow-down",
-        "arrow-left",
-        "arrow-right",
-        "play",
-        "pause",
-        "volume",
-        "volume-mute",
-      ],
+      options: [...ICON_NAMES],
       description: "Icon glyph from the bundled icon set",
     },
     variant: {

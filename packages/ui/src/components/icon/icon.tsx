@@ -6,16 +6,19 @@ import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
 
-export type IconName =
-  | "arrow-up"
-  | "arrow-down"
-  | "arrow-left"
-  | "arrow-right"
-  | "close"
-  | "play"
-  | "pause"
-  | "volume"
-  | "volume-mute";
+export const ICON_NAMES = [
+  "arrow-up",
+  "arrow-down",
+  "arrow-left",
+  "arrow-right",
+  "close",
+  "play",
+  "pause",
+  "volume",
+  "volume-mute",
+] as const;
+
+export type IconName = (typeof ICON_NAMES)[number];
 
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "css"> {
   name: IconName;

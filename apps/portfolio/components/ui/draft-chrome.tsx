@@ -2,7 +2,13 @@
 
 import { PageBadgeProvider } from "@httpjpg/ui";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
+import { Suspense, useEffect, useState, type ReactNode } from "react";
+
+export interface DraftChromeProps {
+  children?: ReactNode;
+  /** Server-side Draft Mode (`draftMode().isEnabled`). The bypass cookie is HttpOnly. */
+  draftModeEnabled?: boolean;
+}
 
 function DraftQueryDetector({ onChange }: { onChange: (draft: boolean) => void }) {
   const searchParams = useSearchParams();
@@ -16,10 +22,9 @@ function DraftQueryDetector({ onChange }: { onChange: (draft: boolean) => void }
   return null;
 }
 
-function DraftChromeView({ children }: { children?: ReactNode }) {
-  const cookieDraft = useSyncExternalStore(subscribeNever, getDraftCookieSnapshot, getServerFalse);
+export function DraftChrome({ children, draftModeEnabled = false }: DraftChromeProps) {
   const [queryDraft, setQueryDraft] = useState(false);
-  const isDraft = cookieDraft || queryDraft;
+  const isDraft = draftModeEnabled || queryDraft;
 
   return (
     <>
@@ -29,20 +34,4 @@ function DraftChromeView({ children }: { children?: ReactNode }) {
       {isDraft ? <PageBadgeProvider>{children}</PageBadgeProvider> : children}
     </>
   );
-}
-
-export function DraftChrome({ children }: { children?: ReactNode }) {
-  return <DraftChromeView>{children}</DraftChromeView>;
-}
-
-function subscribeNever() {
-  return () => {};
-}
-
-function getDraftCookieSnapshot() {
-  return document.cookie.includes("__prerender_bypass");
-}
-
-function getServerFalse() {
-  return false;
 }

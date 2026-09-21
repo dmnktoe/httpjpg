@@ -13,24 +13,13 @@ vi.mock("next/navigation", () => ({
 
 import { DraftChrome } from "./draft-chrome";
 
-function clearCookies() {
-  for (const cookie of document.cookie.split(";")) {
-    const name = cookie.split("=")[0]?.trim();
-    if (name) {
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-    }
-  }
-}
-
 describe("DraftChrome", () => {
   beforeEach(() => {
     searchParamKeys = new Set();
-    clearCookies();
   });
 
   afterEach(() => {
     cleanup();
-    clearCookies();
   });
 
   it("renders nothing outside of draft mode", () => {
@@ -40,10 +29,8 @@ describe("DraftChrome", () => {
     expect(document.body.querySelector("[data-page-badge]")).toBeNull();
   });
 
-  it("renders draft chrome when the draft-bypass cookie is present", () => {
-    document.cookie = "__prerender_bypass=token";
-
-    render(<DraftChrome />);
+  it("renders draft chrome when server Draft Mode is enabled", () => {
+    render(<DraftChrome draftModeEnabled />);
 
     expect(screen.getByRole("status", { name: /preview mode/i })).toHaveTextContent("draft");
     expect(screen.getByRole("link", { name: "Exit draft preview" })).toHaveAttribute(
@@ -70,10 +57,8 @@ describe("DraftChrome", () => {
   });
 
   it("puts the work URL and editor pills in one cluster", () => {
-    document.cookie = "__prerender_bypass=token";
-
     render(
-      <DraftChrome>
+      <DraftChrome draftModeEnabled>
         <PageBadge
           href="https://external.dev"
           editHref="https://app.storyblok.com/#/me/spaces/7/stories/0/0/9"

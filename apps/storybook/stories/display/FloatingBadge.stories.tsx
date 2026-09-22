@@ -1,33 +1,27 @@
-import { Box, FloatingPreviewBadge } from "@httpjpg/ui";
+import { Box, FloatingBadge, workPreviewAction } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ReactNode } from "react";
 
 const meta = {
-  title: "Display/FloatingPreviewBadge",
-  component: FloatingPreviewBadge,
+  title: "Display/FloatingBadge",
+  component: FloatingBadge,
   parameters: {
     layout: "fullscreen",
     docs: {
       story: { inline: false, iframeHeight: 360 },
+      description: {
+        component: "Portalled glass pills. `accentColor` tints pills marked `accented`.",
+      },
     },
   },
   tags: ["autodocs"],
   argTypes: {
-    href: {
-      control: "text",
-      description: "External URL the badge points to",
-    },
-    label: {
-      control: "text",
-      description: "Label shown inside the pill on desktop",
-      table: { defaultValue: { summary: "preview" } },
-    },
     accentColor: {
       control: "color",
-      description: "Work page Project Accent Color — tints the portalled glass pill",
+      description: "Work page Project Accent Color — tints accented pills only",
     },
   },
-} satisfies Meta<typeof FloatingPreviewBadge>;
+} satisfies Meta<typeof FloatingBadge>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -50,42 +44,28 @@ const Stage = ({ children }: { children: ReactNode }) => (
 );
 
 export const Default: Story = {
-  args: {
-    href: "https://example.com",
-    label: "preview",
-  },
-  render: (args) => (
+  render: () => (
     <Stage>
-      <FloatingPreviewBadge {...args} />
+      <FloatingBadge actions={[workPreviewAction("https://example.com")]} />
     </Stage>
   ),
 };
 
 export const CustomLabel: Story = {
-  args: {
-    href: "https://example.com",
-    label: "DEMO",
-  },
-  render: (args) => (
+  render: () => (
     <Stage>
-      <FloatingPreviewBadge {...args} />
+      <FloatingBadge actions={[workPreviewAction("https://example.com", "DEMO")]} />
     </Stage>
   ),
 };
 
-/**
- * The same hex that tints iOS liquid-glass icons. Set on the portalled node
- * so the pill does not depend on `html` custom properties.
- */
 export const WorkAccent: Story = {
   args: {
-    href: "https://example.com",
-    label: "preview",
     accentColor: "#EC6839",
   },
   render: (args) => (
     <Stage>
-      <FloatingPreviewBadge {...args} />
+      <FloatingBadge {...args} actions={[workPreviewAction("https://example.com")]} />
     </Stage>
   ),
 };

@@ -47,6 +47,12 @@ export { imagePreset } from "./image-presets";
 export { getResponsiveImage } from "./image-processing";
 export type { ResponsiveImage, ResponsiveImageOptions } from "./image-processing";
 export { firstImage, firstImageFilename, isVideoAsset, toSlideshowImage } from "./media-utils";
+export {
+  parseStoryblokEditable,
+  storyblokEditorHref,
+  storyblokEditorHrefFromEditable,
+} from "./editable";
+export type { StoryblokEditableMeta } from "./editable";
 export { validateStoryblokPreviewToken } from "./preview";
 export type {
   StoryblokApiResponse,

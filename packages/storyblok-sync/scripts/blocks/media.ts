@@ -1,5 +1,6 @@
 import type { BlockDef } from "../lib/block";
 import { field, tabbed } from "../lib/fields";
+import { ENTRANCE_ANIMATION_OPTIONS } from "../lib/motion";
 import { inlineOptions, OVERLAY_PATTERN_OPTIONS } from "../lib/options";
 import { withSpacing } from "../lib/spacing";
 
@@ -17,16 +18,6 @@ const FETCH_PRIORITY_OPTIONS = [
 ];
 
 const SLIDESHOW_EFFECTS = ["slide", "fade", "cube", "coverflow", "flip", "cards", "creative"];
-
-const SLIDESHOW_ANIMATIONS = [
-  { name: "None", value: "none" },
-  { name: "Fade In", value: "fadeIn" },
-  { name: "Zoom In", value: "zoomIn" },
-  { name: "Slide In Left", value: "slideInFromLeft" },
-  { name: "Slide In Right", value: "slideInFromRight" },
-  { name: "Slide Up", value: "slideUp" },
-  { name: "Slide Down", value: "slideDown" },
-];
 
 const VIDEO_SOURCES = [
   { name: "Native", value: "native" },
@@ -227,7 +218,7 @@ export const mediaBlocks: BlockDef[] = [
         showNavigation: field.boolean("Show Navigation", "true"),
       }),
       ...tabbed("Animation", "animation", {
-        animation: field.options("Entrance Animation", SLIDESHOW_ANIMATIONS, {
+        animation: field.options("Entrance Animation", ENTRANCE_ANIMATION_OPTIONS, {
           default_value: "none",
         }),
         animationDelay: field.number("Animation Delay (s)", { default_value: "0" }),

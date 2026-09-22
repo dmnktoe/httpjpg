@@ -6,7 +6,13 @@ import { createPortal } from "react-dom";
 
 import { getConsent, setConsent } from "../consent";
 import type { ConsentCategory, ConsentState } from "../types";
-import { DEFAULT_CONSENT_STATE, EXTERNAL_VENDORS, REQUIRED_CATEGORIES } from "../types";
+import {
+  DEFAULT_CONSENT_STATE,
+  EXTERNAL_VENDORS,
+  impliedConsent,
+  OPT_OUT_CATEGORIES,
+  REQUIRED_CATEGORIES,
+} from "../types";
 import { useConsent } from "../use-consent";
 import { ConsentCategoryList } from "./consent-category-list";
 
@@ -21,7 +27,7 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
   const savedConsent = useConsent();
   const [showDetails, setShowDetails] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());
-  const [consent, setConsentState] = useState<ConsentState>(DEFAULT_CONSENT_STATE);
+  const [consent, setConsentState] = useState<ConsentState>(impliedConsent);
   const [forceOpen, setForceOpen] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [seededFrom, setSeededFrom] = useState<ConsentState | null>(null);
@@ -92,10 +98,13 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
     });
   };
 
-  // Count only the named opt-in third parties: required vendors (e.g. Sentry)
-  // receive data regardless of consent, and "generic-media" is a catch-all.
+  // Count only opt-in third parties (media embeds). Privacy-friendly analytics
+  // is opt-out and self-hosted, so it is not billed as a "trusted partner" ask.
   const trustedPartnerCount = Object.entries(EXTERNAL_VENDORS).filter(
-    ([key, vendor]) => key !== "generic-media" && !REQUIRED_CATEGORIES.has(vendor.category),
+    ([key, vendor]) =>
+      key !== "generic-media" &&
+      !REQUIRED_CATEGORIES.has(vendor.category) &&
+      !OPT_OUT_CATEGORIES.has(vendor.category),
   ).length;
 
   const isVisible = mounted && !dismissed && (forceOpen || savedConsent === null);
@@ -139,25 +148,26 @@ export function CookieBanner({ onAcceptAll, onRejectAll, onSavePreferences }: Co
         </Box>
 
         <Box as="p" css={{ m: 0, mb: "4", fontSize: "sm" }}>
-          🎀 ⋆ﾟ･ httpjpg uses personal data collected on this site — such as page visits via cookies
-          and other device identifiers — to generate personalized content, store your preferences,
-          and analyze usage to improve the experience. If you consent, we also let up to{" "}
+          🎀 ⋆ﾟ･ httpjpg uses a first-party preference cookie and privacy-friendly, cookieless
+          analytics (Umami on our own EU server) by default — you can opt out anytime. If you
+          consent, we also let up to{" "}
           <Box as="strong" css={{ color: "primary.500", fontWeight: "bold" }}>
-            {trustedPartnerCount} trusted third-party services
+            {trustedPartnerCount} trusted third-party media services
           </Box>{" "}
-          receive data from this site or store and access cookies on your device to measure
-          effectiveness and gain audience insights. You can review each service and its{" "}
-          <BannerLink onClick={() => setShowDetails(true)}>Privacy Policy ↗</BannerLink> below. By
-          clicking{" "}
+          receive data from this site or store and access cookies on your device when embeds load.
+          You can review each service, its{" "}
+          <BannerLink onClick={() => setShowDetails(true)}>Privacy Policy ↗</BannerLink>, and
+          cookiedatabase.org entries below. By clicking{" "}
           <Box as="strong" css={{ fontWeight: "bold" }}>
             “Accept All”
           </Box>{" "}
-          you consent to these activities. Click{" "}
+          you consent to media embeds too. Click{" "}
           <Box as="strong" css={{ fontWeight: "bold" }}>
             “Reject All”
           </Box>{" "}
-          to object, or <BannerLink onClick={() => setShowDetails(true)}>“Customize”</BannerLink> to
-          make detailed choices and learn more. You can change these settings anytime. 🍪 ⋆ﾟ･
+          to opt out of analytics and keep embeds blocked, or{" "}
+          <BannerLink onClick={() => setShowDetails(true)}>“Customize”</BannerLink> to make detailed
+          choices. You can change these settings anytime. 🍪 ⋆ﾟ･
         </Box>
 
         {showDetails && (

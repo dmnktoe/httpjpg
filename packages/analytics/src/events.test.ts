@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@httpjpg/env", () => ({
   env: {
-    NEXT_PUBLIC_GA_MEASUREMENT_ID: "G-TEST123",
     NEXT_PUBLIC_UMAMI_ID: "test-website-id",
     NODE_ENV: "production",
   },
@@ -17,32 +16,20 @@ import {
   trackOutboundClick,
   trackSearchOpen,
   trackSearchSelect,
-  trackWebVital,
 } from "./events";
 
 describe("analytics event fan-out", () => {
-  let gtagSpy: ReturnType<typeof vi.fn>;
   let umamiSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    gtagSpy = vi.fn();
     umamiSpy = vi.fn();
-    vi.stubGlobal("window", { gtag: gtagSpy, umami: { track: umamiSpy } });
+    vi.stubGlobal("window", { umami: { track: umamiSpy } });
   });
 
-  it("trackNowPlayingClick reaches both providers", () => {
+  it("trackNowPlayingClick reaches Umami", () => {
     trackNowPlayingClick({ title: "Song", artist: "Artist" });
 
-    expect(gtagSpy).toHaveBeenCalledWith(
-      "event",
-      "now_playing_click",
-      expect.objectContaining({
-        event_label: "spotify_widget",
-        title: "Song",
-        artist: "Artist",
-      }),
-    );
     expect(umamiSpy).toHaveBeenCalledWith("now_playing_click", {
       widget: "spotify",
       title: "Song",
@@ -50,43 +37,9 @@ describe("analytics event fan-out", () => {
     });
   });
 
-  it("trackWebVital rounds the value, rates it, and reaches both providers", () => {
-    trackWebVital("LCP", 2345.67);
-
-    expect(gtagSpy).toHaveBeenCalledWith(
-      "event",
-      "performance",
-      expect.objectContaining({ event_label: "LCP", value: 2346, rating: "good" }),
-    );
-    expect(umamiSpy).toHaveBeenCalledWith("web_vital", {
-      metric: "LCP",
-      value: 2346,
-      rating: "good",
-    });
-  });
-
-  it("trackWebVital marks poor LCP correctly", () => {
-    trackWebVital("LCP", 5000);
-    expect(umamiSpy).toHaveBeenCalledWith("web_vital", expect.objectContaining({ rating: "poor" }));
-  });
-
-  it("a missing provider does not block the other", () => {
-    vi.stubGlobal("window", { umami: { track: umamiSpy } });
-
-    trackNowPlayingClick();
-
-    expect(gtagSpy).not.toHaveBeenCalled();
-    expect(umamiSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it("trackEvent fans out a generic name and data", () => {
+  it("trackEvent sends a generic name and data", () => {
     trackEvent("custom_thing", { foo: "bar", count: 2 });
 
-    expect(gtagSpy).toHaveBeenCalledWith(
-      "event",
-      "custom_thing",
-      expect.objectContaining({ foo: "bar", count: 2 }),
-    );
     expect(umamiSpy).toHaveBeenCalledWith("custom_thing", { foo: "bar", count: 2 });
   });
 

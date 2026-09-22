@@ -5,7 +5,12 @@ import { useState } from "react";
 
 import { setConsent } from "../consent";
 import type { ConsentCategory, ConsentState } from "../types";
-import { CONSENT_CATEGORIES, DEFAULT_CONSENT_STATE, REQUIRED_CATEGORIES } from "../types";
+import {
+  CONSENT_CATEGORIES,
+  DEFAULT_CONSENT_STATE,
+  impliedConsent,
+  REQUIRED_CATEGORIES,
+} from "../types";
 import { useConsent } from "../use-consent";
 import { ConsentCategoryList } from "./consent-category-list";
 
@@ -26,7 +31,7 @@ export function CookieCenter({ onSave }: CookieCenterProps) {
   // Seed from the store on first render so saved preferences don't flash back
   // to defaults before the sync effect runs (e.g. on client-side navigation).
   const [consent, setConsentState] = useState<ConsentState>(
-    () => externalConsent ?? DEFAULT_CONSENT_STATE,
+    () => externalConsent ?? impliedConsent(),
   );
   const [expandedCategories, setExpandedCategories] = useState<Set<ConsentCategory>>(new Set());
   const [isSaved, setIsSaved] = useState(false);

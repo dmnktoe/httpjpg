@@ -11,6 +11,7 @@ export function UmamiAnalytics({ websiteId, src }: UmamiAnalyticsProps) {
       src={src}
       data-website-id={websiteId}
       data-do-not-track="true"
+      data-performance="true"
       strategy="afterInteractive"
     />
   );

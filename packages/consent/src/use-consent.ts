@@ -5,7 +5,7 @@ import { useSyncExternalStore } from "react";
 import { getConsent, readConsentCookie } from "./consent";
 import { CONSENT_CHANGE_EVENT } from "./events";
 import type { ConsentCategory, ConsentState, ExternalVendor } from "./types";
-import { EXTERNAL_VENDORS } from "./types";
+import { EXTERNAL_VENDORS, isCategoryAllowed } from "./types";
 
 function subscribe(onStoreChange: () => void): () => void {
   if (typeof window === "undefined") {
@@ -41,8 +41,8 @@ export function useConsent(): ConsentState | null {
 export function useConsentCategory(category: ConsentCategory): boolean {
   return useSyncExternalStore(
     subscribe,
-    () => getConsentSnapshot()?.[category] === true,
-    getServerFalse,
+    () => isCategoryAllowed(getConsentSnapshot(), category),
+    () => isCategoryAllowed(null, category),
   );
 }
 
@@ -51,15 +51,12 @@ export function useConsentCategory(category: ConsentCategory): boolean {
 export function useVendorConsent(vendor: ExternalVendor | null): boolean {
   return useSyncExternalStore(
     subscribe,
-    () => vendor === null || getConsentSnapshot()?.[EXTERNAL_VENDORS[vendor].category] === true,
-    () => vendor === null,
+    () =>
+      vendor === null || isCategoryAllowed(getConsentSnapshot(), EXTERNAL_VENDORS[vendor].category),
+    () => (vendor === null ? true : isCategoryAllowed(null, EXTERNAL_VENDORS[vendor].category)),
   );
 }
 
 function getServerConsent(): ConsentState | null {
   return null;
-}
-
-function getServerFalse(): boolean {
-  return false;
 }

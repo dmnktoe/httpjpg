@@ -64,9 +64,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Basic image with live controls
- */
 export const Basic: Story = {
   args: {
     src: OPTIMIZED_IMAGES.videoStill1,

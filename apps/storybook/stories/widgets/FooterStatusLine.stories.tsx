@@ -27,17 +27,15 @@ const meta = {
     label: { control: "text" },
     href: { control: "text" },
     loading: { control: "boolean" },
+    onClick: {
+      description: "Fires on the line — use for outbound analytics when href is set",
+    },
   },
 } satisfies Meta<typeof FooterStatusLine>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * One line of the footer's live status stack. The label sits at the lowest
- * opacity, the title at the highest, incidental detail in between — so the eye
- * lands on what changed rather than on the source name.
- */
 export const Playground: Story = {};
 
 /** Held while the request is in flight, so the footer does not jump when data lands. */

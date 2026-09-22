@@ -1,4 +1,4 @@
-import { Box, Image, Link } from "@httpjpg/ui";
+import { Box, formatYear, Image, Link } from "@httpjpg/ui";
 import type { MouseEventHandler } from "react";
 
 import { RELATED_LIST_ASPECT_RATIO, type RelatedWorkItem } from "@/lib/queries/related-work";
@@ -16,7 +16,7 @@ export function RelatedWorkRow({
   sharedTags,
   onClick,
 }: RelatedWorkRowProps) {
-  const year = date ? new Date(date).getFullYear() : null;
+  const year = formatYear(date);
 
   return (
     <Box as="li" css={{ borderColor: "pageBorder", borderTop: "1px solid" }}>

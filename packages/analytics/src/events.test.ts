@@ -8,14 +8,26 @@ vi.mock("@httpjpg/env", () => ({
 }));
 
 import {
+  trackAskAction,
   trackAskComplete,
+  trackAskError,
   trackAskSubmit,
+  trackAudioPause,
+  trackAudioPlay,
+  trackAudioSkip,
+  trackComparisonInteract,
   trackEvent,
+  trackLightboxClose,
+  trackLightboxNavigate,
   trackLightboxOpen,
+  trackLocaleSwitch,
   trackNowPlayingClick,
   trackOutboundClick,
+  trackRelatedWorkClick,
+  trackRelatedWorkView,
   trackSearchOpen,
   trackSearchSelect,
+  trackWorkNavClick,
 } from "./events";
 
 describe("analytics event fan-out", () => {
@@ -80,5 +92,49 @@ describe("analytics event fan-out", () => {
     trackEvent("scrub", { keep: "yes", skip: undefined, bad: Number.NaN });
 
     expect(umamiSpy).toHaveBeenCalledWith("scrub", { keep: "yes" });
+  });
+
+  it("media and nav helpers send structured payloads", () => {
+    const longHref = `https://example.com/${"a".repeat(600)}`;
+    trackLightboxNavigate({ type: "video", index: 2, count: 5 });
+    trackLightboxClose({ type: "video", index: 2 });
+    trackAudioPlay({ title: "One", href: longHref });
+    trackAudioPause({ title: "One", href: longHref });
+    trackAudioSkip({ direction: "next", title: "Two", href: "/two.mp3" });
+    trackWorkNavClick({ direction: "prev", slug: "field-recorder" });
+    trackRelatedWorkClick({ href: "/work/healform", view: "grid" });
+    trackRelatedWorkView("list");
+    trackLocaleSwitch({ from: "en", to: "de" });
+    trackComparisonInteract({ orientation: "vertical" });
+    trackAskError({ reason: "ai_busy" });
+    trackAskAction({ href: "/work/brutalist" });
+
+    expect(umamiSpy).toHaveBeenCalledWith("lightbox_navigate", {
+      type: "video",
+      index: 2,
+      count: 5,
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("lightbox_close", { type: "video", index: 2 });
+    const play = umamiSpy.mock.calls.find((call) => call[0] === "audio_play");
+    expect(play?.[1].href).toHaveLength(480);
+    expect(umamiSpy).toHaveBeenCalledWith("audio_pause", expect.objectContaining({ title: "One" }));
+    expect(umamiSpy).toHaveBeenCalledWith("audio_skip", {
+      direction: "next",
+      title: "Two",
+      href: "/two.mp3",
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("work_nav_click", {
+      direction: "prev",
+      slug: "field-recorder",
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("related_work_click", {
+      href: "/work/healform",
+      view: "grid",
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("related_work_view", { view: "list" });
+    expect(umamiSpy).toHaveBeenCalledWith("locale_switch", { from: "en", to: "de" });
+    expect(umamiSpy).toHaveBeenCalledWith("comparison_interact", { orientation: "vertical" });
+    expect(umamiSpy).toHaveBeenCalledWith("ask_error", { reason: "ai_busy" });
+    expect(umamiSpy).toHaveBeenCalledWith("ask_action", { href: "/work/brutalist" });
   });
 });

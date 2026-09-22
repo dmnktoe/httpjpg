@@ -21,7 +21,9 @@ vi.mock("@httpjpg/analytics", () => ({
 }));
 
 import {
+  trackAskAction,
   trackAskComplete,
+  trackAskError,
   trackAskSubmit,
   trackSearchOpen,
   trackSearchSelect,
@@ -245,6 +247,7 @@ describe("AskWidget", () => {
     fireEvent.click(screen.getByRole("button", { name: /ask/i }));
 
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/busy/i));
+    expect(trackAskError).toHaveBeenCalledWith({ reason: "ai_busy" });
   });
 
   it("explains a 503 as an unconfigured deployment", async () => {
@@ -259,6 +262,7 @@ describe("AskWidget", () => {
     await waitFor(() =>
       expect(screen.getByRole("alert")).toHaveTextContent(/not available on this deployment/i),
     );
+    expect(trackAskError).toHaveBeenCalledWith({ reason: "unavailable" });
   });
 
   it("reports a generic failure for other error statuses", async () => {
@@ -271,6 +275,7 @@ describe("AskWidget", () => {
     fireEvent.click(screen.getByRole("button", { name: /ask/i }));
 
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/answer failed/i));
+    expect(trackAskError).toHaveBeenCalledWith({ reason: "http_error" });
   });
 
   it("clears a stale answer when the query changes", async () => {
@@ -322,6 +327,7 @@ describe("AskWidget", () => {
     await waitFor(() => expect(screen.getByText("See this.")).toBeInTheDocument());
     fireEvent.click(screen.getByRole("button", { name: /go to Brutalist Portfolio/ }));
     expect(mockPush).toHaveBeenCalledWith("/work/brutalist");
+    expect(trackAskAction).toHaveBeenCalledWith({ href: "/work/brutalist" });
   });
 
   it("treats a missing search payload as empty and reports a thrown ask", async () => {
@@ -339,6 +345,7 @@ describe("AskWidget", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: /ask/i })).toBeInTheDocument());
     fireEvent.click(screen.getByRole("button", { name: /ask/i }));
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/answer failed/i));
+    expect(trackAskError).toHaveBeenCalledWith({ reason: "stream_error" });
   });
 
   it("reports a network failure from ask", async () => {
@@ -356,6 +363,7 @@ describe("AskWidget", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: /ask/i })).toBeInTheDocument());
     fireEvent.click(screen.getByRole("button", { name: /ask/i }));
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/answer failed/i));
+    expect(trackAskError).toHaveBeenCalledWith({ reason: "network_error" });
   });
 
   it("applies a suggestion and ignores an aborted in-flight search", async () => {

@@ -256,9 +256,6 @@ export const WithTags: Story = {
   args: MOCK_TAGGED_WORK,
 };
 
-/**
- * Fully customizable work card with live controls (Playground)
- */
 export const Playground: Story = {
   args: {
     title: "Brand Identity",

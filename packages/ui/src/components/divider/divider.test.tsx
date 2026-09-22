@@ -105,6 +105,18 @@ describe("Divider", () => {
     expect(screen.getByTestId("divider").style.color).not.toBe("");
   });
 
+  it("passes Storyblok hex colors through as-is", () => {
+    render(<Divider variant="ascii" color="#D4D4D4" data-testid="divider" />);
+
+    expect(screen.getByTestId("divider")).toHaveStyle({ color: "#D4D4D4" });
+  });
+
+  it("applies hex on solid borders too", () => {
+    render(<Divider color="#3B82F6" data-testid="divider" />);
+
+    expect(screen.getByTestId("divider")).toHaveStyle({ borderTopColor: "#3B82F6" });
+  });
+
   it("passes through arbitrary div props", () => {
     render(<Divider id="rule" aria-label="section break" data-testid="divider" />);
 

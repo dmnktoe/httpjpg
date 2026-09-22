@@ -33,10 +33,27 @@ export interface DividerProps extends Omit<ComponentPropsWithoutRef<"div">, "css
   pattern?: string;
   children?: ReactNode;
   thickness?: string;
-  /** Panda color token (e.g. `"neutral.300"`). */
+  /**
+   * Panda token path (`"neutral.300"`) or a raw CSS color.
+   * Storyblok `color-options` emit hex — those must pass through as-is.
+   */
   color?: string;
   spacing?: string | number;
   css?: SystemStyleObject;
+}
+
+/** Resolve a token path via Panda; leave hex / rgb / var() alone for the CMS. */
+function resolveDividerColor(color: string): string {
+  if (
+    color.startsWith("#") ||
+    color.startsWith("rgb") ||
+    color.startsWith("hsl") ||
+    color.startsWith("var(")
+  ) {
+    return color;
+  }
+  const fromToken = token(`colors.${color}` as never) as string | undefined;
+  return fromToken ?? color;
 }
 
 export const Divider = forwardRef<HTMLDivElement, DividerProps>(
@@ -55,7 +72,7 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
     },
     ref,
   ) => {
-    const resolvedColor = token(`colors.${dividerColor}` as never) as string;
+    const resolvedColor = resolveDividerColor(dividerColor);
     const horizontal = orientation === "horizontal";
     const resolvedPattern = pattern ?? (preset ? PRESETS[preset] : ASCII_DIVIDER_STARS);
 

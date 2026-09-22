@@ -12,4 +12,21 @@ describe("SbDivider", () => {
     render(<SbDivider blok={{ _uid: "2", component: "divider", label: "Section" } as never} />);
     expect(screen.getByText("Section")).toBeInTheDocument();
   });
+
+  it("forwards a Storyblok hex color onto the divider", () => {
+    render(
+      <SbDivider
+        blok={
+          {
+            _uid: "3",
+            component: "divider",
+            variant: "ascii",
+            pattern: "***",
+            color: "#D4D4D4",
+          } as never
+        }
+      />,
+    );
+    expect(screen.getByText("***")).toHaveStyle({ color: "#D4D4D4" });
+  });
 });

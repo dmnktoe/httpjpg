@@ -126,16 +126,19 @@ export const Solid: Story = {
  */
 export const ASCII: Story = {
   args: {
+    variant: "ascii",
+    color: "neutral.400",
+    spacing: 4,
     children: null,
   },
-  render: () => (
+  render: (args) => (
     <>
       <Paragraph>Section One</Paragraph>
-      <Divider variant="ascii" pattern="*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚" />
+      <Divider {...args} pattern="*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚" />
       <Paragraph>Section Two</Paragraph>
-      <Divider variant="ascii" pattern="・゜゜・。。・゜゜・。。・゜゜・。" />
+      <Divider {...args} pattern="・゜゜・。。・゜゜・。。・゜゜・。" />
       <Paragraph>Section Three</Paragraph>
-      <Divider variant="ascii" pattern="━━━━━━━ ∘◦ ❈ ◦∘ ━━━━━━━" />
+      <Divider {...args} pattern="━━━━━━━ ∘◦ ❈ ◦∘ ━━━━━━━" />
       <Paragraph>Section Four</Paragraph>
     </>
   ),

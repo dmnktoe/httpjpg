@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { MouseEventHandler, ReactNode } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
@@ -13,6 +13,8 @@ export interface FooterStatusLineProps {
   label?: string;
   /** Turns the whole line into an external link to the item it describes. */
   href?: string;
+  /** Click handler — useful for outbound analytics when `href` is set. */
+  onClick?: MouseEventHandler<HTMLElement>;
   /**
    * Replaces the children with a placeholder, holding the line's height while
    * the request is in flight so the footer does not jump when data lands.
@@ -31,6 +33,7 @@ export interface FooterStatusLineProps {
 export function FooterStatusLine({
   label,
   href,
+  onClick,
   loading = false,
   children,
   css: cssProp,
@@ -43,6 +46,7 @@ export function FooterStatusLine({
       href={isLink ? href : undefined}
       target={isLink ? "_blank" : undefined}
       rel={isLink ? "noopener noreferrer" : undefined}
+      onClick={onClick}
       css={{
         display: "flex",
         justifyContent: "center",

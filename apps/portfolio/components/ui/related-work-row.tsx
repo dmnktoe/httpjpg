@@ -1,6 +1,11 @@
 import { Box, Image, Link } from "@httpjpg/ui";
+import type { MouseEventHandler } from "react";
 
 import { RELATED_LIST_ASPECT_RATIO, type RelatedWorkItem } from "@/lib/queries/related-work";
+
+export interface RelatedWorkRowProps extends RelatedWorkItem {
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
+}
 
 export function RelatedWorkRow({
   title,
@@ -9,13 +14,15 @@ export function RelatedWorkRow({
   square,
   squareSrcSet,
   sharedTags,
-}: RelatedWorkItem) {
+  onClick,
+}: RelatedWorkRowProps) {
   const year = date ? new Date(date).getFullYear() : null;
 
   return (
     <Box as="li" css={{ borderColor: "pageBorder", borderTop: "1px solid" }}>
       <Link
         href={href}
+        onClick={onClick}
         css={{
           display: "flex",
           alignItems: "center",

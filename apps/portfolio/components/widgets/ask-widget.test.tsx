@@ -11,6 +11,22 @@ vi.mock("next/navigation", () => ({
   usePathname: () => mockPathname(),
 }));
 
+vi.mock("@httpjpg/analytics", () => ({
+  trackSearchOpen: vi.fn(),
+  trackSearchSelect: vi.fn(),
+  trackAskSubmit: vi.fn(),
+  trackAskComplete: vi.fn(),
+  trackAskError: vi.fn(),
+  trackAskAction: vi.fn(),
+}));
+
+import {
+  trackAskComplete,
+  trackAskSubmit,
+  trackSearchOpen,
+  trackSearchSelect,
+} from "@httpjpg/analytics";
+
 import { AskWidget } from "./ask-widget";
 
 const SEARCH_PAYLOAD = {
@@ -88,6 +104,7 @@ describe("AskWidget", () => {
     openPalette();
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(trackSearchOpen).toHaveBeenCalledWith("keyboard");
   });
 
   it("opens when the header trigger asks it to", () => {
@@ -96,6 +113,7 @@ describe("AskWidget", () => {
     fireEvent(window, new CustomEvent(OPEN_SEARCH_EVENT));
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(trackSearchOpen).toHaveBeenCalledWith("trigger");
   });
 
   it("stays open when the trigger fires again", () => {
@@ -105,6 +123,7 @@ describe("AskWidget", () => {
     fireEvent(window, new CustomEvent(OPEN_SEARCH_EVENT));
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(trackSearchOpen).toHaveBeenCalledTimes(1);
   });
 
   it("closes itself when the route changes underneath it", () => {
@@ -172,6 +191,11 @@ describe("AskWidget", () => {
     fireEvent.mouseDown(screen.getAllByRole("option")[0]);
 
     expect(mockPush).toHaveBeenCalledWith("/work/brutalist");
+    expect(trackSearchSelect).toHaveBeenCalledWith({
+      kind: "work",
+      href: "/work/brutalist",
+      queryLength: 6,
+    });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
@@ -207,6 +231,8 @@ describe("AskWidget", () => {
 
     await waitFor(() => expect(screen.getByText("It is a portfolio.")).toBeInTheDocument());
     expect(screen.getByRole("link", { name: /Brutalist Portfolio/ })).toBeInTheDocument();
+    expect(trackAskSubmit).toHaveBeenCalledWith({ queryLength: 13 });
+    expect(trackAskComplete).toHaveBeenCalledWith({ hasAction: false, sourceCount: 1 });
   });
 
   it("surfaces a busy model as a retryable message", async () => {

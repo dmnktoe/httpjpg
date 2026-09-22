@@ -5,13 +5,11 @@ import { env } from "@httpjpg/env";
 import {
   ASCII_DIVIDER_WAVE,
   AsciiArt,
-  AudioPlayerProvider,
   Box,
   Footer,
   Header,
   ImagePreview,
   LazyMotionProvider,
-  LightboxProvider,
   parseWorkAccent,
   Userbars,
   workAccentCssVars,
@@ -24,6 +22,10 @@ import type { CSSProperties, PropsWithChildren } from "react";
 import { ConsentGate } from "@/components/providers/consent-gate";
 import { ConsentProvider } from "@/components/providers/consent-provider";
 import { StoryblokProvider } from "@/components/providers/storyblok-provider";
+import {
+  TrackedAudioPlayerProvider,
+  TrackedLightboxProvider,
+} from "@/components/providers/tracked-media-providers";
 import { UmamiAnalytics } from "@/components/providers/umami-analytics";
 import { ConsoleBanner } from "@/components/ui/console-banner";
 import { CustomCursorWrapper } from "@/components/ui/custom-cursor-wrapper";
@@ -135,7 +137,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         {!inStoryblokEditor && <ConsentProvider />}
         <WebVitalsReporter />
         <ScrollToTop />
-        <AudioPlayerProvider>
+        <TrackedAudioPlayerProvider>
           <LazyMotionProvider>
             <StoryblokProvider>
               <CustomCursorWrapper
@@ -155,11 +157,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 showSearch={widgetConfig.askEnabled}
                 showScrollVeil={interfaceConfig.headerScrollVeilEnabled}
               />
-              <LightboxProvider>
+              <TrackedLightboxProvider>
                 <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
                   {children}
                 </Box>
-              </LightboxProvider>
+              </TrackedLightboxProvider>
               <Footer
                 backgroundImage={footerConfig.backgroundImage}
                 footerLinks={footerConfig.footerLinks}
@@ -220,7 +222,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               />
             </StoryblokProvider>
           </LazyMotionProvider>
-        </AudioPlayerProvider>
+        </TrackedAudioPlayerProvider>
 
         {(env.NEXT_PUBLIC_GA_MEASUREMENT_ID || env.NEXT_PUBLIC_UMAMI_ID) && (
           <ConsentGate category="analytics">

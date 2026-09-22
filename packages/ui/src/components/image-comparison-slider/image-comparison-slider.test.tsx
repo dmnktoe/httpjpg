@@ -121,6 +121,17 @@ describe("ImageComparisonSlider", () => {
     expect(screen.getByText("[ 072 / 100 ]")).toBeInTheDocument();
   });
 
+  it("notifies onInteract once across repeated changes", () => {
+    const onInteract = vi.fn();
+    renderSlider({ onInteract });
+    const slider = screen.getByRole("slider");
+
+    fireEvent.change(slider, { target: { value: "60" } });
+    fireEvent.change(slider, { target: { value: "70" } });
+
+    expect(onInteract).toHaveBeenCalledTimes(1);
+  });
+
   it("seeks from a pointer down on the frame", () => {
     renderSlider();
     const slider = screen.getByRole("slider");

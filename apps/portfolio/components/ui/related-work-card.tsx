@@ -1,6 +1,11 @@
 import { Box, Image, Link } from "@httpjpg/ui";
+import type { MouseEventHandler } from "react";
 
 import { RELATED_CARD_ASPECT_RATIO, type RelatedWorkItem } from "@/lib/queries/related-work";
+
+export interface RelatedWorkCardProps extends RelatedWorkItem {
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
+}
 
 export function RelatedWorkCard({
   title,
@@ -9,13 +14,15 @@ export function RelatedWorkCard({
   thumb,
   thumbSrcSet,
   sharedTags,
-}: RelatedWorkItem) {
+  onClick,
+}: RelatedWorkCardProps) {
   const year = date ? new Date(date).getFullYear() : null;
 
   return (
     <Box as="li" css={{ minW: 0 }}>
       <Link
         href={href}
+        onClick={onClick}
         css={{
           display: "flex",
           flexDirection: "column",

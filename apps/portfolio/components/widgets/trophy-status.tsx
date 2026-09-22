@@ -1,5 +1,6 @@
 "use client";
 
+import { trackOutboundClick } from "@httpjpg/analytics";
 import {
   FooterStatusLine,
   FooterStatusLineSeparator,
@@ -22,7 +23,11 @@ export function TrophyStatus({ trophy, avatar, loaded }: TrophyStatusProps) {
   }
 
   return (
-    <FooterStatusLine label="psn" href={trophy.url}>
+    <FooterStatusLine
+      label="psn"
+      href={trophy.url}
+      onClick={() => trackOutboundClick({ destination: "psn", href: trophy.url })}
+    >
       {avatar && <FooterStatusLineThumb src={avatar} size="4" shape="circle" />}
       {trophy.image && (
         <FooterStatusLineThumb src={trophy.image} size="4" shape="square" fit="contain" />

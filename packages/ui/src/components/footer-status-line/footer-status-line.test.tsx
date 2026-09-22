@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 
 import { FooterStatusLine } from "./footer-status-line";
 import { FooterStatusLineSeparator } from "./footer-status-line-separator";
@@ -30,6 +30,22 @@ describe("FooterStatusLine", () => {
     expect(link).toHaveAttribute("href", "https://letterboxd.com/film/dune");
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  it("forwards onClick when the line is a link", () => {
+    const onClick = vi.fn();
+    render(
+      <FooterStatusLine
+        label="letterboxd"
+        href="https://letterboxd.com/film/dune"
+        onClick={onClick}
+      >
+        Dune
+      </FooterStatusLine>,
+    );
+
+    fireEvent.click(screen.getByRole("link"));
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it("shows the placeholder instead of children while loading", () => {

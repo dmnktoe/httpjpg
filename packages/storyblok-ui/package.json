@@ -16,6 +16,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@httpjpg/analytics": "workspace:*",
     "@httpjpg/consent": "workspace:*",
     "@httpjpg/storyblok-richtext": "workspace:*",
     "@httpjpg/storyblok-utils": "workspace:*",

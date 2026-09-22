@@ -1,5 +1,6 @@
 "use client";
 
+import { trackOutboundClick } from "@httpjpg/analytics";
 import {
   FooterStatusLine,
   FooterStatusLineSeparator,
@@ -21,7 +22,11 @@ export function DiscogsStatus({ release, loaded }: DiscogsStatusProps) {
   }
 
   return (
-    <FooterStatusLine label="discogs" href={release.url}>
+    <FooterStatusLine
+      label="discogs"
+      href={release.url}
+      onClick={() => trackOutboundClick({ destination: "discogs", href: release.url })}
+    >
       {release.thumb && <FooterStatusLineThumb src={release.thumb} aspect="auto" />}
       <FooterStatusLineText maxWidth="240px">
         {release.artist} — {release.title}

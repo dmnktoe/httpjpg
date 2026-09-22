@@ -1,6 +1,14 @@
 "use client";
 
 import {
+  trackAskAction,
+  trackAskComplete,
+  trackAskError,
+  trackAskSubmit,
+  trackSearchOpen,
+  trackSearchSelect,
+} from "@httpjpg/analytics";
+import {
   type CommandPaletteAction,
   CommandPalette,
   type CommandPaletteMediaItem,
@@ -56,6 +64,15 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     setStatus("idle");
   }, []);
 
+  const openFrom = useCallback((source: "keyboard" | "trigger") => {
+    setIsOpen((open) => {
+      if (!open) {
+        trackSearchOpen(source);
+      }
+      return true;
+    });
+  }, []);
+
   const [menuPathname, setMenuPathname] = useState(pathname);
   if (pathname !== menuPathname) {
     setMenuPathname(pathname);
@@ -66,7 +83,13 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "k" && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
-        setIsOpen((open) => !open);
+        setIsOpen((open) => {
+          if (open) {
+            return false;
+          }
+          trackSearchOpen("keyboard");
+          return true;
+        });
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -74,10 +97,10 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
   }, []);
 
   useEffect(() => {
-    const handleOpen = () => setIsOpen(true);
+    const handleOpen = () => openFrom("trigger");
     window.addEventListener(OPEN_SEARCH_EVENT, handleOpen);
     return () => window.removeEventListener(OPEN_SEARCH_EVENT, handleOpen);
-  }, []);
+  }, [openFrom]);
 
   useEffect(() => {
     return () => {
@@ -143,6 +166,11 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
 
   const handleSelect = useCallback(
     (result: CommandPaletteResult) => {
+      trackSearchSelect({
+        kind: result.kind,
+        href: result.href,
+        queryLength: query.trim().length,
+      });
       close();
       if (result.href.startsWith("http")) {
         window.open(result.href, "_blank", "noopener,noreferrer");
@@ -150,7 +178,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
       }
       router.push(result.href);
     },
-    [close, router],
+    [close, query, router],
   );
 
   const handleAsk = useCallback(async (question: string) => {
@@ -167,6 +195,10 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     setAction(undefined);
     setErrorMessage(undefined);
     setStatus("answering");
+    trackAskSubmit({ queryLength: question.trim().length });
+
+    let sourceCount = 0;
+    let hasAction = false;
 
     try {
       const response = await fetch("/api/ask", {
@@ -178,20 +210,23 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
 
       if (!response.ok || !response.body) {
         setStatus("error");
-        setErrorMessage(
+        const reason =
           response.status === 503
             ? "Ask is not available on this deployment."
-            : "The answer failed. Try the search results instead.",
-        );
+            : "The answer failed. Try the search results instead.";
+        setErrorMessage(reason);
+        trackAskError({ reason: response.status === 503 ? "unavailable" : "http_error" });
         return;
       }
 
       for await (const event of readAskStream(response.body)) {
         if (event.type === "sources") {
+          sourceCount = event.sources.length;
           setSources(event.sources);
         } else if (event.type === "delta") {
           setAnswer((current) => current + event.text);
         } else if (event.type === "action") {
+          hasAction = true;
           setAction(event.action);
         } else {
           setStatus("error");
@@ -200,11 +235,13 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
               ? "The model is busy. Try again in a moment."
               : "The answer failed. Try the search results instead.",
           );
+          trackAskError({ reason: event.error === "ai_busy" ? "ai_busy" : "stream_error" });
           return;
         }
       }
 
       setStatus("idle");
+      trackAskComplete({ hasAction, sourceCount });
     } catch (error) {
       if (controller.signal.aborted) {
         return;
@@ -212,6 +249,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
       console.error("Ask request failed:", error);
       setStatus("error");
       setErrorMessage("The answer failed. Try the search results instead.");
+      trackAskError({ reason: "network_error" });
     }
   }, []);
 
@@ -226,6 +264,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
 
   const handleAction = useCallback(
     (target: CommandPaletteAction) => {
+      trackAskAction({ href: target.href });
       close();
       router.push(target.href);
     },

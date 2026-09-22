@@ -8,6 +8,8 @@
 
 Brutalist design portfolio built on a 12-column grid. Mono type, hard edges, maximalist accents — ASCII and kawaii decorations live in the rendered UI, not in the margins. Monochrome palette with vibrant accents, custom cursor, mouse trail. Storyblok in the back, Next.js in the front, Panda CSS doing the styling, design tokens as the single source of truth.
 
+The native iOS reader lives in [`dmnktoe/httpjpg-ios`](https://github.com/dmnktoe/httpjpg-ios).
+
 *ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚
 
 **Domenik Töfflinger** · [@dmnktoe](https://github.com/dmnktoe)<br/>

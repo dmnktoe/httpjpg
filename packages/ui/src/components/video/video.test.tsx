@@ -106,6 +106,12 @@ describe("Video", () => {
     expect(screen.getByLabelText("Seek")).toBeInTheDocument();
   });
 
+  it("shows the control bar when autoplay is off so a paused video can be started", () => {
+    render(<Video src="/clip.mp4" autoPlay={false} controls />);
+    const bar = screen.getByLabelText("Seek").parentElement as HTMLElement;
+    expect(bar).toHaveStyle({ opacity: "1" });
+  });
+
   it("marks the video as loaded when it already has data on mount", () => {
     const readyState = vi
       .spyOn(window.HTMLMediaElement.prototype, "readyState", "get")

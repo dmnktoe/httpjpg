@@ -40,6 +40,7 @@ const headlineClampSizes = [
   "clamp(2.25rem, 5vw + 1rem, 3.75rem)",
   "clamp(1.875rem, 4vw + 1rem, 3rem)",
   "clamp(1.5rem, 3vw + 0.5rem, 2.25rem)",
+  "clamp(1.25rem, 2vw + 0.25rem, 1.5rem)",
 ];
 
 export default defineConfig({

@@ -12,7 +12,7 @@ export const DIVIDER_ORIENTATION_OPTIONS = ["horizontal", "vertical"] as const;
 export const OBJECT_FIT_OPTIONS = ["cover", "contain", "fill", "none", "scale-down"] as const;
 export const CONTAINER_SIZE_OPTIONS = ["sm", "md", "lg", "xl", "2xl", "fluid"] as const;
 export const BUTTON_VARIANT_OPTIONS = ["primary", "secondary", "accent", "danger"] as const;
-export const HEADLINE_LEVEL_OPTIONS = [1, 2, 3] as const;
+export const HEADLINE_LEVEL_OPTIONS = [1, 2, 3, 4] as const;
 
 export function spacingArgType(description: string, defaultValue: number | string = "4") {
   return {

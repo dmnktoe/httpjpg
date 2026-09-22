@@ -20,7 +20,7 @@ const meta = {
       description: "Visual hierarchy level (affects font size)",
       table: {
         defaultValue: { summary: "1" },
-        type: { summary: "1 | 2 | 3" },
+        type: { summary: "1 | 2 | 3 | 4" },
       },
     },
     as: {
@@ -28,7 +28,7 @@ const meta = {
       options: ["h1", "h2", "h3", "h4", "h5", "h6"] as const,
       description: "Semantic HTML element to render (overrides default element based on level)",
       table: {
-        defaultValue: { summary: "matches level (h1, h2, or h3)" },
+        defaultValue: { summary: "matches level (h1–h4)" },
         type: { summary: "h1 | h2 | h3 | h4 | h5 | h6" },
       },
     },
@@ -90,6 +90,13 @@ export const H3: Story = {
   },
 };
 
+export const H4: Story = {
+  args: {
+    level: 4,
+    children: "This is a Headline Level 4",
+  },
+};
+
 export const AllLevels: Story = {
   args: {
     children: "Responsive Typography",
@@ -111,6 +118,9 @@ export const AllLevels: Story = {
       </Headline>
       <Headline {...args} level={3}>
         Level 3: Subsection Title
+      </Headline>
+      <Headline {...args} level={4}>
+        Level 4: Minor Heading
       </Headline>
     </div>
   ),

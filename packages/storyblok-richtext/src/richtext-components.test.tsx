@@ -89,15 +89,17 @@ describe("richTextComponents · text blocks", () => {
       { type: "heading", attrs: { level: 1 }, content: [text("One")] },
       { type: "heading", attrs: { level: 2 }, content: [text("Two")] },
       { type: "heading", attrs: { level: 3 }, content: [text("Three")] },
+      { type: "heading", attrs: { level: 4 }, content: [text("Four")] },
     ]);
     expect(screen.getByRole("heading", { level: 1, name: "One" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 2, name: "Two" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 3, name: "Three" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 4, name: "Four" })).toBeInTheDocument();
   });
 
-  it("keeps the semantic tag for headings deeper than level 3", () => {
-    renderDoc([{ type: "heading", attrs: { level: 4 }, content: [text("Four")] }]);
-    expect(screen.getByRole("heading", { level: 4, name: "Four" })).toBeInTheDocument();
+  it("keeps the semantic tag for headings deeper than level 4", () => {
+    renderDoc([{ type: "heading", attrs: { level: 5 }, content: [text("Five")] }]);
+    expect(screen.getByRole("heading", { level: 5, name: "Five" })).toBeInTheDocument();
   });
 
   it("applies heading text alignment from Storyblok attrs", () => {
@@ -196,6 +198,9 @@ describe("richTextComponents · code", () => {
     const code = container.querySelector("code");
     expect(code).toHaveTextContent("inline");
     expect(code).not.toHaveAttribute("data-inline-code");
+    // Theme-aware chip: light bg on light pages, dark bg under data-theme=dark
+    // (see InlineCodeRenderer `_pageDark`) so pageFg stays readable.
+    expect(code?.className).toBeTruthy();
   });
 });
 

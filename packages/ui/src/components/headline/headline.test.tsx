@@ -24,6 +24,13 @@ describe("Headline", () => {
     expect(heading).toHaveTextContent("Level 3");
   });
 
+  it("renders h4 when level is 4", () => {
+    render(<Headline level={4}>Level 4</Headline>);
+    const heading = screen.getByRole("heading", { level: 4 });
+    expect(heading).toBeInTheDocument();
+    expect(heading).toHaveTextContent("Level 4");
+  });
+
   it("applies default font treatment", () => {
     render(<Headline>Default</Headline>);
     const heading = screen.getByRole("heading", { level: 1 });

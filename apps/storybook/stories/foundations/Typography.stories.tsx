@@ -268,7 +268,8 @@ export const TypographyGuide = {
 
 <Headline level={1}>BRUTALIST DESIGN</Headline>
 <Headline level={2}>Section Title</Headline>
-<Headline level={3}>Subsection</Headline>`}
+<Headline level={3}>Subsection</Headline>
+<Headline level={4}>Minor Heading</Headline>`}
           </pre>
         </Box>
         <Box css={{ p: "4", bg: "neutral.50", borderRadius: "md" }}>
@@ -278,7 +279,10 @@ export const TypographyGuide = {
           <Headline level={2} css={{ mb: "4" }}>
             Section Title
           </Headline>
-          <Headline level={3}>Subsection</Headline>
+          <Headline level={3} css={{ mb: "4" }}>
+            Subsection
+          </Headline>
+          <Headline level={4}>Minor Heading</Headline>
         </Box>
       </Box>
 

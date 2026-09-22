@@ -4,10 +4,16 @@ import { describe, expect, it, vi } from "vitest";
 
 import { VideoControls } from "./video-controls";
 
-function setup({ show = true }: { show?: boolean } = {}) {
+function setup({ show = true, paused = true }: { show?: boolean; paused?: boolean } = {}) {
   const video = document.createElement("video");
-  video.play = vi.fn();
-  video.pause = vi.fn();
+  video.play = vi.fn(() => {
+    Object.defineProperty(video, "paused", { value: false, configurable: true });
+    return Promise.resolve();
+  });
+  video.pause = vi.fn(() => {
+    Object.defineProperty(video, "paused", { value: true, configurable: true });
+  });
+  Object.defineProperty(video, "paused", { value: paused, configurable: true });
   // jsdom's HTMLMediaElement ignores currentTime writes; make it observable.
   Object.defineProperty(video, "currentTime", { value: 0, writable: true, configurable: true });
   document.body.appendChild(video);
@@ -17,6 +23,14 @@ function setup({ show = true }: { show?: boolean } = {}) {
 
   const utils = render(<VideoControls videoRef={ref} show={show} />);
   return { video, ref, ...utils };
+}
+
+function controlsBar(): HTMLElement {
+  return screen.getByLabelText("Seek").parentElement as HTMLElement;
+}
+
+function hoverOverlay(): HTMLElement {
+  return controlsBar().parentElement as HTMLElement;
 }
 
 describe("VideoControls", () => {
@@ -43,6 +57,53 @@ describe("VideoControls", () => {
     fireEvent.change(screen.getByLabelText("Volume"), { target: { value: "0.5" } });
   });
 
+  it("keeps the controls visible while the video is paused", () => {
+    setup({ paused: true });
+
+    expect(controlsBar()).toHaveStyle({ opacity: "1" });
+  });
+
+  it("hides the controls once playback starts until the frame is hovered", () => {
+    const { video } = setup({ paused: true });
+
+    act(() => {
+      Object.defineProperty(video, "paused", { value: false, configurable: true });
+      video.dispatchEvent(new Event("play"));
+    });
+
+    expect(controlsBar()).toHaveStyle({ opacity: "0" });
+
+    fireEvent.mouseEnter(hoverOverlay());
+    expect(controlsBar()).toHaveStyle({ opacity: "1" });
+
+    fireEvent.mouseLeave(hoverOverlay());
+    expect(controlsBar()).toHaveStyle({ opacity: "0" });
+  });
+
+  it("does not toggle playback when the video surface is clicked", () => {
+    const { video } = setup({ paused: false });
+
+    act(() => {
+      video.dispatchEvent(new Event("play"));
+    });
+
+    fireEvent.click(hoverOverlay());
+
+    expect(video.pause).not.toHaveBeenCalled();
+    expect(video.play).not.toHaveBeenCalled();
+  });
+
+  it("disables hit-testing on the bar while it is hidden so invisible buttons cannot pause", () => {
+    const { video } = setup({ paused: true });
+
+    act(() => {
+      Object.defineProperty(video, "paused", { value: false, configurable: true });
+      video.dispatchEvent(new Event("play"));
+    });
+
+    expect(controlsBar()).toHaveStyle({ pointerEvents: "none" });
+  });
+
   it("plays the video and flips the button label on the play event", () => {
     const { video } = setup();
 
@@ -61,6 +122,7 @@ describe("VideoControls", () => {
     act(() => {
       video.dispatchEvent(new Event("play"));
     });
+    fireEvent.mouseEnter(hoverOverlay());
     fireEvent.click(screen.getByLabelText("Pause"));
     expect(video.pause).toHaveBeenCalledOnce();
 
@@ -158,20 +220,9 @@ describe("VideoControls", () => {
     expect(screen.getByLabelText("Volume")).toHaveValue("0");
   });
 
-  it("reveals itself on hover and hides again on leave", () => {
-    setup();
-    const overlay = screen.getByLabelText("Seek").parentElement as HTMLElement;
-
-    fireEvent.mouseEnter(overlay);
-    expect(overlay).toHaveStyle({ opacity: "1" });
-
-    fireEvent.mouseLeave(overlay);
-    expect(overlay).toHaveStyle({ opacity: "0" });
-  });
-
   it("exposes a full-bleed overlay so hovering the video center reveals controls", () => {
     setup();
-    const overlay = screen.getByLabelText("Seek").parentElement as HTMLElement;
+    const overlay = hoverOverlay();
 
     // inset: 0 expands the hit area beyond the bottom bar; without it, the
     // center of the video never receives mouseenter and the bar stays hidden.

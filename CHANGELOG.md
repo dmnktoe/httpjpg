@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.4](https://github.com/dmnktoe/httpjpg/compare/v2.9.3...v2.9.4) (2026-09-22)
+
+
+### Fixed
+
+* **ui:** keep video poster overlay until playback starts ([#449](https://github.com/dmnktoe/httpjpg/issues/449)) ([b607d57](https://github.com/dmnktoe/httpjpg/commit/b607d5729dc588cbe284982b7f5b1107f0f5cadb))
+* **ui:** show video controls when hovering the video center ([#443](https://github.com/dmnktoe/httpjpg/issues/443)) ([c9ee965](https://github.com/dmnktoe/httpjpg/commit/c9ee96517b5ee9f991c185d59034bbbfd7cb5aae))
+* **ui:** show video controls while paused and ignore surface clicks ([#448](https://github.com/dmnktoe/httpjpg/issues/448)) ([e6c3a43](https://github.com/dmnktoe/httpjpg/commit/e6c3a432f6662bea35f824f9e66704a5b250cf22))
+* **ui:** show video poster while media is still loading ([#450](https://github.com/dmnktoe/httpjpg/issues/450)) ([34a7d13](https://github.com/dmnktoe/httpjpg/commit/34a7d1317f00ac206284385eca595e2056b65e2b))
+
+
+### Changed
+
+* weekly cleanup for shared ICON_NAMES, story catalog, and agent docs ([#441](https://github.com/dmnktoe/httpjpg/issues/441)) ([8a5f9c9](https://github.com/dmnktoe/httpjpg/commit/8a5f9c9a6da3ce628c53a1242f405e409c4e15fc))
+
+
+### Dependencies
+
+* lock file maintenance ([#440](https://github.com/dmnktoe/httpjpg/issues/440)) ([772b523](https://github.com/dmnktoe/httpjpg/commit/772b523e1c76822f356b643fe492cdaa2ffbcf9d))
+* update dependency @types/node to ^24.13.5 ([#437](https://github.com/dmnktoe/httpjpg/issues/437)) ([97be3fc](https://github.com/dmnktoe/httpjpg/commit/97be3fcb36c03d77e0cfcf819f33e0a2663b222f))
+* update dependency @types/node to ^24.13.6 ([#446](https://github.com/dmnktoe/httpjpg/issues/446)) ([4c15927](https://github.com/dmnktoe/httpjpg/commit/4c159275fdcd0f28292de08f391a287a9cf6cab8))
+* update dependency dotenv to ^18.0.1 ([#447](https://github.com/dmnktoe/httpjpg/issues/447)) ([4e32179](https://github.com/dmnktoe/httpjpg/commit/4e32179932e2e966b86504262852907f6348e1a8))
+* update dependency dotenv to v18 ([#439](https://github.com/dmnktoe/httpjpg/issues/439)) ([71f94ed](https://github.com/dmnktoe/httpjpg/commit/71f94ed468ba28779b1c9b1aa97a505dc7bdfaa2))
+* update dependency jsdom to ^30.1.0 ([#438](https://github.com/dmnktoe/httpjpg/issues/438)) ([fd4ada1](https://github.com/dmnktoe/httpjpg/commit/fd4ada1606f11253a7662b54e6e45d813c2a5a79))
+* update dependency turbo to ^2.11.2 ([#444](https://github.com/dmnktoe/httpjpg/issues/444)) ([fa8493d](https://github.com/dmnktoe/httpjpg/commit/fa8493d667fa21236f7dace57723e2df276ce7cf))
+* update dependency zod to ^4.6.5 ([#434](https://github.com/dmnktoe/httpjpg/issues/434)) ([8afff56](https://github.com/dmnktoe/httpjpg/commit/8afff56767c88e62d3f4ee6b98b2a5c55205c4f8))
+* update dev dependencies ([#432](https://github.com/dmnktoe/httpjpg/issues/432)) ([a8bde8a](https://github.com/dmnktoe/httpjpg/commit/a8bde8a8212538235e8a38f2220b87687a2c4ddc))
+* update github actions ([#433](https://github.com/dmnktoe/httpjpg/issues/433)) ([ba0f64d](https://github.com/dmnktoe/httpjpg/commit/ba0f64d2c79dc99800d1be1007dd768d7b2d1680))
+* update production dependencies ([#436](https://github.com/dmnktoe/httpjpg/issues/436)) ([9ec5639](https://github.com/dmnktoe/httpjpg/commit/9ec5639d7774593016ee9fd40327c9a4d932a27b))
+
 ## [2.9.3](https://github.com/dmnktoe/httpjpg/compare/v2.9.2...v2.9.3) (2026-09-16)
 
 

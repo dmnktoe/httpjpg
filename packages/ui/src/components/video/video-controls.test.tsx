@@ -80,7 +80,7 @@ describe("VideoControls", () => {
     expect(controlsBar()).toHaveStyle({ opacity: "0" });
   });
 
-  it("does not toggle playback when the video surface is clicked", () => {
+  it("toggles playback when the video surface is clicked", () => {
     const { video } = setup({ paused: false });
 
     act(() => {
@@ -88,9 +88,22 @@ describe("VideoControls", () => {
     });
 
     fireEvent.click(hoverOverlay());
+    expect(video.pause).toHaveBeenCalledOnce();
+  });
 
+  it("starts playback when a paused surface is clicked", () => {
+    const { video } = setup({ paused: true });
+
+    fireEvent.click(hoverOverlay());
+    expect(video.play).toHaveBeenCalledOnce();
+  });
+
+  it("does not double-toggle when the play button is clicked", () => {
+    const { video } = setup({ paused: true });
+
+    fireEvent.click(screen.getByLabelText("Play"));
+    expect(video.play).toHaveBeenCalledOnce();
     expect(video.pause).not.toHaveBeenCalled();
-    expect(video.play).not.toHaveBeenCalled();
   });
 
   it("disables hit-testing on the bar while it is hidden so invisible buttons cannot pause", () => {

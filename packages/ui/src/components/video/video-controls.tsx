@@ -75,8 +75,20 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
     if (isPlaying) {
       video.pause();
     } else {
-      video.play();
+      void video.play()?.catch(() => {
+        // Browser may still block unmuted play until a later gesture.
+      });
     }
+  };
+
+  // YouTube-style: click the picture to play/pause. Skip chrome so the play
+  // button and sliders do not toggle twice via bubble.
+  const handleSurfaceClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.closest("button, input, a, label")) {
+      return;
+    }
+    togglePlay();
   };
 
   const toggleMute = () => {
@@ -114,19 +126,19 @@ export function VideoControls({ videoRef, show = true }: VideoControlsProps) {
 
   return (
     <Box
-      // Full-bleed hit area so hovering the video center reveals the bar —
-      // a bottom-only strip stays invisible until the cursor lucks into it.
-      // Clicks here intentionally do not toggle playback: with show controls,
-      // only the play/pause button should change play state.
+      // Full-bleed hit area: hover reveals the bar; click toggles playback
+      // (only mounted when `show` — ambient controls-off videos stay inert).
       css={{
         position: "absolute",
         inset: 0,
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-end",
+        cursor: "pointer",
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={handleSurfaceClick}
     >
       <Box
         css={{

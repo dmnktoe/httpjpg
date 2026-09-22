@@ -46,6 +46,30 @@ describe("Video", () => {
     expect(container.querySelector('img[src="/poster.png"]')).not.toBeInTheDocument();
   });
 
+  it("shows the poster overlay immediately even while the video is still loading", () => {
+    const { container } = render(
+      <Video src="/clip.mp4" poster="/poster.png" autoPlay={false} controls={false} />,
+    );
+    const video = container.querySelector("video") as HTMLVideoElement;
+    const overlay = container.querySelector('img[src="/poster.png"]');
+
+    expect(video).toHaveStyle({ opacity: "0" });
+    expect(overlay).toBeInTheDocument();
+    expect(overlay).toHaveStyle({ opacity: "1" });
+  });
+
+  it("reveals the video when playback starts even if loadeddata never fired", () => {
+    const { container } = render(
+      <Video src="/clip.mp4" poster="/poster.png" autoPlay={false} controls={false} />,
+    );
+    const video = container.querySelector("video") as HTMLVideoElement;
+
+    expect(video).toHaveStyle({ opacity: "0" });
+    fireEvent.playing(video);
+    expect(video).toHaveStyle({ opacity: "1" });
+    expect(container.querySelector('img[src="/poster.png"]')).not.toBeInTheDocument();
+  });
+
   it("keeps the media hidden until it is ready", () => {
     const { container } = render(<Video src="/clip.mp4" controls={false} />);
     expect(container.querySelector("video")).toHaveStyle({ opacity: "0" });

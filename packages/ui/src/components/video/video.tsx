@@ -121,7 +121,12 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
         handleReady();
       }
 
-      const handlePlaying = () => setHasPlayed(true);
+      const handlePlaying = () => {
+        setHasPlayed(true);
+        // Poster drops on `playing`; reveal the element too so a stuck
+        // preload=metadata load (readyState < 2) does not leave a black hole.
+        setIsLoading(false);
+      };
       video.addEventListener("playing", handlePlaying);
 
       if (!shouldAutoPlay) {
@@ -225,6 +230,9 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
             // Decorative stand-in for the native poster; alt stays empty so
             // screen readers announce the play control, not a duplicate image.
             // Always absolute so it covers the <video> in both layout modes.
+            // Visible immediately — do not gate on isLoading. preload=metadata
+            // often never reaches readyState >= 2 until play, so waiting would
+            // paint the page background (black) instead of the cover art.
             // oxlint-disable-next-line next/no-img-element -- CMS poster URL, not next/image
             <img
               src={resolvedPoster}
@@ -233,7 +241,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
               draggable={false}
               className={mediaClass}
               style={{
-                opacity: isLoading ? 0 : 1,
+                opacity: 1,
                 pointerEvents: "none",
                 objectFit,
               }}

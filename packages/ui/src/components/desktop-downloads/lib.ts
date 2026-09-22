@@ -189,17 +189,35 @@ export function clampDesktopIconPoint(
   };
 }
 
-export function triggerDownload(url: string, name: string): boolean {
-  const href = url.trim();
-  if (!href || !isSafeHref(href)) {
+function isSameOriginHref(href: string): boolean {
+  if (
+    href.startsWith("/") ||
+    href.startsWith("./") ||
+    href.startsWith("../") ||
+    href.startsWith("#")
+  ) {
+    return true;
+  }
+  try {
+    return new URL(href, window.location.href).origin === window.location.origin;
+  } catch {
     return false;
   }
+}
+
+function clickDownloadAnchor(
+  href: string,
+  filename: string,
+  options: { openInNewTab: boolean },
+): void {
   const anchor = document.createElement("a");
   anchor.href = href;
-  anchor.download = downloadFilename(name, href);
+  anchor.download = filename;
   anchor.rel = "noopener noreferrer";
-  anchor.target = "_blank";
   anchor.referrerPolicy = "no-referrer";
+  if (options.openInNewTab) {
+    anchor.target = "_blank";
+  }
   anchor.style.display = "none";
   document.body.appendChild(anchor);
   try {
@@ -207,5 +225,55 @@ export function triggerDownload(url: string, name: string): boolean {
   } finally {
     anchor.remove();
   }
+}
+
+async function downloadViaObjectUrl(href: string, filename: string): Promise<boolean> {
+  const response = await fetch(href, {
+    mode: "cors",
+    credentials: "omit",
+    referrerPolicy: "no-referrer",
+  });
+  if (!response.ok) {
+    return false;
+  }
+  const blob = await response.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  try {
+    // Object URLs are same-origin, so `download` is honored without opening a tab.
+    clickDownloadAnchor(objectUrl, filename, { openInNewTab: false });
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+  return true;
+}
+
+/**
+ * Start a file download. Same-origin URLs use the `download` attribute directly.
+ * Cross-origin URLs are fetched as a blob first so the browser does not treat the
+ * click as navigation (and open a new tab) when `Content-Disposition` is missing.
+ * Falls back to a new-tab navigation only when the blob fetch fails.
+ */
+export function triggerDownload(url: string, name: string): boolean {
+  const href = url.trim();
+  if (!href || !isSafeHref(href)) {
+    return false;
+  }
+  const filename = downloadFilename(name, href);
+
+  if (isSameOriginHref(href)) {
+    clickDownloadAnchor(href, filename, { openInNewTab: false });
+    return true;
+  }
+
+  void downloadViaObjectUrl(href, filename).then(
+    (ok) => {
+      if (!ok) {
+        clickDownloadAnchor(href, filename, { openInNewTab: true });
+      }
+    },
+    () => {
+      clickDownloadAnchor(href, filename, { openInNewTab: true });
+    },
+  );
   return true;
 }

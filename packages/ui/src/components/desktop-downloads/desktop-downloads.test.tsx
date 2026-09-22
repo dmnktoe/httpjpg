@@ -12,6 +12,10 @@ const ITEMS = [
 describe("DesktopDownloads", () => {
   afterEach(() => {
     DESKTOP_ICON_SRC.pdf = undefined;
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 1024 });
+    Object.defineProperty(window, "innerHeight", { configurable: true, value: 768 });
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
   it("renders nothing when there are no usable items", () => {
@@ -62,22 +66,30 @@ describe("DesktopDownloads", () => {
     expect(icon).toHaveAttribute("aria-pressed", "false");
   });
 
-  it("starts a download on double-click and on Enter", () => {
+  it("starts a download on double-click and on Enter", async () => {
+    const blob = new Blob(["pdf"], { type: "application/pdf" });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        blob: async () => blob,
+      }),
+    );
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:mock-download");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
     const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
     render(<DesktopDownloads items={ITEMS} />);
     const icon = screen.getByRole("button", { name: "Download Press kit.pdf" });
 
     fireEvent.doubleClick(icon);
-    expect(click).toHaveBeenCalledOnce();
+    await vi.waitFor(() => expect(click).toHaveBeenCalledOnce());
     expect((click.mock.instances[0] as HTMLAnchorElement).download).toBe("Press kit.pdf");
 
     fireEvent.keyDown(icon, { key: "Enter" });
-    expect(click).toHaveBeenCalledTimes(2);
+    await vi.waitFor(() => expect(click).toHaveBeenCalledTimes(2));
 
     fireEvent.keyDown(icon, { key: " " });
-    expect(click).toHaveBeenCalledTimes(3);
-
-    click.mockRestore();
+    await vi.waitFor(() => expect(click).toHaveBeenCalledTimes(3));
   });
 
   it("does not download on a single click", () => {
@@ -90,11 +102,12 @@ describe("DesktopDownloads", () => {
       "aria-pressed",
       "true",
     );
-
-    click.mockRestore();
   });
 
   it("drags past the threshold into pixel positioning", () => {
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 800 });
+    Object.defineProperty(window, "innerHeight", { configurable: true, value: 600 });
+
     render(<DesktopDownloads items={[ITEMS[0]]} />);
     const icon = screen.getByRole("button", { name: "Download Press kit.pdf" });
 
@@ -121,6 +134,41 @@ describe("DesktopDownloads", () => {
     fireEvent.pointerUp(icon, { pointerId: 1 });
     fireEvent.pointerMove(icon, { pointerId: 1, clientX: 400, clientY: 400 });
     expect(icon.style.left).toBe("170px");
+  });
+
+  it("re-clamps a dragged icon when the viewport shrinks", () => {
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 800 });
+    Object.defineProperty(window, "innerHeight", { configurable: true, value: 600 });
+
+    render(<DesktopDownloads items={[ITEMS[0]]} />);
+    const icon = screen.getByRole("button", { name: "Download Press kit.pdf" });
+
+    vi.spyOn(icon, "getBoundingClientRect").mockReturnValue({
+      x: 120,
+      y: 80,
+      left: 120,
+      top: 80,
+      width: 76,
+      height: 86,
+      right: 196,
+      bottom: 166,
+      toJSON() {
+        return {};
+      },
+    });
+
+    fireEvent.pointerDown(icon, { button: 0, pointerId: 1, clientX: 130, clientY: 90 });
+    fireEvent.pointerMove(icon, { pointerId: 1, clientX: 180, clientY: 140 });
+    fireEvent.pointerUp(icon, { pointerId: 1 });
+    expect(icon.style.left).toBe("170px");
+    expect(icon.style.top).toBe("130px");
+
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 200 });
+    Object.defineProperty(window, "innerHeight", { configurable: true, value: 200 });
+    fireEvent(window, new Event("resize"));
+
+    expect(icon.style.left).toBe("116px");
+    expect(icon.style.top).toBe("106px");
   });
 
   it("ignores pointer ids that do not own the drag", () => {

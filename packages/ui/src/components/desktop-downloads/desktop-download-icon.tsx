@@ -1,7 +1,7 @@
 "use client";
 
 import type { KeyboardEvent, PointerEvent } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { css } from "styled-system/css";
 
 import { DesktopDownloadPlaceholder } from "./desktop-download-placeholder";
@@ -48,6 +48,23 @@ export function DesktopDownloadIcon({
   const dragRef = useRef<DragSession | null>(null);
   const [offset, setOffset] = useState<{ x: number; y: number } | null>(null);
   const [dragging, setDragging] = useState(false);
+
+  useEffect(() => {
+    function reclamp() {
+      setOffset((current) =>
+        current
+          ? clampDesktopIconPoint(current.x, current.y, window.innerWidth, window.innerHeight)
+          : current,
+      );
+    }
+
+    window.addEventListener("resize", reclamp);
+    window.addEventListener("orientationchange", reclamp);
+    return () => {
+      window.removeEventListener("resize", reclamp);
+      window.removeEventListener("orientationchange", reclamp);
+    };
+  }, []);
 
   const kind: DesktopFileKind = item.kind ?? fileKindFromSource(item.name, item.url);
   const iconSrc = DESKTOP_ICON_SRC[kind];

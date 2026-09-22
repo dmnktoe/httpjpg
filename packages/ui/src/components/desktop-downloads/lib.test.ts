@@ -122,19 +122,69 @@ describe("clampDesktopIconPoint", () => {
 });
 
 describe("triggerDownload", () => {
-  it("clicks a temporary anchor with download attrs", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("downloads same-origin files without opening a new tab", () => {
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+
+    expect(triggerDownload("/files/a.pdf", "Press kit")).toBe(true);
+
+    const anchor = click.mock.instances[0] as HTMLAnchorElement;
+    expect(anchor.getAttribute("href")).toBe("/files/a.pdf");
+    expect(anchor.download).toBe("Press kit.pdf");
+    expect(anchor.target).toBe("");
+    expect(anchor.rel).toBe("noopener noreferrer");
+    expect(document.body.contains(anchor)).toBe(false);
+  });
+
+  it("fetches cross-origin files as a blob so download is honored", async () => {
+    const blob = new Blob(["pdf"], { type: "application/pdf" });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        blob: async () => blob,
+      }),
+    );
+    const createObjectURL = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:mock-download");
+    const revokeObjectURL = vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
     const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
 
     expect(triggerDownload("https://cdn.example/a.pdf", "Press kit")).toBe(true);
+
+    await vi.waitFor(() => {
+      expect(click).toHaveBeenCalledOnce();
+    });
+
+    const anchor = click.mock.instances[0] as HTMLAnchorElement;
+    expect(fetch).toHaveBeenCalledWith(
+      "https://cdn.example/a.pdf",
+      expect.objectContaining({ mode: "cors", credentials: "omit" }),
+    );
+    expect(createObjectURL).toHaveBeenCalledWith(blob);
+    expect(anchor.href).toBe("blob:mock-download");
+    expect(anchor.download).toBe("Press kit.pdf");
+    expect(anchor.target).toBe("");
+    expect(revokeObjectURL).toHaveBeenCalledWith("blob:mock-download");
+  });
+
+  it("falls back to a new tab when the cross-origin fetch fails", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+
+    expect(triggerDownload("https://cdn.example/a.pdf", "Press kit")).toBe(true);
+
+    await vi.waitFor(() => {
+      expect(click).toHaveBeenCalledOnce();
+    });
 
     const anchor = click.mock.instances[0] as HTMLAnchorElement;
     expect(anchor.href).toBe("https://cdn.example/a.pdf");
     expect(anchor.download).toBe("Press kit.pdf");
     expect(anchor.target).toBe("_blank");
-    expect(anchor.rel).toBe("noopener noreferrer");
-    expect(document.body.contains(anchor)).toBe(false);
-
-    click.mockRestore();
   });
 
   it("refuses javascript urls", () => {
@@ -142,7 +192,5 @@ describe("triggerDownload", () => {
 
     expect(triggerDownload("javascript:alert(1)", "Nope")).toBe(false);
     expect(click).not.toHaveBeenCalled();
-
-    click.mockRestore();
   });
 });

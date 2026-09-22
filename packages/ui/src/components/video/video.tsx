@@ -92,6 +92,10 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
     const ownVideoRef = useRef<HTMLVideoElement>(null);
     const videoRef = mediaRef ?? ownVideoRef;
     const [isLoading, setIsLoading] = useState(true);
+    // Native `poster` is discarded once the browser thinks it has a frame —
+    // often a blank black canvas after preload=metadata. Keep our own overlay
+    // until playback actually starts so paused videos show the cover art.
+    const [hasPlayed, setHasPlayed] = useState(false);
     const prefersReducedMotion = useReducedMotion();
     const shouldAutoPlay = autoPlay && !prefersReducedMotion;
     const isNative = source === "native";
@@ -101,6 +105,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       cmsAspectRatio ?? mediaAspectRatio ?? (isNative ? undefined : EMBED_DEFAULT_ASPECT_RATIO);
     const useIntrinsicLayout = isNative && !containerAspectRatio;
     const resolvedPoster = poster?.trim() ? poster.trim() : undefined;
+    const showPosterOverlay = Boolean(resolvedPoster) && isNative && !hasPlayed;
 
     const handleReady = useCallback(() => {
       setIsLoading(false);
@@ -116,7 +121,14 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
         handleReady();
       }
 
-      if (!shouldAutoPlay) return;
+      const handlePlaying = () => setHasPlayed(true);
+      video.addEventListener("playing", handlePlaying);
+
+      if (!shouldAutoPlay) {
+        return () => {
+          video.removeEventListener("playing", handlePlaying);
+        };
+      }
 
       const media = video;
       function tryPlay() {
@@ -134,6 +146,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       media.addEventListener("loadeddata", tryPlay);
       media.addEventListener("canplay", tryPlay);
       return () => {
+        media.removeEventListener("playing", handlePlaying);
         media.removeEventListener("loadeddata", tryPlay);
         media.removeEventListener("canplay", tryPlay);
       };
@@ -148,6 +161,7 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
       const video = videoRef.current;
       if (!video || !isNative) return;
       setIsLoading(true);
+      setHasPlayed(false);
       video.load();
     }, [src, isNative]);
 
@@ -207,6 +221,24 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
             }}
             {...props}
           />
+          {showPosterOverlay && (
+            // Decorative stand-in for the native poster; alt stays empty so
+            // screen readers announce the play control, not a duplicate image.
+            // Always absolute so it covers the <video> in both layout modes.
+            // oxlint-disable-next-line next/no-img-element -- CMS poster URL, not next/image
+            <img
+              src={resolvedPoster}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className={mediaClass}
+              style={{
+                opacity: isLoading ? 0 : 1,
+                pointerEvents: "none",
+                objectFit,
+              }}
+            />
+          )}
           <VideoControls videoRef={videoRef} show={controls} />
         </>
       );

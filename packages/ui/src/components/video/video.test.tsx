@@ -32,6 +32,20 @@ describe("Video", () => {
     expect(video).toHaveAttribute("poster", "/poster.png");
   });
 
+  it("keeps a poster overlay until playback starts so the frame is not a black canvas", () => {
+    const { container } = render(
+      <Video src="/clip.mp4" poster="/poster.png" autoPlay={false} controls={false} />,
+    );
+    const video = container.querySelector("video") as HTMLVideoElement;
+    fireEvent.loadedData(video);
+
+    const overlay = container.querySelector('img[src="/poster.png"]');
+    expect(overlay).toBeInTheDocument();
+
+    fireEvent.playing(video);
+    expect(container.querySelector('img[src="/poster.png"]')).not.toBeInTheDocument();
+  });
+
   it("keeps the media hidden until it is ready", () => {
     const { container } = render(<Video src="/clip.mp4" controls={false} />);
     expect(container.querySelector("video")).toHaveStyle({ opacity: "0" });

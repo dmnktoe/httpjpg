@@ -198,10 +198,15 @@ function InlineCodeRenderer({ children }: SbReactRichTextProps<"code">) {
       css={{
         px: "1",
         py: "0.5",
+        color: "pageFg",
         fontFamily: "mono",
         fontSize: "sm",
+        // Light chip by default; dark chip under isDark so white pageFg stays readable.
         bg: "neutral.100",
         borderRadius: "sm",
+        _pageDark: {
+          bg: "neutral.800",
+        },
       }}
     >
       {children}

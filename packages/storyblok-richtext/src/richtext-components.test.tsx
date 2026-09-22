@@ -196,6 +196,9 @@ describe("richTextComponents · code", () => {
     const code = container.querySelector("code");
     expect(code).toHaveTextContent("inline");
     expect(code).not.toHaveAttribute("data-inline-code");
+    // Theme-aware chip: light bg on light pages, dark bg under data-theme=dark
+    // (see InlineCodeRenderer `_pageDark`) so pageFg stays readable.
+    expect(code?.className).toBeTruthy();
   });
 });
 

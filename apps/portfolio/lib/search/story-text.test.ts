@@ -19,6 +19,15 @@ describe("collectStoryText", () => {
     expect(collectStoryText(content)).toBe("Poster Series Risograph 2024");
   });
 
+  it("indexes download labels via name", () => {
+    const content = {
+      title: "Outlet",
+      downloads: [{ name: "Press kit.pdf", url: "https://cdn.example/press.pdf" }],
+    };
+
+    expect(collectStoryText(content)).toBe("Outlet Press kit.pdf");
+  });
+
   it("ignores plumbing fields like uuids and colors", () => {
     const content = { title: "Kept", _uid: "abc-123", component: "work", color: "#ff0000" };
 

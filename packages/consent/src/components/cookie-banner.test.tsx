@@ -45,7 +45,7 @@ describe("CookieBanner", () => {
   it("names the number of opt-in third parties", () => {
     render(<CookieBanner />);
 
-    expect(screen.getByText(/trusted third-party services/)).toBeInTheDocument();
+    expect(screen.getByText(/trusted third-party media services/)).toBeInTheDocument();
   });
 
   it("opens the details panel from the inline links", () => {
@@ -84,11 +84,14 @@ describe("CookieBanner", () => {
     render(<CookieBanner onSavePreferences={onSavePreferences} />);
     customize();
 
-    fireEvent.click(screen.getByRole("checkbox", { name: ANALYTICS }));
+    // Analytics starts on (opt-out); toggle media on for an explicit opt-in.
+    fireEvent.click(screen.getByRole("checkbox", { name: /ᴍᴇᴅɪᴀ/ }));
     fireEvent.click(screen.getByRole("button", { name: /Save Preferences/ }));
 
-    expect(onSavePreferences).toHaveBeenCalledWith(expect.objectContaining({ analytics: true }));
-    expect(getConsent()).toMatchObject({ analytics: true });
+    expect(onSavePreferences).toHaveBeenCalledWith(
+      expect.objectContaining({ analytics: true, media: true }),
+    );
+    expect(getConsent()).toMatchObject({ analytics: true, media: true });
   });
 
   it("locks the required categories on", () => {

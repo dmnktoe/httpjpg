@@ -16,5 +16,13 @@ describe("VendorList", () => {
   it("hides privacy links when showPrivacyLinks is false", () => {
     render(<VendorList showPrivacyLinks={false} />);
     expect(screen.queryByText("Privacy Policy ↗")).toBeNull();
+    expect(screen.queryByText("Cookie Database ↗")).toBeNull();
+  });
+
+  it("links vendors to cookiedatabase.org", () => {
+    render(<VendorList />);
+    const links = screen.getAllByRole("link", { name: /Cookie Database/ });
+    expect(links.length).toBeGreaterThan(0);
+    expect(links[0]).toHaveAttribute("href", expect.stringContaining("cookiedatabase.org"));
   });
 });

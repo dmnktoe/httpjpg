@@ -1,11 +1,7 @@
-import { GA_CATEGORIES, trackGoogleEvent } from "./google/analytics";
 import { type UmamiEventData, trackUmamiEvent } from "./umami/analytics";
 
-/** Shared event payload — Umami keeps types; GA flattens the same keys. */
+/** Shared event payload for Umami custom events. */
 export type EventData = UmamiEventData;
-
-type WebVitalName = "CLS" | "FCP" | "LCP" | "TTFB" | "INP";
-type WebVitalRating = "good" | "needs-improvement" | "poor";
 
 export type SearchOpenSource = "keyboard" | "trigger";
 export type WorkNavDirection = "prev" | "next";
@@ -19,48 +15,22 @@ export type OutboundDestination =
   | "external";
 
 /**
- * Fan-out helper for ad-hoc events. Prefer the typed `track*` helpers below so
- * names and properties stay consistent across GA and Umami.
+ * Ad-hoc events. Prefer the typed `track*` helpers below so names and
+ * properties stay consistent.
  */
 export function trackEvent(name: string, data?: EventData): void {
-  const payload = sanitizeEventData(data);
-
-  trackGoogleEvent(name, {
-    category: GA_CATEGORIES.USER_INTERACTION,
-    ...toGoogleParams(payload),
-  });
-  trackUmamiEvent(name, payload);
+  trackUmamiEvent(name, sanitizeEventData(data));
 }
 
 export function trackNowPlayingClick(data?: { title?: string; artist?: string }): void {
-  const payload = sanitizeEventData({
-    widget: "spotify",
-    title: data?.title,
-    artist: data?.artist,
-  });
-
-  trackGoogleEvent("now_playing_click", {
-    category: GA_CATEGORIES.USER_INTERACTION,
-    label: "spotify_widget",
-    ...toGoogleParams(payload),
-  });
-  trackUmamiEvent("now_playing_click", payload);
-}
-
-/**
- * GA-only: Umami collects Core Web Vitals via `data-performance` on the
- * tracker script (Performance tab). Keep this for GA event reporting.
- */
-export function trackWebVital(name: WebVitalName, value: number): void {
-  const rounded = name === "CLS" ? roundCls(value) : Math.round(value);
-  const rating = rateWebVital(name, value);
-
-  trackGoogleEvent("performance", {
-    category: GA_CATEGORIES.PERFORMANCE,
-    label: name,
-    value: rounded,
-    rating,
-  });
+  trackUmamiEvent(
+    "now_playing_click",
+    sanitizeEventData({
+      widget: "spotify",
+      title: data?.title,
+      artist: data?.artist,
+    }),
+  );
 }
 
 export function trackSearchOpen(source: SearchOpenSource): void {
@@ -215,41 +185,3 @@ function sanitizeEventData(data?: EventData): EventData | undefined {
 function clipString(value: string, max = MAX_STRING): string {
   return value.length > max ? value.slice(0, max) : value;
 }
-
-function toGoogleParams(data?: EventData): Record<string, string | number | boolean> {
-  if (!data) {
-    return {};
-  }
-  const params: Record<string, string | number | boolean> = {};
-  for (const [key, value] of Object.entries(data)) {
-    if (value === undefined || value === null) {
-      continue;
-    }
-    params[key] = value;
-  }
-  return params;
-}
-
-function roundCls(value: number): number {
-  return Math.round(value * 1000) / 1000;
-}
-
-function rateWebVital(name: WebVitalName, value: number): WebVitalRating {
-  const [good, poor] = WEB_VITAL_THRESHOLDS[name];
-  if (value <= good) {
-    return "good";
-  }
-  if (value <= poor) {
-    return "needs-improvement";
-  }
-  return "poor";
-}
-
-/** Core Web Vitals thresholds (good / poor). */
-const WEB_VITAL_THRESHOLDS: Record<WebVitalName, readonly [number, number]> = {
-  LCP: [2500, 4000],
-  INP: [200, 500],
-  CLS: [0.1, 0.25],
-  FCP: [1800, 3000],
-  TTFB: [800, 1800],
-};

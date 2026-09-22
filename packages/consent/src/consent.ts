@@ -7,6 +7,7 @@ import {
   CONSENT_VERSION,
   DEFAULT_CONSENT_STATE,
   EXTERNAL_VENDORS,
+  isCategoryAllowed,
   REQUIRED_CATEGORIES,
 } from "./types";
 
@@ -61,11 +62,7 @@ export function hasConsent(): boolean {
 }
 
 export function hasVendorConsent(vendor: ExternalVendor): boolean {
-  const consent = getConsent();
-  if (!consent) {
-    return false;
-  }
-  return consent[EXTERNAL_VENDORS[vendor].category] === true;
+  return isCategoryAllowed(getConsent(), EXTERNAL_VENDORS[vendor].category);
 }
 
 /** Decoded consent cookie value, or null. */

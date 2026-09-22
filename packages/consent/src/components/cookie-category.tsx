@@ -9,6 +9,7 @@ export interface CookieCategoryVendor {
   name: string;
   description: string;
   privacyPolicy?: string;
+  cookieDatabase?: string;
 }
 
 export interface CookieCategoryProps {
@@ -106,6 +107,20 @@ export function CookieCategory({
                               css={{ textDecoration: "underline" }}
                             >
                               Privacy Policy ↗
+                            </Box>
+                          </>
+                        )}
+                        {vendor.cookieDatabase && (
+                          <>
+                            {" "}
+                            <Box
+                              as="a"
+                              href={vendor.cookieDatabase}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              css={{ textDecoration: "underline" }}
+                            >
+                              Cookie Database ↗
                             </Box>
                           </>
                         )}

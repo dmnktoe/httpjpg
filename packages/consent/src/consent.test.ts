@@ -64,8 +64,14 @@ describe("consent storage", () => {
     expect(hasVendorConsent("spotify")).toBe(true);
   });
 
-  it("returns false for vendors before any cookie is set", () => {
+  it("allows opt-out analytics vendors before any cookie is set", () => {
+    expect(hasVendorConsent("umami")).toBe(true);
     expect(hasVendorConsent("youtube")).toBe(false);
+  });
+
+  it("respects an explicit analytics opt-out", () => {
+    setConsent(DEFAULT);
+    expect(hasVendorConsent("umami")).toBe(false);
   });
 
   it("treats a non-object consent payload as missing", () => {

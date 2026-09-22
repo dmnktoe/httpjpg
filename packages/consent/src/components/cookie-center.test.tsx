@@ -45,11 +45,19 @@ describe("CookieCenter", () => {
   it("saves an opted-in optional category via Save Preferences", () => {
     render(<CookieCenter />);
 
-    fireEvent.click(screen.getAllByRole("checkbox")[ANALYTICS_INDEX]);
+    // Analytics starts checked (opt-out); toggle media on.
+    fireEvent.click(screen.getAllByRole("checkbox")[MEDIA_INDEX]);
     fireEvent.click(screen.getByRole("button", { name: /Save Preferences/ }));
 
     expect(getConsent()?.analytics).toBe(true);
-    expect(getConsent()?.media).toBe(false);
+    expect(getConsent()?.media).toBe(true);
+  });
+
+  it("starts with analytics on before any stored decision", () => {
+    render(<CookieCenter />);
+    const checkboxes = screen.getAllByRole("checkbox") as HTMLInputElement[];
+    expect(checkboxes[ANALYTICS_INDEX].checked).toBe(true);
+    expect(checkboxes[MEDIA_INDEX].checked).toBe(false);
   });
 
   it("hydrates from previously stored consent on mount", () => {
@@ -78,19 +86,15 @@ describe("CookieCenter", () => {
   it("does not clobber unsaved edits when consent changes elsewhere", () => {
     render(<CookieCenter />);
 
-    // Toggle Analytics on but do not save.
-    fireEvent.click(screen.getAllByRole("checkbox")[ANALYTICS_INDEX]);
-    expect((screen.getAllByRole("checkbox")[ANALYTICS_INDEX] as HTMLInputElement).checked).toBe(
-      true,
-    );
+    // Toggle Media on but do not save.
+    fireEvent.click(screen.getAllByRole("checkbox")[MEDIA_INDEX]);
+    expect((screen.getAllByRole("checkbox")[MEDIA_INDEX] as HTMLInputElement).checked).toBe(true);
 
     // An external Reject All must not wipe the in-progress edit.
     act(() => {
       setConsent(DEFAULT_CONSENT);
     });
 
-    expect((screen.getAllByRole("checkbox")[ANALYTICS_INDEX] as HTMLInputElement).checked).toBe(
-      true,
-    );
+    expect((screen.getAllByRole("checkbox")[MEDIA_INDEX] as HTMLInputElement).checked).toBe(true);
   });
 });

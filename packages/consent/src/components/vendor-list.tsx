@@ -114,6 +114,23 @@ export function VendorList({
                       </Box>
                     </>
                   )}
+                  {showPrivacyLinks && vendor.cookieDatabase && (
+                    <>
+                      {" "}
+                      <Box
+                        as="a"
+                        href={vendor.cookieDatabase}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        css={{
+                          color: "primary.600",
+                          textDecoration: "underline",
+                        }}
+                      >
+                        Cookie Database ↗
+                      </Box>
+                    </>
+                  )}
                 </Box>
               ))}
             </Box>

@@ -60,7 +60,7 @@ const CATEGORY_COPY: Record<ConsentCategory, CategoryCopy> = {
   },
   analytics: {
     label: "ᴀɴᴀʟʏᴛɪᴄꜱ",
-    description: "Helps us understand how visitors interact with our website. 📊",
+    description: "Privacy-friendly Umami on our EU server. On by default — uncheck to opt out. 📊",
   },
   media: {
     label: "ᴍᴇᴅɪᴀ & ᴇxᴛᴇʀɴᴀʟ ꜱᴇʀᴠɪᴄᴇꜱ",

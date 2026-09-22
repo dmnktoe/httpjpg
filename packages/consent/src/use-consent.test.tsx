@@ -30,6 +30,12 @@ describe("consent hooks", () => {
 
   it("useConsentCategory reflects and reacts to changes", () => {
     render(<CategoryProbe />);
+    // Analytics is opt-out: allowed before any stored decision.
+    expect(screen.getByText("analytics:true")).toBeInTheDocument();
+
+    act(() => {
+      setConsent(WITH_MEDIA);
+    });
     expect(screen.getByText("analytics:false")).toBeInTheDocument();
 
     act(() => {

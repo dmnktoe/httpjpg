@@ -73,20 +73,23 @@ test.describe("cookie consent", () => {
       await expect(required.nth(index)).toBeDisabled();
     }
 
-    const optional = page.getByRole("checkbox", { name: /^(?!.*\(Required\)).*$/ }).first();
-    await expect(optional).not.toBeChecked();
+    const optionalMedia = page.getByRole("checkbox", { name: /ᴍᴇᴅɪᴀ/ });
+    await expect(optionalMedia).not.toBeChecked();
+
+    const analytics = page.getByRole("checkbox", { name: /ᴀɴᴀʟʏᴛɪᴄꜱ/ });
+    await expect(analytics).toBeChecked();
 
     // The input itself is visually hidden behind a styled glyph, so toggle it
     // the way a visitor does — through its text label.
-    const optionalId = await optional.getAttribute("id");
-    await page.locator(`label[for="${optionalId}"]`).last().click();
-    await expect(optional).toBeChecked();
+    const mediaId = await optionalMedia.getAttribute("id");
+    await page.locator(`label[for="${mediaId}"]`).last().click();
+    await expect(optionalMedia).toBeChecked();
 
     await page.getByRole("button", { name: /Save Preferences/ }).click();
     await expect(banner(page)).toHaveCount(0);
 
     const cookie = await consentCookie(page);
     const stored = JSON.parse(decodeURIComponent(cookie?.value ?? "{}"));
-    expect(Object.values(stored.consent).filter(Boolean).length).toBeGreaterThan(2);
+    expect(stored.consent).toMatchObject({ analytics: true, media: true });
   });
 });

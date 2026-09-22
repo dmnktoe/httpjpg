@@ -45,6 +45,26 @@ describe("ConsentGate", () => {
     expect(screen.getByText("tracker")).toBeInTheDocument();
   });
 
+  it("allows analytics by default before any decision is stored", () => {
+    render(
+      <ConsentGate category="analytics">
+        <div>tracker</div>
+      </ConsentGate>,
+    );
+
+    expect(screen.getByText("tracker")).toBeInTheDocument();
+  });
+
+  it("keeps media blocked before any decision is stored", () => {
+    render(
+      <ConsentGate category="media">
+        <div>embed</div>
+      </ConsentGate>,
+    );
+
+    expect(screen.queryByText("embed")).toBeNull();
+  });
+
   it("reacts to consent changes", () => {
     setConsent(WITHOUT_ANALYTICS);
 

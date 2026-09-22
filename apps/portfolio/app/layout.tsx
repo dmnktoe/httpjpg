@@ -14,7 +14,6 @@ import {
   Userbars,
   workAccentCssVars,
 } from "@httpjpg/ui";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import type { CSSProperties, PropsWithChildren } from "react";
@@ -40,7 +39,6 @@ import { NowPlayingWidget } from "@/components/widgets/now-playing-widget";
 import { PSNCard } from "@/components/widgets/psn-card";
 import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
-import { WebVitalsReporter } from "@/components/widgets/web-vitals-reporter";
 import { isStoryblokEditor } from "@/lib/is-storyblok-editor";
 import { htmlLangForPath } from "@/lib/locale";
 import { getPageAccent, getPageTheme } from "@/lib/page-theme";
@@ -135,7 +133,6 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         )}
         <ConsoleBanner repositoryUrl={site.repositoryUrl} />
         {!inStoryblokEditor && <ConsentProvider />}
-        <WebVitalsReporter />
         <ScrollToTop />
         <TrackedAudioPlayerProvider>
           <LazyMotionProvider>
@@ -224,17 +221,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           </LazyMotionProvider>
         </TrackedAudioPlayerProvider>
 
-        {(env.NEXT_PUBLIC_GA_MEASUREMENT_ID || env.NEXT_PUBLIC_UMAMI_ID) && (
+        {env.NEXT_PUBLIC_UMAMI_ID && (
           <ConsentGate category="analytics">
-            {env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
-              <GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
-            )}
-            {env.NEXT_PUBLIC_UMAMI_ID && (
-              <UmamiAnalytics
-                websiteId={env.NEXT_PUBLIC_UMAMI_ID}
-                src={env.NEXT_PUBLIC_UMAMI_SRC}
-              />
-            )}
+            <UmamiAnalytics websiteId={env.NEXT_PUBLIC_UMAMI_ID} src={env.NEXT_PUBLIC_UMAMI_SRC} />
           </ConsentGate>
         )}
       </body>

@@ -31,8 +31,9 @@ function ParagraphRenderer({ attrs, children }: SbReactRichTextProps<"paragraph"
 
 function HeadingRenderer({ attrs, children }: SbReactRichTextProps<"heading">) {
   const level = attrs?.level ?? 1;
-  const headlineLevel = (level <= 3 ? level : 3) as 1 | 2 | 3;
-  const tag = level > 3 ? (`h${level}` as "h4" | "h5" | "h6") : undefined;
+  // Visual scale tops out at h4; h5/h6 keep their semantic tag with h4 size.
+  const headlineLevel = (level <= 4 ? level : 4) as 1 | 2 | 3 | 4;
+  const tag = level > 4 ? (`h${level}` as "h5" | "h6") : undefined;
   return (
     <Headline
       level={headlineLevel}

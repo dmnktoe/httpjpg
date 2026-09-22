@@ -24,13 +24,13 @@ export interface StoryblokRichTextProps extends ComponentProps<"div"> {
 const proseRhythm = {
   "& > *": { marginTop: 0, marginBottom: 0 },
   "& > * + *": { marginTop: "4" },
-  "& > * + h1, & > * + h2, & > * + h3": { marginTop: "8" },
-  "& > h1 + *, & > h2 + *, & > h3 + *": { marginTop: "3" },
+  "& > * + h1, & > * + h2, & > * + h3, & > * + h4": { marginTop: "8" },
+  "& > h1 + *, & > h2 + *, & > h3 + *, & > h4 + *": { marginTop: "3" },
   "& li > p, & li > div": { marginBottom: "0", marginTop: "0" },
 } as const;
 
 const colorInherit = {
-  "& p, & h1, & h2, & h3, & li, & blockquote, & strong, & em, & a, & li::before": {
+  "& p, & h1, & h2, & h3, & h4, & li, & blockquote, & strong, & em, & a, & li::before": {
     color: "inherit",
   },
 } as const;

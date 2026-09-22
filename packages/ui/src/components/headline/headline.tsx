@@ -8,10 +8,13 @@ const HEADLINE_FONT_SIZES = {
   1: "clamp(2.25rem, 5vw + 1rem, 3.75rem)",
   2: "clamp(1.875rem, 4vw + 1rem, 3rem)",
   3: "clamp(1.5rem, 3vw + 0.5rem, 2.25rem)",
+  4: "clamp(1.25rem, 2vw + 0.25rem, 1.5rem)",
 } as const;
 
+export type HeadlineLevel = 1 | 2 | 3 | 4;
+
 export interface HeadlineProps extends Omit<HTMLAttributes<HTMLHeadingElement>, "css" | "style"> {
-  level?: 1 | 2 | 3;
+  level?: HeadlineLevel;
   align?: "left" | "center" | "right" | "justify";
   children: ReactNode;
   /** Override the HTML tag; defaults to `h{level}`. */
@@ -45,6 +48,7 @@ const headlineRecipe = cva({
         letterSpacing: "tighter",
       },
       3: { fontSize: HEADLINE_FONT_SIZES[3], fontWeight: "bold" },
+      4: { fontSize: HEADLINE_FONT_SIZES[4], fontWeight: "bold" },
     },
     align: {
       left: { textAlign: "left" },
@@ -68,7 +72,7 @@ export function Headline({
   style,
   ...props
 }: HeadlineProps) {
-  const Element = as ?? (`h${level}` as "h1" | "h2" | "h3");
+  const Element = as ?? (`h${level}` as "h1" | "h2" | "h3" | "h4");
   return (
     <Element
       className={cx(

@@ -118,10 +118,11 @@ export const contentBlocks: BlockDef[] = [
           { name: "H1", value: "1" },
           { name: "H2", value: "2" },
           { name: "H3", value: "3" },
+          { name: "H4", value: "4" },
         ],
         {
           default_value: "2",
-          description: "Use a single H1 per page; H2/H3 for sub-sections.",
+          description: "Use a single H1 per page; H2–H4 for sub-sections.",
           tooltip: true,
         },
       ),

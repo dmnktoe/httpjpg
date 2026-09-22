@@ -15,7 +15,7 @@ export const SbHeadline = memo(function SbHeadline({ blok }: SbHeadlineProps) {
   return (
     <Headline
       {...editable}
-      level={Number(level) as 1 | 2 | 3}
+      level={Number(level) as 1 | 2 | 3 | 4}
       align={align}
       css={{ color, ...spacingCss(blok) }}
     >

@@ -1,6 +1,13 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach } from "vitest";
 
+vi.mock("@httpjpg/analytics", () => ({
+  trackRelatedWorkClick: vi.fn(),
+  trackRelatedWorkView: vi.fn(),
+}));
+
+import { trackRelatedWorkClick, trackRelatedWorkView } from "@httpjpg/analytics";
+
 import { RelatedWorkGallery } from "./related-work-gallery";
 
 const STORAGE_KEY = "httpjpg:related-work-view";
@@ -65,6 +72,7 @@ describe("RelatedWorkGallery", () => {
     expect(screen.getByRole("button", { name: /grid/i })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: /list/i })).toHaveAttribute("aria-pressed", "false");
     expect(document.querySelector("img")).toHaveAttribute("src", ITEMS[0]?.thumb);
+    expect(trackRelatedWorkView).toHaveBeenCalledWith("grid");
   });
 
   it("hands the browser the width candidates in the grid", () => {
@@ -85,6 +93,12 @@ describe("RelatedWorkGallery", () => {
       "/work/field-recorder",
     );
     expect(screen.getByText("2027")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("link", { name: /Field Recorder/ }));
+    expect(trackRelatedWorkClick).toHaveBeenCalledWith({
+      href: "/work/field-recorder",
+      view: "list",
+    });
 
     clickView("grid");
 

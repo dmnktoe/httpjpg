@@ -46,6 +46,16 @@ const meta: Meta<typeof Video> = {
       control: "boolean",
       description: "Mute video",
     },
+    poster: {
+      control: "text",
+      description:
+        "Still shown until native playback starts (overlay — the browser drops the native poster)",
+    },
+    objectFit: {
+      control: "select",
+      options: ["contain", "cover", "fill", "none", "scale-down"],
+      description: "How the native video fills a fixed aspect box",
+    },
     copyrightSource: {
       control: "text",
       description: "Asset source/credit, shown as a second line below the copyright",
@@ -61,9 +71,6 @@ const meta: Meta<typeof Video> = {
 export default meta;
 type Story = StoryObj<typeof Video>;
 
-/**
- * YouTube video embed
- */
 export const YouTube: Story = {
   tags: ["!test"],
   args: {
@@ -79,9 +86,6 @@ export const YouTube: Story = {
   },
 };
 
-/**
- * Vimeo video embed
- */
 export const Vimeo: Story = {
   tags: ["!test"],
   args: {
@@ -112,9 +116,6 @@ export const NativeIntrinsic: Story = {
   },
 };
 
-/**
- * Native video with custom controls
- */
 export const Native: Story = {
   tags: ["!test"],
   args: {
@@ -131,9 +132,6 @@ export const Native: Story = {
   },
 };
 
-/**
- * Native video with a copyright + source line
- */
 export const NativeWithCopyrightSource: Story = {
   tags: ["!test"],
   args: {
@@ -151,9 +149,6 @@ export const NativeWithCopyrightSource: Story = {
   },
 };
 
-/**
- * Native video with overlay copyright
- */
 export const NativeWithOverlayCopyright: Story = {
   tags: ["!test"],
   args: {
@@ -170,9 +165,6 @@ export const NativeWithOverlayCopyright: Story = {
   },
 };
 
-/**
- * Square aspect ratio (1:1)
- */
 export const SquareAspectRatio: Story = {
   tags: ["!test"],
   args: {
@@ -186,9 +178,6 @@ export const SquareAspectRatio: Story = {
   },
 };
 
-/**
- * Ultrawide aspect ratio (21:9)
- */
 export const UltrawideAspectRatio: Story = {
   tags: ["!test"],
   args: {
@@ -202,9 +191,6 @@ export const UltrawideAspectRatio: Story = {
   },
 };
 
-/**
- * Autoplay and muted (recommended for autoplay)
- */
 export const AutoplayMuted: Story = {
   tags: ["!test"],
   args: {
@@ -219,9 +205,6 @@ export const AutoplayMuted: Story = {
   },
 };
 
-/**
- * Without controls
- */
 export const WithoutControls: Story = {
   tags: ["!test"],
   args: {

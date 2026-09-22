@@ -1,5 +1,11 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+
+vi.mock("@httpjpg/analytics", () => ({
+  trackWorkNavClick: vi.fn(),
+}));
+
+import { trackWorkNavClick } from "@httpjpg/analytics";
 
 import { WorkNav } from "./work-nav";
 
@@ -54,5 +60,10 @@ describe("WorkNav", () => {
 
     expect(screen.getByRole("link", { name: /Alpha/ })).toHaveAttribute("href", "/work/alpha");
     expect(screen.getByRole("link", { name: /Omega/ })).toHaveAttribute("href", "/work/omega");
+
+    fireEvent.click(screen.getByRole("link", { name: /Alpha/ }));
+    expect(trackWorkNavClick).toHaveBeenCalledWith({ direction: "prev", slug: "alpha" });
+    fireEvent.click(screen.getByRole("link", { name: /Omega/ }));
+    expect(trackWorkNavClick).toHaveBeenCalledWith({ direction: "next", slug: "omega" });
   });
 });

@@ -48,9 +48,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Basic section with live controls
- */
 export const Basic: Story = {
   args: {
     pt: 16,

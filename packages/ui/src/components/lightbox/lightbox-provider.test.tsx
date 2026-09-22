@@ -43,8 +43,9 @@ describe("LightboxProvider", () => {
   it("opens the clicked item and walks the page queue", () => {
     const onOpen = vi.fn();
     const onNavigate = vi.fn();
+    const onClose = vi.fn();
     render(
-      <LightboxProvider onOpen={onOpen} onNavigate={onNavigate}>
+      <LightboxProvider onOpen={onOpen} onNavigate={onNavigate} onClose={onClose}>
         {[FIRST, SECOND, THIRD].map((item) => (
           <Thumb key={item.id} item={item} />
         ))}
@@ -65,6 +66,9 @@ describe("LightboxProvider", () => {
     expect(within(dialog).getByRole("img", { name: "Two" })).toBeInTheDocument();
     expect(within(dialog).getByText("[ 02 / 03 ]")).toBeInTheDocument();
     expect(onNavigate).toHaveBeenCalledWith(SECOND, 1, 3);
+
+    fireEvent.click(screen.getByRole("button", { name: "Close image viewer" }));
+    expect(onClose).toHaveBeenCalledWith(SECOND, 1);
   });
 
   it("opens a later item at its index, not at zero", () => {

@@ -29,6 +29,9 @@ const meta = {
     aspectRatio: { control: "text" },
     beforeLabel: { control: "text" },
     afterLabel: { control: "text" },
+    onInteract: {
+      description: "Fires once on the first handle / range interaction",
+    },
   },
 } satisfies Meta<typeof ImageComparisonSlider>;
 

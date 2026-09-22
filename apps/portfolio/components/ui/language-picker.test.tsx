@@ -1,4 +1,10 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+
+vi.mock("@httpjpg/analytics", () => ({
+  trackLocaleSwitch: vi.fn(),
+}));
+
+import { trackLocaleSwitch } from "@httpjpg/analytics";
 
 import { LanguagePicker } from "./language-picker";
 
@@ -23,5 +29,12 @@ describe("LanguagePicker", () => {
     render(<LanguagePicker locale="en" slug="cv" />);
 
     expect(screen.getByRole("link", { name: "DE" })).toHaveAttribute("hrefLang", "de");
+  });
+
+  it("records a locale switch when the other language is chosen", () => {
+    render(<LanguagePicker locale="en" slug="cv" />);
+
+    fireEvent.click(screen.getByRole("link", { name: "DE" }));
+    expect(trackLocaleSwitch).toHaveBeenCalledWith({ from: "en", to: "de" });
   });
 });

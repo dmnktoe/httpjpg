@@ -13,7 +13,7 @@ const ITEMS = [
 
 /**
  * Work-page downloads as Windows XP desktop icons. Drag to move; double-click
- * to download. Hover uses the same 👋 cursor as Now Playing.
+ * to download. The custom cursor becomes 👋 while hovering a draggable icon.
  */
 const meta = {
   title: "Widgets/DesktopDownloads",

@@ -422,4 +422,33 @@ describe("AudioPlayerProvider media session", () => {
     fireEvent.click(screen.getByText("play /one.mp3"));
     expect(session.playbackState).toBe("paused");
   });
+
+  it("notifies play, pause, and skip callbacks", () => {
+    stubPlayback();
+    const onPlay = vi.fn();
+    const onPause = vi.fn();
+    const onSkip = vi.fn();
+    render(
+      <AudioPlayerProvider onPlay={onPlay} onPause={onPause} onSkip={onSkip}>
+        <QueueEntry track={FIRST} />
+        <QueueEntry track={SECOND} />
+        <Transport />
+      </AudioPlayerProvider>,
+    );
+
+    fireEvent.click(screen.getByText("play /one.mp3"));
+    emit("play", false);
+    expect(onPlay).toHaveBeenCalledWith(expect.objectContaining({ src: "/one.mp3", title: "One" }));
+
+    emit("pause", true);
+    expect(onPause).toHaveBeenCalledWith(
+      expect.objectContaining({ src: "/one.mp3", title: "One" }),
+    );
+
+    fireEvent.click(screen.getByText("next"));
+    expect(onSkip).toHaveBeenCalledWith(
+      "next",
+      expect.objectContaining({ src: "/two.mp3", title: "Two" }),
+    );
+  });
 });

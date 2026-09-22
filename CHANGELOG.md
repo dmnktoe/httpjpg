@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.10.0](https://github.com/dmnktoe/httpjpg/compare/v2.9.4...v2.10.0) (2026-09-22)
+
+
+### Added
+
+* **analytics:** expand Umami/GA event catalog and wire UI surfaces ([#445](https://github.com/dmnktoe/httpjpg/issues/445)) ([4e265b7](https://github.com/dmnktoe/httpjpg/commit/4e265b7265fe59c7a79affea65dc3531a75a5532))
+* scatter XP desktop download icons on work pages ([#420](https://github.com/dmnktoe/httpjpg/issues/420)) ([4df12d2](https://github.com/dmnktoe/httpjpg/commit/4df12d246dc0f461addce38155b0f9fce68cfb09))
+
+
+### Changed
+
+* **analytics:** Umami performance, drop GA, opt-out + cookiedatabase.org ([#455](https://github.com/dmnktoe/httpjpg/issues/455)) ([f7ae831](https://github.com/dmnktoe/httpjpg/commit/f7ae831237f9b5b16a4ca986d1759362dd550b1e))
+
+
+### Dependencies
+
+* update chromaui/action digest to 6b3c282 ([#452](https://github.com/dmnktoe/httpjpg/issues/452)) ([c85b2b5](https://github.com/dmnktoe/httpjpg/commit/c85b2b5cc90d5cf3923b3feb17d6083072bda44f))
+
 ## [2.9.4](https://github.com/dmnktoe/httpjpg/compare/v2.9.3...v2.9.4) (2026-09-22)
 
 

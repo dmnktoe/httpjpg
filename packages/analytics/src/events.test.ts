@@ -50,7 +50,7 @@ describe("analytics event fan-out", () => {
     });
   });
 
-  it("trackWebVital rounds the value, rates it, and reaches both providers", () => {
+  it("trackWebVital rounds the value, rates it, and sends only to GA", () => {
     trackWebVital("LCP", 2345.67);
 
     expect(gtagSpy).toHaveBeenCalledWith(
@@ -58,16 +58,17 @@ describe("analytics event fan-out", () => {
       "performance",
       expect.objectContaining({ event_label: "LCP", value: 2346, rating: "good" }),
     );
-    expect(umamiSpy).toHaveBeenCalledWith("web_vital", {
-      metric: "LCP",
-      value: 2346,
-      rating: "good",
-    });
+    expect(umamiSpy).not.toHaveBeenCalled();
   });
 
   it("trackWebVital marks poor LCP correctly", () => {
     trackWebVital("LCP", 5000);
-    expect(umamiSpy).toHaveBeenCalledWith("web_vital", expect.objectContaining({ rating: "poor" }));
+    expect(gtagSpy).toHaveBeenCalledWith(
+      "event",
+      "performance",
+      expect.objectContaining({ rating: "poor" }),
+    );
+    expect(umamiSpy).not.toHaveBeenCalled();
   });
 
   it("a missing provider does not block the other", () => {

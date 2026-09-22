@@ -47,10 +47,13 @@ export function trackNowPlayingClick(data?: { title?: string; artist?: string })
   trackUmamiEvent("now_playing_click", payload);
 }
 
+/**
+ * GA-only: Umami collects Core Web Vitals via `data-performance` on the
+ * tracker script (Performance tab). Keep this for GA event reporting.
+ */
 export function trackWebVital(name: WebVitalName, value: number): void {
   const rounded = name === "CLS" ? roundCls(value) : Math.round(value);
   const rating = rateWebVital(name, value);
-  const payload = { metric: name, value: rounded, rating };
 
   trackGoogleEvent("performance", {
     category: GA_CATEGORIES.PERFORMANCE,
@@ -58,7 +61,6 @@ export function trackWebVital(name: WebVitalName, value: number): void {
     value: rounded,
     rating,
   });
-  trackUmamiEvent("web_vital", payload);
 }
 
 export function trackSearchOpen(source: SearchOpenSource): void {

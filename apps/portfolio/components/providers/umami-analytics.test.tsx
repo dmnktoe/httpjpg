@@ -15,6 +15,7 @@ describe("UmamiAnalytics", () => {
       src: "https://analytics.example.com/script.js",
       "data-website-id": "abc-123",
       "data-do-not-track": "true",
+      "data-performance": "true",
       strategy: "afterInteractive",
     });
   });

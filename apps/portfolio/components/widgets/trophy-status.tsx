@@ -26,7 +26,13 @@ export function TrophyStatus({ trophy, avatar, loaded }: TrophyStatusProps) {
     <FooterStatusLine
       label="psn"
       href={trophy.url}
-      onClick={() => trackOutboundClick({ destination: "psn", href: trophy.url })}
+      onClick={() =>
+        trackOutboundClick({
+          destination: "psn",
+          href: trophy.url,
+          label: `${trophy.name} — ${trophy.game}`,
+        })
+      }
     >
       {avatar && <FooterStatusLineThumb src={avatar} size="4" shape="circle" />}
       {trophy.image && (

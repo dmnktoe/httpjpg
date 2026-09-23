@@ -33,7 +33,9 @@ function NowPlayingWidgetComponent() {
 
   const handleClick = () => {
     trackNowPlayingClick(
-      data && !errorCode ? { title: data.title, artist: data.artist } : undefined,
+      data && !errorCode
+        ? { title: data.title, artist: data.artist, href: data.trackUrl }
+        : undefined,
     );
   };
 

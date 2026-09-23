@@ -32,7 +32,13 @@ export function LetterboxdStatus({ film, loaded }: LetterboxdStatusProps) {
     <FooterStatusLine
       label="letterboxd"
       href={film.url}
-      onClick={() => trackOutboundClick({ destination: "letterboxd", href: film.url })}
+      onClick={() =>
+        trackOutboundClick({
+          destination: "letterboxd",
+          href: film.url,
+          label: film.year ? `${film.title} (${film.year})` : film.title,
+        })
+      }
     >
       {film.poster && <FooterStatusLineThumb src={film.poster} aspect="auto" />}
       <FooterStatusLineText>{film.title}</FooterStatusLineText>

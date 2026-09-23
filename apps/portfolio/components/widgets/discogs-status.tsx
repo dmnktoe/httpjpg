@@ -25,7 +25,13 @@ export function DiscogsStatus({ release, loaded }: DiscogsStatusProps) {
     <FooterStatusLine
       label="discogs"
       href={release.url}
-      onClick={() => trackOutboundClick({ destination: "discogs", href: release.url })}
+      onClick={() =>
+        trackOutboundClick({
+          destination: "discogs",
+          href: release.url,
+          label: `${release.artist} — ${release.title}`,
+        })
+      }
     >
       {release.thumb && <FooterStatusLineThumb src={release.thumb} aspect="auto" />}
       <FooterStatusLineText maxWidth="240px">

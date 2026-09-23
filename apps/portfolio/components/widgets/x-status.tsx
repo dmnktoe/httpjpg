@@ -35,7 +35,13 @@ export function XStatus({ profile, post, loaded }: XStatusProps) {
     <FooterStatusLine
       label="x"
       href={post.url}
-      onClick={() => trackOutboundClick({ destination: "x", href: post.url })}
+      onClick={() =>
+        trackOutboundClick({
+          destination: "x",
+          href: post.url,
+          label: post.text,
+        })
+      }
     >
       {profile.avatar && (
         <Tooltip label={`@${profile.username}`} css={{ flexShrink: 0 }}>

@@ -10,6 +10,8 @@ vi.mock("@httpjpg/env", () => ({
 import {
   trackAskComplete,
   trackAskSubmit,
+  trackAudioPlay,
+  trackAudioSkip,
   trackEvent,
   trackLightboxOpen,
   trackNowPlayingClick,
@@ -28,12 +30,17 @@ describe("analytics event fan-out", () => {
   });
 
   it("trackNowPlayingClick reaches Umami", () => {
-    trackNowPlayingClick({ title: "Song", artist: "Artist" });
+    trackNowPlayingClick({
+      title: "Song",
+      artist: "Artist",
+      href: "https://open.spotify.com/track/abc",
+    });
 
     expect(umamiSpy).toHaveBeenCalledWith("now_playing_click", {
       widget: "spotify",
       title: "Song",
       artist: "Artist",
+      href: "https://open.spotify.com/track/abc",
     });
   });
 
@@ -62,18 +69,59 @@ describe("analytics event fan-out", () => {
     });
   });
 
-  it("lightbox and outbound helpers clip long strings", () => {
+  it("lightbox and outbound helpers include media identity and clip long strings", () => {
     const longHref = `https://example.com/${"a".repeat(600)}`;
-    trackLightboxOpen({ type: "image", index: 1, count: 4 });
-    trackOutboundClick({ destination: "letterboxd", href: longHref });
+    const longLabel = `label-${"b".repeat(200)}`;
+    trackLightboxOpen({
+      type: "image",
+      index: 1,
+      count: 4,
+      src: "https://cdn.example.com/shot.jpg",
+      alt: "Cover still",
+    });
+    trackOutboundClick({
+      destination: "letterboxd",
+      href: longHref,
+      label: longLabel,
+    });
 
     expect(umamiSpy).toHaveBeenCalledWith("lightbox_open", {
       type: "image",
       index: 1,
       count: 4,
+      src: "https://cdn.example.com/shot.jpg",
+      alt: "Cover still",
     });
     const outbound = umamiSpy.mock.calls.find((call) => call[0] === "outbound_click");
     expect(outbound?.[1].href).toHaveLength(480);
+    expect(outbound?.[1].destination).toBe("letterboxd");
+    expect(outbound?.[1].label).toHaveLength(160);
+  });
+
+  it("audio helpers send file src, title, and artist", () => {
+    trackAudioPlay({
+      title: "Intro",
+      artist: "httpjpg",
+      src: "https://cdn.example.com/intro.mp3",
+      href: "/work/demo",
+    });
+    trackAudioSkip({
+      direction: "next",
+      title: "Outro",
+      src: "https://cdn.example.com/outro.mp3",
+    });
+
+    expect(umamiSpy).toHaveBeenCalledWith("audio_play", {
+      title: "Intro",
+      artist: "httpjpg",
+      src: "https://cdn.example.com/intro.mp3",
+      href: "/work/demo",
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("audio_skip", {
+      direction: "next",
+      title: "Outro",
+      src: "https://cdn.example.com/outro.mp3",
+    });
   });
 
   it("drops undefined values and non-finite numbers from payloads", () => {

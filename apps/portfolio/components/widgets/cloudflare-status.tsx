@@ -28,7 +28,13 @@ export function CloudflareStatus() {
   return (
     <FooterStatusLine
       href={CLOUDFLARE_HREF}
-      onClick={() => trackOutboundClick({ destination: "cloudflare", href: CLOUDFLARE_HREF })}
+      onClick={() =>
+        trackOutboundClick({
+          destination: "cloudflare",
+          href: CLOUDFLARE_HREF,
+          label: data?.colo ? `Cloudflare (${data.colo})` : "Cloudflare",
+        })
+      }
     >
       {data?.colo && <CloudflareStat separator={false}>{data.colo}</CloudflareStat>}
       {data?.country && (

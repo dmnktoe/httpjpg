@@ -22,13 +22,18 @@ export function trackEvent(name: string, data?: EventData): void {
   trackUmamiEvent(name, sanitizeEventData(data));
 }
 
-export function trackNowPlayingClick(data?: { title?: string; artist?: string }): void {
+export function trackNowPlayingClick(data?: {
+  title?: string;
+  artist?: string;
+  href?: string;
+}): void {
   trackUmamiEvent(
     "now_playing_click",
     sanitizeEventData({
       widget: "spotify",
       title: data?.title,
       artist: data?.artist,
+      href: data?.href ? clipString(data.href) : undefined,
     }),
   );
 }
@@ -64,60 +69,37 @@ export function trackAskAction(data: { href: string }): void {
   trackEvent("ask_action", { href: clipString(data.href) });
 }
 
-export function trackLightboxOpen(data: {
-  type: "image" | "video";
-  index: number;
-  count: number;
-}): void {
-  trackEvent("lightbox_open", {
-    type: data.type,
-    index: data.index,
-    count: data.count,
-  });
+export function trackLightboxOpen(data: LightboxEventData): void {
+  trackEvent("lightbox_open", lightboxPayload(data));
 }
 
-export function trackLightboxNavigate(data: {
-  type: "image" | "video";
-  index: number;
-  count: number;
-}): void {
-  trackEvent("lightbox_navigate", {
-    type: data.type,
-    index: data.index,
-    count: data.count,
-  });
+export function trackLightboxNavigate(data: LightboxEventData): void {
+  trackEvent("lightbox_navigate", lightboxPayload(data));
 }
 
-export function trackLightboxClose(data?: { type?: "image" | "video"; index?: number }): void {
+export function trackLightboxClose(
+  data?: Pick<LightboxEventData, "type" | "index" | "src" | "alt">,
+): void {
   trackEvent("lightbox_close", {
     type: data?.type,
     index: data?.index,
+    src: data?.src ? clipString(data.src) : undefined,
+    alt: data?.alt,
   });
 }
 
-export function trackAudioPlay(data?: { title?: string; href?: string }): void {
-  trackEvent("audio_play", {
-    title: data?.title,
-    href: data?.href ? clipString(data.href) : undefined,
-  });
+export function trackAudioPlay(data?: AudioEventData): void {
+  trackEvent("audio_play", audioPayload(data));
 }
 
-export function trackAudioPause(data?: { title?: string; href?: string }): void {
-  trackEvent("audio_pause", {
-    title: data?.title,
-    href: data?.href ? clipString(data.href) : undefined,
-  });
+export function trackAudioPause(data?: AudioEventData): void {
+  trackEvent("audio_pause", audioPayload(data));
 }
 
-export function trackAudioSkip(data: {
-  direction: AudioSkipDirection;
-  title?: string;
-  href?: string;
-}): void {
+export function trackAudioSkip(data: AudioEventData & { direction: AudioSkipDirection }): void {
   trackEvent("audio_skip", {
     direction: data.direction,
-    title: data.title,
-    href: data.href ? clipString(data.href) : undefined,
+    ...audioPayload(data),
   });
 }
 
@@ -146,10 +128,13 @@ export function trackLocaleSwitch(data: { from: string; to: string }): void {
 export function trackOutboundClick(data: {
   destination: OutboundDestination;
   href?: string;
+  /** Human-readable target (film title, release, trophy, …) for Umami Properties. */
+  label?: string;
 }): void {
   trackEvent("outbound_click", {
     destination: data.destination,
     href: data.href ? clipString(data.href) : undefined,
+    label: data.label ? clipString(data.label, MAX_LABEL) : undefined,
   });
 }
 
@@ -157,8 +142,46 @@ export function trackComparisonInteract(data?: { orientation?: string }): void {
   trackEvent("comparison_interact", { orientation: data?.orientation });
 }
 
+interface LightboxEventData {
+  type: "image" | "video";
+  index: number;
+  count: number;
+  src?: string;
+  alt?: string;
+}
+
+interface AudioEventData {
+  title?: string;
+  artist?: string;
+  /** Audio file URL — the track identity. */
+  src?: string;
+  /** Page the track was registered from. */
+  href?: string;
+}
+
+function lightboxPayload(data: LightboxEventData): EventData {
+  return {
+    type: data.type,
+    index: data.index,
+    count: data.count,
+    src: data.src ? clipString(data.src) : undefined,
+    alt: data.alt,
+  };
+}
+
+function audioPayload(data?: AudioEventData): EventData {
+  return {
+    title: data?.title,
+    artist: data?.artist,
+    src: data?.src ? clipString(data.src) : undefined,
+    href: data?.href ? clipString(data.href) : undefined,
+  };
+}
+
 /** Umami string limit is 500; keep a small headroom for encoding. */
 const MAX_STRING = 480;
+/** Keep outbound labels short so the Properties breakdown stays readable. */
+const MAX_LABEL = 160;
 
 function sanitizeEventData(data?: EventData): EventData | undefined {
   if (!data) {

@@ -1,5 +1,11 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("@httpjpg/analytics", () => ({
+  trackOutboundClick: vi.fn(),
+}));
+
+import { trackOutboundClick } from "@httpjpg/analytics";
 
 import { BuildBadge } from "./build-badge";
 
@@ -45,6 +51,18 @@ describe("BuildBadge", () => {
       "href",
       "https://github.com/dmnktoe/httpjpg/commit/a1b2c3d4e5f6a7b8",
     );
+  });
+
+  it("tracks an outbound github click with the version label", () => {
+    render(<BuildBadge repositoryUrl={REPO} version="v2.4.0" commitSha="a1b2c3d4e5f6a7b8" />);
+
+    fireEvent.click(screen.getByRole("link"));
+
+    expect(trackOutboundClick).toHaveBeenCalledWith({
+      destination: "github",
+      href: "https://github.com/dmnktoe/httpjpg/commit/a1b2c3d4e5f6a7b8",
+      label: "v2.4.0",
+    });
   });
 
   it("falls back to the release tag when only the version is known", () => {

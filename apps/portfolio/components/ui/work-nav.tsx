@@ -38,7 +38,9 @@ export function WorkNav({ prev, next, accent }: WorkNavProps) {
           <Link
             href={`/work/${prev.slug}`}
             style={linkColor}
-            onClick={() => trackWorkNavClick({ direction: "prev", slug: prev.slug })}
+            onClick={() =>
+              trackWorkNavClick({ direction: "prev", slug: prev.slug, title: prev.title })
+            }
             css={{
               display: "block",
               color: "primary.500",
@@ -61,7 +63,9 @@ export function WorkNav({ prev, next, accent }: WorkNavProps) {
           <Link
             href={`/work/${next.slug}`}
             style={linkColor}
-            onClick={() => trackWorkNavClick({ direction: "next", slug: next.slug })}
+            onClick={() =>
+              trackWorkNavClick({ direction: "next", slug: next.slug, title: next.title })
+            }
             css={{
               display: "block",
               color: "primary.500",

@@ -6,7 +6,7 @@ import { MiniPlayerSlot } from "../music-player/mini-player-slot";
 import { SearchTrigger } from "../search-trigger/search-trigger";
 import { ExpandableLinks } from "./expandable-links";
 import { Favicon } from "./favicon";
-import type { HeaderProps } from "./header";
+import type { HeaderProps, NavClickPayload } from "./header";
 import { WorkNavLink } from "./work-nav-link";
 
 export function Navigation({
@@ -14,7 +14,12 @@ export function Navigation({
   projectsWork = [],
   websitesWork = [],
   showSearch = false,
+  onNavClick,
 }: Omit<HeaderProps, "children">) {
+  function emit(payload: NavClickPayload) {
+    onNavClick?.(payload);
+  }
+
   return (
     <Box css={{ position: "relative", display: { base: "none", lg: "flex" }, w: "full" }}>
       <Box
@@ -37,6 +42,14 @@ export function Navigation({
               ⇝HE𝓁𝓁O{" "}
               <Link
                 href="/"
+                onClick={() =>
+                  emit({
+                    label: "www.httpjpg.com",
+                    href: "/",
+                    source: "desktop",
+                    kind: "home",
+                  })
+                }
                 css={{ color: "inherit", textDecoration: "underline", _hover: { opacity: 0.7 } }}
               >
                 www.httpjpg.com
@@ -53,6 +66,15 @@ export function Navigation({
                   href={item.href}
                   isExternal={item.isExternal}
                   showExternalIcon={false}
+                  onClick={() =>
+                    emit({
+                      label: item.name,
+                      href: item.href,
+                      source: "desktop",
+                      kind: "menu",
+                      ...(item.isExternal ? { external: true } : {}),
+                    })
+                  }
                   css={{
                     fontFamily: "accent",
                     textDecoration: "none",
@@ -78,6 +100,14 @@ export function Navigation({
             <br />
             <Link
               href="/feed-xml_html"
+              onClick={() =>
+                emit({
+                  label: "music",
+                  href: "/feed-xml_html",
+                  source: "desktop",
+                  kind: "music",
+                })
+              }
               css={{
                 textDecoration: "none",
                 _hover: { textDecoration: "underline" },
@@ -103,7 +133,24 @@ export function Navigation({
           {projectsWork.length > 0 ? (
             <ExpandableLinks
               items={projectsWork}
-              renderItem={(work) => <WorkNavLink key={work.id} work={work} variant="projects" />}
+              renderItem={(work) => (
+                <WorkNavLink
+                  key={work.id}
+                  work={work}
+                  variant="projects"
+                  onClick={() =>
+                    emit({
+                      label: work.title,
+                      href: work.isExternal ? work.slug : `/work/${work.slug}`,
+                      source: "desktop",
+                      kind: "work",
+                      variant: "projects",
+                      slug: work.slug,
+                      ...(work.isExternal ? { external: true } : {}),
+                    })
+                  }
+                />
+              )}
             />
           ) : (
             <Box as="span" css={{ opacity: 0.5, fontSize: "xs" }}>
@@ -130,7 +177,24 @@ export function Navigation({
           {websitesWork.length > 0 ? (
             <ExpandableLinks
               items={websitesWork}
-              renderItem={(work) => <WorkNavLink key={work.id} work={work} variant="websites" />}
+              renderItem={(work) => (
+                <WorkNavLink
+                  key={work.id}
+                  work={work}
+                  variant="websites"
+                  onClick={() =>
+                    emit({
+                      label: work.title,
+                      href: work.isExternal ? work.slug : `/work/${work.slug}`,
+                      source: "desktop",
+                      kind: "work",
+                      variant: "websites",
+                      slug: work.slug,
+                      ...(work.isExternal ? { external: true } : {}),
+                    })
+                  }
+                />
+              )}
             />
           ) : (
             <Box as="span" css={{ opacity: 0.5, fontSize: "xs" }}>

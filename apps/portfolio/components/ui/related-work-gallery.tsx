@@ -36,8 +36,8 @@ export function RelatedWorkGallery({ items }: RelatedWorkGalleryProps) {
   }, []);
 
   const handleItemClick = useCallback(
-    (href: string) => {
-      trackRelatedWorkClick({ href, view });
+    (item: RelatedWorkItem) => {
+      trackRelatedWorkClick({ href: item.href, view, title: item.title });
     },
     [view],
   );
@@ -61,13 +61,13 @@ export function RelatedWorkGallery({ items }: RelatedWorkGalleryProps) {
           }}
         >
           {items.map((item) => (
-            <RelatedWorkCard key={item.id} {...item} onClick={() => handleItemClick(item.href)} />
+            <RelatedWorkCard key={item.id} {...item} onClick={() => handleItemClick(item)} />
           ))}
         </Box>
       ) : (
         <Box as="ul" css={{ mt: "3", listStyle: "none" }}>
           {items.map((item) => (
-            <RelatedWorkRow key={item.id} {...item} onClick={() => handleItemClick(item.href)} />
+            <RelatedWorkRow key={item.id} {...item} onClick={() => handleItemClick(item)} />
           ))}
         </Box>
       )}

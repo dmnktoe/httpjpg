@@ -6,12 +6,15 @@ export type EventData = UmamiEventData;
 export type SearchOpenSource = "keyboard" | "trigger";
 export type WorkNavDirection = "prev" | "next";
 export type AudioSkipDirection = "next" | "previous";
+export type NavClickSource = "desktop" | "mobile";
+export type NavClickKind = "menu" | "work" | "home" | "music";
 export type OutboundDestination =
   | "letterboxd"
   | "discogs"
   | "x"
   | "psn"
   | "cloudflare"
+  | "github"
   | "external";
 
 /**
@@ -42,11 +45,17 @@ export function trackSearchOpen(source: SearchOpenSource): void {
   trackEvent("search_open", { source });
 }
 
-export function trackSearchSelect(data: { kind: string; href: string; queryLength: number }): void {
+export function trackSearchSelect(data: {
+  kind: string;
+  href: string;
+  queryLength: number;
+  title?: string;
+}): void {
   trackEvent("search_select", {
     kind: data.kind,
     href: clipString(data.href),
     query_length: data.queryLength,
+    title: data.title,
   });
 }
 
@@ -65,8 +74,12 @@ export function trackAskError(data: { reason: string }): void {
   trackEvent("ask_error", { reason: clipString(data.reason, 80) });
 }
 
-export function trackAskAction(data: { href: string }): void {
-  trackEvent("ask_action", { href: clipString(data.href) });
+export function trackAskAction(data: { href: string; title?: string; kind?: string }): void {
+  trackEvent("ask_action", {
+    href: clipString(data.href),
+    title: data.title,
+    kind: data.kind,
+  });
 }
 
 export function trackLightboxOpen(data: LightboxEventData): void {
@@ -103,17 +116,43 @@ export function trackAudioSkip(data: AudioEventData & { direction: AudioSkipDire
   });
 }
 
-export function trackWorkNavClick(data: { direction: WorkNavDirection; slug: string }): void {
+export function trackWorkNavClick(data: {
+  direction: WorkNavDirection;
+  slug: string;
+  title?: string;
+}): void {
   trackEvent("work_nav_click", {
     direction: data.direction,
     slug: clipString(data.slug, 120),
+    title: data.title,
   });
 }
 
-export function trackRelatedWorkClick(data: { href: string; view: string }): void {
+export function trackRelatedWorkClick(data: { href: string; view: string; title?: string }): void {
   trackEvent("related_work_click", {
     href: clipString(data.href),
     view: data.view,
+    title: data.title,
+  });
+}
+
+export function trackNavClick(data: {
+  label: string;
+  href: string;
+  source: NavClickSource;
+  kind: NavClickKind;
+  external?: boolean;
+  variant?: "projects" | "websites";
+  slug?: string;
+}): void {
+  trackEvent("nav_click", {
+    label: clipString(data.label, MAX_LABEL),
+    href: clipString(data.href),
+    source: data.source,
+    kind: data.kind,
+    external: data.external,
+    variant: data.variant,
+    slug: data.slug ? clipString(data.slug, 120) : undefined,
   });
 }
 

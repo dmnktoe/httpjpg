@@ -1,3 +1,5 @@
+import type { MouseEventHandler } from "react";
+
 import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
 import { NavLink } from "../nav-link/nav-link";
@@ -7,6 +9,7 @@ import type { WorkItem } from "./header";
 interface WorkNavLinkProps {
   work: WorkItem;
   variant: "projects" | "websites";
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
 }
 
 const DRAFT_PADDING = {
@@ -14,7 +17,7 @@ const DRAFT_PADDING = {
   websites: "0 4px",
 } as const;
 
-export function WorkNavLink({ work, variant }: WorkNavLinkProps) {
+export function WorkNavLink({ work, variant, onClick }: WorkNavLinkProps) {
   const year = formatYear(work.date);
 
   return (
@@ -24,6 +27,7 @@ export function WorkNavLink({ work, variant }: WorkNavLinkProps) {
       isExternal={work.isExternal}
       showExternalIcon={work.isExternal}
       data-preview-image={work.imageUrl}
+      onClick={onClick}
       css={{
         ...WORK_LINK_FLEX,
         backgroundColor: work.isDraft ? "warning.200" : "transparent",

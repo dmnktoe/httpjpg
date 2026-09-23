@@ -170,6 +170,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
         kind: result.kind,
         href: result.href,
         queryLength: query.trim().length,
+        title: result.title,
       });
       close();
       if (result.href.startsWith("http")) {
@@ -264,7 +265,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
 
   const handleAction = useCallback(
     (target: CommandPaletteAction) => {
-      trackAskAction({ href: target.href });
+      trackAskAction({ href: target.href, title: target.title, kind: target.kind });
       close();
       router.push(target.href);
     },

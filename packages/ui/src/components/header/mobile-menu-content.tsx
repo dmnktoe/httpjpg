@@ -21,6 +21,7 @@ export function MobileMenuContent({
   nav,
   projectsWork = [],
   websitesWork = [],
+  onNavClick,
 }: MobileMenuContentProps) {
   const mounted = useHasMounted();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -184,13 +185,18 @@ export function MobileMenuContent({
               overscrollBehavior: "contain",
             }}
           >
-            <MobileMenuNavRibbon nav={nav} onItemClick={handleMenuItemClick} />
+            <MobileMenuNavRibbon
+              nav={nav}
+              onItemClick={handleMenuItemClick}
+              onNavClick={onNavClick}
+            />
 
             <MobileMenuWorkSection
               heading="⇝ᵣₑcꫀₙₜ TH1𝓃𝑔S"
               works={projectsWork}
               variant="projects"
               onItemClick={handleMenuItemClick}
+              onNavClick={onNavClick}
               emptyState={
                 <Box as="span" css={{ opacity: 0.5, fontSize: "xs" }}>
                   ╭─────────────────╮
@@ -206,6 +212,7 @@ export function MobileMenuContent({
               works={websitesWork}
               variant="websites"
               onItemClick={handleMenuItemClick}
+              onNavClick={onNavClick}
               emptyState={
                 <Box as="span" css={{ opacity: 0.5, fontSize: "xs" }}>
                   ╭───────────────────╮

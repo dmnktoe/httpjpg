@@ -8,16 +8,20 @@ vi.mock("@httpjpg/env", () => ({
 }));
 
 import {
+  trackAskAction,
   trackAskComplete,
   trackAskSubmit,
   trackAudioPlay,
   trackAudioSkip,
   trackEvent,
   trackLightboxOpen,
+  trackNavClick,
   trackNowPlayingClick,
   trackOutboundClick,
+  trackRelatedWorkClick,
   trackSearchOpen,
   trackSearchSelect,
+  trackWorkNavClick,
 } from "./events";
 
 describe("analytics event fan-out", () => {
@@ -52,20 +56,86 @@ describe("analytics event fan-out", () => {
 
   it("search and ask helpers send structured payloads", () => {
     trackSearchOpen("keyboard");
-    trackSearchSelect({ kind: "work", href: "/work/x", queryLength: 4 });
+    trackSearchSelect({
+      kind: "work",
+      href: "/work/x",
+      queryLength: 4,
+      title: "X",
+    });
     trackAskSubmit({ queryLength: 12 });
     trackAskComplete({ hasAction: true, sourceCount: 3 });
+    trackAskAction({ href: "/work/x", title: "X", kind: "work" });
 
     expect(umamiSpy).toHaveBeenCalledWith("search_open", { source: "keyboard" });
     expect(umamiSpy).toHaveBeenCalledWith("search_select", {
       kind: "work",
       href: "/work/x",
       query_length: 4,
+      title: "X",
     });
     expect(umamiSpy).toHaveBeenCalledWith("ask_submit", { query_length: 12 });
     expect(umamiSpy).toHaveBeenCalledWith("ask_complete", {
       has_action: true,
       source_count: 3,
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("ask_action", {
+      href: "/work/x",
+      title: "X",
+      kind: "work",
+    });
+  });
+
+  it("nav and related helpers include readable labels", () => {
+    trackNavClick({
+      label: "Projects",
+      href: "/work",
+      source: "desktop",
+      kind: "menu",
+    });
+    trackNavClick({
+      label: "Outlet",
+      href: "/work/outlet",
+      source: "mobile",
+      kind: "work",
+      variant: "projects",
+      slug: "outlet",
+    });
+    trackWorkNavClick({ direction: "next", slug: "outlet", title: "Outlet" });
+    trackRelatedWorkClick({ href: "/work/outlet", view: "grid", title: "Outlet" });
+    trackOutboundClick({
+      destination: "github",
+      href: "https://github.com/dmnktoe/httpjpg",
+      label: "v2.10.0",
+    });
+
+    expect(umamiSpy).toHaveBeenCalledWith("nav_click", {
+      label: "Projects",
+      href: "/work",
+      source: "desktop",
+      kind: "menu",
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("nav_click", {
+      label: "Outlet",
+      href: "/work/outlet",
+      source: "mobile",
+      kind: "work",
+      variant: "projects",
+      slug: "outlet",
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("work_nav_click", {
+      direction: "next",
+      slug: "outlet",
+      title: "Outlet",
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("related_work_click", {
+      href: "/work/outlet",
+      view: "grid",
+      title: "Outlet",
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("outbound_click", {
+      destination: "github",
+      href: "https://github.com/dmnktoe/httpjpg",
+      label: "v2.10.0",
     });
   });
 

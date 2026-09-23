@@ -21,6 +21,7 @@ vi.mock("@httpjpg/analytics", () => ({
 }));
 
 import {
+  trackAskAction,
   trackAskComplete,
   trackAskSubmit,
   trackSearchOpen,
@@ -195,6 +196,7 @@ describe("AskWidget", () => {
       kind: "work",
       href: "/work/brutalist",
       queryLength: 6,
+      title: "Brutalist Portfolio",
     });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
@@ -322,6 +324,11 @@ describe("AskWidget", () => {
     await waitFor(() => expect(screen.getByText("See this.")).toBeInTheDocument());
     fireEvent.click(screen.getByRole("button", { name: /go to Brutalist Portfolio/ }));
     expect(mockPush).toHaveBeenCalledWith("/work/brutalist");
+    expect(trackAskAction).toHaveBeenCalledWith({
+      href: "/work/brutalist",
+      title: "Brutalist Portfolio",
+      kind: "work",
+    });
   });
 
   it("treats a missing search payload as empty and reports a thrown ask", async () => {

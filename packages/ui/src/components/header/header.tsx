@@ -32,6 +32,20 @@ export interface WorkItem {
   date?: string;
 }
 
+export type NavClickSource = "desktop" | "mobile";
+export type NavClickKind = "menu" | "work" | "home" | "music";
+
+/** Payload for optional header nav analytics — no analytics dep in ui. */
+export interface NavClickPayload {
+  label: string;
+  href: string;
+  source: NavClickSource;
+  kind: NavClickKind;
+  external?: boolean;
+  variant?: "projects" | "websites";
+  slug?: string;
+}
+
 export interface HeaderProps {
   nav: NavItem[];
   projectsWork?: WorkItem[];
@@ -40,6 +54,8 @@ export interface HeaderProps {
   showSearch?: boolean;
   /** Fades a theme-aware scrim in behind the header on scroll. @default true */
   showScrollVeil?: boolean;
+  /** Fires when a header / mobile-menu link is activated. */
+  onNavClick?: (payload: NavClickPayload) => void;
   children?: ReactNode;
 }
 
@@ -49,6 +65,7 @@ export function Header({
   websitesWork = [],
   showSearch = false,
   showScrollVeil = true,
+  onNavClick,
   children,
 }: HeaderProps) {
   const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false);
@@ -124,6 +141,14 @@ export function Header({
               <br />
               <Link
                 href="/"
+                onClick={() =>
+                  onNavClick?.({
+                    label: "www.httpjpg.com",
+                    href: "/",
+                    source: "mobile",
+                    kind: "home",
+                  })
+                }
                 css={{ color: "inherit", textDecoration: "underline", _hover: { opacity: 0.7 } }}
               >
                 www.httpjpg.com
@@ -146,6 +171,7 @@ export function Header({
               projectsWork={projectsWork}
               websitesWork={websitesWork}
               showSearch={showSearch}
+              onNavClick={onNavClick}
             />
             <MobileMenuButton isOpen={mobileMenuIsOpen} setIsOpen={setMobileMenuIsOpen} />
           </Box>
@@ -157,6 +183,7 @@ export function Header({
           nav={nav}
           projectsWork={projectsWork}
           websitesWork={websitesWork}
+          onNavClick={onNavClick}
         />
 
         {children}

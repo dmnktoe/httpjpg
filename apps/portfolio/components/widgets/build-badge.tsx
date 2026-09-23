@@ -1,5 +1,6 @@
 "use client";
 
+import { trackOutboundClick } from "@httpjpg/analytics";
 import { Box } from "@httpjpg/ui";
 import { useSyncExternalStore } from "react";
 
@@ -79,8 +80,17 @@ export function BuildBadge({ repositoryUrl, version, buildTime, commitSha }: Bui
     return <Box css={lineCss}>{content}</Box>;
   }
 
+  const label = version ?? shortSha ?? "build";
+
   return (
-    <Box as="a" href={href} target="_blank" rel="noopener noreferrer" css={lineCss}>
+    <Box
+      as="a"
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => trackOutboundClick({ destination: "github", href, label })}
+      css={lineCss}
+    >
       {content}
     </Box>
   );

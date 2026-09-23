@@ -231,4 +231,33 @@ describe("Header", () => {
 
     expect(screen.getAllByRole("button", { name: "Open search" }).length).toBeGreaterThan(0);
   });
+
+  it("reports desktop nav clicks through onNavClick", () => {
+    const onNavClick = vi.fn();
+    render(<Header nav={NAV} onNavClick={onNavClick} />);
+
+    fireEvent.click(screen.getAllByRole("link", { name: "WORK" })[0]!);
+
+    expect(onNavClick).toHaveBeenCalledWith({
+      label: "work",
+      href: "/work",
+      source: "desktop",
+      kind: "menu",
+    });
+  });
+
+  it("reports mobile menu nav clicks through onNavClick", () => {
+    const onNavClick = vi.fn();
+    render(<Header nav={NAV} onNavClick={onNavClick} />);
+
+    openMenu();
+    fireEvent.click(screen.getAllByRole("link", { name: "ABOUT" }).at(-1)!);
+
+    expect(onNavClick).toHaveBeenCalledWith({
+      label: "about",
+      href: "/about",
+      source: "mobile",
+      kind: "menu",
+    });
+  });
 });

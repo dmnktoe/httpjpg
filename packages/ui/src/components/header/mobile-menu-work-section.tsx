@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { formatYear } from "../../lib/format";
 import { Box } from "../box/box";
 import { NavLink } from "../nav-link/nav-link";
-import type { WorkItem } from "./header";
+import type { NavClickPayload, WorkItem } from "./header";
 
 interface MobileMenuWorkSectionProps {
   heading: ReactNode;
@@ -13,6 +13,7 @@ interface MobileMenuWorkSectionProps {
   variant: "projects" | "websites";
   emptyState: ReactNode;
   onItemClick: () => void;
+  onNavClick?: (payload: NavClickPayload) => void;
 }
 
 export function MobileMenuWorkSection({
@@ -21,6 +22,7 @@ export function MobileMenuWorkSection({
   variant,
   emptyState,
   onItemClick,
+  onNavClick,
 }: MobileMenuWorkSectionProps) {
   return (
     <Box>
@@ -39,7 +41,18 @@ export function MobileMenuWorkSection({
                 href={href}
                 isExternal={work.isExternal}
                 showExternalIcon={work.isExternal}
-                onClick={onItemClick}
+                onClick={() => {
+                  onNavClick?.({
+                    label: work.title,
+                    href,
+                    source: "mobile",
+                    kind: "work",
+                    variant,
+                    slug: work.slug,
+                    ...(work.isExternal ? { external: true } : {}),
+                  });
+                  onItemClick();
+                }}
                 data-preview-image={work.imageUrl}
                 css={{
                   backgroundColor: work.isDraft ? "warning.200" : "transparent",

@@ -7,7 +7,6 @@ import {
   AsciiArt,
   Box,
   Footer,
-  Header,
   ImagePreview,
   LazyMotionProvider,
   parseWorkAccent,
@@ -21,6 +20,7 @@ import type { CSSProperties, PropsWithChildren } from "react";
 import { ConsentGate } from "@/components/providers/consent-gate";
 import { ConsentProvider } from "@/components/providers/consent-provider";
 import { StoryblokProvider } from "@/components/providers/storyblok-provider";
+import { TrackedHeader } from "@/components/providers/tracked-header";
 import {
   TrackedAudioPlayerProvider,
   TrackedLightboxProvider,
@@ -147,7 +147,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               {widgetConfig.psnEnabled && <PSNCard username={widgetConfig.psnUsername} />}
               {widgetConfig.askEnabled && <AskWidget askEnabled={Boolean(env.GROQ_API_KEY)} />}
               <PreviewNotification />
-              <Header
+              <TrackedHeader
                 nav={navigation}
                 projectsWork={projectsWork}
                 websitesWork={websitesWork}

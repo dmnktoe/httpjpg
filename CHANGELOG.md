@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.10.1](https://github.com/dmnktoe/httpjpg/compare/v2.10.0...v2.10.1) (2026-09-24)
+
+
+### Fixed
+
+* **analytics:** enrich Umami events + track nav clicks ([#461](https://github.com/dmnktoe/httpjpg/issues/461)) ([3c5dc25](https://github.com/dmnktoe/httpjpg/commit/3c5dc25b703656508d6de7b1b5234a9246123c3d))
+* **consent:** drop duplicate ↗ on cookie policy links ([#464](https://github.com/dmnktoe/httpjpg/issues/464)) ([238df05](https://github.com/dmnktoe/httpjpg/commit/238df056bbe78855d23118c429445c4cfecfa40a))
+
+
+### Tooling
+
+* link native iOS reader in README ([#459](https://github.com/dmnktoe/httpjpg/issues/459)) ([27eec01](https://github.com/dmnktoe/httpjpg/commit/27eec0117e278c1e45c1f37ac8fc8a80b6d55a5c)), closes [#458](https://github.com/dmnktoe/httpjpg/issues/458)
+
+
+### Dependencies
+
+* update dev dependencies to ^21.2.3 ([#453](https://github.com/dmnktoe/httpjpg/issues/453)) ([3f2ff09](https://github.com/dmnktoe/httpjpg/commit/3f2ff091557a631651b5d4d70c6e94e414258c63))
+
 ## [2.10.0](https://github.com/dmnktoe/httpjpg/compare/v2.9.4...v2.10.0) (2026-09-22)
 
 

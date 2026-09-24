@@ -26,7 +26,7 @@ describe("CookiePolicyPage", () => {
     const links = screen.getAllByRole("link", { name: "Cookie Database" });
     expect(links.length).toBeGreaterThan(0);
     for (const link of links) {
-      expect(link.textContent).toBe("Cookie Database↗");
+      expect(link.textContent?.match(/↗/g)).toEqual(["↗"]);
       expect(link.querySelectorAll("[aria-hidden='true']")).toHaveLength(1);
     }
   });

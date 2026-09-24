@@ -104,7 +104,7 @@ export default function CookiePolicyPage() {
                 <>
                   {" "}
                   <Link href={cookie.cookieDatabase} target="_blank" rel="noopener noreferrer">
-                    Cookie Database ↗
+                    Cookie Database
                   </Link>
                 </>
               ) : null}

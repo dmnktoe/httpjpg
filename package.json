@@ -37,9 +37,9 @@
     "husky": "^9.1.7",
     "jsdom": "catalog:",
     "lint-staged": "^17.5.1",
-    "oxfmt": "^0.68.0",
-    "oxlint": "^1.83.0",
-    "turbo": "^2.11.2",
+    "oxfmt": "^0.70.0",
+    "oxlint": "^1.85.0",
+    "turbo": "^2.11.3",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

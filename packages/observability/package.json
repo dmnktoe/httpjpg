@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@httpjpg/env": "workspace:*",
-    "@sentry/nextjs": "^10.75.0"
+    "@sentry/nextjs": "^11.0.0"
   },
   "devDependencies": {
     "@types/node": "catalog:",

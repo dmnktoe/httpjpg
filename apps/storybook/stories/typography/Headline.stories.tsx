@@ -59,9 +59,6 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/**
- * Basic headline with live controls
- */
 export const Basic: Story = {
   args: {
     level: 1,

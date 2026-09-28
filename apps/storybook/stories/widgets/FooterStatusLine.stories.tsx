@@ -27,6 +27,10 @@ const meta = {
     label: { control: "text" },
     href: { control: "text" },
     loading: { control: "boolean" },
+    onClick: {
+      action: "click",
+      description: "Outbound analytics hook when the line is a link",
+    },
   },
 } satisfies Meta<typeof FooterStatusLine>;
 

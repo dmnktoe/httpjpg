@@ -26,9 +26,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Basic Box with live controls
- */
 export const Basic: Story = {
   args: {
     as: "div",

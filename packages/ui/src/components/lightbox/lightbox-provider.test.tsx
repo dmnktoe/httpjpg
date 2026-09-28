@@ -77,6 +77,20 @@ describe("LightboxProvider", () => {
     expect(within(dialog).getByText("[ 02 / 03 ]")).toBeInTheDocument();
   });
 
+  it("reports close through onClose", () => {
+    const onClose = vi.fn();
+    render(
+      <LightboxProvider onClose={onClose}>
+        <Thumb item={FIRST} />
+      </LightboxProvider>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Open One at full size" }));
+    fireEvent.click(screen.getByRole("button", { name: "Close image viewer" }));
+
+    expect(onClose).toHaveBeenCalledWith(FIRST, 0);
+  });
+
   it("closes when the last registered item unmounts", async () => {
     const { rerender } = renderGallery([FIRST]);
 

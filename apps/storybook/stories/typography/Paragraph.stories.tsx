@@ -91,9 +91,6 @@ const mediumText =
 
 const shortText = "A brief statement about design principles.";
 
-/**
- * Basic paragraph with live controls
- */
 export const Basic: Story = {
   args: {
     size: "sm",

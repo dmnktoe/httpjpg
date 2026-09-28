@@ -6,6 +6,7 @@ export type EventData = UmamiEventData;
 export type SearchOpenSource = "keyboard" | "trigger";
 export type WorkNavDirection = "prev" | "next";
 export type AudioSkipDirection = "next" | "previous";
+/** Mirrors Header `NavClickPayload` — keep in lockstep; ui must not import analytics. */
 export type NavClickSource = "desktop" | "mobile";
 export type NavClickKind = "menu" | "work" | "home" | "music";
 export type OutboundDestination =

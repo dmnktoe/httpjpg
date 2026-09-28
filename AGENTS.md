@@ -65,7 +65,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 | `@httpjpg/storyblok-sync`     | CLI: push schemas/datasources from `CMS_OPTIONS` + tokens — not imported at runtime                                                 |
 | `@httpjpg/spotify`            | Spotify API + `useNowPlaying` + vibrant color extraction                                                                            |
 | `@httpjpg/now-playing`        | Draggable widget UI (`@httpjpg/ui` peer for `Marquee`) — UI only                                                                    |
-| `@httpjpg/analytics`          | GA4 + Umami wrappers; load behind `analytics` consent via `ConsentGate`                                                             |
+| `@httpjpg/analytics`          | Typed `track*` catalog → self-hosted Umami; load behind `ConsentGate` (analytics is opt-out)                                        |
 | `@httpjpg/ai`                 | Groq chat client (`createGroqClient`, streaming, `GroqApiError`); prompts live in the app                                           |
 | `@httpjpg/observability`      | Sentry init for client / server / edge                                                                                              |
 | `@httpjpg/consent`            | Consent state machine + banner UI + `EXTERNAL_VENDORS`                                                                              |
@@ -216,6 +216,14 @@ Command palette (`⌘K` / `Ctrl+K`) has search + ask sharing one corpus.
 - **`action` is derived**, not asked for: `firstCitedSource()` resolves the first `[n]` citation; `readAskStream` re-checks same-origin. External / uncited answers get no action.
 - **AI is optional.** No `GROQ_API_KEY` → ask is 503 / hidden; search still works. Prompts in the app (`buildAskMessages`), never in `@httpjpg/ai`.
 - **UI split:** presentational `CommandPalette` (`@httpjpg/ui`) vs stateful `AskWidget`. Open via keyboard or `SearchTrigger` → `OPEN_SEARCH_EVENT` (not keyboard-only — touch needs the trigger).
+- Search/ask events go through `trackSearch*` / `trackAsk*` in `@httpjpg/analytics`.
+
+## Analytics & consent
+
+- `@httpjpg/analytics` is Umami-only (no GA). Typed `track*` helpers live here; prompts stay in the app.
+- Analytics is **opt-out**: `OPT_OUT_CATEGORIES` in `@httpjpg/consent` keeps Umami on until the visitor rejects it. `ConsentGate` still wraps `UmamiAnalytics` (`data-do-not-track` + `data-performance`).
+- Vendors and first-party cookies are listed on `/cookie-policy` (`EXTERNAL_VENDORS`, `SITE_COOKIES`, cookiedatabase.org).
+- Portfolio wraps header / audio / lightbox as `TrackedHeader` / `TrackedAudioPlayerProvider` / `TrackedLightboxProvider` so `@httpjpg/ui` stays analytics-free.
 
 ## Work tags
 
@@ -233,9 +241,9 @@ A few stories (currently CV) are bilingual. English stays at `/cv`; German is `/
 
 ## Page-wide audio
 
-Audio outlives client navigations (like the iOS app's `AudioPlayerModel`).
+Audio outlives client navigations (like the iOS app's `AudioPlayerModel`; native reader: `dmnktoe/httpjpg-ios`).
 
-- One `AudioPlayerProvider` in root `app/layout.tsx` — never a second, never under a route segment.
+- One `AudioPlayerProvider` in root `app/layout.tsx`, wrapped as `TrackedAudioPlayerProvider` — never a second, never under a route segment.
 - `useAudioPlayer()` → `null` outside the provider so Storybook/tests work without an engine.
 - Bloks register tracks via `useAudioQueueEntry`; they don't own playback. With a provider, mp3 mode renders `AudioTrackRow`; without, falls back to `MP3Player`. Spotify / SoundCloud embeds stay out of the queue.
 - `play()` snapshots the registry so next/prev survive unmount. Header: `MiniPlayerSlot` / controlled `MiniPlayer` (nothing until something is loaded).
@@ -253,11 +261,15 @@ Work pages may set a Project Accent Color (`#RGB` / `#RRGGBB`). `parseWorkAccent
 
 Same presentational/stateful split as the command palette.
 
-- Controlled `Lightbox` (`open` / `index` / `items` + `onClose` / `onIndexChange`) + `useLightbox()` for callers.
+- Controlled `Lightbox` (`open` / `index` / `items` + `onClose` / `onIndexChange`) + `useLightbox()` for callers. Portfolio wraps the provider as `TrackedLightboxProvider`.
 - Portal must restate theme via `usePageTheme()` — overlay renders into `document.body`, outside `[data-theme]`, so semantic tokens resolve correctly. Any future portalled overlay needs the same.
 - Trigger is a sibling overlay (`cover` default / `corner` when the media has its own controls), not a wrapper (invalid markup otherwise).
 - ASCII chrome (`[ 02 / 05 ]`, `[ ← ]` …); wrap + clamp index; preload neighbours; videos skip preload; credit always `CopyrightLabel` `below` variant.
 - Opt-in only on `image` / `video` bloks — not slideshow. Rendition: `imagePreset.full` (2560px, usually a cache hit).
+
+## Work downloads
+
+Work pages scatter XP desktop icons via `DesktopDownloads` (`@httpjpg/ui`). CMS `download_item` bloks on `SbPageWork` feed the strip. Don't invent a second download path.
 
 ## Env & observability
 

@@ -84,9 +84,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Basic divider with live controls
- */
 export const Basic: Story = {
   args: {
     variant: "solid",

@@ -1,5 +1,6 @@
 import { Header, ImagePreview } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
+import { fn } from "storybook/test";
 
 import { MOCK_HEADER_PROJECTS_WORK, MOCK_HEADER_WEBSITES_WORK } from "../shared/storybook-fixtures";
 
@@ -20,11 +21,11 @@ const meta = {
     },
     projectsWork: {
       control: "object",
-      description: "Recent personal work items",
+      description: "Projects flyout items",
     },
     websitesWork: {
       control: "object",
-      description: "Recent client work items",
+      description: "Websites flyout items",
     },
     showScrollVeil: {
       control: "boolean",
@@ -36,6 +37,13 @@ const meta = {
       description: "Renders the search trigger next to the nav",
       table: { defaultValue: { summary: "false" } },
     },
+    onNavClick: {
+      action: "navClick",
+      description: "Fires for header / mobile-menu activations (label, href, source, kind)",
+    },
+  },
+  args: {
+    onNavClick: fn(),
   },
 } satisfies Meta<typeof Header>;
 

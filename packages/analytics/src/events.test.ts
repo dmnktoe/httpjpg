@@ -10,15 +10,22 @@ vi.mock("@httpjpg/env", () => ({
 import {
   trackAskAction,
   trackAskComplete,
+  trackAskError,
   trackAskSubmit,
+  trackAudioPause,
   trackAudioPlay,
   trackAudioSkip,
+  trackComparisonInteract,
   trackEvent,
+  trackLightboxClose,
+  trackLightboxNavigate,
   trackLightboxOpen,
+  trackLocaleSwitch,
   trackNavClick,
   trackNowPlayingClick,
   trackOutboundClick,
   trackRelatedWorkClick,
+  trackRelatedWorkView,
   trackSearchOpen,
   trackSearchSelect,
   trackWorkNavClick,
@@ -198,5 +205,40 @@ describe("analytics event fan-out", () => {
     trackEvent("scrub", { keep: "yes", skip: undefined, bad: Number.NaN });
 
     expect(umamiSpy).toHaveBeenCalledWith("scrub", { keep: "yes" });
+  });
+
+  it("covers remaining typed helpers", () => {
+    trackAskError({ reason: "network_error" });
+    trackLightboxNavigate({
+      type: "video",
+      index: 2,
+      count: 4,
+      src: "https://cdn.example.com/clip.mp4",
+    });
+    trackLightboxClose({ type: "image", index: 0, src: "https://cdn.example.com/shot.jpg" });
+    trackAudioPause({ title: "Intro", src: "https://cdn.example.com/intro.mp3" });
+    trackRelatedWorkView("grid");
+    trackLocaleSwitch({ from: "en", to: "de" });
+    trackComparisonInteract({ orientation: "vertical" });
+
+    expect(umamiSpy).toHaveBeenCalledWith("ask_error", { reason: "network_error" });
+    expect(umamiSpy).toHaveBeenCalledWith("lightbox_navigate", {
+      type: "video",
+      index: 2,
+      count: 4,
+      src: "https://cdn.example.com/clip.mp4",
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("lightbox_close", {
+      type: "image",
+      index: 0,
+      src: "https://cdn.example.com/shot.jpg",
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("audio_pause", {
+      title: "Intro",
+      src: "https://cdn.example.com/intro.mp3",
+    });
+    expect(umamiSpy).toHaveBeenCalledWith("related_work_view", { view: "grid" });
+    expect(umamiSpy).toHaveBeenCalledWith("locale_switch", { from: "en", to: "de" });
+    expect(umamiSpy).toHaveBeenCalledWith("comparison_interact", { orientation: "vertical" });
   });
 });

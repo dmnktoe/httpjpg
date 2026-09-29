@@ -20,6 +20,13 @@ describe("spacingCss", () => {
       mb: { base: "2", md: "2", lg: "8" },
     });
   });
+
+  it("passes signed margin tokens through for grid pull-out", () => {
+    expect(spacingCss({ ml: "-4", mt: "-8" } as never)).toEqual({
+      ml: "-4",
+      mt: "-8",
+    });
+  });
 });
 
 describe("widthCss", () => {

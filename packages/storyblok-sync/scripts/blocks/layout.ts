@@ -109,7 +109,7 @@ export const layoutBlocks: BlockDef[] = [
     group: "Layout",
     icon: "block-square",
     color: "#4a5568",
-    schema: {
+    schema: withSpacing({
       content: field.bloks("Content"),
       ...tabbed("Span", "span", {
         colSpan: field.options("Column Span", GRID_SPAN_OPTIONS),
@@ -132,12 +132,16 @@ export const layoutBlocks: BlockDef[] = [
       ...tabbed("Alignment", "alignment", {
         alignSelf: field.options("Align Self", labelize(CMS_OPTIONS.alignItems)),
         justifySelf: field.options("Justify Self", labelize(CMS_OPTIONS.justifyItems)),
+        zIndex: field.number("Z-Index", {
+          description: "Stacking order when items overlap (negative margin pull-out).",
+          tooltip: true,
+        }),
       }),
       ...tabbed("Visibility", "visibility", {
         hiddenBase: field.boolean("Hide on Mobile"),
         hiddenMd: field.boolean("Hide on Tablet"),
         hiddenLg: field.boolean("Hide on Desktop"),
       }),
-    },
+    }),
   },
 ];

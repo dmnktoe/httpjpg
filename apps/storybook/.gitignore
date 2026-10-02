@@ -9,6 +9,3 @@ node_modules/
 
 # Build info
 *.tsbuildinfo
-
-# Visual regression — Argos owns baselines; local captures stay off git
-screenshots/

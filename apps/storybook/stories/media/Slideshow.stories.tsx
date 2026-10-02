@@ -9,7 +9,6 @@ const meta = {
   component: Slideshow,
   parameters: {
     layout: "padded",
-    argos: { fitToContent: false },
   },
   tags: ["autodocs"],
   argTypes: {
@@ -339,7 +338,6 @@ export const WithCopyrightSource: Story = {
  * Mixed content with video slide
  */
 export const WithVideo: Story = {
-  tags: ["!test"],
   args: {
     images: [
       {

@@ -18,9 +18,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Basic VStack with live controls
- */
 export const Basic: Story = {
   args: {
     gap: "4",

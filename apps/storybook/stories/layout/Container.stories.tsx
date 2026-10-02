@@ -37,9 +37,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Basic container with live controls
- */
 export const Basic: Story = {
   args: {
     size: "lg",

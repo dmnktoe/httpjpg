@@ -55,6 +55,16 @@ const meta: Meta<typeof Video> = {
       options: ["below", "overlay", "inline-black", "inline-white"],
       description: "Copyright text position",
     },
+    poster: {
+      control: "text",
+      description:
+        "Stand-in frame until native playback starts; discarded once a real frame exists",
+    },
+    objectFit: {
+      control: "select",
+      options: ["contain", "cover", "fill", "none", "scale-down"],
+      description: "How the native file fills its box. Ignored when the layout is intrinsic.",
+    },
   },
 };
 

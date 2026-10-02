@@ -8,7 +8,15 @@ import { fn } from "storybook/test";
 const meta = {
   title: "Widgets/CookieBanner",
   component: CookieBanner,
-  parameters: { layout: "fullscreen" },
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "First-visit banner. Analytics is opt-out (Umami stays on until rejected). Vendor copy and cookiedatabase.org links live in the details list.",
+      },
+    },
+  },
   tags: ["autodocs"],
   args: {
     onAcceptAll: fn(),

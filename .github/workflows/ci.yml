@@ -258,44 +258,10 @@ jobs:
           buildScriptName: build
           exitOnceUploaded: true
 
-  # ── Visual regression: Storybook Vitest + Argos ───────────────────
-  # Always runs (unlike Publish Storybook) so the `argos` GitHub status exists
-  # on every PR and can be a required check. Path skipping would leave it pending.
-  # Chromatic still hosts the browsable Storybook; we do not `argos deploy`.
-  visual:
-    name: Visual Regression
-    needs: [guard]
-    if: needs.guard.outputs.run == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    permissions:
-      contents: read
-      id-token: write
-      pull-requests: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: ./.github/actions/setup
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm --filter=@httpjpg/storybook exec playwright install --with-deps chromium
-      - name: Install Playwright system deps
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm --filter=@httpjpg/storybook exec playwright install-deps chromium
-      - name: Capture stories and upload to Argos
-        run: pnpm run test:visual
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   ci:
     name: All checks passed
     runs-on: ubuntu-latest
-    needs: [guard, lint, typecheck, build-packages, build-apps, test, e2e, visual, chromatic]
+    needs: [guard, lint, typecheck, build-packages, build-apps, test, e2e, chromatic]
     if: always()
     timeout-minutes: 5
     steps:
@@ -316,7 +282,6 @@ jobs:
             echo "| Build Packages    | ${{ needs.build-packages.result }} |"
             echo "| Build Apps        | ${{ needs.build-apps.result }} |"
             echo "| E2E Tests         | ${{ needs.e2e.result }} |"
-            echo "| Visual Regression | ${{ needs.visual.result }} |"
             echo "| Publish Storybook | ${{ needs.chromatic.result }} |"
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Verify all jobs passed

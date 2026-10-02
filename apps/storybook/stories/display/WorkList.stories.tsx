@@ -11,7 +11,6 @@ const meta = {
   component: WorkList,
   parameters: {
     layout: "fullscreen",
-    argos: { fitToContent: false },
   },
   tags: ["autodocs"],
 } satisfies Meta<typeof WorkList>;

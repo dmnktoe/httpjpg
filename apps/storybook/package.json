@@ -9,7 +9,6 @@
     "build": "turbo run build --filter=@httpjpg/ui && storybook build",
     "preview": "storybook preview",
     "chromatic": "chromatic",
-    "test:visual": "vitest run --project=storybook",
     "type-check": "tsc --noEmit",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix"
@@ -26,24 +25,18 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@argos-ci/storybook": "^6.4.0",
     "@floating-ui/react-dom": "^2.1.9",
     "@storybook/addon-docs": "^10.6.0",
-    "@storybook/addon-vitest": "^10.6.0",
     "@storybook/react": "^10.6.0",
     "@storybook/react-vite": "^10.6.0",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@vitest/browser": "catalog:",
-    "@vitest/browser-playwright": "catalog:",
     "chromatic": "^18.9.4",
     "motion": "^13.4.0",
-    "playwright": "^1.63.0",
     "storybook": "^10.6.0",
     "swiper": "^14.2.0",
     "typescript": "catalog:",
-    "vite": "^8.3.0",
-    "vitest": "catalog:"
+    "vite": "^8.3.0"
   }
 }

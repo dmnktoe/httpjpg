@@ -36,7 +36,7 @@
     "psn-api": "^2.18.1",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "sharp": "^0.35.4"
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@codecov/nextjs-webpack-plugin": "^2.0.1",

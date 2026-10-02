@@ -20,7 +20,6 @@ const meta = {
   component: DesktopDownloads,
   parameters: {
     layout: "fullscreen",
-    argos: { fitToContent: false },
   },
   tags: ["autodocs"],
 } satisfies Meta<typeof DesktopDownloads>;

@@ -139,7 +139,6 @@ export const OverlayCopyright: Story = {
  * Progressive loading with decorative copyright
  */
 export const BlurUpLoading: Story = {
-  tags: ["!test"],
   args: {
     src: OPTIMIZED_IMAGES.portrait,
     alt: "Loading example",

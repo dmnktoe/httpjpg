@@ -85,11 +85,11 @@ describe("CloudflareStatus", () => {
     render(<CloudflareStatus />);
 
     expect(await screen.findByText("23 blocked")).toBeInTheDocument();
-    expect(screen.getByText("23 blocked")).toHaveClass("d_none", "md:d_block");
-    expect(screen.getByText("3% cached")).toHaveClass("d_none", "md:d_block");
-    expect(screen.getByText("FRA")).not.toHaveClass("d_none");
-    expect(screen.getByText("DE")).not.toHaveClass("d_none");
-    expect(screen.getByRole("img", { name: "Cloudflare" })).not.toHaveClass("d_none");
+    expect(screen.getByText("23 blocked")).toHaveClass("jpg-d_none", "md:jpg-d_block");
+    expect(screen.getByText("3% cached")).toHaveClass("jpg-d_none", "md:jpg-d_block");
+    expect(screen.getByText("FRA")).not.toHaveClass("jpg-d_none");
+    expect(screen.getByText("DE")).not.toHaveClass("jpg-d_none");
+    expect(screen.getByRole("img", { name: "Cloudflare" })).not.toHaveClass("jpg-d_none");
   });
 
   it("omits empty extras so a local request still shows the lockup", async () => {

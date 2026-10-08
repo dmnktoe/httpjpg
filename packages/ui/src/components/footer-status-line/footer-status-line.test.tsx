@@ -84,7 +84,7 @@ describe("FooterStatusLineSeparator", () => {
   it("forwards css onto the mark", () => {
     render(<FooterStatusLineSeparator css={{ display: { base: "none", md: "block" } }} />);
 
-    expect(screen.getByText("·")).toHaveClass("d_none", "md:d_block");
+    expect(screen.getByText("·")).toHaveClass("jpg-d_none", "md:jpg-d_block");
   });
 });
 

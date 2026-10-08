@@ -2,7 +2,7 @@ import { css } from "styled-system/css";
 
 /**
  * Colors go through Panda's `{token.path}` syntax, not a literal
- * `var(--colors-*)`. Production hashes every token variable, so a
+ * `var(--jpg-colors-*)`. Production hashes every token variable, so a
  * hand-written name resolves to nothing and the whole `background`
  * declaration is dropped — an invisible skeleton.
  *

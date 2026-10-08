@@ -69,9 +69,9 @@ describe("LetterboxdStatus", () => {
   it("keeps the line unbreakable, letting only the title ellipsize", () => {
     render(<LetterboxdStatus film={{ ...film, liked: true }} loaded />);
 
-    expect(screen.getByText(film.title)).toHaveClass("min-w_0");
-    expect(screen.getByText("★★★★½")).toHaveClass("flex-sh_0", "white-space_nowrap");
-    expect(screen.getByText("2001")).toHaveClass("flex-sh_0");
-    expect(screen.getByLabelText("liked")).toHaveClass("flex-sh_0");
+    expect(screen.getByText(film.title)).toHaveClass("jpg-min-w_0");
+    expect(screen.getByText("★★★★½")).toHaveClass("jpg-flex-sh_0", "jpg-white-space_nowrap");
+    expect(screen.getByText("2001")).toHaveClass("jpg-flex-sh_0");
+    expect(screen.getByLabelText("liked")).toHaveClass("jpg-flex-sh_0");
   });
 });

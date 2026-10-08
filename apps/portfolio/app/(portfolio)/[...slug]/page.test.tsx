@@ -3,7 +3,7 @@ vi.mock("@httpjpg/env", () => ({ env: { NEXT_PUBLIC_APP_URL: "https://httpjpg.te
 const {
   draftMode,
   notFound,
-  getCachedStory,
+  readPageStory,
   getAdjacentWork,
   getAuthor,
   getSiteConfig,
@@ -15,7 +15,7 @@ const {
   notFound: vi.fn(() => {
     throw new Error("NEXT_NOT_FOUND");
   }),
-  getCachedStory: vi.fn(),
+  readPageStory: vi.fn(),
   getAdjacentWork: vi.fn(),
   getAuthor: vi.fn(),
   getSiteConfig: vi.fn(),
@@ -25,7 +25,7 @@ const {
 }));
 
 vi.mock("next/headers", () => ({ draftMode }));
-vi.mock("next/navigation", () => ({ notFound }));
+vi.mock("next/navigation", () => ({ notFound, unstable_rethrow: vi.fn() }));
 vi.mock("react-dom", async (importOriginal) => {
   const actual = await importOriginal<typeof import("react-dom")>();
   return { ...actual, default: { ...actual, preload }, preload };
@@ -42,7 +42,7 @@ vi.mock("@/components/providers/storyblok-live", () => ({
 
 vi.mock("@/lib/queries/config", () => ({ getAuthor, getSiteConfig, getSocialProfiles }));
 vi.mock("@/lib/queries/widgets", () => ({ getFeatureFlags }));
-vi.mock("@/lib/queries/work", () => ({ getAdjacentWork, getCachedStory }));
+vi.mock("@/lib/queries/work", () => ({ getAdjacentWork, readPageStory }));
 
 import { render, screen } from "@testing-library/react";
 
@@ -93,11 +93,11 @@ describe("generateMetadata", () => {
     const metadata = await generateMetadata({ params: params(["api", "draft"]) });
 
     expect(metadata).toEqual({ title: "Not Found" });
-    expect(getCachedStory).not.toHaveBeenCalled();
+    expect(readPageStory).not.toHaveBeenCalled();
   });
 
   it("returns a Not Found title when the story is missing", async () => {
-    getCachedStory.mockResolvedValueOnce(null);
+    readPageStory.mockResolvedValueOnce(null);
 
     const metadata = await generateMetadata({ params: params(["missing"]) });
 
@@ -105,7 +105,7 @@ describe("generateMetadata", () => {
   });
 
   it("maps the story metadata for an existing page", async () => {
-    getCachedStory.mockResolvedValueOnce({
+    readPageStory.mockResolvedValueOnce({
       slug: "about",
       content: { component: "page", title: "About" },
     });
@@ -116,42 +116,42 @@ describe("generateMetadata", () => {
   });
 
   it("resolves the root slug when no segments are given", async () => {
-    getCachedStory.mockResolvedValueOnce({ slug: "home", content: { component: "page" } });
+    readPageStory.mockResolvedValueOnce({ slug: "home", content: { component: "page" } });
 
     await generateMetadata({ params: params(undefined) });
 
-    expect(getCachedStory).toHaveBeenCalledWith("", expect.anything());
+    expect(readPageStory).toHaveBeenCalledWith("", expect.anything());
   });
 
   it("fetches drafts when draft mode is enabled", async () => {
     draftMode.mockResolvedValue({ isEnabled: true });
-    getCachedStory.mockResolvedValueOnce({ slug: "about", content: { component: "page" } });
+    readPageStory.mockResolvedValueOnce({ slug: "about", content: { component: "page" } });
 
     await generateMetadata({ params: params(["about"]) });
 
-    expect(getCachedStory).toHaveBeenCalledWith("about", { draftMode: true });
+    expect(readPageStory).toHaveBeenCalledWith("about", { draft: true });
   });
 
   it("fetches drafts when the visual editor query is present", async () => {
-    getCachedStory.mockResolvedValueOnce({ slug: "about", content: { component: "page" } });
+    readPageStory.mockResolvedValueOnce({ slug: "about", content: { component: "page" } });
 
     await generateMetadata({
       params: params(["about"]),
       searchParams: search({ _storyblok: "1" }),
     });
 
-    expect(getCachedStory).toHaveBeenCalledWith("about", { draftMode: true });
+    expect(readPageStory).toHaveBeenCalledWith("about", { draft: true });
   });
 
   it("requests the German CV and stamps hreflang alternates", async () => {
-    getCachedStory.mockResolvedValueOnce({
+    readPageStory.mockResolvedValueOnce({
       slug: "cv",
       content: { component: "page", title: "Lebenslauf" },
     });
 
     const metadata = await generateMetadata({ params: params(["de", "cv"]) });
 
-    expect(getCachedStory).toHaveBeenCalledWith("cv", { draftMode: false, language: "de" });
+    expect(readPageStory).toHaveBeenCalledWith("cv", { draft: false, language: "de" });
     expect(metadata.title).toBe("Lebenslauf");
     expect(metadata.alternates).toEqual({
       canonical: "/de/cv",
@@ -168,11 +168,11 @@ describe("DynamicPage", () => {
     ).rejects.toThrow("NEXT_NOT_FOUND");
 
     expect(notFound).toHaveBeenCalled();
-    expect(getCachedStory).not.toHaveBeenCalled();
+    expect(readPageStory).not.toHaveBeenCalled();
   });
 
   it("calls notFound when the story does not exist", async () => {
-    getCachedStory.mockResolvedValueOnce(null);
+    readPageStory.mockResolvedValueOnce(null);
 
     await expect(
       DynamicPage({ params: params(["missing"]), searchParams: search() }),
@@ -183,7 +183,7 @@ describe("DynamicPage", () => {
 
   it("renders the live preview when draft mode is enabled", async () => {
     draftMode.mockResolvedValue({ isEnabled: true });
-    getCachedStory.mockResolvedValueOnce({ content: { component: "page" } });
+    readPageStory.mockResolvedValueOnce({ content: { component: "page" } });
 
     render(await DynamicPage({ params: params(["about"]), searchParams: search() }));
 
@@ -191,7 +191,7 @@ describe("DynamicPage", () => {
   });
 
   it("renders the live preview when the visual editor query param is present", async () => {
-    getCachedStory.mockResolvedValueOnce({ content: { component: "page" } });
+    readPageStory.mockResolvedValueOnce({ content: { component: "page" } });
 
     render(
       await DynamicPage({
@@ -201,11 +201,11 @@ describe("DynamicPage", () => {
     );
 
     expect(screen.getByTestId("live")).toBeInTheDocument();
-    expect(getCachedStory).toHaveBeenCalledWith("about", { draftMode: true });
+    expect(readPageStory).toHaveBeenCalledWith("about", { draft: true });
   });
 
   it("renders the live preview for the _draft query param", async () => {
-    getCachedStory.mockResolvedValueOnce({ content: { component: "page" } });
+    readPageStory.mockResolvedValueOnce({ content: { component: "page" } });
 
     render(await DynamicPage({ params: params(["about"]), searchParams: search({ _draft: "1" }) }));
 
@@ -213,7 +213,7 @@ describe("DynamicPage", () => {
   });
 
   it("renders a plain page without schema markup", async () => {
-    getCachedStory.mockResolvedValueOnce({ content: { component: "page" } });
+    readPageStory.mockResolvedValueOnce({ content: { component: "page" } });
 
     render(await DynamicPage({ params: params(["about"]), searchParams: search() }));
 
@@ -222,7 +222,7 @@ describe("DynamicPage", () => {
   });
 
   it("emits schema markup for work pages", async () => {
-    getCachedStory.mockResolvedValueOnce(workStory);
+    readPageStory.mockResolvedValueOnce(workStory);
 
     render(await DynamicPage({ params: params(["work", "some-project"]), searchParams: search() }));
 
@@ -242,7 +242,7 @@ describe("DynamicPage", () => {
   it("includes the configured author and their profiles in the schema markup", async () => {
     getAuthor.mockResolvedValueOnce({ name: "Dominik", url: "https://httpjpg.test/about" });
     getSocialProfiles.mockResolvedValueOnce(["https://github.com/dmnktoe"]);
-    getCachedStory.mockResolvedValueOnce(workStory);
+    readPageStory.mockResolvedValueOnce(workStory);
 
     render(await DynamicPage({ params: params(["work", "some-project"]), searchParams: search() }));
 
@@ -259,7 +259,7 @@ describe("DynamicPage", () => {
       language: "en-US",
       repositoryUrl: "https://github.com/acme/site",
     });
-    getCachedStory.mockResolvedValueOnce(workStory);
+    readPageStory.mockResolvedValueOnce(workStory);
 
     render(await DynamicPage({ params: params(["work", "some-project"]), searchParams: search() }));
 
@@ -273,7 +273,7 @@ describe("DynamicPage", () => {
       prev: { slug: "older", title: "Older" },
       next: { slug: "newer", title: "Newer" },
     });
-    getCachedStory.mockResolvedValueOnce(workStory);
+    readPageStory.mockResolvedValueOnce(workStory);
 
     render(await DynamicPage({ params: params(["work", "some-project"]), searchParams: search() }));
 
@@ -282,7 +282,7 @@ describe("DynamicPage", () => {
   });
 
   it("omits schema images when the work page has no images", async () => {
-    getCachedStory.mockResolvedValueOnce({
+    readPageStory.mockResolvedValueOnce({
       ...workStory,
       content: { component: "work", title: "No Images" },
     });
@@ -295,7 +295,7 @@ describe("DynamicPage", () => {
   });
 
   it("re-throws and logs errors raised while loading the story", async () => {
-    getCachedStory.mockRejectedValueOnce(new Error("storyblok down"));
+    readPageStory.mockRejectedValueOnce(new Error("storyblok down"));
 
     await expect(
       DynamicPage({ params: params(["about"]), searchParams: search() }),
@@ -304,7 +304,7 @@ describe("DynamicPage", () => {
   });
 
   it("logs non-Error throws as strings", async () => {
-    getCachedStory.mockRejectedValueOnce("kaputt");
+    readPageStory.mockRejectedValueOnce("kaputt");
 
     await expect(DynamicPage({ params: params(["about"]), searchParams: search() })).rejects.toBe(
       "kaputt",
@@ -316,7 +316,7 @@ describe("DynamicPage", () => {
   });
 
   it("renders the language picker on the English CV", async () => {
-    getCachedStory.mockResolvedValueOnce({
+    readPageStory.mockResolvedValueOnce({
       slug: "cv",
       content: { component: "page", title: "CV" },
     });
@@ -325,24 +325,24 @@ describe("DynamicPage", () => {
 
     expect(screen.getByRole("navigation", { name: "Language" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "DE" })).toHaveAttribute("href", "/de/cv");
-    expect(getCachedStory).toHaveBeenCalledWith("cv", { draftMode: false });
+    expect(readPageStory).toHaveBeenCalledWith("cv", { draft: false });
   });
 
   it("fetches the German story for /de/cv and points EN back at /cv", async () => {
-    getCachedStory.mockResolvedValueOnce({
+    readPageStory.mockResolvedValueOnce({
       slug: "cv",
       content: { component: "page", title: "Lebenslauf" },
     });
 
     render(await DynamicPage({ params: params(["de", "cv"]), searchParams: search() }));
 
-    expect(getCachedStory).toHaveBeenCalledWith("cv", { draftMode: false, language: "de" });
+    expect(readPageStory).toHaveBeenCalledWith("cv", { draft: false, language: "de" });
     expect(screen.getByRole("link", { name: "EN" })).toHaveAttribute("href", "/cv");
     expect(screen.getByText("DE")).toHaveAttribute("aria-current", "page");
   });
 
   it("honors _storyblok_lang in the visual editor without rendering the picker", async () => {
-    getCachedStory.mockResolvedValueOnce({ content: { component: "page" } });
+    readPageStory.mockResolvedValueOnce({ content: { component: "page" } });
 
     render(
       await DynamicPage({
@@ -351,13 +351,13 @@ describe("DynamicPage", () => {
       }),
     );
 
-    expect(getCachedStory).toHaveBeenCalledWith("cv", { draftMode: true, language: "de" });
+    expect(readPageStory).toHaveBeenCalledWith("cv", { draft: true, language: "de" });
     expect(screen.getByTestId("live")).toBeInTheDocument();
     expect(screen.queryByRole("navigation", { name: "Language" })).not.toBeInTheDocument();
   });
 
   it("ignores a public _storyblok_lang query on /cv", async () => {
-    getCachedStory.mockResolvedValueOnce({
+    readPageStory.mockResolvedValueOnce({
       slug: "cv",
       content: { component: "page", title: "CV" },
     });
@@ -369,7 +369,7 @@ describe("DynamicPage", () => {
       }),
     );
 
-    expect(getCachedStory).toHaveBeenCalledWith("cv", { draftMode: false });
+    expect(readPageStory).toHaveBeenCalledWith("cv", { draft: false });
     expect(screen.getByText("EN")).toHaveAttribute("aria-current", "page");
   });
 });

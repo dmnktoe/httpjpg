@@ -302,7 +302,7 @@ export default function MyPage() {
               code={`tokens          ← design tokens (colors, spacing, type)
 storyblok-utils ← runtime types, image processing
 storyblok-api   ← raw CDN client
-storyblok-next  ← Next.js cache layer (unstable_cache)
+storyblok-next  ← Cache Components layer (readStory · CMS_TAGS · expire*)
 ui              ← component library (Panda CSS)
 storyblok-ui    ← Sb* blok wrappers (generated types)
 storyblok-sync  ← schema push + codegen CLI

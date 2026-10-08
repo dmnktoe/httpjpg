@@ -69,6 +69,15 @@ function formatLastUpdated(iso: string): string {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
 }
 
+/**
+ * Allowed to block. `<html data-theme lang>` and the work-accent vars come
+ * from the story behind the requested path (`x-pathname`), and attributes on
+ * `<html>` cannot sit behind a `<Suspense>` boundary — so the document renders
+ * per request. Every read below it is `"use cache"`, so that render is cheap;
+ * moving those attributes to a pre-paint script would let the shell prerender.
+ */
+export const instant = false;
+
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoDefaults();
   const site = await getSiteConfig();

@@ -13,6 +13,8 @@ vi.mock("@httpjpg/storyblok-api", () => ({
   getStoryblokApi: () => ({ getStories }),
 }));
 
+vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
+
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 
 import sitemap from "./sitemap";

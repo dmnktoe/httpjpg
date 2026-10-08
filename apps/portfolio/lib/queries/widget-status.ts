@@ -1,5 +1,5 @@
 import { env } from "@httpjpg/env";
-import { unstable_cache } from "next/cache";
+import { cacheLife } from "next/cache";
 
 import {
   type DiscogsRelease,
@@ -17,7 +17,7 @@ import { getConfig } from "./config";
 
 /**
  * How long each widget's data stays fresh, in seconds. Shared by the dedicated
- * routes (as their edge `s-maxage`) and by the data cache below, so a widget
+ * routes (as their edge `s-maxage`) and by the cache scopes below, so a widget
  * has one freshness window rather than one per layer.
  */
 export const WIDGET_MAX_AGE = {
@@ -48,41 +48,35 @@ export interface WidgetStatus {
 // is cached, both because it is plain JSON — a PSN failure carries a raw Error,
 // which does not survive serialisation — and because a widget that cannot load
 // simply leaves its line out. The dedicated routes still report the real status.
-const loadLetterboxd = unstable_cache(
-  async (username: string) => {
-    const result = await fetchLetterboxdFilms(username);
-    return result.ok ? { films: result.films } : null;
-  },
-  ["widget-status", "letterboxd"],
-  { revalidate: WIDGET_MAX_AGE.letterboxd },
-);
+// Each keeps its upstream's own window from `WIDGET_MAX_AGE`, so bundling them
+// never makes a third-party API busier.
+async function readLetterboxd(username: string) {
+  "use cache";
+  cacheLife({ revalidate: WIDGET_MAX_AGE.letterboxd });
+  const result = await fetchLetterboxdFilms(username);
+  return result.ok ? { films: result.films } : null;
+}
 
-const loadDiscogs = unstable_cache(
-  async (username: string) => {
-    const result = await fetchDiscogsCollection(username);
-    return result.ok ? { releases: result.releases } : null;
-  },
-  ["widget-status", "discogs"],
-  { revalidate: WIDGET_MAX_AGE.discogs },
-);
+async function readDiscogs(username: string) {
+  "use cache";
+  cacheLife({ revalidate: WIDGET_MAX_AGE.discogs });
+  const result = await fetchDiscogsCollection(username);
+  return result.ok ? { releases: result.releases } : null;
+}
 
-const loadX = unstable_cache(
-  async (username: string, apiUrl: string, apiKey: string) => {
-    const result = await fetchXTimeline({ apiUrl, apiKey, username });
-    return result.ok ? result.timeline : null;
-  },
-  ["widget-status", "x"],
-  { revalidate: WIDGET_MAX_AGE.x },
-);
+async function readX(username: string, apiUrl: string, apiKey: string) {
+  "use cache";
+  cacheLife({ revalidate: WIDGET_MAX_AGE.x });
+  const result = await fetchXTimeline({ apiUrl, apiKey, username });
+  return result.ok ? result.timeline : null;
+}
 
-const loadTrophies = unstable_cache(
-  async (npsso: string, username?: string) => {
-    const result = await fetchRecentTrophies(npsso, username);
-    return result.ok ? { trophies: result.trophies, avatar: result.avatar } : null;
-  },
-  ["widget-status", "psn-trophies"],
-  { revalidate: WIDGET_MAX_AGE.psnTrophies },
-);
+async function readTrophies(npsso: string, username?: string) {
+  "use cache";
+  cacheLife({ revalidate: WIDGET_MAX_AGE.psnTrophies });
+  const result = await fetchRecentTrophies(npsso, username);
+  return result.ok ? { trophies: result.trophies, avatar: result.avatar } : null;
+}
 
 /**
  * The setting when it is present and passes its validator, `undefined`
@@ -117,7 +111,7 @@ async function settle<T>(label: string, loader: Promise<T | null> | null): Promi
  * Every slow-moving footer widget's data in one read.
  *
  * The footer used to open one connection per widget on mount. Each upstream
- * keeps its own refresh rate through the data cache above, so bundling them
+ * keeps its own refresh rate through the cache scopes above, so bundling them
  * does not make any third-party API busier — it just stops the browser opening
  * four connections to say so.
  */
@@ -137,11 +131,11 @@ export async function getWidgetStatus(): Promise<WidgetStatus> {
   const npsso = env.PSN_NPSSO;
 
   const letterboxdLoad =
-    config?.letterboxd_enabled && letterboxdUser ? loadLetterboxd(letterboxdUser) : null;
-  const discogsLoad = config?.discogs_enabled && discogsUser ? loadDiscogs(discogsUser) : null;
+    config?.letterboxd_enabled && letterboxdUser ? readLetterboxd(letterboxdUser) : null;
+  const discogsLoad = config?.discogs_enabled && discogsUser ? readDiscogs(discogsUser) : null;
   const xLoad =
-    config?.x_enabled && xUser && xApiKey ? loadX(xUser, env.TWEETAPI_API_URL, xApiKey) : null;
-  const trophiesLoad = config?.psn_trophy_enabled && npsso ? loadTrophies(npsso, psnUser) : null;
+    config?.x_enabled && xUser && xApiKey ? readX(xUser, env.TWEETAPI_API_URL, xApiKey) : null;
+  const trophiesLoad = config?.psn_trophy_enabled && npsso ? readTrophies(npsso, psnUser) : null;
 
   const [letterboxd, discogs, x, trophies] = await Promise.all([
     settle("letterboxd", letterboxdLoad),

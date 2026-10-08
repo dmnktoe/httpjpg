@@ -5,16 +5,16 @@ vi.mock("@httpjpg/storyblok-api", () => ({
 }));
 
 vi.mock("@httpjpg/storyblok-next", () => ({
-  CACHE_TAGS: {
-    STORY: (slug: string) => `story-${slug}`,
-    STORIES: "stories",
-    CONFIG: "storyblok-config",
+  CMS_TAGS: {
+    story: (slug: string) => `cms:story:${slug}`,
+    stories: "cms:stories",
+    config: "cms:config",
   },
 }));
 
-vi.mock("next/cache", () => ({
-  unstable_cache: (fn: (...args: unknown[]) => unknown) => fn,
-}));
+vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
+
+vi.mock("next/server", () => ({ connection: vi.fn(async () => undefined) }));
 
 vi.mock("next/headers", () => ({
   draftMode: vi.fn(),

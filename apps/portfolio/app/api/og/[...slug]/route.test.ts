@@ -2,7 +2,7 @@
 import type * as Observability from "@httpjpg/observability/sentry/server.ts";
 import type * as StoryblokNext from "@httpjpg/storyblok-next";
 
-vi.mock("@httpjpg/storyblok-next", () => ({ fetchStory: vi.fn() }));
+vi.mock("@httpjpg/storyblok-next", () => ({ readStory: vi.fn() }));
 vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
@@ -63,12 +63,12 @@ afterAll(() => {
 
 import type { NextRequest } from "next/server";
 
-const { fetchStory } = (await import("@httpjpg/storyblok-next")) as typeof StoryblokNext;
+const { readStory } = (await import("@httpjpg/storyblok-next")) as typeof StoryblokNext;
 const { captureServerException } =
   (await import("@httpjpg/observability/sentry/server.ts")) as typeof Observability;
 const { GET } = await import("./route");
 
-const mockedFetchStory = vi.mocked(fetchStory);
+const mockedReadStory = vi.mocked(readStory);
 const mockedCapture = vi.mocked(captureServerException);
 
 function callGET(slug: string[]) {
@@ -90,7 +90,7 @@ function validWorkStory() {
 
 describe("GET /api/og/[...slug]", () => {
   beforeEach(() => {
-    mockedFetchStory.mockReset();
+    mockedReadStory.mockReset();
     mockedCapture.mockReset();
     enforceRateLimit.mockReset();
     enforceRateLimit.mockResolvedValue(null);
@@ -102,11 +102,11 @@ describe("GET /api/og/[...slug]", () => {
     const res = await callGET(["work", "my-project"]);
 
     expect(res.status).toBe(429);
-    expect(mockedFetchStory).not.toHaveBeenCalled();
+    expect(mockedReadStory).not.toHaveBeenCalled();
   });
 
   it("reports a 500 when the Google Fonts CSS fetch fails", async () => {
-    mockedFetchStory.mockResolvedValueOnce(validWorkStory());
+    mockedReadStory.mockResolvedValueOnce(validWorkStory());
     const prev = globalThis.fetch;
     globalThis.fetch = vi.fn(async () => ({ ok: false, status: 503 }) as Response);
     const res = await callGET(["font-css-fail"]);
@@ -116,7 +116,7 @@ describe("GET /api/og/[...slug]", () => {
   });
 
   it("reports a 500 when the CSS contains no TTF URL", async () => {
-    mockedFetchStory.mockResolvedValueOnce(validWorkStory());
+    mockedReadStory.mockResolvedValueOnce(validWorkStory());
     const prev = globalThis.fetch;
     globalThis.fetch = vi.fn(
       async () =>
@@ -132,7 +132,7 @@ describe("GET /api/og/[...slug]", () => {
   });
 
   it("reports a 500 when the font binary fetch fails", async () => {
-    mockedFetchStory.mockResolvedValueOnce(validWorkStory());
+    mockedReadStory.mockResolvedValueOnce(validWorkStory());
     const prev = globalThis.fetch;
     globalThis.fetch = vi.fn(async (input: RequestInfo | URL) => {
       const href = String(input);
@@ -152,14 +152,14 @@ describe("GET /api/og/[...slug]", () => {
   });
 
   it("returns 404 when no story is found", async () => {
-    mockedFetchStory.mockResolvedValueOnce(null as never);
+    mockedReadStory.mockResolvedValueOnce(null as never);
     const res = await callGET(["work", "missing"]);
     expect(res.status).toBe(404);
-    expect(mockedFetchStory).toHaveBeenCalledWith("work/missing", { draftMode: false });
+    expect(mockedReadStory).toHaveBeenCalledWith("work/missing");
   });
 
   it("refuses to fetch images hosted off the Storyblok CDN", async () => {
-    mockedFetchStory.mockResolvedValueOnce({
+    mockedReadStory.mockResolvedValueOnce({
       content: {
         component: "work",
         images: [{ filename: "https://attacker.example/cover.jpg" }],
@@ -171,7 +171,7 @@ describe("GET /api/og/[...slug]", () => {
   });
 
   it("forwards unexpected errors to Sentry and responds 500", async () => {
-    mockedFetchStory.mockRejectedValueOnce(new Error("boom"));
+    mockedReadStory.mockRejectedValueOnce(new Error("boom"));
     const res = await callGET(["work", "broken"]);
     expect(res.status).toBe(500);
     expect(mockedCapture).toHaveBeenCalledTimes(1);
@@ -181,7 +181,7 @@ describe("GET /api/og/[...slug]", () => {
   });
 
   it("renders the work layout for a published work story", async () => {
-    mockedFetchStory.mockResolvedValueOnce({
+    mockedReadStory.mockResolvedValueOnce({
       name: "Project",
       content: {
         component: "work",
@@ -206,7 +206,7 @@ describe("GET /api/og/[...slug]", () => {
   });
 
   it("renders the page layout for a non-work story with an image", async () => {
-    mockedFetchStory.mockResolvedValueOnce({
+    mockedReadStory.mockResolvedValueOnce({
       name: "CV",
       content: {
         component: "page",
@@ -218,7 +218,7 @@ describe("GET /api/og/[...slug]", () => {
   });
 
   it("renders the page layout without an image when none is set", async () => {
-    mockedFetchStory.mockResolvedValueOnce({
+    mockedReadStory.mockResolvedValueOnce({
       name: "About",
       content: { component: "page" },
     } as never);
@@ -227,7 +227,7 @@ describe("GET /api/og/[...slug]", () => {
   });
 
   it("falls back to the story name when title is missing", async () => {
-    mockedFetchStory.mockResolvedValueOnce({
+    mockedReadStory.mockResolvedValueOnce({
       name: "Fallback Name",
       content: {
         component: "work",

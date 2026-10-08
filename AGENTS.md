@@ -10,7 +10,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 
 - **TypeScript** — strict mode, `interface` for object shapes, no `enum`
 - **Node.js** ≥ 22.12 (pinned via `.nvmrc` to 24.21.0), ESM-only (`"type": "module"` in every workspace package; the private root `package.json` does not declare it)
-- **Next.js 16** App Router — Server Components by default, route handlers in `app/api/*`
+- **Next.js 16.4** App Router + **Cache Components** (`cacheComponents` + `partialPrefetching`) — Server Components by default, route handlers in `app/api/*`
 - **React 19** — functional components only
 - **Panda CSS** (zero-runtime) — `css({})` / `cx()` / token-aware patterns; tokens from `@httpjpg/tokens`
 - **Storyblok** — Visual Editor live-bridge in dev, draft mode in production
@@ -59,7 +59,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 | `@httpjpg/ui`                 | Panda component library (`styled-system/`, primitives, widgets). Tooltip positioning via `@floating-ui/react-dom` — don't hand-roll |
 | `@httpjpg/storyblok-utils`    | Runtime types, `CMS_OPTIONS`, image presets, plain-text extraction, preview-token validation, `STORYBLOK_RELATIONS`                 |
 | `@httpjpg/storyblok-api`      | Raw CDN client (`getStoryblokApi`) — no Next coupling                                                                               |
-| `@httpjpg/storyblok-next`     | Cached `fetchStory()` (`unstable_cache`, 1 h, draft bypass) + `CACHE_TAGS`                                                          |
+| `@httpjpg/storyblok-next`     | Cache Components layer: `readStory()` (`"use cache"`, draft bypass), `CMS_TAGS`, `CACHE_LIFE.cms`, `expireStory` / `expireConfig`   |
 | `@httpjpg/storyblok-richtext` | Richtext → React via `@storyblok/react` + UI tag map                                                                                |
 | `@httpjpg/storyblok-ui`       | `Sb*` blok components; re-exports utils types; `storyblokInit` / `apiPlugin`                                                        |
 | `@httpjpg/storyblok-sync`     | CLI: push schemas/datasources from `CMS_OPTIONS` + tokens — not imported at runtime                                                 |
@@ -178,8 +178,8 @@ New blok checklist:
 ## React & Next.js
 
 - `"use client"` only for state / effects / browser APIs / refs / handlers; keep client boundaries small.
-- Fetch Storyblok on the server (`fetchStory` cached, or `getStoryblokApi` uncached); never from the client.
-- Per-request dedupe: `react.cache()` (e.g. `getCachedStory` so `generateMetadata` + page share one roundtrip).
+- Fetch Storyblok on the server (`readStory` cached, or `getStoryblokApi` inside your own `"use cache"` scope); never from the client.
+- Per-request dedupe: `react.cache()` (e.g. `readPageStory` so `generateMetadata` + page + root layout share one roundtrip).
 - Missing story → `notFound()`; throw from route handlers only for real 500s. Log user-facing Storyblok failures to Sentry.
 
 ## Storyblok
@@ -188,7 +188,7 @@ New blok checklist:
 - Every `Sb*` spreads `editableAttrs(blok)` on the root.
 - Spacing: `withSpacing()` (sync, 24-field matrix) ↔ `BlokSpacing` + `spacingCss()` (runtime) — keep in lock-step.
 - Draft: `getStoryblokApi({ draftMode: true })` uses preview token + `version: "draft"`; `proxy.ts` validates the preview-token hash.
-- Revalidate webhook: `app/api/revalidate/route.ts` → `CACHE_TAGS.STORY/STORIES/CONFIG` + paths.
+- Revalidate webhook: `app/api/revalidate/route.ts` → `expireStory(slug)` / `expireConfig()` + paths.
 - New CMS option: edit `storyblok-utils/src/cms-options.ts` → `sync:datasources` → rebuild `ui`.
 
 ## Panda CSS
@@ -201,16 +201,27 @@ New blok checklist:
 
 ## Caching
 
-- All cached Storyblok reads through `fetchStory()` in `@httpjpg/storyblok-next` so the tag set stays consistent.
-- Tags: `CACHE_TAGS.STORY(slug)`, `STORIES`, `CONFIG` — never bare strings with `revalidateTag`.
-- Default TTL 1 h + webhook invalidation; avoid ad-hoc TTLs.
-- Per-request dedupe with `react.cache()` is cheap — cache loaders, not raw API calls.
+Cache Components: nothing is cached unless a `"use cache"` scope says so. Three pieces, all in `@httpjpg/storyblok-next`:
+
+| Piece        | API                                                   | Rule                                                                             |
+| ------------ | ----------------------------------------------------- | -------------------------------------------------------------------------------- |
+| **Lifetime** | `cacheLife("cms")` ← `CACHE_LIFE` in `next.config.ts` | Storyblok reads use `cms` (1 h ceiling, webhook expires sooner). No ad-hoc TTLs. |
+| **Tags**     | `cacheTag(CMS_TAGS.story(slug) / .stories / .config)` | Never a bare tag string.                                                         |
+| **Expiry**   | `expireStory(slug)` / `expireConfig()`                | Only the webhook calls them; they return the tags they expired.                  |
+
+- Read a story with `readStory(slug, { draft, relations, language })`. Lists and indexes are app-side `read*` helpers with their own scope (`readRecentWork`, `getSearchIndex`, `readWorkStories`, …) — `"use cache"` + `cacheLife` + `cacheTag` at the top, nothing request-bound inside.
+- Draft is never cached: branch on `draft` **outside** the scope and `await connection()` before the uncached read, so it waits for request time instead of being aborted in the prerender pass.
+- Throw inside a cache scope to keep a failure out of the cache; catch outside, and `unstable_rethrow(error)` first so Next's prerender interrupts are not logged as errors.
+- Third-party widget feeds use inline lifetimes from `WIDGET_MAX_AGE` (`cacheLife({ revalidate: WIDGET_MAX_AGE.x })`). `widgetRoute()` calls `connection()` so rate limiting and draft checks stay per request.
+- The root layout (and the page routes under it) export `instant = false`: `<html data-theme lang>` comes from the request path. Every read under it is cached, so the render is cheap; a pre-paint script for those attributes would unlock a static shell.
+- No `dynamic` / `revalidate` / `runtime` segment configs — Cache Components rejects them.
+- Entries are in-memory and keyed by build: a deploy starts cold, and self-hosting keeps them across requests.
 
 ## Search & Ask
 
 Command palette (`⌘K` / `Ctrl+K`) has search + ask sharing one corpus.
 
-- **One index:** `getSearchIndex()` → `SearchDocument[]` under `CACHE_TAGS.STORIES`. Don't add a second corpus.
+- **One index:** `getSearchIndex()` → `SearchDocument[]` under `CMS_TAGS.stories`. Don't add a second corpus.
 - **Ranking is lexical and pure** (`rankDocuments`, `suggestCompletions`) — autocomplete is not an AI call.
 - **`GET /api/search`** → `{ results, suggestions }`. **`POST /api/ask`** streams NDJSON (`sources` → `delta` → `action`|`error`). Both rate-limited.
 - **`action` is derived**, not asked for: `firstCitedSource()` resolves the first `[n]` citation; `readAskStream` re-checks same-origin. External / uncited answers get no action.
@@ -223,7 +234,7 @@ Controlled vocabulary, not free text.
 
 - Catalog: `WORK_TAGS` in `storyblok-utils` (`value` stable, `label` displayed, `group`) → `sync:datasources`. Editors pick from the datasource; never type.
 - `SearchDocument.tagValues` = canonical · `tags` = display labels. Search matches both. `resolveWorkTags()` drops unknown values.
-- Readers must tolerate missing `tagValues` (cached index can lag a deploy by up to 1 h).
+- Readers still tolerate missing `tagValues` (the type stays optional; `"use cache"` entries no longer outlive a deploy).
 - Related work: rarity-weighted shared tags (`relatedDocuments`). Untagged → no neighbours; padding with unrelated work would duplicate prev/next. Empty state shows a one-line diagnostic only in draft / `pnpm dev`.
 - Separate axes: `tag_list` (Projects / Websites nav in `lib/queries/work.ts`) vs `content.tags` (topic vocabulary). Don't mix.
 

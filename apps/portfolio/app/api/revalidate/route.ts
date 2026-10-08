@@ -1,7 +1,7 @@
 import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { CACHE_TAGS } from "@httpjpg/storyblok-next";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { expireConfig, expireStory } from "@httpjpg/storyblok-next";
+import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
@@ -43,13 +43,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "No story slug provided" }, { status: 400 });
     }
     const revalidatedPaths: string[] = [];
-    const revalidatedTags: string[] = [];
-
-    revalidateTag(CACHE_TAGS.STORY(storySlug), { expire: 0 });
-    revalidatedTags.push(CACHE_TAGS.STORY(storySlug));
-
-    revalidateTag(CACHE_TAGS.STORIES, { expire: 0 });
-    revalidatedTags.push(CACHE_TAGS.STORIES);
+    const revalidatedTags = expireStory(storySlug);
 
     const pagePath = storySlug === STORYBLOK_SLUGS.HOME ? "/" : `/${storySlug}`;
     revalidatePath(pagePath);
@@ -63,9 +57,8 @@ export async function POST(request: NextRequest) {
     }
 
     if (storySlug === STORYBLOK_SLUGS.CONFIG || contentType === STORYBLOK_SLUGS.CONFIG) {
-      revalidateTag(CACHE_TAGS.CONFIG, { expire: 0 });
+      revalidatedTags.push(...expireConfig());
       revalidatePath("/", "layout");
-      revalidatedTags.push(CACHE_TAGS.CONFIG);
       revalidatedPaths.push("/layout");
     }
 

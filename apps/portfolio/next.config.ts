@@ -2,6 +2,7 @@ import { execSync } from "node:child_process";
 
 import { codecovNextJSWebpackPlugin } from "@codecov/nextjs-webpack-plugin";
 import { env } from "@httpjpg/env";
+import { CACHE_LIFE } from "@httpjpg/storyblok-next/cache-life";
 import type { NextConfig } from "next";
 
 const GITHUB_REPO = "dmnktoe/httpjpg";
@@ -70,11 +71,18 @@ function resolveCommitSha(): string {
 
 export default async (): Promise<NextConfig> => {
   const config: NextConfig = {
+    // Caching is opt-in per read (`"use cache"` + `cacheLife` + `cacheTag`);
+    // see `@httpjpg/storyblok-next` for the CMS side of it.
+    cacheComponents: true,
+    partialPrefetching: true,
+    cacheLife: CACHE_LIFE,
+
     transpilePackages: [
       "@httpjpg/ui",
       "@httpjpg/tokens",
       "@httpjpg/env",
       "@httpjpg/storyblok-api",
+      "@httpjpg/storyblok-next",
       "@httpjpg/storyblok-utils",
     ],
 

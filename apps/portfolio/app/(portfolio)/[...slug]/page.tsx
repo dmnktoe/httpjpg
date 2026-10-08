@@ -4,7 +4,7 @@ import { Box } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import type { Metadata } from "next";
 import { draftMode } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, unstable_rethrow } from "next/navigation";
 
 import { StoryblokLive } from "@/components/providers/storyblok-live";
 import { LanguagePicker } from "@/components/ui/language-picker";
@@ -26,7 +26,7 @@ import { isInternalSlug } from "@/lib/page-theme";
 import { getAuthor, getSiteConfig, getSocialProfiles } from "@/lib/queries/config";
 import { getRelatedWork } from "@/lib/queries/related-work";
 import { getFeatureFlags } from "@/lib/queries/widgets";
-import { getAdjacentWork, getCachedStory } from "@/lib/queries/work";
+import { getAdjacentWork, readPageStory } from "@/lib/queries/work";
 import { generateCreativeWorkSchema, JsonLd } from "@/lib/schema-org";
 import { extractStoryMetadata, toNextMetadata } from "@/lib/seo";
 
@@ -39,9 +39,9 @@ interface PageProps {
 
 const IS_DEV = process.env.NODE_ENV === "development";
 
-function storyOpts(draftModeEnabled: boolean, locale: AppLocale) {
+function storyOpts(draft: boolean, locale: AppLocale) {
   const language = storyblokLanguageParam(locale);
-  return language ? { draftMode: draftModeEnabled, language } : { draftMode: draftModeEnabled };
+  return language ? { draft, language } : { draft };
 }
 
 async function resolvePageRequest(
@@ -61,6 +61,12 @@ async function resolvePageRequest(
   return { locale, slug, fetchDraft, isVisualEditor, isEnabled };
 }
 
+/**
+ * Allowed to block, like the root layout above it: Visual Editor and draft
+ * reads are uncached and wait for request time.
+ */
+export const instant = false;
+
 export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
   const { locale, slug, fetchDraft } = await resolvePageRequest(params, searchParams);
 
@@ -68,7 +74,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     return { title: "Not Found" };
   }
 
-  const story = await getCachedStory(slug, storyOpts(fetchDraft, locale));
+  const story = await readPageStory(slug, storyOpts(fetchDraft, locale));
   if (!story) {
     return { title: "Not Found" };
   }
@@ -104,8 +110,11 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
 
   let story;
   try {
-    story = await getCachedStory(slug, storyOpts(fetchDraft, locale));
+    story = await readPageStory(slug, storyOpts(fetchDraft, locale));
   } catch (error) {
+    // Next's own prerender interrupts (draft reads wait for request time) are
+    // control flow, not failures.
+    unstable_rethrow(error);
     console.error(`[DynamicPage] Error loading story "${slug}":`, {
       error: error instanceof Error ? error.message : String(error),
       slug,
@@ -203,5 +212,3 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
     </>
   );
 }
-
-export const dynamic = "force-dynamic";

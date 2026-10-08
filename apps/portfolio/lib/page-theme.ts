@@ -1,7 +1,7 @@
 import { draftMode, headers } from "next/headers";
 
 import { splitLocaleSlug } from "./locale";
-import { getCachedStory } from "./queries/work";
+import { readPageStory } from "./queries/work";
 import { STORYBLOK_EDITOR_HEADER } from "./storyblok-editor";
 import { STORYBLOK_SLUGS } from "./storyblok-slugs";
 
@@ -60,5 +60,5 @@ async function loadCurrentStory(): Promise<{ content?: PageStoryContent } | null
   }
   const { isEnabled } = await draftMode();
   const fetchDraft = isEnabled || process.env.NODE_ENV === "development";
-  return getCachedStory(slug, { draftMode: fetchDraft });
+  return readPageStory(slug, { draft: fetchDraft });
 }

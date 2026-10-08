@@ -1,7 +1,8 @@
 import { Box, Image, Link } from "@httpjpg/ui";
 import type { MouseEventHandler } from "react";
 
-import { RELATED_CARD_ASPECT_RATIO, type RelatedWorkItem } from "@/lib/queries/related-work";
+import type { RelatedWorkItem } from "@/lib/queries/related-work";
+import { RELATED_CARD_ASPECT_RATIO } from "@/lib/related-work-crop";
 
 export interface RelatedWorkCardProps extends RelatedWorkItem {
   onClick?: MouseEventHandler<HTMLAnchorElement>;

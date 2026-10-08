@@ -115,12 +115,12 @@ describe("XStatus", () => {
   it("keeps the line unbreakable, letting only the post ellipsize", () => {
     render(<XStatus profile={profile} post={{ ...post, isQuote: true, hasMedia: true }} loaded />);
 
-    expect(screen.getByText("Hello world")).toHaveClass("min-w_0");
-    expect(screen.getByText("(1.2K)")).toHaveClass("flex-sh_0");
-    expect(screen.getByLabelText("quote post")).toHaveClass("flex-sh_0");
-    expect(screen.getByLabelText("has media")).toHaveClass("flex-sh_0");
+    expect(screen.getByText("Hello world")).toHaveClass("jpg-min-w_0");
+    expect(screen.getByText("(1.2K)")).toHaveClass("jpg-flex-sh_0");
+    expect(screen.getByLabelText("quote post")).toHaveClass("jpg-flex-sh_0");
+    expect(screen.getByLabelText("has media")).toHaveClass("jpg-flex-sh_0");
 
     const avatar = document.querySelector(`img[src="${profile.avatar}"]`) as HTMLElement;
-    expect(avatar.parentElement?.parentElement).toHaveClass("flex-sh_0");
+    expect(avatar.parentElement?.parentElement).toHaveClass("jpg-flex-sh_0");
   });
 });

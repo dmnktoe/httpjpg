@@ -1,7 +1,9 @@
 import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
+import { CMS_TAGS } from "@httpjpg/storyblok-next";
 import type { MetadataRoute } from "next";
+import { cacheLife, cacheTag } from "next/cache";
 
 import { LOCALIZED_SLUGS, localeAlternates, localizedPath } from "@/lib/locale";
 
@@ -15,9 +17,14 @@ interface SitemapStory {
 }
 
 /**
- * Dynamic sitemap generation from Storyblok stories
+ * Sitemap from the published Storyblok stories. Cached like every other story
+ * list, so a publish refreshes it instead of it freezing at build time.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  "use cache";
+  cacheLife("cms");
+  cacheTag(CMS_TAGS.stories);
+
   const baseUrl = env.NEXT_PUBLIC_APP_URL;
   const { getStories } = getStoryblokApi();
 

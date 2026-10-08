@@ -1,4 +1,9 @@
 // @vitest-environment node
+// `connection()` throws outside a Next request scope.
+vi.mock("next/server", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("next/server")>()),
+  connection: async () => undefined,
+}));
 const mockEnv = vi.hoisted(() => ({ PSN_NPSSO: "npsso-token" as string | undefined }));
 
 vi.mock("@httpjpg/env", () => ({ env: mockEnv }));

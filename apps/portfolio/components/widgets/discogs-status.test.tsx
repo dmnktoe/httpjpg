@@ -43,9 +43,9 @@ describe("DiscogsStatus", () => {
   it("keeps the line unbreakable, letting only the title ellipsize", () => {
     render(<DiscogsStatus release={{ ...release, format: 'Vinyl 12"' }} loaded />);
 
-    expect(screen.getByText("DJ Shadow — Endtroducing.....")).toHaveClass("min-w_0");
-    expect(screen.getByText('Vinyl 12"')).toHaveClass("flex-sh_0", "white-space_nowrap");
-    expect(screen.getByText("1996")).toHaveClass("flex-sh_0");
+    expect(screen.getByText("DJ Shadow — Endtroducing.....")).toHaveClass("jpg-min-w_0");
+    expect(screen.getByText('Vinyl 12"')).toHaveClass("jpg-flex-sh_0", "jpg-white-space_nowrap");
+    expect(screen.getByText("1996")).toHaveClass("jpg-flex-sh_0");
   });
 
   it("omits the year and format when they are unknown", () => {

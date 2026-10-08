@@ -7,11 +7,9 @@ const mockEnv = vi.hoisted(() => ({
 
 vi.mock("@httpjpg/env", () => ({ env: mockEnv }));
 
-// unstable_cache would otherwise memoise across cases; the cache behaviour it
-// provides is Next's, not ours, so the loaders are exercised directly.
-vi.mock("next/cache", () => ({
-  unstable_cache: (fn: unknown) => fn,
-}));
+// The cache scopes are Next's, not ours: `"use cache"` is inert under Vitest,
+// so the loaders are exercised directly.
+vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
 
 const {
   getConfig,

@@ -121,7 +121,7 @@ describe("MiniPlayer", () => {
     );
 
     const record = screen.getByText("◉").parentElement;
-    expect(record).toHaveClass("anim-ps_running");
+    expect(record).toHaveClass("jpg-anim-ps_running");
 
     rerender(
       <MiniPlayer
@@ -138,7 +138,7 @@ describe("MiniPlayer", () => {
       />,
     );
 
-    expect(record).toHaveClass("anim-ps_paused");
+    expect(record).toHaveClass("jpg-anim-ps_paused");
     const shorthands = (record?.className ?? "")
       .split(" ")
       .filter((name) => /(?:^|:)anim_/.test(name) && !name.startsWith("motionReduce:"));

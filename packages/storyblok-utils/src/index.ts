@@ -71,7 +71,7 @@ export {
 } from "./work-tags";
 export type { WorkTag, WorkTagGroup } from "./work-tags";
 
-/** Storyblok `resolve_relations` slugs. Used by fetchStory / getStories. */
+/** Storyblok `resolve_relations` slugs. Used by readStory / getStories. */
 export const STORYBLOK_RELATIONS = {
   WORK_LIST: "work_list.work",
 } as const;

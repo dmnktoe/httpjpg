@@ -65,17 +65,17 @@ beforeEach(() => {
   playedSources = [];
   pausedSources = [];
 
-  vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(
-    function (this: HTMLMediaElement) {
-      playedSources.push(this.src);
-      return Promise.resolve(undefined);
-    },
-  );
-  vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(
-    function (this: HTMLMediaElement) {
-      pausedSources.push(this.src);
-    },
-  );
+  vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(function (
+    this: HTMLMediaElement,
+  ) {
+    playedSources.push(this.src);
+    return Promise.resolve(undefined);
+  });
+  vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(function (
+    this: HTMLMediaElement,
+  ) {
+    pausedSources.push(this.src);
+  });
 });
 
 afterEach(() => {
@@ -221,7 +221,7 @@ describe("Slideshow video slide rendering", () => {
   it("labels a video slide with its copyright, dark by default", () => {
     const { getByText } = renderSlideshow([{ ...VIDEO_A, copyright: "Studio" }, IMAGE_A]);
 
-    expect(getByText(/Studio/)).toHaveClass("c_black");
+    expect(getByText(/Studio/)).toHaveClass("jpg-c_black");
   });
 
   it("honors an explicit copyright position on a video slide", () => {
@@ -230,7 +230,7 @@ describe("Slideshow video slide rendering", () => {
       IMAGE_A,
     ]);
 
-    expect(getByText(/Studio/)).toHaveClass("c_white");
+    expect(getByText(/Studio/)).toHaveClass("jpg-c_white");
   });
 
   it("renders no copyright label on a video slide without one", () => {

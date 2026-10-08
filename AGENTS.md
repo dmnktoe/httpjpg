@@ -197,6 +197,7 @@ New blok checklist:
 - Tokens over hex (`bg: "primary.500"`, `color: "pageFg"`). Hex only for genuinely off-palette decoration.
 - Semantic `pageBg` / `pageFg` / `pageBorder` for themed surfaces.
 - Dynamic inline styles: `token.var("colors.success.500")`.
+- Everything Panda emits is namespaced `jpg` (`prefix` in `packages/ui/panda.config.ts`): classes `jpg-d_flex`, vars `--jpg-colors-black`, hashed in production. Assert classes with the prefix in tests; never hand-write `var(--jpg-*)` — use `{colors.*}` / `token.var()`.
 - Build helpers (`hexToRgba`, `linearGradient`) live in `panda.helpers.ts` — never re-export from the runtime index.
 
 ## Caching

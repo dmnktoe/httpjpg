@@ -28,7 +28,7 @@ describe("Page", () => {
 
     expect(screen.queryByRole("banner")).not.toBeInTheDocument();
     expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
-    expect(screen.getByRole("main")).toHaveClass("pb_0");
+    expect(screen.getByRole("main")).toHaveClass("jpg-pb_0");
   });
 
   it("renders a header when one is configured", () => {
@@ -41,6 +41,6 @@ describe("Page", () => {
     render(<Page footer={{}}>content</Page>);
 
     expect(screen.getByRole("contentinfo")).toBeInTheDocument();
-    expect(screen.getByRole("main")).toHaveClass("pb_100px");
+    expect(screen.getByRole("main")).toHaveClass("jpg-pb_100px");
   });
 });

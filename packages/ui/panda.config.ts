@@ -261,6 +261,14 @@ export default defineConfig({
   },
 
   outdir: "styled-system",
+  /**
+   * House namespace for every generated class and token variable
+   * (`jpg-d_flex`, `--jpg-colors-black`) so devtools read as httpjpg and
+   * nothing collides with third-party CSS (Storyblok bridge, embeds).
+   * Production hashes on top (`jpg-1a2b3c`); reference tokens through
+   * `{colors.*}` / `token.var()`, never a hand-written `var(--jpg-*)`.
+   */
+  prefix: "jpg",
   jsxFramework: "react",
   minify: pandaCliProduction,
   hash: pandaCliProduction,

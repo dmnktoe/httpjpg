@@ -16,7 +16,7 @@ describe("MediaSkeleton", () => {
 
     const skeleton = skeletonOf(container);
     expect(skeleton).toHaveAttribute("aria-hidden", "true");
-    expect(skeleton.className).toContain("pointer-events_none");
+    expect(skeleton.className).toContain("jpg-pointer-events_none");
   });
 
   it("fades between visible and resolved instead of unmounting", () => {
@@ -30,7 +30,7 @@ describe("MediaSkeleton", () => {
   it("paints above media that is still transparent", () => {
     const { container } = render(<MediaSkeleton visible />);
 
-    expect(skeletonOf(container).className).toContain("z_1");
+    expect(skeletonOf(container).className).toContain("jpg-z_1");
   });
 
   it("carries its gradient as a token reference", () => {

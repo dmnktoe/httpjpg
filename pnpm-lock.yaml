@@ -37,8 +37,8 @@ catalogs:
       specifier: ^4.1.11
       version: 4.1.11
     dotenv:
-      specifier: ^18.0.1
-      version: 18.0.2
+      specifier: ^18.0.6
+      version: 18.0.7
     jsdom:
       specifier: ^30.1.0
       version: 30.1.0
@@ -402,7 +402,7 @@ importers:
         version: link:../terminal
       dotenv:
         specifier: 'catalog:'
-        version: 18.0.2
+        version: 18.0.7
       psn-api:
         specifier: ^2.18.1
         version: 2.18.1
@@ -421,7 +421,7 @@ importers:
         version: 0.13.11(typescript@7.0.2)(zod@4.6.5)
       dotenv:
         specifier: 'catalog:'
-        version: 18.0.2
+        version: 18.0.7
       zod:
         specifier: ^4.6.5
         version: 4.6.5
@@ -584,7 +584,7 @@ importers:
         version: 0.4.3
       dotenv:
         specifier: 'catalog:'
-        version: 18.0.2
+        version: 18.0.7
     devDependencies:
       tsx:
         specifier: 'catalog:'
@@ -3927,8 +3927,8 @@ packages:
     resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
     engines: {node: '>=12'}
 
-  dotenv@18.0.2:
-    resolution: {integrity: sha512-wl0U3CxC0iobaryqEKpFJxzyp4AxQFYAKj/WWszXZr87vVHLi2yJv2syax5Vxt+u02xqNgE277rsc3lOKg9sPg==}
+  dotenv@18.0.7:
+    resolution: {integrity: sha512-QEvMEF8ca3GNZJJnAbOgxpj5ULhBvnMcURp+XKrtvqFNPgjBvYoswQ0Jl2cO7JzCjxZjJhr9ZuIEhlrRxMft/Q==}
     engines: {node: '>=12'}
     hasBin: true
 
@@ -8536,7 +8536,7 @@ snapshots:
 
   dotenv@17.4.2: {}
 
-  dotenv@18.0.2: {}
+  dotenv@18.0.7: {}
 
   electron-to-chromium@1.5.433: {}
 

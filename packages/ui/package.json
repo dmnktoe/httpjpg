@@ -50,8 +50,8 @@
   "dependencies": {
     "@floating-ui/react-dom": "^2.1.9",
     "@httpjpg/tokens": "workspace:*",
-    "motion": "^13.4.4",
-    "swiper": "^14.2.0"
+    "motion": "^13.5.1",
+    "swiper": "^14.3.0"
   },
   "devDependencies": {
     "@httpjpg/storyblok-utils": "workspace:*",

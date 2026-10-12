@@ -33,6 +33,7 @@ component_management:
       paths:
         - "packages/spotify/**"
         - "packages/now-playing/**"
+        - "packages/ai/**"
         - "packages/analytics/**"
         - "packages/consent/**"
         - "packages/observability/**"
@@ -45,6 +46,15 @@ component_management:
       name: portfolio
       paths:
         - "apps/portfolio/**"
+    - component_id: studio
+      name: studio
+      paths:
+        - "apps/studio/**"
+    - component_id: tooling
+      name: tooling
+      paths:
+        - "packages/credentials/**"
+        - "packages/terminal/**"
 
 ignore:
   - "**/*.test.ts"

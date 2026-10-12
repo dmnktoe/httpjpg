@@ -77,7 +77,7 @@ Storyblok layering:
 ```
 storyblok-utils ← storyblok-api    storyblok-richtext ← storyblok-ui
        ↑               ↑                  ↑                 ↑
-    tokens            env                ui           ui, consent, richtext, utils
+    tokens            env                ui           ui, consent, analytics, richtext, utils
                        ↑
               storyblok-next ← apps/portfolio
 ```
@@ -87,8 +87,9 @@ storyblok-utils ← storyblok-api    storyblok-richtext ← storyblok-ui
 - Only portfolio aliases `@/*` → `apps/portfolio/*`. Elsewhere import `@httpjpg/<name>`, never relative into another package.
 - Leaves: `tokens`, `env` (no workspace deps).
 - `storyblok-utils` → `tokens` only · `storyblok-api` → `env` · `storyblok-next` → `storyblok-api` (Next apps only)
-- `storyblok-ui` → `ui`, `consent`, `storyblok-richtext`, `storyblok-utils`
-- `now-playing` → `spotify` + peer `@httpjpg/ui` (`ui` must not import back)
+- `storyblok-ui` → `ui`, `consent`, `analytics`, `storyblok-richtext`, `storyblok-utils` (bloks may call `track*`; `ui` stays analytics-free)
+- `consent` → `ui` · `analytics` / `observability` → `env` · `terminal` → `tokens` · CLIs (`credentials`, `storyblok-sync`) → `terminal`
+- `now-playing` → `spotify`, `tokens` + peer `@httpjpg/ui` (`ui` must not import back)
 - Apps may import anything
 
 ## TypeScript

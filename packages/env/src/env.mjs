@@ -55,16 +55,6 @@ export const env = createEnv({
 
     ARCJET_KEY: z.string().optional(),
 
-    // https://www.indexnow.org/documentation — 8–128 chars of a-z, A-Z, 0-9, `-`.
-    // `""` (as in .env.example) means unset, not an invalid key.
-    INDEXNOW_KEY: z.preprocess(
-      (value) => (value === "" ? undefined : value),
-      z
-        .string()
-        .regex(/^[a-zA-Z0-9-]{8,128}$/, "INDEXNOW_KEY must be 8–128 chars of a-z, A-Z, 0-9 or -")
-        .optional(),
-    ),
-
     CODECOV_TOKEN: z.string().optional(),
     ANALYZE_BUNDLE: z.enum(["true", "false"]).optional(),
 
@@ -118,7 +108,6 @@ export const env = createEnv({
     GROQ_MODEL: process.env.GROQ_MODEL,
 
     ARCJET_KEY: process.env.ARCJET_KEY,
-    INDEXNOW_KEY: process.env.INDEXNOW_KEY,
 
     CODECOV_TOKEN: process.env.CODECOV_TOKEN,
     ANALYZE_BUNDLE: process.env.ANALYZE_BUNDLE,

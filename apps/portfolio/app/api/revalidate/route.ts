@@ -4,8 +4,6 @@ import { expireConfig, expireStory } from "@httpjpg/storyblok-next";
 import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
-import { submitIndexNow } from "@/lib/integrations/indexnow";
-import { LOCALIZED_SLUGS, localizedPath } from "@/lib/locale";
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
 interface StoryblokWebhookPayload {
@@ -64,11 +62,8 @@ export async function POST(request: NextRequest) {
       revalidatedPaths.push("/layout");
     }
 
-    const indexNow = await pingIndexNow(storySlug, contentType);
-
     return NextResponse.json({
       revalidated: true,
-      ...(indexNow ? { indexNow } : {}),
       action,
       story: storySlug,
       paths: revalidatedPaths,
@@ -85,50 +80,5 @@ export async function POST(request: NextRequest) {
       },
       { status: 500 },
     );
-  }
-}
-
-/** Public URLs a story renders at; config and other internal stories have none. */
-function publicUrls(storySlug: string, contentType?: string): string[] {
-  if (storySlug === STORYBLOK_SLUGS.CONFIG || contentType === STORYBLOK_SLUGS.CONFIG) {
-    return [];
-  }
-  if (storySlug === STORYBLOK_SLUGS.HOME) {
-    return ["/"];
-  }
-  if (LOCALIZED_SLUGS.has(storySlug)) {
-    return [localizedPath("en", storySlug), localizedPath("de", storySlug)];
-  }
-  return [`/${storySlug}`];
-}
-
-/**
- * Notify IndexNow engines of the change. Best-effort: a failed ping is
- * reported but never fails the webhook, since the cache is already purged.
- */
-async function pingIndexNow(
-  storySlug: string,
-  contentType?: string,
-): Promise<"submitted" | "failed" | undefined> {
-  const key = env.INDEXNOW_KEY;
-  const paths = publicUrls(storySlug, contentType);
-  if (!key || paths.length === 0) {
-    return undefined;
-  }
-  const baseUrl = env.NEXT_PUBLIC_APP_URL;
-  try {
-    const result = await submitIndexNow({
-      baseUrl,
-      key,
-      urls: paths.map((path) => new URL(path, baseUrl).toString()),
-    });
-    if (result.ok) {
-      return "submitted";
-    }
-    console.warn(`[IndexNow] ${result.message}`);
-    return "failed";
-  } catch (error) {
-    captureServerException(error, { tags: { route: "revalidate", integration: "indexnow" } });
-    return "failed";
   }
 }

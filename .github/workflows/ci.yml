@@ -201,12 +201,17 @@ jobs:
         run: |
           tar -xzf portfolio-build.tar.gz -C apps/portfolio
           cat apps/portfolio/.next/BUILD_ID
+      # Keyed on the Playwright version, not the lockfile: every dependency bump
+      # would otherwise save another ~270 MB copy of the same Chromium.
+      - name: Resolve Playwright version
+        id: playwright-version
+        run: echo "version=$(pnpm --filter=@httpjpg/portfolio exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
       - name: Cache Playwright browsers
         id: playwright-cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm --filter=@httpjpg/portfolio exec playwright install --with-deps chromium
@@ -275,12 +280,17 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: ./.github/actions/setup
+      # Keyed on the Playwright version, not the lockfile: every dependency bump
+      # would otherwise save another ~270 MB copy of the same Chromium.
+      - name: Resolve Playwright version
+        id: playwright-version
+        run: echo "version=$(pnpm --filter=@httpjpg/storybook exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
       - name: Cache Playwright browsers
         id: playwright-cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm --filter=@httpjpg/storybook exec playwright install --with-deps chromium

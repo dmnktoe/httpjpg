@@ -343,8 +343,7 @@ function PageLayout({ slug, title, titleSize, year, p, imageUrl }: LayoutArgs) {
 }
 
 export async function GET(request: NextRequest, ctx: { params: Promise<{ slug: string[] }> }) {
-  // Rendering a card downloads the story's hero image and rasterises it, so an
-  // unthrottled crawler here is expensive in a way the other routes are not.
+  // Each card downloads and rasterises an image: expensive for crawlers.
   const limited = await enforceRateLimit(request);
   if (limited) {
     return limited;

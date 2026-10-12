@@ -34,9 +34,7 @@ describe("MediaSkeleton", () => {
   });
 
   it("carries its gradient as a token reference", () => {
-    // A hand-written token variable would be hashed away in production and take
-    // the whole background declaration with it. `panda-tokens/no-token-var`
-    // guards the repo; this pins the skeleton itself.
+    // Production hashes hand-written token vars and drops the declaration.
     const { className } = skeletonOf(render(<MediaSkeleton visible />).container);
 
     expect(className).toContain("colors.neutral.200");

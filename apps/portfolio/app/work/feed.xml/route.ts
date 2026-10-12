@@ -54,9 +54,7 @@ export async function GET() {
     unstable_rethrow(error);
     console.error("Error building work feed:", error);
     captureServerException(error, { tags: { route: "work-feed" } });
-    // Request-time from here, so an outage during the build is not frozen
-    // into the prerender. A 503 rather than an empty channel: readers retry
-    // it instead of treating every item as removed.
+    // 503, not an empty channel: readers retry instead of dropping every item.
     await connection();
     return new Response("Work feed temporarily unavailable", {
       status: 503,
@@ -112,7 +110,6 @@ ${items}
   });
 }
 
-/** Throws on an empty answer, so a failed read is never cached. */
 async function readWorkStories(): Promise<FeedStory[]> {
   "use cache";
   cacheLife("cms");
@@ -123,8 +120,7 @@ async function readWorkStories(): Promise<FeedStory[]> {
     sort_by: "content.date:desc",
     version: "published",
   });
-  // `getStories` swallows its own fetch errors and answers with an empty page.
-  // Throwing keeps that out of the cache instead of serving an empty feed.
+  // An empty answer is an outage (`getStories` swallows errors): don't cache it.
   if (!res.stories?.length) {
     throw new Error("Storyblok returned no work stories for the feed");
   }

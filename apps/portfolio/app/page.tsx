@@ -8,10 +8,7 @@ import { StoryblokLive } from "@/components/providers/storyblok-live";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
-/**
- * Allowed to block, like the root layout above it: Visual Editor and draft
- * reads are uncached and wait for request time.
- */
+/** Blocking, like the root layout; draft reads wait for request time. */
 export const instant = false;
 
 export default async function HomePage({

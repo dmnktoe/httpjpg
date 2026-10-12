@@ -22,7 +22,6 @@ describe("LetterboxdStatus", () => {
   it("holds a loading label until the data arrives", () => {
     render(<LetterboxdStatus film={null} loaded={false} />);
 
-    // A loading line holds the footer in place during the request.
     expect(screen.getByText("loading ...")).toBeInTheDocument();
   });
 

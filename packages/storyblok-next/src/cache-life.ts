@@ -1,18 +1,6 @@
-/**
- * Named `cacheLife` profiles, registered once in `next.config.ts`:
- *
- * ```ts
- * cacheLife: CACHE_LIFE
- * ```
- *
- * Kept free of runtime imports so the config can load it without pulling in
- * `next/cache` or the Storyblok client.
- */
+/** `cacheLife` profiles for `next.config.ts`. No runtime imports: the config loads it. */
 export const CACHE_LIFE = {
-  /**
-   * Storyblok content. An hour is the ceiling, not the expected age: the
-   * publish webhook expires the matching `CMS_TAGS` long before that.
-   */
+  /** Storyblok content; the publish webhook usually expires it long before the hour. */
   cms: {
     stale: 300,
     revalidate: 3600,

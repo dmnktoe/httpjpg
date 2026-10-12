@@ -60,12 +60,7 @@ export default defineConfig({
 
   exclude: ["./node_modules/**", "./styled-system/**", "./.next/**", "./dist/**", "./.turbo/**"],
 
-  /**
-   * Every CSS property listed here is statically extracted for every value
-   * in `CMS_OPTIONS`, in every responsive condition. This is what makes
-   * runtime Storyblok values "just work" in the Visual Editor — the class
-   * is already in the bundle.
-   */
+  /** Pre-extracts every `CMS_OPTIONS` value, so runtime Storyblok values have a class. */
   staticCss: {
     css: [
       {
@@ -261,13 +256,7 @@ export default defineConfig({
   },
 
   outdir: "styled-system",
-  /**
-   * House namespace for every generated class and token variable
-   * (`jpg-d_flex`, `--jpg-colors-black`) so devtools read as httpjpg and
-   * nothing collides with third-party CSS (Storyblok bridge, embeds).
-   * Production hashes on top (`jpg-1a2b3c`); reference tokens through
-   * `{colors.*}` / `token.var()`, never a hand-written `var(--jpg-*)`.
-   */
+  /** `jpg-d_flex`, `--jpg-colors-black`. Never hand-write `var(--jpg-*)`: production hashes it. */
   prefix: "jpg",
   jsxFramework: "react",
   minify: pandaCliProduction,

@@ -51,7 +51,6 @@ describe("readStory · published", () => {
   });
 
   it("holds a miss for seconds instead of the cms hour", async () => {
-    // The client answers null for a missing slug and for a failed fetch alike.
     getStory.mockResolvedValueOnce(null);
     await expect(readStory("work/gone")).resolves.toBeNull();
     expect(cacheLife).toHaveBeenCalledWith("seconds");

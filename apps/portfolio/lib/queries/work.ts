@@ -63,11 +63,7 @@ function toWorkItem(story: WorkStory, publishedUuids: Set<string>): WorkItem {
   };
 }
 
-/**
- * The story behind a page route. `react.cache` dedupes `generateMetadata` +
- * page + root layout within one request (draft reads have no cache scope to
- * share); published reads land in `readStory`'s `cms` cache.
- */
+/** Per-request dedupe for metadata, page and layout (drafts have no cache scope). */
 export const readPageStory = cache(
   async (fullSlug: string, opts: { draft: boolean; language?: string }) => {
     return readStory(fullSlug, {
@@ -94,8 +90,7 @@ export async function getRecentWork(): Promise<{
 
 async function readRecentWork() {
   "use cache";
-  // Dev lists unpublished work too, and no publish webhook reaches localhost,
-  // so it only holds the list for a few seconds there.
+  // Dev lists drafts and gets no webhook: hold for seconds only.
   if (IS_DEV) {
     cacheLife("seconds");
   } else {

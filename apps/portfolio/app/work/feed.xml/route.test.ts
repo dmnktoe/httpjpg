@@ -16,7 +16,6 @@ vi.mock("@/lib/queries/widgets", () => ({ getFeatureFlags }));
 
 vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
 
-// `connection()` throws outside a Next request scope.
 vi.mock("next/server", () => ({ connection: vi.fn(async () => undefined) }));
 
 vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
@@ -55,7 +54,6 @@ describe("GET /work/feed.xml", () => {
             images: [{ filename: "https://a.storyblok.com/f/1/a.jpg" }],
           },
         },
-        // Nested slug — filtered out of the feed.
         { slug: "beta", full_slug: "work/group/beta" },
       ],
     });
@@ -66,13 +64,9 @@ describe("GET /work/feed.xml", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toContain("application/rss+xml");
     expect(body).toContain('<rss version="2.0"');
-    // XML special characters are escaped.
     expect(body).toContain("Alpha &lt;Project&gt;");
-    // Enclosure built from the first image.
     expect(body).toContain("<enclosure");
-    // Base URL trailing slash is trimmed.
     expect(body).toContain("https://example.test/work/alpha");
-    // Nested story excluded.
     expect(body).not.toContain("group/beta");
   });
 

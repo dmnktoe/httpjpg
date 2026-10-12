@@ -74,7 +74,6 @@ describe("getConfig", () => {
   });
 
   it("holds a missing published story for seconds, not the cms hour", async () => {
-    // `getStory` swallows fetch errors and answers null.
     setupGetStory(async () => null);
     await expect(getConfig()).resolves.toBeNull();
     expect(cacheLife).toHaveBeenCalledWith("seconds");

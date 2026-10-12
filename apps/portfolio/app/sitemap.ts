@@ -18,13 +18,8 @@ interface SitemapStory {
   content?: { external_only?: boolean };
 }
 
-/** Internal stories that are not pages. */
 const EXCLUDED_SLUGS = ["config", "page-not-found"];
 
-/**
- * Sitemap from the published Storyblok stories. Cached like every other story
- * list, so a publish refreshes it instead of it freezing at build time.
- */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = env.NEXT_PUBLIC_APP_URL;
   try {
@@ -33,14 +28,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     unstable_rethrow(error);
     console.error("Error generating sitemap:", error);
     captureServerException(error, { tags: { route: "sitemap" } });
-    // Request-time from here: a failure during the build must not freeze the
-    // minimal sitemap into a static prerender.
+    // Request-time, so a build-time outage doesn't freeze the fallback.
     await connection();
     return [{ url: baseUrl, changeFrequency: "weekly", priority: 1 }];
   }
 }
 
-/** Throws instead of returning a partial sitemap, so a failure is never cached. */
 async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
   "use cache";
   cacheLife("cms");
@@ -50,8 +43,7 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
     per_page: 100,
     version: "published",
   });
-  // `getStories` swallows its own fetch errors and answers with an empty page,
-  // so an outage would otherwise look like a site with nothing but home.
+  // An empty answer is an outage (`getStories` swallows errors): don't cache it.
   if (!response.stories?.length) {
     throw new Error("Storyblok returned no published stories for the sitemap");
   }
@@ -93,7 +85,6 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
       return [english, { url: `${baseUrl}${localizedPath("de", story.full_slug)}`, ...shared }];
     });
 
-  // Add home page
   entries.unshift({
     url: baseUrl,
     lastModified: new Date(),

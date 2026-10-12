@@ -28,10 +28,6 @@ export interface RelatedWork {
 
 const EMPTY: RelatedWork = { tags: [], related: [] };
 
-/**
- * Reads the same index search and ask read, so a story cannot be findable by a
- * tag and unrelated to its neighbours by the same tag.
- */
 export async function getRelatedWork(href: string, limit = 3): Promise<RelatedWork> {
   try {
     const documents = await getSearchIndex();
@@ -64,10 +60,7 @@ interface RelatedImageSource {
   focus?: string;
 }
 
-/**
- * Featured image first — the same asset the nav hover preview uses. A document
- * indexed before `featured` existed falls back to its first body image.
- */
+/** Featured image first, then the first body image. */
 function pickRelatedImage(document: SearchDocument): RelatedImageSource | undefined {
   if (document.featured?.source) {
     return document.featured;
@@ -75,7 +68,7 @@ function pickRelatedImage(document: SearchDocument): RelatedImageSource | undefi
   return document.media?.find((item) => item.kind === "image" && (item.source || item.thumb));
 }
 
-/** A document indexed before `source` existed falls back to its 200px thumbnail. */
+/** Falls back to the 200px thumbnail without a `source`. */
 function relatedImages(
   media: RelatedImageSource | undefined,
 ): Pick<RelatedWorkItem, "thumb" | "thumbSrcSet" | "square" | "squareSrcSet"> {

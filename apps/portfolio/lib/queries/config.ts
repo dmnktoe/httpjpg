@@ -15,7 +15,6 @@ export async function getConfig(): Promise<SbConfigStory | null> {
   const { isEnabled } = await draftMode();
   try {
     if (isEnabled) {
-      // Uncached draft read: keep it out of the request's prerender pass.
       await connection();
       return await loadConfig(true);
     }
@@ -33,10 +32,7 @@ async function readPublishedConfig(): Promise<SbConfigStory | null> {
   cacheTag(CMS_TAGS.config, CMS_TAGS.story(STORYBLOK_SLUGS.CONFIG));
   const config = await loadConfig(false);
   if (!config) {
-    // `getStory` swallows fetch errors and answers null. Under `cms` that
-    // would drop nav, footer and every widget toggle for up to an hour, so a
-    // miss is only held for seconds — which also keeps it out of prerenders.
-    // Not a throw: an error from a cache scope fails the page prerender.
+    // Null is a failed fetch: hold it for seconds, not the hour (see `readStory`).
     cacheLife("seconds");
     return null;
   }
@@ -110,11 +106,7 @@ function toUserbars(bloks: SbUserbarData[] | undefined): UserbarItem[] {
   return items;
 }
 
-/**
- * Site identity, authored in the General tab. Every field is optional on
- * purpose: the CMS owns these values outright, so a missing one drops the
- * output that depends on it instead of resurfacing a copy kept in the code.
- */
+/** Site identity from the CMS. A missing field drops its output; no code fallback. */
 export interface SiteConfig {
   name?: string;
   /** Open Graph / schema.org locale, e.g. `de_DE`. */

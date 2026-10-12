@@ -22,7 +22,7 @@ interface PageStoryContent {
   accentColor?: unknown;
 }
 
-/** Light by default; only Storyblok-resolved pages with `content.isDark` flip to dark. */
+/** Light unless the story sets `content.isDark`. */
 export async function getPageTheme(): Promise<PageTheme> {
   try {
     const story = await loadCurrentStory();
@@ -32,7 +32,7 @@ export async function getPageTheme(): Promise<PageTheme> {
   }
 }
 
-/** Work page Project Accent Color, or `null` on every other surface. */
+/** Work-page accent color, else `null`. */
 export async function getPageAccent(): Promise<string | null> {
   try {
     const story = await loadCurrentStory();

@@ -9,6 +9,6 @@ export default (): NextConfig => ({
     },
   },
   reactStrictMode: true,
-  // The root AGENTS.md is the one guide; `next dev` would add its own.
+  // No generated AGENTS.md per app; the root one is the guide.
   agentRules: false,
 });

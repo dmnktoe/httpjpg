@@ -8,13 +8,7 @@ import { widgetCacheHeaders } from "./cache-headers";
 import { getConfig } from "./queries/config";
 import { enforceRateLimit } from "./rate-limit";
 
-/**
- * Outcome of reading one widget's setting out of the Storyblok config story.
- *
- * `missing` and `unavailable` are deliberately separate: a field the editor has
- * not filled in is a 501 (the widget is off), while a config story we could not
- * read at all is a 503 (the widget is on, the CMS is down).
- */
+/** `missing` → 501 (widget off), `unavailable` → 503 (config story unreadable). */
 export type WidgetSetting =
   | { status: "ok"; value: string }
   | { status: "missing" }
@@ -27,11 +21,7 @@ export interface WidgetSettingOptions {
   validate: (value: string) => boolean;
 }
 
-/**
- * Reads one widget setting from the cached config story. Goes through
- * `getConfig()` so every route shares the `CMS_TAGS.config` entry instead of
- * hitting Storyblok per request.
- */
+/** Reads one widget setting from the cached config story. */
 export async function resolveWidgetSetting({
   field,
   validate,
@@ -53,7 +43,6 @@ export async function resolveWidgetSetting({
   return { status: "ok", value };
 }
 
-/** The setting's value when it is present and valid, `undefined` otherwise. */
 export function settingValue(setting: WidgetSetting): string | undefined {
   return setting.status === "ok" ? setting.value : undefined;
 }
@@ -102,7 +91,6 @@ export function widgetUpstreamError(
 }
 
 export interface WidgetRouteContext {
-  /** Draft mode is on, so the response must not be cached publicly. */
   isDraft: boolean;
 }
 
@@ -113,23 +101,13 @@ export interface WidgetRouteOptions {
   label: string;
 }
 
-/**
- * Wraps a widget handler in the scaffolding every one of them needs: the shared
- * rate limiter, the request's draft mode, and a last-resort 500 that reports to
- * Sentry. Handlers return their own success and expected-failure responses.
- *
- * Rate limiting lives here rather than in each handler so a new widget route
- * cannot ship without it.
- */
+/** Rate limit, draft mode and a reported last-resort 500 for every widget route. */
 export function widgetRoute(
   { route, label }: WidgetRouteOptions,
   handler: (context: WidgetRouteContext) => Promise<NextResponse>,
 ): (request: NextRequest) => Promise<NextResponse> {
   return async function handleWidgetRequest(request: NextRequest): Promise<NextResponse> {
-    // Request-time on purpose: Cache Components would otherwise prerender a
-    // handler that reads no request data, skipping the rate limit and draft
-    // check — and the prerender bail-out would land in the catch below.
-    // Freshness comes from each loader's own cache scope instead.
+    // Otherwise Cache Components prerenders the handler and skips both checks.
     await connection();
     const limited = await enforceRateLimit(request);
     if (limited) {

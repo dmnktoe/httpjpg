@@ -13,16 +13,10 @@ import {
 import { WIDGET_MAX_AGE } from "@/lib/queries/widget-status";
 import { widgetRoute } from "@/lib/widget-route";
 
-/** Browser freshness only — colo is per visitor, so CDNs must not share this. */
+/** Browser-only: the colo is per visitor. */
 const EDGE_MAX_AGE = 60;
 
-/**
- * Visitor colo from CF-Ray, plus yesterday's zone totals when a token is set.
- *
- * Always 200: local/dev and a GraphQL blip still leave the branded line up.
- * Unlike the other widget routes this stays `private` — caching it publicly
- * would stamp one visitor's colo onto everybody else.
- */
+/** Visitor colo plus yesterday's zone totals. Always 200, always `private`. */
 export const GET = widgetRoute(
   { route: "cloudflare", label: "Cloudflare" },
   async ({ isDraft }) => {

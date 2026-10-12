@@ -61,10 +61,7 @@ async function resolvePageRequest(
   return { locale, slug, fetchDraft, isVisualEditor, isEnabled };
 }
 
-/**
- * Allowed to block, like the root layout above it: Visual Editor and draft
- * reads are uncached and wait for request time.
- */
+/** Blocking, like the root layout; draft reads wait for request time. */
 export const instant = false;
 
 export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
@@ -112,8 +109,6 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
   try {
     story = await readPageStory(slug, storyOpts(fetchDraft, locale));
   } catch (error) {
-    // Next's own prerender interrupts (draft reads wait for request time) are
-    // control flow, not failures.
     unstable_rethrow(error);
     console.error(`[DynamicPage] Error loading story "${slug}":`, {
       error: error instanceof Error ? error.message : String(error),

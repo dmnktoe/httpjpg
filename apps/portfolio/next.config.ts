@@ -71,12 +71,10 @@ function resolveCommitSha(): string {
 
 export default async (): Promise<NextConfig> => {
   const config: NextConfig = {
-    // Caching is opt-in per read (`"use cache"` + `cacheLife` + `cacheTag`);
-    // see `@httpjpg/storyblok-next` for the CMS side of it.
     cacheComponents: true,
     partialPrefetching: true,
     cacheLife: CACHE_LIFE,
-    // The root AGENTS.md is the one guide; `next dev` would add its own.
+    // No generated AGENTS.md per app; the root one is the guide.
     agentRules: false,
 
     transpilePackages: [

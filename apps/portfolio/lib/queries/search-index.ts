@@ -26,10 +26,9 @@ interface IndexableStory {
 
 const PER_PAGE = 100;
 
-/** Backstop against a paging bug walking the CDN forever. */
+/** Backstop against endless paging. */
 const MAX_PAGES = 20;
 
-/** Configuration stories, not readable pages. */
 const EXCLUDED_SLUGS = new Set<string>([STORYBLOK_SLUGS.CONFIG]);
 
 function toHref(story: IndexableStory): string {
@@ -46,9 +45,6 @@ function toHref(story: IndexableStory): string {
 }
 
 function toSearchDocument(story: IndexableStory): SearchDocument {
-  // Labels are what a visitor reads and what the model is shown; values are
-  // the stable key related work compares. Both come off one resolve so they
-  // can never disagree about which tags a story carries.
   const curated = resolveWorkTags(story.content?.tags);
   const featured = toFeatured(story.content?.images);
 
@@ -76,7 +72,7 @@ function toFeatured(
   return { source: image.filename, focus: image.focus };
 }
 
-/** The published corpus both search and the ask endpoint read. */
+/** The one corpus for search, ask and related work. */
 export async function getSearchIndex(): Promise<SearchDocument[]> {
   "use cache";
   cacheLife("cms");
@@ -85,8 +81,6 @@ export async function getSearchIndex(): Promise<SearchDocument[]> {
   const api = getStoryblokApi({ draftMode: false });
   const stories: IndexableStory[] = [];
 
-  // Paginated rather than capped at one page: a silent truncation would
-  // simply drop later work out of search with nothing to show for it.
   for (let page = 1; page <= MAX_PAGES; page += 1) {
     const response = await api.getStories({
       per_page: PER_PAGE,
@@ -102,11 +96,7 @@ export async function getSearchIndex(): Promise<SearchDocument[]> {
     }
   }
 
-  // `getStories` swallows its own fetch errors and answers with an empty
-  // page, so an outage is indistinguishable from an empty space. Throwing
-  // keeps the cache scope from storing it — otherwise a two-second blip
-  // during a refill leaves search answering "no matches" for an hour. The
-  // caller reports it and returns its error response.
+  // An empty answer is an outage (`getStories` swallows errors): don't cache it.
   if (stories.length === 0) {
     throw new Error("Storyblok returned no published stories for the search index");
   }

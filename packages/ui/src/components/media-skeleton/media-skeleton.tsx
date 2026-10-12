@@ -1,14 +1,8 @@
 import { css } from "styled-system/css";
 
 /**
- * Colors go through Panda's `{token.path}` syntax, not a literal
- * `var(--jpg-colors-*)`. Production hashes every token variable, so a
- * hand-written name resolves to nothing and the whole `background`
- * declaration is dropped — an invisible skeleton.
- *
- * `backgroundImage` for the same reason `background` would be wrong: the
- * shorthand resets `background-size`, and the shimmer sweep needs the
- * gradient to stay twice as wide as the box.
+ * `{colors.*}`, not `var(--jpg-colors-*)`: production hashes the vars.
+ * `backgroundImage`, not `background`: the shorthand resets the 200% size.
  */
 const skeletonClass = css({
   position: "absolute",

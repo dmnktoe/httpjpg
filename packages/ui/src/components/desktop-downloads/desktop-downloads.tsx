@@ -9,7 +9,6 @@ import { DesktopDownloadIcon } from "./desktop-download-icon";
 import { desktopIconPositions, type DesktopDownloadItem, visibleDesktopDownloads } from "./lib";
 
 export type { DesktopDownloadItem, DesktopFileKind } from "./lib";
-export { DESKTOP_ICON_SRC, fileKindFromSource } from "./lib";
 
 export interface DesktopDownloadsProps {
   items: DesktopDownloadItem[];

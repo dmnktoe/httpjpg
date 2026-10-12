@@ -1,25 +1,9 @@
 "use client";
 
+import { useHasMounted } from "@httpjpg/ui";
 import { StoryblokComponent, type ISbStoryData, useStoryblokState } from "@storyblok/react";
-import { useSyncExternalStore } from "react";
 
 import { ThemeSync } from "@/components/ui/theme-sync";
-
-function subscribe() {
-  return () => {};
-}
-
-function getClientSnapshot() {
-  return true;
-}
-
-function getServerSnapshot() {
-  return false;
-}
-
-function useHasMounted() {
-  return useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
-}
 
 export interface StoryblokLiveProps {
   story: ISbStoryData;

@@ -24,14 +24,21 @@
       "rangeStrategy": "replace"
     },
     {
-      "description": "Dev tooling lands in one PR",
-      "matchDepTypes": ["devDependencies"],
+      "description": "Dev tooling lands in one PR, pnpm catalog included",
+      "matchDepTypes": ["devDependencies", "pnpm.catalog.default"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "dev dependencies"
     },
     {
       "description": "Production deps land in one PR",
       "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "production dependencies"
+    },
+    {
+      "description": "Runtime packages that live in the pnpm catalog stay with production",
+      "matchDepTypes": ["pnpm.catalog.default"],
+      "matchPackageNames": ["@storyblok/react"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "production dependencies"
     },
@@ -52,6 +59,12 @@
       "matchManagers": ["github-actions"],
       "groupName": "github actions",
       "addLabels": ["ci"]
+    },
+    {
+      "description": "Node and pnpm move together",
+      "matchDepNames": ["node", "pnpm"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "toolchain"
     },
     {
       "description": "Majors need a human",

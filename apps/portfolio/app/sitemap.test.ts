@@ -119,4 +119,71 @@ describe("sitemap", () => {
     });
     expect(de?.alternates?.languages).toEqual(en?.alternates?.languages);
   });
+
+  it("lists the home story once, at the root", async () => {
+    getStories.mockResolvedValueOnce({
+      stories: [
+        {
+          slug: "home",
+          full_slug: "home",
+          first_published_at: "2024-01-01",
+          published_at: "2024-03-01",
+          is_startpage: false,
+        },
+      ],
+    });
+
+    const entries = await sitemap();
+
+    expect(entries.map((e) => e.url)).toEqual(["https://example.test"]);
+    expect(entries[0].lastModified).toEqual(new Date("2024-03-01"));
+  });
+
+  it("walks every CDN page", async () => {
+    const story = (slug: string) => ({
+      slug,
+      full_slug: slug,
+      first_published_at: "2024-01-01",
+      published_at: null,
+      is_startpage: false,
+    });
+    getStories
+      .mockResolvedValueOnce({ stories: [story("a")], total: 2, perPage: 1 })
+      .mockResolvedValueOnce({ stories: [story("b")], total: 2, perPage: 1 });
+
+    const entries = await sitemap();
+
+    expect(getStories).toHaveBeenCalledTimes(2);
+    expect(getStories).toHaveBeenLastCalledWith(expect.objectContaining({ page: 2 }));
+    expect(entries.map((e) => e.url)).toEqual(
+      expect.arrayContaining(["https://example.test/a", "https://example.test/b"]),
+    );
+  });
+
+  it("attaches featured and inline images", async () => {
+    getStories.mockResolvedValueOnce({
+      stories: [
+        {
+          slug: "project",
+          full_slug: "work/project",
+          first_published_at: "2024-01-01",
+          published_at: null,
+          is_startpage: false,
+          content: {
+            images: [{ filename: "https://cdn/a.jpg" }],
+            body: [
+              { component: "image", image: { filename: "https://cdn/a.jpg" } },
+              { component: "image", image: { filename: "https://cdn/b.jpg" } },
+              { component: "music_player", title: "Song", artwork: "https://cdn/art.jpg" },
+            ],
+          },
+        },
+      ],
+    });
+
+    const entries = await sitemap();
+    const work = entries.find((e) => e.url === "https://example.test/work/project");
+
+    expect(work?.images).toEqual(["https://cdn/a.jpg", "https://cdn/b.jpg"]);
+  });
 });

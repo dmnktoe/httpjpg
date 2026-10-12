@@ -53,7 +53,8 @@ import {
 import { getLastUpdated } from "@/lib/queries/last-updated";
 import { getFeatureFlags, getInterfaceConfig, getWidgetConfig } from "@/lib/queries/widgets";
 import { getRecentWork } from "@/lib/queries/work";
-import { generatePersonSchema, JsonLd } from "@/lib/schema-org";
+import { generateSiteGraph, JsonLd } from "@/lib/schema-org";
+import { feedAlternates } from "@/lib/seo";
 
 import "./globals.css";
 
@@ -72,6 +73,7 @@ function formatLastUpdated(iso: string): string {
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoDefaults();
   const site = await getSiteConfig();
+  const flags = await getFeatureFlags();
   return {
     title: {
       absolute: seo.title || site.name || "",
@@ -80,6 +82,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: seo.description,
     metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+    alternates: feedAlternates(flags.rssFeedEnabled),
     openGraph: {
       type: "website",
       locale: site.locale,
@@ -106,6 +109,14 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const author = await getAuthor();
   const socialProfiles = await getSocialProfiles();
   const flags = await getFeatureFlags();
+  const seo = await getSeoDefaults();
+  const siteGraph = generateSiteGraph({
+    baseUrl: env.NEXT_PUBLIC_APP_URL,
+    name: site.name,
+    description: seo.description,
+    inLanguage: site.language,
+    author: author ? { ...author, sameAs: socialProfiles } : null,
+  });
   const { projectsWork, websitesWork } = await getRecentWork();
   const lastUpdated = flags.lastUpdatedBadgeEnabled ? await getLastUpdated() : undefined;
 
@@ -122,15 +133,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       style={workAccentStyle}
     >
       <body style={{ margin: 0, padding: 0 }}>
-        {author && (
-          <JsonLd
-            data={generatePersonSchema({
-              name: author.name,
-              url: author.url,
-              sameAs: socialProfiles,
-            })}
-          />
-        )}
+        {siteGraph && <JsonLd data={siteGraph} />}
         <ConsoleBanner repositoryUrl={site.repositoryUrl} />
         {!inStoryblokEditor && <ConsentProvider />}
         <ScrollToTop />

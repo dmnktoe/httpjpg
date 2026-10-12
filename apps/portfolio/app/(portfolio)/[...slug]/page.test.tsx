@@ -56,6 +56,17 @@ function search(value: Record<string, string | string[] | undefined> = {}) {
   return Promise.resolve(value);
 }
 
+type SchemaNode = Record<string, unknown> & { "@type"?: string };
+
+function schemaNodes(): SchemaNode[] {
+  const jsonLd = document.querySelector('script[type="application/ld+json"]');
+  return (JSON.parse(jsonLd?.textContent ?? "{}") as { "@graph"?: SchemaNode[] })["@graph"] ?? [];
+}
+
+function schemaNode(type: string): SchemaNode | undefined {
+  return schemaNodes().find((node) => node["@type"] === type);
+}
+
 const workStory = {
   slug: "some-project",
   first_published_at: "2024-01-01",
@@ -143,6 +154,34 @@ describe("generateMetadata", () => {
     expect(getCachedStory).toHaveBeenCalledWith("about", { draftMode: true });
   });
 
+  it("stamps a canonical on every page", async () => {
+    getCachedStory.mockResolvedValueOnce({ slug: "about", content: { component: "page" } });
+
+    const metadata = await generateMetadata({ params: params(["about"]) });
+
+    expect(metadata.alternates).toEqual({ canonical: "/about" });
+  });
+
+  it("points /home at the root canonical", async () => {
+    getCachedStory.mockResolvedValueOnce({ slug: "home", content: { component: "page" } });
+
+    const metadata = await generateMetadata({ params: params(["home"]) });
+
+    expect(metadata.alternates).toEqual({ canonical: "/" });
+  });
+
+  it("links the RSS feed when it is enabled", async () => {
+    getFeatureFlags.mockResolvedValue({ rssFeedEnabled: true });
+    getCachedStory.mockResolvedValueOnce({ slug: "about", content: { component: "page" } });
+
+    const metadata = await generateMetadata({ params: params(["about"]) });
+
+    expect(metadata.alternates).toEqual({
+      canonical: "/about",
+      types: { "application/rss+xml": "/work/feed.xml" },
+    });
+  });
+
   it("requests the German CV and stamps hreflang alternates", async () => {
     getCachedStory.mockResolvedValueOnce({
       slug: "cv",
@@ -212,13 +251,47 @@ describe("DynamicPage", () => {
     expect(screen.getByTestId("live")).toBeInTheDocument();
   });
 
-  it("renders a plain page without schema markup", async () => {
-    getCachedStory.mockResolvedValueOnce({ content: { component: "page" } });
+  it("renders a plain page with breadcrumbs only", async () => {
+    getCachedStory.mockResolvedValueOnce({
+      slug: "about",
+      name: "About",
+      content: { component: "page" },
+    });
 
     render(await DynamicPage({ params: params(["about"]), searchParams: search() }));
 
     expect(screen.getByTestId("blok")).toHaveTextContent("page");
-    expect(document.querySelector('script[type="application/ld+json"]')).toBeNull();
+    expect(schemaNodes().map((node) => node["@type"])).toEqual(["BreadcrumbList"]);
+    expect(schemaNode("BreadcrumbList")?.itemListElement).toEqual([
+      { "@type": "ListItem", position: 1, name: "㋡httpjpg.com", item: "https://httpjpg.test/" },
+      { "@type": "ListItem", position: 2, name: "About", item: "https://httpjpg.test/about" },
+    ]);
+  });
+
+  it("marks the CV as a ProfilePage of the site author", async () => {
+    getAuthor.mockResolvedValue({ name: "Dominik" });
+    getCachedStory.mockResolvedValueOnce({
+      slug: "cv",
+      content: { component: "page", title: "CV" },
+    });
+
+    render(await DynamicPage({ params: params(["cv"]), searchParams: search() }));
+
+    expect(schemaNode("ProfilePage")).toMatchObject({
+      url: "https://httpjpg.test/cv",
+      mainEntity: { "@id": "https://httpjpg.test/#person" },
+    });
+  });
+
+  it("skips the ProfilePage when no author is configured", async () => {
+    getCachedStory.mockResolvedValueOnce({
+      slug: "cv",
+      content: { component: "page", title: "CV" },
+    });
+
+    render(await DynamicPage({ params: params(["cv"]), searchParams: search() }));
+
+    expect(schemaNode("ProfilePage")).toBeUndefined();
   });
 
   it("emits schema markup for work pages", async () => {
@@ -226,17 +299,47 @@ describe("DynamicPage", () => {
 
     render(await DynamicPage({ params: params(["work", "some-project"]), searchParams: search() }));
 
-    const jsonLd = document.querySelector('script[type="application/ld+json"]');
-    expect(jsonLd).not.toBeNull();
-    const schema = JSON.parse(jsonLd?.textContent ?? "{}") as {
-      name?: string;
-      url?: string;
-      image?: string | string[];
-    };
-    expect(schema.name).toBe("Some Project");
-    expect(schema.url).toBe("https://httpjpg.test/work/some-project");
-    expect(schema.image).toEqual(expect.stringContaining("/m/1200x630/smart"));
+    const schema = schemaNode("CreativeWork");
+    expect(schema?.name).toBe("Some Project");
+    expect(schema?.url).toBe("https://httpjpg.test/work/some-project");
+    expect(schema?.image).toEqual(expect.stringContaining("/m/1200x630/smart"));
+    expect(schema?.isPartOf).toEqual({ "@id": "https://httpjpg.test/#website" });
+    expect(schemaNode("BreadcrumbList")).toBeDefined();
     expect(preload).not.toHaveBeenCalled();
+  });
+
+  it("describes the tags and media a work page renders", async () => {
+    getCachedStory.mockResolvedValueOnce({
+      ...workStory,
+      content: {
+        ...workStory.content,
+        tags: ["typescript", "not-a-tag"],
+        body: [
+          {
+            component: "video",
+            source: "native",
+            video: { filename: "https://a.storyblok.com/f/1/clip.mp4" },
+            poster: { filename: "https://a.storyblok.com/f/1/poster.jpg" },
+          },
+        ],
+      },
+    });
+
+    render(await DynamicPage({ params: params(["work", "some-project"]), searchParams: search() }));
+
+    const schema = schemaNode("CreativeWork");
+    expect(schema?.keywords).toBe("TypeScript");
+    expect(schema?.video).toEqual([
+      expect.objectContaining({
+        "@type": "VideoObject",
+        contentUrl: "https://a.storyblok.com/f/1/clip.mp4",
+        thumbnailUrl: "https://a.storyblok.com/f/1/poster.jpg",
+        uploadDate: "2024-01-01",
+      }),
+    ]);
+    expect(schema?.associatedMedia).toEqual([
+      expect.objectContaining({ contentUrl: "https://a.storyblok.com/f/1/x.jpg" }),
+    ]);
   });
 
   it("includes the configured author and their profiles in the schema markup", async () => {
@@ -263,8 +366,7 @@ describe("DynamicPage", () => {
 
     render(await DynamicPage({ params: params(["work", "some-project"]), searchParams: search() }));
 
-    const jsonLd = document.querySelector('script[type="application/ld+json"]');
-    expect(JSON.parse(jsonLd?.textContent ?? "{}").inLanguage).toBe("en-US");
+    expect(schemaNode("CreativeWork")?.inLanguage).toBe("en-US");
   });
 
   it("renders the work navigation when the flag is enabled", async () => {
@@ -289,9 +391,8 @@ describe("DynamicPage", () => {
 
     render(await DynamicPage({ params: params(["work", "no-images"]), searchParams: search() }));
 
-    const jsonLd = document.querySelector('script[type="application/ld+json"]');
-    expect(jsonLd).not.toBeNull();
-    expect(JSON.parse(jsonLd?.textContent ?? "{}")).not.toHaveProperty("image");
+    expect(schemaNode("CreativeWork")).toBeDefined();
+    expect(schemaNode("CreativeWork")).not.toHaveProperty("image");
   });
 
   it("re-throws and logs errors raised while loading the story", async () => {

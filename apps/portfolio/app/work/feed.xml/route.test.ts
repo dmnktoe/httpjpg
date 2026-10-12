@@ -16,6 +16,15 @@ vi.mock("@/lib/queries/widgets", () => ({ getFeatureFlags }));
 
 vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
 
+// `connection()` throws outside a Next request scope.
+vi.mock("next/server", () => ({ connection: vi.fn(async () => undefined) }));
+
+vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
+  captureServerException: vi.fn(),
+}));
+
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
+
 import { GET } from "./route";
 
 beforeEach(() => {
@@ -77,5 +86,21 @@ describe("GET /work/feed.xml", () => {
 
     expect(body).toContain("https://example.test/work/gamma");
     expect(body).not.toContain("<enclosure");
+  });
+
+  it.each([
+    ["an empty answer", () => getStories.mockResolvedValueOnce({ stories: [] })],
+    ["a thrown error", () => getStories.mockRejectedValueOnce(new Error("down"))],
+  ])("answers 503 instead of an empty feed on %s", async (_label, arrange) => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    getFeatureFlags.mockResolvedValueOnce({ rssFeedEnabled: true });
+    arrange();
+
+    const response = await GET();
+
+    expect(response.status).toBe(503);
+    expect(response.headers.get("Retry-After")).toBe("300");
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+    expect(captureServerException).toHaveBeenCalledOnce();
   });
 });

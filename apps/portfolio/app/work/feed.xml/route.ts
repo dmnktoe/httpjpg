@@ -1,4 +1,5 @@
 import { env } from "@httpjpg/env";
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { CMS_TAGS } from "@httpjpg/storyblok-next";
 import {
@@ -8,6 +9,8 @@ import {
   type StoryblokRichText,
 } from "@httpjpg/storyblok-utils";
 import { cacheLife, cacheTag } from "next/cache";
+import { unstable_rethrow } from "next/navigation";
+import { connection } from "next/server";
 
 import { getFeatureFlags } from "@/lib/queries/widgets";
 
@@ -44,7 +47,24 @@ export async function GET() {
   }
 
   const base = env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
-  const stories = (await readWorkStories()).filter((s) => {
+  let workStories: FeedStory[];
+  try {
+    workStories = await readWorkStories();
+  } catch (error) {
+    unstable_rethrow(error);
+    console.error("Error building work feed:", error);
+    captureServerException(error, { tags: { route: "work-feed" } });
+    // Request-time from here, so an outage during the build is not frozen
+    // into the prerender. A 503 rather than an empty channel: readers retry
+    // it instead of treating every item as removed.
+    await connection();
+    return new Response("Work feed temporarily unavailable", {
+      status: 503,
+      headers: { "Retry-After": "300", "Cache-Control": "no-store" },
+    });
+  }
+
+  const stories = workStories.filter((s) => {
     const full = s.full_slug || s.slug;
     const rest = full.replace(/^work\//, "");
     return rest && !rest.includes("/");
@@ -92,6 +112,7 @@ ${items}
   });
 }
 
+/** Throws on an empty answer, so a failed read is never cached. */
 async function readWorkStories(): Promise<FeedStory[]> {
   "use cache";
   cacheLife("cms");
@@ -102,5 +123,10 @@ async function readWorkStories(): Promise<FeedStory[]> {
     sort_by: "content.date:desc",
     version: "published",
   });
-  return (res.stories ?? []) as FeedStory[];
+  // `getStories` swallows its own fetch errors and answers with an empty page.
+  // Throwing keeps that out of the cache instead of serving an empty feed.
+  if (!res.stories?.length) {
+    throw new Error("Storyblok returned no work stories for the feed");
+  }
+  return res.stories as FeedStory[];
 }

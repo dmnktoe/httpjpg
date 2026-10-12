@@ -1,12 +1,16 @@
 import { env } from "@httpjpg/env";
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
+import { CMS_TAGS } from "@httpjpg/storyblok-next";
 import {
   extractPlainText,
   firstImageFilename,
   imagePreset,
   type StoryblokRichText,
 } from "@httpjpg/storyblok-utils";
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
+import { unstable_rethrow } from "next/navigation";
+import { connection } from "next/server";
 
 import { getFeatureFlags } from "@/lib/queries/widgets";
 
@@ -36,20 +40,6 @@ function escapeXml(s: string): string {
     .replace(/'/g, "&apos;");
 }
 
-const fetchWorkStories = unstable_cache(
-  async (): Promise<FeedStory[]> => {
-    const res = await getStoryblokApi({ draftMode: false }).getStories({
-      starts_with: "work/",
-      per_page: 50,
-      sort_by: "content.date:desc",
-      version: "published",
-    });
-    return (res.stories ?? []) as FeedStory[];
-  },
-  ["work-feed"],
-  { revalidate: 3600 },
-);
-
 export async function GET() {
   const flags = await getFeatureFlags();
   if (!flags.rssFeedEnabled) {
@@ -57,7 +47,22 @@ export async function GET() {
   }
 
   const base = env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
-  const stories = (await fetchWorkStories()).filter((s) => {
+  let workStories: FeedStory[];
+  try {
+    workStories = await readWorkStories();
+  } catch (error) {
+    unstable_rethrow(error);
+    console.error("Error building work feed:", error);
+    captureServerException(error, { tags: { route: "work-feed" } });
+    // 503, not an empty channel: readers retry instead of dropping every item.
+    await connection();
+    return new Response("Work feed temporarily unavailable", {
+      status: 503,
+      headers: { "Retry-After": "300", "Cache-Control": "no-store" },
+    });
+  }
+
+  const stories = workStories.filter((s) => {
     const full = s.full_slug || s.slug;
     const rest = full.replace(/^work\//, "");
     return rest && !rest.includes("/");
@@ -103,4 +108,21 @@ ${items}
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
     },
   });
+}
+
+async function readWorkStories(): Promise<FeedStory[]> {
+  "use cache";
+  cacheLife("cms");
+  cacheTag(CMS_TAGS.stories);
+  const res = await getStoryblokApi({ draftMode: false }).getStories({
+    starts_with: "work/",
+    per_page: 50,
+    sort_by: "content.date:desc",
+    version: "published",
+  });
+  // An empty answer is an outage (`getStories` swallows errors): don't cache it.
+  if (!res.stories?.length) {
+    throw new Error("Storyblok returned no work stories for the feed");
+  }
+  return res.stories as FeedStory[];
 }

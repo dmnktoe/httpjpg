@@ -1,39 +1,51 @@
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
-import { CACHE_TAGS } from "@httpjpg/storyblok-next";
+import { CMS_TAGS } from "@httpjpg/storyblok-next";
 import { type MenuLink, type SbConfigStory, storyblokHref } from "@httpjpg/storyblok-ui";
 import type { SbUserbarData } from "@httpjpg/storyblok-utils";
 import { isExternalLink, type NavItem, type UserbarItem } from "@httpjpg/ui";
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { draftMode } from "next/headers";
+import { unstable_rethrow } from "next/navigation";
+import { connection } from "next/server";
 
 import { STORYBLOK_SLUGS } from "../storyblok-slugs";
 
 export async function getConfig(): Promise<SbConfigStory | null> {
   const { isEnabled } = await draftMode();
-
-  const fetchConfig = async () => {
-    const api = getStoryblokApi({ draftMode: isEnabled });
-    try {
-      const story = await api.getStory({
-        slug: STORYBLOK_SLUGS.CONFIG,
-        resolve_relations: ["menu_link.link"],
-      });
-      return (story?.content as SbConfigStory) ?? null;
-    } catch (error) {
-      console.error("Error fetching config:", error);
-      captureServerException(error, { tags: { query: "config" } });
-      return null;
+  try {
+    if (isEnabled) {
+      await connection();
+      return await loadConfig(true);
     }
-  };
-
-  if (isEnabled) {
-    return fetchConfig();
+    return await readPublishedConfig();
+  } catch (error) {
+    unstable_rethrow(error);
+    console.error("Error fetching config:", error);
+    captureServerException(error, { tags: { query: "config" } });
+    return null;
   }
-  return unstable_cache(fetchConfig, ["config-story"], {
-    tags: [CACHE_TAGS.CONFIG, CACHE_TAGS.STORY(STORYBLOK_SLUGS.CONFIG)],
-    revalidate: 3600,
-  })();
+}
+
+async function readPublishedConfig(): Promise<SbConfigStory | null> {
+  "use cache";
+  cacheTag(CMS_TAGS.config, CMS_TAGS.story(STORYBLOK_SLUGS.CONFIG));
+  const config = await loadConfig(false);
+  if (!config) {
+    // Null is a failed fetch: hold it for seconds, not the hour (see `readStory`).
+    cacheLife("seconds");
+    return null;
+  }
+  cacheLife("cms");
+  return config;
+}
+
+async function loadConfig(draft: boolean): Promise<SbConfigStory | null> {
+  const story = await getStoryblokApi({ draftMode: draft }).getStory({
+    slug: STORYBLOK_SLUGS.CONFIG,
+    resolve_relations: ["menu_link.link"],
+  });
+  return (story?.content as SbConfigStory) ?? null;
 }
 
 function toNavItem(item: MenuLink): NavItem | null {
@@ -94,11 +106,7 @@ function toUserbars(bloks: SbUserbarData[] | undefined): UserbarItem[] {
   return items;
 }
 
-/**
- * Site identity, authored in the General tab. Every field is optional on
- * purpose: the CMS owns these values outright, so a missing one drops the
- * output that depends on it instead of resurfacing a copy kept in the code.
- */
+/** Site identity from the CMS. A missing field drops its output; no code fallback. */
 export interface SiteConfig {
   name?: string;
   /** Open Graph / schema.org locale, e.g. `de_DE`. */

@@ -1,4 +1,8 @@
 // @vitest-environment node
+vi.mock("next/server", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("next/server")>()),
+  connection: async () => undefined,
+}));
 vi.mock("next/headers", () => ({
   draftMode: vi.fn(async () => ({ isEnabled: false })),
 }));

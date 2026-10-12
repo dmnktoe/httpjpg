@@ -1,20 +1,14 @@
-/** A thumbnail a story shows, surfaced in the palette's media strip. */
 export interface SearchMedia {
   id: string;
   kind: "image" | "video" | "audio";
-  /** 200px-wide thumbnail URL. Empty for a track whose artwork the editor left blank. */
+  /** 200px wide; empty for a track without artwork. */
   thumb: string;
-  /**
-   * The unprocessed asset, so a consumer rendering wider than the strip can cut
-   * its own. Optional for the same reason `tagValues` is: `unstable_cache` keeps
-   * serving the previous build's documents for up to an hour after a deploy.
-   */
+  /** Unprocessed asset, for consumers that cut their own crops. */
   source?: string;
   focus?: string;
   label: string;
 }
 
-/** The unprocessed featured asset, so related work can cut its own crops. */
 export interface SearchFeatured {
   source: string;
   focus?: string;
@@ -22,26 +16,17 @@ export interface SearchFeatured {
 
 export interface SearchDocument {
   id: string;
-  /** Site-relative href, e.g. `/work/some-project`. */
   href: string;
   title: string;
   kind: "work" | "page";
-  /** Display labels, e.g. `TypeScript`. What search matches and the UI renders. */
+  /** Display labels (`TypeScript`). */
   tags: string[];
-  /**
-   * Canonical vocabulary values, e.g. `typescript`. Optional because
-   * `unstable_cache` keeps serving the previous build's documents for up to an
-   * hour after a deploy, so every reader has to tolerate their absence.
-   */
+  /** Canonical vocabulary values (`typescript`). */
   tagValues?: string[];
   excerpt: string;
   date?: string;
   media?: SearchMedia[];
-  /**
-   * First featured image (`content.images`), the same asset the nav hover
-   * preview uses. Optional because `unstable_cache` keeps serving the previous
-   * build's documents for up to an hour after a deploy.
-   */
+  /** First `content.images` entry, as in the nav hover preview. */
   featured?: SearchFeatured;
 }
 
@@ -62,7 +47,7 @@ const WEIGHT = {
 
 const MIN_TOKEN_LENGTH = 2;
 
-/** Lowercase, strip diacritics, and drop punctuation so "Müller's" matches "muller". */
+/** "Müller's" → "mullers": lowercase, no diacritics, no punctuation. */
 export function normalize(value: string): string {
   return value
     .toLowerCase()
@@ -79,10 +64,7 @@ export function tokenize(value: string): string[] {
     .filter((token) => token.length >= MIN_TOKEN_LENGTH);
 }
 
-/**
- * Both spellings of every tag, plus a space-free variant, so `nextjs` finds a
- * story tagged `Next.js` and `next-js` finds it too.
- */
+/** Every tag spelling plus a space-free variant, so `nextjs` finds `Next.js`. */
 function tagVariants(document: SearchDocument): string[] {
   const variants = new Set<string>();
   for (const tag of [...document.tags, ...(document.tagValues ?? [])]) {
@@ -141,7 +123,7 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
   return score;
 }
 
-/** Rank documents by relevance. Ties break on recency, then title, for stability. */
+/** Ties break on recency, then title. */
 export function rankDocuments(
   documents: SearchDocument[],
   query: string,
@@ -165,7 +147,7 @@ export function rankDocuments(
     .slice(0, limit);
 }
 
-/** Type-ahead completions from titles and tags. Index-only, never a model call. */
+/** Type-ahead from titles and tags; never a model call. */
 export function suggestCompletions(
   documents: SearchDocument[],
   query: string,

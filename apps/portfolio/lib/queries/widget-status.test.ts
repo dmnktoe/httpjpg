@@ -7,11 +7,8 @@ const mockEnv = vi.hoisted(() => ({
 
 vi.mock("@httpjpg/env", () => ({ env: mockEnv }));
 
-// unstable_cache would otherwise memoise across cases; the cache behaviour it
-// provides is Next's, not ours, so the loaders are exercised directly.
-vi.mock("next/cache", () => ({
-  unstable_cache: (fn: unknown) => fn,
-}));
+// `"use cache"` is inert under Vitest, so the loaders run directly.
+vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
 
 const {
   getConfig,
@@ -26,8 +23,7 @@ const {
   fetchDiscogsCollection: vi.fn(),
   fetchXTimeline: vi.fn(),
   fetchRecentTrophies: vi.fn(),
-  // Stands in for each integration's real validator: rejects whitespace and
-  // any path separator, which is what the traversal case below leans on.
+  // Stand-in validator: rejects whitespace and path separators.
   isPlainUsername: (value: string) => !/[\s/\\]/.test(value),
 }));
 

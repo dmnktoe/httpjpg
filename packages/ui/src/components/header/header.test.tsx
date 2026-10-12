@@ -105,12 +105,12 @@ describe("Header", () => {
     render(<Header nav={NAV} />);
 
     const header = screen.getByRole("banner");
-    expect(header.className).toContain("pos_sticky");
+    expect(header.className).toContain("jpg-pos_sticky");
 
     openMenu();
 
-    expect(header.className).toContain("pos_fixed");
-    expect(header.className).not.toContain("pos_sticky");
+    expect(header.className).toContain("jpg-pos_fixed");
+    expect(header.className).not.toContain("jpg-pos_sticky");
     expect(screen.getByLabelText("Close menu")).toBeVisible();
   });
 

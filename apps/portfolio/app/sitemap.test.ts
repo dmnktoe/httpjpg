@@ -13,6 +13,10 @@ vi.mock("@httpjpg/storyblok-api", () => ({
   getStoryblokApi: () => ({ getStories }),
 }));
 
+vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
+
+vi.mock("next/server", () => ({ connection: vi.fn(async () => undefined) }));
+
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 
 import sitemap from "./sitemap";
@@ -44,7 +48,6 @@ describe("sitemap", () => {
 
     const entries = await sitemap();
 
-    // Home page is unshifted to the front.
     expect(entries[0].url).toBe("https://example.test");
     expect(entries.some((e) => e.url === "https://example.test/about")).toBe(true);
     const work = entries.find((e) => e.url === "https://example.test/work/project");
@@ -78,7 +81,6 @@ describe("sitemap", () => {
     });
 
     const entries = await sitemap();
-    // Only the home entry survives the filters.
     expect(entries).toHaveLength(1);
     expect(entries[0].url).toBe("https://example.test");
   });
@@ -90,6 +92,17 @@ describe("sitemap", () => {
 
     expect(entries).toHaveLength(1);
     expect(entries[0].url).toBe("https://example.test");
+    expect(captureServerException).toHaveBeenCalledOnce();
+  });
+
+  it("treats an empty Storyblok answer as a failure instead of caching it", async () => {
+    getStories.mockResolvedValueOnce({ stories: [] });
+
+    const entries = await sitemap();
+
+    expect(entries).toEqual([
+      { url: "https://example.test", changeFrequency: "weekly", priority: 1 },
+    ]);
     expect(captureServerException).toHaveBeenCalledOnce();
   });
 

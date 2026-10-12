@@ -1,7 +1,7 @@
 import { draftMode, headers } from "next/headers";
 
 import { splitLocaleSlug } from "./locale";
-import { getCachedStory } from "./queries/work";
+import { readPageStory } from "./queries/work";
 import { STORYBLOK_EDITOR_HEADER } from "./storyblok-editor";
 import { STORYBLOK_SLUGS } from "./storyblok-slugs";
 
@@ -22,7 +22,7 @@ interface PageStoryContent {
   accentColor?: unknown;
 }
 
-/** Light by default; only Storyblok-resolved pages with `content.isDark` flip to dark. */
+/** Light unless the story sets `content.isDark`. */
 export async function getPageTheme(): Promise<PageTheme> {
   try {
     const story = await loadCurrentStory();
@@ -32,7 +32,7 @@ export async function getPageTheme(): Promise<PageTheme> {
   }
 }
 
-/** Work page Project Accent Color, or `null` on every other surface. */
+/** Work-page accent color, else `null`. */
 export async function getPageAccent(): Promise<string | null> {
   try {
     const story = await loadCurrentStory();
@@ -60,5 +60,5 @@ async function loadCurrentStory(): Promise<{ content?: PageStoryContent } | null
   }
   const { isEnabled } = await draftMode();
   const fetchDraft = isEnabled || process.env.NODE_ENV === "development";
-  return getCachedStory(slug, { draftMode: fetchDraft });
+  return readPageStory(slug, { draft: fetchDraft });
 }

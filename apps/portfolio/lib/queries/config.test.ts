@@ -5,22 +5,23 @@ vi.mock("@httpjpg/storyblok-api", () => ({
 }));
 
 vi.mock("@httpjpg/storyblok-next", () => ({
-  CACHE_TAGS: {
-    STORY: (slug: string) => `story-${slug}`,
-    STORIES: "stories",
-    CONFIG: "storyblok-config",
+  CMS_TAGS: {
+    story: (slug: string) => `cms:story:${slug}`,
+    stories: "cms:stories",
+    config: "cms:config",
   },
 }));
 
-vi.mock("next/cache", () => ({
-  unstable_cache: (fn: (...args: unknown[]) => unknown) => fn,
-}));
+vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
+
+vi.mock("next/server", () => ({ connection: vi.fn(async () => undefined) }));
 
 vi.mock("next/headers", () => ({
   draftMode: vi.fn(),
 }));
 
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
+import { cacheLife, cacheTag } from "next/cache";
 import { draftMode } from "next/headers";
 
 import {
@@ -72,9 +73,25 @@ describe("getConfig", () => {
     expect(mockGetStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
   });
 
-  it("returns null when the story has no content", async () => {
+  it("holds a missing published story for seconds, not the cms hour", async () => {
     setupGetStory(async () => null);
     await expect(getConfig()).resolves.toBeNull();
+    expect(cacheLife).toHaveBeenCalledWith("seconds");
+    expect(cacheLife).not.toHaveBeenCalledWith("cms");
+  });
+
+  it("caches a published story under the cms lifetime", async () => {
+    setupGetStory(async () => ({ content: { seo_title: "Title" } }));
+    await getConfig();
+    expect(cacheLife).toHaveBeenCalledWith("cms");
+    expect(cacheTag).toHaveBeenCalledWith("cms:config", "cms:story:config");
+  });
+
+  it("returns null for a missing draft story without reporting it", async () => {
+    mockDraftMode.mockResolvedValue({ isEnabled: true } as never);
+    setupGetStory(async () => null);
+    await expect(getConfig()).resolves.toBeNull();
+    expect(console.error).not.toHaveBeenCalled();
   });
 
   it("returns null and logs when Storyblok throws", async () => {

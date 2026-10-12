@@ -2,6 +2,7 @@ import { execSync } from "node:child_process";
 
 import { codecovNextJSWebpackPlugin } from "@codecov/nextjs-webpack-plugin";
 import { env } from "@httpjpg/env";
+import { CACHE_LIFE } from "@httpjpg/storyblok-next/cache-life";
 import type { NextConfig } from "next";
 
 const GITHUB_REPO = "dmnktoe/httpjpg";
@@ -70,11 +71,18 @@ function resolveCommitSha(): string {
 
 export default async (): Promise<NextConfig> => {
   const config: NextConfig = {
+    cacheComponents: true,
+    partialPrefetching: true,
+    cacheLife: CACHE_LIFE,
+    // No generated AGENTS.md per app; the root one is the guide.
+    agentRules: false,
+
     transpilePackages: [
       "@httpjpg/ui",
       "@httpjpg/tokens",
       "@httpjpg/env",
       "@httpjpg/storyblok-api",
+      "@httpjpg/storyblok-next",
       "@httpjpg/storyblok-utils",
     ],
 

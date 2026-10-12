@@ -13,7 +13,7 @@ const { revalidatePath, revalidateTag } = vi.hoisted(() => ({
 vi.mock("next/cache", () => ({ revalidatePath, revalidateTag }));
 
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { CACHE_TAGS } from "@httpjpg/storyblok-next";
+import { CMS_TAGS } from "@httpjpg/storyblok-next";
 import type { NextRequest } from "next/server";
 
 import { POST } from "./route";
@@ -84,10 +84,10 @@ describe("POST /api/revalidate", () => {
       action: "published",
       story: "about",
       paths: ["/about"],
-      tags: [CACHE_TAGS.STORY("about"), CACHE_TAGS.STORIES],
+      tags: [CMS_TAGS.story("about"), CMS_TAGS.stories],
     });
-    expect(revalidateTag).toHaveBeenCalledWith(CACHE_TAGS.STORY("about"), { expire: 0 });
-    expect(revalidateTag).toHaveBeenCalledWith(CACHE_TAGS.STORIES, { expire: 0 });
+    expect(revalidateTag).toHaveBeenCalledWith(CMS_TAGS.story("about"), { expire: 0 });
+    expect(revalidateTag).toHaveBeenCalledWith(CMS_TAGS.stories, { expire: 0 });
     expect(revalidatePath).toHaveBeenCalledWith("/about");
   });
 
@@ -116,7 +116,7 @@ describe("POST /api/revalidate", () => {
     );
 
     await expect(response.json()).resolves.toMatchObject({
-      tags: [CACHE_TAGS.STORY("config"), CACHE_TAGS.STORIES, CACHE_TAGS.CONFIG],
+      tags: [CMS_TAGS.story("config"), CMS_TAGS.stories, CMS_TAGS.config],
       paths: ["/config", "/layout"],
     });
     expect(revalidatePath).toHaveBeenCalledWith("/", "layout");
@@ -131,7 +131,7 @@ describe("POST /api/revalidate", () => {
     );
 
     await expect(response.json()).resolves.toMatchObject({
-      tags: [CACHE_TAGS.STORY("settings"), CACHE_TAGS.STORIES, CACHE_TAGS.CONFIG],
+      tags: [CMS_TAGS.story("settings"), CMS_TAGS.stories, CMS_TAGS.config],
     });
   });
 

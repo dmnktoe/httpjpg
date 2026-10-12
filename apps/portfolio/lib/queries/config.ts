@@ -24,15 +24,25 @@ export async function getConfig(): Promise<SbConfigStory | null> {
     unstable_rethrow(error);
     console.error("Error fetching config:", error);
     captureServerException(error, { tags: { query: "config" } });
+    // Request-time from here, so an outage during the build is not frozen
+    // into a prerender with no nav, footer or widgets.
+    await connection();
     return null;
   }
 }
 
-async function readPublishedConfig(): Promise<SbConfigStory | null> {
+/** Throws on a missing story, so a failed read is never cached. */
+async function readPublishedConfig(): Promise<SbConfigStory> {
   "use cache";
   cacheLife("cms");
   cacheTag(CMS_TAGS.config, CMS_TAGS.story(STORYBLOK_SLUGS.CONFIG));
-  return loadConfig(false);
+  // `getStory` swallows fetch errors and answers null. Caching that would
+  // drop nav, footer and every widget toggle for up to an hour.
+  const config = await loadConfig(false);
+  if (!config) {
+    throw new Error("Storyblok returned no config story");
+  }
+  return config;
 }
 
 async function loadConfig(draft: boolean): Promise<SbConfigStory | null> {

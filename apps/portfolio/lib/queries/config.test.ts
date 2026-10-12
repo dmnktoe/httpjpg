@@ -22,6 +22,7 @@ vi.mock("next/headers", () => ({
 
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { draftMode } from "next/headers";
+import { connection } from "next/server";
 
 import {
   getAuthor,
@@ -72,9 +73,19 @@ describe("getConfig", () => {
     expect(mockGetStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
   });
 
-  it("returns null when the story has no content", async () => {
+  it("treats a missing published story as a failure instead of caching it", async () => {
+    // `getStory` swallows fetch errors and answers null.
     setupGetStory(async () => null);
     await expect(getConfig()).resolves.toBeNull();
+    expect(console.error).toHaveBeenCalledWith("Error fetching config:", expect.any(Error));
+    expect(connection).toHaveBeenCalled();
+  });
+
+  it("returns null for a missing draft story without reporting it", async () => {
+    mockDraftMode.mockResolvedValue({ isEnabled: true } as never);
+    setupGetStory(async () => null);
+    await expect(getConfig()).resolves.toBeNull();
+    expect(console.error).not.toHaveBeenCalled();
   });
 
   it("returns null and logs when Storyblok throws", async () => {

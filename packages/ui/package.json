@@ -50,7 +50,7 @@
   "dependencies": {
     "@floating-ui/react-dom": "^2.1.9",
     "@httpjpg/tokens": "workspace:*",
-    "motion": "^13.5.1",
+    "motion": "^14.1.0",
     "swiper": "^14.3.0"
   },
   "devDependencies": {

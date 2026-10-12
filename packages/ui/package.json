@@ -61,7 +61,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "concurrently": "^10.0.5",
+    "concurrently": "^10.0.6",
     "react": "catalog:",
     "react-dom": "catalog:",
     "typescript": "catalog:",

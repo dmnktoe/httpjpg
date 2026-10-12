@@ -21,8 +21,8 @@ vi.mock("next/headers", () => ({
 }));
 
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
+import { cacheLife, cacheTag } from "next/cache";
 import { draftMode } from "next/headers";
-import { connection } from "next/server";
 
 import {
   getAuthor,
@@ -73,12 +73,19 @@ describe("getConfig", () => {
     expect(mockGetStoryblokApi).toHaveBeenCalledWith({ draftMode: true });
   });
 
-  it("treats a missing published story as a failure instead of caching it", async () => {
+  it("holds a missing published story for seconds, not the cms hour", async () => {
     // `getStory` swallows fetch errors and answers null.
     setupGetStory(async () => null);
     await expect(getConfig()).resolves.toBeNull();
-    expect(console.error).toHaveBeenCalledWith("Error fetching config:", expect.any(Error));
-    expect(connection).toHaveBeenCalled();
+    expect(cacheLife).toHaveBeenCalledWith("seconds");
+    expect(cacheLife).not.toHaveBeenCalledWith("cms");
+  });
+
+  it("caches a published story under the cms lifetime", async () => {
+    setupGetStory(async () => ({ content: { seo_title: "Title" } }));
+    await getConfig();
+    expect(cacheLife).toHaveBeenCalledWith("cms");
+    expect(cacheTag).toHaveBeenCalledWith("cms:config", "cms:story:config");
   });
 
   it("returns null for a missing draft story without reporting it", async () => {

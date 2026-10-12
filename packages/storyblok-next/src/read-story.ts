@@ -17,7 +17,8 @@ export interface ReadStoryOptions {
  * One story, read through the canonical caching policy:
  * - draft → request-time fetch through the preview token, never stored
  * - published → `use cache` under the `cms` lifetime, tagged with
- *   `CMS_TAGS.story(slug)` + `CMS_TAGS.stories` so the webhook can expire it
+ *   `CMS_TAGS.story(slug)` + `CMS_TAGS.stories` so the webhook can expire it;
+ *   a miss is held for seconds only
  */
 export async function readStory(slug: string, options: ReadStoryOptions = {}) {
   const { draft = false, relations, language } = options;
@@ -35,9 +36,17 @@ export async function readStory(slug: string, options: ReadStoryOptions = {}) {
 
 async function readPublishedStory(slug: string, relations: string[], language?: string) {
   "use cache";
-  cacheLife("cms");
   cacheTag(CMS_TAGS.story(slug), CMS_TAGS.stories);
-  return loadStory(slug, relations, language, false);
+  const story = await loadStory(slug, relations, language, false);
+  if (!story) {
+    // The client answers null for a missing slug and for a failed fetch alike.
+    // Hold a miss for seconds, so a CDN blip cannot 404 a page for the hour.
+    // Not a throw: an error from a cache scope fails the page prerender.
+    cacheLife("seconds");
+    return story;
+  }
+  cacheLife("cms");
+  return story;
 }
 
 async function loadStory(

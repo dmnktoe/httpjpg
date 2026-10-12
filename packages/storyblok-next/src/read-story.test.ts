@@ -50,6 +50,15 @@ describe("readStory · published", () => {
     expect(connection).not.toHaveBeenCalled();
   });
 
+  it("holds a miss for seconds instead of the cms hour", async () => {
+    // The client answers null for a missing slug and for a failed fetch alike.
+    getStory.mockResolvedValueOnce(null);
+    await expect(readStory("work/gone")).resolves.toBeNull();
+    expect(cacheLife).toHaveBeenCalledWith("seconds");
+    expect(cacheLife).not.toHaveBeenCalledWith("cms");
+    expect(cacheTag).toHaveBeenCalledWith("cms:story:work/gone", "cms:stories");
+  });
+
   it("leaves resolve_relations undefined when none are given", async () => {
     await readStory("home");
     expect(getStory).toHaveBeenCalledWith({ slug: "home", resolve_relations: undefined });

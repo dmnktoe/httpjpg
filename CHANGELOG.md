@@ -4,6 +4,43 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.10.1](https://github.com/dmnktoe/httpjpg/compare/v2.10.0...v2.10.1) (2026-10-12)
+
+
+### Fixed
+
+* **analytics:** enrich Umami events + track nav clicks ([#461](https://github.com/dmnktoe/httpjpg/issues/461)) ([3c5dc25](https://github.com/dmnktoe/httpjpg/commit/3c5dc25b703656508d6de7b1b5234a9246123c3d))
+* **consent:** drop duplicate ↗ on cookie policy links ([#464](https://github.com/dmnktoe/httpjpg/issues/464)) ([238df05](https://github.com/dmnktoe/httpjpg/commit/238df056bbe78855d23118c429445c4cfecfa40a))
+
+
+### Changed
+
+* weekly cleanup for analytics coverage, formatYear, and agent docs ([#471](https://github.com/dmnktoe/httpjpg/issues/471)) ([3073e84](https://github.com/dmnktoe/httpjpg/commit/3073e84dbeca78f5ba862b88f937364dcfc85697))
+
+
+### Tooling
+
+* group pnpm catalog and toolchain updates in renovate ([#485](https://github.com/dmnktoe/httpjpg/issues/485)) ([41dc84e](https://github.com/dmnktoe/httpjpg/commit/41dc84ee040f6754b3bda54b9236d35ae01a8d06))
+* key Playwright browser cache on the Playwright version ([#477](https://github.com/dmnktoe/httpjpg/issues/477)) ([d260d5b](https://github.com/dmnktoe/httpjpg/commit/d260d5b8307e80f3500613dda9f404947d0bf0a3))
+* link native iOS reader in README ([#459](https://github.com/dmnktoe/httpjpg/issues/459)) ([27eec01](https://github.com/dmnktoe/httpjpg/commit/27eec0117e278c1e45c1f37ac8fc8a80b6d55a5c)), closes [#458](https://github.com/dmnktoe/httpjpg/issues/458)
+* remove Argos visual regression, keep Storybook publish ([#475](https://github.com/dmnktoe/httpjpg/issues/475)) ([a259017](https://github.com/dmnktoe/httpjpg/commit/a2590178a5a7424011f2cce322172d8bc20a68f6))
+* save the pnpm store cache from main only ([#481](https://github.com/dmnktoe/httpjpg/issues/481)) ([b4c908f](https://github.com/dmnktoe/httpjpg/commit/b4c908f9926d4fdd5723b6fbfc907d5c6517f9db))
+
+
+### Dependencies
+
+* update @sentry/nextjs to v11 with PII-free dataCollection ([#483](https://github.com/dmnktoe/httpjpg/issues/483)) ([a04ef5e](https://github.com/dmnktoe/httpjpg/commit/a04ef5ee3709392d06fd1513e3ee05f8317158e2))
+* update dependency @types/node to ^24.19.2 ([#473](https://github.com/dmnktoe/httpjpg/issues/473)) ([4d37b96](https://github.com/dmnktoe/httpjpg/commit/4d37b96cb2809f7fa7972c373bb98c33d30917e2))
+* update dependency @vitejs/plugin-react to ^6.1.2 ([#478](https://github.com/dmnktoe/httpjpg/issues/478)) ([b1916ee](https://github.com/dmnktoe/httpjpg/commit/b1916ee05691922ae3b1f311ac5a48880add35ea))
+* update dependency dotenv to ^18.0.7 ([#466](https://github.com/dmnktoe/httpjpg/issues/466)) ([72ac521](https://github.com/dmnktoe/httpjpg/commit/72ac5212b8346ff1d2db05478926bb117ff69bec))
+* update dependency jsdom to ^30.1.2 ([#467](https://github.com/dmnktoe/httpjpg/issues/467)) ([853c54f](https://github.com/dmnktoe/httpjpg/commit/853c54fbe118fccbf10f712e107aa0f05de74b0a))
+* update dependency tsx to ^4.23.15 ([#462](https://github.com/dmnktoe/httpjpg/issues/462)) ([b3f8b6a](https://github.com/dmnktoe/httpjpg/commit/b3f8b6aa9e8ddba640d7b1e0028bfcc0ec6a5ca7))
+* update dev dependencies ([#469](https://github.com/dmnktoe/httpjpg/issues/469)) ([f6bfa17](https://github.com/dmnktoe/httpjpg/commit/f6bfa1740f09113d9959a5c75225b20e76c3c520))
+* update dev dependencies to ^21.2.3 ([#453](https://github.com/dmnktoe/httpjpg/issues/453)) ([3f2ff09](https://github.com/dmnktoe/httpjpg/commit/3f2ff091557a631651b5d4d70c6e94e414258c63))
+* update github actions ([#472](https://github.com/dmnktoe/httpjpg/issues/472)) ([e415202](https://github.com/dmnktoe/httpjpg/commit/e415202b475f75863ed272f2b62be040436452fa))
+* update pnpm to v11.28.5 ([#463](https://github.com/dmnktoe/httpjpg/issues/463)) ([a17cca3](https://github.com/dmnktoe/httpjpg/commit/a17cca31ba8bfa61aac418e211d02499fe40ab8f))
+* update production dependencies ([#465](https://github.com/dmnktoe/httpjpg/issues/465)) ([e8e0f91](https://github.com/dmnktoe/httpjpg/commit/e8e0f916547047fc6274a06bd82f3dc12816bcf1))
+
 ## [2.10.0](https://github.com/dmnktoe/httpjpg/compare/v2.9.4...v2.10.0) (2026-09-22)
 
 

@@ -163,9 +163,15 @@ describe("HomePage schema", () => {
 
 describe("generateMetadata", () => {
   it("sets the root canonical and the home OG image", async () => {
+    getSiteConfig.mockResolvedValueOnce({ name: "httpjpg", locale: "de_DE" });
+
     const metadata = await generateMetadata();
 
     expect(metadata.alternates).toEqual({ canonical: "/" });
+    // Restated because a page's openGraph replaces the layout's.
+    expect(metadata.openGraph).toEqual(
+      expect.objectContaining({ type: "website", locale: "de_DE", siteName: "httpjpg" }),
+    );
     expect(metadata.openGraph).toEqual(
       expect.objectContaining({
         url: "/",

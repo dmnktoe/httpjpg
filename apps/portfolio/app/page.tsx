@@ -23,11 +23,18 @@ export const instant = false;
 const MAX_LISTED_WORK = 30;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const flags = await getFeatureFlags();
+  const [flags, site] = await Promise.all([getFeatureFlags(), getSiteConfig()]);
   const ogImage = `/api/og/${STORYBLOK_SLUGS.HOME}`;
   return {
     alternates: { canonical: "/", ...feedAlternates(flags.rssFeedEnabled) },
-    openGraph: { url: "/", images: [{ url: ogImage, width: 1200, height: 630 }] },
+    // Next replaces `openGraph` wholesale per segment, so restate the layout's fields.
+    openGraph: {
+      type: "website",
+      locale: site.locale,
+      siteName: site.name,
+      url: "/",
+      images: [{ url: ogImage, width: 1200, height: 630 }],
+    },
     twitter: { card: "summary_large_image", images: [ogImage] },
   };
 }

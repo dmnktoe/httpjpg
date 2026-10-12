@@ -194,7 +194,7 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
   );
 }
 
-/** `/home` renders the start page too; point it at the root so only one is indexed. */
+/** `/home` duplicates the root. */
 function canonicalPath(locale: AppLocale, slug: string): string {
   return slug === STORYBLOK_SLUGS.HOME ? "/" : localizedPath(locale, slug);
 }
@@ -211,7 +211,6 @@ interface SchemaStory {
   };
 }
 
-/** Breadcrumbs for every page, plus the node that says what the page is. */
 async function buildPageSchema(
   story: SchemaStory,
   locale: AppLocale,

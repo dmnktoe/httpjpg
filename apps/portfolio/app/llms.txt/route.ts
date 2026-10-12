@@ -7,13 +7,9 @@ import { getAuthor, getSeoDefaults, getSiteConfig } from "@/lib/queries/config";
 import { getSearchIndex } from "@/lib/queries/search-index";
 import type { SearchDocument } from "@/lib/search/ranking";
 
-/** Per-entry summary length; the file is an index, not a copy of the site. */
 const EXCERPT_LIMIT = 200;
 
-/**
- * https://llmstxt.org — a Markdown map of the site for language models,
- * built from the same corpus search and ask read.
- */
+/** https://llmstxt.org, built from the search index. */
 export async function GET() {
   let documents: SearchDocument[];
   try {
@@ -21,7 +17,7 @@ export async function GET() {
   } catch (error) {
     unstable_rethrow(error);
     captureServerException(error, { tags: { route: "llms.txt" } });
-    // Request-time, so a build-time outage doesn't freeze the 503.
+    // Request-time, so a build-time outage doesn't freeze the fallback.
     await connection();
     return new Response("Index unavailable", { status: 503 });
   }

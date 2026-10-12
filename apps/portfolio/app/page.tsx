@@ -19,7 +19,6 @@ import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 /** Blocking, like the root layout; draft reads wait for request time. */
 export const instant = false;
 
-/** The start page lists work; past this the ItemList stops adding signal. */
 const MAX_LISTED_WORK = 30;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -27,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage = `/api/og/${STORYBLOK_SLUGS.HOME}`;
   return {
     alternates: { canonical: "/", ...feedAlternates(flags.rssFeedEnabled) },
-    // Next replaces `openGraph` wholesale per segment, so restate the layout's fields.
+    // Next replaces `openGraph` per segment; restate the layout's fields.
     openGraph: {
       type: "website",
       locale: site.locale,
@@ -88,7 +87,6 @@ async function buildHomeSchema() {
     documents = await getSearchIndex();
   } catch (error) {
     unstable_rethrow(error);
-    // Structured data is a nice-to-have; the page renders without the list.
     captureServerException(error, { tags: { route: "home", feature: "schema" } });
   }
 

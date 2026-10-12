@@ -12,7 +12,6 @@ import type {
 interface SchemaAuthor {
   name: string;
   url?: string;
-  /** Profile URLs that identify the same author elsewhere. */
   sameAs?: string[];
 }
 
@@ -36,16 +35,12 @@ interface ListedItem {
   image?: string;
 }
 
-/**
- * Stable node ids so every page's graph points at the same WebSite and
- * Person the root layout declares, instead of restating a copy per page.
- */
+/** Ids of the layout's WebSite and Person, so pages can reference them. */
 export function schemaIds(baseUrl: string): SchemaIds {
   const base = trimTrailingSlash(baseUrl);
   return { website: `${base}/#website`, person: `${base}/#person` };
 }
 
-// https://schema.org/WebSite + https://schema.org/Person
 export function generateSiteGraph({
   baseUrl,
   name,
@@ -81,7 +76,6 @@ export function generateSiteGraph({
   return nodes.length ? toGraph(nodes) : null;
 }
 
-// https://schema.org/Person
 export function generatePersonSchema({
   id,
   name,
@@ -97,7 +91,6 @@ export function generatePersonSchema({
   };
 }
 
-// https://schema.org/CreativeWork
 export function generateCreativeWorkSchema({
   name,
   description,
@@ -119,7 +112,6 @@ export function generateCreativeWorkSchema({
   url: string;
   datePublished?: string;
   dateModified?: string;
-  /** Inline enough of the author to stand alone; `@id` merges it with the site graph. */
   author?: SchemaAuthor & { id?: string };
   inLanguage?: string;
   isPartOf?: SchemaRef;
@@ -141,7 +133,7 @@ export function generateCreativeWorkSchema({
     inLanguage,
     isPartOf,
     ...(keywords?.length ? { keywords: keywords.join(", ") } : {}),
-    // schema-dts types these as single-kind unions; mixed media lists are valid JSON-LD.
+    // schema-dts can't type mixed media lists.
     ...(video?.length ? { video: video as CreativeWork["video"] } : {}),
     ...(audio?.length ? { audio: audio as CreativeWork["audio"] } : {}),
     ...(associatedMedia?.length
@@ -150,7 +142,6 @@ export function generateCreativeWorkSchema({
   } as CreativeWork;
 }
 
-// https://schema.org/BreadcrumbList
 export function generateBreadcrumbSchema(items: BreadcrumbItem[]): BreadcrumbList {
   return {
     "@type": "BreadcrumbList",
@@ -163,7 +154,6 @@ export function generateBreadcrumbSchema(items: BreadcrumbItem[]): BreadcrumbLis
   };
 }
 
-// https://schema.org/ProfilePage — Google's profile rich result for creators.
 export function generateProfilePageSchema({
   url,
   name,
@@ -194,7 +184,6 @@ export function generateProfilePageSchema({
   };
 }
 
-// https://schema.org/CollectionPage with an ItemList of its entries.
 export function generateCollectionPageSchema({
   url,
   name,
@@ -237,13 +226,12 @@ export function JsonLd({ data }: { data: Graph }) {
   return (
     <script
       type="application/ld+json"
-      // CMS text lands in here verbatim; escaping `<` keeps a stray `</script>`
-      // from closing the tag early.
       dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
     />
   );
 }
 
+/** Escapes `<` so CMS text can't close the script tag. */
 export function serializeJsonLd(data: Graph): string {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }

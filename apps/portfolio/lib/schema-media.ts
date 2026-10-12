@@ -1,10 +1,8 @@
 import { extractPlainText, isVideoAsset, type StoryblokRichText } from "@httpjpg/storyblok-utils";
 import type { ImageObject, MusicRecording, VideoObject } from "schema-dts";
 
-/** Bounds the walk so a cyclic payload cannot hang a render. */
 const MAX_DEPTH = 8;
 
-/** Enough to describe a page's media without bloating every response. */
 const MAX_IMAGES = 12;
 const MAX_VIDEOS = 6;
 const MAX_RECORDINGS = 12;
@@ -22,10 +20,9 @@ interface BlokLike extends Record<string, unknown> {
 }
 
 interface SchemaMediaContext {
-  /** Page title: the fallback name for a video without a caption. */
   name: string;
   description?: string;
-  /** Required by Google for VideoObject; videos are dropped without it. */
+  /** Videos are dropped without it (required by Google). */
   uploadDate?: string;
 }
 
@@ -35,12 +32,7 @@ interface SchemaMedia {
   recordings: MusicRecording[];
 }
 
-/**
- * schema.org nodes for the media a story renders: images (with credit),
- * videos (with poster + upload date, as Google's video rich result needs)
- * and music players. A sibling of `collectStoryMedia`, which builds
- * thumbnails for the palette rather than full media descriptions.
- */
+/** schema.org media nodes for a story; `collectStoryMedia` builds palette thumbnails instead. */
 export function collectSchemaMedia(content: unknown, context: SchemaMediaContext): SchemaMedia {
   const media: SchemaMedia = { images: [], videos: [], recordings: [] };
   const seen = new Set<string>();
@@ -92,7 +84,6 @@ export function collectSchemaMedia(content: unknown, context: SchemaMediaContext
     }
   };
 
-  // Featured images lead: they are what the page is "about".
   const featured = (content as { images?: unknown } | null | undefined)?.images;
   if (Array.isArray(featured)) {
     for (const asset of featured) {

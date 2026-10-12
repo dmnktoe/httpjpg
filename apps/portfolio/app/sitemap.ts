@@ -24,10 +24,8 @@ const EXCLUDED_SLUGS = ["config", "page-not-found"];
 
 const PER_PAGE = 100;
 
-/** Backstop against a paging bug walking the CDN forever. */
 const MAX_PAGES = 20;
 
-/** Image sitemap entries per URL; Google reads up to 1,000, a handful is plenty. */
 const MAX_IMAGES_PER_URL = 10;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -49,7 +47,6 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
   cacheLife("cms");
   cacheTag(CMS_TAGS.stories);
 
-  // Paginated so stories past the first CDN page still get listed.
   const stories: SitemapStory[] = [];
   let expected: number | undefined;
   for (let page = 1; page <= MAX_PAGES; page += 1) {
@@ -59,7 +56,7 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
       version: "published",
     });
     stories.push(...((response.stories ?? []) as SitemapStory[]));
-    // A failed later page answers `total: 0`; keep the first page's count.
+    // A failed later page reports `total: 0`.
     expected ??= response.total;
     const total = expected ?? stories.length;
     if (stories.length >= total || page * (response.perPage || PER_PAGE) >= total) {
@@ -70,7 +67,6 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
   if (!stories.length) {
     throw new Error("Storyblok returned no published stories for the sitemap");
   }
-  // A partial walk would be cached as the whole sitemap for an hour.
   if (expected !== undefined && stories.length < expected) {
     throw new Error(`Sitemap read ${stories.length} of ${expected} published stories`);
   }
@@ -88,7 +84,7 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
     .flatMap((story) => {
       const lastModified = new Date(story.published_at || story.first_published_at);
       const images = storyImages(story);
-      // `/home` renders the start page too; list it once, at the root.
+      // `/home` duplicates the root.
       if (story.full_slug === STORYBLOK_SLUGS.HOME) {
         home = {
           url: baseUrl,
@@ -125,7 +121,6 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
       return [english, { url: `${baseUrl}${localizedPath("de", story.full_slug)}`, ...shared }];
     });
 
-  // The root is always listed, even when the home story is missing.
   entries.unshift(
     home ?? { url: baseUrl, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
   );

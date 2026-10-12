@@ -47,10 +47,7 @@ export function extractStoryMetadata(story: StoryShape): StoryMetadata {
   return { title, description, ogImage };
 }
 
-/**
- * Feed discovery link. Next replaces `alternates` wholesale per segment, so
- * every route that sets its own canonical has to restate this too.
- */
+/** Restate on every route that sets `alternates`; Next replaces it per segment. */
 export function feedAlternates(enabled: boolean): Pick<Alternates, "types"> {
   return enabled ? { types: { "application/rss+xml": WORK_FEED_PATH } } : {};
 }

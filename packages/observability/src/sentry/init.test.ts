@@ -59,6 +59,16 @@ describe.each(INITIALIZERS)("initSentry%s", (scope, init) => {
     );
   });
 
+  it("keeps PII out of collected data", () => {
+    init();
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dataCollection: { userInfo: false, cookies: false, httpBodies: [] },
+      }),
+    );
+  });
+
   it("does nothing without a DSN", () => {
     sentryConfig.value = { ...sentryConfig.value, dsn: undefined };
 

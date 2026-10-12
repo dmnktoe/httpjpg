@@ -12,6 +12,7 @@ export function initSentryServer() {
     environment,
     release,
     enabled: isEnabled,
+    dataCollection: { userInfo: false, cookies: false, httpBodies: [] },
     attachStacktrace: true,
     normalizeDepth: 5,
     tracesSampleRate: isProduction ? 0.1 : 1.0,

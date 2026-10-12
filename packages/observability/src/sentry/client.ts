@@ -13,7 +13,7 @@ export function initSentryClient() {
     environment,
     release,
     enabled: isEnabled,
-    sendDefaultPii: false,
+    dataCollection: { userInfo: false, cookies: false, httpBodies: [] },
     attachStacktrace: true,
     normalizeDepth: 5,
     tracesSampleRate: isProduction ? 0.1 : 1.0,

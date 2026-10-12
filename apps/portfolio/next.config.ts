@@ -76,6 +76,8 @@ export default async (): Promise<NextConfig> => {
     cacheComponents: true,
     partialPrefetching: true,
     cacheLife: CACHE_LIFE,
+    // The root AGENTS.md is the one guide; `next dev` would add its own.
+    agentRules: false,
 
     transpilePackages: [
       "@httpjpg/ui",

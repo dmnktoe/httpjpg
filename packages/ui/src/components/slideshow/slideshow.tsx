@@ -134,7 +134,6 @@ export function Slideshow({
         onSwiper={handleSwiperInit}
         onSlideChange={handleSlideChange}
         loop={images.length > 1}
-        // Swiper 14.3 skips loop setup on a "locked" slider (zero-width at init); keep the loop.
         watchOverflow={false}
         autoplay={
           autoplayEnabled

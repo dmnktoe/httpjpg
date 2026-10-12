@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@httpjpg/storyblok-utils": "workspace:*",
-    "@pandacss/dev": "1.12.1",
+    "@pandacss/dev": "2.2.0",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/node": "catalog:",

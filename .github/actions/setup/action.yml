@@ -12,9 +12,6 @@ runs:
       with:
         node-version-file: .nvmrc
 
-    # Only main writes the pnpm store cache; PRs restore main's nearest entry.
-    # setup-node's `cache: pnpm` saved a ~260 MB store per lockfile hash per PR
-    # ref, so every Renovate rebase filled the repo's cache quota.
     - name: Resolve pnpm store path
       id: pnpm-store
       shell: bash

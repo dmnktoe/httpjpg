@@ -214,7 +214,7 @@ Cache Components: nothing is cached unless a `"use cache"` scope says so. Three 
 - Draft is never cached: branch on `draft` **outside** the scope and `await connection()` before the uncached read, so it waits for request time instead of being aborted in the prerender pass.
 - Throw inside a cache scope to keep a failure out of the cache; catch outside, and `unstable_rethrow(error)` first so Next's prerender interrupts are not logged as errors.
 - Third-party widget feeds use inline lifetimes from `WIDGET_MAX_AGE` (`cacheLife({ revalidate: WIDGET_MAX_AGE.x })`). `widgetRoute()` calls `connection()` so rate limiting and draft checks stay per request.
-- The root layout (and the page routes under it) export `instant = false`: `<html data-theme lang>` comes from the request path. Every read under it is cached, so the render is cheap; a pre-paint script for those attributes would unlock a static shell.
+- The root layout (and the page routes under it) export `instant = false`: `<html data-theme lang>` comes from the request path. Every read under it is cached, so the per-request render stays cheap.
 - No `dynamic` / `revalidate` / `runtime` segment configs — Cache Components rejects them.
 - Entries are in-memory and keyed by build: a deploy starts cold, and self-hosting keeps them across requests.
 

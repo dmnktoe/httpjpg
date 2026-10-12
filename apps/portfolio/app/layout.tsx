@@ -73,8 +73,7 @@ function formatLastUpdated(iso: string): string {
  * Allowed to block. `<html data-theme lang>` and the work-accent vars come
  * from the story behind the requested path (`x-pathname`), and attributes on
  * `<html>` cannot sit behind a `<Suspense>` boundary — so the document renders
- * per request. Every read below it is `"use cache"`, so that render is cheap;
- * moving those attributes to a pre-paint script would let the shell prerender.
+ * per request. Every read below it is `"use cache"`, so that render is cheap.
  */
 export const instant = false;
 

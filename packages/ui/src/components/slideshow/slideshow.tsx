@@ -134,6 +134,7 @@ export function Slideshow({
         onSwiper={handleSwiperInit}
         onSlideChange={handleSlideChange}
         loop={images.length > 1}
+        watchOverflow={false}
         autoplay={
           autoplayEnabled
             ? { delay: autoplayDelay, disableOnInteraction: false, waitForTransition: false }

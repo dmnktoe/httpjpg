@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.11.0](https://github.com/dmnktoe/httpjpg/compare/v2.10.1...v2.11.0) (2026-10-12)
+
+
+### Added
+
+* adopt Next.js 16.4 Cache Components with a typed cache suite ([#476](https://github.com/dmnktoe/httpjpg/issues/476)) ([b9fcc9b](https://github.com/dmnktoe/httpjpg/commit/b9fcc9ba65500d14e23889f8bcbd3d51c811653a))
+* **seo:** linked JSON-LD graph, canonicals, image sitemap and llms.txt ([#487](https://github.com/dmnktoe/httpjpg/issues/487)) ([2b8747c](https://github.com/dmnktoe/httpjpg/commit/2b8747c98fbdd5d002a254ef5f0da60e4f333d09))
+
+
+### Dependencies
+
+* lock file maintenance ([#490](https://github.com/dmnktoe/httpjpg/issues/490)) ([2870800](https://github.com/dmnktoe/httpjpg/commit/28708008ec8853a08cd0accefb16616edaaf8c33))
+* update dependency motion to v14 ([#480](https://github.com/dmnktoe/httpjpg/issues/480)) ([be5128e](https://github.com/dmnktoe/httpjpg/commit/be5128e00ab3bf6a651a70a0fc40a29c7ed83422))
+* update production dependencies ([#474](https://github.com/dmnktoe/httpjpg/issues/474)) ([bf93b81](https://github.com/dmnktoe/httpjpg/commit/bf93b81609b1e323d4bac99e596420e445f69503))
+* update swiper to ^14.3.0 with slideshow loop fix ([#482](https://github.com/dmnktoe/httpjpg/issues/482)) ([1252b64](https://github.com/dmnktoe/httpjpg/commit/1252b64eb982a4accabf7e1be2048acaf4921f55))
+
 ## [2.10.1](https://github.com/dmnktoe/httpjpg/compare/v2.10.0...v2.10.1) (2026-10-12)
 
 

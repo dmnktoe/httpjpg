@@ -217,6 +217,28 @@ describe("POST /api/revalidate", () => {
       expect(submitIndexNow).not.toHaveBeenCalled();
     });
 
+    it("skips config stories identified by content type", async () => {
+      env.INDEXNOW_KEY = "abcdef123456";
+
+      await POST(
+        makeRequest(
+          {
+            action: "published",
+            story: {
+              id: 1,
+              name: "c",
+              slug: "site",
+              full_slug: "settings/site",
+              content_type: "config",
+            },
+          },
+          { secret: "s3cret" },
+        ),
+      );
+
+      expect(submitIndexNow).not.toHaveBeenCalled();
+    });
+
     it("keeps the webhook green when the ping fails", async () => {
       env.INDEXNOW_KEY = "abcdef123456";
       submitIndexNow.mockResolvedValueOnce({ ok: false, status: 403, message: "Status 403." });

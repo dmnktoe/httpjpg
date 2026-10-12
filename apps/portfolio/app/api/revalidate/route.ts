@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       revalidatedPaths.push("/layout");
     }
 
-    const indexNow = await pingIndexNow(storySlug);
+    const indexNow = await pingIndexNow(storySlug, contentType);
 
     return NextResponse.json({
       revalidated: true,
@@ -89,8 +89,8 @@ export async function POST(request: NextRequest) {
 }
 
 /** Public URLs a story renders at; config and other internal stories have none. */
-function publicUrls(storySlug: string): string[] {
-  if (storySlug === STORYBLOK_SLUGS.CONFIG) {
+function publicUrls(storySlug: string, contentType?: string): string[] {
+  if (storySlug === STORYBLOK_SLUGS.CONFIG || contentType === STORYBLOK_SLUGS.CONFIG) {
     return [];
   }
   if (storySlug === STORYBLOK_SLUGS.HOME) {
@@ -106,9 +106,12 @@ function publicUrls(storySlug: string): string[] {
  * Notify IndexNow engines of the change. Best-effort: a failed ping is
  * reported but never fails the webhook, since the cache is already purged.
  */
-async function pingIndexNow(storySlug: string): Promise<"submitted" | "failed" | undefined> {
+async function pingIndexNow(
+  storySlug: string,
+  contentType?: string,
+): Promise<"submitted" | "failed" | undefined> {
   const key = env.INDEXNOW_KEY;
-  const paths = publicUrls(storySlug);
+  const paths = publicUrls(storySlug, contentType);
   if (!key || paths.length === 0) {
     return undefined;
   }

@@ -199,4 +199,26 @@ describe("sitemap", () => {
 
     expect(work?.images).toEqual(["https://cdn/a.jpg", "https://cdn/b.jpg"]);
   });
+
+  it("falls back instead of caching a partial walk", async () => {
+    const story = (slug: string) => ({
+      slug,
+      full_slug: slug,
+      first_published_at: "2024-01-01",
+      published_at: null,
+      is_startpage: false,
+    });
+    getStories
+      .mockResolvedValueOnce({ stories: [story("a")], total: 2, perPage: 1 })
+      // `getStories` answers a failed page with an empty result.
+      .mockResolvedValueOnce({ stories: [], total: 0, perPage: 0 });
+
+    const entries = await sitemap();
+
+    expect(entries.map((e) => e.url)).toEqual(["https://example.test"]);
+    expect(captureServerException).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "Sitemap read 1 of 2 published stories" }),
+      expect.anything(),
+    );
+  });
 });

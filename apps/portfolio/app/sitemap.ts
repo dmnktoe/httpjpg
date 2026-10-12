@@ -51,6 +51,7 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
 
   // Paginated so stories past the first CDN page still get listed.
   const stories: SitemapStory[] = [];
+  let expected: number | undefined;
   for (let page = 1; page <= MAX_PAGES; page += 1) {
     const response = await getStoryblokApi().getStories({
       per_page: PER_PAGE,
@@ -58,7 +59,9 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
       version: "published",
     });
     stories.push(...((response.stories ?? []) as SitemapStory[]));
-    const total = response.total ?? stories.length;
+    // A failed later page answers `total: 0`; keep the first page's count.
+    expected ??= response.total;
+    const total = expected ?? stories.length;
     if (stories.length >= total || page * (response.perPage || PER_PAGE) >= total) {
       break;
     }
@@ -66,6 +69,10 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
   // An empty answer is an outage (`getStories` swallows errors): don't cache it.
   if (!stories.length) {
     throw new Error("Storyblok returned no published stories for the sitemap");
+  }
+  // A partial walk would be cached as the whole sitemap for an hour.
+  if (expected !== undefined && stories.length < expected) {
+    throw new Error(`Sitemap read ${stories.length} of ${expected} published stories`);
   }
 
   let home: MetadataRoute.Sitemap[number] | undefined;

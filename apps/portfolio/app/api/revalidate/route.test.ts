@@ -1,5 +1,15 @@
 // @vitest-environment node
-vi.mock("@httpjpg/env", () => ({ env: { STORYBLOK_REVALIDATE_SECRET: "s3cret" } }));
+const { env, submitIndexNow } = vi.hoisted(() => ({
+  env: {
+    STORYBLOK_REVALIDATE_SECRET: "s3cret",
+    NEXT_PUBLIC_APP_URL: "https://httpjpg.test",
+    INDEXNOW_KEY: undefined as string | undefined,
+  },
+  submitIndexNow: vi.fn(),
+}));
+
+vi.mock("@httpjpg/env", () => ({ env }));
+vi.mock("@/lib/integrations/indexnow", () => ({ submitIndexNow }));
 
 vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
@@ -35,6 +45,7 @@ function makeRequest(
 
 beforeEach(() => {
   vi.clearAllMocks();
+  env.INDEXNOW_KEY = undefined;
   vi.spyOn(console, "warn").mockImplementation(() => {});
   vi.spyOn(console, "error").mockImplementation(() => {});
 });
@@ -156,5 +167,70 @@ describe("POST /api/revalidate", () => {
     const response = await POST(request);
 
     await expect(response.json()).resolves.toMatchObject({ error: "Unknown error" });
+  });
+
+  describe("IndexNow", () => {
+    function publish(fullSlug: string) {
+      return POST(makeRequest({ action: "published", full_slug: fullSlug }, { secret: "s3cret" }));
+    }
+
+    it("stays quiet without a key", async () => {
+      const response = await publish("work/x");
+
+      expect(submitIndexNow).not.toHaveBeenCalled();
+      expect(await response.json()).not.toHaveProperty("indexNow");
+    });
+
+    it("submits the story's public url", async () => {
+      env.INDEXNOW_KEY = "abcdef123456";
+      submitIndexNow.mockResolvedValueOnce({ ok: true, response: new Response() });
+
+      const response = await publish("work/x");
+
+      expect(submitIndexNow).toHaveBeenCalledWith({
+        baseUrl: "https://httpjpg.test",
+        key: "abcdef123456",
+        urls: ["https://httpjpg.test/work/x"],
+      });
+      expect((await response.json()).indexNow).toBe("submitted");
+    });
+
+    it("submits the root for home and both locales for the CV", async () => {
+      env.INDEXNOW_KEY = "abcdef123456";
+      submitIndexNow.mockResolvedValue({ ok: true, response: new Response() });
+
+      await publish("home");
+      await publish("cv");
+
+      expect(submitIndexNow.mock.calls[0]?.[0].urls).toEqual(["https://httpjpg.test/"]);
+      expect(submitIndexNow.mock.calls[1]?.[0].urls).toEqual([
+        "https://httpjpg.test/cv",
+        "https://httpjpg.test/de/cv",
+      ]);
+    });
+
+    it("skips the config story", async () => {
+      env.INDEXNOW_KEY = "abcdef123456";
+
+      await publish("config");
+
+      expect(submitIndexNow).not.toHaveBeenCalled();
+    });
+
+    it("keeps the webhook green when the ping fails", async () => {
+      env.INDEXNOW_KEY = "abcdef123456";
+      submitIndexNow.mockResolvedValueOnce({ ok: false, status: 403, message: "Status 403." });
+
+      const failed = await publish("work/x");
+      expect(failed.status).toBe(200);
+      expect((await failed.json()).indexNow).toBe("failed");
+
+      submitIndexNow.mockRejectedValueOnce(new Error("network"));
+      const thrown = await publish("work/x");
+      expect(thrown.status).toBe(200);
+      expect(captureServerException).toHaveBeenCalledWith(expect.any(Error), {
+        tags: { route: "revalidate", integration: "indexnow" },
+      });
+    });
   });
 });

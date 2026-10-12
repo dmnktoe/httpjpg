@@ -1,6 +1,8 @@
 import { extractPlainText, type StoryblokRichTextNode } from "@httpjpg/storyblok-utils";
 import type { Metadata } from "next";
 
+type Alternates = NonNullable<Metadata["alternates"]>;
+
 interface StoryShape {
   name: string;
   slug?: string;
@@ -20,6 +22,8 @@ interface StoryMetadata {
 }
 
 const DESCRIPTION_LIMIT = 160;
+
+export const WORK_FEED_PATH = "/work/feed.xml";
 
 export function extractStoryMetadata(story: StoryShape): StoryMetadata {
   const title = story.content?.title || story.name;
@@ -43,7 +47,17 @@ export function extractStoryMetadata(story: StoryShape): StoryMetadata {
   return { title, description, ogImage };
 }
 
-export function toNextMetadata(meta: StoryMetadata, path: string, siteName?: string): Metadata {
+/** Restate on every route that sets `alternates`; Next replaces it per segment. */
+export function feedAlternates(enabled: boolean): Pick<Alternates, "types"> {
+  return enabled ? { types: { "application/rss+xml": WORK_FEED_PATH } } : {};
+}
+
+export function toNextMetadata(
+  meta: StoryMetadata,
+  path: string,
+  siteName?: string,
+  alternates: Omit<Alternates, "canonical"> = {},
+): Metadata {
   const fullTitle = siteName ? `${meta.title} | ${siteName}` : meta.title;
   const ogImages = meta.ogImage
     ? [{ url: meta.ogImage.url, width: 1200, height: 630, alt: meta.ogImage.alt }]
@@ -51,6 +65,7 @@ export function toNextMetadata(meta: StoryMetadata, path: string, siteName?: str
   return {
     title: meta.title,
     description: meta.description,
+    alternates: { canonical: path, ...alternates },
     openGraph: {
       title: fullTitle,
       description: meta.description,

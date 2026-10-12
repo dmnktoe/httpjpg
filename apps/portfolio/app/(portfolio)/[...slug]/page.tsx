@@ -1,10 +1,11 @@
 import { env } from "@httpjpg/env";
-import { imagePreset } from "@httpjpg/storyblok-utils";
+import { imagePreset, workTagLabels } from "@httpjpg/storyblok-utils";
 import { Box } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import type { Metadata } from "next";
 import { draftMode } from "next/headers";
 import { notFound, unstable_rethrow } from "next/navigation";
+import type { Thing } from "schema-dts";
 
 import { StoryblokLive } from "@/components/providers/storyblok-live";
 import { LanguagePicker } from "@/components/ui/language-picker";
@@ -27,8 +28,17 @@ import { getAuthor, getSiteConfig, getSocialProfiles } from "@/lib/queries/confi
 import { getRelatedWork } from "@/lib/queries/related-work";
 import { getFeatureFlags } from "@/lib/queries/widgets";
 import { getAdjacentWork, readPageStory } from "@/lib/queries/work";
-import { generateCreativeWorkSchema, JsonLd } from "@/lib/schema-org";
-import { extractStoryMetadata, toNextMetadata } from "@/lib/seo";
+import { collectSchemaMedia } from "@/lib/schema-media";
+import {
+  generateBreadcrumbSchema,
+  generateCreativeWorkSchema,
+  generateProfilePageSchema,
+  JsonLd,
+  schemaIds,
+  toGraph,
+} from "@/lib/schema-org";
+import { extractStoryMetadata, feedAlternates, toNextMetadata } from "@/lib/seo";
+import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
 interface PageProps {
   params: Promise<{
@@ -76,16 +86,18 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
     return { title: "Not Found" };
   }
 
-  const site = await getSiteConfig();
-  const path = localizedPath(locale, slug);
-  const metadata = toNextMetadata(extractStoryMetadata(story), path, site.name);
+  const [site, flags] = await Promise.all([getSiteConfig(), getFeatureFlags()]);
+  const path = canonicalPath(locale, slug);
   const languages = localeAlternates(slug);
+  const metadata = toNextMetadata(extractStoryMetadata(story), path, site.name, {
+    ...feedAlternates(flags.rssFeedEnabled),
+    ...(languages ? { languages } : {}),
+  });
   if (!languages) {
     return metadata;
   }
   return {
     ...metadata,
-    alternates: { canonical: path, languages },
     openGraph: {
       ...metadata.openGraph,
       locale: ogLocale(locale),
@@ -134,38 +146,12 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
   const isWorkPage = story.content?.component === "work";
   const flags = await getFeatureFlags();
 
-  let schemaMarkup = null;
   let adjacent: Awaited<ReturnType<typeof getAdjacentWork>> = {};
   let related: Awaited<ReturnType<typeof getRelatedWork>> = { tags: [], related: [] };
 
+  const schemaMarkup = await buildPageSchema(story, locale, slug, isWorkPage);
+
   if (isWorkPage) {
-    const site = await getSiteConfig();
-    const siteAuthor = await getAuthor();
-    const author = siteAuthor
-      ? {
-          "@type": "Person" as const,
-          name: siteAuthor.name,
-          url: siteAuthor.url,
-          sameAs: await getSocialProfiles(),
-        }
-      : undefined;
-
-    const meta = extractStoryMetadata(story);
-    const images = story.content?.images?.map((img: { filename: string; focus?: string }) =>
-      imagePreset.og(img.filename, img.focus),
-    );
-
-    schemaMarkup = generateCreativeWorkSchema({
-      name: meta.title,
-      description: meta.description || undefined,
-      image: images?.[0] || images,
-      url: `${env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")}${localizedPath(locale, slug)}`,
-      datePublished: story.first_published_at,
-      dateModified: story.published_at,
-      author,
-      inLanguage: schemaLanguage(locale, site.language),
-    });
-
     [adjacent, related] = await Promise.all([
       flags.prevNextWorkEnabled ? getAdjacentWork(story.slug) : Promise.resolve({}),
       flags.relatedWorkEnabled ? getRelatedWork(`/${slug}`) : Promise.resolve(related),
@@ -181,7 +167,7 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
     <>
       <ThemeSync theme={pageTheme} accent={pageAccent} />
       <LocaleSync lang={locale} />
-      {schemaMarkup && <JsonLd data={schemaMarkup} />}
+      <JsonLd data={schemaMarkup} />
       {showLanguagePicker && (
         <Box
           css={{
@@ -206,4 +192,88 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
       )}
     </>
   );
+}
+
+/** `/home` duplicates the root. */
+function canonicalPath(locale: AppLocale, slug: string): string {
+  return slug === STORYBLOK_SLUGS.HOME ? "/" : localizedPath(locale, slug);
+}
+
+interface SchemaStory {
+  name: string;
+  slug: string;
+  first_published_at?: string | null;
+  published_at?: string | null;
+  content?: Record<string, unknown> & {
+    component?: string;
+    tags?: string[];
+    images?: Array<{ filename: string; focus?: string }>;
+  };
+}
+
+async function buildPageSchema(
+  story: SchemaStory,
+  locale: AppLocale,
+  slug: string,
+  isWorkPage: boolean,
+) {
+  const [site, siteAuthor] = await Promise.all([getSiteConfig(), getAuthor()]);
+  const base = env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
+  const ids = schemaIds(base);
+  const url = `${base}${canonicalPath(locale, slug)}`;
+  const meta = extractStoryMetadata(story);
+  const inLanguage = schemaLanguage(locale, site.language);
+  const isPartOf = site.name ? { "@id": ids.website } : undefined;
+  const datePublished = story.first_published_at || undefined;
+  const dateModified = story.published_at || undefined;
+
+  const nodes: Thing[] = [
+    generateBreadcrumbSchema([
+      { name: site.name || "Home", url: `${base}/` },
+      ...(slug === STORYBLOK_SLUGS.HOME ? [] : [{ name: meta.title, url }]),
+    ]),
+  ];
+
+  if (isWorkPage) {
+    const images = story.content?.images?.map((img) => imagePreset.og(img.filename, img.focus));
+    const media = collectSchemaMedia(story.content, {
+      name: meta.title,
+      description: meta.description || undefined,
+      uploadDate: datePublished,
+    });
+    const author = siteAuthor
+      ? { ...siteAuthor, id: ids.person, sameAs: await getSocialProfiles() }
+      : undefined;
+    nodes.unshift(
+      generateCreativeWorkSchema({
+        name: meta.title,
+        description: meta.description || undefined,
+        image: images?.[0] || images,
+        url,
+        datePublished,
+        dateModified,
+        author,
+        inLanguage,
+        isPartOf,
+        keywords: workTagLabels(story.content?.tags),
+        video: media.videos,
+        audio: media.recordings,
+        associatedMedia: media.images,
+      }),
+    );
+  } else if (slug === STORYBLOK_SLUGS.CV && siteAuthor) {
+    nodes.unshift(
+      generateProfilePageSchema({
+        url,
+        name: meta.title,
+        personId: ids.person,
+        dateCreated: datePublished,
+        dateModified,
+        inLanguage,
+        isPartOf,
+      }),
+    );
+  }
+
+  return toGraph(nodes);
 }

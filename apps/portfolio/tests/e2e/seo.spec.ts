@@ -54,4 +54,22 @@ test.describe("seo surface", () => {
     // Internal-only stories must never leak into the public sitemap.
     expect(locations.some((location) => location.includes("/config"))).toBe(false);
   });
+
+  test("home page ships a canonical and parseable structured data", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(page.locator('head link[rel="canonical"]')).toHaveAttribute(
+      "href",
+      /^https?:\/\/[^/]+\/?$/,
+    );
+
+    const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
+    expect(blocks.length).toBeGreaterThan(0);
+    const types = blocks.flatMap((block) => {
+      const data = JSON.parse(block) as { "@context"?: string; "@graph"?: { "@type"?: string }[] };
+      expect(data["@context"]).toBe("https://schema.org");
+      return (data["@graph"] ?? []).map((node) => node["@type"]);
+    });
+    expect(types).toContain("WebSite");
+  });
 });

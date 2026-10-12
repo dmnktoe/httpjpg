@@ -8,6 +8,8 @@ import { unstable_rethrow } from "next/navigation";
 import { connection } from "next/server";
 
 import { LOCALIZED_SLUGS, localeAlternates, localizedPath } from "@/lib/locale";
+import { collectStoryMedia } from "@/lib/search/story-media";
+import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
 interface SitemapStory {
   slug: string;
@@ -15,10 +17,16 @@ interface SitemapStory {
   first_published_at: string | null;
   published_at: string | null;
   is_startpage: boolean;
-  content?: { external_only?: boolean };
+  content?: { external_only?: boolean; images?: Array<{ filename?: string }> };
 }
 
 const EXCLUDED_SLUGS = ["config", "page-not-found"];
+
+const PER_PAGE = 100;
+
+const MAX_PAGES = 20;
+
+const MAX_IMAGES_PER_URL = 10;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = env.NEXT_PUBLIC_APP_URL;
@@ -39,16 +47,31 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
   cacheLife("cms");
   cacheTag(CMS_TAGS.stories);
 
-  const response = await getStoryblokApi().getStories({
-    per_page: 100,
-    version: "published",
-  });
+  const stories: SitemapStory[] = [];
+  let expected: number | undefined;
+  for (let page = 1; page <= MAX_PAGES; page += 1) {
+    const response = await getStoryblokApi().getStories({
+      per_page: PER_PAGE,
+      page,
+      version: "published",
+    });
+    stories.push(...((response.stories ?? []) as SitemapStory[]));
+    // A failed later page reports `total: 0`.
+    expected ??= response.total;
+    const total = expected ?? stories.length;
+    if (stories.length >= total || page * (response.perPage || PER_PAGE) >= total) {
+      break;
+    }
+  }
   // An empty answer is an outage (`getStories` swallows errors): don't cache it.
-  if (!response.stories?.length) {
+  if (!stories.length) {
     throw new Error("Storyblok returned no published stories for the sitemap");
   }
+  if (expected !== undefined && stories.length < expected) {
+    throw new Error(`Sitemap read ${stories.length} of ${expected} published stories`);
+  }
 
-  const stories = response.stories as SitemapStory[];
+  let home: MetadataRoute.Sitemap[number] | undefined;
 
   const entries: MetadataRoute.Sitemap = stories
     .filter(
@@ -60,6 +83,18 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
     .filter((story) => !story.content?.external_only)
     .flatMap((story) => {
       const lastModified = new Date(story.published_at || story.first_published_at);
+      const images = storyImages(story);
+      // `/home` duplicates the root.
+      if (story.full_slug === STORYBLOK_SLUGS.HOME) {
+        home = {
+          url: baseUrl,
+          lastModified,
+          changeFrequency: "weekly",
+          priority: 1,
+          ...(images.length ? { images } : {}),
+        };
+        return [];
+      }
       const changeFrequency = story.full_slug.startsWith("work/") ? "monthly" : "weekly";
       const languages = localeAlternates(story.full_slug);
       const alternates = languages
@@ -72,8 +107,9 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
       const shared = {
         lastModified,
         changeFrequency: changeFrequency as MetadataRoute.Sitemap[number]["changeFrequency"],
-        priority: story.full_slug === "home" ? 1 : 0.8,
+        priority: 0.8,
         ...(alternates ? { alternates } : {}),
+        ...(images.length ? { images } : {}),
       };
       const english: MetadataRoute.Sitemap[number] = {
         url: `${baseUrl}${localizedPath("en", story.full_slug)}`,
@@ -85,12 +121,20 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
       return [english, { url: `${baseUrl}${localizedPath("de", story.full_slug)}`, ...shared }];
     });
 
-  entries.unshift({
-    url: baseUrl,
-    lastModified: new Date(),
-    changeFrequency: "weekly",
-    priority: 1,
-  });
+  entries.unshift(
+    home ?? { url: baseUrl, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
+  );
 
   return entries;
+}
+
+function storyImages(story: SitemapStory): string[] {
+  const featured = (story.content?.images ?? [])
+    .map((image) => image.filename)
+    .filter((filename): filename is string => Boolean(filename));
+  const inline = collectStoryMedia(story.content, MAX_IMAGES_PER_URL)
+    .filter((media) => media.kind !== "audio")
+    .map((media) => media.source)
+    .filter((source): source is string => Boolean(source));
+  return [...new Set([...featured, ...inline])].slice(0, MAX_IMAGES_PER_URL);
 }

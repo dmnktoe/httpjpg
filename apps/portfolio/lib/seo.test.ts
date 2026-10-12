@@ -1,4 +1,4 @@
-import { extractStoryMetadata, toNextMetadata } from "./seo";
+import { extractStoryMetadata, feedAlternates, toNextMetadata } from "./seo";
 
 describe("extractStoryMetadata", () => {
   it("prefers content.title over the story name", () => {
@@ -196,5 +196,29 @@ describe("toNextMetadata", () => {
     const md = toNextMetadata({ title: "T", description: "D" }, "/", "httpjpg");
     const openGraph = md.openGraph as { type?: string } | undefined;
     expect(openGraph?.type).toBe("website");
+  });
+
+  it("sets the canonical to the passed path", () => {
+    const md = toNextMetadata({ title: "T", description: "D" }, "/about");
+    expect(md.alternates).toEqual({ canonical: "/about" });
+  });
+
+  it("merges extra alternates next to the canonical", () => {
+    const md = toNextMetadata({ title: "T", description: "D" }, "/cv", undefined, {
+      languages: { de: "/de/cv" },
+      ...feedAlternates(true),
+    });
+    expect(md.alternates).toEqual({
+      canonical: "/cv",
+      languages: { de: "/de/cv" },
+      types: { "application/rss+xml": "/work/feed.xml" },
+    });
+  });
+});
+
+describe("feedAlternates", () => {
+  it("links the work feed only when enabled", () => {
+    expect(feedAlternates(true)).toEqual({ types: { "application/rss+xml": "/work/feed.xml" } });
+    expect(feedAlternates(false)).toEqual({});
   });
 });

@@ -18,7 +18,6 @@ const meta = {
         iframeHeight: 800,
       },
     },
-    argos: { fitToContent: false },
   },
   tags: ["autodocs"],
   args: {

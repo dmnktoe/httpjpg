@@ -47,7 +47,7 @@ const meta = {
   parameters: {
     layout: "fullscreen",
   },
-  tags: ["autodocs", "!test"],
+  tags: ["autodocs"],
 } satisfies Meta<typeof NowPlaying>;
 
 export default meta;

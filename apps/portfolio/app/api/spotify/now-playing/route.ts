@@ -1,5 +1,5 @@
 import { env } from "@httpjpg/env";
-import { captureEdgeException } from "@httpjpg/observability/sentry/edge.ts";
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import {
   clearAccessTokenCache,
   getAccessToken,
@@ -11,9 +11,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { API_ERROR, jsonError } from "@/lib/api-error";
 import { enforceRateLimit } from "@/lib/rate-limit";
-
-export const runtime = "edge";
-export const revalidate = 0;
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -55,7 +52,7 @@ export async function GET(request: NextRequest) {
     }
 
     console.error("Spotify API error:", error);
-    captureEdgeException(error, { route: "spotify/now-playing" });
+    captureServerException(error, { tags: { route: "spotify/now-playing" } });
     return jsonError(API_ERROR.internal, 500, {
       message: "Failed to fetch now playing",
       headers: CORS_HEADERS,

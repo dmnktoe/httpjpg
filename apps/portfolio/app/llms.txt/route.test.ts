@@ -12,6 +12,8 @@ const { getSearchIndex, getSiteConfig, getSeoDefaults, getAuthor, captureServerE
 
 vi.mock("@httpjpg/observability/sentry/server.ts", () => ({ captureServerException }));
 vi.mock("@/lib/queries/search-index", () => ({ getSearchIndex }));
+vi.mock("next/navigation", () => ({ unstable_rethrow: vi.fn() }));
+vi.mock("next/server", () => ({ connection: vi.fn() }));
 vi.mock("@/lib/queries/config", () => ({ getSiteConfig, getSeoDefaults, getAuthor }));
 
 import { GET } from "./route";

@@ -14,10 +14,15 @@ vi.mock("@httpjpg/storyblok-api", () => ({
 
 vi.mock("@/lib/queries/widgets", () => ({ getFeatureFlags }));
 
-// unstable_cache wraps the fetcher — pass it through unchanged.
-vi.mock("next/cache", () => ({
-  unstable_cache: (fn: unknown) => fn,
+vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
+
+vi.mock("next/server", () => ({ connection: vi.fn(async () => undefined) }));
+
+vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
+  captureServerException: vi.fn(),
 }));
+
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 
 import { GET } from "./route";
 
@@ -49,7 +54,6 @@ describe("GET /work/feed.xml", () => {
             images: [{ filename: "https://a.storyblok.com/f/1/a.jpg" }],
           },
         },
-        // Nested slug — filtered out of the feed.
         { slug: "beta", full_slug: "work/group/beta" },
       ],
     });
@@ -60,13 +64,9 @@ describe("GET /work/feed.xml", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toContain("application/rss+xml");
     expect(body).toContain('<rss version="2.0"');
-    // XML special characters are escaped.
     expect(body).toContain("Alpha &lt;Project&gt;");
-    // Enclosure built from the first image.
     expect(body).toContain("<enclosure");
-    // Base URL trailing slash is trimmed.
     expect(body).toContain("https://example.test/work/alpha");
-    // Nested story excluded.
     expect(body).not.toContain("group/beta");
   });
 
@@ -80,5 +80,21 @@ describe("GET /work/feed.xml", () => {
 
     expect(body).toContain("https://example.test/work/gamma");
     expect(body).not.toContain("<enclosure");
+  });
+
+  it.each([
+    ["an empty answer", () => getStories.mockResolvedValueOnce({ stories: [] })],
+    ["a thrown error", () => getStories.mockRejectedValueOnce(new Error("down"))],
+  ])("answers 503 instead of an empty feed on %s", async (_label, arrange) => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    getFeatureFlags.mockResolvedValueOnce({ rssFeedEnabled: true });
+    arrange();
+
+    const response = await GET();
+
+    expect(response.status).toBe(503);
+    expect(response.headers.get("Retry-After")).toBe("300");
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+    expect(captureServerException).toHaveBeenCalledOnce();
   });
 });

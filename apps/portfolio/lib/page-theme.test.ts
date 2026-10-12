@@ -6,17 +6,17 @@ vi.mock("next/headers", () => ({
 }));
 
 vi.mock("./queries/work", () => ({
-  getCachedStory: vi.fn(),
+  readPageStory: vi.fn(),
 }));
 
 import { draftMode, headers } from "next/headers";
 
 import { getPageAccent, getPageTheme, isInternalSlug } from "./page-theme";
-import { getCachedStory } from "./queries/work";
+import { readPageStory } from "./queries/work";
 
 const mockHeaders = vi.mocked(headers);
 const mockDraftMode = vi.mocked(draftMode);
-const mockGetCachedStory = vi.mocked(getCachedStory);
+const mockReadPageStory = vi.mocked(readPageStory);
 
 function headerMap(entries: Record<string, string>): Headers {
   return new Headers(entries);
@@ -54,74 +54,74 @@ describe("getPageTheme", () => {
   it("forces light theme when the request comes from the Storyblok editor", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-storyblok-editor": "1" }) as never);
     await expect(getPageTheme()).resolves.toBe("light");
-    expect(mockGetCachedStory).not.toHaveBeenCalled();
+    expect(mockReadPageStory).not.toHaveBeenCalled();
   });
 
   it("forces light theme for internal slugs without fetching", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/_next/static/foo" }) as never);
     await expect(getPageTheme()).resolves.toBe("light");
-    expect(mockGetCachedStory).not.toHaveBeenCalled();
+    expect(mockReadPageStory).not.toHaveBeenCalled();
   });
 
   it("returns dark when the resolved story has content.isDark", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/work/something" }) as never);
-    mockGetCachedStory.mockResolvedValue({ content: { isDark: true } } as never);
+    mockReadPageStory.mockResolvedValue({ content: { isDark: true } } as never);
     await expect(getPageTheme()).resolves.toBe("dark");
-    expect(mockGetCachedStory).toHaveBeenCalledWith("work/something", { draftMode: false });
+    expect(mockReadPageStory).toHaveBeenCalledWith("work/something", { draft: false });
   });
 
   it("returns light when the story has no isDark flag", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/about" }) as never);
-    mockGetCachedStory.mockResolvedValue({ content: {} } as never);
+    mockReadPageStory.mockResolvedValue({ content: {} } as never);
     await expect(getPageTheme()).resolves.toBe("light");
   });
 
   it("falls back to the home slug when the pathname is empty", async () => {
     mockHeaders.mockResolvedValue(headerMap({}) as never);
-    mockGetCachedStory.mockResolvedValue({ content: { isDark: false } } as never);
+    mockReadPageStory.mockResolvedValue({ content: { isDark: false } } as never);
     await getPageTheme();
-    expect(mockGetCachedStory).toHaveBeenCalledWith("home", { draftMode: false });
+    expect(mockReadPageStory).toHaveBeenCalledWith("home", { draft: false });
   });
 
   it("strips leading and trailing slashes when deriving the slug", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "//work/foo//" }) as never);
-    mockGetCachedStory.mockResolvedValue({ content: {} } as never);
+    mockReadPageStory.mockResolvedValue({ content: {} } as never);
     await getPageTheme();
-    expect(mockGetCachedStory).toHaveBeenCalledWith("work/foo", { draftMode: false });
+    expect(mockReadPageStory).toHaveBeenCalledWith("work/foo", { draft: false });
   });
 
   it("strips the public locale prefix before fetching the story", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/de/cv" }) as never);
-    mockGetCachedStory.mockResolvedValue({ content: {} } as never);
+    mockReadPageStory.mockResolvedValue({ content: {} } as never);
     await getPageTheme();
-    expect(mockGetCachedStory).toHaveBeenCalledWith("cv", { draftMode: false });
+    expect(mockReadPageStory).toHaveBeenCalledWith("cv", { draft: false });
   });
 
   it("fetches the draft version when draft mode is enabled", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/home" }) as never);
     mockDraftMode.mockResolvedValue({ isEnabled: true } as never);
-    mockGetCachedStory.mockResolvedValue({ content: {} } as never);
+    mockReadPageStory.mockResolvedValue({ content: {} } as never);
     await getPageTheme();
-    expect(mockGetCachedStory).toHaveBeenCalledWith("home", { draftMode: true });
+    expect(mockReadPageStory).toHaveBeenCalledWith("home", { draft: true });
   });
 
   it("fetches the draft version in development even without draft mode", async () => {
     vi.stubEnv("NODE_ENV", "development");
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/home" }) as never);
-    mockGetCachedStory.mockResolvedValue({ content: {} } as never);
+    mockReadPageStory.mockResolvedValue({ content: {} } as never);
     await getPageTheme();
-    expect(mockGetCachedStory).toHaveBeenCalledWith("home", { draftMode: true });
+    expect(mockReadPageStory).toHaveBeenCalledWith("home", { draft: true });
   });
 
   it("returns light when the story lookup throws", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/work/foo" }) as never);
-    mockGetCachedStory.mockRejectedValue(new Error("boom"));
+    mockReadPageStory.mockRejectedValue(new Error("boom"));
     await expect(getPageTheme()).resolves.toBe("light");
   });
 
-  it("returns light when getCachedStory resolves to null", async () => {
+  it("returns light when readPageStory resolves to null", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/work/foo" }) as never);
-    mockGetCachedStory.mockResolvedValue(null as never);
+    mockReadPageStory.mockResolvedValue(null as never);
     await expect(getPageTheme()).resolves.toBe("light");
   });
 });
@@ -140,12 +140,12 @@ describe("getPageAccent", () => {
   it("returns null in the Storyblok editor without fetching", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-storyblok-editor": "1" }) as never);
     await expect(getPageAccent()).resolves.toBeNull();
-    expect(mockGetCachedStory).not.toHaveBeenCalled();
+    expect(mockReadPageStory).not.toHaveBeenCalled();
   });
 
   it("returns the work page hex and ignores other components", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/work/sentiment" }) as never);
-    mockGetCachedStory.mockResolvedValue({
+    mockReadPageStory.mockResolvedValue({
       content: { component: "work", accentColor: "#ec6839" },
     } as never);
     await expect(getPageAccent()).resolves.toBe("#ec6839");
@@ -153,7 +153,7 @@ describe("getPageAccent", () => {
 
   it("returns null on a regular page even if a leftover hex is present", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/about" }) as never);
-    mockGetCachedStory.mockResolvedValue({
+    mockReadPageStory.mockResolvedValue({
       content: { component: "page", accentColor: "#ec6839" },
     } as never);
     await expect(getPageAccent()).resolves.toBeNull();
@@ -161,7 +161,7 @@ describe("getPageAccent", () => {
 
   it("returns null when the work page has no accent", async () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/work/foo" }) as never);
-    mockGetCachedStory.mockResolvedValue({ content: { component: "work" } } as never);
+    mockReadPageStory.mockResolvedValue({ content: { component: "work" } } as never);
     await expect(getPageAccent()).resolves.toBeNull();
   });
 });

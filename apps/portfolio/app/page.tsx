@@ -1,11 +1,11 @@
 import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { fetchStory } from "@httpjpg/storyblok-next";
+import { readStory } from "@httpjpg/storyblok-next";
 import { imagePreset, STORYBLOK_RELATIONS } from "@httpjpg/storyblok-utils";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import type { Metadata } from "next";
 import { draftMode } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, unstable_rethrow } from "next/navigation";
 
 import { StoryblokLive } from "@/components/providers/storyblok-live";
 import { ThemeSync } from "@/components/ui/theme-sync";
@@ -15,6 +15,9 @@ import { getFeatureFlags } from "@/lib/queries/widgets";
 import { generateCollectionPageSchema, JsonLd, schemaIds, toGraph } from "@/lib/schema-org";
 import { feedAlternates } from "@/lib/seo";
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
+
+/** Blocking, like the root layout; draft reads wait for request time. */
+export const instant = false;
 
 /** The start page lists work; past this the ItemList stops adding signal. */
 const MAX_LISTED_WORK = 30;
@@ -40,9 +43,9 @@ export default async function HomePage({
   const isVisualEditor = search._storyblok || search._draft;
   const isDraft = Boolean(isEnabled || isVisualEditor);
 
-  const story = await fetchStory(STORYBLOK_SLUGS.HOME, {
-    draftMode: isDraft,
-    resolveRelations: [STORYBLOK_RELATIONS.WORK_LIST],
+  const story = await readStory(STORYBLOK_SLUGS.HOME, {
+    draft: isDraft,
+    relations: [STORYBLOK_RELATIONS.WORK_LIST],
   });
 
   if (!story) {
@@ -77,6 +80,7 @@ async function buildHomeSchema() {
   try {
     documents = await getSearchIndex();
   } catch (error) {
+    unstable_rethrow(error);
     // Structured data is a nice-to-have; the page renders without the list.
     captureServerException(error, { tags: { route: "home", feature: "schema" } });
   }
@@ -101,5 +105,3 @@ async function buildHomeSchema() {
     }),
   ]);
 }
-
-export const dynamic = "force-dynamic";

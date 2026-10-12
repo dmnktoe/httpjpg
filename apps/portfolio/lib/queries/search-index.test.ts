@@ -5,15 +5,14 @@ vi.mock("@httpjpg/storyblok-api", () => ({
 }));
 
 vi.mock("@httpjpg/storyblok-next", () => ({
-  CACHE_TAGS: {
-    STORY: (slug: string) => `story-${slug}`,
-    STORIES: "stories",
+  CMS_TAGS: {
+    story: (slug: string) => `cms:story:${slug}`,
+    stories: "cms:stories",
+    config: "cms:config",
   },
 }));
 
-vi.mock("next/cache", () => ({
-  unstable_cache: (fn: (...args: unknown[]) => unknown) => fn,
-}));
+vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
 
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 
@@ -246,9 +245,6 @@ describe("getSearchIndex", () => {
     expect(getStories).toHaveBeenCalledTimes(1);
   });
 
-  // getStories swallows its own fetch errors and answers with an empty page,
-  // so an outage looks exactly like an empty space. Throwing is what stops
-  // that emptiness being cached for an hour.
   it("throws rather than caching an empty result", async () => {
     const getStories = vi.fn().mockResolvedValue({ stories: [], total: 0, perPage: 100 });
     mockGetStoryblokApi.mockReturnValue({ getStories } as never);

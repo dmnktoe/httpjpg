@@ -121,7 +121,7 @@ describe("MiniPlayer", () => {
     );
 
     const record = screen.getByText("◉").parentElement;
-    expect(record).toHaveClass("anim-ps_running");
+    expect(record).toHaveClass("jpg-anim-ps_running");
 
     rerender(
       <MiniPlayer
@@ -138,7 +138,7 @@ describe("MiniPlayer", () => {
       />,
     );
 
-    expect(record).toHaveClass("anim-ps_paused");
+    expect(record).toHaveClass("jpg-anim-ps_paused");
     const shorthands = (record?.className ?? "")
       .split(" ")
       .filter((name) => /(?:^|:)anim_/.test(name) && !name.startsWith("motionReduce:"));
@@ -169,8 +169,7 @@ describe("MiniPlayer", () => {
 
     const link = screen.getByRole("link", { name: "Go to the page playing Night Drive — Nova" });
     expect(link).toHaveAttribute("href", "/work/night-drive");
-    // An internal route, so it must not carry the new-tab treatment: a document
-    // reload would stop the very playback the header is reporting.
+    // Internal route: a new tab or reload would stop playback.
     expect(link).not.toHaveAttribute("target");
   });
 

@@ -3,7 +3,7 @@ vi.mock("@httpjpg/env", () => ({ env: { NEXT_PUBLIC_APP_URL: "https://httpjpg.te
 const {
   draftMode,
   notFound,
-  fetchStory,
+  readStory,
   getSeoDefaults,
   getSiteConfig,
   getSearchIndex,
@@ -14,7 +14,7 @@ const {
   notFound: vi.fn(() => {
     throw new Error("NEXT_NOT_FOUND");
   }),
-  fetchStory: vi.fn(),
+  readStory: vi.fn(),
   getSeoDefaults: vi.fn(),
   getSiteConfig: vi.fn(),
   getSearchIndex: vi.fn(),
@@ -23,8 +23,8 @@ const {
 }));
 
 vi.mock("next/headers", () => ({ draftMode }));
-vi.mock("next/navigation", () => ({ notFound }));
-vi.mock("@httpjpg/storyblok-next", () => ({ fetchStory }));
+vi.mock("next/navigation", () => ({ notFound, unstable_rethrow: vi.fn() }));
+vi.mock("@httpjpg/storyblok-next", () => ({ readStory }));
 vi.mock("@httpjpg/observability/sentry/server.ts", () => ({ captureServerException }));
 vi.mock("@/lib/queries/config", () => ({ getSeoDefaults, getSiteConfig }));
 vi.mock("@/lib/queries/search-index", () => ({ getSearchIndex }));
@@ -60,23 +60,23 @@ beforeEach(() => {
 
 describe("HomePage", () => {
   it("calls notFound when the home story is missing", async () => {
-    fetchStory.mockResolvedValueOnce(null);
+    readStory.mockResolvedValueOnce(null);
 
     await expect(HomePage({ searchParams: search() })).rejects.toThrow("NEXT_NOT_FOUND");
   });
 
   it("renders the story and syncs the light theme", async () => {
-    fetchStory.mockResolvedValueOnce({ content: { component: "page" } });
+    readStory.mockResolvedValueOnce({ content: { component: "page" } });
 
     render(await HomePage({ searchParams: search() }));
 
     expect(screen.getByTestId("blok")).toHaveTextContent("page");
     expect(document.documentElement.dataset.theme).toBe("light");
-    expect(fetchStory).toHaveBeenCalledWith("home", expect.objectContaining({ draftMode: false }));
+    expect(readStory).toHaveBeenCalledWith("home", expect.objectContaining({ draft: false }));
   });
 
   it("syncs the dark theme for dark stories", async () => {
-    fetchStory.mockResolvedValueOnce({ content: { component: "page", isDark: true } });
+    readStory.mockResolvedValueOnce({ content: { component: "page", isDark: true } });
 
     render(await HomePage({ searchParams: search() }));
 
@@ -85,16 +85,16 @@ describe("HomePage", () => {
 
   it("renders the live preview when draft mode is enabled", async () => {
     draftMode.mockResolvedValue({ isEnabled: true });
-    fetchStory.mockResolvedValueOnce({ content: { component: "page" } });
+    readStory.mockResolvedValueOnce({ content: { component: "page" } });
 
     render(await HomePage({ searchParams: search() }));
 
     expect(screen.getByTestId("live")).toBeInTheDocument();
-    expect(fetchStory).toHaveBeenCalledWith("home", expect.objectContaining({ draftMode: true }));
+    expect(readStory).toHaveBeenCalledWith("home", expect.objectContaining({ draft: true }));
   });
 
   it("renders the live preview for the visual editor query param", async () => {
-    fetchStory.mockResolvedValueOnce({ content: { component: "page" } });
+    readStory.mockResolvedValueOnce({ content: { component: "page" } });
 
     render(await HomePage({ searchParams: search({ _storyblok: "1" }) }));
 
@@ -102,7 +102,7 @@ describe("HomePage", () => {
   });
 
   it("renders the live preview for the _draft query param", async () => {
-    fetchStory.mockResolvedValueOnce({ content: { component: "page" } });
+    readStory.mockResolvedValueOnce({ content: { component: "page" } });
 
     render(await HomePage({ searchParams: search({ _draft: "1" }) }));
 
@@ -117,7 +117,7 @@ describe("HomePage schema", () => {
   }
 
   it("lists internal work, newest first, as a CollectionPage", async () => {
-    fetchStory.mockResolvedValueOnce({ content: { component: "page" } });
+    readStory.mockResolvedValueOnce({ content: { component: "page" } });
     getSearchIndex.mockResolvedValueOnce([
       { kind: "work", href: "/work/old", title: "Old", date: "2020-01-01", tags: [], excerpt: "" },
       { kind: "work", href: "/work/new", title: "New", date: "2024-01-01", tags: [], excerpt: "" },
@@ -141,7 +141,7 @@ describe("HomePage schema", () => {
   });
 
   it("still renders an empty list when the index is unavailable", async () => {
-    fetchStory.mockResolvedValueOnce({ content: { component: "page" } });
+    readStory.mockResolvedValueOnce({ content: { component: "page" } });
     getSearchIndex.mockRejectedValueOnce(new Error("down"));
 
     render(await HomePage({ searchParams: search() }));
@@ -151,7 +151,7 @@ describe("HomePage schema", () => {
   });
 
   it("omits the schema when the site has no name", async () => {
-    fetchStory.mockResolvedValueOnce({ content: { component: "page" } });
+    readStory.mockResolvedValueOnce({ content: { component: "page" } });
     getSeoDefaults.mockResolvedValueOnce({});
     getSiteConfig.mockResolvedValueOnce({});
 

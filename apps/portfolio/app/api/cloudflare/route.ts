@@ -1,6 +1,6 @@
 import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { unstable_cache } from "next/cache";
+import { cacheLife } from "next/cache";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -13,22 +13,10 @@ import {
 import { WIDGET_MAX_AGE } from "@/lib/queries/widget-status";
 import { widgetRoute } from "@/lib/widget-route";
 
-/** Browser freshness only — colo is per visitor, so CDNs must not share this. */
+/** Browser-only: the colo is per visitor. */
 const EDGE_MAX_AGE = 60;
 
-const loadAnalytics = unstable_cache(
-  async (token: string, zoneId: string) => fetchCloudflareAnalytics(token, zoneId),
-  ["cloudflare-analytics"],
-  { revalidate: WIDGET_MAX_AGE.cloudflare },
-);
-
-/**
- * Visitor colo from CF-Ray, plus yesterday's zone totals when a token is set.
- *
- * Always 200: local/dev and a GraphQL blip still leave the branded line up.
- * Unlike the other widget routes this stays `private` — caching it publicly
- * would stamp one visitor's colo onto everybody else.
- */
+/** Visitor colo plus yesterday's zone totals. Always 200, always `private`. */
 export const GET = widgetRoute(
   { route: "cloudflare", label: "Cloudflare" },
   async ({ isDraft }) => {
@@ -39,7 +27,7 @@ export const GET = widgetRoute(
     const zoneId = env.CLOUDFLARE_ZONE_ID;
     if (token && zoneId && isCloudflareZoneId(zoneId)) {
       try {
-        analytics = await loadAnalytics(token, zoneId);
+        analytics = await readAnalytics(token, zoneId);
       } catch (error) {
         console.warn("Cloudflare Analytics failed:", error);
         captureServerException(error, { tags: { route: "cloudflare" } });
@@ -53,3 +41,9 @@ export const GET = widgetRoute(
     });
   },
 );
+
+async function readAnalytics(token: string, zoneId: string) {
+  "use cache";
+  cacheLife({ revalidate: WIDGET_MAX_AGE.cloudflare });
+  return fetchCloudflareAnalytics(token, zoneId);
+}

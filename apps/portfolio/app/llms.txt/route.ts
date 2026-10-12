@@ -1,5 +1,7 @@
 import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
+import { unstable_rethrow } from "next/navigation";
+import { connection } from "next/server";
 
 import { getAuthor, getSeoDefaults, getSiteConfig } from "@/lib/queries/config";
 import { getSearchIndex } from "@/lib/queries/search-index";
@@ -17,7 +19,10 @@ export async function GET() {
   try {
     documents = await getSearchIndex();
   } catch (error) {
+    unstable_rethrow(error);
     captureServerException(error, { tags: { route: "llms.txt" } });
+    // Request-time, so a build-time outage doesn't freeze the 503.
+    await connection();
     return new Response("Index unavailable", { status: 503 });
   }
 

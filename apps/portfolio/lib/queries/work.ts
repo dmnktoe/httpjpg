@@ -155,6 +155,7 @@ export async function getAdjacentWork(
   try {
     return await readAdjacentWork(currentSlug);
   } catch (error) {
+    unstable_rethrow(error);
     captureServerException(error, { tags: { query: "adjacent-work" } });
     return {};
   }

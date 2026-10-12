@@ -2,11 +2,13 @@ import { captureServerException } from "@httpjpg/observability/sentry/server.ts"
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { CMS_TAGS } from "@httpjpg/storyblok-next";
 import { cacheLife, cacheTag } from "next/cache";
+import { unstable_rethrow } from "next/navigation";
 
 export async function getLastUpdated(): Promise<string | undefined> {
   try {
     return await readLastPublishedAt();
   } catch (error) {
+    unstable_rethrow(error);
     console.error("Error fetching last-updated timestamp:", error);
     captureServerException(error, { tags: { query: "last-updated" } });
     return undefined;

@@ -15,6 +15,9 @@ vi.mock("@httpjpg/storyblok-api", () => ({
 
 vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
 
+// `connection()` throws outside a Next request scope.
+vi.mock("next/server", () => ({ connection: vi.fn(async () => undefined) }));
+
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 
 import sitemap from "./sitemap";
@@ -92,6 +95,18 @@ describe("sitemap", () => {
 
     expect(entries).toHaveLength(1);
     expect(entries[0].url).toBe("https://example.test");
+    expect(captureServerException).toHaveBeenCalledOnce();
+  });
+
+  it("treats an empty Storyblok answer as a failure instead of caching it", async () => {
+    // `getStories` swallows fetch errors and answers with an empty page.
+    getStories.mockResolvedValueOnce({ stories: [] });
+
+    const entries = await sitemap();
+
+    expect(entries).toEqual([
+      { url: "https://example.test", changeFrequency: "weekly", priority: 1 },
+    ]);
     expect(captureServerException).toHaveBeenCalledOnce();
   });
 

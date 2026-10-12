@@ -1,5 +1,5 @@
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { fetchStory } from "@httpjpg/storyblok-next";
+import { readStory } from "@httpjpg/storyblok-next";
 import { firstImageFilename } from "@httpjpg/storyblok-utils";
 import { colors } from "@httpjpg/tokens/colors";
 import { spacing } from "@httpjpg/tokens/spacing";
@@ -19,9 +19,6 @@ import {
   toOgImageUrl,
 } from "@/lib/og-work-meta";
 import { enforceRateLimit } from "@/lib/rate-limit";
-
-export const runtime = "nodejs";
-export const revalidate = 3600;
 
 const WIDTH = 1200;
 const HEIGHT = 630;
@@ -356,7 +353,7 @@ export async function GET(request: NextRequest, ctx: { params: Promise<{ slug: s
   const { slug } = await ctx.params;
   const fullSlug = slug.join("/");
   try {
-    const story = await fetchStory(fullSlug, { draftMode: false });
+    const story = await readStory(fullSlug);
     if (!story) {
       return new Response("Not Found", { status: 404 });
     }

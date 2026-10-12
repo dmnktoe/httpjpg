@@ -1,6 +1,6 @@
 import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { unstable_cache } from "next/cache";
+import { cacheLife } from "next/cache";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -15,12 +15,6 @@ import { widgetRoute } from "@/lib/widget-route";
 
 /** Browser freshness only — colo is per visitor, so CDNs must not share this. */
 const EDGE_MAX_AGE = 60;
-
-const loadAnalytics = unstable_cache(
-  async (token: string, zoneId: string) => fetchCloudflareAnalytics(token, zoneId),
-  ["cloudflare-analytics"],
-  { revalidate: WIDGET_MAX_AGE.cloudflare },
-);
 
 /**
  * Visitor colo from CF-Ray, plus yesterday's zone totals when a token is set.
@@ -39,7 +33,7 @@ export const GET = widgetRoute(
     const zoneId = env.CLOUDFLARE_ZONE_ID;
     if (token && zoneId && isCloudflareZoneId(zoneId)) {
       try {
-        analytics = await loadAnalytics(token, zoneId);
+        analytics = await readAnalytics(token, zoneId);
       } catch (error) {
         console.warn("Cloudflare Analytics failed:", error);
         captureServerException(error, { tags: { route: "cloudflare" } });
@@ -53,3 +47,9 @@ export const GET = widgetRoute(
     });
   },
 );
+
+async function readAnalytics(token: string, zoneId: string) {
+  "use cache";
+  cacheLife({ revalidate: WIDGET_MAX_AGE.cloudflare });
+  return fetchCloudflareAnalytics(token, zoneId);
+}

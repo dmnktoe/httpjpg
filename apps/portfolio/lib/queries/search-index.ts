@@ -1,7 +1,7 @@
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
-import { CACHE_TAGS } from "@httpjpg/storyblok-next";
+import { CMS_TAGS } from "@httpjpg/storyblok-next";
 import { firstImage, resolveWorkTags } from "@httpjpg/storyblok-utils";
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 import type { SearchDocument, SearchFeatured } from "../search/ranking";
 import { collectStoryMedia } from "../search/story-media";
@@ -78,44 +78,41 @@ function toFeatured(
 
 /** The published corpus both search and the ask endpoint read. */
 export async function getSearchIndex(): Promise<SearchDocument[]> {
-  const buildIndex = async (): Promise<SearchDocument[]> => {
-    const api = getStoryblokApi({ draftMode: false });
-    const stories: IndexableStory[] = [];
+  "use cache";
+  cacheLife("cms");
+  cacheTag(CMS_TAGS.stories);
 
-    // Paginated rather than capped at one page: a silent truncation would
-    // simply drop later work out of search with nothing to show for it.
-    for (let page = 1; page <= MAX_PAGES; page += 1) {
-      const response = await api.getStories({
-        per_page: PER_PAGE,
-        page,
-        version: "published",
-      });
-      stories.push(...((response.stories ?? []) as IndexableStory[]));
+  const api = getStoryblokApi({ draftMode: false });
+  const stories: IndexableStory[] = [];
 
-      const perPage = response.perPage || PER_PAGE;
-      const total = response.total ?? stories.length;
-      if (stories.length >= total || page * perPage >= total) {
-        break;
-      }
+  // Paginated rather than capped at one page: a silent truncation would
+  // simply drop later work out of search with nothing to show for it.
+  for (let page = 1; page <= MAX_PAGES; page += 1) {
+    const response = await api.getStories({
+      per_page: PER_PAGE,
+      page,
+      version: "published",
+    });
+    stories.push(...((response.stories ?? []) as IndexableStory[]));
+
+    const perPage = response.perPage || PER_PAGE;
+    const total = response.total ?? stories.length;
+    if (stories.length >= total || page * perPage >= total) {
+      break;
     }
+  }
 
-    // `getStories` swallows its own fetch errors and answers with an empty
-    // page, so an outage is indistinguishable from an empty space. Throwing
-    // keeps `unstable_cache` from storing it — otherwise a two-second blip
-    // during a refill leaves search answering "no matches" for an hour. The
-    // caller reports it and returns its error response.
-    if (stories.length === 0) {
-      throw new Error("Storyblok returned no published stories for the search index");
-    }
+  // `getStories` swallows its own fetch errors and answers with an empty
+  // page, so an outage is indistinguishable from an empty space. Throwing
+  // keeps the cache scope from storing it — otherwise a two-second blip
+  // during a refill leaves search answering "no matches" for an hour. The
+  // caller reports it and returns its error response.
+  if (stories.length === 0) {
+    throw new Error("Storyblok returned no published stories for the search index");
+  }
 
-    return stories
-      .filter((story) => !EXCLUDED_SLUGS.has(story.full_slug || story.slug))
-      .map(toSearchDocument)
-      .filter((document) => Boolean(document.title));
-  };
-
-  return unstable_cache(buildIndex, ["search-index"], {
-    tags: [CACHE_TAGS.STORIES],
-    revalidate: 3600,
-  })();
+  return stories
+    .filter((story) => !EXCLUDED_SLUGS.has(story.full_slug || story.slug))
+    .map(toSearchDocument)
+    .filter((document) => Boolean(document.title));
 }

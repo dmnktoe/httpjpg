@@ -1,7 +1,7 @@
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import type { SbConfigStory } from "@httpjpg/storyblok-ui";
 import { draftMode } from "next/headers";
-import { type NextRequest, NextResponse } from "next/server";
+import { connection, type NextRequest, NextResponse } from "next/server";
 
 import { API_ERROR, type ApiErrorBody, jsonError } from "./api-error";
 import { widgetCacheHeaders } from "./cache-headers";
@@ -29,7 +29,7 @@ export interface WidgetSettingOptions {
 
 /**
  * Reads one widget setting from the cached config story. Goes through
- * `getConfig()` so every route shares the `CACHE_TAGS.CONFIG` entry instead of
+ * `getConfig()` so every route shares the `CMS_TAGS.config` entry instead of
  * hitting Storyblok per request.
  */
 export async function resolveWidgetSetting({
@@ -126,6 +126,11 @@ export function widgetRoute(
   handler: (context: WidgetRouteContext) => Promise<NextResponse>,
 ): (request: NextRequest) => Promise<NextResponse> {
   return async function handleWidgetRequest(request: NextRequest): Promise<NextResponse> {
+    // Request-time on purpose: Cache Components would otherwise prerender a
+    // handler that reads no request data, skipping the rate limit and draft
+    // check — and the prerender bail-out would land in the catch below.
+    // Freshness comes from each loader's own cache scope instead.
+    await connection();
     const limited = await enforceRateLimit(request);
     if (limited) {
       return limited;

@@ -1,12 +1,13 @@
 import { env } from "@httpjpg/env";
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
+import { CMS_TAGS } from "@httpjpg/storyblok-next";
 import {
   extractPlainText,
   firstImageFilename,
   imagePreset,
   type StoryblokRichText,
 } from "@httpjpg/storyblok-utils";
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 import { getFeatureFlags } from "@/lib/queries/widgets";
 
@@ -36,20 +37,6 @@ function escapeXml(s: string): string {
     .replace(/'/g, "&apos;");
 }
 
-const fetchWorkStories = unstable_cache(
-  async (): Promise<FeedStory[]> => {
-    const res = await getStoryblokApi({ draftMode: false }).getStories({
-      starts_with: "work/",
-      per_page: 50,
-      sort_by: "content.date:desc",
-      version: "published",
-    });
-    return (res.stories ?? []) as FeedStory[];
-  },
-  ["work-feed"],
-  { revalidate: 3600 },
-);
-
 export async function GET() {
   const flags = await getFeatureFlags();
   if (!flags.rssFeedEnabled) {
@@ -57,7 +44,7 @@ export async function GET() {
   }
 
   const base = env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
-  const stories = (await fetchWorkStories()).filter((s) => {
+  const stories = (await readWorkStories()).filter((s) => {
     const full = s.full_slug || s.slug;
     const rest = full.replace(/^work\//, "");
     return rest && !rest.includes("/");
@@ -103,4 +90,17 @@ ${items}
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
     },
   });
+}
+
+async function readWorkStories(): Promise<FeedStory[]> {
+  "use cache";
+  cacheLife("cms");
+  cacheTag(CMS_TAGS.stories);
+  const res = await getStoryblokApi({ draftMode: false }).getStories({
+    starts_with: "work/",
+    per_page: 50,
+    sort_by: "content.date:desc",
+    version: "published",
+  });
+  return (res.stories ?? []) as FeedStory[];
 }

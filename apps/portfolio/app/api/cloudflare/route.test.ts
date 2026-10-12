@@ -1,4 +1,9 @@
 // @vitest-environment node
+// `connection()` throws outside a Next request scope.
+vi.mock("next/server", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("next/server")>()),
+  connection: async () => undefined,
+}));
 const mockEnv = vi.hoisted(() => ({
   CLOUDFLARE_API_TOKEN: "token" as string | undefined,
   CLOUDFLARE_ZONE_ID: "0123456789abcdef0123456789abcdef" as string | undefined,
@@ -28,9 +33,7 @@ vi.mock("next/headers", () => ({
   })),
 }));
 
-vi.mock("next/cache", () => ({
-  unstable_cache: (fn: unknown) => fn,
-}));
+vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
 
 vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),

@@ -6,8 +6,7 @@ export interface SearchMedia {
   thumb: string;
   /**
    * The unprocessed asset, so a consumer rendering wider than the strip can cut
-   * its own. Optional for the same reason `tagValues` is: `unstable_cache` keeps
-   * serving the previous build's documents for up to an hour after a deploy.
+   * its own. Optional like `tagValues` (see there).
    */
   source?: string;
   focus?: string;
@@ -29,9 +28,10 @@ export interface SearchDocument {
   /** Display labels, e.g. `TypeScript`. What search matches and the UI renders. */
   tags: string[];
   /**
-   * Canonical vocabulary values, e.g. `typescript`. Optional because
-   * `unstable_cache` keeps serving the previous build's documents for up to an
-   * hour after a deploy, so every reader has to tolerate their absence.
+   * Canonical vocabulary values, e.g. `typescript`. Optional because the old
+   * data-cache index outlived deploys; `"use cache"` keys by build, so
+   * every document now carries it, but readers still tolerate its absence
+   * until the type is tightened.
    */
   tagValues?: string[];
   excerpt: string;
@@ -39,8 +39,7 @@ export interface SearchDocument {
   media?: SearchMedia[];
   /**
    * First featured image (`content.images`), the same asset the nav hover
-   * preview uses. Optional because `unstable_cache` keeps serving the previous
-   * build's documents for up to an hour after a deploy.
+   * preview uses. Optional like `tagValues` (see there).
    */
   featured?: SearchFeatured;
 }

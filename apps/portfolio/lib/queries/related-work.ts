@@ -1,15 +1,10 @@
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { getResponsiveImage, workTagLabels } from "@httpjpg/storyblok-utils";
 
+import { RELATED_CARD_ASPECT_RATIO, RELATED_LIST_ASPECT_RATIO } from "../related-work-crop";
 import type { SearchDocument } from "../search/ranking";
 import { relatedDocuments } from "../search/related";
 import { getSearchIndex } from "./search-index";
-
-/** The crop the cards are laid out at, so the box and the cut file cannot drift. */
-export const RELATED_CARD_ASPECT_RATIO = "4/3";
-
-/** The crop the list thumbs are laid out at, so the box and the cut file cannot drift. */
-export const RELATED_LIST_ASPECT_RATIO = "1/1";
 
 const CARD_WIDTHS = [320, 480, 640, 960, 1280];
 const LIST_WIDTHS = [40, 80, 120];

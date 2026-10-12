@@ -5,24 +5,23 @@ vi.mock("@httpjpg/storyblok-api", () => ({
 }));
 
 vi.mock("@httpjpg/storyblok-next", () => ({
-  CACHE_TAGS: {
-    STORY: (slug: string) => `story-${slug}`,
-    STORIES: "stories",
+  CMS_TAGS: {
+    story: (slug: string) => `cms:story:${slug}`,
+    stories: "cms:stories",
+    config: "cms:config",
   },
-  fetchStory: vi.fn(),
+  readStory: vi.fn(),
 }));
 
-vi.mock("next/cache", () => ({
-  unstable_cache: (fn: (...args: unknown[]) => unknown) => fn,
-}));
+vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
 
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
-import { fetchStory } from "@httpjpg/storyblok-next";
+import { readStory } from "@httpjpg/storyblok-next";
 
-import { getAdjacentWork, getCachedStory, getRecentWork } from "./work";
+import { getAdjacentWork, readPageStory, getRecentWork } from "./work";
 
 const mockGetStoryblokApi = vi.mocked(getStoryblokApi);
-const mockFetchStory = vi.mocked(fetchStory);
+const mockReadStory = vi.mocked(readStory);
 
 function workStory(overrides: Record<string, unknown> = {}) {
   return {
@@ -35,35 +34,35 @@ function workStory(overrides: Record<string, unknown> = {}) {
   };
 }
 
-describe("getCachedStory", () => {
+describe("readPageStory", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("delegates to fetchStory with the work-list relation", async () => {
-    mockFetchStory.mockResolvedValue({ uuid: "u" } as never);
-    await getCachedStory("work/demo", { draftMode: true });
-    expect(mockFetchStory).toHaveBeenCalledWith("work/demo", {
-      draftMode: true,
-      resolveRelations: ["work_list.work"],
+  it("delegates to readStory with the work-list relation", async () => {
+    mockReadStory.mockResolvedValue({ uuid: "u" } as never);
+    await readPageStory("work/demo", { draft: true });
+    expect(mockReadStory).toHaveBeenCalledWith("work/demo", {
+      draft: true,
+      relations: ["work_list.work"],
     });
   });
 
-  it("forwards the draftMode flag through to fetchStory", async () => {
-    mockFetchStory.mockResolvedValue({ uuid: "u" } as never);
-    await getCachedStory("home", { draftMode: false });
-    expect(mockFetchStory).toHaveBeenCalledWith("home", {
-      draftMode: false,
-      resolveRelations: ["work_list.work"],
+  it("forwards the draft flag through to readStory", async () => {
+    mockReadStory.mockResolvedValue({ uuid: "u" } as never);
+    await readPageStory("home", { draft: false });
+    expect(mockReadStory).toHaveBeenCalledWith("home", {
+      draft: false,
+      relations: ["work_list.work"],
     });
   });
 
-  it("forwards a non-default language through to fetchStory", async () => {
-    mockFetchStory.mockResolvedValue({ uuid: "u" } as never);
-    await getCachedStory("cv", { draftMode: false, language: "de" });
-    expect(mockFetchStory).toHaveBeenCalledWith("cv", {
-      draftMode: false,
-      resolveRelations: ["work_list.work"],
+  it("forwards a non-default language through to readStory", async () => {
+    mockReadStory.mockResolvedValue({ uuid: "u" } as never);
+    await readPageStory("cv", { draft: false, language: "de" });
+    expect(mockReadStory).toHaveBeenCalledWith("cv", {
+      draft: false,
+      relations: ["work_list.work"],
       language: "de",
     });
   });

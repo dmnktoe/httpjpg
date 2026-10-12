@@ -9,8 +9,8 @@ vi.mock("@httpjpg/env", () => ({
   },
 }));
 
-vi.mock("@httpjpg/observability/sentry/edge.ts", () => ({
-  captureEdgeException: vi.fn(),
+vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
+  captureServerException: vi.fn(),
 }));
 
 vi.mock("@/lib/rate-limit", () => ({
@@ -31,7 +31,7 @@ vi.mock("@httpjpg/spotify", async (importActual) => {
   };
 });
 
-import { captureEdgeException } from "@httpjpg/observability/sentry/edge.ts";
+import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { SpotifyForbiddenError, SpotifyUnauthorizedError } from "@httpjpg/spotify";
 
 import { enforceRateLimit } from "@/lib/rate-limit";
@@ -52,7 +52,7 @@ describe("GET /api/spotify/now-playing", () => {
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({ data: { title: "Song", isPlaying: true } });
-    expect(captureEdgeException).not.toHaveBeenCalled();
+    expect(captureServerException).not.toHaveBeenCalled();
   });
 
   it("answers a missing Premium account with a 200 and no Sentry report", async () => {
@@ -65,7 +65,7 @@ describe("GET /api/spotify/now-playing", () => {
       data: null,
       unavailable: "premium_missing",
     });
-    expect(captureEdgeException).not.toHaveBeenCalled();
+    expect(captureServerException).not.toHaveBeenCalled();
   });
 
   it("caches the premium-missing answer so polling stops hitting Spotify", async () => {
@@ -83,7 +83,7 @@ describe("GET /api/spotify/now-playing", () => {
 
     expect(response.status).toBe(500);
     await expect(response.json()).resolves.toMatchObject({ error: "internal_error" });
-    expect(captureEdgeException).toHaveBeenCalledOnce();
+    expect(captureServerException).toHaveBeenCalledOnce();
   });
 
   it("retries once after an expired access token", async () => {

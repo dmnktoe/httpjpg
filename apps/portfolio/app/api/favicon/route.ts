@@ -5,8 +5,6 @@ import { NextResponse } from "next/server";
 import { fetchFavicon } from "@/lib/integrations/favicon";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
-export const runtime = "nodejs";
-
 const MIN_SIZE = 16;
 const MAX_SIZE = 256;
 const DEFAULT_SIZE = 16;

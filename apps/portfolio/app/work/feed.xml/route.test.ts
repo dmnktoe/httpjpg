@@ -14,10 +14,7 @@ vi.mock("@httpjpg/storyblok-api", () => ({
 
 vi.mock("@/lib/queries/widgets", () => ({ getFeatureFlags }));
 
-// unstable_cache wraps the fetcher — pass it through unchanged.
-vi.mock("next/cache", () => ({
-  unstable_cache: (fn: unknown) => fn,
-}));
+vi.mock("next/cache", () => ({ cacheLife: vi.fn(), cacheTag: vi.fn() }));
 
 import { GET } from "./route";
 

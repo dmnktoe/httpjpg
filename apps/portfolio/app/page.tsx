@@ -1,4 +1,4 @@
-import { fetchStory } from "@httpjpg/storyblok-next";
+import { readStory } from "@httpjpg/storyblok-next";
 import { STORYBLOK_RELATIONS } from "@httpjpg/storyblok-utils";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { draftMode } from "next/headers";
@@ -7,6 +7,12 @@ import { notFound } from "next/navigation";
 import { StoryblokLive } from "@/components/providers/storyblok-live";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
+
+/**
+ * Allowed to block, like the root layout above it: Visual Editor and draft
+ * reads are uncached and wait for request time.
+ */
+export const instant = false;
 
 export default async function HomePage({
   searchParams,
@@ -19,9 +25,9 @@ export default async function HomePage({
   const isVisualEditor = search._storyblok || search._draft;
   const isDraft = Boolean(isEnabled || isVisualEditor);
 
-  const story = await fetchStory(STORYBLOK_SLUGS.HOME, {
-    draftMode: isDraft,
-    resolveRelations: [STORYBLOK_RELATIONS.WORK_LIST],
+  const story = await readStory(STORYBLOK_SLUGS.HOME, {
+    draft: isDraft,
+    relations: [STORYBLOK_RELATIONS.WORK_LIST],
   });
 
   if (!story) {
@@ -41,5 +47,3 @@ export default async function HomePage({
     </>
   );
 }
-
-export const dynamic = "force-dynamic";

@@ -238,31 +238,35 @@ export default function MyPage() {
               {[
                 {
                   cat: "Layout",
-                  items: "Box · Grid · GridItem · Center · Container · Stack · Section · Page",
+                  items:
+                    "Box · Grid · GridItem · Center · Container · Stack · Section · Page · Divider",
                 },
                 {
                   cat: "Typography",
-                  items: "Headline · Paragraph · Link · AsciiArt · ShimmeringText",
+                  items: "Headline · Paragraph · ShimmeringText · Richtext",
                 },
                 {
                   cat: "Media",
                   items:
-                    "Image · Video · Slideshow · ScrollClipImage · Lightbox · ImageComparisonSlider",
+                    "Image · Video · Slideshow · ScrollClipImage · Lightbox · ImageComparisonSlider · ImageOverlay",
                 },
                 {
                   cat: "Display",
                   items:
-                    "Accordion · Callout · CodeBlock · Stats · List · Tag · WorkCard · CopyrightLabel · Icon · Tooltip · ImagePreview · WorkList · Badges",
+                    "Accordion · Callout · CodeBlock · Stats · List · Tag · WorkCard · CopyrightLabel · Icon · Tooltip · ImagePreview · WorkList · Badges · AsciiArt",
                 },
                 { cat: "Inputs", items: "Button · ButtonGroup · IconButton · Loading · Checkbox" },
-                { cat: "Navigation", items: "Header · Footer · NavLink · SearchTrigger" },
+                {
+                  cat: "Navigation",
+                  items: "Header · Footer · NavLink · Link · SearchTrigger",
+                },
                 { cat: "Motion", items: "CustomCursor · MouseTrail · AnimateInView · Marquee" },
                 {
                   cat: "Widgets",
                   items:
-                    "MusicPlayer · NowPlaying · MiniPlayer · CommandPalette · FooterStatusLine · CloudflareLogo · Userbars · DesktopDownloads",
+                    "MusicPlayer · NowPlaying · MiniPlayer · CommandPalette · FooterStatusLine · CloudflareLogo · Userbars · DesktopDownloads · CookieBanner · CookieCenter",
                 },
-                { cat: "Decoration", items: "Divider · ImageOverlay · FloatingPreviewBadge" },
+                { cat: "Decoration", items: "FloatingPreviewBadge" },
               ].map((g) => (
                 <Box key={g.cat} css={{ p: "4", borderColor: "pageFg", borderTop: "2px solid" }}>
                   <Box

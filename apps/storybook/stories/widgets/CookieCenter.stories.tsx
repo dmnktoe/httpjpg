@@ -14,7 +14,15 @@ const PREVIOUS_CONSENT: ConsentState = {
 const meta = {
   title: "Widgets/CookieCenter",
   component: CookieCenter,
-  parameters: { layout: "padded" },
+  parameters: {
+    layout: "padded",
+    docs: {
+      description: {
+        component:
+          "Inline preference manager for the cookie policy page. Analytics is opt-out; vendor rows link to cookiedatabase.org when catalogued.",
+      },
+    },
+  },
   tags: ["autodocs"],
   args: {
     onSave: fn(),

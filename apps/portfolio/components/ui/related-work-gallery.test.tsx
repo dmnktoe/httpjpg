@@ -1,6 +1,13 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach } from "vitest";
 
+vi.mock("@httpjpg/analytics", () => ({
+  trackRelatedWorkClick: vi.fn(),
+  trackRelatedWorkView: vi.fn(),
+}));
+
+import { trackRelatedWorkClick, trackRelatedWorkView } from "@httpjpg/analytics";
+
 import { RelatedWorkGallery } from "./related-work-gallery";
 
 const STORAGE_KEY = "httpjpg:related-work-view";
@@ -106,6 +113,7 @@ describe("RelatedWorkGallery", () => {
     clickView("grid");
 
     expect(window.localStorage.getItem(STORAGE_KEY)).toBe("grid");
+    expect(trackRelatedWorkView).toHaveBeenCalledWith("grid");
   });
 
   it("restores a stored choice on the next page", async () => {
@@ -126,5 +134,17 @@ describe("RelatedWorkGallery", () => {
     render(<RelatedWorkGallery items={ITEMS} />);
 
     expect(screen.getByRole("button", { name: /list/i })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("tracks a neighbour click with the current view", () => {
+    render(<RelatedWorkGallery items={ITEMS} />);
+
+    fireEvent.click(screen.getByRole("link", { name: /Field Recorder/ }));
+
+    expect(trackRelatedWorkClick).toHaveBeenCalledWith({
+      href: "/work/field-recorder",
+      view: "list",
+      title: "Field Recorder",
+    });
   });
 });

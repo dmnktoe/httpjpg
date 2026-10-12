@@ -29,6 +29,10 @@ const meta = {
     aspectRatio: { control: "text" },
     beforeLabel: { control: "text" },
     afterLabel: { control: "text" },
+    onInteract: {
+      action: "interact",
+      description: "Fires once on the first drag or key move",
+    },
   },
 } satisfies Meta<typeof ImageComparisonSlider>;
 

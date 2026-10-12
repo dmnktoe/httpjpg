@@ -13,7 +13,8 @@ export function initSentryClient() {
     environment,
     release,
     enabled: isEnabled,
-    sendDefaultPii: false,
+    // Sentry runs under the required "monitoring" consent category, so keep it PII-free.
+    dataCollection: { userInfo: false, cookies: false, httpBodies: [] },
     attachStacktrace: true,
     normalizeDepth: 5,
     tracesSampleRate: isProduction ? 0.1 : 1.0,

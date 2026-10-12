@@ -201,8 +201,6 @@ jobs:
         run: |
           tar -xzf portfolio-build.tar.gz -C apps/portfolio
           cat apps/portfolio/.next/BUILD_ID
-      # Keyed on the Playwright version, not the lockfile: every dependency bump
-      # would otherwise save another ~270 MB copy of the same Chromium.
       - name: Resolve Playwright version
         id: playwright-version
         run: echo "version=$(pnpm --filter=@httpjpg/portfolio exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"

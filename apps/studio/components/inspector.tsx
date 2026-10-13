@@ -4,6 +4,10 @@ import { useState } from "react";
 import { css } from "styled-system/css";
 
 import { AssetPicker, StoryPicker } from "./asset-picker";
+import { fieldCss, fieldInline, labelCss } from "./inspector-field-css";
+import { NumberField } from "./inspector-number-field";
+import { SelectField } from "./inspector-select-field";
+import { SpacingPair } from "./inspector-spacing-pair";
 import {
   ALIGN_SELF_OPTIONS,
   blokPlugin,
@@ -19,7 +23,6 @@ import {
   hiddenFieldForViewport,
   type ItemSpacing,
   JUSTIFY_SELF_OPTIONS,
-  SPACING_OPTIONS,
   type SpacingSet,
   type SpacingSide,
   type Viewport,
@@ -371,167 +374,6 @@ function Row({ label, value, mono }: { label: string; value: string; mono?: bool
     </div>
   );
 }
-
-const labelCss = css({ display: "flex", flexDirection: "column", gap: 1 });
-const fieldInline = {
-  padding: 1,
-  border: "1px solid",
-  borderColor: "pageBorder",
-  bg: "pageBg",
-  color: "pageFg",
-  fontFamily: "mono",
-  fontSize: "sm",
-} as const;
-const fieldCss = css({ width: "100%", ...fieldInline });
-
-function NumberField({
-  label,
-  value,
-  min,
-  max,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min?: number;
-  max?: number;
-  onChange(v: number): void;
-}) {
-  return (
-    <label className={labelCss}>
-      <span className={css({ opacity: 0.6 })}>{label}</span>
-      <input
-        type="number"
-        value={value}
-        min={min}
-        max={max}
-        aria-label={label}
-        onChange={(e) => {
-          const v = Number(e.target.value);
-          if (Number.isFinite(v)) onChange(v);
-        }}
-        className={fieldCss}
-      />
-    </label>
-  );
-}
-
-function SelectField({
-  label,
-  value,
-  options,
-  onChange,
-  hint,
-}: {
-  label: string;
-  value: string;
-  options: { value: string; label: string }[];
-  onChange(v: string): void;
-  hint?: string;
-}) {
-  return (
-    <label className={labelCss}>
-      <span className={css({ display: "flex", justifyContent: "space-between", opacity: 0.6 })}>
-        <span>{label}</span>
-        {hint && <span className={css({ opacity: 0.6 })}>{hint}</span>}
-      </span>
-      <select value={value} onChange={(e) => onChange(e.target.value)} className={fieldCss}>
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
-}
-
-const SIDE_ROWS: { label: string; sides: [SpacingSide, SpacingSide] }[] = [
-  { label: "Top / Bottom", sides: ["mt", "mb"] },
-  { label: "Left / Right", sides: ["ml", "mr"] },
-];
-
-function SpacingPair({
-  legend,
-  ownSet,
-  inherited,
-  prefix,
-  onChange,
-}: {
-  legend: string;
-  ownSet: SpacingSet;
-  inherited: SpacingSet;
-  prefix: "m" | "p";
-  onChange(side: SpacingSide, value: string): void;
-}) {
-  return (
-    <fieldset
-      className={css({
-        display: "flex",
-        flexDirection: "column",
-        gap: 1,
-        padding: 2,
-        border: "1px solid",
-        borderColor: "pageBorder",
-      })}
-    >
-      <legend className={css({ opacity: 0.6, fontSize: "sm", textTransform: "uppercase" })}>
-        {legend}
-      </legend>
-      {SIDE_ROWS.map(({ label, sides }) => {
-        const [a, b] = sides.map((s) => `${prefix}${s.slice(1)}` as SpacingSide) as [
-          SpacingSide,
-          SpacingSide,
-        ];
-        return (
-          <div
-            key={label}
-            className={css({ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 })}
-          >
-            <SpacingField side={a} ownSet={ownSet} inherited={inherited} onChange={onChange} />
-            <SpacingField side={b} ownSet={ownSet} inherited={inherited} onChange={onChange} />
-          </div>
-        );
-      })}
-    </fieldset>
-  );
-}
-
-function SpacingField({
-  side,
-  ownSet,
-  inherited,
-  onChange,
-}: {
-  side: SpacingSide;
-  ownSet: SpacingSet;
-  inherited: SpacingSet;
-  onChange(side: SpacingSide, value: string): void;
-}) {
-  const own = ownSet[side] ?? "";
-  const inheritedValue = inherited[side];
-  const hint = !own && inheritedValue ? `↑ ${inheritedValue}` : undefined;
-  return (
-    <SelectField
-      label={SIDE_LABEL[side]}
-      value={own}
-      options={SPACING_OPTIONS}
-      onChange={(v) => onChange(side, v)}
-      hint={hint}
-    />
-  );
-}
-
-const SIDE_LABEL: Record<SpacingSide, string> = {
-  mt: "Top",
-  mb: "Bottom",
-  ml: "Left",
-  mr: "Right",
-  pt: "Top",
-  pb: "Bottom",
-  pl: "Left",
-  pr: "Right",
-};
 
 function BlokField({
   field,

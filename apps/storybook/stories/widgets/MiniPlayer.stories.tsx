@@ -6,7 +6,7 @@ import { fn } from "storybook/test";
  * Header transport for the page-wide audio queue. Fully controlled here;
  * on the site it is wired through `AudioPlayerProvider`.
  */
-const meta: Meta<typeof MiniPlayer> = {
+const meta = {
   title: "Widgets/MiniPlayer",
   component: MiniPlayer,
   parameters: {
@@ -41,10 +41,10 @@ const meta: Meta<typeof MiniPlayer> = {
     onPrevious: fn(),
     onStop: fn(),
   },
-};
+} satisfies Meta<typeof MiniPlayer>;
 
 export default meta;
-type Story = StoryObj<typeof MiniPlayer>;
+type Story = StoryObj<typeof meta>;
 
 /**
  * The page-wide player as it sits in the header, right behind the ⌘+K trigger.

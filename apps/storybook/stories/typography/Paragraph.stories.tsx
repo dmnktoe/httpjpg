@@ -254,8 +254,8 @@ export const MultiParagraph: Story = {
         experience. Proper typography enhances comprehension and keeps readers engaged.
       </Paragraph>
       <Paragraph size="sm" color="muted">
-        Small text is perfect for captions, footnotes, or supplementary information that supports
-        the main content without overwhelming it.
+        Small text suits captions, footnotes, or supplementary information that supports the main
+        content without overwhelming it.
       </Paragraph>
     </>
   ),

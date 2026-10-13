@@ -17,6 +17,7 @@ function HookHost(_args: ParallaxArgs) {
 const meta = {
   title: "Utilities/useParallax",
   component: HookHost,
+  tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
     docs: {

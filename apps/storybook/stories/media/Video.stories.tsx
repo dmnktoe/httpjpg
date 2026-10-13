@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
-const meta: Meta<typeof Video> = {
+const meta = {
   title: "Media/Video",
   component: Video,
   parameters: {
@@ -66,10 +66,10 @@ const meta: Meta<typeof Video> = {
       description: "How the native file fills its box. Ignored when the layout is intrinsic.",
     },
   },
-};
+} satisfies Meta<typeof Video>;
 
 export default meta;
-type Story = StoryObj<typeof Video>;
+type Story = StoryObj<typeof meta>;
 
 /**
  * YouTube video embed

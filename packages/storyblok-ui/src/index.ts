@@ -29,7 +29,7 @@ export {
   type SbScrollClipImageProps,
 } from "./components/scroll-clip-image/SbScrollClipImage";
 export { SbSection, type SbSectionProps } from "./components/section/SbSection";
-export type { MenuLink, SbConfigStory } from "./components/settings/SbSettings";
+export type { MenuLink, SbConfigStory } from "./components/settings/types";
 export { SbSlideshow, type SbSlideshowProps } from "./components/slideshow/SbSlideshow";
 export { SbStats, type SbStatsProps } from "./components/stats/SbStats";
 export { SbVideo, type SbVideoProps } from "./components/video/SbVideo";

@@ -38,9 +38,7 @@
     "**/styled-system/**",
     "**/styles.css",
     "**/globals.css",
-    "**/tailwind-animate.css",
     "**/coverage/**",
-    "**/.panda-studio/**",
     "**/storybook-static/**"
   ]
 }

@@ -253,7 +253,7 @@ export default function MyPage() {
                 {
                   cat: "Display",
                   items:
-                    "Accordion · Callout · CodeBlock · Stats · List · Tag · WorkCard · CopyrightLabel · Icon · Tooltip · ImagePreview · WorkList · Badges · AsciiArt",
+                    "Accordion · Callout · CodeBlock · Stats · List · Tag · WorkCard · CopyrightLabel · Icon · Tooltip · ImagePreview · WorkList · Badges · AsciiArt · FloatingPreviewBadge",
                 },
                 { cat: "Inputs", items: "Button · ButtonGroup · IconButton · Loading · Checkbox" },
                 {
@@ -266,7 +266,15 @@ export default function MyPage() {
                   items:
                     "MusicPlayer · NowPlaying · MiniPlayer · CommandPalette · FooterStatusLine · CloudflareLogo · Userbars · DesktopDownloads · CookieBanner · CookieCenter",
                 },
-                { cat: "Decoration", items: "FloatingPreviewBadge" },
+                {
+                  cat: "Utilities",
+                  items: "Storyblok Image CDN · useParallax",
+                },
+                {
+                  cat: "Foundations",
+                  items:
+                    "Colors · Typography · Spacing · Sizes · Border Radius · Shadows · Opacity · Z-Index · Transitions · Work Tags",
+                },
               ].map((g) => (
                 <Box key={g.cat} css={{ p: "4", borderColor: "pageFg", borderTop: "2px solid" }}>
                   <Box

@@ -62,7 +62,13 @@ const ANSWER =
 const meta = {
   title: "Widgets/CommandPalette",
   component: CommandPalette,
-  parameters: { layout: "fullscreen" },
+  parameters: {
+    layout: "fullscreen",
+    // Docs renders every story on one page, so inline each open palette would
+    // portal into the same body and stack its own scroll lock, focus trap and
+    // key handling on the others'. An iframe per story keeps them apart.
+    docs: { story: { inline: false, iframeHeight: 640 } },
+  },
   tags: ["autodocs"],
   // The palette is fully controlled. Stories that only need to look right take
   // these no-ops; Playground swaps in real state so it can be typed into.

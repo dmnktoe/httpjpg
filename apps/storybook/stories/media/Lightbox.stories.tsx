@@ -28,7 +28,13 @@ const ITEMS: LightboxItem[] = [
 const meta = {
   title: "Media/Lightbox",
   component: Lightbox,
-  parameters: { layout: "fullscreen" },
+  parameters: {
+    layout: "fullscreen",
+    // Docs renders every story on one page, so inline each open lightbox would
+    // portal into the same body and stack its own scroll lock, focus trap and
+    // key handling on the others'. An iframe per story keeps them apart.
+    docs: { story: { inline: false, iframeHeight: 640 } },
+  },
   tags: ["autodocs"],
   // Controlled and presentational, same split as CommandPalette / AskWidget:
   // these no-ops are enough for the static stories, and FromAThumbnail wires

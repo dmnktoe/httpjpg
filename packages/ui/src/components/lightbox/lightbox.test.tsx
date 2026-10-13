@@ -269,6 +269,25 @@ describe("Lightbox", () => {
     }
   });
 
+  it("ignores other overlays' mirrored theme when following the page", () => {
+    // Storybook Docs: a story pinned to dark sits beside ones following a light
+    // page. Reading that mirror back as the page theme fed a render loop.
+    render(
+      <Lightbox
+        open
+        items={ITEMS}
+        index={0}
+        theme="dark"
+        onClose={vi.fn()}
+        onIndexChange={vi.fn()}
+      />,
+    );
+    setup({ items: [{ src: "/four.jpg", alt: "Four" }] });
+
+    const follower = screen.getByRole("img", { name: "Four" });
+    expect(follower.closest("[data-theme]")).toHaveAttribute("data-theme", "light");
+  });
+
   // The frame is portalled onto `document.body`, so these query the document
   // rather than render()'s container.
   it("plays a video item instead of rendering an image", () => {

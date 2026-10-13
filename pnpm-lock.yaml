@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    '@floating-ui/react-dom':
+      specifier: ^2.1.9
+      version: 2.1.9
     '@storyblok/react':
       specifier: ^7.3.1
       version: 7.3.1
@@ -36,15 +39,24 @@ catalogs:
     jsdom:
       specifier: ^30.1.2
       version: 30.1.2
+    motion:
+      specifier: ^14.1.0
+      version: 14.1.0
     next:
       specifier: ^16.4.0
       version: 16.4.0
+    psn-api:
+      specifier: ^2.18.1
+      version: 2.18.1
     react:
       specifier: ^19.3.0
       version: 19.3.0
     react-dom:
       specifier: ^19.3.0
       version: 19.3.0
+    swiper:
+      specifier: ^14.3.0
+      version: 14.3.0
     tsx:
       specifier: ^4.23.15
       version: 4.23.15
@@ -162,7 +174,7 @@ importers:
         specifier: 'catalog:'
         version: 16.4.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       psn-api:
-        specifier: ^2.18.1
+        specifier: 'catalog:'
         version: 2.18.1
       react:
         specifier: 'catalog:'
@@ -230,7 +242,7 @@ importers:
         version: 19.3.0(react@19.3.0)
     devDependencies:
       '@floating-ui/react-dom':
-        specifier: ^2.1.9
+        specifier: 'catalog:'
         version: 2.1.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@storybook/addon-docs':
         specifier: ^10.6.1
@@ -254,13 +266,13 @@ importers:
         specifier: ^18.12.0
         version: 18.12.0
       motion:
-        specifier: ^14.1.0
+        specifier: 'catalog:'
         version: 14.1.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       storybook:
         specifier: ^10.6.1
         version: 10.6.2(@types/react@19.3.0)(prettier@3.2.5)(react@19.3.0)
       swiper:
-        specifier: ^14.3.0
+        specifier: 'catalog:'
         version: 14.3.0
       typescript:
         specifier: 'catalog:'
@@ -380,7 +392,7 @@ importers:
         specifier: 'catalog:'
         version: 18.0.7
       psn-api:
-        specifier: ^2.18.1
+        specifier: 'catalog:'
         version: 2.18.1
     devDependencies:
       tsx:
@@ -653,19 +665,19 @@ importers:
   packages/ui:
     dependencies:
       '@floating-ui/react-dom':
-        specifier: ^2.1.9
+        specifier: 'catalog:'
         version: 2.1.9(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@httpjpg/tokens':
         specifier: workspace:*
         version: link:../tokens
       motion:
-        specifier: ^14.1.0
+        specifier: 'catalog:'
         version: 14.1.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       next:
         specifier: ^16.0.0
         version: 16.4.0(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       swiper:
-        specifier: ^14.3.0
+        specifier: 'catalog:'
         version: 14.3.0
     devDependencies:
       '@httpjpg/storyblok-utils':

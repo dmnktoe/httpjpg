@@ -48,10 +48,10 @@
     "clean": "rm -rf styled-system styles.css"
   },
   "dependencies": {
-    "@floating-ui/react-dom": "^2.1.9",
+    "@floating-ui/react-dom": "catalog:",
     "@httpjpg/tokens": "workspace:*",
-    "motion": "^14.1.0",
-    "swiper": "^14.3.0"
+    "motion": "catalog:",
+    "swiper": "catalog:"
   },
   "devDependencies": {
     "@httpjpg/storyblok-utils": "workspace:*",

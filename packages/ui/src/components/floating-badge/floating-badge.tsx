@@ -11,37 +11,27 @@ import { parseWorkAccent, workAccentCssVars } from "../../lib/work-accent";
 
 const MOBILE_SIZE = 40;
 const DESKTOP_HEIGHT = 32;
-function desktopPrefix(label: string): string {
-  return `(っ◔◡◔)っ ♥ ${label} •°*“˜.•°*“˜ `;
-}
 const BACKDROP_FILTER = "blur(20px) saturate(180%)";
 
+/**
+ * One pill. `href` → link, `onClick` → button, `status` → `<output>`.
+ * `label` shows from `sm` up; mobile shows only the glyph.
+ */
 export interface FloatingBadgeAction {
-  href?: string;
-  onClick?: () => void;
+  /** Stable React key and accessible name. */
+  ariaLabel: string;
   label: string;
   glyph: string;
-  ariaLabel: string;
+  href?: string;
+  onClick?: () => void;
+  /** Toggle state for `onClick` pills (`aria-pressed`). Keep `ariaLabel` stable. */
   pressed?: boolean;
-  /** Default: true when `href` is http(s). Same-origin routes (exit draft) set false. */
+  /** Default: true when `href` is http(s). */
   external?: boolean;
-  /** Hide inside the Storyblok Visual Editor iframe (e.g. exit-draft). */
-  hideInIframe?: boolean;
-  /** Status pill. Renders an `output`, not a control. */
-  presentational?: boolean;
-  /** Tint this pill with `accentColor`. Work preview only. */
+  /** Non-interactive status pill, rendered as `<output>`. */
+  status?: boolean;
+  /** Tint this pill with the badge `accentColor`. */
   accented?: boolean;
-}
-
-/** Live URL pill for a work page. Accented so the cluster can tint it. */
-export function workPreviewAction(href: string, label = "preview"): FloatingBadgeAction {
-  return {
-    href,
-    label,
-    glyph: "↗",
-    ariaLabel: `${label} — open external preview`,
-    accented: true,
-  };
 }
 
 export interface FloatingBadgeProps {
@@ -118,7 +108,7 @@ const pressedClass = css({
   borderColor: "var(--work-accent, rgba(255, 255, 255, 0.55))",
 });
 
-const presentationalClass = css({
+const statusClass = css({
   cursor: "default",
   _hover: { boxShadow: "inherit", transform: "none" },
   _active: { transform: "none" },
@@ -136,7 +126,7 @@ const labelClass = css({
   sm: { display: "inline" },
 });
 
-/** Portalled glass pills. Accent tints only pills with `accented`. */
+/** Portalled glass pill row, bottom center. `accentColor` tints only `accented` pills. */
 export const FloatingBadge = forwardRef<HTMLDivElement, FloatingBadgeProps>(function FloatingBadge(
   { actions, accentColor, className, css: cssProp, style },
   ref,
@@ -147,16 +137,14 @@ export const FloatingBadge = forwardRef<HTMLDivElement, FloatingBadgeProps>(func
     return null;
   }
 
-  const inIframe = window.self !== window.top;
-  const pills = (actions ?? []).filter((action) => !(action.hideInIframe && inIframe));
-  if (pills.length === 0) {
+  if (!actions?.length) {
     return null;
   }
 
   return createPortal(
     <div
       ref={ref}
-      data-page-badge=""
+      data-floating-badge=""
       style={style}
       className={cx(
         css({
@@ -176,36 +164,26 @@ export const FloatingBadge = forwardRef<HTMLDivElement, FloatingBadgeProps>(func
         className,
       )}
     >
-      {pills.map((action) => (
-        <BadgePill
-          key={action.ariaLabel}
-          action={action}
-          accentColor={accentColor}
-          kawaii={action.glyph === "↗"}
-        />
+      {actions.map((action) => (
+        <BadgePill key={action.ariaLabel} action={action} accentColor={accentColor} />
       ))}
     </div>,
     document.body,
   );
 });
 
-function BadgePill({
-  action,
-  accentColor,
-  kawaii,
-}: {
+FloatingBadge.displayName = "FloatingBadge";
+
+interface BadgePillProps {
   action: FloatingBadgeAction;
   accentColor?: string | null;
-  kawaii: boolean;
-}) {
+}
+
+function BadgePill({ action, accentColor }: BadgePillProps) {
   const accentVars = action.accented ? workAccentCssVars(parseWorkAccent(accentColor)) : undefined;
 
   const shared = {
-    className: cx(
-      pillClass,
-      action.pressed && pressedClass,
-      action.presentational && presentationalClass,
-    ),
+    className: cx(pillClass, action.pressed && pressedClass, action.status && statusClass),
     style: {
       backdropFilter: BACKDROP_FILTER,
       WebkitBackdropFilter: BACKDROP_FILTER,
@@ -218,16 +196,14 @@ function BadgePill({
 
   const inner = (
     <span className={contentClass}>
-      <span className={labelClass}>
-        {kawaii ? desktopPrefix(action.label) : `${action.label} `}
-      </span>
+      <span className={labelClass}>{`${action.label} `}</span>
       <span aria-hidden="true" className={glyphClass}>
         {action.glyph}
       </span>
     </span>
   );
 
-  if (action.presentational) {
+  if (action.status) {
     return <output {...shared}>{inner}</output>;
   }
 

@@ -1,7 +1,11 @@
-import { Box, FloatingBadge, workPreviewAction } from "@httpjpg/ui";
+import { Box, FloatingBadge, type FloatingBadgeAction } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ReactNode } from "react";
 
+/**
+ * Presentational glass pill row. Pages use `PageBadge`, which builds the
+ * actions; reach for `FloatingBadge` directly only for a new kind of row.
+ */
 const meta = {
   title: "Display/FloatingBadge",
   component: FloatingBadge,
@@ -10,7 +14,8 @@ const meta = {
     docs: {
       story: { inline: false, iframeHeight: 360 },
       description: {
-        component: "Portalled glass pills. `accentColor` tints pills marked `accented`.",
+        component:
+          "Portalled glass pills: `href` → link, `onClick` → toggle button, `status` → `<output>`. `accentColor` tints `accented` pills only.",
       },
     },
   },
@@ -25,6 +30,29 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+const LINK: FloatingBadgeAction = {
+  ariaLabel: "preview — open external preview",
+  label: "preview",
+  glyph: "↗",
+  href: "https://example.com",
+  accented: true,
+};
+
+const STATUS: FloatingBadgeAction = {
+  ariaLabel: "Draft preview — unpublished content",
+  label: "draft",
+  glyph: "🔍",
+  status: true,
+};
+
+const TOGGLE: FloatingBadgeAction = {
+  ariaLabel: "12-column overlay",
+  label: "grid",
+  glyph: "⊞",
+  pressed: true,
+  onClick: () => {},
+};
 
 const Stage = ({ children }: { children: ReactNode }) => (
   <Box
@@ -44,28 +72,29 @@ const Stage = ({ children }: { children: ReactNode }) => (
 );
 
 export const Default: Story = {
-  render: () => (
+  render: (args) => (
     <Stage>
-      <FloatingBadge actions={[workPreviewAction("https://example.com")]} />
+      <FloatingBadge {...args} actions={[LINK]} />
     </Stage>
   ),
 };
 
-export const CustomLabel: Story = {
-  render: () => (
+export const Mixed: Story = {
+  render: (args) => (
     <Stage>
-      <FloatingBadge actions={[workPreviewAction("https://example.com", "DEMO")]} />
+      <FloatingBadge {...args} actions={[LINK, STATUS, TOGGLE]} />
     </Stage>
   ),
 };
 
+/** Only the accented pill takes the accent; the rest stay on the default glass. */
 export const WorkAccent: Story = {
   args: {
     accentColor: "#EC6839",
   },
   render: (args) => (
     <Stage>
-      <FloatingBadge {...args} actions={[workPreviewAction("https://example.com")]} />
+      <FloatingBadge {...args} actions={[LINK, STATUS, TOGGLE]} />
     </Stage>
   ),
 };

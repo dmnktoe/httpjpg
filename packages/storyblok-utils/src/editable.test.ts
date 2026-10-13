@@ -1,49 +1,34 @@
-import {
-  parseStoryblokEditable,
-  storyblokEditorHref,
-  storyblokEditorHrefFromEditable,
-} from "./editable";
+import { storyblokEditHref } from "./editable";
 
 const RAW = '<!--#storyblok#{"name": "work", "space": "12345", "uid": "abc-123", "id": "67890"}-->';
 
-describe("parseStoryblokEditable", () => {
-  it("reads space and story id from the comment payload", () => {
-    expect(parseStoryblokEditable(RAW)).toEqual({
-      name: "work",
-      space: "12345",
-      uid: "abc-123",
-      id: "67890",
-    });
-  });
-
-  it("coerces numeric ids to strings", () => {
-    expect(parseStoryblokEditable('<!--#storyblok#{"space": 1, "id": 2}-->')).toEqual({
-      name: undefined,
-      space: "1",
-      uid: undefined,
-      id: "2",
-    });
-  });
-
-  it("returns null for missing or malformed comments", () => {
-    expect(parseStoryblokEditable()).toBeNull();
-    expect(parseStoryblokEditable("")).toBeNull();
-    expect(parseStoryblokEditable("<!--#storyblok#not-json-->")).toBeNull();
-    expect(parseStoryblokEditable('<!--#storyblok#{"space":"1"}-->')).toBeNull();
-  });
-});
-
-describe("storyblokEditorHref", () => {
-  it("builds the Visual Editor deep-link", () => {
-    expect(storyblokEditorHref("12345", "67890")).toBe(
+describe("storyblokEditHref", () => {
+  it("builds the Visual Editor deep-link from the space and story id", () => {
+    expect(storyblokEditHref(RAW)).toBe(
       "https://app.storyblok.com/#/me/spaces/12345/stories/0/0/67890",
     );
   });
 
-  it("returns null when the comment cannot be parsed", () => {
-    expect(storyblokEditorHrefFromEditable(undefined)).toBeNull();
-    expect(storyblokEditorHrefFromEditable(RAW)).toBe(
-      "https://app.storyblok.com/#/me/spaces/12345/stories/0/0/67890",
+  it("accepts numeric ids", () => {
+    expect(storyblokEditHref('<!--#storyblok#{"space": 1, "id": 2}-->')).toBe(
+      "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2",
     );
+  });
+
+  it("returns null for published content (no comment)", () => {
+    expect(storyblokEditHref(undefined)).toBeNull();
+    expect(storyblokEditHref("")).toBeNull();
+    expect(storyblokEditHref(42)).toBeNull();
+  });
+
+  it("returns null for malformed or incomplete comments", () => {
+    expect(storyblokEditHref("<!--#storyblok#not-json-->")).toBeNull();
+    expect(storyblokEditHref("<!--#storyblok#{not json}-->")).toBeNull();
+    expect(storyblokEditHref('<!--#storyblok#{"space":"1"}-->')).toBeNull();
+  });
+
+  it("rejects ids that are not numeric", () => {
+    expect(storyblokEditHref('<!--#storyblok#{"space":"1/../x","id":"2"}-->')).toBeNull();
+    expect(storyblokEditHref('<!--#storyblok#{"space":"1","id":"2?evil"}-->')).toBeNull();
   });
 });

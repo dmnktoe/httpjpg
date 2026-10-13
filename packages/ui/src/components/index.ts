@@ -19,14 +19,7 @@ export * from "./copyright-label/copyright-label";
 export * from "./custom-cursor/custom-cursor";
 export * from "./desktop-downloads/desktop-downloads";
 export * from "./divider/divider";
-export { EditorChrome, type EditorChromeProps } from "./floating-badge/editor-chrome";
-export {
-  FloatingBadge,
-  type FloatingBadgeAction,
-  type FloatingBadgeProps,
-  workPreviewAction,
-} from "./floating-badge/floating-badge";
-export { PageBadge, PageBadgeProvider, type PageBadgeProps } from "./floating-badge/page-badge";
+export * from "./floating-badge/floating-badge";
 export * from "./footer/footer";
 export * from "./footer-status-line/footer-status-line";
 export * from "./footer-status-line/footer-status-line-separator";
@@ -61,6 +54,8 @@ export * from "./music-player/audio-player-provider";
 export * from "./music-player/mini-player";
 export * from "./music-player/music-player";
 export * from "./nav-link/nav-link";
+export * from "./page-badge/page-badge";
+export * from "./page-badge/page-badge-provider";
 export * from "./page/page";
 export * from "./paragraph/paragraph";
 export * from "./scroll-clip-image/scroll-clip-image";

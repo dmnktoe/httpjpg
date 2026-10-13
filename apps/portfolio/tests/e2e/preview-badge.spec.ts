@@ -38,7 +38,7 @@ test.describe("work preview badge", () => {
     await expect(badge).toHaveAttribute("rel", "noopener noreferrer");
     await expect(badge).toHaveAttribute("href", /^https?:\/\//);
 
-    const cluster = page.locator("[data-page-badge]");
+    const cluster = page.locator("[data-floating-badge]");
     await expect(cluster).toHaveCount(1);
     const clusterParent = await cluster.evaluate((node) => node.parentElement?.tagName ?? "");
     expect(clusterParent).toBe("BODY");

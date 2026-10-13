@@ -253,7 +253,7 @@ export default function MyPage() {
                 {
                   cat: "Display",
                   items:
-                    "Accordion · Callout · CodeBlock · Stats · List · Tag · WorkCard · CopyrightLabel · Icon · Tooltip · ImagePreview · WorkList · Badges · AsciiArt · FloatingBadge · EditorChrome",
+                    "Accordion · Callout · CodeBlock · Stats · List · Tag · WorkCard · CopyrightLabel · Icon · Tooltip · ImagePreview · WorkList · Badges · AsciiArt · FloatingBadge · PageBadge",
                 },
                 { cat: "Inputs", items: "Button · ButtonGroup · IconButton · Loading · Checkbox" },
                 {

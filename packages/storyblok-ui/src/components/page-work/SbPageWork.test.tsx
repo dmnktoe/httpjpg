@@ -32,15 +32,15 @@ describe("SbPageWork", () => {
         }
       />,
     );
-    // PageBadge portals the cluster into document.body.
+    // PageBadge portals the pill row into document.body.
     const link = document.querySelector('a[href="https://external.dev"]') as HTMLAnchorElement;
     expect(link).not.toBeNull();
     expect(link.style.getPropertyValue("--work-accent")).toBe("#EC6839");
-    const cluster = document.body.querySelector("[data-page-badge]") as HTMLElement;
+    const cluster = document.body.querySelector("[data-floating-badge]") as HTMLElement;
     expect(cluster.style.getPropertyValue("--work-accent")).toBe("");
   });
 
-  it("adds an edit pill when the draft _editable comment is present", () => {
+  it("adds draft tools and an edit pill when the draft _editable comment is present", () => {
     render(
       <SbPageWork
         blok={
@@ -59,8 +59,8 @@ describe("SbPageWork", () => {
         'a[href="https://app.storyblok.com/#/me/spaces/99/stories/0/0/42"]',
       ),
     ).not.toBeNull();
-    expect(screen.getByRole("status", { name: /preview mode/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Show 12-column overlay (G)" })).not.toBeNull();
+    expect(screen.getByRole("status", { name: /draft preview/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "12-column overlay (G)" })).not.toBeNull();
     expect(screen.getByRole("link", { name: "Exit draft preview" })).toHaveAttribute(
       "href",
       "/api/exit-draft",

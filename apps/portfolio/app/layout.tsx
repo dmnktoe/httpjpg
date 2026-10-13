@@ -9,6 +9,7 @@ import {
   Footer,
   ImagePreview,
   LazyMotionProvider,
+  PageBadgeProvider,
   parseWorkAccent,
   Userbars,
   workAccentCssVars,
@@ -28,7 +29,6 @@ import {
 import { UmamiAnalytics } from "@/components/providers/umami-analytics";
 import { ConsoleBanner } from "@/components/ui/console-banner";
 import { CustomCursorWrapper } from "@/components/ui/custom-cursor-wrapper";
-import { DraftChrome } from "@/components/ui/draft-chrome";
 import { NostalgiaSlideshow } from "@/components/ui/nostalgia-slideshow";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AskWidget } from "@/components/widgets/ask-widget";
@@ -163,13 +163,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 showSearch={widgetConfig.askEnabled}
                 showScrollVeil={interfaceConfig.headerScrollVeilEnabled}
               />
-              <DraftChrome draftModeEnabled={draft.isEnabled}>
+              <PageBadgeProvider draft={draft.isEnabled} inEditor={inStoryblokEditor}>
                 <TrackedLightboxProvider>
                   <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
                     {children}
                   </Box>
                 </TrackedLightboxProvider>
-              </DraftChrome>
+              </PageBadgeProvider>
               <Footer
                 backgroundImage={footerConfig.backgroundImage}
                 footerLinks={footerConfig.footerLinks}

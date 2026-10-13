@@ -1,53 +1,33 @@
-/**
- * Parse the Storyblok `_editable` comment injected on draft / Visual Editor
- * payloads. Shape: `<!--#storyblok#{ "name", "space", "uid", "id" }-->`.
- */
-export interface StoryblokEditableMeta {
-  name?: string;
-  space: string;
-  uid?: string;
-  id: string;
-}
+const NUMERIC_ID = /^\d+$/;
 
-export function parseStoryblokEditable(raw?: string): StoryblokEditableMeta | null {
-  if (!raw) {
+/**
+ * Visual Editor deep-link for the story behind a draft blok.
+ *
+ * Storyblok adds `_editable` only to draft payloads:
+ * `<!--#storyblok#{"name":"page","space":"123","uid":"…","id":"456"}-->`, where
+ * `id` is the story id. Published content, or a comment that does not parse, → null.
+ */
+export function storyblokEditHref(editable: unknown): string | null {
+  if (typeof editable !== "string") {
     return null;
   }
-  const start = raw.indexOf("{");
-  const end = raw.lastIndexOf("}");
+  const start = editable.indexOf("{");
+  const end = editable.lastIndexOf("}");
   if (start < 0 || end <= start) {
     return null;
   }
   try {
-    const data = JSON.parse(raw.slice(start, end + 1)) as {
-      name?: string;
-      space?: string | number;
-      uid?: string;
-      id?: string | number;
+    const { space, id } = JSON.parse(editable.slice(start, end + 1)) as {
+      space?: unknown;
+      id?: unknown;
     };
-    if (data.space == null || data.id == null) {
+    const spaceId = String(space ?? "");
+    const storyId = String(id ?? "");
+    if (!NUMERIC_ID.test(spaceId) || !NUMERIC_ID.test(storyId)) {
       return null;
     }
-    return {
-      name: data.name,
-      space: String(data.space),
-      uid: data.uid,
-      id: String(data.id),
-    };
+    return `https://app.storyblok.com/#/me/spaces/${spaceId}/stories/0/0/${storyId}`;
   } catch {
     return null;
   }
-}
-
-/** Visual Editor deep-link for a story. `id` is the numeric story id. */
-export function storyblokEditorHref(spaceId: string, storyId: string): string {
-  return `https://app.storyblok.com/#/me/spaces/${spaceId}/stories/0/0/${storyId}`;
-}
-
-export function storyblokEditorHrefFromEditable(raw?: string): string | null {
-  const meta = parseStoryblokEditable(raw);
-  if (!meta) {
-    return null;
-  }
-  return storyblokEditorHref(meta.space, meta.id);
 }

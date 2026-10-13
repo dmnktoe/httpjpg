@@ -24,7 +24,7 @@ describe("SbPage", () => {
     expect(container.firstChild).not.toBeNull();
   });
 
-  it("renders the editor chrome when the draft _editable comment is present", () => {
+  it("renders draft tools when the draft _editable comment is present", () => {
     render(
       <SbPage
         blok={
@@ -41,8 +41,8 @@ describe("SbPage", () => {
         'a[href="https://app.storyblok.com/#/me/spaces/7/stories/0/0/9"]',
       ),
     ).not.toBeNull();
-    expect(screen.getByRole("status", { name: /preview mode/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Show 12-column overlay (G)" })).not.toBeNull();
+    expect(screen.getByRole("status", { name: /draft preview/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "12-column overlay (G)" })).not.toBeNull();
     expect(screen.getByRole("link", { name: "Exit draft preview" })).toHaveAttribute(
       "href",
       "/api/exit-draft",

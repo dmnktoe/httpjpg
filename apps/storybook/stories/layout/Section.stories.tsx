@@ -356,8 +356,8 @@ export const FluidContainer: Story = {
           }}
         >
           <Paragraph css={{ opacity: 0.7, fontSize: "sm" }}>
-            The fluid container allows content to use the full available width, perfect for
-            full-width layouts or when you want maximum space.
+            The fluid container allows content to use the full available width, for full-width
+            layouts or when you want maximum space.
           </Paragraph>
         </Box>
       </>

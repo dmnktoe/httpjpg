@@ -18,6 +18,7 @@ function Playground(_args: PlaygroundArgs) {
 const meta = {
   title: "Utilities/Storyblok Image CDN",
   component: Playground,
+  tags: ["autodocs"],
   parameters: {
     layout: "padded",
     docs: {

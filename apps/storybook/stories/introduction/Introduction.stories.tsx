@@ -260,7 +260,10 @@ export default function MyPage() {
                   cat: "Navigation",
                   items: "Header · Footer · NavLink · Link · SearchTrigger",
                 },
-                { cat: "Motion", items: "CustomCursor · MouseTrail · AnimateInView · Marquee" },
+                {
+                  cat: "Motion",
+                  items: "CustomCursor · MouseTrail · AnimateInView · Marquee · LazyMotionProvider",
+                },
                 {
                   cat: "Widgets",
                   items:

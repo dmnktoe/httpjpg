@@ -7,7 +7,7 @@ import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
  * Embed (Spotify / SoundCloud) or local MP3. Spotify and SoundCloud stay
  * out of the page-wide audio queue.
  */
-const meta: Meta<typeof MusicPlayer> = {
+const meta = {
   title: "Widgets/MusicPlayer",
   component: MusicPlayer,
   parameters: {
@@ -52,16 +52,16 @@ const meta: Meta<typeof MusicPlayer> = {
       table: { defaultValue: { summary: "ASCII_DIVIDER_MUSIC" } },
     },
   },
-};
+} satisfies Meta<typeof MusicPlayer>;
 
 export default meta;
-type Story = StoryObj<typeof MusicPlayer>;
+type Story = StoryObj<typeof meta>;
 
 /**
  * Spotify track embed (compact size)
  *
  * Embeds a Spotify track player with ASCII decorations.
- * The compact player is smaller and perfect for minimal layouts.
+ * The compact player is the smaller variant.
  */
 export const SpotifyTrack: Story = {
   args: {

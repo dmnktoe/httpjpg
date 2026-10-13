@@ -1,7 +1,7 @@
 import { ListItem, OrderedList, Paragraph, UnorderedList } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-const meta: Meta<typeof UnorderedList> = {
+const meta = {
   title: "Display/List",
   component: UnorderedList,
   parameters: {
@@ -13,10 +13,11 @@ const meta: Meta<typeof UnorderedList> = {
     },
   },
   tags: ["autodocs"],
-};
+  args: { children: null },
+} satisfies Meta<typeof UnorderedList>;
 
 export default meta;
-type Story = StoryObj<typeof UnorderedList>;
+type Story = StoryObj<typeof meta>;
 
 /**
  * Basic unordered list with default disc bullets

@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.11.1](https://github.com/dmnktoe/httpjpg/compare/v2.11.0...v2.11.1) (2026-10-13)
+
+
+### Changed
+
+* weekly cleanup for env docs, catalog, storybook intro, studio toolbar ([#492](https://github.com/dmnktoe/httpjpg/issues/492)) ([27b0e7c](https://github.com/dmnktoe/httpjpg/commit/27b0e7c1806ba1dbde5f20084450fdf42cd9968c))
+
+
+### Dependencies
+
+* update actions/create-github-app-token digest to 64ab729 ([#493](https://github.com/dmnktoe/httpjpg/issues/493)) ([9e7d9bb](https://github.com/dmnktoe/httpjpg/commit/9e7d9bb16026f14ba450882fb19880c3016121e2))
+* update dev dependencies to ^10.6.2 ([#488](https://github.com/dmnktoe/httpjpg/issues/488)) ([6601e89](https://github.com/dmnktoe/httpjpg/commit/6601e895a8b2e6ffc9262f9afcf40f4d5984c345))
+* update production dependencies ([#489](https://github.com/dmnktoe/httpjpg/issues/489)) ([b5f9175](https://github.com/dmnktoe/httpjpg/commit/b5f91750201fcd418feceb5a582e0cd6f85d24c8))
+
 ## [2.11.0](https://github.com/dmnktoe/httpjpg/compare/v2.10.1...v2.11.0) (2026-10-12)
 
 

@@ -282,12 +282,13 @@ Same presentational/stateful split as the command palette.
 - ASCII chrome (`[ 02 / 05 ]`, `[ ← ]` …); wrap + clamp index; preload neighbours; videos skip preload; credit always `CopyrightLabel` `below` variant.
 - Opt-in only on `image` / `video` bloks — not slideshow. Rendition: `imagePreset.full` (2560px, usually a cache hit).
 
-## Page badge & draft tools
+## Page actions & draft tools
 
 One glass pill row at the bottom. Same presentational/stateful split as the lightbox.
 
-- Presentational `FloatingBadge` (`actions` → link / toggle / `status` pills). Stateful `PageBadgeProvider` in root `app/layout.tsx` — never a second.
-- Pages publish `href` / `accentColor` / `editHref` via `PageBadge` (`SbPage`, `SbPageWork`). Only the live-URL pill is accented.
+- Presentational `FloatingActionBar` (`actions` → link / toggle / `status` pills; no page or draft knowledge). Stateful `PageActionsProvider` in root `app/layout.tsx` builds its actions — never a second.
+- Not a `Badge`: that name is the 88×31 image buttons (`Badge` / `Badges`).
+- Pages publish `href` / `accentColor` / `editHref` via `PageActions` (`SbPage`, `SbPageWork`). Only the live-URL pill is accented.
 - Draft tools (status · edit · exit · grid, `G` toggles the 12-column overlay) show when `draftMode().isEnabled` or the page is draft content (`storyblokEditHref(_editable)`). Inside the Visual Editor (`isStoryblokEditor()`) edit + exit are dropped. Decide on the server — the bypass cookie is HttpOnly.
 
 ## Work downloads

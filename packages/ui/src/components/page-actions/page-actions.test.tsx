@@ -1,23 +1,23 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 
-import { PageBadge } from "./page-badge";
-import { PageBadgeProvider } from "./page-badge-provider";
+import { PageActions } from "./page-actions";
+import { PageActionsProvider } from "./page-actions-provider";
 
 const HREF = "https://external.dev";
 const EDIT = "https://app.storyblok.com/#/me/spaces/7/stories/0/0/9";
 const GRID = { name: "12-column overlay (G)" };
 
 function rows(): NodeListOf<Element> {
-  return document.body.querySelectorAll("[data-floating-badge]");
+  return document.body.querySelectorAll("[data-floating-action-bar]");
 }
 
 function grid(): Element | null {
-  return document.body.querySelector("[data-page-badge-grid]");
+  return document.body.querySelector("[data-page-actions-grid]");
 }
 
-describe("PageBadge without a provider", () => {
+describe("PageActions without a provider", () => {
   it("renders only the accented live-URL pill for published content", () => {
-    render(<PageBadge href={HREF} accentColor="#ec6839" />);
+    render(<PageActions href={HREF} accentColor="#ec6839" />);
 
     const link = screen.getByRole("link", { name: /open external preview/ });
     expect(link).toHaveAttribute("href", HREF);
@@ -26,7 +26,7 @@ describe("PageBadge without a provider", () => {
   });
 
   it("adds draft tools for draft content (editHref)", () => {
-    render(<PageBadge editHref={EDIT} />);
+    render(<PageActions editHref={EDIT} />);
 
     expect(screen.getByRole("status", { name: /draft preview/i })).toHaveTextContent("draft");
     expect(screen.getByRole("link", { name: "Edit in Storyblok" })).toHaveAttribute("href", EDIT);
@@ -34,23 +34,23 @@ describe("PageBadge without a provider", () => {
   });
 
   it("renders nothing without a URL or draft content", () => {
-    render(<PageBadge />);
+    render(<PageActions />);
     expect(rows()).toHaveLength(0);
   });
 });
 
-describe("PageBadgeProvider", () => {
+describe("PageActionsProvider", () => {
   it("renders nothing for a published page without a live URL", () => {
     render(
-      <PageBadgeProvider>
-        <PageBadge />
-      </PageBadgeProvider>,
+      <PageActionsProvider>
+        <PageActions />
+      </PageActionsProvider>,
     );
     expect(rows()).toHaveLength(0);
   });
 
   it("shows draft tools on any page while Draft Mode is on", () => {
-    render(<PageBadgeProvider draft />);
+    render(<PageActionsProvider draft />);
 
     expect(screen.getByRole("status", { name: /draft preview/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Exit draft preview" })).toHaveAttribute(
@@ -62,9 +62,9 @@ describe("PageBadgeProvider", () => {
 
   it("draws one row with the page's live URL and draft tools", () => {
     render(
-      <PageBadgeProvider draft>
-        <PageBadge href={HREF} editHref={EDIT} accentColor="#ec6839" />
-      </PageBadgeProvider>,
+      <PageActionsProvider draft>
+        <PageActions href={HREF} editHref={EDIT} accentColor="#ec6839" />
+      </PageActionsProvider>,
     );
 
     expect(rows()).toHaveLength(1);
@@ -83,18 +83,18 @@ describe("PageBadgeProvider", () => {
 
   it("shows draft tools for draft content even without the Draft Mode cookie", () => {
     render(
-      <PageBadgeProvider>
-        <PageBadge editHref={EDIT} />
-      </PageBadgeProvider>,
+      <PageActionsProvider>
+        <PageActions editHref={EDIT} />
+      </PageActionsProvider>,
     );
     expect(screen.getByRole("status", { name: /draft preview/i })).toBeInTheDocument();
   });
 
   it("hides edit and exit inside the Visual Editor", () => {
     render(
-      <PageBadgeProvider draft inEditor>
-        <PageBadge editHref={EDIT} />
-      </PageBadgeProvider>,
+      <PageActionsProvider draft inEditor>
+        <PageActions editHref={EDIT} />
+      </PageActionsProvider>,
     );
     expect(screen.getByRole("status", { name: /draft preview/i })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Edit in Storyblok" })).toBeNull();
@@ -104,26 +104,26 @@ describe("PageBadgeProvider", () => {
 
   it("clears the slot when the page unmounts", () => {
     const { rerender } = render(
-      <PageBadgeProvider>
-        <PageBadge href={HREF} />
-      </PageBadgeProvider>,
+      <PageActionsProvider>
+        <PageActions href={HREF} />
+      </PageActionsProvider>,
     );
     expect(screen.getByRole("link", { name: /open external preview/ })).toBeInTheDocument();
 
-    rerender(<PageBadgeProvider />);
+    rerender(<PageActionsProvider />);
     expect(rows()).toHaveLength(0);
   });
 
   it("keeps the next page's slot when the previous one unmounts after it", () => {
     const { rerender } = render(
-      <PageBadgeProvider>
-        <PageBadge key="a" href="https://a.dev" />
-      </PageBadgeProvider>,
+      <PageActionsProvider>
+        <PageActions key="a" href="https://a.dev" />
+      </PageActionsProvider>,
     );
     rerender(
-      <PageBadgeProvider>
-        <PageBadge key="b" href="https://b.dev" />
-      </PageBadgeProvider>,
+      <PageActionsProvider>
+        <PageActions key="b" href="https://b.dev" />
+      </PageActionsProvider>,
     );
     expect(screen.getByRole("link", { name: /open external preview/ })).toHaveAttribute(
       "href",
@@ -134,7 +134,7 @@ describe("PageBadgeProvider", () => {
 
 describe("grid overlay", () => {
   it("toggles from the grid pill without losing focus", () => {
-    render(<PageBadgeProvider draft />);
+    render(<PageActionsProvider draft />);
     const button = screen.getByRole("button", GRID);
     button.focus();
 
@@ -150,7 +150,7 @@ describe("grid overlay", () => {
   });
 
   it("toggles with G and closes with Escape", () => {
-    render(<PageBadgeProvider draft />);
+    render(<PageActionsProvider draft />);
     fireEvent.keyDown(window, { key: "g" });
     expect(grid()).not.toBeNull();
     fireEvent.keyDown(window, { key: "Escape" });
@@ -161,9 +161,9 @@ describe("grid overlay", () => {
 
   it("ignores G with modifiers, while typing, or when already handled", () => {
     render(
-      <PageBadgeProvider draft>
+      <PageActionsProvider draft>
         <input aria-label="field" />
-      </PageBadgeProvider>,
+      </PageActionsProvider>,
     );
     fireEvent.keyDown(window, { key: "g", metaKey: true });
     fireEvent.keyDown(screen.getByRole("textbox", { name: "field" }), { key: "g" });
@@ -177,9 +177,9 @@ describe("grid overlay", () => {
 
   it("does not listen for G outside draft", () => {
     render(
-      <PageBadgeProvider>
-        <PageBadge href={HREF} />
-      </PageBadgeProvider>,
+      <PageActionsProvider>
+        <PageActions href={HREF} />
+      </PageActionsProvider>,
     );
     fireEvent.keyDown(window, { key: "g" });
     expect(grid()).toBeNull();

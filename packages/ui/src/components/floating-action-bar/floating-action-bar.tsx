@@ -17,7 +17,7 @@ const BACKDROP_FILTER = "blur(20px) saturate(180%)";
  * One pill. `href` → link, `onClick` → button, `status` → `<output>`.
  * `label` shows from `sm` up; mobile shows only the glyph.
  */
-export interface FloatingBadgeAction {
+export interface FloatingAction {
   /** Stable React key and accessible name. */
   ariaLabel: string;
   label: string;
@@ -30,12 +30,12 @@ export interface FloatingBadgeAction {
   external?: boolean;
   /** Non-interactive status pill, rendered as `<output>`. */
   status?: boolean;
-  /** Tint this pill with the badge `accentColor`. */
+  /** Tint this pill with the bar `accentColor`. */
   accented?: boolean;
 }
 
-export interface FloatingBadgeProps {
-  actions?: FloatingBadgeAction[];
+export interface FloatingActionBarProps {
+  actions?: FloatingAction[];
   /** Applied only to pills with `accented`. Editor tools stay on the default glass. */
   accentColor?: string | null;
   css?: SystemStyleObject;
@@ -126,60 +126,63 @@ const labelClass = css({
   sm: { display: "inline" },
 });
 
-/** Portalled glass pill row, bottom center. `accentColor` tints only `accented` pills. */
-export const FloatingBadge = forwardRef<HTMLDivElement, FloatingBadgeProps>(function FloatingBadge(
-  { actions, accentColor, className, css: cssProp, style },
-  ref,
-) {
-  const mounted = useHasMounted();
+/**
+ * Presentational: draws the `actions` it is given as glass pills, portalled to the
+ * bottom center. Knows nothing about pages or draft — `PageActions` builds the list.
+ * `accentColor` tints only `accented` pills.
+ */
+export const FloatingActionBar = forwardRef<HTMLDivElement, FloatingActionBarProps>(
+  function FloatingActionBar({ actions, accentColor, className, css: cssProp, style }, ref) {
+    const mounted = useHasMounted();
 
-  if (!mounted) {
-    return null;
-  }
+    if (!mounted) {
+      return null;
+    }
 
-  if (!actions?.length) {
-    return null;
-  }
+    if (!actions?.length) {
+      return null;
+    }
 
-  return createPortal(
-    <div
-      ref={ref}
-      data-floating-badge=""
-      style={style}
-      className={cx(
-        css({
-          position: "fixed",
-          right: "0",
-          bottom: "12",
-          left: "0",
-          zIndex: "previewBadge",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "2",
-          pointerEvents: "none",
-          "& > *": { pointerEvents: "auto" },
-        }),
-        cssProp && css(cssProp),
-        className,
-      )}
-    >
-      {actions.map((action) => (
-        <BadgePill key={action.ariaLabel} action={action} accentColor={accentColor} />
-      ))}
-    </div>,
-    document.body,
-  );
-});
+    return createPortal(
+      <div
+        ref={ref}
+        data-floating-action-bar=""
+        style={style}
+        className={cx(
+          css({
+            position: "fixed",
+            right: "0",
+            bottom: "12",
+            left: "0",
+            zIndex: "previewBadge",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "2",
+            pointerEvents: "none",
+            "& > *": { pointerEvents: "auto" },
+          }),
+          cssProp && css(cssProp),
+          className,
+        )}
+      >
+        {actions.map((action) => (
+          <ActionPill key={action.ariaLabel} action={action} accentColor={accentColor} />
+        ))}
+      </div>,
+      document.body,
+    );
+  },
+);
 
-FloatingBadge.displayName = "FloatingBadge";
+FloatingActionBar.displayName = "FloatingActionBar";
 
-interface BadgePillProps {
-  action: FloatingBadgeAction;
+interface ActionPillProps {
+  action: FloatingAction;
   accentColor?: string | null;
 }
 
-function BadgePill({ action, accentColor }: BadgePillProps) {
+function ActionPill({ action, accentColor }: ActionPillProps) {
   const accentVars = action.accented ? workAccentCssVars(parseWorkAccent(accentColor)) : undefined;
 
   const shared = {

@@ -1,29 +1,29 @@
 "use client";
 
-import { FloatingBadge } from "../floating-badge/floating-badge";
+import { FloatingActionBar } from "../floating-action-bar/floating-action-bar";
 import { draftActions, workPreviewAction } from "./lib";
-import type { PageBadgeProps } from "./page-badge";
-import { PageBadgeGrid, useGridShortcut } from "./page-badge-grid";
+import type { PageActionsProps } from "./page-actions";
+import { PageActionsGrid, useGridShortcut } from "./page-actions-grid";
 
-interface PageBadgeRowProps extends PageBadgeProps {
+interface PageActionsBarProps extends PageActionsProps {
   draft?: boolean;
   inEditor?: boolean;
 }
 
 /** Live URL (accented) + draft tools in one row. Draft content always gets the tools. */
-export function PageBadgeRow({
+export function PageActionsBar({
   href,
   editHref,
   accentColor,
   draft = false,
   inEditor = false,
-}: PageBadgeRowProps) {
+}: PageActionsBarProps) {
   const showDraftTools = draft || Boolean(editHref);
   const [gridOpen, toggleGrid] = useGridShortcut(showDraftTools);
 
   return (
     <>
-      <FloatingBadge
+      <FloatingActionBar
         accentColor={accentColor}
         actions={[
           ...(href ? [workPreviewAction(href)] : []),
@@ -32,7 +32,7 @@ export function PageBadgeRow({
             : []),
         ]}
       />
-      {gridOpen && <PageBadgeGrid />}
+      {gridOpen && <PageActionsGrid />}
     </>
   );
 }

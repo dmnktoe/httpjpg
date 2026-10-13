@@ -1,14 +1,14 @@
-import { Box, FloatingBadge, type FloatingBadgeAction } from "@httpjpg/ui";
+import { Box, FloatingActionBar, type FloatingAction } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ReactNode } from "react";
 
 /**
- * Presentational glass pill row. Pages use `PageBadge`, which builds the
- * actions; reach for `FloatingBadge` directly only for a new kind of row.
+ * Presentational glass pill row. Pages use `PageActions`, which builds the
+ * actions; reach for `FloatingActionBar` directly only for a new kind of row.
  */
 const meta = {
-  title: "Display/FloatingBadge",
-  component: FloatingBadge,
+  title: "Display/FloatingActionBar",
+  component: FloatingActionBar,
   parameters: {
     layout: "fullscreen",
     docs: {
@@ -26,12 +26,12 @@ const meta = {
       description: "Work page Project Accent Color — tints accented pills only",
     },
   },
-} satisfies Meta<typeof FloatingBadge>;
+} satisfies Meta<typeof FloatingActionBar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const LINK: FloatingBadgeAction = {
+const LINK: FloatingAction = {
   ariaLabel: "preview — open external preview",
   label: "preview",
   glyph: "↗",
@@ -39,14 +39,14 @@ const LINK: FloatingBadgeAction = {
   accented: true,
 };
 
-const STATUS: FloatingBadgeAction = {
+const STATUS: FloatingAction = {
   ariaLabel: "Draft preview — unpublished content",
   label: "draft",
   glyph: "🔍",
   status: true,
 };
 
-const TOGGLE: FloatingBadgeAction = {
+const TOGGLE: FloatingAction = {
   ariaLabel: "12-column overlay",
   label: "grid",
   glyph: "⊞",
@@ -74,7 +74,7 @@ const Stage = ({ children }: { children: ReactNode }) => (
 export const Default: Story = {
   render: (args) => (
     <Stage>
-      <FloatingBadge {...args} actions={[LINK]} />
+      <FloatingActionBar {...args} actions={[LINK]} />
     </Stage>
   ),
 };
@@ -82,7 +82,7 @@ export const Default: Story = {
 export const Mixed: Story = {
   render: (args) => (
     <Stage>
-      <FloatingBadge {...args} actions={[LINK, STATUS, TOGGLE]} />
+      <FloatingActionBar {...args} actions={[LINK, STATUS, TOGGLE]} />
     </Stage>
   ),
 };
@@ -94,7 +94,7 @@ export const WorkAccent: Story = {
   },
   render: (args) => (
     <Stage>
-      <FloatingBadge {...args} actions={[LINK, STATUS, TOGGLE]} />
+      <FloatingActionBar {...args} actions={[LINK, STATUS, TOGGLE]} />
     </Stage>
   ),
 };

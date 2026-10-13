@@ -1,9 +1,9 @@
-import type { FloatingBadgeAction } from "../floating-badge/floating-badge";
+import type { FloatingAction } from "../floating-action-bar/floating-action-bar";
 
 export const EXIT_DRAFT_HREF = "/api/exit-draft";
 
 /** Live URL pill for a work page. The only accented pill in the row. */
-export function workPreviewAction(href: string, label = "preview"): FloatingBadgeAction {
+export function workPreviewAction(href: string, label = "preview"): FloatingAction {
   return {
     ariaLabel: `${label} — open external preview`,
     label: `(っ◔◡◔)っ ♥ ${label} •°*“˜.•°*“˜`,
@@ -27,7 +27,7 @@ export function draftActions({
   inEditor = false,
   gridOpen,
   onToggleGrid,
-}: DraftActionsOptions): FloatingBadgeAction[] {
+}: DraftActionsOptions): FloatingAction[] {
   return [
     DRAFT_STATUS,
     ...(editHref && !inEditor ? [editAction(editHref)] : []),
@@ -42,18 +42,18 @@ export function draftActions({
   ];
 }
 
-function editAction(href: string): FloatingBadgeAction {
+function editAction(href: string): FloatingAction {
   return { ariaLabel: "Edit in Storyblok", label: "edit", glyph: "✎", href };
 }
 
-const DRAFT_STATUS: FloatingBadgeAction = {
+const DRAFT_STATUS: FloatingAction = {
   ariaLabel: "Draft preview — unpublished content",
   label: "draft",
   glyph: "🔍",
   status: true,
 };
 
-const EXIT_DRAFT: FloatingBadgeAction = {
+const EXIT_DRAFT: FloatingAction = {
   ariaLabel: "Exit draft preview",
   label: "exit",
   glyph: "×",

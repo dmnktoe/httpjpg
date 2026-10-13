@@ -1,4 +1,4 @@
-import { Box, PageBadge, PageBadgeProvider } from "@httpjpg/ui";
+import { Box, PageActions, PageActionsProvider } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 import type { ReactNode } from "react";
 
@@ -6,13 +6,13 @@ const HREF = "https://example.com";
 const EDIT_HREF = "https://app.storyblok.com/#/me/spaces/1/stories/0/0/2";
 
 /**
- * The page's one pill row. `PageBadgeProvider` sits in the root layout; work
- * pages publish their live URL + accent through `PageBadge`. In draft the row
+ * The page's one pill row. `PageActionsProvider` sits in the root layout; work
+ * pages publish their live URL + accent through `PageActions`. In draft the row
  * adds draft status · edit · exit · grid (`G` toggles the 12-column overlay).
  */
 const meta = {
-  title: "Display/PageBadge",
-  component: PageBadge,
+  title: "Display/PageActions",
+  component: PageActions,
   parameters: {
     layout: "fullscreen",
     docs: {
@@ -28,7 +28,7 @@ const meta = {
     },
     accentColor: { control: "color", description: "Tints the live-URL pill only" },
   },
-} satisfies Meta<typeof PageBadge>;
+} satisfies Meta<typeof PageActions>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -55,9 +55,9 @@ export const WorkPreview: Story = {
   args: { href: HREF, accentColor: "#EC6839" },
   render: (args) => (
     <Stage>
-      <PageBadgeProvider>
-        <PageBadge {...args} />
-      </PageBadgeProvider>
+      <PageActionsProvider>
+        <PageActions {...args} />
+      </PageActionsProvider>
     </Stage>
   ),
 };
@@ -67,9 +67,9 @@ export const DraftWorkPage: Story = {
   args: { href: HREF, editHref: EDIT_HREF, accentColor: "#EC6839" },
   render: (args) => (
     <Stage>
-      <PageBadgeProvider draft>
-        <PageBadge {...args} />
-      </PageBadgeProvider>
+      <PageActionsProvider draft>
+        <PageActions {...args} />
+      </PageActionsProvider>
     </Stage>
   ),
 };
@@ -78,7 +78,7 @@ export const DraftWorkPage: Story = {
 export const DraftOnly: Story = {
   render: () => (
     <Stage>
-      <PageBadgeProvider draft />
+      <PageActionsProvider draft />
     </Stage>
   ),
 };
@@ -88,9 +88,9 @@ export const InVisualEditor: Story = {
   args: { editHref: EDIT_HREF },
   render: (args) => (
     <Stage>
-      <PageBadgeProvider draft inEditor>
-        <PageBadge {...args} />
-      </PageBadgeProvider>
+      <PageActionsProvider draft inEditor>
+        <PageActions {...args} />
+      </PageActionsProvider>
     </Stage>
   ),
 };

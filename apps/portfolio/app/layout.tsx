@@ -9,7 +9,7 @@ import {
   Footer,
   ImagePreview,
   LazyMotionProvider,
-  PageBadgeProvider,
+  PageActionsProvider,
   parseWorkAccent,
   Userbars,
   workAccentCssVars,
@@ -163,13 +163,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 showSearch={widgetConfig.askEnabled}
                 showScrollVeil={interfaceConfig.headerScrollVeilEnabled}
               />
-              <PageBadgeProvider draft={draft.isEnabled} inEditor={inStoryblokEditor}>
+              <PageActionsProvider draft={draft.isEnabled} inEditor={inStoryblokEditor}>
                 <TrackedLightboxProvider>
                   <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
                     {children}
                   </Box>
                 </TrackedLightboxProvider>
-              </PageBadgeProvider>
+              </PageActionsProvider>
               <Footer
                 backgroundImage={footerConfig.backgroundImage}
                 footerLinks={footerConfig.footerLinks}

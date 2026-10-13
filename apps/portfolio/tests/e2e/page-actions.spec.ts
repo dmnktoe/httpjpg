@@ -1,14 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-const BADGE_SELECTOR = "a[aria-label$='open external preview']";
+const PILL_SELECTOR = "a[aria-label$='open external preview']";
 
-test.describe("work preview badge", () => {
-  test("home page never renders a preview badge", async ({ page }) => {
+test.describe("work live-URL pill", () => {
+  test("home page never renders a live-URL pill", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator(BADGE_SELECTOR)).toHaveCount(0);
+    await expect(page.locator(PILL_SELECTOR)).toHaveCount(0);
   });
 
-  test("when present on a work page the badge is portaled to <body> and links externally", async ({
+  test("when present on a work page the pill is portaled to <body> and links externally", async ({
     page,
   }) => {
     await page.goto("/");
@@ -27,23 +27,23 @@ test.describe("work preview badge", () => {
 
     await page.goto(href);
 
-    const badge = page.locator(BADGE_SELECTOR);
-    if ((await badge.count()) === 0) {
-      test.skip(true, `no preview badge on ${href}`);
+    const pill = page.locator(PILL_SELECTOR);
+    if ((await pill.count()) === 0) {
+      test.skip(true, `no live-URL pill on ${href}`);
       return;
     }
 
-    await expect(badge).toBeVisible();
-    await expect(badge).toHaveAttribute("target", "_blank");
-    await expect(badge).toHaveAttribute("rel", "noopener noreferrer");
-    await expect(badge).toHaveAttribute("href", /^https?:\/\//);
+    await expect(pill).toBeVisible();
+    await expect(pill).toHaveAttribute("target", "_blank");
+    await expect(pill).toHaveAttribute("rel", "noopener noreferrer");
+    await expect(pill).toHaveAttribute("href", /^https?:\/\//);
 
-    const cluster = page.locator("[data-floating-badge]");
+    const cluster = page.locator("[data-floating-action-bar]");
     await expect(cluster).toHaveCount(1);
     const clusterParent = await cluster.evaluate((node) => node.parentElement?.tagName ?? "");
     expect(clusterParent).toBe("BODY");
 
-    await expect(badge).toContainText("↗");
+    await expect(pill).toContainText("↗");
 
     const box = await cluster.boundingBox();
     expect(box).not.toBeNull();

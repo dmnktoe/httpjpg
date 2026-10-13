@@ -7,7 +7,7 @@ import { css } from "styled-system/css";
 import { useHasMounted } from "../../lib/use-has-mounted";
 
 /** Portalled 12-column overlay with `[ 01 ]` … `[ 12 ]` labels. */
-export function PageBadgeGrid() {
+export function PageActionsGrid() {
   const mounted = useHasMounted();
   if (!mounted) {
     return null;
@@ -51,7 +51,7 @@ function GridColumns() {
   return (
     <div
       aria-hidden="true"
-      data-page-badge-grid=""
+      data-page-actions-grid=""
       className={css({
         position: "fixed",
         inset: "0",

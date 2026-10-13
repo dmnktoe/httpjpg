@@ -1,5 +1,5 @@
 import { type SbPageData, storyblokEditHref } from "@httpjpg/storyblok-utils";
-import { Box, PageBadge } from "@httpjpg/ui";
+import { Box, PageActions } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
@@ -19,7 +19,7 @@ export const SbPage = memo(function SbPage({ blok }: SbPageProps) {
       {body?.map((child) => (
         <StoryblokServerComponent key={child._uid} blok={child} />
       ))}
-      <PageBadge editHref={storyblokEditHref(blok._editable)} />
+      <PageActions editHref={storyblokEditHref(blok._editable)} />
     </Box>
   );
 });

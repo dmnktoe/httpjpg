@@ -2,10 +2,10 @@
 
 import { useContext, useEffect } from "react";
 
-import { PageBadgeContext } from "./page-badge-context";
-import { PageBadgeRow } from "./page-badge-row";
+import { PageActionsBar } from "./page-actions-bar";
+import { PageActionsContext } from "./page-actions-context";
 
-export interface PageBadgeProps {
+export interface PageActionsProps {
   /** Work page live URL (external). */
   href?: string | null;
   /** Visual Editor deep-link; only draft content carries one. */
@@ -15,11 +15,16 @@ export interface PageBadgeProps {
 }
 
 /**
- * Publishes the page's live URL, accent and edit link to the `PageBadgeProvider`
- * row. Without a provider (Storybook, tests) it draws the row itself.
+ * What a page contributes to the action bar: live URL, accent, edit link.
+ * Publishes to `PageActionsProvider`, which renders the `FloatingActionBar`.
+ * Without a provider (Storybook, tests) it renders the bar itself.
  */
-export function PageBadge({ href = null, editHref = null, accentColor = null }: PageBadgeProps) {
-  const setSlot = useContext(PageBadgeContext);
+export function PageActions({
+  href = null,
+  editHref = null,
+  accentColor = null,
+}: PageActionsProps) {
+  const setSlot = useContext(PageActionsContext);
 
   useEffect(() => {
     if (!setSlot) {
@@ -33,5 +38,5 @@ export function PageBadge({ href = null, editHref = null, accentColor = null }: 
   if (setSlot) {
     return null;
   }
-  return <PageBadgeRow href={href} editHref={editHref} accentColor={accentColor} />;
+  return <PageActionsBar href={href} editHref={editHref} accentColor={accentColor} />;
 }

@@ -18,7 +18,7 @@ describe("SbPageWork", () => {
     expect(container.firstChild).not.toBeNull();
   });
 
-  it("renders a floating preview badge for an external link", () => {
+  it("renders a live-URL pill for an external link", () => {
     render(
       <SbPageWork
         blok={
@@ -32,11 +32,11 @@ describe("SbPageWork", () => {
         }
       />,
     );
-    // PageBadge portals the pill row into document.body.
+    // PageActions portals the pill row into document.body.
     const link = document.querySelector('a[href="https://external.dev"]') as HTMLAnchorElement;
     expect(link).not.toBeNull();
     expect(link.style.getPropertyValue("--work-accent")).toBe("#EC6839");
-    const cluster = document.body.querySelector("[data-floating-badge]") as HTMLElement;
+    const cluster = document.body.querySelector("[data-floating-action-bar]") as HTMLElement;
     expect(cluster.style.getPropertyValue("--work-accent")).toBe("");
   });
 
@@ -67,7 +67,7 @@ describe("SbPageWork", () => {
     );
   });
 
-  it("ignores non-external links for the preview badge", () => {
+  it("ignores non-external links for the live-URL pill", () => {
     render(
       <SbPageWork
         blok={
@@ -79,7 +79,7 @@ describe("SbPageWork", () => {
         }
       />,
     );
-    // The badge portals into document.body, so assert against the portal target.
+    // The bar portals into document.body, so assert against the portal target.
     expect(document.body.querySelector('a[aria-label*="open external preview"]')).toBeNull();
   });
 

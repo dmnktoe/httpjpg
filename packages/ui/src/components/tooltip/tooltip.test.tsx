@@ -336,30 +336,30 @@ function stubLayout(rects: { trigger: StubRect; bubble: StubRect }) {
     vi.spyOn(document.documentElement, prop, "get").mockReturnValue(size);
   }
 
-  vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockImplementation(
-    function (this: HTMLElement) {
-      return boxFor(this).width;
-    },
-  );
-  vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(
-    function (this: HTMLElement) {
-      return boxFor(this).height;
-    },
-  );
+  vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockImplementation(function (
+    this: HTMLElement,
+  ) {
+    return boxFor(this).width;
+  });
+  vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(function (
+    this: HTMLElement,
+  ) {
+    return boxFor(this).height;
+  });
 
-  vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(
-    function (this: HTMLElement) {
-      const box = boxFor(this);
-      return {
-        ...box,
-        x: box.left,
-        y: box.top,
-        right: box.left + box.width,
-        bottom: box.top + box.height,
-        toJSON: () => "",
-      } as DOMRect;
-    },
-  );
+  vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (
+    this: HTMLElement,
+  ) {
+    const box = boxFor(this);
+    return {
+      ...box,
+      x: box.left,
+      y: box.top,
+      right: box.left + box.width,
+      bottom: box.top + box.height,
+      toJSON: () => "",
+    } as DOMRect;
+  });
 
   return state;
 }

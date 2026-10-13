@@ -25,7 +25,7 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@floating-ui/react-dom": "^2.1.9",
+    "@floating-ui/react-dom": "catalog:",
     "@storybook/addon-docs": "^10.6.1",
     "@storybook/react": "^10.6.1",
     "@storybook/react-vite": "^10.6.1",
@@ -33,9 +33,9 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "chromatic": "^18.12.0",
-    "motion": "^14.1.0",
+    "motion": "catalog:",
     "storybook": "^10.6.1",
-    "swiper": "^14.3.0",
+    "swiper": "catalog:",
     "typescript": "catalog:",
     "vite": "^8.3.4"
   }

@@ -33,7 +33,7 @@
     "@httpjpg/ui": "workspace:*",
     "@storyblok/react": "catalog:",
     "next": "catalog:",
-    "psn-api": "^2.18.1",
+    "psn-api": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "sharp": "^0.35.5"

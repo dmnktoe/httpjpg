@@ -270,8 +270,6 @@ describe("Lightbox", () => {
   });
 
   it("ignores other overlays' mirrored theme when following the page", () => {
-    // Storybook Docs: a story pinned to dark sits beside ones following a light
-    // page. Reading that mirror back as the page theme fed a render loop.
     render(
       <Lightbox
         open

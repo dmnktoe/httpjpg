@@ -4,12 +4,6 @@ import { useSyncExternalStore } from "react";
 
 export type PageTheme = "light" | "dark";
 
-/**
- * Marks a portal root that restates the theme rather than sets it. Without it
- * every open overlay would read the others' mirrors (and its own) as the page's
- * theme — a feedback loop once two disagree, as in Storybook Docs where one
- * story pins `dark` and the rest follow the page.
- */
 const THEME_MIRROR_ATTRIBUTE = "data-theme-mirror";
 
 const THEME_HOST_SELECTOR = `[data-theme]:not([${THEME_MIRROR_ATTRIBUTE}])`;
@@ -30,7 +24,6 @@ export function usePageTheme(override?: PageTheme): PageTheme {
 
 function subscribeTheme(onStoreChange: () => void) {
   const observer = new MutationObserver((records) => {
-    // Mirrors re-render with every overlay; they never change the answer.
     if (records.some((record) => !isThemeMirror(record.target))) {
       onStoreChange();
     }

@@ -304,7 +304,6 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
     // Panda's `_pageDark` condition matches `[data-theme=dark] &`, and this
     // subtree hangs off `document.body` — outside whatever carries the page's
     // attribute. Restating it here is what keeps the frame in the page's theme.
-    // `data-theme-mirror` keeps usePageTheme from reading this root back.
     <div data-theme={resolvedTheme} data-theme-mirror="">
       {lightbox}
     </div>,

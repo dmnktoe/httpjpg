@@ -1,5 +1,6 @@
 "use client";
 
+import { spacingValue } from "@httpjpg/storyblok-utils";
 import { type PointerEvent, useCallback, useEffect, useRef, useState } from "react";
 import { css } from "styled-system/css";
 
@@ -23,7 +24,6 @@ import {
   patchSize,
   ROW_HEIGHT_PX,
   type SpacingSet,
-  spacingToPx,
   type Viewport,
   VIEWPORT_WIDTH_PX,
 } from "./lib";
@@ -74,7 +74,7 @@ export function Canvas({
     ...items.map((it) => effectiveY(it, viewport) + effectiveH(it, viewport)),
   );
   const rows = Math.max(MIN_ROWS, occupiedRows + 4) + extraRows;
-  const gapPx = spacingToPx(settings.gap) ?? "0";
+  const gapPx = spacingValue(settings.gap) ?? "0";
   const maxWidth = VIEWPORT_WIDTH_PX[viewport];
 
   useEffect(() => {
@@ -478,19 +478,19 @@ function CanvasItem({
 
 function marginStyle(s: SpacingSet): React.CSSProperties {
   return {
-    marginTop: spacingToPx(s.mt),
-    marginBottom: spacingToPx(s.mb),
-    marginLeft: spacingToPx(s.ml),
-    marginRight: spacingToPx(s.mr),
+    marginTop: spacingValue(s.mt),
+    marginBottom: spacingValue(s.mb),
+    marginLeft: spacingValue(s.ml),
+    marginRight: spacingValue(s.mr),
   };
 }
 
 function paddingStyle(s: SpacingSet): React.CSSProperties {
   return {
-    paddingTop: spacingToPx(s.pt) ?? "4px",
-    paddingBottom: spacingToPx(s.pb) ?? "4px",
-    paddingLeft: spacingToPx(s.pl) ?? "4px",
-    paddingRight: spacingToPx(s.pr) ?? "4px",
+    paddingTop: spacingValue(s.pt) ?? "4px",
+    paddingBottom: spacingValue(s.pb) ?? "4px",
+    paddingLeft: spacingValue(s.pl) ?? "4px",
+    paddingRight: spacingValue(s.pr) ?? "4px",
   };
 }
 

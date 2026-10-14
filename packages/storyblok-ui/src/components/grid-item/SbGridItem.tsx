@@ -1,7 +1,7 @@
 import type { SbGridItemData } from "@httpjpg/storyblok-utils";
 import { GridItem, type GridPlacement } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
-import { memo } from "react";
+import { type CSSProperties, memo } from "react";
 import { css } from "styled-system/css";
 
 import { EntranceMotion } from "../../lib/entrance-motion";
@@ -46,10 +46,7 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
       justifySelf={justifySelf || undefined}
       className={visibility}
       css={spacing.css}
-      style={{
-        ...spacing.style,
-        ...(Number.isFinite(Number(zIndex)) ? { zIndex: Number(zIndex) } : {}),
-      }}
+      style={{ ...spacing.style, ...zIndexStyle(zIndex) }}
     >
       {/* Animate inside the cell: an outer wrapper would become the grid child and drop the placement. */}
       <EntranceMotion blok={blok}>
@@ -87,4 +84,13 @@ function toSpan(value?: string): number | undefined {
 function toLine(value?: string | number): number | undefined {
   const n = Number(value);
   return Number.isInteger(n) && n !== 0 ? n : undefined;
+}
+
+/** Empty CMS number fields arrive as `""`: no z-index, so no stacking context. */
+function zIndexStyle(value: unknown): CSSProperties | undefined {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  const zIndex = Number(value);
+  return Number.isInteger(zIndex) ? { zIndex } : undefined;
 }

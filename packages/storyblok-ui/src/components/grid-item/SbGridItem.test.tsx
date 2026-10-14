@@ -97,6 +97,10 @@ describe("SbGridItem", () => {
     expect(item.style.getPropertyValue("--sb-ml")).toBe("calc(var(--jpg-spacing-4) * -1)");
   });
 
+  it.each(["", null, undefined, "abc"])("sets no z-index for an empty field (%j)", (zIndex) => {
+    expect(renderItem({ zIndex }).item.style.zIndex).toBe("");
+  });
+
   it("hides the item per breakpoint", () => {
     const { item } = renderItem({ hiddenLg: true });
 

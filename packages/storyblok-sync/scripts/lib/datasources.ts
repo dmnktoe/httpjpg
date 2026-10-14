@@ -1,21 +1,15 @@
 import {
   CMS_OPTIONS,
+  spacingLabel,
   WORK_TAG_DATASOURCE_SLUG,
   workTagDatasourceEntries,
 } from "@httpjpg/storyblok-utils";
-import { spacing } from "@httpjpg/tokens";
 
 import type { Datasource, DatasourceEntry } from "../../src/index";
 
 export interface DatasourceWithEntries {
   datasource: Datasource;
   entries: DatasourceEntry[];
-}
-
-function spacingEntryName(key: string): string {
-  const unsigned = key.startsWith("-") ? key.slice(1) : key;
-  const rem = (spacing as Record<string, string>)[unsigned];
-  return rem ? `${key} (${key.startsWith("-") ? `-${rem}` : rem})` : key;
 }
 
 function spacingDs(): DatasourceWithEntries {
@@ -25,7 +19,7 @@ function spacingDs(): DatasourceWithEntries {
       .slice()
       .sort((a, b) => Number(a) - Number(b))
       .map((key) => ({
-        name: spacingEntryName(key),
+        name: spacingLabel(key),
         value: key,
       })),
   };
@@ -38,7 +32,7 @@ function marginDs(): DatasourceWithEntries {
       .slice()
       .sort((a, b) => Number(a) - Number(b))
       .map((key) => ({
-        name: spacingEntryName(key),
+        name: spacingLabel(key),
         value: key,
       })),
   };

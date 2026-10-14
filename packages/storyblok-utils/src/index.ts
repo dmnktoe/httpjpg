@@ -43,6 +43,7 @@ export type {
   SbWorkListData,
 } from "./blok-types.gen";
 export * from "./cms-options";
+export { isMarginSide, MARGIN_SIDES, spacingLabel, spacingValue } from "./spacing";
 export { extractPlainText } from "./extract-plain-text";
 export { imagePreset } from "./image-presets";
 export { getResponsiveImage } from "./image-processing";

@@ -18,7 +18,7 @@ describe("SbPageWork", () => {
     expect(container.firstChild).not.toBeNull();
   });
 
-  it("renders a floating preview badge for an external link", () => {
+  it("renders a live-URL pill for an external link", () => {
     render(
       <SbPageWork
         blok={
@@ -32,13 +32,42 @@ describe("SbPageWork", () => {
         }
       />,
     );
-    // FloatingPreviewBadge portals into document.body.
-    const badge = document.querySelector('a[href="https://external.dev"]') as HTMLAnchorElement;
-    expect(badge).not.toBeNull();
-    expect(badge.style.getPropertyValue("--work-accent")).toBe("#EC6839");
+    // PageActions portals the pill row into document.body.
+    const link = document.querySelector('a[href="https://external.dev"]') as HTMLAnchorElement;
+    expect(link).not.toBeNull();
+    expect(link.style.getPropertyValue("--work-accent")).toBe("#EC6839");
+    const cluster = document.body.querySelector("[data-floating-action-bar]") as HTMLElement;
+    expect(cluster.style.getPropertyValue("--work-accent")).toBe("");
   });
 
-  it("ignores non-external links for the preview badge", () => {
+  it("adds draft tools and an edit pill when the draft _editable comment is present", () => {
+    render(
+      <SbPageWork
+        blok={
+          {
+            _uid: "4",
+            component: "page_work",
+            _editable: '<!--#storyblok#{"space":"99","id":"42"}-->',
+            link: { linktype: "url", url: "https://external.dev" },
+          } as never
+        }
+      />,
+    );
+    expect(document.body.querySelector('a[href="https://external.dev"]')).not.toBeNull();
+    expect(
+      document.body.querySelector(
+        'a[href="https://app.storyblok.com/#/me/spaces/99/stories/0/0/42"]',
+      ),
+    ).not.toBeNull();
+    expect(screen.getByRole("status", { name: /draft preview/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "12-column overlay (G)" })).not.toBeNull();
+    expect(screen.getByRole("link", { name: "Exit draft preview" })).toHaveAttribute(
+      "href",
+      "/api/exit-draft",
+    );
+  });
+
+  it("ignores non-external links for the live-URL pill", () => {
     render(
       <SbPageWork
         blok={
@@ -50,7 +79,7 @@ describe("SbPageWork", () => {
         }
       />,
     );
-    // The badge portals into document.body, so assert against the portal target.
+    // The bar portals into document.body, so assert against the portal target.
     expect(document.body.querySelector('a[aria-label*="open external preview"]')).toBeNull();
   });
 

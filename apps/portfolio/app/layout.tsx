@@ -9,12 +9,13 @@ import {
   Footer,
   ImagePreview,
   LazyMotionProvider,
+  PageActionsProvider,
   parseWorkAccent,
   Userbars,
   workAccentCssVars,
 } from "@httpjpg/ui";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
+import { draftMode, headers } from "next/headers";
 import type { CSSProperties, PropsWithChildren } from "react";
 
 import { ConsentGate } from "@/components/providers/consent-gate";
@@ -29,7 +30,6 @@ import { UmamiAnalytics } from "@/components/providers/umami-analytics";
 import { ConsoleBanner } from "@/components/ui/console-banner";
 import { CustomCursorWrapper } from "@/components/ui/custom-cursor-wrapper";
 import { NostalgiaSlideshow } from "@/components/ui/nostalgia-slideshow";
-import { PreviewNotification } from "@/components/ui/preview-notification";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AskWidget } from "@/components/widgets/ask-widget";
 import { BuildBadge } from "@/components/widgets/build-badge";
@@ -98,7 +98,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const [theme, pageAccent] = await Promise.all([getPageTheme(), getPageAccent()]);
+  const [theme, pageAccent, draft] = await Promise.all([
+    getPageTheme(),
+    getPageAccent(),
+    draftMode(),
+  ]);
   const workAccent = parseWorkAccent(pageAccent);
   const workAccentStyle = workAccentCssVars(workAccent, theme === "dark") as
     | CSSProperties
@@ -152,7 +156,6 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               {widgetConfig.spotifyEnabled && <NowPlayingWidget />}
               {widgetConfig.psnEnabled && <PSNCard username={widgetConfig.psnUsername} />}
               {widgetConfig.askEnabled && <AskWidget askEnabled={Boolean(env.GROQ_API_KEY)} />}
-              <PreviewNotification />
               <TrackedHeader
                 nav={navigation}
                 projectsWork={projectsWork}
@@ -160,11 +163,13 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 showSearch={widgetConfig.askEnabled}
                 showScrollVeil={interfaceConfig.headerScrollVeilEnabled}
               />
-              <TrackedLightboxProvider>
-                <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
-                  {children}
-                </Box>
-              </TrackedLightboxProvider>
+              <PageActionsProvider draft={draft.isEnabled} inEditor={inStoryblokEditor}>
+                <TrackedLightboxProvider>
+                  <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
+                    {children}
+                  </Box>
+                </TrackedLightboxProvider>
+              </PageActionsProvider>
               <Footer
                 backgroundImage={footerConfig.backgroundImage}
                 footerLinks={footerConfig.footerLinks}

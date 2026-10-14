@@ -1,0 +1,57 @@
+import { expect, test } from "@playwright/test";
+
+const PILL_SELECTOR = "a[aria-label$='open external preview']";
+
+test.describe("work live-URL pill", () => {
+  test("home page never renders a live-URL pill", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator(PILL_SELECTOR)).toHaveCount(0);
+  });
+
+  test("when present on a work page the pill is portaled to <body> and links externally", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    const internalWorkLink = page.locator("main").locator("a[href^='/work/']").first();
+    if ((await internalWorkLink.count()) === 0) {
+      test.skip(true, "no internal work links to traverse");
+      return;
+    }
+
+    const href = await internalWorkLink.getAttribute("href");
+    if (!href) {
+      test.skip(true, "internal work link has no href");
+      return;
+    }
+
+    await page.goto(href);
+
+    const pill = page.locator(PILL_SELECTOR);
+    if ((await pill.count()) === 0) {
+      test.skip(true, `no live-URL pill on ${href}`);
+      return;
+    }
+
+    await expect(pill).toBeVisible();
+    await expect(pill).toHaveAttribute("target", "_blank");
+    await expect(pill).toHaveAttribute("rel", "noopener noreferrer");
+    await expect(pill).toHaveAttribute("href", /^https?:\/\//);
+
+    const cluster = page.locator("[data-floating-action-bar]");
+    await expect(cluster).toHaveCount(1);
+    const clusterParent = await cluster.evaluate((node) => node.parentElement?.tagName ?? "");
+    expect(clusterParent).toBe("BODY");
+
+    await expect(pill).toContainText("↗");
+
+    const box = await cluster.boundingBox();
+    expect(box).not.toBeNull();
+    const viewport = page.viewportSize();
+    if (box && viewport) {
+      const clusterCenterX = box.x + box.width / 2;
+      expect(Math.abs(clusterCenterX - viewport.width / 2)).toBeLessThan(10);
+      expect(viewport.height - (box.y + box.height)).toBeLessThan(viewport.height / 3);
+    }
+  });
+});

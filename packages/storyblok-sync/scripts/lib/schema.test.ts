@@ -15,4 +15,19 @@ describe("allBlocks", () => {
       component_whitelist: ["download_item"],
     });
   });
+
+  it("registers desktop media windows on the work page", () => {
+    const blocks = allBlocks();
+    const work = blocks.find((b) => b.name === "work");
+    expect(work?.schema.desktop_media).toMatchObject({
+      type: "bloks",
+      component_whitelist: ["desktop_media_item"],
+    });
+    const item = blocks.find((b) => b.name === "desktop_media_item");
+    expect(item?.schema.width).toMatchObject({
+      type: "option",
+      default_value: "400",
+      options: expect.arrayContaining([{ name: "400px", value: "400" }]),
+    });
+  });
 });

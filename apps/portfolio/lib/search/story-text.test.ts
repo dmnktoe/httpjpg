@@ -53,6 +53,15 @@ describe("collectStoryText", () => {
     expect(collectStoryText({ text: "  spaced   out  " })).toBe("spaced out");
   });
 
+  it("indexes desktop media window names", () => {
+    const content = {
+      title: "Outlet",
+      desktop_media: [{ name: "Showreel", url: "https://cdn.example/reel.mp4" }],
+    };
+
+    expect(collectStoryText(content)).toBe("Outlet Showreel");
+  });
+
   it("skips blank strings", () => {
     expect(collectStoryText({ title: "   ", text: "kept" })).toBe("kept");
   });

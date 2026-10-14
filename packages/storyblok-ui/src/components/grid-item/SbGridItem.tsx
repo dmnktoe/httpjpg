@@ -31,6 +31,15 @@ function rowSpanNumber(value?: string): number | undefined {
   return Number.isFinite(n) && n > 0 ? n : undefined;
 }
 
+/** Empty CMS number fields arrive as `""`: no z-index, so no stacking context. */
+function zIndexStyle(value: unknown): CSSProperties | undefined {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  const zIndex = Number(value);
+  return Number.isInteger(zIndex) ? { zIndex } : undefined;
+}
+
 export interface SbGridItemProps {
   blok: SbGridItemData;
 }
@@ -105,11 +114,8 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
       alignSelf={alignSelf || undefined}
       justifySelf={justifySelf || undefined}
       className={cx(responsive, visibility)}
-      css={{ overflow: "visible", ...spacingCss(blok) }}
-      style={{
-        ...styleVars,
-        ...(Number.isFinite(Number(zIndex)) ? { zIndex: Number(zIndex) } : {}),
-      }}
+      css={spacingCss(blok)}
+      style={{ ...styleVars, ...zIndexStyle(zIndex) }}
     >
       {content?.map((child) => (
         <StoryblokServerComponent key={child._uid} blok={child} />

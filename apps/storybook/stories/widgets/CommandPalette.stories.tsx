@@ -62,7 +62,10 @@ const ANSWER =
 const meta = {
   title: "Widgets/CommandPalette",
   component: CommandPalette,
-  parameters: { layout: "fullscreen" },
+  parameters: {
+    layout: "fullscreen",
+    docs: { story: { inline: false, iframeHeight: 640 } },
+  },
   tags: ["autodocs"],
   // The palette is fully controlled. Stories that only need to look right take
   // these no-ops; Playground swaps in real state so it can be typed into.

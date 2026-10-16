@@ -28,7 +28,10 @@ const ITEMS: LightboxItem[] = [
 const meta = {
   title: "Media/Lightbox",
   component: Lightbox,
-  parameters: { layout: "fullscreen" },
+  parameters: {
+    layout: "fullscreen",
+    docs: { story: { inline: false, iframeHeight: 640 } },
+  },
   tags: ["autodocs"],
   // Controlled and presentational, same split as CommandPalette / AskWidget:
   // these no-ops are enough for the static stories, and FromAThumbnail wires

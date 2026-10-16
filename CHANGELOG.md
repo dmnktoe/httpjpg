@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.12.0](https://github.com/dmnktoe/httpjpg/compare/v2.11.1...v2.12.0) (2026-10-16)
+
+
+### Added
+
+* replace the yellow preview bar with page actions and draft tools ([#498](https://github.com/dmnktoe/httpjpg/issues/498)) ([8f2563b](https://github.com/dmnktoe/httpjpg/commit/8f2563bd5df7e819a0beb885af605cb90f5802ea))
+
+
+### Fixed
+
+* **ui:** stop lightbox theme feedback loop in Storybook Docs ([#499](https://github.com/dmnktoe/httpjpg/issues/499)) ([af91f4b](https://github.com/dmnktoe/httpjpg/commit/af91f4be01b254bdfe7b422ce63f9a94d5510952))
+
+
+### Changed
+
+* weekly cleanup for studio inspector, storybook stories, and config drift ([#495](https://github.com/dmnktoe/httpjpg/issues/495)) ([ae77f37](https://github.com/dmnktoe/httpjpg/commit/ae77f373b9544cb77be86d014d7b32ee1ef5bd6a))
+
+
+### Dependencies
+
+* update chromaui/action digest to 18599f2 ([#504](https://github.com/dmnktoe/httpjpg/issues/504)) ([481b1d2](https://github.com/dmnktoe/httpjpg/commit/481b1d2b380de27e02d8aae169c7a8a45d84e2b1))
+* update chromaui/action digest to 8e6c25f ([#497](https://github.com/dmnktoe/httpjpg/issues/497)) ([d312575](https://github.com/dmnktoe/httpjpg/commit/d3125755904146af98c21eafd859d88a0a132da9))
+* update node.js to v24.22.0 ([#503](https://github.com/dmnktoe/httpjpg/issues/503)) ([29ed348](https://github.com/dmnktoe/httpjpg/commit/29ed348e5b6f30d81230ebf74782d97c992b4942))
+
 ## [2.11.1](https://github.com/dmnktoe/httpjpg/compare/v2.11.0...v2.11.1) (2026-10-13)
 
 

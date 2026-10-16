@@ -4,6 +4,7 @@ import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo, type CSSProperties } from "react";
 import { css, cx } from "styled-system/css";
 
+import { EntranceMotion } from "../../lib/entrance-motion";
 import { editableAttrs } from "../../lib/use-blok";
 
 type Span = GridItemProps["colSpan"];
@@ -106,9 +107,12 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
       className={cx(responsive, visibility)}
       style={styleVars}
     >
-      {content?.map((child) => (
-        <StoryblokServerComponent key={child._uid} blok={child} />
-      ))}
+      {/* Animate inside the cell: an outer wrapper would become the grid child and drop the placement. */}
+      <EntranceMotion blok={blok}>
+        {content?.map((child) => (
+          <StoryblokServerComponent key={child._uid} blok={child} />
+        ))}
+      </EntranceMotion>
     </GridItem>
   );
 });

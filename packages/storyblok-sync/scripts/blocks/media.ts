@@ -1,5 +1,6 @@
 import type { BlockDef } from "../lib/block";
 import { field, tabbed } from "../lib/fields";
+import { withMotion } from "../lib/motion";
 import { inlineOptions, OVERLAY_PATTERN_OPTIONS } from "../lib/options";
 import { withSpacing } from "../lib/spacing";
 
@@ -17,16 +18,6 @@ const FETCH_PRIORITY_OPTIONS = [
 ];
 
 const SLIDESHOW_EFFECTS = ["slide", "fade", "cube", "coverflow", "flip", "cards", "creative"];
-
-const SLIDESHOW_ANIMATIONS = [
-  { name: "None", value: "none" },
-  { name: "Fade In", value: "fadeIn" },
-  { name: "Zoom In", value: "zoomIn" },
-  { name: "Slide In Left", value: "slideInFromLeft" },
-  { name: "Slide In Right", value: "slideInFromRight" },
-  { name: "Slide Up", value: "slideUp" },
-  { name: "Slide Down", value: "slideDown" },
-];
 
 const VIDEO_SOURCES = [
   { name: "Native", value: "native" },
@@ -217,31 +208,27 @@ export const mediaBlocks: BlockDef[] = [
     group: "Media",
     icon: "block-slideshow",
     color: "#38b2ac",
-    schema: withSpacing({
-      images: field.multiasset("Images", ["images"], { required: true }),
-      aspectRatio: field.options("Aspect Ratio", inlineOptions.aspectRatio),
-      ...tabbed("Playback", "playback", {
-        effect: field.options("Effect", SLIDESHOW_EFFECTS, { default_value: "slide" }),
-        autoplayDelay: field.number("Autoplay Delay (ms)", { default_value: "7000" }),
-        speed: field.number("Transition Speed (ms)", { default_value: "300" }),
-        showNavigation: field.boolean("Show Navigation", "true"),
-      }),
-      ...tabbed("Animation", "animation", {
-        animation: field.options("Entrance Animation", SLIDESHOW_ANIMATIONS, {
-          default_value: "none",
+    schema: withSpacing(
+      withMotion({
+        images: field.multiasset("Images", ["images"], { required: true }),
+        aspectRatio: field.options("Aspect Ratio", inlineOptions.aspectRatio),
+        ...tabbed("Playback", "playback", {
+          effect: field.options("Effect", SLIDESHOW_EFFECTS, { default_value: "slide" }),
+          autoplayDelay: field.number("Autoplay Delay (ms)", { default_value: "7000" }),
+          speed: field.number("Transition Speed (ms)", { default_value: "300" }),
+          showNavigation: field.boolean("Show Navigation", "true"),
         }),
-        animationDelay: field.number("Animation Delay (s)", { default_value: "0" }),
-      }),
-      ...tabbed("Effects", "effects", {
-        overlay: field.options("ASCII Overlay", OVERLAY_PATTERN_OPTIONS, {
-          default_value: "random",
+        ...tabbed("Effects", "effects", {
+          overlay: field.options("ASCII Overlay", OVERLAY_PATTERN_OPTIONS, {
+            default_value: "random",
+          }),
+          overlayInset: field.number("Overlay Inset (%, particles inward)", {
+            default_value: "0",
+          }),
+          showCounter: field.boolean("Show Slide Counter (01/04)"),
         }),
-        overlayInset: field.number("Overlay Inset (%, particles inward)", {
-          default_value: "0",
-        }),
-        showCounter: field.boolean("Show Slide Counter (01/04)"),
       }),
-    }),
+    ),
   },
   {
     name: "music_player",

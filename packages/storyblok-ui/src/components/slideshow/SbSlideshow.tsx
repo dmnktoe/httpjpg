@@ -2,6 +2,7 @@ import { type SbSlideshowData, toSlideshowImage } from "@httpjpg/storyblok-utils
 import { Box, Slideshow } from "@httpjpg/ui";
 import { memo } from "react";
 
+import { EntranceMotion } from "../../lib/entrance-motion";
 import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 export interface SbSlideshowProps {
@@ -26,18 +27,20 @@ export const SbSlideshow = memo(function SbSlideshow({ blok }: SbSlideshowProps)
   }
 
   return (
-    <Box {...editable} css={spacingCss(blok)}>
-      <Slideshow
-        images={images.map((img) => toSlideshowImage(img, ""))}
-        aspectRatio={aspectRatio}
-        effect={effect}
-        autoplayDelay={autoplayDelay}
-        speed={speed}
-        showNavigation={showNavigation}
-        overlay={overlay}
-        showCounter={showCounter}
-      />
-    </Box>
+    <EntranceMotion blok={blok}>
+      <Box {...editable} css={spacingCss(blok)}>
+        <Slideshow
+          images={images.map((img) => toSlideshowImage(img, ""))}
+          aspectRatio={aspectRatio}
+          effect={effect}
+          autoplayDelay={autoplayDelay}
+          speed={speed}
+          showNavigation={showNavigation}
+          overlay={overlay}
+          showCounter={showCounter}
+        />
+      </Box>
+    </EntranceMotion>
   );
 });
 

@@ -18,11 +18,12 @@ import {
   findGridsInBody,
   GRID_COLS,
   hiddenFieldForViewport,
+  MARGIN_OPTIONS,
   nudgeItem,
   patchPosition,
   patchSize,
   serializeGrid,
-  spacingToPx,
+  SPACING_OPTIONS,
 } from "./lib";
 
 function item(overrides: Partial<BuilderItem> = {}): BuilderItem {
@@ -173,11 +174,9 @@ describe("nudgeItem / duplicateItem", () => {
 });
 
 describe("spacing / effective geometry", () => {
-  it("maps known spacing keys and ignores blanks", () => {
-    expect(spacingToPx()).toBeUndefined();
-    expect(spacingToPx("")).toBeUndefined();
-    expect(spacingToPx("4")).toBe("1rem");
-    expect(spacingToPx("not-a-token")).toBeUndefined();
+  it("exposes signed pull-out values on MARGIN_OPTIONS only", () => {
+    expect(MARGIN_OPTIONS).toContainEqual({ value: "-4", label: "-4 (-1rem)" });
+    expect(SPACING_OPTIONS.some((option) => option.value.startsWith("-"))).toBe(false);
   });
 
   it("cascades spacing, columns, and box geometry across viewports", () => {

@@ -1,9 +1,9 @@
 import {
   CMS_OPTIONS,
+  spacingLabel,
   WORK_TAG_DATASOURCE_SLUG,
   workTagDatasourceEntries,
 } from "@httpjpg/storyblok-utils";
-import { spacing } from "@httpjpg/tokens";
 
 import type { Datasource, DatasourceEntry } from "../../src/index";
 
@@ -19,7 +19,20 @@ function spacingDs(): DatasourceWithEntries {
       .slice()
       .sort((a, b) => Number(a) - Number(b))
       .map((key) => ({
-        name: `${key} (${spacing[key as unknown as keyof typeof spacing]})`,
+        name: spacingLabel(key),
+        value: key,
+      })),
+  };
+}
+
+function marginDs(): DatasourceWithEntries {
+  return {
+    datasource: { name: "Margin Options", slug: "margin-options" },
+    entries: CMS_OPTIONS.margin
+      .slice()
+      .sort((a, b) => Number(a) - Number(b))
+      .map((key) => ({
+        name: spacingLabel(key),
         value: key,
       })),
   };
@@ -40,5 +53,5 @@ function workTagsDs(): DatasourceWithEntries {
 }
 
 export function allDatasources(): DatasourceWithEntries[] {
-  return [spacingDs(), colorDs(), workTagsDs()];
+  return [spacingDs(), marginDs(), colorDs(), workTagsDs()];
 }

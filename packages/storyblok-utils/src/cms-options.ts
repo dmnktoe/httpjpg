@@ -54,6 +54,11 @@ const colorEntries: ReadonlyArray<{ name: string; value: string }> = (() => {
 })();
 
 const spacingScale = Object.keys(spacing) as Array<keyof typeof spacing & string>;
+/** Signed spacing keys for margin / offset. Padding and gap stay positive-only. */
+const negativeSpacingScale = spacingScale
+  .filter((key) => key !== "0")
+  .map((key) => `-${key}` as const);
+const marginScale = [...negativeSpacingScale, ...spacingScale];
 const fontSizeScale = Object.keys(typography.fontSize) as Array<
   keyof typeof typography.fontSize & string
 >;
@@ -131,6 +136,7 @@ export const CMS_OPTIONS = {
   colors: colorTokens,
   colorEntries,
   spacing: spacingScale,
+  margin: marginScale,
   fontSize: fontSizeScale,
   fontWeight: fontWeightScale,
   fontFamily: fontFamilyScale,
@@ -150,6 +156,7 @@ export const CMS_OPTIONS = {
 
 export type CmsColor = (typeof colorTokens)[number];
 export type CmsSpacing = (typeof spacingScale)[number];
+export type CmsMargin = (typeof marginScale)[number];
 export type CmsFontSize = (typeof fontSizeScale)[number];
 export type CmsFontWeight = (typeof fontWeightScale)[number];
 export type CmsFontFamily = (typeof fontFamilyScale)[number];

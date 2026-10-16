@@ -1,7 +1,8 @@
+import { isMarginSide } from "@httpjpg/storyblok-utils";
 import { css } from "styled-system/css";
 
 import { SelectField } from "./inspector-select-field";
-import { SPACING_OPTIONS, type SpacingSet, type SpacingSide } from "./lib";
+import { MARGIN_OPTIONS, SPACING_OPTIONS, type SpacingSet, type SpacingSide } from "./lib";
 
 const SIDE_ROWS: { label: string; sides: [SpacingSide, SpacingSide] }[] = [
   { label: "Top / Bottom", sides: ["mt", "mb"] },
@@ -72,7 +73,7 @@ function SpacingField({
     <SelectField
       label={SIDE_LABEL[side]}
       value={own}
-      options={SPACING_OPTIONS}
+      options={isMarginSide(side) ? MARGIN_OPTIONS : SPACING_OPTIONS}
       onChange={(v) => onChange(side, v)}
       hint={hint}
     />

@@ -1,10 +1,17 @@
 import { type SbWorkData, storyblokEditHref, type StoryblokLink } from "@httpjpg/storyblok-utils";
-import { Box, DesktopDownloads, type DesktopDownloadItem, PageActions } from "@httpjpg/ui";
+import {
+  Box,
+  DesktopDownloads,
+  type DesktopDownloadItem,
+  DesktopMedia,
+  PageActions,
+} from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
 import { storyblokHref } from "../../lib/href";
 import { editableAttrs } from "../../lib/use-blok";
+import { workDesktopMedia } from "./work-desktop-media";
 
 export interface SbPageWorkProps {
   blok: SbWorkData;
@@ -33,6 +40,7 @@ export const SbPageWork = memo(function SbPageWork({ blok }: SbPageWorkProps) {
   const { body, external_only, link, accentColor } = blok;
   const href = isExternalPreviewLink(link) ? storyblokHref(link) : null;
   const downloads = workDownloadItems(blok);
+  const media = workDesktopMedia(blok);
   return (
     <Box {...editableAttrs(blok)}>
       {!external_only &&
@@ -43,6 +51,7 @@ export const SbPageWork = memo(function SbPageWork({ blok }: SbPageWorkProps) {
         accentColor={accentColor}
       />
       {downloads.length > 0 && <DesktopDownloads items={downloads} />}
+      {media.length > 0 && <DesktopMedia items={media} />}
     </Box>
   );
 });

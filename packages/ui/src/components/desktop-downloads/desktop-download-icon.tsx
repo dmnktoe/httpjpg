@@ -1,37 +1,26 @@
 "use client";
 
-import type { KeyboardEvent, PointerEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
 import { css } from "styled-system/css";
 
+import type { ScatterPosition } from "../../lib/desktop-scatter";
+import { useDesktopDrag } from "../../lib/use-desktop-drag";
 import { DesktopDownloadPlaceholder } from "./desktop-download-placeholder";
 import {
-  clampDesktopIconPoint,
-  DESKTOP_DRAG_THRESHOLD_PX,
   DESKTOP_ICON_SRC,
   type DesktopDownloadItem,
   type DesktopFileKind,
-  type DesktopIconPosition,
   fileKindFromSource,
   triggerDownload,
 } from "./lib";
 
 export interface DesktopDownloadIconProps {
   item: DesktopDownloadItem;
-  position: DesktopIconPosition;
+  position: ScatterPosition;
   selected: boolean;
   stackingOrder: number;
   onSelect: () => void;
   onActivate: () => void;
-}
-
-interface DragSession {
-  pointerId: number;
-  startX: number;
-  startY: number;
-  origX: number;
-  origY: number;
-  moved: boolean;
 }
 
 const LABEL_SHADOW =
@@ -45,81 +34,10 @@ export function DesktopDownloadIcon({
   onSelect,
   onActivate,
 }: DesktopDownloadIconProps) {
-  const dragRef = useRef<DragSession | null>(null);
-  const [offset, setOffset] = useState<{ x: number; y: number } | null>(null);
-  const [dragging, setDragging] = useState(false);
-
-  useEffect(() => {
-    function reclamp() {
-      setOffset((current) =>
-        current
-          ? clampDesktopIconPoint(current.x, current.y, window.innerWidth, window.innerHeight)
-          : current,
-      );
-    }
-
-    window.addEventListener("resize", reclamp);
-    window.addEventListener("orientationchange", reclamp);
-    return () => {
-      window.removeEventListener("resize", reclamp);
-      window.removeEventListener("orientationchange", reclamp);
-    };
-  }, []);
+  const { offset, dragging, handlers } = useDesktopDrag<HTMLButtonElement>({ onSelect });
 
   const kind: DesktopFileKind = item.kind ?? fileKindFromSource(item.name, item.url);
   const iconSrc = DESKTOP_ICON_SRC[kind];
-
-  function handlePointerDown(event: PointerEvent<HTMLButtonElement>) {
-    if (event.button !== 0) {
-      return;
-    }
-    const node = event.currentTarget;
-    onSelect();
-    const rect = node.getBoundingClientRect();
-    dragRef.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      origX: offset?.x ?? rect.left,
-      origY: offset?.y ?? rect.top,
-      moved: false,
-    };
-    node.setPointerCapture?.(event.pointerId);
-  }
-
-  function handlePointerMove(event: PointerEvent<HTMLButtonElement>) {
-    const drag = dragRef.current;
-    if (!drag || event.pointerId !== drag.pointerId) {
-      return;
-    }
-    const dx = event.clientX - drag.startX;
-    const dy = event.clientY - drag.startY;
-    if (!drag.moved && dx * dx + dy * dy < DESKTOP_DRAG_THRESHOLD_PX * DESKTOP_DRAG_THRESHOLD_PX) {
-      return;
-    }
-    drag.moved = true;
-    if (!dragging) {
-      setDragging(true);
-    }
-    setOffset(
-      clampDesktopIconPoint(
-        drag.origX + dx,
-        drag.origY + dy,
-        window.innerWidth,
-        window.innerHeight,
-      ),
-    );
-  }
-
-  function endDrag(event: PointerEvent<HTMLButtonElement>) {
-    const drag = dragRef.current;
-    if (!drag || event.pointerId !== drag.pointerId) {
-      return;
-    }
-    dragRef.current = null;
-    setDragging(false);
-    event.currentTarget.releasePointerCapture?.(event.pointerId);
-  }
 
   function handleDoubleClick() {
     triggerDownload(item.url, item.name);
@@ -140,10 +58,7 @@ export function DesktopDownloadIcon({
       aria-pressed={selected}
       aria-label={`Download ${item.name}`}
       title={`${item.name} — double-click to download`}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
+      {...handlers}
       onDoubleClick={handleDoubleClick}
       onKeyDown={handleKeyDown}
       onClick={(event) => {

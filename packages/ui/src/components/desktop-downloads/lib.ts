@@ -1,3 +1,4 @@
+import type { ScatterOptions } from "../../lib/desktop-scatter";
 import { isSafeHref } from "../../lib/is-external-link";
 
 export const DESKTOP_FILE_KINDS = [
@@ -20,21 +21,20 @@ export interface DesktopDownloadItem {
   kind?: DesktopFileKind;
 }
 
-export interface DesktopIconPosition {
-  left: number;
-  top: number;
-}
-
 /**
  * Optional image URLs per file kind. Leave a kind unset to keep the drawn
  * placeholder — swap in 32×32 XP glyphs later (pixelated rendering is already on).
  */
 export const DESKTOP_ICON_SRC: Partial<Record<DesktopFileKind, string>> = {};
 
-export const DESKTOP_ICON_WIDTH = 76;
-export const DESKTOP_ICON_HEIGHT = 86;
-export const DESKTOP_ICON_MARGIN = 8;
-export const DESKTOP_DRAG_THRESHOLD_PX = 4;
+/** Icons are small: tight margins, and they may sit closer together than media windows. */
+export const DESKTOP_ICON_SCATTER: ScatterOptions = {
+  marginX: 6,
+  marginY: 12,
+  right: 14,
+  bottom: 18,
+  minDist: 12,
+};
 
 const KIND_BY_EXT: Record<string, DesktopFileKind> = {
   pdf: "pdf",
@@ -121,72 +121,6 @@ export function visibleDesktopDownloads(items: DesktopDownloadItem[]): DesktopDo
     const url = item.url.trim();
     return Boolean(name && url && isSafeHref(url));
   });
-}
-
-export function hashSeed(input: string): number {
-  let hash = 2166136261;
-  for (const char of input) {
-    hash ^= char.charCodeAt(0);
-    hash = Math.imul(hash, 16777619);
-  }
-  return hash >>> 0;
-}
-
-function unit(hash: number, salt: number): number {
-  const mixed = Math.imul(hash ^ (salt >>> 0), 1597334677) >>> 0;
-  return mixed / 0x1_0000_0000;
-}
-
-/** Seeded scatter in viewport percentages, with a light anti-overlap pass. */
-export function desktopIconPositions(ids: readonly string[]): DesktopIconPosition[] {
-  const positions: DesktopIconPosition[] = [];
-  const marginX = 6;
-  const marginY = 12;
-  const bottom = 18;
-  const minDist = 12;
-
-  for (let index = 0; index < ids.length; index += 1) {
-    const seed = hashSeed(`${ids[index]}:${index}`);
-    let left = marginX;
-    let top = marginY;
-
-    for (let attempt = 0; attempt < 14; attempt += 1) {
-      left = marginX + unit(seed, 11 + attempt * 17) * (100 - marginX * 2 - 8);
-      top = marginY + unit(seed, 29 + attempt * 13) * (100 - marginY - bottom);
-      const collides = positions.some((position) => {
-        const dx = position.left - left;
-        const dy = position.top - top;
-        return dx * dx + dy * dy < minDist * minDist;
-      });
-      if (!collides) {
-        break;
-      }
-    }
-
-    positions.push({ left, top });
-  }
-
-  return positions;
-}
-
-export function clampDesktopIconPoint(
-  x: number,
-  y: number,
-  viewportWidth: number,
-  viewportHeight: number,
-): { x: number; y: number } {
-  const maxX = Math.max(
-    DESKTOP_ICON_MARGIN,
-    viewportWidth - DESKTOP_ICON_WIDTH - DESKTOP_ICON_MARGIN,
-  );
-  const maxY = Math.max(
-    DESKTOP_ICON_MARGIN,
-    viewportHeight - DESKTOP_ICON_HEIGHT - DESKTOP_ICON_MARGIN,
-  );
-  return {
-    x: Math.min(maxX, Math.max(DESKTOP_ICON_MARGIN, x)),
-    y: Math.min(maxY, Math.max(DESKTOP_ICON_MARGIN, y)),
-  };
 }
 
 function isSameOriginHref(href: string): boolean {

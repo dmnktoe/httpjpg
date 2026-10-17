@@ -23,9 +23,9 @@ catalog:
   "@types/react-dom": ^19.3.0
   "@vitejs/plugin-react": ^6.1.2
   "@vitest/coverage-v8": ^4.1.11
-  dotenv: ^18.0.7
+  dotenv: ^18.0.8
   jsdom: ^30.1.2
-  motion: ^14.1.0
+  motion: ^14.2.0
   next: ^16.4.0
   psn-api: ^2.18.1
   react: ^19.3.0

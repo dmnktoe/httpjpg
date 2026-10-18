@@ -97,6 +97,33 @@ describe("rankDocuments", () => {
     expect(rankDocuments(documents, "print")).toHaveLength(1);
   });
 
+  it("matches tokens only at word starts, not inside other words", () => {
+    const documents = [
+      doc({ title: "Companion App", excerpt: "A participatory web application", id: "hit" }),
+      doc({ title: "Haze", excerpt: "what happened, a shadowy appearance, provided", id: "noise" }),
+    ];
+
+    const results = rankDocuments(documents, "companion app id");
+
+    expect(results.map((result) => result.id)).toEqual(["hit"]);
+  });
+
+  it("lets a long enough token match as a word prefix", () => {
+    expect(rankDocuments(DOCUMENTS, "brut").map((result) => result.title)).toEqual([
+      "Brutalist Portfolio",
+      "Archive",
+    ]);
+  });
+
+  it("keeps short tokens to whole words", () => {
+    const documents = [
+      doc({ title: "Whole", excerpt: "an app for walks", id: "whole" }),
+      doc({ title: "Prefix", excerpt: "an application form", id: "prefix" }),
+    ];
+
+    expect(rankDocuments(documents, "app").map((result) => result.id)).toEqual(["whole"]);
+  });
+
   it("excludes documents that match nothing", () => {
     expect(rankDocuments(DOCUMENTS, "kubernetes")).toEqual([]);
   });

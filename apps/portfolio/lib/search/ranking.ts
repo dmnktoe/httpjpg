@@ -47,6 +47,13 @@ const WEIGHT = {
 
 const MIN_TOKEN_LENGTH = 2;
 
+/**
+ * Below this length a token only matches a whole word. As a prefix or
+ * substring, `app` pulls in every "happened" and "appearance", and `id` every
+ * "provided", so a precise title query came back padded with unrelated work.
+ */
+const MIN_PREFIX_LENGTH = 4;
+
 /** "Müller's" → "mullers": lowercase, no diacritics, no punctuation. */
 export function normalize(value: string): string {
   return value
@@ -62,6 +69,14 @@ export function tokenize(value: string): string[] {
   return normalize(value)
     .split(" ")
     .filter((token) => token.length >= MIN_TOKEN_LENGTH);
+}
+
+/** True when `token` starts a word of normalized `text` (or is one, if short). */
+function matchesWord(text: string, token: string): boolean {
+  const padded = ` ${text} `;
+  return token.length >= MIN_PREFIX_LENGTH
+    ? padded.includes(` ${token}`)
+    : padded.includes(` ${token} `);
 }
 
 /** Every tag spelling plus a space-free variant, so `nextjs` finds `Next.js`. */
@@ -95,18 +110,18 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
   for (const token of tokens) {
     let hit = false;
 
-    if (title.includes(token)) {
+    if (matchesWord(title, token)) {
       score += title.startsWith(token) ? WEIGHT.titlePrefix : WEIGHT.titleToken;
       hit = true;
     }
     if (tags.includes(token)) {
       score += WEIGHT.tagExact;
       hit = true;
-    } else if (tags.some((tag) => tag.includes(token))) {
+    } else if (tags.some((tag) => matchesWord(tag, token))) {
       score += WEIGHT.tagToken;
       hit = true;
     }
-    if (excerpt.includes(token)) {
+    if (matchesWord(excerpt, token)) {
       score += WEIGHT.excerptToken;
       hit = true;
     }

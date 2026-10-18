@@ -39,6 +39,7 @@ interface SearchResponse {
     media?: CommandPaletteMediaItem[];
   }>;
   suggestions?: string[];
+  terms?: string[];
 }
 
 export function AskWidget({ askEnabled = true }: AskWidgetProps) {
@@ -48,6 +49,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<CommandPaletteResult[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [terms, setTerms] = useState<string[]>([]);
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState<Array<{ title: string; href: string }>>([]);
   const [action, setAction] = useState<AskNavigateAction>();
@@ -146,6 +148,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
         }
         setResults(data.results ?? []);
         setSuggestions(data.suggestions ?? []);
+        setTerms(data.terms ?? []);
         setStatus("idle");
       } catch (error) {
         if (controller.signal.aborted || searchAbort.current !== controller) {
@@ -278,6 +281,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
       query={query}
       results={results}
       suggestions={suggestions}
+      highlightTerms={terms}
       answer={answer}
       sources={sources}
       action={action}

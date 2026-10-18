@@ -57,6 +57,13 @@ describe("CommandPalette", () => {
     expect(screen.getByText("Stark")).toBeInTheDocument();
   });
 
+  it("marks the query terms in titles and excerpts", () => {
+    setup({ highlightTerms: ["brutalist", "stark"] });
+
+    const marks = screen.getAllByText((_content, element) => element?.tagName === "MARK");
+    expect(marks.map((mark) => mark.textContent)).toEqual(["Brutalist", "Stark"]);
+  });
+
   it("reports the match count", () => {
     setup();
 
@@ -367,20 +374,47 @@ describe("CommandPalette answer", () => {
 
   it("renders the answer text and its sources", () => {
     setup({
-      answer: "It is a portfolio.",
+      answer: "It is a portfolio [1].",
       sources: [{ title: "Brutalist Portfolio", href: "/work/brutalist" }],
     });
 
-    expect(screen.getByText("It is a portfolio.")).toBeInTheDocument();
+    expect(screen.getByText(/It is a portfolio/)).toHaveTextContent("It is a portfolio [1].");
     expect(screen.getByRole("link", { name: /Brutalist Portfolio/ })).toHaveAttribute(
       "href",
       "/work/brutalist",
     );
   });
 
+  it("lists only the sources the answer cites, under their own numbers", () => {
+    setup({
+      answer: "It is a portfolio [2], built in Go [2, 3].",
+      sources: [
+        { title: "Context Only", href: "/work/context" },
+        { title: "Brutalist Portfolio", href: "/work/brutalist" },
+        { title: "Go Service", href: "/work/go" },
+      ],
+    });
+
+    const links = screen.getAllByRole("link");
+    expect(links.map((link) => link.textContent)).toEqual([
+      "[2] Brutalist Portfolio",
+      "[3] Go Service",
+    ]);
+    expect(screen.queryByText(/Context Only/)).not.toBeInTheDocument();
+  });
+
+  it("lists no sources when the answer cites none", () => {
+    setup({
+      answer: "Nothing on that.",
+      sources: [{ title: "Brutalist Portfolio", href: "/work/brutalist" }],
+    });
+
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  });
+
   it("closes when a source link is followed", () => {
     const props = setup({
-      answer: "It is a portfolio.",
+      answer: "It is a portfolio [1].",
       sources: [{ title: "Brutalist Portfolio", href: "/work/brutalist" }],
     });
 

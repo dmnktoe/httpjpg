@@ -45,6 +45,8 @@ export interface CommandPaletteProps {
   query: string;
   results: CommandPaletteResult[];
   suggestions?: string[];
+  /** Normalized terms the server ranked on; marked in titles and excerpts. */
+  highlightTerms?: string[];
   /** The answer text so far. Grows token by token while status is `answering`. */
   answer?: string;
   sources?: CommandPaletteSource[];
@@ -66,6 +68,7 @@ export function CommandPalette({
   query,
   results,
   suggestions = [],
+  highlightTerms = [],
   answer = "",
   sources = [],
   action,
@@ -259,6 +262,7 @@ export function CommandPalette({
                   result={result}
                   isActive={index === activeIndex}
                   optionId={optionId(index)}
+                  terms={highlightTerms}
                   onSelect={onSelect}
                   onHover={() => setActiveIndex(index)}
                 />

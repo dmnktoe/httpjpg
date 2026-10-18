@@ -174,6 +174,18 @@ export const MediaStrip: Story = {
   },
 };
 
+/**
+ * The terms `/api/search` ranked on, marked where they start a word. The excerpt
+ * opens near its first match, so the row shows why it matched.
+ */
+export const Highlighted: Story = {
+  args: {
+    query: "poster",
+    results: RESULTS,
+    highlightTerms: ["poster"],
+  },
+};
+
 /** Autocomplete only — suggestions arrive before the ranked results do. */
 export const Autocomplete: Story = {
   args: {

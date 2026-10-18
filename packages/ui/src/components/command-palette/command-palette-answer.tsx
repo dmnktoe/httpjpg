@@ -5,6 +5,7 @@ import type { MouseEvent } from "react";
 import { Box } from "../box/box";
 import { Button } from "../button/button";
 import { Link } from "../link/link";
+import { citedSourceNumbers, splitCitations } from "./lib";
 
 export interface CommandPaletteSource {
   title: string;
@@ -37,6 +38,8 @@ export function CommandPaletteAnswer({
   onSourceClick,
   onAction,
 }: CommandPaletteAnswerProps) {
+  const cited = citedSourceNumbers(answer, sources.length);
+
   return (
     <Box
       css={{
@@ -78,7 +81,19 @@ export function CommandPaletteAnswer({
             whiteSpace: "pre-wrap",
           }}
         >
-          {answer}
+          {splitCitations(answer).map((segment, index) =>
+            segment.isCitation ? (
+              <Box
+                as="span"
+                key={index}
+                css={{ color: "primary.500", fontFamily: "mono", fontSize: "sm" }}
+              >
+                {segment.text}
+              </Box>
+            ) : (
+              segment.text
+            ),
+          )}
           {isStreaming && (
             <Box
               as="span"
@@ -111,7 +126,7 @@ export function CommandPaletteAnswer({
         </Box>
       )}
 
-      {sources.length > 0 && (
+      {cited.length > 0 && (
         <Box
           css={{
             display: "flex",
@@ -127,9 +142,9 @@ export function CommandPaletteAnswer({
           <Box as="span" css={{ textTransform: "uppercase" }}>
             sources
           </Box>
-          {sources.map((source, index) => (
-            <Link key={source.href} href={source.href} onClick={onSourceClick}>
-              [{index + 1}] {source.title}
+          {cited.map((number) => (
+            <Link key={number} href={sources[number - 1].href} onClick={onSourceClick}>
+              [{number}] {sources[number - 1].title}
             </Link>
           ))}
         </Box>

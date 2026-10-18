@@ -222,7 +222,7 @@ describe("AskWidget", () => {
       askBody: ndjson([
         { type: "sources", sources: [{ title: "Brutalist Portfolio", href: "/work/brutalist" }] },
         { type: "delta", text: "It is " },
-        { type: "delta", text: "a portfolio." },
+        { type: "delta", text: "a portfolio [1]." },
       ]),
     });
     render(<AskWidget />);
@@ -232,7 +232,9 @@ describe("AskWidget", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /ask/i }));
 
-    await waitFor(() => expect(screen.getByText("It is a portfolio.")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/It is a portfolio/)).toHaveTextContent("It is a portfolio [1]."),
+    );
     expect(screen.getByRole("link", { name: /Brutalist Portfolio/ })).toBeInTheDocument();
     expect(trackAskSubmit).toHaveBeenCalledWith({ queryLength: 13 });
     expect(trackAskComplete).toHaveBeenCalledWith({ hasAction: false, sourceCount: 1 });

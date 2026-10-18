@@ -14,9 +14,11 @@ import {
   CommandPaletteAnswer,
   type CommandPaletteSource,
 } from "./command-palette-answer";
+import { CommandPaletteEmpty } from "./command-palette-empty";
 import { CommandPaletteFooter } from "./command-palette-footer";
 import { CommandPaletteInput } from "./command-palette-input";
 import { CommandPaletteMedia, type CommandPaletteMediaItem } from "./command-palette-media";
+import { CommandPaletteRecents } from "./command-palette-recents";
 import { type CommandPaletteResult, CommandPaletteResultItem } from "./command-palette-result";
 import { CommandPaletteSuggestions } from "./command-palette-suggestions";
 
@@ -45,6 +47,10 @@ export interface CommandPaletteProps {
   query: string;
   results: CommandPaletteResult[];
   suggestions?: string[];
+  /** Normalized terms the server ranked on; marked in titles and excerpts. */
+  highlightTerms?: string[];
+  /** Earlier queries, newest first, offered while the input is empty. */
+  recents?: string[];
   /** The answer text so far. Grows token by token while status is `answering`. */
   answer?: string;
   sources?: CommandPaletteSource[];
@@ -59,6 +65,7 @@ export interface CommandPaletteProps {
   onSelect: (result: CommandPaletteResult) => void;
   onAsk: (question: string) => void;
   onAction?: (action: CommandPaletteAction) => void;
+  onClearRecents?: () => void;
 }
 
 export function CommandPalette({
@@ -66,6 +73,8 @@ export function CommandPalette({
   query,
   results,
   suggestions = [],
+  highlightTerms = [],
+  recents = [],
   answer = "",
   sources = [],
   action,
@@ -78,6 +87,7 @@ export function CommandPalette({
   onSelect,
   onAsk,
   onAction,
+  onClearRecents,
 }: CommandPaletteProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const isMounted = useHasMounted();
@@ -111,7 +121,11 @@ export function CommandPalette({
 
   const hasAnswer = Boolean(answer) || status === "answering" || status === "error";
   const isStreaming = status === "answering";
-  const canAsk = askEnabled && query.trim().length > 0;
+  const trimmedQuery = query.trim();
+  const canAsk = askEnabled && trimmedQuery.length > 0;
+  const isEmpty = !trimmedQuery && !hasAnswer;
+  const hasNoMatches =
+    Boolean(trimmedQuery) && status === "idle" && results.length === 0 && !hasAnswer;
 
   const handleDialogKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Escape") {
@@ -233,6 +247,14 @@ export function CommandPalette({
               onKeyDown={handleKeyDown}
             />
 
+            {isEmpty && (
+              <CommandPaletteRecents
+                recents={recents}
+                onSelect={onQueryChange}
+                onClear={() => onClearRecents?.()}
+              />
+            )}
+
             <CommandPaletteSuggestions suggestions={suggestions} onSelect={onQueryChange} />
 
             <CommandPaletteMedia results={results} onSelect={onSelect} />
@@ -259,11 +281,20 @@ export function CommandPalette({
                   result={result}
                   isActive={index === activeIndex}
                   optionId={optionId(index)}
+                  terms={highlightTerms}
                   onSelect={onSelect}
                   onHover={() => setActiveIndex(index)}
                 />
               ))}
             </Box>
+
+            {hasNoMatches && (
+              <CommandPaletteEmpty
+                query={trimmedQuery}
+                canAsk={canAsk}
+                onAsk={() => onAsk(trimmedQuery)}
+              />
+            )}
 
             <CommandPaletteFooter
               statusLabel={statusLabel(status, query, results.length)}

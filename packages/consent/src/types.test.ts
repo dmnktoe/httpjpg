@@ -36,6 +36,7 @@ describe("consent defaults and cookiedatabase helpers", () => {
 
   it("lists site cookies with cookiedatabase links where known", () => {
     expect(SITE_COOKIES.some((cookie) => cookie.name === "httpjpg_consent")).toBe(true);
+    expect(SITE_COOKIES.some((cookie) => cookie.name === "httpjpg.recent-searches")).toBe(true);
     expect(
       SITE_COOKIES.some(
         (cookie) => cookie.cookieDatabase?.startsWith(`${COOKIE_DATABASE_ORIGIN}/cookie/`) ?? false,

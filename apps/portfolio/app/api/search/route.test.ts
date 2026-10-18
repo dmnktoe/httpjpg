@@ -67,19 +67,20 @@ describe("GET /api/search", () => {
       "Brutalist Portfolio",
     ]);
     expect(body.suggestions).toContain("Brutalist Portfolio");
+    expect(body.terms).toEqual(["brutalist"]);
   });
 
   it("returns empty payloads for a blank query without touching the index", async () => {
     const response = await GET(get("/api/search?q=%20%20"));
 
-    await expect(response.json()).resolves.toEqual({ results: [], suggestions: [] });
+    await expect(response.json()).resolves.toEqual({ results: [], suggestions: [], terms: [] });
     expect(mockGetSearchIndex).not.toHaveBeenCalled();
   });
 
   it("returns empty payloads when q is absent", async () => {
     const response = await GET(get("/api/search"));
 
-    await expect(response.json()).resolves.toEqual({ results: [], suggestions: [] });
+    await expect(response.json()).resolves.toEqual({ results: [], suggestions: [], terms: [] });
   });
 
   it("honours the limit parameter", async () => {

@@ -20,6 +20,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { type AskNavigateAction, readAskStream } from "@/lib/search/ask-stream";
+import {
+  clearRecentSearches,
+  rememberSearch,
+  useRecentSearches,
+} from "@/lib/search/recent-searches";
 
 export interface AskWidgetProps {
   /** False when the deployment has no Groq key — search still works. */
@@ -39,6 +44,7 @@ interface SearchResponse {
     media?: CommandPaletteMediaItem[];
   }>;
   suggestions?: string[];
+  terms?: string[];
 }
 
 export function AskWidget({ askEnabled = true }: AskWidgetProps) {
@@ -48,6 +54,8 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<CommandPaletteResult[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [terms, setTerms] = useState<string[]>([]);
+  const recents = useRecentSearches();
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState<Array<{ title: string; href: string }>>([]);
   const [action, setAction] = useState<AskNavigateAction>();
@@ -130,7 +138,6 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     searchAbort.current = controller;
 
     const timer = setTimeout(async () => {
-      setStatus("searching");
       try {
         const response = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`, {
           signal: controller.signal,
@@ -146,6 +153,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
         }
         setResults(data.results ?? []);
         setSuggestions(data.suggestions ?? []);
+        setTerms(data.terms ?? []);
         setStatus("idle");
       } catch (error) {
         if (controller.signal.aborted || searchAbort.current !== controller) {
@@ -172,6 +180,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
         queryLength: query.trim().length,
         title: result.title,
       });
+      rememberSearch(query);
       close();
       if (result.href.startsWith("http")) {
         window.open(result.href, "_blank", "noopener,noreferrer");
@@ -196,6 +205,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
     setAction(undefined);
     setErrorMessage(undefined);
     setStatus("answering");
+    rememberSearch(question);
     trackAskSubmit({ queryLength: question.trim().length });
 
     let sourceCount = 0;
@@ -256,6 +266,11 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
 
   const handleQueryChange = useCallback((value: string) => {
     setQuery(value);
+    // Searching from the first keystroke, not after the debounce: otherwise the
+    // palette reads "no matches" for a beat before the first response lands.
+    if (value.trim()) {
+      setStatus("searching");
+    }
     askAbort.current?.abort();
     setAnswer("");
     setSources([]);
@@ -278,6 +293,8 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
       query={query}
       results={results}
       suggestions={suggestions}
+      highlightTerms={terms}
+      recents={recents}
       answer={answer}
       sources={sources}
       action={action}
@@ -289,6 +306,7 @@ export function AskWidget({ askEnabled = true }: AskWidgetProps) {
       onSelect={handleSelect}
       onAsk={handleAsk}
       onAction={handleAction}
+      onClearRecents={clearRecentSearches}
     />
   );
 }

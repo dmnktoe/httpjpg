@@ -1,5 +1,6 @@
 import {
   normalize,
+  queryTerms,
   rankDocuments,
   type SearchDocument,
   suggestCompletions,
@@ -42,6 +43,17 @@ describe("normalize", () => {
 describe("tokenize", () => {
   it("drops single-character noise", () => {
     expect(tokenize("a poster series")).toEqual(["poster", "series"]);
+  });
+});
+
+describe("queryTerms", () => {
+  it("drops filler words and duplicates", () => {
+    expect(queryTerms("What is the Innenstadt app about? app")).toEqual(["innenstadt", "app"]);
+    expect(queryTerms("Was gibt es über Kassel")).toEqual(["kassel"]);
+  });
+
+  it("keeps filler when the query is nothing else", () => {
+    expect(queryTerms("the who")).toEqual(["the", "who"]);
   });
 });
 
@@ -95,6 +107,62 @@ describe("rankDocuments", () => {
     const documents = [doc({ title: "Legacy", tags: ["Print"], tagValues: undefined })];
 
     expect(rankDocuments(documents, "print")).toHaveLength(1);
+  });
+
+  it("matches tokens only at word starts, not inside other words", () => {
+    const documents = [
+      doc({ title: "Companion App", excerpt: "A participatory web application", id: "hit" }),
+      doc({ title: "Haze", excerpt: "what happened, a shadowy appearance, provided", id: "noise" }),
+    ];
+
+    const results = rankDocuments(documents, "companion app id");
+
+    expect(results.map((result) => result.id)).toEqual(["hit"]);
+  });
+
+  it("lets a long enough token match as a word prefix", () => {
+    expect(rankDocuments(DOCUMENTS, "brut").map((result) => result.title)).toEqual([
+      "Brutalist Portfolio",
+      "Archive",
+    ]);
+  });
+
+  it("keeps short tokens to whole words", () => {
+    const documents = [
+      doc({ title: "Whole", excerpt: "an app for walks", id: "whole" }),
+      doc({ title: "Prefix", excerpt: "an application form", id: "prefix" }),
+    ];
+
+    expect(rankDocuments(documents, "app").map((result) => result.id)).toEqual(["whole"]);
+  });
+
+  it("drops documents that match fewer query terms than the best match", () => {
+    const documents = [
+      doc({ title: "Innenstadt ID-100, Companion App", id: "hit" }),
+      doc({ title: "Dücker", excerpt: "1,100+ partner brands", id: "number" }),
+      doc({ title: "Other", excerpt: "a small app", id: "app" }),
+    ];
+
+    const results = rankDocuments(documents, "Innenstadt ID-100, Companion App");
+
+    expect(results.map((result) => result.id)).toEqual(["hit"]);
+  });
+
+  it("falls back to the best-covered documents when none match every term", () => {
+    const results = rankDocuments(DOCUMENTS, "brutalist kubernetes");
+
+    expect(results.map((result) => result.title)).toEqual(["Brutalist Portfolio", "Archive"]);
+  });
+
+  it("ranks a question on its topic words, not its filler", () => {
+    const documents = [
+      doc({ title: "Innenstadt", excerpt: "a walk through the city", id: "topic" }),
+      doc({ title: "Filler", excerpt: "what is this about, who is it for", id: "filler" }),
+    ];
+
+    const results = rankDocuments(documents, "what is innenstadt about?");
+
+    expect(results.map((result) => result.id)).toEqual(["topic"]);
   });
 
   it("excludes documents that match nothing", () => {

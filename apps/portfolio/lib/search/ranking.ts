@@ -47,6 +47,101 @@ const WEIGHT = {
 
 const MIN_TOKEN_LENGTH = 2;
 
+/**
+ * Below this length a token only matches a whole word. As a prefix or
+ * substring, `app` pulls in every "happened" and "appearance", and `id` every
+ * "provided", so a precise title query came back padded with unrelated work.
+ */
+const MIN_PREFIX_LENGTH = 4;
+
+/**
+ * Words that name no topic. Ask ranks the whole question, and "what is … about"
+ * would otherwise count as a match on nearly every page. Spelled normalized.
+ */
+const STOP_WORDS = new Set([
+  "a",
+  "an",
+  "and",
+  "are",
+  "as",
+  "at",
+  "be",
+  "by",
+  "can",
+  "did",
+  "do",
+  "does",
+  "for",
+  "from",
+  "has",
+  "have",
+  "how",
+  "in",
+  "is",
+  "it",
+  "its",
+  "me",
+  "my",
+  "of",
+  "on",
+  "or",
+  "tell",
+  "that",
+  "the",
+  "this",
+  "to",
+  "was",
+  "were",
+  "what",
+  "when",
+  "where",
+  "which",
+  "who",
+  "why",
+  "with",
+  "you",
+  "your",
+  "about",
+  "any",
+  "show",
+  "auf",
+  "bitte",
+  "das",
+  "dem",
+  "den",
+  "der",
+  "des",
+  "die",
+  "du",
+  "ein",
+  "eine",
+  "einem",
+  "einen",
+  "einer",
+  "es",
+  "fur",
+  "gibt",
+  "hat",
+  "ich",
+  "im",
+  "ist",
+  "mal",
+  "mir",
+  "mit",
+  "oder",
+  "sind",
+  "uber",
+  "und",
+  "von",
+  "warum",
+  "was",
+  "welche",
+  "wer",
+  "wie",
+  "wo",
+  "zu",
+]);
+
 /** "Müller's" → "mullers": lowercase, no diacritics, no punctuation. */
 export function normalize(value: string): string {
   return value
@@ -64,6 +159,25 @@ export function tokenize(value: string): string[] {
     .filter((token) => token.length >= MIN_TOKEN_LENGTH);
 }
 
+/**
+ * The words a query is ranked on: tokenized, deduplicated, filler dropped. A
+ * query of nothing but filler keeps it, so "the who" still finds something.
+ * `/api/search` returns these so clients highlight what was actually matched.
+ */
+export function queryTerms(query: string): string[] {
+  const tokens = [...new Set(tokenize(query))];
+  const topical = tokens.filter((token) => !STOP_WORDS.has(token));
+  return topical.length > 0 ? topical : tokens;
+}
+
+/** True when `token` starts a word of normalized `text` (or is one, if short). */
+function matchesWord(text: string, token: string): boolean {
+  const padded = ` ${text} `;
+  return token.length >= MIN_PREFIX_LENGTH
+    ? padded.includes(` ${token}`)
+    : padded.includes(` ${token} `);
+}
+
 /** Every tag spelling plus a space-free variant, so `nextjs` finds `Next.js`. */
 function tagVariants(document: SearchDocument): string[] {
   const variants = new Set<string>();
@@ -78,7 +192,13 @@ function tagVariants(document: SearchDocument): string[] {
   return [...variants];
 }
 
-function scoreDocument(document: SearchDocument, query: string, tokens: string[]): number {
+interface DocumentScore {
+  score: number;
+  /** How many query terms hit any field. */
+  matched: number;
+}
+
+function scoreDocument(document: SearchDocument, query: string, tokens: string[]): DocumentScore {
   const title = normalize(document.title);
   const excerpt = normalize(document.excerpt);
   const tags = tagVariants(document);
@@ -95,18 +215,18 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
   for (const token of tokens) {
     let hit = false;
 
-    if (title.includes(token)) {
+    if (matchesWord(title, token)) {
       score += title.startsWith(token) ? WEIGHT.titlePrefix : WEIGHT.titleToken;
       hit = true;
     }
     if (tags.includes(token)) {
       score += WEIGHT.tagExact;
       hit = true;
-    } else if (tags.some((tag) => tag.includes(token))) {
+    } else if (tags.some((tag) => matchesWord(tag, token))) {
       score += WEIGHT.tagToken;
       hit = true;
     }
-    if (excerpt.includes(token)) {
+    if (matchesWord(excerpt, token)) {
       score += WEIGHT.excerptToken;
       hit = true;
     }
@@ -120,24 +240,36 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
     score += WEIGHT.allTokens;
   }
 
-  return score;
+  return { score, matched };
 }
 
-/** Ties break on recency, then title. */
+/**
+ * Every query term has to match, as in Algolia's default. When no document
+ * matches them all, the best-covered ones stand in, so a typo or a half-typed
+ * last word narrows the list instead of emptying it — and a lone shared word
+ * like `app` no longer pads a precise query with unrelated work.
+ *
+ * Ties break on recency, then title.
+ */
 export function rankDocuments(
   documents: SearchDocument[],
   query: string,
   limit = 8,
 ): SearchResult[] {
   const normalized = normalize(query);
-  const tokens = tokenize(query);
+  const tokens = queryTerms(query);
   if (!normalized || tokens.length === 0) {
     return [];
   }
 
-  return documents
-    .map((document) => ({ ...document, score: scoreDocument(document, normalized, tokens) }))
-    .filter((result) => result.score > 0)
+  const scored = documents
+    .map((document) => ({ document, ...scoreDocument(document, normalized, tokens) }))
+    .filter((entry) => entry.score > 0);
+  const coverage = Math.max(0, ...scored.map((entry) => entry.matched));
+
+  return scored
+    .filter((entry) => entry.matched === coverage)
+    .map(({ document, score }) => ({ ...document, score }))
     .sort(
       (a, b) =>
         b.score - a.score ||

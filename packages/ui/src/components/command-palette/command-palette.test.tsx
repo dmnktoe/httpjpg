@@ -64,6 +64,36 @@ describe("CommandPalette", () => {
     expect(marks.map((mark) => mark.textContent)).toEqual(["Brutalist", "Stark"]);
   });
 
+  it("offers recent searches while the input is empty", () => {
+    const props = setup({ query: "", recents: ["blence", "poster"], onClearRecents: vi.fn() });
+
+    fireEvent.click(screen.getByRole("button", { name: /blence/ }));
+    expect(props.onQueryChange).toHaveBeenCalledWith("blence");
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear recent searches" }));
+    expect(props.onClearRecents).toHaveBeenCalled();
+  });
+
+  it("hides recent searches once there is a query", () => {
+    setup({ recents: ["blence"] });
+
+    expect(screen.queryByRole("button", { name: /blence/ })).not.toBeInTheDocument();
+  });
+
+  it("turns no matches into an offer to ask", () => {
+    const props = setup({ query: "kubernetes", results: [] });
+
+    expect(screen.getByText("no matches for “kubernetes”")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /ask instead/ }));
+    expect(props.onAsk).toHaveBeenCalledWith("kubernetes");
+  });
+
+  it("does not claim no matches while a search is in flight", () => {
+    setup({ query: "kubernetes", results: [], status: "searching" });
+
+    expect(screen.queryByText(/no matches for/)).not.toBeInTheDocument();
+  });
+
   it("reports the match count", () => {
     setup();
 
@@ -379,7 +409,7 @@ describe("CommandPalette answer", () => {
     });
 
     expect(screen.getByText(/It is a portfolio/)).toHaveTextContent("It is a portfolio [1].");
-    expect(screen.getByRole("link", { name: /Brutalist Portfolio/ })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "[1] Brutalist Portfolio" })).toHaveAttribute(
       "href",
       "/work/brutalist",
     );
@@ -395,12 +425,31 @@ describe("CommandPalette answer", () => {
       ],
     });
 
-    const links = screen.getAllByRole("link");
-    expect(links.map((link) => link.textContent)).toEqual([
+    const chips = screen.getAllByRole("link").filter((link) => link.textContent?.startsWith("["));
+    expect(chips.map((link) => link.textContent)).toEqual([
       "[2] Brutalist Portfolio",
       "[3] Go Service",
     ]);
     expect(screen.queryByText(/Context Only/)).not.toBeInTheDocument();
+  });
+
+  it("links each inline citation to its source", () => {
+    setup({
+      answer: "Built in Go [1, 2].",
+      sources: [
+        { title: "Brutalist Portfolio", href: "/work/brutalist" },
+        { title: "Go Service", href: "/work/go" },
+      ],
+    });
+
+    expect(screen.getByRole("link", { name: "Source 1: Brutalist Portfolio" })).toHaveAttribute(
+      "href",
+      "/work/brutalist",
+    );
+    expect(screen.getByRole("link", { name: "Source 2: Go Service" })).toHaveAttribute(
+      "href",
+      "/work/go",
+    );
   });
 
   it("lists no sources when the answer cites none", () => {
@@ -418,7 +467,7 @@ describe("CommandPalette answer", () => {
       sources: [{ title: "Brutalist Portfolio", href: "/work/brutalist" }],
     });
 
-    fireEvent.click(screen.getByRole("link", { name: /Brutalist Portfolio/ }));
+    fireEvent.click(screen.getByRole("link", { name: "[1] Brutalist Portfolio" }));
 
     expect(props.onClose).toHaveBeenCalled();
   });

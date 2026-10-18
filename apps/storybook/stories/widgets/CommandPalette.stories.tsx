@@ -186,6 +186,15 @@ export const Highlighted: Story = {
   },
 };
 
+/** Empty input: the searches that led somewhere, newest first, with a way to clear them. */
+export const Recents: Story = {
+  args: {
+    query: "",
+    results: [],
+    recents: ["blence", "innenstadt", "poster series"],
+  },
+};
+
 /** Autocomplete only — suggestions arrive before the ranked results do. */
 export const Autocomplete: Story = {
   args: {

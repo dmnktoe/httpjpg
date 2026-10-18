@@ -1,6 +1,6 @@
 "use client";
 
-import type { MouseEvent } from "react";
+import type { MouseEvent, ReactNode } from "react";
 
 import { Box } from "../box/box";
 import { Button } from "../button/button";
@@ -88,7 +88,7 @@ export function CommandPaletteAnswer({
                 key={index}
                 css={{ color: "primary.500", fontFamily: "mono", fontSize: "sm" }}
               >
-                {segment.text}
+                {citationLinks(segment.text, sources, onSourceClick)}
               </Box>
             ) : (
               segment.text
@@ -151,4 +151,29 @@ export function CommandPaletteAnswer({
       )}
     </Box>
   );
+}
+
+/** `[1, 3]` with each number linking to its source; numbers past the list stay plain. */
+function citationLinks(
+  citation: string,
+  sources: CommandPaletteSource[],
+  onSourceClick: () => void,
+): ReactNode[] {
+  return citation.split(/(\d+)/).map((part, index) => {
+    const source = /^\d+$/.test(part) ? sources[Number(part) - 1] : undefined;
+    if (!source) {
+      return part;
+    }
+    return (
+      <Link
+        key={index}
+        href={source.href}
+        onClick={onSourceClick}
+        aria-label={`Source ${part}: ${source.title}`}
+        css={{ color: "inherit" }}
+      >
+        {part}
+      </Link>
+    );
+  });
 }

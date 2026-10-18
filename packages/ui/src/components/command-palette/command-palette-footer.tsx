@@ -30,6 +30,20 @@ export function CommandPaletteFooter({ statusLabel, canAsk, onAsk }: CommandPale
       <Box as="span" css={{ color: "pageMuted" }}>
         {statusLabel}
       </Box>
+      {/* Touch screens have no arrow keys; the hints would only be noise there. */}
+      <Box
+        as="span"
+        aria-hidden="true"
+        css={{
+          display: { base: "none", md: "inline" },
+          ml: "auto",
+          color: "pageMuted",
+          opacity: 0.7,
+          whiteSpace: "nowrap",
+        }}
+      >
+        ↑↓ move · ↵ open · esc close
+      </Box>
       {canAsk && (
         <Button
           size="sm"

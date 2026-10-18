@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { API_ERROR, jsonError } from "@/lib/api-error";
 import { getSearchIndex } from "@/lib/queries/search-index";
 import { enforceRateLimit } from "@/lib/rate-limit";
-import { rankDocuments, suggestCompletions } from "@/lib/search/ranking";
+import { queryTerms, rankDocuments, suggestCompletions } from "@/lib/search/ranking";
 
 const MAX_QUERY_LENGTH = 120;
 const DEFAULT_LIMIT = 8;
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
   const limit = parseLimit(request.nextUrl.searchParams.get("limit"));
 
   if (!query) {
-    return NextResponse.json({ results: [], suggestions: [] });
+    return NextResponse.json({ results: [], suggestions: [], terms: [] });
   }
 
   try {
@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
       {
         results: rankDocuments(documents, query, limit),
         suggestions: suggestCompletions(documents, query),
+        terms: queryTerms(query),
       },
       { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
     );

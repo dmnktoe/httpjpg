@@ -113,7 +113,7 @@ function isWordChar(char: string | undefined): boolean {
 function merge(ranges: TextRange[]): TextRange[] {
   const merged: TextRange[] = [];
   for (const range of [...ranges].sort((a, b) => a.start - b.start)) {
-    const last = merged.at(-1);
+    const last = merged[merged.length - 1];
     if (last && range.start <= last.end) {
       last.end = Math.max(last.end, range.end);
     } else {

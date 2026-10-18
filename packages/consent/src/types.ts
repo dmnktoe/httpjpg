@@ -126,6 +126,14 @@ export const SITE_COOKIES: readonly SiteCookieInfo[] = [
     duration: "1 year",
   },
   {
+    name: "httpjpg.recent-searches",
+    provider: "httpjpg (first-party)",
+    purpose:
+      "Local storage, not a cookie: remembers your last few searches in the site search so you can run them again. It stays on this device, is never sent to the server, and the search panel's clear button removes it",
+    category: "preferences",
+    duration: "until cleared",
+  },
+  {
     name: "VISITOR_INFO1_LIVE",
     provider: "YouTube",
     purpose: "Estimates bandwidth and may track the visitor on YouTube embeds",

@@ -1,4 +1,11 @@
-import { clearRecentSearches, readRecentSearches, rememberSearch } from "./recent-searches";
+import { SITE_COOKIES } from "@httpjpg/consent";
+
+import {
+  clearRecentSearches,
+  RECENT_SEARCHES_KEY,
+  readRecentSearches,
+  rememberSearch,
+} from "./recent-searches";
 
 describe("recent searches", () => {
   beforeEach(() => {
@@ -30,13 +37,17 @@ describe("recent searches", () => {
   });
 
   it("survives a corrupt store", () => {
-    window.localStorage.setItem("httpjpg.recent-searches", "{not json");
+    window.localStorage.setItem(RECENT_SEARCHES_KEY, "{not json");
     expect(readRecentSearches()).toEqual([]);
   });
 
   it("hands back the same array while the store is unchanged", () => {
     rememberSearch("poster");
     expect(readRecentSearches()).toBe(readRecentSearches());
+  });
+
+  it("is declared on the cookie policy under the key it actually uses", () => {
+    expect(SITE_COOKIES.map((cookie) => cookie.name)).toContain(RECENT_SEARCHES_KEY);
   });
 
   it("clears", () => {

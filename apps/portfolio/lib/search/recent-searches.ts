@@ -1,7 +1,10 @@
 import { useSyncExternalStore } from "react";
 
-/** Device-local only: never sent anywhere, and a cleared or blocked store just starts empty. */
-const STORAGE_KEY = "httpjpg.recent-searches";
+/**
+ * Device-local only: never sent anywhere, and a cleared or blocked store just
+ * starts empty. Listed in `SITE_COOKIES`, so a rename has to change it there too.
+ */
+export const RECENT_SEARCHES_KEY = "httpjpg.recent-searches";
 const MAX_RECENT = 6;
 const NONE: string[] = [];
 
@@ -18,7 +21,7 @@ export function useRecentSearches(): string[] {
 export function readRecentSearches(): string[] {
   let raw: string | null = null;
   try {
-    raw = window.localStorage.getItem(STORAGE_KEY);
+    raw = window.localStorage.getItem(RECENT_SEARCHES_KEY);
   } catch {
     raw = null;
   }
@@ -72,9 +75,9 @@ function parse(raw: string | null): string[] {
 function write(entries: string[]): void {
   try {
     if (entries.length === 0) {
-      window.localStorage.removeItem(STORAGE_KEY);
+      window.localStorage.removeItem(RECENT_SEARCHES_KEY);
     } else {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      window.localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(entries));
     }
   } catch {
     // Quota or private-mode failures only cost the history.

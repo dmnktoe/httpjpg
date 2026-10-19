@@ -43,7 +43,7 @@ catalogs:
       specifier: ^14.3.0
       version: 14.3.0
     next:
-      specifier: ^16.4.1
+      specifier: ^16.4.2
       version: 16.4.2
     psn-api:
       specifier: ^2.18.1

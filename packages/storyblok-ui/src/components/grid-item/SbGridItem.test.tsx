@@ -134,6 +134,31 @@ describe("SbGridItem", () => {
     });
   });
 
+  it("applies signed spacing and a stacking z-index", () => {
+    const { container } = render(
+      <SbGridItem
+        blok={
+          {
+            _uid: "12",
+            component: "grid_item",
+            ml: "-4",
+            zIndex: 2,
+          } as never
+        }
+      />,
+    );
+    const item = container.firstElementChild as HTMLElement;
+    expect(item).toHaveStyle({ zIndex: "2" });
+    expect(item.className).toContain("jpg-ml_-4");
+  });
+
+  it.each(["", null, undefined, "abc"])("sets no z-index for an empty field (%j)", (zIndex) => {
+    const { container } = render(
+      <SbGridItem blok={{ _uid: "13", component: "grid_item", zIndex } as never} />,
+    );
+    expect((container.firstElementChild as HTMLElement).style.zIndex).toBe("");
+  });
+
   it("hides the item at the lg breakpoint", () => {
     const { container } = render(
       <SbGridItem blok={{ _uid: "11", component: "grid_item", hiddenLg: true } as never} />,

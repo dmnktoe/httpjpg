@@ -4,7 +4,7 @@ import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo, type CSSProperties } from "react";
 import { css, cx } from "styled-system/css";
 
-import { editableAttrs } from "../../lib/use-blok";
+import { editableAttrs, spacingCss } from "../../lib/use-blok";
 
 type Span = GridItemProps["colSpan"];
 
@@ -29,6 +29,15 @@ function rowSpanNumber(value?: string): number | undefined {
   }
   const n = Number.parseInt(value, 10);
   return Number.isFinite(n) && n > 0 ? n : undefined;
+}
+
+/** Empty CMS number fields arrive as `""`: no z-index, so no stacking context. */
+function zIndexStyle(value: unknown): CSSProperties | undefined {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+  const zIndex = Number(value);
+  return Number.isInteger(zIndex) ? { zIndex } : undefined;
 }
 
 export interface SbGridItemProps {
@@ -57,6 +66,7 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
     hiddenBase,
     hiddenMd,
     hiddenLg,
+    zIndex,
   } = blok;
   const editable = editableAttrs(blok);
 
@@ -104,7 +114,8 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
       alignSelf={alignSelf || undefined}
       justifySelf={justifySelf || undefined}
       className={cx(responsive, visibility)}
-      style={styleVars}
+      css={spacingCss(blok)}
+      style={{ ...styleVars, ...zIndexStyle(zIndex) }}
     >
       {content?.map((child) => (
         <StoryblokServerComponent key={child._uid} blok={child} />

@@ -123,4 +123,45 @@ describe("SbPageWork", () => {
 
     expect(screen.queryByRole("region", { name: "Work downloads" })).toBeNull();
   });
+
+  it("renders desktop media windows when the work page has media", () => {
+    render(
+      <SbPageWork
+        blok={
+          {
+            _uid: "6",
+            component: "work",
+            desktop_media: [
+              {
+                _uid: "m1",
+                component: "desktop_media_item",
+                name: "Still",
+                url: "https://cdn.example/still.png",
+              },
+              {
+                _uid: "m2",
+                component: "desktop_media_item",
+                name: "Showreel",
+                url: "https://cdn.example/reel.mp4",
+              },
+            ],
+          } as never
+        }
+      />,
+    );
+
+    expect(screen.getByRole("figure", { name: "Still" })).toHaveAttribute(
+      "data-media-kind",
+      "image",
+    );
+    expect(screen.getByRole("figure", { name: "Showreel" })).toHaveAttribute(
+      "data-media-kind",
+      "video",
+    );
+  });
+
+  it("renders no media layer when desktop media is empty", () => {
+    render(<SbPageWork blok={{ _uid: "7", component: "work", desktop_media: [] } as never} />);
+    expect(screen.queryByRole("region", { name: "Work media" })).toBeNull();
+  });
 });

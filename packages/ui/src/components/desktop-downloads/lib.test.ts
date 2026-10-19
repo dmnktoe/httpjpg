@@ -1,11 +1,9 @@
+import { scatterPositions } from "../../lib/desktop-scatter";
 import {
-  clampDesktopIconPoint,
-  DESKTOP_ICON_MARGIN,
-  desktopIconPositions,
+  DESKTOP_ICON_SCATTER,
   downloadFilename,
   extensionOf,
   fileKindFromSource,
-  hashSeed,
   triggerDownload,
   visibleDesktopDownloads,
 } from "./lib";
@@ -81,43 +79,15 @@ describe("visibleDesktopDownloads", () => {
   });
 });
 
-describe("desktopIconPositions", () => {
-  it("is deterministic for the same ids", () => {
-    const ids = ["uid-a", "uid-b", "uid-c"];
-    expect(desktopIconPositions(ids)).toEqual(desktopIconPositions(ids));
-  });
-
-  it("returns one point per id inside the padded viewport", () => {
-    const positions = desktopIconPositions(["a", "b"]);
-    expect(positions).toHaveLength(2);
+describe("DESKTOP_ICON_SCATTER", () => {
+  it("keeps icons inside the padded viewport", () => {
+    const positions = scatterPositions(["a", "b", "c"], DESKTOP_ICON_SCATTER);
     for (const position of positions) {
       expect(position.left).toBeGreaterThanOrEqual(6);
-      expect(position.left).toBeLessThanOrEqual(94);
+      expect(position.left).toBeLessThanOrEqual(86);
       expect(position.top).toBeGreaterThanOrEqual(12);
-      expect(position.top).toBeLessThanOrEqual(88);
+      expect(position.top).toBeLessThanOrEqual(82);
     }
-  });
-
-  it("returns an empty list for no ids", () => {
-    expect(desktopIconPositions([])).toEqual([]);
-  });
-});
-
-describe("hashSeed", () => {
-  it("is stable and sensitive to input", () => {
-    expect(hashSeed("abc")).toBe(hashSeed("abc"));
-    expect(hashSeed("abc")).not.toBe(hashSeed("abd"));
-  });
-});
-
-describe("clampDesktopIconPoint", () => {
-  it("keeps a point inside the viewport margins", () => {
-    expect(clampDesktopIconPoint(-40, -10, 800, 600)).toEqual({
-      x: DESKTOP_ICON_MARGIN,
-      y: DESKTOP_ICON_MARGIN,
-    });
-    expect(clampDesktopIconPoint(900, 700, 800, 600).x).toBeLessThan(800);
-    expect(clampDesktopIconPoint(900, 700, 800, 600).y).toBeLessThan(600);
   });
 });
 

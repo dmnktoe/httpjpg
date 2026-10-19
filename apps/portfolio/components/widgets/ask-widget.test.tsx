@@ -89,6 +89,7 @@ async function type(value: string) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  window.localStorage.clear();
   mockPathname.mockReturnValue("/");
   mockFetch();
 });
@@ -202,6 +203,19 @@ describe("AskWidget", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
+  it("offers a query that led somewhere as a recent search next time", async () => {
+    render(<AskWidget />);
+    openPalette();
+    await type("brutal");
+    await waitFor(() => expect(screen.getAllByRole("option")).toHaveLength(2));
+    fireEvent.mouseDown(screen.getAllByRole("option")[0]);
+
+    openPalette();
+    await type("");
+
+    expect(screen.getByRole("button", { name: /brutal/ })).toBeInTheDocument();
+  });
+
   it("opens an external result in a new tab instead of routing", async () => {
     const open = vi.fn();
     vi.stubGlobal("open", open);
@@ -222,7 +236,7 @@ describe("AskWidget", () => {
       askBody: ndjson([
         { type: "sources", sources: [{ title: "Brutalist Portfolio", href: "/work/brutalist" }] },
         { type: "delta", text: "It is " },
-        { type: "delta", text: "a portfolio." },
+        { type: "delta", text: "a portfolio [1]." },
       ]),
     });
     render(<AskWidget />);
@@ -232,8 +246,10 @@ describe("AskWidget", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /ask/i }));
 
-    await waitFor(() => expect(screen.getByText("It is a portfolio.")).toBeInTheDocument());
-    expect(screen.getByRole("link", { name: /Brutalist Portfolio/ })).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText(/It is a portfolio/)).toHaveTextContent("It is a portfolio [1]."),
+    );
+    expect(screen.getByRole("link", { name: "[1] Brutalist Portfolio" })).toBeInTheDocument();
     expect(trackAskSubmit).toHaveBeenCalledWith({ queryLength: 13 });
     expect(trackAskComplete).toHaveBeenCalledWith({ hasAction: false, sourceCount: 1 });
   });

@@ -1,10 +1,11 @@
 "use client";
 
-import type { MouseEvent } from "react";
+import type { MouseEvent, ReactNode } from "react";
 
 import { Box } from "../box/box";
 import { Button } from "../button/button";
 import { Link } from "../link/link";
+import { citedSourceNumbers, splitCitations } from "./lib";
 
 export interface CommandPaletteSource {
   title: string;
@@ -37,6 +38,8 @@ export function CommandPaletteAnswer({
   onSourceClick,
   onAction,
 }: CommandPaletteAnswerProps) {
+  const cited = citedSourceNumbers(answer, sources.length);
+
   return (
     <Box
       css={{
@@ -78,7 +81,19 @@ export function CommandPaletteAnswer({
             whiteSpace: "pre-wrap",
           }}
         >
-          {answer}
+          {splitCitations(answer).map((segment, index) =>
+            segment.isCitation ? (
+              <Box
+                as="span"
+                key={index}
+                css={{ color: "primary.500", fontFamily: "mono", fontSize: "sm" }}
+              >
+                {citationLinks(segment.text, sources, onSourceClick)}
+              </Box>
+            ) : (
+              segment.text
+            ),
+          )}
           {isStreaming && (
             <Box
               as="span"
@@ -111,7 +126,7 @@ export function CommandPaletteAnswer({
         </Box>
       )}
 
-      {sources.length > 0 && (
+      {cited.length > 0 && (
         <Box
           css={{
             display: "flex",
@@ -127,13 +142,38 @@ export function CommandPaletteAnswer({
           <Box as="span" css={{ textTransform: "uppercase" }}>
             sources
           </Box>
-          {sources.map((source, index) => (
-            <Link key={source.href} href={source.href} onClick={onSourceClick}>
-              [{index + 1}] {source.title}
+          {cited.map((number) => (
+            <Link key={number} href={sources[number - 1].href} onClick={onSourceClick}>
+              [{number}] {sources[number - 1].title}
             </Link>
           ))}
         </Box>
       )}
     </Box>
   );
+}
+
+/** `[1, 3]` with each number linking to its source; numbers past the list stay plain. */
+function citationLinks(
+  citation: string,
+  sources: CommandPaletteSource[],
+  onSourceClick: () => void,
+): ReactNode[] {
+  return citation.split(/(\d+)/).map((part, index) => {
+    const source = /^\d+$/.test(part) ? sources[Number(part) - 1] : undefined;
+    if (!source) {
+      return part;
+    }
+    return (
+      <Link
+        key={index}
+        href={source.href}
+        onClick={onSourceClick}
+        aria-label={`Source ${part}: ${source.title}`}
+        css={{ color: "inherit" }}
+      >
+        {part}
+      </Link>
+    );
+  });
 }

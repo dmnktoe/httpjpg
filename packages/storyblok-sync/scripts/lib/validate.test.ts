@@ -12,6 +12,15 @@ describe("validateLocalSchema", () => {
     expect(validateLocalSchema().ok).toBe(true);
   });
 
+  it("adds the Motion tab to layout bloks, headline and slideshow", () => {
+    const schema = toSchemaLike();
+    for (const name of ["section", "container", "grid", "grid_item", "headline", "slideshow"]) {
+      const block = schema.blocks.find((candidate) => candidate.name === name);
+      expect(block?.fields.some((field) => field.name === "animation")).toBe(true);
+      expect(block?.fields.some((field) => field.name === "animationDelay")).toBe(true);
+    }
+  });
+
   it("rejects a bloks whitelist pointing at an unknown block", () => {
     const result = validateLocalSchema([
       block("grid", { items: field.bloks("Items", { whitelist: ["ghost_block"] }) }),

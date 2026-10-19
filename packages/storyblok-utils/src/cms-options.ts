@@ -97,6 +97,18 @@ const gridSpanScale = [
 const aspectRatioScale = ["16/9", "4/3", "1/1", "3/4", "9/16", "21/9"] as const;
 const videoAspectRatioScale = [...aspectRatioScale, "1920/200"] as const;
 const widthScale = ["sm", "md", "lg", "xl", "2xl", "fluid"] as const;
+/** `AnimateInView` animations in `@httpjpg/ui`. `none` keeps a blok still. */
+const entranceAnimationScale = [
+  "none",
+  "fadeIn",
+  "zoomIn",
+  "zoomSharpen",
+  "sharpen",
+  "slideInFromLeft",
+  "slideInFromRight",
+  "slideUp",
+  "slideDown",
+] as const;
 const imageWidthScale = [
   "10%",
   "20%",
@@ -140,6 +152,7 @@ export const CMS_OPTIONS = {
   videoAspectRatio: videoAspectRatioScale,
   width: widthScale,
   imageWidth: imageWidthScale,
+  entranceAnimation: entranceAnimationScale,
   proseMaxWidth: proseMaxWidthScale,
   alignItems: alignItemsScale,
   justifyItems: justifyItemsScale,
@@ -159,6 +172,7 @@ export type CmsAspectRatio = (typeof aspectRatioScale)[number];
 export type CmsVideoAspectRatio = (typeof videoAspectRatioScale)[number];
 export type CmsWidth = (typeof widthScale)[number];
 export type CmsImageWidth = (typeof imageWidthScale)[number];
+export type CmsEntranceAnimation = (typeof entranceAnimationScale)[number];
 export type CmsProseMaxWidth = (typeof proseMaxWidthScale)[number];
 export type CmsAlignItems = (typeof alignItemsScale)[number];
 export type CmsJustifyItems = (typeof justifyItemsScale)[number];

@@ -1,4 +1,4 @@
-import { CMS_OPTIONS } from "@httpjpg/storyblok-utils";
+import { CMS_OPTIONS, type CmsEntranceAnimation } from "@httpjpg/storyblok-utils";
 import { typography } from "@httpjpg/tokens";
 
 const widthLabels: Record<string, string> = {
@@ -18,6 +18,18 @@ const aspectRatioLabels: Record<string, string> = {
   "9/16": "9:16 (Vertical)",
   "21/9": "21:9 (Ultrawide)",
   "1920/200": "1920×200 (Stage Banner)",
+};
+
+const entranceAnimationLabels: Record<CmsEntranceAnimation, string> = {
+  none: "None",
+  fadeIn: "Fade In",
+  zoomIn: "Zoom In",
+  zoomSharpen: "Zoom Sharpen",
+  sharpen: "Sharpen",
+  slideInFromLeft: "Slide In Left",
+  slideInFromRight: "Slide In Right",
+  slideUp: "Slide Up",
+  slideDown: "Slide Down",
 };
 
 const proseMaxWidthLabels: Record<string, string> = {
@@ -57,6 +69,10 @@ export const OVERLAY_PATTERN_OPTIONS = [
 export const inlineOptions = {
   width: CMS_OPTIONS.width.map((value) => ({ name: widthLabels[value], value })),
   imageWidth: CMS_OPTIONS.imageWidth.map((value) => ({ name: value, value })),
+  entranceAnimation: CMS_OPTIONS.entranceAnimation.map((value) => ({
+    name: entranceAnimationLabels[value],
+    value,
+  })),
   aspectRatio: CMS_OPTIONS.aspectRatio.map((value) => ({
     name: aspectRatioLabels[value],
     value,

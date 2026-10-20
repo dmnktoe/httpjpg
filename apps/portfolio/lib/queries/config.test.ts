@@ -341,10 +341,10 @@ describe("getAuthor", () => {
 
   it("returns the author when a name is configured", async () => {
     setupGetStory(async () => ({
-      content: { author_name: "Dominik", author_url: "https://httpjpg.com" },
+      content: { author_name: "Domenik", author_url: "https://httpjpg.com" },
     }));
     await expect(getAuthor()).resolves.toEqual({
-      name: "Dominik",
+      name: "Domenik",
       url: "https://httpjpg.com",
     });
   });

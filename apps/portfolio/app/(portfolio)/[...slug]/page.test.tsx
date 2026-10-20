@@ -269,7 +269,7 @@ describe("DynamicPage", () => {
   });
 
   it("marks the CV as a ProfilePage of the site author", async () => {
-    getAuthor.mockResolvedValue({ name: "Dominik" });
+    getAuthor.mockResolvedValue({ name: "Domenik" });
     readPageStory.mockResolvedValueOnce({
       slug: "cv",
       content: { component: "page", title: "CV" },
@@ -343,14 +343,14 @@ describe("DynamicPage", () => {
   });
 
   it("includes the configured author and their profiles in the schema markup", async () => {
-    getAuthor.mockResolvedValueOnce({ name: "Dominik", url: "https://httpjpg.test/about" });
+    getAuthor.mockResolvedValueOnce({ name: "Domenik", url: "https://httpjpg.test/about" });
     getSocialProfiles.mockResolvedValueOnce(["https://github.com/dmnktoe"]);
     readPageStory.mockResolvedValueOnce(workStory);
 
     render(await DynamicPage({ params: params(["work", "some-project"]), searchParams: search() }));
 
     const jsonLd = document.querySelector('script[type="application/ld+json"]');
-    expect(jsonLd?.textContent).toContain("Dominik");
+    expect(jsonLd?.textContent).toContain("Domenik");
     expect(jsonLd?.textContent).toContain("https://github.com/dmnktoe");
   });
 

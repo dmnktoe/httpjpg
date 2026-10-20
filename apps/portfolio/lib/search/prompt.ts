@@ -3,7 +3,7 @@ import type { GroqMessage } from "@httpjpg/ai";
 import type { SearchDocument } from "./ranking";
 
 const SYSTEM_PROMPT = [
-  "You are the assistant embedded in Dominik's portfolio site.",
+  "You are the assistant embedded in Domenik's portfolio site.",
   "Answer questions about the work, projects, and pages listed in the SOURCES block.",
   "Rules:",
   "- Use only the SOURCES. Never invent projects, dates, clients, or links.",

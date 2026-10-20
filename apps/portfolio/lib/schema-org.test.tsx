@@ -35,7 +35,7 @@ describe("generateSiteGraph", () => {
       name: "httpjpg",
       description: "Portfolio",
       inLanguage: "de-DE",
-      author: { name: "Dominik", url: "https://httpjpg.com", sameAs: ["https://github.com/x"] },
+      author: { name: "Domenik", url: "https://httpjpg.com", sameAs: ["https://github.com/x"] },
     });
     const [website, person] = (graph?.["@graph"] ?? []) as readonly SchemaRecord[];
     expect(graph?.["@context"]).toBe("https://schema.org");
@@ -50,7 +50,7 @@ describe("generateSiteGraph", () => {
     expect(person).toMatchObject({
       "@type": "Person",
       "@id": "https://httpjpg.com/#person",
-      name: "Dominik",
+      name: "Domenik",
       sameAs: ["https://github.com/x"],
     });
   });
@@ -69,7 +69,7 @@ describe("generateSiteGraph", () => {
 
 describe("generatePersonSchema", () => {
   it("omits sameAs entirely when there are no profiles", () => {
-    expect(generatePersonSchema({ name: "Dominik" })).not.toHaveProperty("sameAs");
+    expect(generatePersonSchema({ name: "Domenik" })).not.toHaveProperty("sameAs");
   });
 });
 
@@ -97,7 +97,7 @@ describe("generateCreativeWorkSchema", () => {
         image: ["https://cdn/a.jpg"],
         datePublished: "2025-01-02",
         dateModified: "2025-02-03",
-        author: { id: "https://httpjpg.com/#person", name: "Dominik" },
+        author: { id: "https://httpjpg.com/#person", name: "Domenik" },
         isPartOf: { "@id": "https://httpjpg.com/#website" },
         keywords: ["TypeScript", "Design"],
         video: [{ "@type": "VideoObject", name: "Clip" }],
@@ -108,7 +108,7 @@ describe("generateCreativeWorkSchema", () => {
     expect(schema.author).toEqual({
       "@type": "Person",
       "@id": "https://httpjpg.com/#person",
-      name: "Dominik",
+      name: "Domenik",
     });
     expect(schema.isPartOf).toEqual({ "@id": "https://httpjpg.com/#website" });
     expect(schema.keywords).toBe("TypeScript, Design");

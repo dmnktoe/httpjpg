@@ -22,7 +22,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   getSiteConfig.mockResolvedValue({ name: "httpjpg" });
   getSeoDefaults.mockResolvedValue({ description: "Brutalist\nportfolio" });
-  getAuthor.mockResolvedValue({ name: "Dominik", url: "https://httpjpg.test" });
+  getAuthor.mockResolvedValue({ name: "Domenik", url: "https://httpjpg.test" });
 });
 
 describe("GET /llms.txt", () => {
@@ -45,7 +45,7 @@ describe("GET /llms.txt", () => {
 
     expect(response.headers.get("content-type")).toMatch(/text\/markdown/);
     expect(body.startsWith("# httpjpg\n\n> Brutalist portfolio\n")).toBe(true);
-    expect(body).toContain("Portfolio of Dominik (https://httpjpg.test).");
+    expect(body).toContain("Portfolio of Domenik (https://httpjpg.test).");
     expect(body.indexOf("/work/new")).toBeLessThan(body.indexOf("/work/old"));
     expect(body).toContain("- [New](https://httpjpg.test/work/new)\n");
     expect(body).toContain("- [Old draft](https://httpjpg.test/work/old): Design — ");

@@ -83,8 +83,8 @@ export const WorkCard = forwardRef<HTMLDivElement, WorkCardProps>(
           <Box
             css={{
               display: "flex",
-              flexDirection: { base: "column", md: "row" },
-              gap: "2",
+              flexDirection: variant === "featured" ? "column" : { base: "column", md: "row" },
+              gap: variant === "featured" ? "4" : "2",
             }}
           >
             <WorkCardTitle title={title} variant={variant} tags={tags} />

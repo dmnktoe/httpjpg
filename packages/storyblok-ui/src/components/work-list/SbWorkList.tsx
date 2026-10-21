@@ -4,7 +4,7 @@ import type { SbWorkListData } from "@httpjpg/storyblok-utils";
 import { WorkList } from "@httpjpg/ui";
 import { memo, useState } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 import { parseCols, resolveStories, toWorkCardProps, type WorkStory } from "./lib";
 
 export interface SbWorkListProps {
@@ -45,7 +45,7 @@ export const SbWorkList = memo(function SbWorkList({ blok }: SbWorkListProps) {
             }
           : undefined
       }
-      css={spacingCss(blok)}
+      {...spacingStyle(blok)}
     />
   );
 });

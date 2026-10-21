@@ -3,7 +3,7 @@ import { Box, Slideshow } from "@httpjpg/ui";
 import { memo } from "react";
 
 import { EntranceMotion } from "../../lib/entrance-motion";
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbSlideshowProps {
   blok: SbSlideshowData;
@@ -28,7 +28,7 @@ export const SbSlideshow = memo(function SbSlideshow({ blok }: SbSlideshowProps)
 
   return (
     <EntranceMotion blok={blok}>
-      <Box {...editable} css={spacingCss(blok)}>
+      <Box {...editable} {...spacingStyle(blok)}>
         <Slideshow
           images={images.map((img) => toSlideshowImage(img, ""))}
           aspectRatio={aspectRatio}

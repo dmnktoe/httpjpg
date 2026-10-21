@@ -5,7 +5,7 @@ import { memo, type CSSProperties } from "react";
 import { css } from "styled-system/css";
 
 import { EntranceMotion } from "../../lib/entrance-motion";
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 type ColCount = NonNullable<GridProps["columns"]>;
 
@@ -59,18 +59,17 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
     return null;
   }
 
-  const styleVars =
-    columnsMd || columnsLg
-      ? ({
-          ...(columnsMd && { "--grid-cols-md": COLS[columnsMd] }),
-          ...(columnsLg && { "--grid-cols-lg": COLS[columnsLg] }),
-        } as CSSProperties)
-      : undefined;
+  const spacing = spacingStyle(blok);
+  const styleVars = {
+    ...(columnsMd && { "--grid-cols-md": COLS[columnsMd] }),
+    ...(columnsLg && { "--grid-cols-lg": COLS[columnsLg] }),
+    ...spacing.style,
+  } as CSSProperties;
 
   const responsive = css({
     md: columnsMd ? { gridTemplateColumns: "var(--grid-cols-md)" } : {},
     lg: columnsLg ? { gridTemplateColumns: "var(--grid-cols-lg)" } : {},
-    ...spacingCss(blok),
+    ...spacing.css,
   });
 
   return (

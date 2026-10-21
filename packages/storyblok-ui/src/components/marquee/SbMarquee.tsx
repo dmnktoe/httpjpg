@@ -2,7 +2,7 @@ import type { SbMarqueeData } from "@httpjpg/storyblok-utils";
 import { Box, Marquee } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbMarqueeProps {
   blok: SbMarqueeData;
@@ -20,6 +20,7 @@ export const SbMarquee = memo(function SbMarquee({ blok }: SbMarqueeProps) {
     bgColor,
     textColor,
   } = blok;
+  const spacing = spacingStyle(blok);
   const editable = editableAttrs(blok);
 
   if (!text) {
@@ -35,7 +36,8 @@ export const SbMarquee = memo(function SbMarquee({ blok }: SbMarqueeProps) {
         repeat={repeat}
         iosStyle={iosStyle}
         pauseDuration={pauseDuration}
-        css={{ backgroundColor: bgColor, color: textColor, ...spacingCss(blok) }}
+        css={{ backgroundColor: bgColor, color: textColor, ...spacing.css }}
+        style={spacing.style}
       >
         {text}
       </Marquee>

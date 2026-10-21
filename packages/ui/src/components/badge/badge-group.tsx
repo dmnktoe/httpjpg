@@ -1,9 +1,11 @@
 "use client";
 
-import type { HTMLAttributes, ReactNode, Ref } from "react";
+import type { CSSProperties, HTMLAttributes, ReactNode, Ref } from "react";
 import { forwardRef } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
+
+import { spacingVar } from "../../lib/spacing-var";
 
 export interface BadgeGroupProps extends Omit<HTMLAttributes<HTMLElement>, "css"> {
   children: ReactNode;
@@ -33,17 +35,19 @@ export const BadgeGroup = forwardRef<HTMLElement, BadgeGroupProps>(function Badg
     inline = false,
     className,
     css: cssProp,
+    style,
     ...props
   },
   ref,
 ) {
+  const gapStyle = { "--badge-group-gap": spacingVar(gap) ?? "0", ...style } as CSSProperties;
   const styles = cx(
     css({
       display: inline ? "inline-flex" : "flex",
       flexWrap: wrap ? "wrap" : "nowrap",
       alignItems: align,
       justifyContent: justify,
-      gap,
+      gap: "var(--badge-group-gap)",
       verticalAlign: "middle",
       ...cssProp,
     }),
@@ -52,13 +56,13 @@ export const BadgeGroup = forwardRef<HTMLElement, BadgeGroupProps>(function Badg
 
   if (inline) {
     return (
-      <span ref={ref as Ref<HTMLSpanElement>} className={styles} {...props}>
+      <span ref={ref as Ref<HTMLSpanElement>} className={styles} style={gapStyle} {...props}>
         {children}
       </span>
     );
   }
   return (
-    <div ref={ref as Ref<HTMLDivElement>} className={styles} {...props}>
+    <div ref={ref as Ref<HTMLDivElement>} className={styles} style={gapStyle} {...props}>
       {children}
     </div>
   );

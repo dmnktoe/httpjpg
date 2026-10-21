@@ -187,7 +187,7 @@ New blok checklist:
 
 - Registry in `apps/portfolio/lib/storyblok.ts` (imported from layout + `StoryblokProvider`). Dev `_fallback: SbMissing`.
 - Every `Sb*` spreads `editableAttrs(blok)` on the root.
-- Spacing: `withSpacing()` (sync, 24-field matrix) ↔ `BlokSpacing` + `spacingCss()` (runtime) — keep in lock-step.
+- Spacing: `withSpacing()` (sync, 24-field matrix) ↔ `BlokSpacing` + `spacingStyle()` (runtime) — keep in lock-step.
 - Draft: `getStoryblokApi({ draftMode: true })` uses preview token + `version: "draft"`; `proxy.ts` validates the preview-token hash.
 - Revalidate webhook: `app/api/revalidate/route.ts` → `expireStory(slug)` / `expireConfig()` + paths.
 - New CMS option: edit `storyblok-utils/src/cms-options.ts` → `sync:datasources` → rebuild `ui`.
@@ -200,6 +200,7 @@ New blok checklist:
 - Dynamic inline styles: `token.var("colors.success.500")`.
 - Everything Panda emits is namespaced `jpg` (`prefix` in `packages/ui/panda.config.ts`): classes `jpg-d_flex`, vars `--jpg-colors-black`, hashed in production. Assert classes with the prefix in tests; never hand-write `var(--jpg-*)` — use `{colors.*}` / `token.var()`.
 - Build helpers (`hexToRgba`, `linearGradient`) live in `panda.helpers.ts` — never re-export from the runtime index.
+- Runtime values (CMS fields, props) never reach `css()` as values — Panda can't see them. Finite enums (colours, type, alignment) are listed in `staticCss`. Open scales (spacing, widths, ratios, columns) use the variable bridge: a fixed literal class (`gap: "var(--grid-gap)"`, or `cond ? "var(--x)" : undefined`) plus the value inline (`style={{ "--grid-gap": spacingVar(gap) }}`). Bloks use `spacingStyle` / `widthStyle` → `{ css, style }`. Only add a class when its variable is set; always set a variable a nested copy could otherwise inherit.
 
 ## Caching
 

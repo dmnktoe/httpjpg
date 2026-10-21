@@ -1,8 +1,10 @@
 "use client";
 
-import type { HTMLAttributes, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { css, cva, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
+
+import { spacingVar } from "../../lib/spacing-var";
 
 const HEADLINE_FONT_SIZES = {
   1: "clamp(2.25rem, 5vw + 1rem, 3.75rem)",
@@ -79,13 +81,19 @@ export function Headline({
         css(headlineRecipe.raw({ level, align })),
         (marginTop || marginBottom) &&
           css({
-            ...(marginTop && { mt: marginTop }),
-            ...(marginBottom && { mb: marginBottom }),
+            mt: marginTop ? "var(--headline-mt)" : undefined,
+            mb: marginBottom ? "var(--headline-mb)" : undefined,
           }),
         className,
         cssProp && css(cssProp),
       )}
-      style={style}
+      style={
+        {
+          ...(marginTop && { "--headline-mt": spacingVar(marginTop) }),
+          ...(marginBottom && { "--headline-mb": spacingVar(marginBottom) }),
+          ...style,
+        } as CSSProperties
+      }
       {...props}
     >
       {children}

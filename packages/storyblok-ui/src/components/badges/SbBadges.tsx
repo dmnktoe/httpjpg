@@ -2,7 +2,7 @@ import type { SbBadgesData } from "@httpjpg/storyblok-utils";
 import { Badges, Box } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbBadgesProps {
   blok: SbBadgesData;
@@ -23,7 +23,7 @@ export const SbBadges = memo(function SbBadges({ blok }: SbBadgesProps) {
   }));
 
   return (
-    <Box {...editableAttrs(blok)} css={spacingCss(blok)}>
+    <Box {...editableAttrs(blok)} {...spacingStyle(blok)}>
       <Badges items={badgeItems} align={align} justify={justify} height={height || undefined} />
     </Box>
   );

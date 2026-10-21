@@ -1,6 +1,6 @@
 import { Box } from "@httpjpg/ui";
 import { createRichTextRenderer, type SbRichTextDoc } from "@storyblok/react/rsc";
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps, CSSProperties, ReactNode } from "react";
 
 import { richTextComponents } from "./richtext-components";
 
@@ -59,11 +59,18 @@ export function StoryblokRichText({
   return (
     <Box
       {...props}
-      style={color ? { color, ...style } : style}
+      style={
+        {
+          ...(color && { color }),
+          ...(resolvedMaxWidth && { "--prose-max": resolvedMaxWidth }),
+          ...style,
+        } as CSSProperties
+      }
       css={{
         ...proseRhythm,
         ...(color && colorInherit),
-        ...(resolvedMaxWidth && { maxWidth: resolvedMaxWidth }),
+        // Any CMS width works: the class reads a variable instead of carrying the value.
+        maxWidth: resolvedMaxWidth ? "var(--prose-max)" : undefined,
       }}
     >
       {renderStoryblokRichText(data)}

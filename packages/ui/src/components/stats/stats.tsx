@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { forwardRef } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
@@ -56,7 +56,7 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
           gridTemplateColumns: {
             base: "repeat(1, 1fr)",
             sm: "repeat(2, 1fr)",
-            md: columnsMap[columns],
+            md: "var(--stats-cols)",
           },
           gap: "6",
           width: "full",
@@ -64,6 +64,7 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
         cssProp && css(cssProp),
         className,
       )}
+      style={{ "--stats-cols": columnsMap[columns] ?? columnsMap[3] } as CSSProperties}
     >
       {items.map((item, idx) => (
         <div

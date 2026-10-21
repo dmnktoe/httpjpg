@@ -193,12 +193,12 @@ export const ScrollClipImage = forwardRef<HTMLDivElement, ScrollClipImageProps>(
     const maskNode = (
       <Box
         ref={maskRef}
-        style={initialStyle}
+        style={{ ...initialStyle, "--media-ratio": aspectRatio } as CSSProperties}
         css={{
           position: "relative",
           display: "block",
           width: "100%",
-          aspectRatio,
+          aspectRatio: "var(--media-ratio)",
           overflow: "hidden",
           clipPath: "inset(var(--clip-ratio, 0%))",
           transition: "clip-path 80ms cubic-bezier(.35, 0, 0, 1)",

@@ -84,4 +84,39 @@ describe("Grid", () => {
       color: "rgb(0, 0, 255)",
     });
   });
+
+  it("publishes columns and gaps as variables for its fixed classes", () => {
+    render(
+      <Grid columns={3} gap="6" rowGap="24" data-testid="grid">
+        cell
+      </Grid>,
+    );
+    const grid = screen.getByTestId("grid");
+
+    expect(grid.style.getPropertyValue("--grid-cols")).toBe("repeat(3, minmax(0, 1fr))");
+    expect(grid.style.getPropertyValue("--grid-row-gap")).toBe("var(--jpg-spacing-24)");
+    expect(grid.style.getPropertyValue("--grid-column-gap")).toBe("var(--jpg-spacing-6)");
+  });
+
+  it("falls back to the shared gap when a CMS row or column gap is empty", () => {
+    render(
+      <Grid gap="2" rowGap="" columnGap="" data-testid="grid">
+        cell
+      </Grid>,
+    );
+    const grid = screen.getByTestId("grid");
+
+    expect(grid.style.getPropertyValue("--grid-row-gap")).toBe("var(--jpg-spacing-2)");
+    expect(grid.style.getPropertyValue("--grid-column-gap")).toBe("var(--jpg-spacing-2)");
+  });
+
+  it("zeroes the gaps instead of inheriting a parent grid's", () => {
+    render(
+      <Grid gap="" data-testid="grid">
+        cell
+      </Grid>,
+    );
+
+    expect(screen.getByTestId("grid").style.getPropertyValue("--grid-row-gap")).toBe("0");
+  });
 });

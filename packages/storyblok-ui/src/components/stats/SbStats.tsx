@@ -2,7 +2,7 @@ import type { SbStatsData } from "@httpjpg/storyblok-utils";
 import { Box, Stats, type StatsProps } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbStatsProps {
   blok: SbStatsData;
@@ -31,7 +31,7 @@ export const SbStats = memo(function SbStats({ blok }: SbStatsProps) {
   }));
 
   return (
-    <Box {...editableAttrs(blok)} css={spacingCss(blok)}>
+    <Box {...editableAttrs(blok)} {...spacingStyle(blok)}>
       <Stats items={statItems} columns={parseColumns(columns)} variant={variant} align={align} />
     </Box>
   );

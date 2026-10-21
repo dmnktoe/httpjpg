@@ -12,10 +12,12 @@ export function WorkCardTitle({
   variant: WorkCardVariant;
   tags?: string[];
 }) {
+  const isFeatured = variant === "featured";
+  const isLongTitle = title.length > LONG_TITLE_LENGTH;
   return (
     <Box
       css={{
-        width: { base: "full", xl: "1/2" },
+        width: isFeatured ? "full" : { base: "full", xl: "1/2" },
         containerType: "inline-size",
       }}
     >
@@ -27,13 +29,15 @@ export function WorkCardTitle({
           lineHeight: 0.9,
           fontFamily: "headline",
           letterSpacing: "tighter",
-          textAlign: { base: "left", md: "justify" },
+          textAlign: isFeatured ? "left" : { base: "left", md: "justify" },
           textWrap: "balance",
           mt: "-0.78em",
           ...(variant === "compact"
             ? { fontSize: "clamp(1.75rem, 8cqi, 5rem)" }
-            : variant === "featured"
-              ? { fontSize: "clamp(2.5rem, 22cqi, 14rem)" }
+            : isFeatured
+              ? isLongTitle
+                ? { fontSize: "clamp(2rem, 7cqi, 7rem)" }
+                : { fontSize: "clamp(2.5rem, 13cqi, 13rem)" }
               : {
                   fontSize: {
                     base: "clamp(1.5rem, 7cqi, 3rem)",
@@ -59,3 +63,6 @@ export function WorkCardTitle({
     </Box>
   );
 }
+
+/** Featured titles longer than this drop to a smaller size so they don't fill the screen. */
+const LONG_TITLE_LENGTH = 32;

@@ -4,6 +4,41 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.12.0](https://github.com/dmnktoe/httpjpg/compare/v2.11.1...v2.12.0) (2026-10-21)
+
+
+### Added
+
+* entrance motion on layout and headline bloks ([#501](https://github.com/dmnktoe/httpjpg/issues/501)) ([610a64a](https://github.com/dmnktoe/httpjpg/commit/610a64a1bafc13742345f88f12c2ac63ddd9a17c))
+* replace the yellow preview bar with page actions and draft tools ([#498](https://github.com/dmnktoe/httpjpg/issues/498)) ([8f2563b](https://github.com/dmnktoe/httpjpg/commit/8f2563bd5df7e819a0beb885af605cb90f5802ea))
+* **search:** precise ranking and a better ⌘K search experience ([#510](https://github.com/dmnktoe/httpjpg/issues/510)) ([2c86b1d](https://github.com/dmnktoe/httpjpg/commit/2c86b1daca70691c3c9c2265384d991c7ab3ff6e))
+
+
+### Fixed
+
+* spell Domenik correctly in the ask prompt and test fixtures ([#516](https://github.com/dmnktoe/httpjpg/issues/516)) ([fb7b4bb](https://github.com/dmnktoe/httpjpg/commit/fb7b4bb269d414a6b4a2480f90aa46d465519101))
+* **ui:** give the featured work card title its own full-width row ([#517](https://github.com/dmnktoe/httpjpg/issues/517)) ([64c143e](https://github.com/dmnktoe/httpjpg/commit/64c143ec9ee8783db5e3de6995b2d9770829c328))
+* **ui:** stop lightbox theme feedback loop in Storybook Docs ([#499](https://github.com/dmnktoe/httpjpg/issues/499)) ([af91f4b](https://github.com/dmnktoe/httpjpg/commit/af91f4be01b254bdfe7b422ce63f9a94d5510952))
+
+
+### Changed
+
+* weekly cleanup for studio inspector, storybook stories, and config drift ([#495](https://github.com/dmnktoe/httpjpg/issues/495)) ([ae77f37](https://github.com/dmnktoe/httpjpg/commit/ae77f373b9544cb77be86d014d7b32ee1ef5bd6a))
+
+
+### Dependencies
+
+* lock file maintenance ([#514](https://github.com/dmnktoe/httpjpg/issues/514)) ([ca44627](https://github.com/dmnktoe/httpjpg/commit/ca4462719d5dd785ede674001200173e7f5e573f))
+* update chromaui/action digest to 18599f2 ([#504](https://github.com/dmnktoe/httpjpg/issues/504)) ([481b1d2](https://github.com/dmnktoe/httpjpg/commit/481b1d2b380de27e02d8aae169c7a8a45d84e2b1))
+* update chromaui/action digest to 8e6c25f ([#497](https://github.com/dmnktoe/httpjpg/issues/497)) ([d312575](https://github.com/dmnktoe/httpjpg/commit/d3125755904146af98c21eafd859d88a0a132da9))
+* update chromaui/action digest to e50abd5 ([#507](https://github.com/dmnktoe/httpjpg/issues/507)) ([7e6da26](https://github.com/dmnktoe/httpjpg/commit/7e6da260892916e8c85c0963deda76acf1c48492))
+* update dependency @sentry/nextjs to ^11.8.0 ([#508](https://github.com/dmnktoe/httpjpg/issues/508)) ([e2e4c1c](https://github.com/dmnktoe/httpjpg/commit/e2e4c1c29620a8463087d9dd320717b9420d7aa5))
+* update dependency next to ^16.4.2 ([#513](https://github.com/dmnktoe/httpjpg/issues/513)) ([27f914e](https://github.com/dmnktoe/httpjpg/commit/27f914e9f10e2b8d0082127cbeaf6205defd95b5))
+* update dev dependencies ([#506](https://github.com/dmnktoe/httpjpg/issues/506)) ([b6b2d1e](https://github.com/dmnktoe/httpjpg/commit/b6b2d1ef59a260d8c17e66cceee50419413aef79))
+* update node.js to v24.22.0 ([#503](https://github.com/dmnktoe/httpjpg/issues/503)) ([29ed348](https://github.com/dmnktoe/httpjpg/commit/29ed348e5b6f30d81230ebf74782d97c992b4942))
+* update pnpm to v11.28.6 ([#509](https://github.com/dmnktoe/httpjpg/issues/509)) ([36bf5bf](https://github.com/dmnktoe/httpjpg/commit/36bf5bff63e02b9589da17f34d04ddabeaa5dade))
+* update react + next ([#468](https://github.com/dmnktoe/httpjpg/issues/468)) ([aabc2f7](https://github.com/dmnktoe/httpjpg/commit/aabc2f704f4ac4a43f9042faa2f24e8e3a7ccd59))
+
 ## [2.11.1](https://github.com/dmnktoe/httpjpg/compare/v2.11.0...v2.11.1) (2026-10-13)
 
 

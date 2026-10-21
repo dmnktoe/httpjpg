@@ -64,6 +64,39 @@ describe("SbGridItem", () => {
     expect(item.style.getPropertyValue("--rowstart-lg")).toBe("5");
   });
 
+  it("pairs an explicit start with a span end instead of a shorthand that drops the span", () => {
+    const { container } = render(
+      <SbGridItem
+        blok={
+          {
+            _uid: "3b",
+            component: "grid_item",
+            colSpanMd: "full",
+            colStartMd: 1,
+            colSpanLg: "7",
+            colStartLg: 2,
+            rowSpanLg: "2",
+            rowStartLg: 1,
+          } as never
+        }
+      />,
+    );
+    const item = container.firstElementChild as HTMLElement;
+
+    expect(item.style.getPropertyValue("--colend-md")).toBe("-1");
+    expect(item.style.getPropertyValue("--colend-lg")).toBe("span 7");
+    expect(item.style.getPropertyValue("--rowend-lg")).toBe("span 2");
+  });
+
+  it("publishes no span end when only a start is set", () => {
+    const { container } = render(
+      <SbGridItem blok={{ _uid: "3c", component: "grid_item", colStartLg: 4 } as never} />,
+    );
+    const item = container.firstElementChild as HTMLElement;
+
+    expect(item.style.getPropertyValue("--colend-lg")).toBe("");
+  });
+
   it("maps a numeric colSpan onto the grid item span", () => {
     const { container } = render(
       <SbGridItem blok={{ _uid: "4", component: "grid_item", colSpan: "8" } as never} />,

@@ -31,7 +31,7 @@ function toPandaTokens<T extends Record<string, any>>(obj: T): Record<string, an
 }
 
 const gridTemplateColumns = CMS_OPTIONS.gridColumn.map((c) =>
-  c === "auto" ? "repeat(auto-fit, minmax(200px, 1fr))" : `repeat(${c}, 1fr)`,
+  c === "auto" ? "repeat(auto-fit, minmax(200px, 1fr))" : `repeat(${c}, minmax(0, 1fr))`,
 );
 
 const gridColumnValues = CMS_OPTIONS.gridSpan.map((s) => (s === "full" ? "1 / -1" : `span ${s}`));

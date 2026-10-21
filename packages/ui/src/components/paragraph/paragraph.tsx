@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, CSSProperties, ElementType, ReactNode } from "react";
 import { forwardRef } from "react";
 import { css, cva, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
@@ -92,6 +92,7 @@ export const Paragraph = forwardRef<HTMLParagraphElement, ParagraphProps>(
       children,
       className,
       css: cssProp,
+      style,
       ...props
     },
     ref,
@@ -102,10 +103,11 @@ export const Paragraph = forwardRef<HTMLParagraphElement, ParagraphProps>(
         ref={ref}
         className={cx(
           css(paragraphRecipe.raw({ size, align, color, weight, spacing })),
-          mw && css({ maxWidth: mw }),
+          mw && css({ maxWidth: "var(--paragraph-max)" }),
           className,
           cssProp && css(cssProp),
         )}
+        style={mw ? ({ "--paragraph-max": mw, ...style } as CSSProperties) : style}
         {...props}
       >
         {children}

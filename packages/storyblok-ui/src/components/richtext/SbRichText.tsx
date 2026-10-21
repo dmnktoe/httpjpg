@@ -3,7 +3,7 @@ import type { SbRichtextData } from "@httpjpg/storyblok-utils";
 import { Box } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbRichTextProps {
   blok: SbRichtextData;
@@ -28,7 +28,7 @@ export const SbRichText = memo(function SbRichText({ blok }: SbRichTextProps) {
   }
 
   return (
-    <Box {...editable} css={spacingCss(blok)}>
+    <Box {...editable} {...spacingStyle(blok)}>
       <StoryblokRichText
         data={content as never}
         maxWidth={parseMaxWidth(maxWidth)}

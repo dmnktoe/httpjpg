@@ -1,9 +1,10 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { forwardRef, useMemo, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
+import { spacingVar } from "../../lib/spacing-var";
 import { AsciiArt } from "../ascii-art/ascii-art";
 import { ASCII_EMPTY } from "../ascii-art/banners";
 import { Box } from "../box/box";
@@ -141,12 +142,20 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
           css={{
             display: "grid",
             gridTemplateColumns: {
-              base: gridTemplate(columns),
-              md: columnsMd ? gridTemplate(columnsMd) : undefined,
-              lg: columnsLg ? gridTemplate(columnsLg) : undefined,
+              base: "var(--work-list-cols)",
+              md: columnsMd ? "var(--work-list-cols-md)" : undefined,
+              lg: columnsLg ? "var(--work-list-cols-lg)" : undefined,
             },
-            gap,
+            gap: "var(--work-list-gap)",
           }}
+          style={
+            {
+              "--work-list-cols": gridTemplate(columns),
+              ...(columnsMd && { "--work-list-cols-md": gridTemplate(columnsMd) }),
+              ...(columnsLg && { "--work-list-cols-lg": gridTemplate(columnsLg) }),
+              "--work-list-gap": spacingVar(gap) ?? "0",
+            } as CSSProperties
+          }
         >
           {cards}
         </Box>
@@ -157,12 +166,12 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
 );
 
 const GRID_TEMPLATES: Record<number, string> = {
-  1: "repeat(1, 1fr)",
-  2: "repeat(2, 1fr)",
-  3: "repeat(3, 1fr)",
-  4: "repeat(4, 1fr)",
-  5: "repeat(5, 1fr)",
-  6: "repeat(6, 1fr)",
+  1: "repeat(1, minmax(0, 1fr))",
+  2: "repeat(2, minmax(0, 1fr))",
+  3: "repeat(3, minmax(0, 1fr))",
+  4: "repeat(4, minmax(0, 1fr))",
+  5: "repeat(5, minmax(0, 1fr))",
+  6: "repeat(6, minmax(0, 1fr))",
 };
 
 function gridTemplate(n: number): string {

@@ -58,7 +58,7 @@ Closes #
 - [ ] `sync:components` (and `sync:datasources` for new `CMS_OPTIONS`) run against Storyblok
 - [ ] `Sb*` component added under `packages/storyblok-ui/src/components/<kebab>/` and exported explicitly from `src/index.ts`
 - [ ] Registered in `apps/portfolio/lib/storyblok.ts` under its blok name
-- [ ] `editableAttrs(blok)` spread on the root element, spacing handled via `BlokSpacing` / `spacingCss()`
+- [ ] `editableAttrs(blok)` spread on the root element, spacing handled via `BlokSpacing` / `spacingStyle()`
 - [ ] Cache tags / revalidation adjusted if the content shape changed
 
 </details>

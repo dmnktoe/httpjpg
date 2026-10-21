@@ -5,23 +5,23 @@ import { memo, type CSSProperties } from "react";
 import { css } from "styled-system/css";
 
 import { EntranceMotion } from "../../lib/entrance-motion";
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 type ColCount = NonNullable<GridProps["columns"]>;
 
 const COLS: Record<string, string> = {
-  "1": "repeat(1, 1fr)",
-  "2": "repeat(2, 1fr)",
-  "3": "repeat(3, 1fr)",
-  "4": "repeat(4, 1fr)",
-  "5": "repeat(5, 1fr)",
-  "6": "repeat(6, 1fr)",
-  "7": "repeat(7, 1fr)",
-  "8": "repeat(8, 1fr)",
-  "9": "repeat(9, 1fr)",
-  "10": "repeat(10, 1fr)",
-  "11": "repeat(11, 1fr)",
-  "12": "repeat(12, 1fr)",
+  "1": "repeat(1, minmax(0, 1fr))",
+  "2": "repeat(2, minmax(0, 1fr))",
+  "3": "repeat(3, minmax(0, 1fr))",
+  "4": "repeat(4, minmax(0, 1fr))",
+  "5": "repeat(5, minmax(0, 1fr))",
+  "6": "repeat(6, minmax(0, 1fr))",
+  "7": "repeat(7, minmax(0, 1fr))",
+  "8": "repeat(8, minmax(0, 1fr))",
+  "9": "repeat(9, minmax(0, 1fr))",
+  "10": "repeat(10, minmax(0, 1fr))",
+  "11": "repeat(11, minmax(0, 1fr))",
+  "12": "repeat(12, minmax(0, 1fr))",
   auto: "repeat(auto-fit, minmax(200px, 1fr))",
 };
 
@@ -59,18 +59,17 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
     return null;
   }
 
-  const styleVars =
-    columnsMd || columnsLg
-      ? ({
-          ...(columnsMd && { "--grid-cols-md": COLS[columnsMd] }),
-          ...(columnsLg && { "--grid-cols-lg": COLS[columnsLg] }),
-        } as CSSProperties)
-      : undefined;
+  const spacing = spacingStyle(blok);
+  const styleVars = {
+    ...(columnsMd && { "--grid-cols-md": COLS[columnsMd] }),
+    ...(columnsLg && { "--grid-cols-lg": COLS[columnsLg] }),
+    ...spacing.style,
+  } as CSSProperties;
 
   const responsive = css({
     md: columnsMd ? { gridTemplateColumns: "var(--grid-cols-md)" } : {},
     lg: columnsLg ? { gridTemplateColumns: "var(--grid-cols-lg)" } : {},
-    ...spacingCss(blok),
+    ...spacing.css,
   });
 
   return (

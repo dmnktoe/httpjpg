@@ -1,48 +1,83 @@
-import { editableAttrs, sizesFromWidths, spacingCss, widthCss } from "./use-blok";
+import {
+  editableAttrs,
+  mergeBlokStyles,
+  sizesFromWidths,
+  spacingStyle,
+  widthStyle,
+} from "./use-blok";
 
-describe("spacingCss", () => {
-  it("returns an empty object when no spacing is set", () => {
-    expect(spacingCss({ _uid: "1" } as never)).toEqual({});
+describe("spacingStyle", () => {
+  it("returns nothing when no spacing is set", () => {
+    expect(spacingStyle({ _uid: "1" } as never)).toEqual({ css: {}, style: {} });
   });
 
-  it("maps a single-breakpoint axis to a plain value", () => {
-    expect(spacingCss({ mt: "4" } as never)).toEqual({ mt: "4" });
-  });
-
-  it("builds a responsive object and fills gaps from smaller breakpoints", () => {
-    expect(spacingCss({ pt: "2", ptMd: "4", ptLg: "8" } as never)).toEqual({
-      pt: { base: "2", md: "4", lg: "8" },
+  it("reads a fixed class and carries the token through a variable", () => {
+    expect(spacingStyle({ mt: "4" } as never)).toEqual({
+      css: { mt: { base: "var(--sb-mt)" } },
+      style: { "--sb-mt": "var(--jpg-spacing-4)" },
     });
   });
 
-  it("inherits md/lg from base when only base + lg are set", () => {
-    expect(spacingCss({ mb: "2", mbLg: "8" } as never)).toEqual({
-      mb: { base: "2", md: "2", lg: "8" },
+  it("adds a class and variable for each breakpoint the editor set", () => {
+    expect(spacingStyle({ pt: "2", ptMd: "4", ptLg: "8" } as never)).toEqual({
+      css: { pt: { base: "var(--sb-pt)", md: "var(--sb-pt-md)", lg: "var(--sb-pt-lg)" } },
+      style: {
+        "--sb-pt": "var(--jpg-spacing-2)",
+        "--sb-pt-md": "var(--jpg-spacing-4)",
+        "--sb-pt-lg": "var(--jpg-spacing-8)",
+      },
+    });
+  });
+
+  it("leaves unset breakpoints to the min-width cascade", () => {
+    expect(spacingStyle({ mb: "2", mbLg: "8" } as never)).toEqual({
+      css: { mb: { base: "var(--sb-mb)", lg: "var(--sb-mb-lg)" } },
+      style: { "--sb-mb": "var(--jpg-spacing-2)", "--sb-mb-lg": "var(--jpg-spacing-8)" },
+    });
+  });
+
+  it("only touches desktop when only desktop is set", () => {
+    expect(spacingStyle({ ptLg: "24" } as never)).toEqual({
+      css: { pt: { lg: "var(--sb-pt-lg)" } },
+      style: { "--sb-pt-lg": "var(--jpg-spacing-24)" },
+    });
+  });
+
+  it("keeps zero and ignores empty CMS fields", () => {
+    expect(spacingStyle({ mt: "0", mb: "" } as never)).toEqual({
+      css: { mt: { base: "var(--sb-mt)" } },
+      style: { "--sb-mt": "var(--jpg-spacing-0)" },
     });
   });
 });
 
-describe("widthCss", () => {
-  it("returns an empty object when no width is set", () => {
-    expect(widthCss({})).toEqual({});
+describe("widthStyle", () => {
+  it("returns nothing when no width is set", () => {
+    expect(widthStyle({})).toEqual({ css: {}, style: {} });
   });
 
-  it("returns a plain width when only the base is set", () => {
-    expect(widthCss({ width: "50%" })).toEqual({ width: "50%" });
-  });
-
-  it("returns a responsive width object across breakpoints", () => {
-    expect(widthCss({ width: "100%", widthMd: "50%", widthLg: "30%" })).toEqual({
-      width: { base: "100%", md: "50%", lg: "30%" },
+  it("passes percentages through a variable per breakpoint", () => {
+    expect(widthStyle({ width: "100%", widthMd: "50%", widthLg: "30%" })).toEqual({
+      css: { width: { base: "var(--sb-w)", md: "var(--sb-w-md)", lg: "var(--sb-w-lg)" } },
+      style: { "--sb-w": "100%", "--sb-w-md": "50%", "--sb-w-lg": "30%" },
     });
   });
 
-  it("fills missing base/md from the next smaller set value", () => {
-    expect(widthCss({ widthMd: "50%" })).toEqual({
-      width: { base: undefined, md: "50%", lg: "50%" },
+  it("leaves the base width alone when only tablet is set", () => {
+    expect(widthStyle({ widthMd: "50%" })).toEqual({
+      css: { width: { md: "var(--sb-w-md)" } },
+      style: { "--sb-w-md": "50%" },
     });
-    expect(spacingCss({ ptLg: "8" } as never)).toEqual({
-      pt: { base: undefined, md: undefined, lg: "8" },
+  });
+});
+
+describe("mergeBlokStyles", () => {
+  it("combines classes and variables", () => {
+    expect(
+      mergeBlokStyles(widthStyle({ width: "50%" }), spacingStyle({ mt: "4" } as never)),
+    ).toEqual({
+      css: { width: { base: "var(--sb-w)" }, mt: { base: "var(--sb-mt)" } },
+      style: { "--sb-w": "50%", "--sb-mt": "var(--jpg-spacing-4)" },
     });
   });
 });

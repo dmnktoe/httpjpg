@@ -4,7 +4,7 @@ import { StoryblokServerComponent } from "@storyblok/react/rsc";
 import { memo } from "react";
 
 import { EntranceMotion } from "../../lib/entrance-motion";
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbContainerProps {
   blok: SbContainerData;
@@ -12,6 +12,7 @@ export interface SbContainerProps {
 
 export const SbContainer = memo(function SbContainer({ blok }: SbContainerProps) {
   const { body, width = "lg", center = true, bgColor } = blok;
+  const spacing = spacingStyle(blok);
   if (!body?.length) {
     return null;
   }
@@ -21,7 +22,8 @@ export const SbContainer = memo(function SbContainer({ blok }: SbContainerProps)
         {...editableAttrs(blok)}
         size={width}
         center={center}
-        css={{ backgroundColor: bgColor, ...spacingCss(blok) }}
+        css={{ backgroundColor: bgColor, ...spacing.css }}
+        style={spacing.style}
       >
         {body.map((child) => (
           <StoryblokServerComponent key={child._uid} blok={child} />

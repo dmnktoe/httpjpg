@@ -3,7 +3,7 @@ import { Box, Button, Callout } from "@httpjpg/ui";
 import { memo } from "react";
 
 import { storyblokHref } from "../../lib/href";
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbCalloutProps {
   blok: SbCalloutData;
@@ -14,7 +14,7 @@ export const SbCallout = memo(function SbCallout({ blok }: SbCalloutProps) {
   const href = ctaText && ctaLink ? storyblokHref(ctaLink) : "";
 
   return (
-    <Box {...editableAttrs(blok)} css={spacingCss(blok)}>
+    <Box {...editableAttrs(blok)} {...spacingStyle(blok)}>
       <Callout
         tone={tone}
         align={align}

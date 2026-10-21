@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { forwardRef, useEffect, useMemo, useRef } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
@@ -32,6 +32,7 @@ export interface MusicPlayerProps {
   footerContent?: ReactNode;
   css?: SystemStyleObject;
   className?: string;
+  style?: CSSProperties;
 }
 
 export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
@@ -51,6 +52,7 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
       footerContent,
       css: cssProp,
       className,
+      style,
     },
     ref,
   ) => {
@@ -156,7 +158,7 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(
     };
 
     return (
-      <Box ref={ref} className={cx(css(containerStyles), className)} css={cssProp}>
+      <Box ref={ref} className={cx(css(containerStyles), className)} css={cssProp} style={style}>
         <VStack gap="3">
           {decoration && (
             <Box

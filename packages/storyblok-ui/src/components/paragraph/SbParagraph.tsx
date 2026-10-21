@@ -2,7 +2,7 @@ import type { SbParagraphData } from "@httpjpg/storyblok-utils";
 import { Paragraph } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbParagraphProps {
   blok: SbParagraphData;
@@ -11,6 +11,7 @@ export interface SbParagraphProps {
 export const SbParagraph = memo(function SbParagraph({ blok }: SbParagraphProps) {
   const { text, size, weight, align, color } = blok;
   const editable = editableAttrs(blok);
+  const spacing = spacingStyle(blok);
 
   const paragraphSize = size === "base" ? undefined : size;
 
@@ -22,8 +23,9 @@ export const SbParagraph = memo(function SbParagraph({ blok }: SbParagraphProps)
       css={{
         color,
         fontWeight: weight,
-        ...spacingCss(blok),
+        ...spacing.css,
       }}
+      style={spacing.style}
     >
       {text}
     </Paragraph>

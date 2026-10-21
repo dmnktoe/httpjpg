@@ -41,10 +41,12 @@ export { apiPlugin, storyblokInit } from "@storyblok/react/rsc";
 export { storyblokHref } from "./lib/href";
 export {
   type BlokSpacing,
+  type BlokStyle,
   type BlokWidth,
   editableAttrs,
-  spacingCss,
-  widthCss,
+  mergeBlokStyles,
+  spacingStyle,
+  widthStyle,
 } from "./lib/use-blok";
 
 export type {

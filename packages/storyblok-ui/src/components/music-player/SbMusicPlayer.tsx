@@ -5,7 +5,7 @@ import type { SbMusicPlayerData } from "@httpjpg/storyblok-utils";
 import { ASCII_DIVIDER_MUSIC, Box, MusicPlayer } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbMusicPlayerProps {
   blok: SbMusicPlayerData;
@@ -60,7 +60,7 @@ export const SbMusicPlayer = memo(function SbMusicPlayer({ blok }: SbMusicPlayer
         decoration={decoration}
         headerContent={headerText ? <Box as="span">{headerText}</Box> : undefined}
         footerContent={footerText ? <Box as="span">{footerText}</Box> : undefined}
-        css={spacingCss(blok)}
+        {...spacingStyle(blok)}
       />
     </Box>
   );

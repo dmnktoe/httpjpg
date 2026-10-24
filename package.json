@@ -24,8 +24,8 @@
     "postinstall": "turbo run build --filter=@httpjpg/tokens --filter=@httpjpg/ui"
   },
   "devDependencies": {
-    "@commitlint/cli": "^21.2.3",
-    "@commitlint/config-conventional": "^21.2.3",
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "@commitlint/types": "21.2.3",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
@@ -36,9 +36,9 @@
     "husky": "^9.1.7",
     "jsdom": "catalog:",
     "lint-staged": "^17.6.0",
-    "oxfmt": "^0.73.0",
-    "oxlint": "^1.88.0",
-    "turbo": "^2.11.8",
+    "oxfmt": "^0.74.0",
+    "oxlint": "^1.89.0",
+    "turbo": "^2.11.10",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

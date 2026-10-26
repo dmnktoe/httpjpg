@@ -171,11 +171,11 @@ export function ImageComparisonSlider({
         display: "block",
         overflow: "hidden",
         width: "100%",
-        aspectRatio: "var(--media-ratio)",
+        aspectRatio: aspectRatio ? "var(--media-ratio)" : undefined,
         userSelect: "none",
         ...cssProp,
       }}
-      style={{ "--media-ratio": aspectRatio } as CSSProperties}
+      style={aspectRatio ? ({ "--media-ratio": aspectRatio } as CSSProperties) : undefined}
     >
       <img
         src={afterSrc}

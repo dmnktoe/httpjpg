@@ -51,6 +51,21 @@ describe("spacingStyle", () => {
   });
 });
 
+describe("spacingStyle defaults", () => {
+  it("fills an empty base value without touching the breakpoints the editor set", () => {
+    expect(spacingStyle({ mbLg: "8" } as never, { mb: "4" })).toEqual({
+      css: { mb: { base: "var(--sb-mb)", lg: "var(--sb-mb-lg)" } },
+      style: { "--sb-mb": "var(--jpg-spacing-4)", "--sb-mb-lg": "var(--jpg-spacing-8)" },
+    });
+  });
+
+  it("lets the editor's base value win over the default", () => {
+    expect(spacingStyle({ mb: "0" } as never, { mb: "4" }).style).toEqual({
+      "--sb-mb": "var(--jpg-spacing-0)",
+    });
+  });
+});
+
 describe("widthStyle", () => {
   it("returns nothing when no width is set", () => {
     expect(widthStyle({})).toEqual({ css: {}, style: {} });

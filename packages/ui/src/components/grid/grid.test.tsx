@@ -119,4 +119,17 @@ describe("Grid", () => {
 
     expect(screen.getByTestId("grid").style.getPropertyValue("--grid-row-gap")).toBe("0");
   });
+
+  it("carries the column count up through the breakpoints", () => {
+    render(
+      <Grid columns={1} columnsLg={12} data-testid="grid">
+        cell
+      </Grid>,
+    );
+    const grid = screen.getByTestId("grid");
+
+    expect(grid.style.getPropertyValue("--grid-cols")).toBe("repeat(1, minmax(0, 1fr))");
+    expect(grid.style.getPropertyValue("--grid-cols-md")).toBe("repeat(1, minmax(0, 1fr))");
+    expect(grid.style.getPropertyValue("--grid-cols-lg")).toBe("repeat(12, minmax(0, 1fr))");
+  });
 });

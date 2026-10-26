@@ -1,39 +1,10 @@
 import type { SbGridData } from "@httpjpg/storyblok-utils";
-import { Grid, type GridProps } from "@httpjpg/ui";
+import { Grid, type GridColumns } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
-import { memo, type CSSProperties } from "react";
-import { css } from "styled-system/css";
+import { memo } from "react";
 
 import { EntranceMotion } from "../../lib/entrance-motion";
 import { editableAttrs, spacingStyle } from "../../lib/use-blok";
-
-type ColCount = NonNullable<GridProps["columns"]>;
-
-const COLS: Record<string, string> = {
-  "1": "repeat(1, minmax(0, 1fr))",
-  "2": "repeat(2, minmax(0, 1fr))",
-  "3": "repeat(3, minmax(0, 1fr))",
-  "4": "repeat(4, minmax(0, 1fr))",
-  "5": "repeat(5, minmax(0, 1fr))",
-  "6": "repeat(6, minmax(0, 1fr))",
-  "7": "repeat(7, minmax(0, 1fr))",
-  "8": "repeat(8, minmax(0, 1fr))",
-  "9": "repeat(9, minmax(0, 1fr))",
-  "10": "repeat(10, minmax(0, 1fr))",
-  "11": "repeat(11, minmax(0, 1fr))",
-  "12": "repeat(12, minmax(0, 1fr))",
-  auto: "repeat(auto-fit, minmax(200px, 1fr))",
-};
-
-function toCols(value: string | undefined): ColCount | undefined {
-  if (!value) {
-    return undefined;
-  }
-  if (value === "auto") {
-    return "auto";
-  }
-  return value in COLS ? (Number.parseInt(value, 10) as ColCount) : undefined;
-}
 
 export interface SbGridProps {
   blok: SbGridData;
@@ -53,30 +24,20 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
     justifyContent,
     flow,
   } = blok;
-  const editable = editableAttrs(blok);
 
   if (!items?.length) {
     return null;
   }
 
   const spacing = spacingStyle(blok);
-  const styleVars = {
-    ...(columnsMd && { "--grid-cols-md": COLS[columnsMd] }),
-    ...(columnsLg && { "--grid-cols-lg": COLS[columnsLg] }),
-    ...spacing.style,
-  } as CSSProperties;
-
-  const responsive = css({
-    md: columnsMd ? { gridTemplateColumns: "var(--grid-cols-md)" } : {},
-    lg: columnsLg ? { gridTemplateColumns: "var(--grid-cols-lg)" } : {},
-    ...spacing.css,
-  });
 
   return (
     <EntranceMotion blok={blok}>
       <Grid
-        {...editable}
-        columns={toCols(columns) ?? 1}
+        {...editableAttrs(blok)}
+        columns={toColumns(columns) ?? 1}
+        columnsMd={toColumns(columnsMd)}
+        columnsLg={toColumns(columnsLg)}
         gap={gap}
         rowGap={rowGap}
         columnGap={columnGap}
@@ -84,8 +45,8 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
         justify={justify || undefined}
         justifyContent={justifyContent || undefined}
         flow={flow || undefined}
-        className={responsive}
-        style={styleVars}
+        css={spacing.css}
+        style={spacing.style}
       >
         {items.map((item) => (
           <StoryblokServerComponent key={item._uid} blok={item} />
@@ -96,3 +57,12 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
 });
 
 SbGrid.displayName = "SbGrid";
+
+/** CMS column count (`"1"`–`"12"`, `"auto"`); empty or unknown values are ignored. */
+function toColumns(value: string | undefined): GridColumns | undefined {
+  if (value === "auto") {
+    return "auto";
+  }
+  const n = Number(value);
+  return Number.isInteger(n) && n >= 1 && n <= 12 ? (n as GridColumns) : undefined;
+}

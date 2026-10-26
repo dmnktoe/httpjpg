@@ -1,14 +1,15 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { forwardRef, useMemo, useState } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
-import { spacingVar } from "../../lib/spacing-var";
 import { AsciiArt } from "../ascii-art/ascii-art";
 import { ASCII_EMPTY } from "../ascii-art/banners";
 import { Box } from "../box/box";
 import { Divider, type DividerProps } from "../divider/divider";
+import { Grid } from "../grid/grid";
+import type { GridColumns } from "../grid/lib";
 import { VStack } from "../stack/stack";
 import { WorkCard, type WorkCardProps, type WorkCardVariant } from "../work-card/work-card";
 import { collectWorkTags, filterWorksByTag } from "./lib";
@@ -138,44 +139,22 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
       <Box ref={ref} css={cssProp} {...props}>
         {header}
         {filterBar}
-        <Box
-          css={{
-            display: "grid",
-            gridTemplateColumns: {
-              base: "var(--work-list-cols)",
-              md: columnsMd ? "var(--work-list-cols-md)" : undefined,
-              lg: columnsLg ? "var(--work-list-cols-lg)" : undefined,
-            },
-            gap: "var(--work-list-gap)",
-          }}
-          style={
-            {
-              "--work-list-cols": gridTemplate(columns),
-              ...(columnsMd && { "--work-list-cols-md": gridTemplate(columnsMd) }),
-              ...(columnsLg && { "--work-list-cols-lg": gridTemplate(columnsLg) }),
-              "--work-list-gap": spacingVar(gap) ?? "0",
-            } as CSSProperties
-          }
+        <Grid
+          columns={toColumns(columns)}
+          columnsMd={columnsMd ? toColumns(columnsMd) : undefined}
+          columnsLg={columnsLg ? toColumns(columnsLg) : undefined}
+          gap={gap}
         >
           {cards}
-        </Box>
+        </Grid>
         {footer}
       </Box>
     );
   },
 );
 
-const GRID_TEMPLATES: Record<number, string> = {
-  1: "repeat(1, minmax(0, 1fr))",
-  2: "repeat(2, minmax(0, 1fr))",
-  3: "repeat(3, minmax(0, 1fr))",
-  4: "repeat(4, minmax(0, 1fr))",
-  5: "repeat(5, minmax(0, 1fr))",
-  6: "repeat(6, minmax(0, 1fr))",
-};
-
-function gridTemplate(n: number): string {
-  return GRID_TEMPLATES[n] ?? GRID_TEMPLATES[1];
+function toColumns(n: number): GridColumns {
+  return Number.isInteger(n) && n >= 1 && n <= 12 ? (n as GridColumns) : 1;
 }
 
 WorkList.displayName = "WorkList";

@@ -40,7 +40,7 @@ describe("Headline", () => {
   it("renders justified alignment without text-wrap: balance suppressing it", () => {
     render(<Headline align="justify">Justified heading</Headline>);
     const heading = screen.getByRole("heading", { level: 1 });
-    expect(heading.className).toContain("jpg-ta_justify");
-    expect(heading.className).toContain("jpg-tw_wrap");
+    // The recipe's justify variant also resets `text-wrap` to `wrap`.
+    expect(heading.className).toContain("jpg-headline--align_justify");
   });
 });

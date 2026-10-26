@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.12.1](https://github.com/dmnktoe/httpjpg/compare/v2.12.0...v2.12.1) (2026-10-26)
+
+
+### Fixed
+
+* **portfolio:** let crawlers fetch share images and favicons ([#523](https://github.com/dmnktoe/httpjpg/issues/523)) ([02ed5c1](https://github.com/dmnktoe/httpjpg/commit/02ed5c1311cd05a4b5184ade68187c6ce5821e4b))
+
+
+### Dependencies
+
+* lock file maintenance ([#522](https://github.com/dmnktoe/httpjpg/issues/522)) ([1c1c60e](https://github.com/dmnktoe/httpjpg/commit/1c1c60e80f84b3c76a2475d5a0dc0f9b0f855e51))
+* update chromaui/action digest to 5bcadb5 ([#518](https://github.com/dmnktoe/httpjpg/issues/518)) ([307a2a5](https://github.com/dmnktoe/httpjpg/commit/307a2a55953c10df9a3eb23a54aaedac9bb119f7))
+* update dependency storyblok-js-client to ^7.8.1 ([#521](https://github.com/dmnktoe/httpjpg/issues/521)) ([b00826a](https://github.com/dmnktoe/httpjpg/commit/b00826a7f96290ef67f5ef793e8185039c14f80f))
+* update dev dependencies ([#515](https://github.com/dmnktoe/httpjpg/issues/515)) ([c5b6120](https://github.com/dmnktoe/httpjpg/commit/c5b612063ecc0c0953f1392eb473e2fc6ef22742))
+* update toolchain ([#519](https://github.com/dmnktoe/httpjpg/issues/519)) ([52dcafa](https://github.com/dmnktoe/httpjpg/commit/52dcafa616164cf2255df88ac55533ef38dfc6c0))
+
 ## [2.12.0](https://github.com/dmnktoe/httpjpg/compare/v2.11.1...v2.12.0) (2026-10-21)
 
 

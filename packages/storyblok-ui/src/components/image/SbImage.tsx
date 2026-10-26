@@ -91,17 +91,13 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     />
   );
 
-  const media = mergeBlokStyles(widthStyle({ width, widthMd, widthLg }), spacingStyle(blok));
+  const media = mergeBlokStyles(
+    widthStyle({ width, widthMd, widthLg }),
+    spacingStyle(blok, { mb: "4" }),
+  );
 
   return (
-    <Box
-      {...editable}
-      css={{
-        mb: "4",
-        ...media.css,
-      }}
-      style={media.style}
-    >
+    <Box {...editable} css={media.css} style={media.style}>
       <Box css={{ position: "relative" }}>
         {isParallax ? (
           <Box css={{ overflow: "hidden" }}>

@@ -38,7 +38,8 @@ export function responsiveSpacingVars(
   name: string,
   value: ResponsiveSpacing,
 ): Record<string, string> {
-  const steps = typeof value === "object" ? value : { base: value };
+  // `null` guards untyped callers (Storybook args, CMS fields), which would otherwise throw here.
+  const steps = value !== null && typeof value === "object" ? value : { base: value };
   const base = spacingVar(steps.base) ?? "0";
   const md = spacingVar(steps.md) ?? base;
   const lg = spacingVar(steps.lg) ?? md;

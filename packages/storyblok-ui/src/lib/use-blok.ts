@@ -59,12 +59,16 @@ function bridge(
   return { css: Object.keys(cssValue).length ? cssValue : undefined, style };
 }
 
-export function spacingStyle(s: BlokSpacing): BlokStyle {
+/** `defaults` fill the base value of an axis the editor left empty, e.g. `{ mb: "4" }`. */
+export function spacingStyle(
+  s: BlokSpacing,
+  defaults: Partial<Record<Axis, string>> = {},
+): BlokStyle {
   const classes: Record<string, unknown> = {};
   const style: Record<string, string> = {};
   for (const axis of AXES) {
     const result = bridge(SPACING_BRIDGE[axis], `--sb-${axis}`, {
-      base: spacingVar(s[axis]),
+      base: spacingVar(s[axis] || defaults[axis]),
       md: spacingVar(s[`${axis}Md`]),
       lg: spacingVar(s[`${axis}Lg`]),
     });

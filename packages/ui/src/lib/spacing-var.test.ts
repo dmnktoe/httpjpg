@@ -45,4 +45,12 @@ describe("responsiveSpacingVars", () => {
       "--x-lg": "var(--jpg-spacing-6)",
     });
   });
+
+  it("treats null like an unset value instead of throwing", () => {
+    expect(responsiveSpacingVars("x", null as never)).toEqual({
+      "--x": "0",
+      "--x-md": "0",
+      "--x-lg": "0",
+    });
+  });
 });

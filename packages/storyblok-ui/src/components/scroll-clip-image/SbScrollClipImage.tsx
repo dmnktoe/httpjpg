@@ -52,17 +52,13 @@ export const SbScrollClipImage = memo(function SbScrollClipImage({ blok }: SbScr
   const resolvedHref = link ? storyblokHref(link) : "";
   const href = resolvedHref || undefined;
 
-  const media = mergeBlokStyles(widthStyle({ width, widthMd, widthLg }), spacingStyle(blok));
+  const media = mergeBlokStyles(
+    widthStyle({ width, widthMd, widthLg }),
+    spacingStyle(blok, { mb: "4" }),
+  );
 
   return (
-    <Box
-      {...editable}
-      css={{
-        mb: "4",
-        ...media.css,
-      }}
-      style={media.style}
-    >
+    <Box {...editable} css={media.css} style={media.style}>
       <ScrollClipImage
         src={src}
         srcSet={srcSet}

@@ -5,6 +5,8 @@ import { forwardRef } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
+import { gridTemplate } from "../grid/lib";
+
 export interface StatItem {
   id: string;
   value: ReactNode;
@@ -20,13 +22,6 @@ export interface StatsProps {
   className?: string;
   css?: SystemStyleObject;
 }
-
-const columnsMap = {
-  1: "repeat(1, 1fr)",
-  2: "repeat(2, 1fr)",
-  3: "repeat(3, 1fr)",
-  4: "repeat(4, 1fr)",
-} as const;
 
 const variantItemStyles = {
   default: {},
@@ -54,8 +49,8 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
         css({
           display: "grid",
           gridTemplateColumns: {
-            base: "repeat(1, 1fr)",
-            sm: "repeat(2, 1fr)",
+            base: "repeat(1, minmax(0, 1fr))",
+            sm: "repeat(2, minmax(0, 1fr))",
             md: "var(--stats-cols)",
           },
           gap: "6",
@@ -64,7 +59,7 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
         cssProp && css(cssProp),
         className,
       )}
-      style={{ "--stats-cols": columnsMap[columns] ?? columnsMap[3] } as CSSProperties}
+      style={{ "--stats-cols": gridTemplate(columns) } as CSSProperties}
     >
       {items.map((item, idx) => (
         <div

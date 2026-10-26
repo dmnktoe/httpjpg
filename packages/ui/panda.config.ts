@@ -14,7 +14,9 @@ import { defineConfig } from "@pandacss/dev";
 
 import { hexToRgba, linearGradient } from "./panda.helpers";
 import { buttonRecipe } from "./src/components/button/button.recipe";
+import { headlineRecipe } from "./src/components/headline/headline.recipe";
 import { navLinkRecipe } from "./src/components/nav-link/nav-link.recipe";
+import { paragraphRecipe } from "./src/components/paragraph/paragraph.recipe";
 
 const pandaCliProduction = process.env.PANDA_PRODUCTION === "1";
 
@@ -29,13 +31,6 @@ function toPandaTokens<T extends Record<string, any>>(obj: T): Record<string, an
   }
   return result;
 }
-
-const headlineClampSizes = [
-  "clamp(2.25rem, 5vw + 1rem, 3.75rem)",
-  "clamp(1.875rem, 4vw + 1rem, 3rem)",
-  "clamp(1.5rem, 3vw + 0.5rem, 2.25rem)",
-  "clamp(1.25rem, 2vw + 0.25rem, 1.5rem)",
-];
 
 export default defineConfig({
   preflight: true,
@@ -80,7 +75,7 @@ export default defineConfig({
           color: CMS_OPTIONS.colors,
           backgroundColor: CMS_OPTIONS.colors,
           borderColor: CMS_OPTIONS.colors,
-          fontSize: [...CMS_OPTIONS.fontSize, ...headlineClampSizes],
+          fontSize: CMS_OPTIONS.fontSize,
           fontWeight: CMS_OPTIONS.fontWeight,
           fontFamily: CMS_OPTIONS.fontFamily,
           borderTopStyle: ["solid", "dashed", "dotted"],
@@ -224,7 +219,9 @@ export default defineConfig({
       },
       recipes: {
         button: buttonRecipe,
+        headline: headlineRecipe,
         navLink: navLinkRecipe,
+        paragraph: paragraphRecipe,
       },
     },
   },

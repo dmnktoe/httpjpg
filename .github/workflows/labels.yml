@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - claude/nice-gauss-po10e0
     paths:
       - .github/labels.yml
       - .github/workflows/labels.yml

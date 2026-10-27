@@ -2,7 +2,7 @@ import { type SbWorkCardData, toSlideshowImage } from "@httpjpg/storyblok-utils"
 import { WorkCard } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbWorkCardProps {
   blok: SbWorkCardData;
@@ -47,7 +47,7 @@ export const SbWorkCard = memo(function SbWorkCard({ blok }: SbWorkCardProps) {
       images={images.map((img) => toSlideshowImage(img, title))}
       overlay={overlay}
       overlayInset={overlayInset}
-      css={spacingCss(blok)}
+      {...spacingStyle(blok)}
     />
   );
 });

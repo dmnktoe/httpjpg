@@ -1,91 +1,18 @@
 import type { SbGridItemData } from "@httpjpg/storyblok-utils";
-import { GridItem, type GridItemProps } from "@httpjpg/ui";
+import { GridItem, type GridPlacement } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
-import { memo, type CSSProperties } from "react";
-import { css, cx } from "styled-system/css";
+import { memo } from "react";
+import { css } from "styled-system/css";
 
 import { EntranceMotion } from "../../lib/entrance-motion";
 import { editableAttrs } from "../../lib/use-blok";
-
-type Span = GridItemProps["colSpan"];
-
-function parseSpan(value?: string): Span | undefined {
-  if (!value) {
-    return undefined;
-  }
-  if (value === "full") {
-    return "full";
-  }
-  const n = Number.parseInt(value, 10);
-  return n >= 1 && n <= 12 ? (n as Span) : undefined;
-}
-
-function spanCss(value: string): string {
-  return value === "full" ? "1 / -1" : `span ${value}`;
-}
-
-function rowSpanNumber(value?: string): number | undefined {
-  if (!value || value === "full") {
-    return undefined;
-  }
-  const n = Number.parseInt(value, 10);
-  return Number.isFinite(n) && n > 0 ? n : undefined;
-}
 
 export interface SbGridItemProps {
   blok: SbGridItemData;
 }
 
 export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
-  const {
-    content,
-    colSpan,
-    colSpanMd,
-    colSpanLg,
-    rowSpan,
-    rowSpanMd,
-    rowSpanLg,
-    colStart,
-    colStartMd,
-    colStartLg,
-    colEnd,
-    rowStart,
-    rowStartMd,
-    rowStartLg,
-    rowEnd,
-    alignSelf,
-    justifySelf,
-    hiddenBase,
-    hiddenMd,
-    hiddenLg,
-  } = blok;
-  const editable = editableAttrs(blok);
-
-  const styleVars = {
-    ...(colSpanMd && { "--col-md": spanCss(colSpanMd) }),
-    ...(colSpanLg && { "--col-lg": spanCss(colSpanLg) }),
-    ...(rowSpanMd && { "--row-md": spanCss(rowSpanMd) }),
-    ...(rowSpanLg && { "--row-lg": spanCss(rowSpanLg) }),
-    ...(colStartMd && { "--colstart-md": String(colStartMd) }),
-    ...(colStartLg && { "--colstart-lg": String(colStartLg) }),
-    ...(rowStartMd && { "--rowstart-md": String(rowStartMd) }),
-    ...(rowStartLg && { "--rowstart-lg": String(rowStartLg) }),
-  } as CSSProperties;
-
-  const responsive = css({
-    md: {
-      gridColumn: colSpanMd ? "var(--col-md)" : undefined,
-      gridColumnStart: colStartMd ? "var(--colstart-md)" : undefined,
-      gridRow: rowSpanMd ? "var(--row-md)" : undefined,
-      gridRowStart: rowStartMd ? "var(--rowstart-md)" : undefined,
-    },
-    lg: {
-      gridColumn: colSpanLg ? "var(--col-lg)" : undefined,
-      gridColumnStart: colStartLg ? "var(--colstart-lg)" : undefined,
-      gridRow: rowSpanLg ? "var(--row-lg)" : undefined,
-      gridRowStart: rowStartLg ? "var(--rowstart-lg)" : undefined,
-    },
-  });
+  const { content, alignSelf, justifySelf, hiddenBase, hiddenMd, hiddenLg } = blok;
 
   const visibility = css({
     display: hiddenBase ? "none" : undefined,
@@ -95,17 +22,28 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
 
   return (
     <GridItem
-      {...editable}
-      colSpan={parseSpan(colSpan)}
-      rowSpan={rowSpanNumber(rowSpan)}
-      colStart={colStart}
-      colEnd={colEnd}
-      rowStart={rowStart}
-      rowEnd={rowEnd}
+      {...editableAttrs(blok)}
+      colSpan={toColSpan(blok.colSpan)}
+      colStart={toLine(blok.colStart)}
+      colEnd={toLine(blok.colEnd)}
+      rowSpan={toRowSpan(blok.rowSpan)}
+      rowStart={toLine(blok.rowStart)}
+      rowEnd={toLine(blok.rowEnd)}
+      md={{
+        colSpan: toColSpan(blok.colSpanMd),
+        colStart: toLine(blok.colStartMd),
+        rowSpan: toRowSpan(blok.rowSpanMd),
+        rowStart: toLine(blok.rowStartMd),
+      }}
+      lg={{
+        colSpan: toColSpan(blok.colSpanLg),
+        colStart: toLine(blok.colStartLg),
+        rowSpan: toRowSpan(blok.rowSpanLg),
+        rowStart: toLine(blok.rowStartLg),
+      }}
       alignSelf={alignSelf || undefined}
       justifySelf={justifySelf || undefined}
-      className={cx(responsive, visibility)}
-      style={styleVars}
+      className={visibility}
     >
       {/* Animate inside the cell: an outer wrapper would become the grid child and drop the placement. */}
       <EntranceMotion blok={blok}>
@@ -118,3 +56,23 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
 });
 
 SbGridItem.displayName = "SbGridItem";
+
+/** `"1"`–`"12"` or `"full"`; anything else (empty, out of range) leaves the span unset. */
+function toColSpan(value?: string): GridPlacement["colSpan"] {
+  if (value === "full") {
+    return "full";
+  }
+  const n = toLine(value);
+  return n !== undefined && n <= 12 ? (n as GridPlacement["colSpan"]) : undefined;
+}
+
+/** Rows have no fixed count, so `"full"` has no meaning there and is ignored. */
+function toRowSpan(value?: string): number | undefined {
+  return value === "full" ? undefined : toLine(value);
+}
+
+/** A positive grid line or span from a CMS number / string field. */
+function toLine(value?: string | number): number | undefined {
+  const n = Number(value);
+  return Number.isInteger(n) && n > 0 ? n : undefined;
+}

@@ -5,7 +5,7 @@ import { Box, Button } from "@httpjpg/ui";
 import { memo } from "react";
 
 import { storyblokHref } from "../../lib/href";
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbButtonProps {
   blok: SbButtonData;
@@ -16,12 +16,12 @@ export const SbButton = memo(function SbButton({ blok, onClick }: SbButtonProps)
   const { text, variant = "primary", size = "md", type = "button", disabled, link } = blok;
   const href = storyblokHref(link);
   const editable = editableAttrs(blok);
-  const spacing = spacingCss(blok);
+  const spacing = spacingStyle(blok);
 
   if (href) {
     return (
       <Box {...editable}>
-        <Button variant={variant} size={size} href={href} css={spacing}>
+        <Button variant={variant} size={size} href={href} {...spacing}>
           {text}
         </Button>
       </Box>
@@ -36,7 +36,7 @@ export const SbButton = memo(function SbButton({ blok, onClick }: SbButtonProps)
         type={type}
         disabled={disabled}
         onClick={onClick}
-        css={spacing}
+        {...spacing}
       >
         {text}
       </Button>

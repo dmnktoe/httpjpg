@@ -1,10 +1,11 @@
 "use client";
 
-import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, CSSProperties, ReactNode } from "react";
 import { forwardRef } from "react";
 import { token } from "styled-system/tokens";
 import type { SystemStyleObject } from "styled-system/types";
 
+import { spacingVar } from "../../lib/spacing-var";
 import {
   ASCII_DIVIDER_ARROWS,
   ASCII_DIVIDER_DOTS,
@@ -68,10 +69,12 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
       color: dividerColor = "neutral.300",
       spacing: dividerSpacing = "4",
       css: cssProp,
+      style,
       ...props
     },
     ref,
   ) => {
+    const spaceVar = { "--divider-space": spacingVar(dividerSpacing) ?? "0" } as CSSProperties;
     const resolvedColor = resolveDividerColor(dividerColor);
     const horizontal = orientation === "horizontal";
     const resolvedPattern = pattern ?? (preset ? PRESETS[preset] : ASCII_DIVIDER_STARS);
@@ -93,17 +96,17 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
             overflow: "hidden",
             textOverflow: "ellipsis",
             w: horizontal ? "full" : undefined,
-            mt: horizontal ? dividerSpacing : undefined,
-            mb: horizontal ? dividerSpacing : undefined,
+            mt: horizontal ? "var(--divider-space)" : undefined,
+            mb: horizontal ? "var(--divider-space)" : undefined,
             textAlign: horizontal ? "center" : undefined,
             writingMode: horizontal ? undefined : "vertical-rl",
             h: horizontal ? undefined : "full",
             minH: horizontal ? undefined : "100px",
-            ml: horizontal ? undefined : dividerSpacing,
-            mr: horizontal ? undefined : dividerSpacing,
+            ml: horizontal ? undefined : "var(--divider-space)",
+            mr: horizontal ? undefined : "var(--divider-space)",
             ...cssProp,
           }}
-          style={{ color: resolvedColor }}
+          style={{ ...spaceVar, color: resolvedColor, ...style }}
           {...props}
         >
           {children || resolvedPattern}
@@ -122,19 +125,21 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
           w: horizontal ? "full" : undefined,
           h: horizontal ? undefined : "full",
           minH: horizontal ? undefined : "20px",
-          mt: horizontal ? dividerSpacing : undefined,
-          mb: horizontal ? dividerSpacing : undefined,
-          ml: horizontal ? undefined : dividerSpacing,
-          mr: horizontal ? undefined : dividerSpacing,
+          mt: horizontal ? "var(--divider-space)" : undefined,
+          mb: horizontal ? "var(--divider-space)" : undefined,
+          ml: horizontal ? undefined : "var(--divider-space)",
+          mr: horizontal ? undefined : "var(--divider-space)",
           ...cssProp,
         }}
         style={{
+          ...spaceVar,
           borderTopWidth: horizontal ? thickness : undefined,
           borderTopStyle: horizontal ? borderStyle : undefined,
           borderTopColor: horizontal ? resolvedColor : undefined,
           borderLeftWidth: horizontal ? undefined : thickness,
           borderLeftStyle: horizontal ? undefined : borderStyle,
           borderLeftColor: horizontal ? undefined : resolvedColor,
+          ...style,
         }}
         {...props}
       />

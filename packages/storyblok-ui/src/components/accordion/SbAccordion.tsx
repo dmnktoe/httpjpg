@@ -2,7 +2,7 @@ import type { SbAccordionData } from "@httpjpg/storyblok-utils";
 import { Accordion, Box } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbAccordionProps {
   blok: SbAccordionData;
@@ -23,7 +23,7 @@ export const SbAccordion = memo(function SbAccordion({ blok }: SbAccordionProps)
   }));
 
   return (
-    <Box {...editableAttrs(blok)} css={spacingCss(blok)}>
+    <Box {...editableAttrs(blok)} {...spacingStyle(blok)}>
       <Accordion
         items={accordionItems}
         allowMultiple={allowMultiple}

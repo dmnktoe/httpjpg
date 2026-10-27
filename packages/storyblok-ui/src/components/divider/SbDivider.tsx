@@ -2,7 +2,7 @@ import type { SbDividerData } from "@httpjpg/storyblok-utils";
 import { Divider } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbDividerProps {
   blok: SbDividerData;
@@ -20,7 +20,7 @@ export const SbDivider = memo(function SbDivider({ blok }: SbDividerProps) {
       thickness={thickness || undefined}
       color={color || undefined}
       spacing={spacing || undefined}
-      css={spacingCss(blok)}
+      {...spacingStyle(blok)}
     >
       {label || undefined}
     </Divider>

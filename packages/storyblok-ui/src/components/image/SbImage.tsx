@@ -16,7 +16,13 @@ import {
 } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { editableAttrs, sizesFromWidths, spacingCss, widthCss } from "../../lib/use-blok";
+import {
+  editableAttrs,
+  mergeBlokStyles,
+  sizesFromWidths,
+  spacingStyle,
+  widthStyle,
+} from "../../lib/use-blok";
 import { SbCaption, type SbCaptionProps } from "../caption/SbCaption";
 
 export interface SbImageProps {
@@ -85,15 +91,13 @@ export const SbImage = memo(function SbImage({ blok }: SbImageProps) {
     />
   );
 
+  const media = mergeBlokStyles(
+    widthStyle({ width, widthMd, widthLg }),
+    spacingStyle(blok, { mb: "4" }),
+  );
+
   return (
-    <Box
-      {...editable}
-      css={{
-        mb: "4",
-        ...widthCss({ width, widthMd, widthLg }),
-        ...spacingCss(blok),
-      }}
-    >
+    <Box {...editable} css={media.css} style={media.style}>
       <Box css={{ position: "relative" }}>
         {isParallax ? (
           <Box css={{ overflow: "hidden" }}>

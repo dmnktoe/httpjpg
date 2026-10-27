@@ -1,6 +1,6 @@
 "use client";
 
-import type { ChangeEvent, PointerEvent } from "react";
+import type { ChangeEvent, CSSProperties, PointerEvent } from "react";
 import { useCallback, useId, useRef, useState } from "react";
 import { css } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
@@ -171,10 +171,11 @@ export function ImageComparisonSlider({
         display: "block",
         overflow: "hidden",
         width: "100%",
-        aspectRatio,
+        aspectRatio: aspectRatio ? "var(--media-ratio)" : undefined,
         userSelect: "none",
         ...cssProp,
       }}
+      style={aspectRatio ? ({ "--media-ratio": aspectRatio } as CSSProperties) : undefined}
     >
       <img
         src={afterSrc}

@@ -1,9 +1,11 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { forwardRef } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
+
+import { gridTemplate } from "../grid/lib";
 
 export interface StatItem {
   id: string;
@@ -20,13 +22,6 @@ export interface StatsProps {
   className?: string;
   css?: SystemStyleObject;
 }
-
-const columnsMap = {
-  1: "repeat(1, 1fr)",
-  2: "repeat(2, 1fr)",
-  3: "repeat(3, 1fr)",
-  4: "repeat(4, 1fr)",
-} as const;
 
 const variantItemStyles = {
   default: {},
@@ -54,9 +49,9 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
         css({
           display: "grid",
           gridTemplateColumns: {
-            base: "repeat(1, 1fr)",
-            sm: "repeat(2, 1fr)",
-            md: columnsMap[columns],
+            base: "repeat(1, minmax(0, 1fr))",
+            sm: "repeat(2, minmax(0, 1fr))",
+            md: "var(--stats-cols)",
           },
           gap: "6",
           width: "full",
@@ -64,6 +59,7 @@ export const Stats = forwardRef<HTMLDivElement, StatsProps>(function Stats(
         cssProp && css(cssProp),
         className,
       )}
+      style={{ "--stats-cols": gridTemplate(columns) } as CSSProperties}
     >
       {items.map((item, idx) => (
         <div

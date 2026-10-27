@@ -1,9 +1,11 @@
 "use client";
 
-import type { HTMLAttributes, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
+
+import { spacingVar } from "../../lib/spacing-var";
 
 export interface ButtonGroupProps extends Omit<HTMLAttributes<HTMLDivElement>, "css"> {
   children: ReactNode;
@@ -40,10 +42,12 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(function
     stretch = false,
     className,
     css: cssProp,
+    style,
     ...props
   },
   ref,
 ) {
+  const gapStyle = { "--button-group-gap": spacingVar(gap) ?? "0", ...style } as CSSProperties;
   const styles = cx(
     css({
       display: "flex",
@@ -51,7 +55,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(function
       flexWrap: wrap ? "wrap" : "nowrap",
       alignItems: stretch ? "stretch" : align,
       justifyContent: JUSTIFY[justify],
-      gap,
+      gap: "var(--button-group-gap)",
       ...(stretch && direction === "row" && { "& > *": { flex: "1 1 0" } }),
       ...cssProp,
     }),
@@ -64,6 +68,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(function
       // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
       role="group"
       className={styles}
+      style={gapStyle}
       {...props}
     >
       {children}

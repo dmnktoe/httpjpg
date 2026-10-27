@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import type { RefObject, VideoHTMLAttributes } from "react";
+import type { CSSProperties, RefObject, VideoHTMLAttributes } from "react";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
@@ -261,9 +261,15 @@ export const Video = forwardRef<HTMLDivElement, VideoProps>(
             position: "relative",
             w: "100%",
             overflow: "hidden",
-            ...(containerAspectRatio && { aspectRatio: containerAspectRatio }),
+            // Media-derived ratios (`1920 / 1080`) are open-ended, so the class reads a variable.
+            aspectRatio: containerAspectRatio ? "var(--media-ratio)" : undefined,
             ...cssProp,
           }}
+          style={
+            containerAspectRatio
+              ? ({ "--media-ratio": containerAspectRatio } as CSSProperties)
+              : undefined
+          }
         >
           {!useIntrinsicLayout && <MediaSkeleton visible={isLoading} />}
           {media}

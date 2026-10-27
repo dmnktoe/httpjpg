@@ -1,9 +1,10 @@
 "use client";
 
-import type { HTMLAttributes, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { forwardRef } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
+import { spacingVar } from "../../lib/spacing-var";
 import { Box } from "../box/box";
 
 export interface StackProps extends HTMLAttributes<HTMLDivElement> {
@@ -31,6 +32,7 @@ export const Stack = forwardRef<HTMLDivElement, StackProps>(
       className,
       children,
       css: cssProp,
+      style,
       ...props
     },
     ref,
@@ -41,7 +43,7 @@ export const Stack = forwardRef<HTMLDivElement, StackProps>(
       css={{
         display: "flex",
         flexDirection: direction === "vertical" ? "column" : "row",
-        gap,
+        gap: "var(--stack-gap)",
         alignItems: align,
         justifyContent: justify,
         flexWrap: wrap ? "wrap" : "nowrap",
@@ -49,6 +51,7 @@ export const Stack = forwardRef<HTMLDivElement, StackProps>(
         h: fullHeight ? "full" : undefined,
         ...cssProp,
       }}
+      style={{ "--stack-gap": spacingVar(gap) ?? "0", ...style } as CSSProperties}
       {...props}
     >
       {children}

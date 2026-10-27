@@ -2,7 +2,7 @@ import type { SbCodeBlockData } from "@httpjpg/storyblok-utils";
 import { Box, CodeBlock } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbCodeBlockProps {
   blok: SbCodeBlockData;
@@ -16,7 +16,7 @@ export const SbCodeBlock = memo(function SbCodeBlock({ blok }: SbCodeBlockProps)
   }
 
   return (
-    <Box {...editableAttrs(blok)} css={spacingCss(blok)}>
+    <Box {...editableAttrs(blok)} {...spacingStyle(blok)}>
       <CodeBlock
         code={code}
         language={language || undefined}

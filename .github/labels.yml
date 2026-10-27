@@ -1,0 +1,78 @@
+# Repo labels as code, synced by .github/workflows/labels.yml.
+# Colors come from @httpjpg/tokens (packages/tokens/src/colors.ts):
+#   black / neutral → release + tooling (the brutalist base)
+#   primary (blue)  → where: apps, packages, stack
+#   accent (lime)   → dependencies
+#   warning / danger → needs a human
+
+# ── Release ──────────────────────────────────────────────────────────
+- name: release
+  color: "000000" # black
+  description: Release PR cut by release-please
+- name: "autorelease: pending"
+  color: "A3A3A3" # neutral.400
+  description: Release PR open, waiting to merge
+- name: "autorelease: tagged"
+  color: "404040" # neutral.700
+  description: Release merged and tagged
+
+# ── Tooling ──────────────────────────────────────────────────────────
+- name: tooling
+  color: "171717" # neutral.900
+  description: Build, lint, format and dev CLIs
+- name: ci
+  color: "525252" # neutral.600
+  description: GitHub Actions and CI config
+- name: weekly-cleanup
+  color: "D4D4D4" # neutral.300
+  description: Housekeeping sweep
+
+# ── Scope: apps + packages ───────────────────────────────────────────
+- name: app:portfolio
+  color: "2563EB" # primary.600
+  description: apps/portfolio, the deployed site
+- name: app:storybook
+  color: "3B82F6" # primary.500
+  description: apps/storybook, @httpjpg/ui docs
+- name: packages
+  color: "1E3A8A" # primary.900
+  description: Shared workspace packages
+
+# ── Stack ────────────────────────────────────────────────────────────
+- name: storyblok
+  color: "60A5FA" # primary.400
+  description: Storyblok CMS, bloks and sync
+- name: react
+  color: "93C5FD" # primary.300
+  description: React and Next.js
+- name: panda
+  color: "BFDBFE" # primary.200
+  description: Panda CSS, tokens and styled-system
+
+# ── Dependencies (Renovate) ──────────────────────────────────────────
+- name: dependencies
+  color: "84CC16" # accent.500
+  description: Dependency update
+- name: deps:prod
+  color: "A3E635" # accent.400
+  description: Production dependencies
+- name: deps:dev
+  color: "BEF264" # accent.300
+  description: Dev dependencies
+- name: deps:test
+  color: "D9F99D" # accent.200
+  description: Test dependencies
+- name: deps:types
+  color: "4D7C0F" # accent.700
+  description: Type definitions
+
+# ── Needs a human ────────────────────────────────────────────────────
+- name: manual-review
+  color: "FBBF24" # warning.400
+  description: Major update or risky change, review by hand
+- name: breaking
+  color: "DC2626" # danger.600
+  description: Breaking change
+- name: security
+  color: "7F1D1D" # danger.900
+  description: Vulnerability fix

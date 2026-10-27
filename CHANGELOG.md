@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.12.2](https://github.com/dmnktoe/httpjpg/compare/v2.12.1...v2.12.2) (2026-10-27)
+
+
+### Tooling
+
+* **agents:** sync the Node pin with .nvmrc ([#529](https://github.com/dmnktoe/httpjpg/issues/529)) ([7713325](https://github.com/dmnktoe/httpjpg/commit/771332574b8853029ff7e6bcb7adadc33d947a32))
+
+
+### Dependencies
+
+* update dependency @sentry/nextjs to ^11.9.0 ([#527](https://github.com/dmnktoe/httpjpg/issues/527)) ([bc66aeb](https://github.com/dmnktoe/httpjpg/commit/bc66aebc03a1d114e791fdef84fe16bdf00060b1))
+* update dependency next to ^16.4.3 ([#528](https://github.com/dmnktoe/httpjpg/issues/528)) ([e23e2b0](https://github.com/dmnktoe/httpjpg/commit/e23e2b03295c45245e121aedb7ff48bcadc1e81a))
+
 ## [2.12.1](https://github.com/dmnktoe/httpjpg/compare/v2.12.0...v2.12.1) (2026-10-26)
 
 

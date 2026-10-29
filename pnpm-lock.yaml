@@ -10,8 +10,8 @@ catalogs:
       specifier: ^2.1.9
       version: 2.1.9
     '@storyblok/react':
-      specifier: ^7.3.1
-      version: 7.3.1
+      specifier: ^7.4.0
+      version: 7.4.0
     '@testing-library/jest-dom':
       specifier: ^7.0.1
       version: 7.0.1
@@ -169,7 +169,7 @@ importers:
         version: link:../../packages/ui
       '@storyblok/react':
         specifier: 'catalog:'
-        version: 7.3.1(@floating-ui/dom@1.8.0)(next@16.4.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        version: 7.4.0(@floating-ui/dom@1.8.0)(next@16.4.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       next:
         specifier: 'catalog:'
         version: 16.4.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -538,7 +538,7 @@ importers:
         version: link:../ui
       '@storyblok/react':
         specifier: 'catalog:'
-        version: 7.3.1(@floating-ui/dom@1.8.0)(next@16.4.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        version: 7.4.0(@floating-ui/dom@1.8.0)(next@16.4.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       react:
         specifier: 'catalog:'
         version: 19.3.1
@@ -594,7 +594,7 @@ importers:
         version: link:../ui
       '@storyblok/react':
         specifier: 'catalog:'
-        version: 7.3.1(@floating-ui/dom@1.8.0)(next@16.4.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        version: 7.4.0(@floating-ui/dom@1.8.0)(next@16.4.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
     devDependencies:
       '@testing-library/jest-dom':
         specifier: 'catalog:'
@@ -2850,14 +2850,14 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@storyblok/js@6.3.4':
-    resolution: {integrity: sha512-H5ZGryFm6yh9iLc0HpYYc1U4XgR9hiSD739qiSbdoYRrSrRnOxnSOc8IQu9eAQJwCrFzjrImYp3cpBKEuSp5dA==}
+  '@storyblok/js@6.4.0':
+    resolution: {integrity: sha512-Qt2xmZ1fmXbKhOm+qTN5R8JFADW6BdJzE2jUCR30sgvl3+OATij+BFAj9F3QkqGP/OwZktaSUpSnswfc1xy9ww==}
 
   '@storyblok/preview-bridge@2.6.0':
     resolution: {integrity: sha512-KcLKPHSeFxqy+vYLPoflCfvl7L+/d298CpbGg54Yefqb7DLLnjXzjbJiIqYzvKC08rfM6ozy6DGFvRhrwAUI/Q==}
 
-  '@storyblok/react@7.3.1':
-    resolution: {integrity: sha512-0D1jgnSWEv4mQ9tP6R26dTN9xx44PgjyxmiyFHnZUXY6ryPeuo+usqOevWlTBT0B0id5lB1M5+Yq4GDFhSrL3A==}
+  '@storyblok/react@7.4.0':
+    resolution: {integrity: sha512-WSv/5BMdz+A4QtQ0xnJnQkjnbhVgGdV3oJtVcG3YVrv6LJCbEYLgid+vrKdrvQIm9a5lIl1jDqPz+0IyHayWGg==}
     peerDependencies:
       next: ^13 || ^14 || ^15 || ^16
       react: ^17 || ^18 || ^19
@@ -7117,7 +7117,7 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@storyblok/js@6.3.4(@floating-ui/dom@1.8.0)':
+  '@storyblok/js@6.4.0(@floating-ui/dom@1.8.0)':
     dependencies:
       '@storyblok/preview-bridge': 2.6.0
       '@storyblok/richtext': 5.3.3(@floating-ui/dom@1.8.0)
@@ -7131,9 +7131,9 @@ snapshots:
     dependencies:
       pure-parse: 0.0.0-beta.8
 
-  '@storyblok/react@7.3.1(@floating-ui/dom@1.8.0)(next@16.4.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@storyblok/react@7.4.0(@floating-ui/dom@1.8.0)(next@16.4.3(@babel/core@7.29.7(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
-      '@storyblok/js': 6.3.4(@floating-ui/dom@1.8.0)
+      '@storyblok/js': 6.4.0(@floating-ui/dom@1.8.0)
       '@storyblok/richtext': 5.3.3(@floating-ui/dom@1.8.0)
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)

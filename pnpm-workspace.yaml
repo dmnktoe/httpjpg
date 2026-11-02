@@ -15,7 +15,7 @@ allowBuilds:
 
 catalog:
   "@floating-ui/react-dom": ^2.1.9
-  "@storyblok/react": ^7.3.1
+  "@storyblok/react": ^7.4.0
   "@testing-library/jest-dom": ^7.0.1
   "@testing-library/react": ^16.3.3
   "@types/node": ^24.19.2

@@ -58,6 +58,8 @@ describe("SbHoloImage", () => {
         aspectRatio: "5/7",
         idle: true,
         gyro: true,
+        foil: "silver",
+        sparkle: "stars",
         loading: "lazy",
         copyright: "Studio",
         copyrightSource: "film",
@@ -86,6 +88,10 @@ describe("SbHoloImage", () => {
             widthLg: "30%",
             depth: 2,
             foreground: { filename: "https://a.storyblok.com/f/1/1200x1600/def/cutout.png" },
+            effects: { filename: "https://a.storyblok.com/f/1/1632x2176/ghi/shards.png" },
+            depthMap: { filename: "https://a.storyblok.com/f/1/1200x1600/jkl/depth.png" },
+            foil: "swirl",
+            sparkle: "fireworks",
           } as never
         }
       />,
@@ -103,5 +109,11 @@ describe("SbHoloImage", () => {
     expect(String(props.foregroundSrc)).toMatch(/^\/_next\/image\?url=.*cutout\.png/);
     expect(String(props.textureSrc)).toMatch(/^\/_next\/image\?url=.*image\.jpg/);
     expect(String(props.src)).toContain("a.storyblok.com");
+    // effects keep their own frame (no crop), the depth map shares the photo's crop
+    expect(String(props.effectsSrc)).toMatch(/^\/_next\/image\?url=.*shards\.png&w=/);
+    expect(decodeURIComponent(String(props.effectsSrc))).not.toContain("/m/");
+    expect(decodeURIComponent(String(props.depthSrc))).toContain("/m/");
+    expect(props.foil).toBe("swirl");
+    expect(props.sparkle).toBe("fireworks");
   });
 });

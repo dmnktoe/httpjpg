@@ -8,7 +8,14 @@ import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
 import { CopyrightLabel } from "../copyright-label/copyright-label";
-import { createHoloRenderer, type HoloRenderer, seedFromString } from "./holo-shader";
+import {
+  createHoloRenderer,
+  type HoloFoil,
+  type HoloLayerKind,
+  type HoloRenderer,
+  type HoloSparkle,
+  seedFromString,
+} from "./holo-shader";
 import { DEFAULT_INTENSITY, DEFAULT_MAX_TILT, type HoloVariant } from "./lib";
 import { useHoloTilt } from "./use-holo-tilt";
 
@@ -50,6 +57,17 @@ export interface HoloCardProps {
   foregroundSrc?: string;
   /** Parallax strength: 0 flat, 1 default, 2 deep. @default 1 */
   depth?: number;
+  /**
+   * Optional effects layer (alpha) rendered on the overhang frame, i.e. the
+   * card plus `OVERSCAN` on every side, so shards can stick out past the edge.
+   */
+  effectsSrc?: string;
+  /** Optional greyscale depth map (white = far, same framing as `src`) for per-pixel parallax. */
+  depthSrc?: string;
+  /** Frame foil: pastel silver (Galagladi) or dark oil-slick swirl (Mew). @default "silver" */
+  foil?: HoloFoil;
+  /** Twinkling sparkles over the art. @default "stars" */
+  sparkle?: HoloSparkle;
   copyright?: string;
   /** Asset source/credit, shown as a second line below the copyright. */
   copyrightSource?: string;
@@ -84,6 +102,10 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
     radius = DEFAULT_RADIUS,
     foregroundSrc,
     depth = 1,
+    effectsSrc,
+    depthSrc,
+    foil = "silver",
+    sparkle = "stars",
     copyright,
     copyrightSource,
     loading = "lazy",
@@ -131,6 +153,8 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
         maxTilt,
         depth: Math.max(0, depth),
         overscan: OVERSCAN,
+        foil,
+        sparkle,
         seed: seedFromString(src),
       });
     } catch (error) {
@@ -159,17 +183,24 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
     };
     image.src = textureSrc || src;
 
-    let foreground: HTMLImageElement | null = null;
-    if (foregroundSrc) {
-      foreground = new window.Image();
-      foreground.crossOrigin = "anonymous";
-      foreground.decoding = "async";
-      foreground.onload = () => {
-        if (!cancelled && foreground) {
-          renderer.setForeground(foreground);
+    const layers: Array<[HoloLayerKind, string | undefined]> = [
+      ["foreground", foregroundSrc],
+      ["effects", effectsSrc],
+      ["depth", depthSrc],
+    ];
+    for (const [kind, layerSrc] of layers) {
+      if (!layerSrc) {
+        continue;
+      }
+      const layer = new window.Image();
+      layer.crossOrigin = "anonymous";
+      layer.decoding = "async";
+      layer.onload = () => {
+        if (!cancelled) {
+          renderer.setLayer(kind, layer);
         }
       };
-      foreground.src = foregroundSrc;
+      layer.src = layerSrc;
     }
 
     const resize = () => {
@@ -206,7 +237,11 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
     src,
     textureSrc,
     foregroundSrc,
+    effectsSrc,
+    depthSrc,
     depth,
+    foil,
+    sparkle,
     variant,
     intensity,
     frame,

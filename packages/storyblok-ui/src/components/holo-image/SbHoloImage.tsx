@@ -31,6 +31,10 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
     gyro = true,
     depth,
     foreground,
+    effects,
+    depthMap,
+    foil = "silver",
+    sparkle = "stars",
   } = blok;
   const editable = editableAttrs(blok);
 
@@ -47,15 +51,22 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
   // Textures go through Next's optimizer: the CDN sends no CORS headers and a
   // tainted image cannot be uploaded to WebGL. The <img> keeps the CDN URLs.
   const textureSrc = sameOriginImageUrl(src, TEXTURE_WIDTH);
+  const cropLikePhoto = (filename: string) =>
+    getResponsiveImage(filename, {
+      aspectRatio: isDisc ? "1/1" : aspectRatio,
+      focus: image.focus || "",
+    }).src;
+  // Effects cover the overhang frame, so they are never cropped; the depth map
+  // shares the photo's crop so the two line up pixel for pixel.
+  const effectsSrc = effects?.filename
+    ? sameOriginImageUrl(effects.filename, TEXTURE_WIDTH)
+    : undefined;
+  const depthSrc = depthMap?.filename
+    ? sameOriginImageUrl(cropLikePhoto(depthMap.filename), TEXTURE_WIDTH)
+    : undefined;
   // Same crop as the photo so the cut-out lines up at rest.
   const foregroundSrc = foreground?.filename
-    ? sameOriginImageUrl(
-        getResponsiveImage(foreground.filename, {
-          aspectRatio: isDisc ? "1/1" : aspectRatio,
-          focus: image.focus || "",
-        }).src,
-        TEXTURE_WIDTH,
-      )
+    ? sameOriginImageUrl(cropLikePhoto(foreground.filename), TEXTURE_WIDTH)
     : undefined;
 
   return (
@@ -81,6 +92,10 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
         gyro={gyro}
         depth={depth !== undefined && Number.isFinite(depth) ? Math.max(0, depth) : undefined}
         foregroundSrc={foregroundSrc}
+        effectsSrc={effectsSrc}
+        depthSrc={depthSrc}
+        foil={foil}
+        sparkle={sparkle}
         loading={isLoadingEager ? "eager" : "lazy"}
         fetchPriority={fetchPriority}
         copyright={image.copyright || ""}

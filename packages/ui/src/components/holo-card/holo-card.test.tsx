@@ -29,7 +29,7 @@ let observerCallback: ((entries: Array<{ isIntersecting: boolean }>) => void) | 
 function fakeRenderer() {
   return {
     setImage: vi.fn(),
-    setForeground: vi.fn(),
+    setLayer: vi.fn(),
     resize: vi.fn(),
     render: vi.fn(),
     dispose: vi.fn(),
@@ -153,18 +153,43 @@ describe("HoloCard", () => {
     expect(images.map((image) => image.src)).toEqual(["/_next/image?url=%2Fcard.jpg&w=1200"]);
   });
 
-  it("loads an optional foreground cut-out into the renderer", () => {
-    render(<HoloCard src="/card.jpg" alt="" foregroundSrc="/card-fg.png" depth={2} />);
+  it("loads the optional layers into the renderer", () => {
+    render(
+      <HoloCard
+        src="/card.jpg"
+        alt=""
+        foregroundSrc="/card-fg.png"
+        effectsSrc="/card-fx.png"
+        depthSrc="/card-depth.png"
+        depth={2}
+        foil="swirl"
+        sparkle="fireworks"
+      />,
+    );
     expect(mockCreateRenderer).toHaveBeenCalledWith(
       expect.any(HTMLCanvasElement),
-      expect.objectContaining({ depth: 2, overscan: expect.any(Number) }),
+      expect.objectContaining({
+        depth: 2,
+        overscan: expect.any(Number),
+        foil: "swirl",
+        sparkle: "fireworks",
+      }),
     );
-    expect(images.map((image) => image.src)).toEqual(["/card.jpg", "/card-fg.png"]);
+    expect(images.map((image) => image.src)).toEqual([
+      "/card.jpg",
+      "/card-fg.png",
+      "/card-fx.png",
+      "/card-depth.png",
+    ]);
     const renderer = mockCreateRenderer.mock.results[0]?.value as ReturnType<typeof fakeRenderer>;
     act(() => {
       images[1]?.onload?.();
+      images[2]?.onload?.();
+      images[3]?.onload?.();
     });
-    expect(renderer.setForeground).toHaveBeenCalledWith(images[1]);
+    expect(renderer.setLayer).toHaveBeenCalledWith("foreground", images[1]);
+    expect(renderer.setLayer).toHaveBeenCalledWith("effects", images[2]);
+    expect(renderer.setLayer).toHaveBeenCalledWith("depth", images[3]);
   });
 
   it("keeps the plain image when WebGL is unavailable", () => {

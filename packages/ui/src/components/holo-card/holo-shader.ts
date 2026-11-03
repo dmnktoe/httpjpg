@@ -38,6 +38,13 @@ uniform float uSeed;
 uniform sampler2D uFg;
 uniform float uHasFg;
 uniform float uDepth;
+uniform sampler2D uFx;
+uniform float uHasFx;
+uniform vec2 uFxSize;
+uniform sampler2D uDepthMap;
+uniform float uHasDepthMap;
+uniform float uFoil;
+uniform float uSparkle;
 
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21) + uSeed);
@@ -51,6 +58,28 @@ vec3 hsl2rgb(float h, float s, float l) {
 }
 
 float luma(vec3 c) { return dot(c, vec3(0.299, 0.587, 0.114)); }
+
+float vnoise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  float a = hash(i);
+  float b = hash(i + vec2(1.0, 0.0));
+  float c = hash(i + vec2(0.0, 1.0));
+  float d = hash(i + vec2(1.0, 1.0));
+  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+
+float fbm(vec2 p) {
+  float v = 0.0;
+  float amp = 0.5;
+  for (int i = 0; i < 4; i++) {
+    v += amp * vnoise(p);
+    p = p * 2.1 + vec2(1.7, 9.2);
+    amp *= 0.5;
+  }
+  return v;
+}
 
 vec2 coverUv(vec2 uv, float rectAspect) {
   float texAspect = uTexSize.x / uTexSize.y;
@@ -80,6 +109,16 @@ float flare(vec2 p, float size) {
   float arms = max(exp(-abs(p.x) * 3.5) * exp(-abs(p.y) * 30.0), exp(-abs(p.y) * 3.5) * exp(-abs(p.x) * 30.0));
   float core = exp(-dot(p, p) * 6.0);
   return clamp(arms * 0.9 + core, 0.0, 1.0);
+}
+
+// Eight-point glint for the firework style: a star plus its 45° twin.
+float burstStar(vec2 p, float size) {
+  p /= size;
+  float a = max(exp(-abs(p.x) * 5.0) * exp(-abs(p.y) * 36.0), exp(-abs(p.y) * 5.0) * exp(-abs(p.x) * 36.0));
+  vec2 q = vec2(p.x + p.y, p.x - p.y) * 0.7071;
+  float b = max(exp(-abs(q.x) * 8.0) * exp(-abs(q.y) * 36.0), exp(-abs(q.y) * 8.0) * exp(-abs(q.x) * 36.0));
+  float core = exp(-dot(p, p) * 10.0);
+  return clamp(a + b * 0.6 + core, 0.0, 1.0);
 }
 
 float star(vec2 p, float size) {
@@ -124,12 +163,21 @@ void main() {
     float di = roundedRect(px - size * 0.5, inner * 0.5, max(uRadius - fw, 2.0));
     isFrame = smoothstep(-0.75, 0.75, di);
     texUv = (coverUv((px - fw) / inner, inner.x / inner.y) - 0.5) * zoom + 0.5;
-    photoUv = texUv - shift * 0.025;
+    // A depth map (white = far) lets every pixel slide by its own distance.
+    float dm = mix(0.5, texture2D(uDepthMap, texUv).r, uHasDepthMap);
+    photoUv = texUv - shift * dm * 0.05;
     vec3 photo = texture2D(uTex, photoUv).rgb;
     vec3 silver = mix(vec3(0.80, 0.81, 0.86), vec3(0.95, 0.95, 0.97), 0.5 + 0.5 * sin((uv.x + uv.y) * 6.0 + tiltPhase * 3.0));
     // brushed metal: fine diagonal lines that catch the light
     float brush = sin(dot(px, vec2(0.68, -0.73)) * 1.9 + tiltPhase * 20.0);
     silver += brush * 0.045;
+    if (uFoil > 0.5) {
+      // Oil-slick swirl: thin rainbow bands on a dark base, drifting with the tilt.
+      float n = fbm(uv * vec2(4.0, 5.6) + vec2(tiltPhase * 0.35, -tiltPhase * 0.2));
+      float band = pow(0.5 + 0.5 * sin((n * 7.0 + tiltPhase * 1.2) * 6.2832), 6.0);
+      vec3 swirl = hsl2rgb(fract(n * 2.3 + tiltPhase * 0.3 + uSeed), 1.0, 0.55);
+      silver = vec3(0.08, 0.08, 0.11) + swirl * (0.25 + 1.1 * band);
+    }
     col = mix(photo, silver, isFrame);
     holoW = mix(smoothstep(0.15, 0.95, luma(photo)) * 0.85 + 0.15, 1.0, isFrame);
   } else {
@@ -138,7 +186,8 @@ void main() {
     float aa = 2.0 / minSide;
     alpha = (1.0 - smoothstep(1.0 - aa, 1.0, r)) * smoothstep(0.15, 0.15 + aa, r);
     texUv = (coverUv(uv, 1.0) - 0.5) * zoom + 0.5;
-    photoUv = texUv - shift * 0.025;
+    float dm = mix(0.5, texture2D(uDepthMap, texUv).r, uHasDepthMap);
+    photoUv = texUv - shift * dm * 0.05;
     vec3 photo = texture2D(uTex, photoUv).rgb;
     float hub = smoothstep(0.38, 0.37, r) * smoothstep(0.15, 0.16, r);
     col = mix(photo, mix(photo, vec3(0.92), 0.3), hub);
@@ -174,7 +223,7 @@ void main() {
   float rainbowAmt = uIntensity * holoW * fanW * (0.22 + 0.42 * drive) * sheen;
   vec3 chroma = rainbow - vec3(luma(rainbow));
   vec3 screened = col + chroma * rainbowAmt * 1.7 + rainbow * rainbowAmt * 0.2 * holoW;
-  vec3 framed = col * mix(vec3(1.0), rainbow * 1.15, 0.55 + 0.35 * drive);
+  vec3 framed = col * mix(vec3(1.0), rainbow * 1.15, (0.55 + 0.35 * drive) * (1.0 - 0.8 * uFoil));
   col = mix(screened, framed, isFrame);
 
   float cell = minSide / 44.0;
@@ -221,16 +270,25 @@ void main() {
     col += fgFringe * fgEdge * uIntensity * (0.3 + 0.45 * drive);
   }
 
+  // Sparkles: 0 none, 1 rainbow stars, 2 firework glints (denser, bigger, gold-white).
   vec3 starCol = vec3(0.0);
-  for (int i = 0; i < 12; i++) {
+  bool fireworks = uSparkle > 1.5;
+  for (int i = 0; i < 22; i++) {
+    if (uSparkle < 0.5) break;
+    if (i >= 12 && !fireworks) break;
     float fi = float(i);
     vec2 sp = 0.06 + vec2(hash(vec2(fi, 1.7)), hash(vec2(fi, 9.1))) * 0.88;
-    float sz = 0.035 + 0.045 * hash(vec2(fi, 3.3));
+    float sz = (0.035 + 0.045 * hash(vec2(fi, 3.3))) * (fireworks ? 1.35 : 1.0);
     vec2 p = (uv - sp + shift * 0.035) * aspectScale;
     float tw = 0.45 + 0.55 * (0.5 + 0.5 * sin(uTime * 1.8 + fi * 2.1 + tiltPhase * 4.0));
+    if (fireworks) tw = pow(tw, 2.5) * 1.3;
     float near = 1.0 - smoothstep(0.0, 0.9, distance(sp, light));
-    float s = star(p, sz) * tw * (0.25 + 0.75 * near);
-    starCol += s * mix(vec3(1.0), hsl2rgb(fract(fi * 0.17 + phase), 1.0, 0.7), 0.5);
+    float shape = fireworks ? burstStar(p, sz) : star(p, sz);
+    float s = shape * tw * (0.25 + 0.75 * near);
+    vec3 tint = fireworks
+      ? mix(vec3(1.0), vec3(1.0, 0.88, 0.6), 0.5 * hash(vec2(fi, 5.5)))
+      : mix(vec3(1.0), hsl2rgb(fract(fi * 0.17 + phase), 1.0, 0.7), 0.5);
+    starCol += s * tint;
   }
   col += starCol * uIntensity * (0.6 + 0.4 * drive) * (1.0 - isFrame * 0.7);
 
@@ -240,6 +298,21 @@ void main() {
 
   col = clamp(col, 0.0, 1.0);
   vec4 outColor = vec4(col * alpha, alpha);
+
+  // ---- effects layer: shards and debris rendered on the overhang frame, furthest in front ----
+  if (uHasFx > 0.5) {
+    vec2 canvasUv = fullPx / uSize;
+    float fxAspect = uFxSize.x / uFxSize.y;
+    float canvasAspect = uSize.x / uSize.y;
+    vec2 fxScale = vec2(1.0);
+    if (fxAspect > canvasAspect) fxScale.x = canvasAspect / fxAspect; else fxScale.y = fxAspect / canvasAspect;
+    vec2 fxUv = (canvasUv - 0.5) * fxScale + 0.5 + shift * 0.09;
+    float fxIn = step(0.0, fxUv.x) * step(fxUv.x, 1.0) * step(0.0, fxUv.y) * step(fxUv.y, 1.0);
+    vec4 fx = texture2D(uFx, fxUv);
+    float fxA = fx.a * fxIn;
+    outColor.rgb = fx.rgb * fxA * (1.0 + 0.25 * drive) + outColor.rgb * (1.0 - fxA);
+    outColor.a = fxA + outColor.a * (1.0 - fxA);
+  }
 
   // ---- particles in front of the card, free to leave its bounds ----
   float burst = 0.15 + 0.85 * uActive;
@@ -302,13 +375,29 @@ export interface HoloRendererOptions {
   depth: number;
   /** Canvas overhang on each side as a fraction of the card, for particles that leave it. */
   overscan: number;
+  /** Frame foil: pastel silver or dark oil-slick swirl. */
+  foil: HoloFoil;
+  /** Twinkling sparkles over the art. */
+  sparkle: HoloSparkle;
 }
+
+export type HoloFoil = "silver" | "swirl";
+export type HoloSparkle = "none" | "stars" | "fireworks";
+/** Extra textures a card can take besides the photo. */
+export type HoloLayerKind = "foreground" | "effects" | "depth";
+
+const SPARKLE_INDEX: Record<HoloSparkle, number> = { none: 0, stars: 1, fireworks: 2 };
+const LAYER_UNIT: Record<HoloLayerKind, number> = { foreground: 1, effects: 2, depth: 3 };
 
 export interface HoloRenderer {
   /** Upload a decoded image as the surface texture and paint the rest pose. */
   setImage(image: TexImageSource & { naturalWidth?: number; naturalHeight?: number }): void;
-  /** Upload a cut-out (alpha) that floats in front of the photo; `null` removes it. */
-  setForeground(image: TexImageSource | null): void;
+  /**
+   * Upload an extra layer, or remove it with `null`. `foreground`: cut-out in
+   * front of the photo (same framing). `effects`: shards on the overhang
+   * frame. `depth`: greyscale, white = far, same framing as the photo.
+   */
+  setLayer(kind: HoloLayerKind, image: TexImageSource | null): void;
   /** Resize the drawing buffer to CSS px × dpr and repaint. */
   resize(width: number, height: number, dpr: number): void;
   /** Paint one frame. `time` in seconds drives the twinkle. */
@@ -334,6 +423,13 @@ const UNIFORMS = [
   "uFg",
   "uHasFg",
   "uDepth",
+  "uFx",
+  "uHasFx",
+  "uFxSize",
+  "uDepthMap",
+  "uHasDepthMap",
+  "uFoil",
+  "uSparkle",
 ] as const;
 
 type UniformName = (typeof UNIFORMS)[number];
@@ -409,15 +505,26 @@ export function createHoloRenderer(
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.uniform1i(uniforms.uTex, 0);
 
-  const fgTexture = gl.createTexture();
-  gl.activeTexture(gl.TEXTURE1);
-  gl.bindTexture(gl.TEXTURE_2D, fgTexture);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.uniform1i(uniforms.uFg, 1);
+  const layerTextures = {} as Record<HoloLayerKind, WebGLTexture | null>;
+  for (const kind of Object.keys(LAYER_UNIT) as HoloLayerKind[]) {
+    const layerTexture = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0 + LAYER_UNIT[kind]);
+    gl.bindTexture(gl.TEXTURE_2D, layerTexture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    layerTextures[kind] = layerTexture;
+  }
+  gl.uniform1i(uniforms.uFg, LAYER_UNIT.foreground);
+  gl.uniform1i(uniforms.uFx, LAYER_UNIT.effects);
+  gl.uniform1i(uniforms.uDepthMap, LAYER_UNIT.depth);
   gl.uniform1f(uniforms.uHasFg, 0);
+  gl.uniform1f(uniforms.uHasFx, 0);
+  gl.uniform1f(uniforms.uHasDepthMap, 0);
+  gl.uniform2f(uniforms.uFxSize, 1, 1);
+  gl.uniform1f(uniforms.uFoil, options.foil === "swirl" ? 1 : 0);
+  gl.uniform1f(uniforms.uSparkle, SPARKLE_INDEX[options.sparkle]);
   gl.uniform1f(uniforms.uDepth, options.depth);
   gl.uniform1f(uniforms.uVariant, options.variant === "disc" ? 1 : 0);
   gl.uniform1f(uniforms.uIntensity, options.intensity);
@@ -471,13 +578,33 @@ export function createHoloRenderer(
       hasTexture = true;
       draw();
     },
-    setForeground(image) {
-      gl.activeTexture(gl.TEXTURE1);
-      gl.bindTexture(gl.TEXTURE_2D, fgTexture);
+    setLayer(kind, image) {
+      gl.activeTexture(gl.TEXTURE0 + LAYER_UNIT[kind]);
+      gl.bindTexture(gl.TEXTURE_2D, layerTextures[kind]);
       if (image) {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
       }
-      gl.uniform1f(uniforms.uHasFg, image ? 1 : 0);
+      const flag = image ? 1 : 0;
+      if (kind === "foreground") {
+        gl.uniform1f(uniforms.uHasFg, flag);
+      } else if (kind === "effects") {
+        gl.uniform1f(uniforms.uHasFx, flag);
+        if (image) {
+          const source = image as {
+            naturalWidth?: number;
+            width?: number;
+            naturalHeight?: number;
+            height?: number;
+          };
+          gl.uniform2f(
+            uniforms.uFxSize,
+            source.naturalWidth || source.width || 1,
+            source.naturalHeight || source.height || 1,
+          );
+        }
+      } else {
+        gl.uniform1f(uniforms.uHasDepthMap, flag);
+      }
       draw();
     },
     resize(nextWidth, nextHeight, nextDpr) {
@@ -495,7 +622,9 @@ export function createHoloRenderer(
     },
     dispose() {
       gl.deleteTexture(texture);
-      gl.deleteTexture(fgTexture);
+      for (const layerTexture of Object.values(layerTextures)) {
+        gl.deleteTexture(layerTexture);
+      }
       gl.deleteBuffer(buffer);
       gl.deleteShader(vertex);
       gl.deleteShader(fragment);

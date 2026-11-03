@@ -52,6 +52,26 @@ const meta = {
       description: "Parallax strength between photo, glitter, stars and the optional cut-out",
       table: { defaultValue: { summary: "1" } },
     },
+    foil: {
+      control: { type: "radio" as const },
+      options: ["silver", "swirl"],
+      description: "Frame foil: pastel silver or dark oil-slick swirl",
+      table: { defaultValue: { summary: "silver" } },
+    },
+    sparkle: {
+      control: { type: "radio" as const },
+      options: ["stars", "fireworks", "none"],
+      description: "Twinkling sparkles over the art",
+      table: { defaultValue: { summary: "stars" } },
+    },
+    effectsSrc: {
+      control: "text",
+      description: "Shards layer on the overhang frame (card + 18% per side)",
+    },
+    depthSrc: {
+      control: "text",
+      description: "Greyscale depth map, white = far, same framing as `src`",
+    },
     textureSrc: {
       control: "text",
       description: "Same-origin copy of `src` for the WebGL texture (CDNs without CORS)",
@@ -111,6 +131,36 @@ export const LayeredCutOut: Story = {
     intensity: 0.85,
     maxTilt: 20,
     depth: 1.4,
+    idle: true,
+    gyro: true,
+  },
+  render: (args) => (
+    <Box css={{ maxW: "360px", mx: "auto", py: 8 }}>
+      <HoloCard {...args} />
+    </Box>
+  ),
+};
+
+/**
+ * Every layer the Blender pipeline (`pnpm holo:render`) produces: photo,
+ * cut-out, shards on the overhang frame and a depth map, with the swirl foil
+ * and firework sparkles of the Mew / Team Rocket cards.
+ */
+export const FullStack: Story = {
+  name: "Full stack (swirl, fireworks, effects, depth)",
+  args: {
+    src: "/images/holo/psp-card.webp",
+    foregroundSrc: "/images/holo/psp-card-fg.webp",
+    effectsSrc: "/images/holo/psp-card-fx.webp",
+    depthSrc: "/images/holo/psp-card-depth.webp",
+    alt: "A silver PSP floating over a night sky, shards flying out of the card",
+    variant: "card",
+    aspectRatio: "5/7",
+    intensity: 0.85,
+    maxTilt: 20,
+    depth: 1.4,
+    foil: "swirl",
+    sparkle: "fireworks",
     idle: true,
     gyro: true,
   },

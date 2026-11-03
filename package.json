@@ -10,6 +10,7 @@
     "dev:https": "turbo run dev:https --filter=@httpjpg/portfolio... --filter=@httpjpg/storybook...",
     "creds:spotify": "pnpm --filter @httpjpg/credentials spotify",
     "creds:psn": "pnpm --filter @httpjpg/credentials psn",
+    "holo:render": "node tools/blender/render-card.mjs",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",

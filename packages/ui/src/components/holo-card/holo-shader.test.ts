@@ -80,6 +80,8 @@ const OPTIONS = {
   maxTilt: 18,
   depth: 1,
   overscan: 0.25,
+  foil: "silver" as const,
+  sparkle: "stars" as const,
 };
 
 describe("createHoloRenderer", () => {
@@ -132,16 +134,37 @@ describe("createHoloRenderer", () => {
     expect(gl.deleteTexture).toHaveBeenCalled();
   });
 
-  it("uploads and clears a foreground cut-out on the second texture unit", () => {
+  it("uploads and clears extra layers on their own texture units", () => {
     const gl = fakeGl();
     const renderer = createHoloRenderer(canvasWith(gl), OPTIONS);
     expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uHasFg" }, 0);
     expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uDepth" }, 1);
-    renderer?.setForeground(document.createElement("img"));
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uFoil" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uSparkle" }, 1);
+    renderer?.setLayer("foreground", document.createElement("img"));
     expect(gl.activeTexture).toHaveBeenCalledWith(8 + 1);
     expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uHasFg" }, 1);
-    renderer?.setForeground(null);
+    renderer?.setLayer("foreground", null);
     expect(gl.uniform1f).toHaveBeenLastCalledWith({ name: "uHasFg" }, 0);
+
+    const fx = document.createElement("img");
+    Object.defineProperty(fx, "naturalWidth", { value: 1360 });
+    Object.defineProperty(fx, "naturalHeight", { value: 1904 });
+    renderer?.setLayer("effects", fx);
+    expect(gl.activeTexture).toHaveBeenCalledWith(8 + 2);
+    expect(gl.uniform2f).toHaveBeenCalledWith({ name: "uFxSize" }, 1360, 1904);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uHasFx" }, 1);
+
+    renderer?.setLayer("depth", document.createElement("img"));
+    expect(gl.activeTexture).toHaveBeenCalledWith(8 + 3);
+    expect(gl.uniform1f).toHaveBeenLastCalledWith({ name: "uHasDepthMap" }, 1);
+  });
+
+  it("maps the swirl foil and the sparkle style to uniforms", () => {
+    const gl = fakeGl();
+    createHoloRenderer(canvasWith(gl), { ...OPTIONS, foil: "swirl", sparkle: "fireworks" });
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uFoil" }, 1);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uSparkle" }, 2);
   });
 
   it("paints a disc without a frame", () => {

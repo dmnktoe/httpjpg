@@ -17,6 +17,18 @@ const FETCH_PRIORITY_OPTIONS = [
   { name: "Low", value: "low" },
 ];
 
+/** Mirror `HoloFoil` / `HoloSparkle` in `@httpjpg/ui`; keep in lock-step. */
+const HOLO_FOIL_OPTIONS = [
+  { name: "Silver (pastel)", value: "silver" },
+  { name: "Swirl (oil slick)", value: "swirl" },
+];
+
+const HOLO_SPARKLE_OPTIONS = [
+  { name: "Stars", value: "stars" },
+  { name: "Fireworks", value: "fireworks" },
+  { name: "None", value: "none" },
+];
+
 const HOLO_VARIANT_OPTIONS = [
   { name: "Card", value: "card" },
   { name: "Disc (CD)", value: "disc" },
@@ -110,6 +122,17 @@ export const mediaBlocks: BlockDef[] = [
         description: "Trading card with a holo frame, or a CD with a centre hole.",
         tooltip: true,
       }),
+      foil: field.options("Frame Foil", HOLO_FOIL_OPTIONS, {
+        default_value: "silver",
+        description: "Pastel silver like the Galagladi card, or the dark oil-slick swirl like Mew.",
+        tooltip: true,
+      }),
+      sparkle: field.options("Sparkles", HOLO_SPARKLE_OPTIONS, {
+        default_value: "stars",
+        description:
+          "Twinkling stars over the art: rainbow stars, dense gold-white firework glints, or none.",
+        tooltip: true,
+      }),
       ...tabbed("Layout", "layout", {
         aspectRatio: field.options("Aspect Ratio (card only)", inlineOptions.aspectRatio, {
           default_value: "5/7",
@@ -142,6 +165,16 @@ export const mediaBlocks: BlockDef[] = [
         depth: field.number("Parallax Depth", {
           default_value: "1",
           description: "How far layers slide apart when the card tilts: 0 flat, 1 default, 2 deep.",
+          tooltip: true,
+        }),
+        effects: field.asset("Effects Layer", ["images"], {
+          description:
+            "Optional PNG/WebP with alpha for shards and debris. Covers the card plus 18% on every side (the Blender pipeline renders this frame), so pieces can stick out past the edge.",
+          tooltip: true,
+        }),
+        depthMap: field.asset("Depth Map", ["images"], {
+          description:
+            "Optional greyscale image, same size and framing as the image, white = far. Lets every pixel slide by its own distance when the card tilts.",
           tooltip: true,
         }),
         foreground: field.asset("Foreground Cut-out", ["images"], {

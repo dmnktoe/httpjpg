@@ -16,9 +16,11 @@ pnpm holo:render --name mew --model mew.glb --palette psychic --variants 3 --eng
 pnpm holo:render --name steelix --blend ~/cards/steelix.blend
 ```
 
-Requires Blender 4.2 or newer on `PATH`, `BLENDER=/path/to/blender`, or in the
-default install location. Works on 5.x: the engine identifier is probed and no
-compositor is used.
+Requires Blender 4.2 or newer on `PATH`, `BLENDER=/path/to/blender`, in the
+default install location, or passed as `--blender`. Verified on 5.0.1 headless:
+the engine identifier is probed and no compositor is used. EEVEE needs a GL
+context; where there is none (containers, CI) the wrapper retries with Cycles
+on the CPU, which takes a minute or two per variant.
 
 ## What comes out
 

@@ -188,6 +188,35 @@ export const EffectsOnly: Story = {
   ),
 };
 
+/**
+ * Straight out of `pnpm holo:render --palette all`: the template scene's
+ * chrome placeholder, psychic palette, every layer rendered by Blender.
+ */
+export const BlenderRender: Story = {
+  name: "Blender pipeline (psychic)",
+  args: {
+    src: "/images/holo/card-psychic-7/card.webp",
+    foregroundSrc: "/images/holo/card-psychic-7/card-fg.webp",
+    effectsSrc: "/images/holo/card-psychic-7/card-fx.webp",
+    depthSrc: "/images/holo/card-psychic-7/card-depth.webp",
+    alt: "Chrome ring over a violet backdrop with light streaks, shards flying out of the card",
+    variant: "card",
+    aspectRatio: "5/7",
+    intensity: 0.8,
+    maxTilt: 20,
+    depth: 1.4,
+    foil: "swirl",
+    sparkle: "fireworks",
+    idle: true,
+    gyro: true,
+  },
+  render: (args) => (
+    <Box css={{ maxW: "360px", mx: "auto", py: 8 }}>
+      <HoloCard {...args} />
+    </Box>
+  ),
+};
+
 export const Disc: Story = {
   args: {
     src: OPTIMIZED_IMAGES.outletStore1,

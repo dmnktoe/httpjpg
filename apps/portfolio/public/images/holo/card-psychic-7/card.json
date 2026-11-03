@@ -1,0 +1,44 @@
+{
+  "name": "card",
+  "palette": "psychic",
+  "seed": 7,
+  "card": {
+    "width": 1000,
+    "height": 1400
+  },
+  "frame": {
+    "width": 1360,
+    "height": 1904
+  },
+  "overscan": 0.18,
+  "depthRange": {
+    "near": 5.540833868026733,
+    "far": 7.539395414352417
+  },
+  "engine": "CYCLES",
+  "blender": "5.0.1",
+  "files": {
+    "photo": "card.png",
+    "foreground": "card-fg.png",
+    "effects": "card-fx.png",
+    "depth": "card-depth.png"
+  },
+  "webp": {
+    "photo": {
+      "file": "card.webp",
+      "bytes": 51564
+    },
+    "foreground": {
+      "file": "card-fg.webp",
+      "bytes": 25018
+    },
+    "effects": {
+      "file": "card-fx.webp",
+      "bytes": 55918
+    },
+    "depth": {
+      "file": "card-depth.webp",
+      "bytes": 30294
+    }
+  }
+}

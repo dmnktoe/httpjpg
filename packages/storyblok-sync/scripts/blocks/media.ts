@@ -139,6 +139,16 @@ export const mediaBlocks: BlockDef[] = [
           description: "Follows the phone's gyroscope. iOS asks the visitor with a tap.",
           tooltip: true,
         }),
+        depth: field.number("Parallax Depth", {
+          default_value: "1",
+          description: "How far layers slide apart when the card tilts: 0 flat, 1 default, 2 deep.",
+          tooltip: true,
+        }),
+        foreground: field.asset("Foreground Cut-out", ["images"], {
+          description:
+            "Optional PNG/WebP with a transparent background and the same size and framing as the image. Floats in front of the photo with its own parallax, shadow and rainbow outline.",
+          tooltip: true,
+        }),
       }),
     }),
   },

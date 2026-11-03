@@ -84,6 +84,8 @@ describe("SbHoloImage", () => {
             isLoadingEager: true,
             width: "50%",
             widthLg: "30%",
+            depth: 2,
+            foreground: { filename: "https://a.storyblok.com/f/1/1200x1600/def/cutout.png" },
           } as never
         }
       />,
@@ -97,5 +99,7 @@ describe("SbHoloImage", () => {
     expect(props.gyro).toBe(false);
     expect(props.loading).toBe("eager");
     expect(props.sizes).toBe("(min-width: 1024px) 30vw, 50vw");
+    expect(props.depth).toBe(2);
+    expect(String(props.foregroundSrc)).toContain("cutout.png");
   });
 });

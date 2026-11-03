@@ -28,6 +28,8 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
     maxTilt,
     idle = true,
     gyro = true,
+    depth,
+    foreground,
   } = blok;
   const editable = editableAttrs(blok);
 
@@ -41,6 +43,13 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
     focus: image.focus || "",
   });
   const sizes = sizesFromWidths({ width, widthMd, widthLg });
+  // Same crop as the photo so the cut-out lines up at rest.
+  const foregroundSrc = foreground?.filename
+    ? getResponsiveImage(foreground.filename, {
+        aspectRatio: isDisc ? "1/1" : aspectRatio,
+        focus: image.focus || "",
+      }).src
+    : undefined;
 
   return (
     <Box
@@ -62,6 +71,8 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
         maxTilt={maxTilt && maxTilt > 0 ? maxTilt : undefined}
         idle={idle}
         gyro={gyro}
+        depth={depth !== undefined && Number.isFinite(depth) ? Math.max(0, depth) : undefined}
+        foregroundSrc={foregroundSrc}
         loading={isLoadingEager ? "eager" : "lazy"}
         fetchPriority={fetchPriority}
         copyright={image.copyright || ""}

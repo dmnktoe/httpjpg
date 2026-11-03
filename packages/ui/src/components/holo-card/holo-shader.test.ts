@@ -11,7 +11,8 @@ function fakeGl(overrides: Record<string, unknown> = {}) {
     STATIC_DRAW: 6,
     FLOAT: 7,
     TEXTURE0: 8,
-    TEXTURE_2D: 9,
+    TEXTURE1: 9,
+    TEXTURE_2D: 20,
     TEXTURE_WRAP_S: 10,
     TEXTURE_WRAP_T: 11,
     CLAMP_TO_EDGE: 12,
@@ -50,6 +51,7 @@ function fakeGl(overrides: Record<string, unknown> = {}) {
     uniform1i: vi.fn(),
     uniform1f: vi.fn(),
     uniform2f: vi.fn(),
+    uniform4f: vi.fn(),
     clearColor: vi.fn(),
     clear: vi.fn(),
     viewport: vi.fn(),
@@ -76,6 +78,8 @@ const OPTIONS = {
   radius: 14,
   seed: 0.5,
   maxTilt: 18,
+  depth: 1,
+  overscan: 0.25,
 };
 
 describe("createHoloRenderer", () => {
@@ -102,9 +106,9 @@ describe("createHoloRenderer", () => {
     renderer?.render(REST_STATE, 1);
     expect(gl.drawArrays).not.toHaveBeenCalled();
 
-    renderer?.resize(300, 400, 2);
+    renderer?.resize(300, 450, 2);
     expect(canvas.width).toBe(600);
-    expect(canvas.height).toBe(800);
+    expect(canvas.height).toBe(900);
     expect(gl.drawArrays).not.toHaveBeenCalled();
 
     const image = Object.assign(document.createElement("img"), {});
@@ -114,6 +118,8 @@ describe("createHoloRenderer", () => {
     expect(gl.texImage2D).toHaveBeenCalled();
     expect(gl.uniform2f).toHaveBeenCalledWith({ name: "uTexSize" }, 900, 1200);
     expect(gl.drawArrays).toHaveBeenCalledTimes(1);
+    // 25% overscan on each side: a 300×450 canvas holds a 200×300 card at (50, 75).
+    expect(gl.uniform4f).toHaveBeenCalledWith({ name: "uCard" }, 50, 75, 200, 300);
 
     renderer?.render({ ...REST_STATE, rx: 9, ry: -18, mx: 25, my: 75, active: 1 }, 2);
     expect(gl.uniform2f).toHaveBeenCalledWith({ name: "uTilt" }, 0.5, -1);
@@ -124,6 +130,18 @@ describe("createHoloRenderer", () => {
     renderer?.dispose();
     expect(gl.deleteProgram).toHaveBeenCalled();
     expect(gl.deleteTexture).toHaveBeenCalled();
+  });
+
+  it("uploads and clears a foreground cut-out on the second texture unit", () => {
+    const gl = fakeGl();
+    const renderer = createHoloRenderer(canvasWith(gl), OPTIONS);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uHasFg" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uDepth" }, 1);
+    renderer?.setForeground(document.createElement("img"));
+    expect(gl.activeTexture).toHaveBeenCalledWith(8 + 1);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uHasFg" }, 1);
+    renderer?.setForeground(null);
+    expect(gl.uniform1f).toHaveBeenLastCalledWith({ name: "uHasFg" }, 0);
   });
 
   it("paints a disc without a frame", () => {

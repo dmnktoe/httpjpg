@@ -24,6 +24,7 @@ varying vec2 vUv;
 uniform sampler2D uTex;
 uniform vec2 uTexSize;
 uniform vec2 uSize;
+uniform vec4 uCard;
 uniform vec2 uTilt;
 uniform vec2 uLight;
 uniform float uActive;
@@ -34,6 +35,9 @@ uniform float uVariant;
 uniform float uFrame;
 uniform float uRadius;
 uniform float uSeed;
+uniform sampler2D uFg;
+uniform float uHasFg;
+uniform float uDepth;
 
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21) + uSeed);
@@ -70,6 +74,14 @@ vec2 hexCenter(vec2 p, out vec2 id) {
   return ca;
 }
 
+// Big four-point flare that can sit outside the card.
+float flare(vec2 p, float size) {
+  p /= size;
+  float arms = max(exp(-abs(p.x) * 3.5) * exp(-abs(p.y) * 30.0), exp(-abs(p.y) * 3.5) * exp(-abs(p.x) * 30.0));
+  float core = exp(-dot(p, p) * 6.0);
+  return clamp(arms * 0.9 + core, 0.0, 1.0);
+}
+
 float star(vec2 p, float size) {
   p /= size;
   float arms = max(exp(-abs(p.x) * 6.0) * exp(-abs(p.y) * 40.0), exp(-abs(p.y) * 6.0) * exp(-abs(p.x) * 40.0));
@@ -78,14 +90,22 @@ float star(vec2 p, float size) {
 }
 
 void main() {
-  vec2 uv = vec2(vUv.x, 1.0 - vUv.y);
-  vec2 px = uv * uSize;
-  float minSide = min(uSize.x, uSize.y);
-  vec2 aspectScale = uSize / minSide;
+  // The canvas overhangs the card (uCard = x, y, w, h of the card inside it)
+  // so flares and arcs can spill past the edge.
+  vec2 fullPx = vec2(vUv.x, 1.0 - vUv.y) * uSize;
+  vec2 size = uCard.zw;
+  vec2 px = fullPx - uCard.xy;
+  vec2 uv = px / size;
+  float minSide = min(size.x, size.y);
+  vec2 aspectScale = size / minSide;
   vec2 light = uLight;
   float tiltPhase = uTilt.y * 0.9 - uTilt.x * 0.6;
   // Foil shows more the further the card is tilted, like the real thing.
   float drive = uActive * (0.45 + 0.55 * uDist);
+  // Parallax: layers behind the surface slide against the tilt, layers in
+  // front slide with it. The photo is zoomed a touch so no edge shows.
+  vec2 shift = vec2(uTilt.y, -uTilt.x) * uDepth;
+  float zoom = 1.0 / (1.0 + 0.06 * uDepth);
   float lightAngle = atan(light.y - 0.5, light.x - 0.5);
   vec2 dir = vec2(cos(lightAngle + 1.5708), sin(lightAngle + 1.5708));
 
@@ -94,16 +114,18 @@ void main() {
   float holoW = 1.0;
   float isFrame = 0.0;
   vec2 texUv = uv;
+  vec2 photoUv = uv;
 
   if (uVariant < 0.5) {
-    float d = roundedRect(px - uSize * 0.5, uSize * 0.5, uRadius);
+    float d = roundedRect(px - size * 0.5, size * 0.5, uRadius);
     alpha = 1.0 - smoothstep(-1.0, 1.0, d);
     float fw = uFrame * minSide;
-    vec2 inner = uSize - 2.0 * fw;
-    float di = roundedRect(px - uSize * 0.5, inner * 0.5, max(uRadius - fw, 2.0));
+    vec2 inner = size - 2.0 * fw;
+    float di = roundedRect(px - size * 0.5, inner * 0.5, max(uRadius - fw, 2.0));
     isFrame = smoothstep(-0.75, 0.75, di);
-    texUv = coverUv((px - fw) / inner, inner.x / inner.y);
-    vec3 photo = texture2D(uTex, texUv).rgb;
+    texUv = (coverUv((px - fw) / inner, inner.x / inner.y) - 0.5) * zoom + 0.5;
+    photoUv = texUv - shift * 0.025;
+    vec3 photo = texture2D(uTex, photoUv).rgb;
     vec3 silver = mix(vec3(0.80, 0.81, 0.86), vec3(0.95, 0.95, 0.97), 0.5 + 0.5 * sin((uv.x + uv.y) * 6.0 + tiltPhase * 3.0));
     // brushed metal: fine diagonal lines that catch the light
     float brush = sin(dot(px, vec2(0.68, -0.73)) * 1.9 + tiltPhase * 20.0);
@@ -115,8 +137,9 @@ void main() {
     float r = length(c);
     float aa = 2.0 / minSide;
     alpha = (1.0 - smoothstep(1.0 - aa, 1.0, r)) * smoothstep(0.15, 0.15 + aa, r);
-    texUv = coverUv(uv, 1.0);
-    vec3 photo = texture2D(uTex, texUv).rgb;
+    texUv = (coverUv(uv, 1.0) - 0.5) * zoom + 0.5;
+    photoUv = texUv - shift * 0.025;
+    vec3 photo = texture2D(uTex, photoUv).rgb;
     float hub = smoothstep(0.38, 0.37, r) * smoothstep(0.15, 0.16, r);
     col = mix(photo, mix(photo, vec3(0.92), 0.3), hub);
     float rim = smoothstep(0.006, 0.0, abs(r - 0.38)) + smoothstep(0.006, 0.0, abs(r - 0.17));
@@ -125,6 +148,16 @@ void main() {
     col *= 0.8;
     holoW = 0.65 + 0.35 * smoothstep(0.2, 0.9, luma(photo));
   }
+
+  // Optional cut-out in front of the photo: own parallax, soft shadow on the
+  // photo, and later a rainbow fringe around its silhouette.
+  vec2 fgUv = texUv + shift * 0.05;
+  vec4 fg = texture2D(uFg, fgUv);
+  float inside = step(0.0, fgUv.x) * step(fgUv.x, 1.0) * step(0.0, fgUv.y) * step(fgUv.y, 1.0);
+  float fgA = fg.a * inside * uHasFg * (1.0 - isFrame);
+  float shadowA = texture2D(uFg, fgUv + vec2(-0.012, -0.018) * uDepth).a * uHasFg * (1.0 - isFrame);
+  col *= 1.0 - shadowA * (1.0 - fgA) * (0.22 + 0.3 * drive);
+  col = mix(col, fg.rgb, fgA);
 
   float phase;
   float fanW = 1.0;
@@ -161,27 +194,39 @@ void main() {
   float speck = step(0.965, sh) * step(0.72, fract(sh * 13.0 + tiltPhase * 2.2 + uTime * 0.05));
   col += vec3(1.0) * speck * (0.15 + 0.6 * drive) * uIntensity * (0.4 + 0.6 * lightFall);
 
-  vec2 t = 1.5 / uTexSize;
-  float tl = luma(texture2D(uTex, texUv + vec2(-t.x, -t.y)).rgb);
-  float tr = luma(texture2D(uTex, texUv + vec2( t.x, -t.y)).rgb);
-  float bl = luma(texture2D(uTex, texUv + vec2(-t.x,  t.y)).rgb);
-  float br = luma(texture2D(uTex, texUv + vec2( t.x,  t.y)).rgb);
-  float l0 = luma(texture2D(uTex, texUv + vec2(-t.x, 0.0)).rgb);
-  float r0 = luma(texture2D(uTex, texUv + vec2( t.x, 0.0)).rgb);
-  float t0 = luma(texture2D(uTex, texUv + vec2(0.0, -t.y)).rgb);
-  float b0 = luma(texture2D(uTex, texUv + vec2(0.0,  t.y)).rgb);
+  // Wider taps and a higher threshold keep the fringe on real contours instead
+  // of outlining every bit of texture; a cut-out takes over most of the role.
+  vec2 t = 2.5 / uTexSize;
+  float tl = luma(texture2D(uTex, photoUv + vec2(-t.x, -t.y)).rgb);
+  float tr = luma(texture2D(uTex, photoUv + vec2( t.x, -t.y)).rgb);
+  float bl = luma(texture2D(uTex, photoUv + vec2(-t.x,  t.y)).rgb);
+  float br = luma(texture2D(uTex, photoUv + vec2( t.x,  t.y)).rgb);
+  float l0 = luma(texture2D(uTex, photoUv + vec2(-t.x, 0.0)).rgb);
+  float r0 = luma(texture2D(uTex, photoUv + vec2( t.x, 0.0)).rgb);
+  float t0 = luma(texture2D(uTex, photoUv + vec2(0.0, -t.y)).rgb);
+  float b0 = luma(texture2D(uTex, photoUv + vec2(0.0,  t.y)).rgb);
   float gx = (tr + 2.0 * r0 + br) - (tl + 2.0 * l0 + bl);
   float gy = (bl + 2.0 * b0 + br) - (tl + 2.0 * t0 + tr);
-  float edge = smoothstep(0.12, 0.6, length(vec2(gx, gy)));
+  float edge = smoothstep(0.3, 0.9, length(vec2(gx, gy)));
   vec3 fringe = hsl2rgb(fract(phase * 2.0 + atan(gy, gx) * 0.159), 1.0, 0.62);
-  col += fringe * edge * (1.0 - isFrame) * uIntensity * (0.35 + 0.65 * drive) * mix(0.9, 0.5, uVariant);
+  col += fringe * edge * (1.0 - isFrame) * uIntensity * (0.25 + 0.5 * drive) * mix(0.9, 0.5, uVariant) * mix(1.0, 0.35, uHasFg);
+  if (uHasFg > 0.5) {
+    vec2 tf = 2.0 / uTexSize;
+    float al = texture2D(uFg, fgUv + vec2(-tf.x, 0.0)).a;
+    float ar = texture2D(uFg, fgUv + vec2( tf.x, 0.0)).a;
+    float at = texture2D(uFg, fgUv + vec2(0.0, -tf.y)).a;
+    float ab = texture2D(uFg, fgUv + vec2(0.0,  tf.y)).a;
+    float fgEdge = smoothstep(0.08, 0.6, abs(ar - al) + abs(ab - at)) * inside * (1.0 - isFrame);
+    vec3 fgFringe = hsl2rgb(fract(phase * 2.0 + atan(ab - at, ar - al) * 0.159), 1.0, 0.68);
+    col += fgFringe * fgEdge * uIntensity * (0.3 + 0.45 * drive);
+  }
 
   vec3 starCol = vec3(0.0);
   for (int i = 0; i < 12; i++) {
     float fi = float(i);
     vec2 sp = 0.06 + vec2(hash(vec2(fi, 1.7)), hash(vec2(fi, 9.1))) * 0.88;
     float sz = 0.035 + 0.045 * hash(vec2(fi, 3.3));
-    vec2 p = (uv - sp) * aspectScale;
+    vec2 p = (uv - sp + shift * 0.035) * aspectScale;
     float tw = 0.45 + 0.55 * (0.5 + 0.5 * sin(uTime * 1.8 + fi * 2.1 + tiltPhase * 4.0));
     float near = 1.0 - smoothstep(0.0, 0.9, distance(sp, light));
     float s = star(p, sz) * tw * (0.25 + 0.75 * near);
@@ -194,7 +239,51 @@ void main() {
   col *= 1.0 - 0.08 * uActive * (1.0 - g);
 
   col = clamp(col, 0.0, 1.0);
-  gl_FragColor = vec4(col * alpha, alpha);
+  vec4 outColor = vec4(col * alpha, alpha);
+
+  // ---- particles in front of the card, free to leave its bounds ----
+  float burst = 0.15 + 0.85 * uActive;
+  vec3 particles = vec3(0.0);
+  for (int i = 0; i < 8; i++) {
+    float fi = float(i) + 40.0;
+    float period = 2.4 + 1.8 * hash(vec2(fi, 4.2));
+    float cyc = uTime / period + hash(vec2(fi, 8.8));
+    float k = floor(cyc);
+    float f = fract(cyc);
+    float env = smoothstep(0.0, 0.08, f) * (1.0 - smoothstep(0.35, 0.9, f));
+    vec2 pos = vec2(hash(vec2(fi, k + 0.1)), hash(vec2(fi, k + 0.7))) * 1.3 - 0.15;
+    float sz = 0.07 + 0.11 * hash(vec2(fi, k + 0.3));
+    vec2 p = (uv - pos + shift * 0.06) * aspectScale;
+    float sp = flare(p, sz * (0.55 + 0.45 * env)) * env;
+    vec3 tint = mix(vec3(1.0), hsl2rgb(fract(hash(vec2(fi, k + 0.5)) + phase * 0.5), 1.0, 0.78), 0.4);
+    particles += sp * tint;
+  }
+  for (int i = 0; i < 3; i++) {
+    float fi = float(i) + 60.0;
+    float period = 3.2 + 1.8 * hash(vec2(fi, 1.1));
+    float cyc = uTime / period + hash(vec2(fi, 2.2));
+    float k = floor(cyc);
+    float f = fract(cyc);
+    float env = smoothstep(0.0, 0.1, f) * (1.0 - smoothstep(0.6, 1.0, f));
+    vec2 c = vec2(0.3 + 0.4 * hash(vec2(fi, k + 0.1)), 0.3 + 0.4 * hash(vec2(fi, k + 0.2)));
+    float radius = 0.5 + 0.4 * hash(vec2(fi, k + 0.3));
+    float dir = hash(vec2(fi, k + 0.6)) > 0.5 ? 1.0 : -1.0;
+    vec2 q = (uv - c + shift * 0.04) * aspectScale;
+    float r = length(q);
+    float ang = atan(q.y, q.x);
+    float head = hash(vec2(fi, k + 0.4)) * 6.2832 + (f * 1.7 - 0.2) * 6.2832 * dir;
+    float behind = mod((head - ang) * dir, 6.2832);
+    float tail = 1.0 - smoothstep(0.0, 1.4, behind);
+    float lineW = 1.6 / size.x;
+    float line = exp(-pow((r - radius) / lineW, 2.0));
+    particles += vec3(1.0, 0.98, 1.0) * line * tail * env * 0.9;
+  }
+  particles *= uIntensity * burst;
+  float particleA = clamp(max(particles.r, max(particles.g, particles.b)), 0.0, 1.0);
+  outColor.rgb = clamp(outColor.rgb + particles, 0.0, 1.0);
+  outColor.a = max(outColor.a, particleA);
+
+  gl_FragColor = outColor;
 }`;
 
 export interface HoloRendererOptions {
@@ -209,11 +298,17 @@ export interface HoloRendererOptions {
   seed: number;
   /** Max tilt in degrees; normalises `HoloState.rx/ry` for the shader. */
   maxTilt: number;
+  /** Parallax strength: 0 flat, 1 default, 2 deep. */
+  depth: number;
+  /** Canvas overhang on each side as a fraction of the card, for particles that leave it. */
+  overscan: number;
 }
 
 export interface HoloRenderer {
   /** Upload a decoded image as the surface texture and paint the rest pose. */
   setImage(image: TexImageSource & { naturalWidth?: number; naturalHeight?: number }): void;
+  /** Upload a cut-out (alpha) that floats in front of the photo; `null` removes it. */
+  setForeground(image: TexImageSource | null): void;
   /** Resize the drawing buffer to CSS px × dpr and repaint. */
   resize(width: number, height: number, dpr: number): void;
   /** Paint one frame. `time` in seconds drives the twinkle. */
@@ -225,6 +320,7 @@ const UNIFORMS = [
   "uTex",
   "uTexSize",
   "uSize",
+  "uCard",
   "uTilt",
   "uLight",
   "uActive",
@@ -235,6 +331,9 @@ const UNIFORMS = [
   "uFrame",
   "uRadius",
   "uSeed",
+  "uFg",
+  "uHasFg",
+  "uDepth",
 ] as const;
 
 type UniformName = (typeof UNIFORMS)[number];
@@ -309,6 +408,17 @@ export function createHoloRenderer(
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.uniform1i(uniforms.uTex, 0);
+
+  const fgTexture = gl.createTexture();
+  gl.activeTexture(gl.TEXTURE1);
+  gl.bindTexture(gl.TEXTURE_2D, fgTexture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.uniform1i(uniforms.uFg, 1);
+  gl.uniform1f(uniforms.uHasFg, 0);
+  gl.uniform1f(uniforms.uDepth, options.depth);
   gl.uniform1f(uniforms.uVariant, options.variant === "disc" ? 1 : 0);
   gl.uniform1f(uniforms.uIntensity, options.intensity);
   gl.uniform1f(uniforms.uFrame, options.variant === "disc" ? 0 : options.frame);
@@ -329,6 +439,15 @@ export function createHoloRenderer(
     }
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.uniform2f(uniforms.uSize, width, height);
+    const cardWidth = width / (1 + 2 * options.overscan);
+    const cardHeight = height / (1 + 2 * options.overscan);
+    gl.uniform4f(
+      uniforms.uCard,
+      options.overscan * cardWidth,
+      options.overscan * cardHeight,
+      cardWidth,
+      cardHeight,
+    );
     gl.uniform1f(uniforms.uRadius, options.radius * 1);
     gl.uniform2f(uniforms.uTilt, lastState.rx * tiltScale, lastState.ry * tiltScale);
     gl.uniform2f(uniforms.uLight, lastState.mx / 100, lastState.my / 100);
@@ -343,12 +462,22 @@ export function createHoloRenderer(
 
   return {
     setImage(image) {
+      gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
       const texWidth = image.naturalWidth || (image as { width?: number }).width || 1;
       const texHeight = image.naturalHeight || (image as { height?: number }).height || 1;
       gl.uniform2f(uniforms.uTexSize, texWidth, texHeight);
       hasTexture = true;
+      draw();
+    },
+    setForeground(image) {
+      gl.activeTexture(gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, fgTexture);
+      if (image) {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      }
+      gl.uniform1f(uniforms.uHasFg, image ? 1 : 0);
       draw();
     },
     resize(nextWidth, nextHeight, nextDpr) {
@@ -366,6 +495,7 @@ export function createHoloRenderer(
     },
     dispose() {
       gl.deleteTexture(texture);
+      gl.deleteTexture(fgTexture);
       gl.deleteBuffer(buffer);
       gl.deleteShader(vertex);
       gl.deleteShader(fragment);

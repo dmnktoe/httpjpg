@@ -36,6 +36,13 @@ export interface HoloCardProps {
   frame?: number;
   /** Corner radius in px (card only). @default 14 */
   radius?: number;
+  /**
+   * Optional cut-out (PNG/WebP with alpha, same framing as `src`) that floats
+   * in front of the photo with its own parallax, shadow and rainbow fringe.
+   */
+  foregroundSrc?: string;
+  /** Parallax strength: 0 flat, 1 default, 2 deep. @default 1 */
+  depth?: number;
   copyright?: string;
   /** Asset source/credit, shown as a second line below the copyright. */
   copyrightSource?: string;
@@ -50,6 +57,8 @@ export interface HoloCardProps {
 const DEFAULT_FRAME = 0.045;
 const DEFAULT_RADIUS = 14;
 const MAX_DPR = 2;
+/** Canvas overhang per side so flares and arcs can spill past the card. */
+const OVERSCAN = 0.18;
 
 export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloCard(
   {
@@ -65,6 +74,8 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
     gyro = true,
     frame = DEFAULT_FRAME,
     radius = DEFAULT_RADIUS,
+    foregroundSrc,
+    depth = 1,
     copyright,
     copyrightSource,
     loading = "lazy",
@@ -110,6 +121,8 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
         frame,
         radius,
         maxTilt,
+        depth: Math.max(0, depth),
+        overscan: OVERSCAN,
         seed: seedFromString(src),
       });
     } catch (error) {
@@ -138,9 +151,27 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
     };
     image.src = src;
 
+    let foreground: HTMLImageElement | null = null;
+    if (foregroundSrc) {
+      foreground = new window.Image();
+      foreground.crossOrigin = "anonymous";
+      foreground.decoding = "async";
+      foreground.onload = () => {
+        if (!cancelled && foreground) {
+          renderer.setForeground(foreground);
+        }
+      };
+      foreground.src = foregroundSrc;
+    }
+
     const resize = () => {
       const rect = stage.getBoundingClientRect();
-      renderer.resize(rect.width, rect.height, Math.min(window.devicePixelRatio || 1, MAX_DPR));
+      const grow = 1 + 2 * OVERSCAN;
+      renderer.resize(
+        rect.width * grow,
+        rect.height * grow,
+        Math.min(window.devicePixelRatio || 1, MAX_DPR),
+      );
     };
     resize();
     const observer = new ResizeObserver(resize);
@@ -163,7 +194,18 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
       renderer.dispose();
       setIsFoilReady(false);
     };
-  }, [src, variant, intensity, frame, radius, maxTilt, generation, rotatorRef]);
+  }, [
+    src,
+    foregroundSrc,
+    depth,
+    variant,
+    intensity,
+    frame,
+    radius,
+    maxTilt,
+    generation,
+    rotatorRef,
+  ]);
 
   const isDisc = variant === "disc";
   const cornerRadius = isDisc ? "9999px" : `${radius}px`;
@@ -206,7 +248,10 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
             ref={canvasRef}
             aria-hidden="true"
             className={CANVAS_CLASS}
-            style={{ visibility: isFoilReady ? "visible" : "hidden" }}
+            style={{
+              visibility: isFoilReady ? "visible" : "hidden",
+              inset: `${-OVERSCAN * 100}%`,
+            }}
           />
         </div>
       </div>

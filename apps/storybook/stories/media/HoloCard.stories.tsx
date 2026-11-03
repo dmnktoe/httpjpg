@@ -47,6 +47,15 @@ const meta = {
       description: "Card only — frame width as a fraction of the shorter side",
       table: { defaultValue: { summary: "0.045" } },
     },
+    depth: {
+      control: { type: "range", min: 0, max: 2, step: 0.1 },
+      description: "Parallax strength between photo, glitter, stars and the optional cut-out",
+      table: { defaultValue: { summary: "1" } },
+    },
+    foregroundSrc: {
+      control: "text",
+      description: "Cut-out (alpha) with the same framing as `src`, floats in front",
+    },
     radius: {
       control: { type: "range", min: 0, max: 40, step: 1 },
       description: "Card only — corner radius (px)",

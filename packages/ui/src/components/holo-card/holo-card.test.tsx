@@ -29,6 +29,7 @@ let observerCallback: ((entries: Array<{ isIntersecting: boolean }>) => void) | 
 function fakeRenderer() {
   return {
     setImage: vi.fn(),
+    setForeground: vi.fn(),
     resize: vi.fn(),
     render: vi.fn(),
     dispose: vi.fn(),
@@ -134,6 +135,20 @@ describe("HoloCard", () => {
     expect(renderer.resize).toHaveBeenCalled();
     unmount();
     expect(renderer.dispose).toHaveBeenCalled();
+  });
+
+  it("loads an optional foreground cut-out into the renderer", () => {
+    render(<HoloCard src="/card.jpg" alt="" foregroundSrc="/card-fg.png" depth={2} />);
+    expect(mockCreateRenderer).toHaveBeenCalledWith(
+      expect.any(HTMLCanvasElement),
+      expect.objectContaining({ depth: 2, overscan: expect.any(Number) }),
+    );
+    expect(images.map((image) => image.src)).toEqual(["/card.jpg", "/card-fg.png"]);
+    const renderer = mockCreateRenderer.mock.results[0]?.value as ReturnType<typeof fakeRenderer>;
+    act(() => {
+      images[1]?.onload?.();
+    });
+    expect(renderer.setForeground).toHaveBeenCalledWith(images[1]);
   });
 
   it("keeps the plain image when WebGL is unavailable", () => {

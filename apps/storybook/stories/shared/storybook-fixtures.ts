@@ -16,6 +16,15 @@ export const MOCK_IMAGES = {
     "https://a.storyblok.com/f/281211/5000x2400/92dcf912ab/outlet-store_slideshow-3.jpg",
 } as const;
 
+/**
+ * Same-origin copy of a CDN image for WebGL textures (`HoloCard.textureSrc`).
+ * Served by the Vite dev proxy in `.storybook/main.ts`; the static build has
+ * no proxy, so there the card falls back to the plain image.
+ */
+export function holoTextureUrl(url: string): string {
+  return url.replace(/^https:\/\/a\.storyblok\.com/, "/storyblok-cdn");
+}
+
 function getOptimizedImageUrl(
   baseUrl: string,
   options: {

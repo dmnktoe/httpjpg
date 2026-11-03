@@ -56,7 +56,14 @@ function detectGyroPermission(): GyroPermission {
     return "unsupported";
   }
   const ctor = window.DeviceOrientationEvent as unknown as OrientationEventCtor;
-  return typeof ctor.requestPermission === "function" ? "prompt" : "granted";
+  if (typeof ctor.requestPermission !== "function") {
+    return "granted";
+  }
+  // Desktop Chromium also exposes requestPermission; only offer the tap where
+  // there is a touch screen and plausibly a sensor behind it.
+  const isCoarse =
+    typeof window.matchMedia !== "function" || window.matchMedia("(pointer: coarse)").matches;
+  return isCoarse ? "prompt" : "unsupported";
 }
 
 /**

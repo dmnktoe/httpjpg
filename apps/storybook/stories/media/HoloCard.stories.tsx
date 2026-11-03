@@ -1,7 +1,7 @@
 import { Box, HoloCard, Paragraph, Stack } from "@httpjpg/ui";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
+import { holoTextureUrl, OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
 /**
  * Trading-card holo foil (Pokémon-TCG-Pocket style) painted by a WebGL
@@ -52,6 +52,10 @@ const meta = {
       description: "Parallax strength between photo, glitter, stars and the optional cut-out",
       table: { defaultValue: { summary: "1" } },
     },
+    textureSrc: {
+      control: "text",
+      description: "Same-origin copy of `src` for the WebGL texture (CDNs without CORS)",
+    },
     foregroundSrc: {
       control: "text",
       description: "Cut-out (alpha) with the same framing as `src`, floats in front",
@@ -74,6 +78,7 @@ type Story = StoryObj<typeof meta>;
 export const Card: Story = {
   args: {
     src: OPTIMIZED_IMAGES.portrait,
+    textureSrc: holoTextureUrl(OPTIMIZED_IMAGES.portrait),
     alt: "Klosterkirche Nordshausen",
     variant: "card",
     aspectRatio: "5/7",
@@ -119,6 +124,7 @@ export const LayeredCutOut: Story = {
 export const Disc: Story = {
   args: {
     src: OPTIMIZED_IMAGES.outletStore1,
+    textureSrc: holoTextureUrl(OPTIMIZED_IMAGES.outletStore1),
     alt: "Outlet store",
     variant: "disc",
     intensity: 0.85,

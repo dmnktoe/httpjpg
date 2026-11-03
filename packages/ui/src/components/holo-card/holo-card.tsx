@@ -15,6 +15,13 @@ import { useHoloTilt } from "./use-holo-tilt";
 export interface HoloCardProps {
   src: string;
   alt: string;
+  /**
+   * Same-origin (or CORS-enabled) copy of `src` for the WebGL texture. The
+   * `<img>` keeps using `src`; a cross-origin texture without CORS headers
+   * taints the canvas, so pass a proxied URL when the CDN sends none.
+   * @default src
+   */
+  textureSrc?: string;
   srcSet?: string;
   sizes?: string;
   /**
@@ -64,6 +71,7 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
   {
     src,
     alt,
+    textureSrc,
     srcSet,
     sizes,
     variant = "card",
@@ -149,7 +157,7 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
         setIsFoilReady(false);
       }
     };
-    image.src = src;
+    image.src = textureSrc || src;
 
     let foreground: HTMLImageElement | null = null;
     if (foregroundSrc) {
@@ -196,6 +204,7 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
     };
   }, [
     src,
+    textureSrc,
     foregroundSrc,
     depth,
     variant,

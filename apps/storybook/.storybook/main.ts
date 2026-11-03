@@ -51,6 +51,16 @@ const config: StorybookConfig = {
         fs: {
           allow: [rootPath],
         },
+        // The Storyblok CDN sends no CORS headers, so WebGL textures (HoloCard)
+        // are fetched through this same-origin path in dev. The site itself
+        // goes through `/_next/image`; see `sameOriginImageUrl`.
+        proxy: {
+          "/storyblok-cdn": {
+            target: "https://a.storyblok.com",
+            changeOrigin: true,
+            rewrite: (path: string) => path.replace(/^\/storyblok-cdn/, ""),
+          },
+        },
       },
     });
   },

@@ -5,6 +5,7 @@ import { getResponsiveImage } from "@httpjpg/storyblok-utils";
 import { Box, HoloCard } from "@httpjpg/ui";
 import { memo } from "react";
 
+import { sameOriginImageUrl } from "../../lib/same-origin-image";
 import { editableAttrs, sizesFromWidths, spacingCss, widthCss } from "../../lib/use-blok";
 import { SbCaption, type SbCaptionProps } from "../caption/SbCaption";
 
@@ -43,12 +44,18 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
     focus: image.focus || "",
   });
   const sizes = sizesFromWidths({ width, widthMd, widthLg });
+  // Textures go through Next's optimizer: the CDN sends no CORS headers and a
+  // tainted image cannot be uploaded to WebGL. The <img> keeps the CDN URLs.
+  const textureSrc = sameOriginImageUrl(src, TEXTURE_WIDTH);
   // Same crop as the photo so the cut-out lines up at rest.
   const foregroundSrc = foreground?.filename
-    ? getResponsiveImage(foreground.filename, {
-        aspectRatio: isDisc ? "1/1" : aspectRatio,
-        focus: image.focus || "",
-      }).src
+    ? sameOriginImageUrl(
+        getResponsiveImage(foreground.filename, {
+          aspectRatio: isDisc ? "1/1" : aspectRatio,
+          focus: image.focus || "",
+        }).src,
+        TEXTURE_WIDTH,
+      )
     : undefined;
 
   return (
@@ -62,6 +69,7 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
     >
       <HoloCard
         src={src}
+        textureSrc={textureSrc}
         srcSet={srcSet}
         sizes={sizes}
         alt={alt || image.alt || image.title || ""}
@@ -85,6 +93,9 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
 });
 
 SbHoloImage.displayName = "SbHoloImage";
+
+/** Enough for a card at 2× on a phone; the optimizer snaps it to a device size. */
+const TEXTURE_WIDTH = 1200;
 
 function clampIntensity(value: number | undefined): number | undefined {
   if (value === undefined || Number.isNaN(value)) {

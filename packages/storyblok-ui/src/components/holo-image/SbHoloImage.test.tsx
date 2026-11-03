@@ -100,6 +100,8 @@ describe("SbHoloImage", () => {
     expect(props.loading).toBe("eager");
     expect(props.sizes).toBe("(min-width: 1024px) 30vw, 50vw");
     expect(props.depth).toBe(2);
-    expect(String(props.foregroundSrc)).toContain("cutout.png");
+    expect(String(props.foregroundSrc)).toMatch(/^\/_next\/image\?url=.*cutout\.png/);
+    expect(String(props.textureSrc)).toMatch(/^\/_next\/image\?url=.*image\.jpg/);
+    expect(String(props.src)).toContain("a.storyblok.com");
   });
 });

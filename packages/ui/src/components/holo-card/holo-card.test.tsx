@@ -104,6 +104,14 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
+// Desktop Chromium exposes requestPermission too; the tap is only offered on touch screens.
+function stubCoarsePointer(matches: boolean) {
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn().mockReturnValue({ matches, addEventListener: vi.fn(), removeEventListener: vi.fn() }),
+  );
+}
+
 function loadTexture() {
   act(() => {
     images.at(-1)?.onload?.();
@@ -135,6 +143,14 @@ describe("HoloCard", () => {
     expect(renderer.resize).toHaveBeenCalled();
     unmount();
     expect(renderer.dispose).toHaveBeenCalled();
+  });
+
+  it("decodes the texture from textureSrc while the img keeps src", () => {
+    const { container } = render(
+      <HoloCard src="/card.jpg" textureSrc="/_next/image?url=%2Fcard.jpg&w=1200" alt="" />,
+    );
+    expect(container.querySelector("img")).toHaveAttribute("src", "/card.jpg");
+    expect(images.map((image) => image.src)).toEqual(["/_next/image?url=%2Fcard.jpg&w=1200"]);
   });
 
   it("loads an optional foreground cut-out into the renderer", () => {
@@ -243,6 +259,7 @@ describe("HoloCard", () => {
   it("offers a tap to unlock the gyroscope where the browser gates it", async () => {
     const requestPermission = vi.fn().mockResolvedValue("granted");
     vi.stubGlobal("DeviceOrientationEvent", { requestPermission });
+    stubCoarsePointer(true);
     render(<HoloCard src="/card.jpg" alt="" />);
     const hint = await screen.findByRole("button", { name: "[ tap to tilt ]" });
     await act(async () => {
@@ -255,6 +272,7 @@ describe("HoloCard", () => {
   it("hides the hint when the gyroscope is off or denied", async () => {
     const requestPermission = vi.fn().mockRejectedValue(new Error("nope"));
     vi.stubGlobal("DeviceOrientationEvent", { requestPermission });
+    stubCoarsePointer(true);
     const { rerender } = render(<HoloCard src="/card.jpg" alt="" />);
     const hint = await screen.findByRole("button", { name: "[ tap to tilt ]" });
     await act(async () => {
@@ -300,6 +318,13 @@ describe("HoloCard", () => {
       flushFrames(5);
     });
     expect(Number(rotator.style.getPropertyValue("--holo-ry"))).toBeGreaterThan(10);
+  });
+
+  it("keeps the gyroscope tap off mouse-driven devices", () => {
+    vi.stubGlobal("DeviceOrientationEvent", { requestPermission: vi.fn() });
+    stubCoarsePointer(false);
+    render(<HoloCard src="/card.jpg" alt="" />);
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 
   it("renders credit below the card and a children slot", () => {

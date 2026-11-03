@@ -89,6 +89,33 @@ export const Card: Story = {
   ),
 };
 
+/**
+ * The layered look: a photo plus a cut-out of its subject with the same
+ * framing. The cut-out floats in front with its own parallax, shadow and
+ * rainbow outline while the backdrop slides the other way. Both demo files
+ * live in `apps/portfolio/public/images/holo/`.
+ */
+export const LayeredCutOut: Story = {
+  name: "Layered (foreground cut-out)",
+  args: {
+    src: "/images/holo/psp-card.webp",
+    foregroundSrc: "/images/holo/psp-card-fg.webp",
+    alt: "A silver PSP floating over a night sky",
+    variant: "card",
+    aspectRatio: "5/7",
+    intensity: 0.85,
+    maxTilt: 20,
+    depth: 1.4,
+    idle: true,
+    gyro: true,
+  },
+  render: (args) => (
+    <Box css={{ maxW: "360px", mx: "auto", py: 8 }}>
+      <HoloCard {...args} />
+    </Box>
+  ),
+};
+
 export const Disc: Story = {
   args: {
     src: OPTIMIZED_IMAGES.outletStore1,

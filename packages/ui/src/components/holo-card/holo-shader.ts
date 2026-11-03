@@ -125,7 +125,7 @@ void main() {
     vec2 c = uv - 0.5;
     float facing = cos(atan(c.y, c.x) - lightAngle);
     phase = facing * 2.0 + tiltPhase + length(c) * 0.6;
-    fanW = smoothstep(0.1, 0.85, abs(facing)) * 1.8;
+    fanW = smoothstep(0.2, 0.9, abs(facing)) * 1.1;
   }
   vec3 rainbow = hsl2rgb(fract(phase), 0.95, mix(0.72, 0.6, uVariant));
   float sheen = pow(0.5 + 0.5 * sin(phase * 3.1416), 1.5);

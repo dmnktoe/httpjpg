@@ -28,6 +28,8 @@ export * from "./footer-status-line/footer-status-line-thumb";
 export * from "./grid/grid";
 export * from "./grid/grid-item";
 export * from "./header/header";
+export * from "./holo-card/holo-card";
+export * from "./holo-card/use-holo-tilt";
 export * from "./headline/headline";
 export * from "./icon-button/icon-button";
 export * from "./icon/icon";

@@ -9,6 +9,7 @@ export { SbDivider, type SbDividerProps } from "./components/divider/SbDivider";
 export { SbGrid, type SbGridProps } from "./components/grid/SbGrid";
 export { SbGridItem, type SbGridItemProps } from "./components/grid-item/SbGridItem";
 export { SbHeadline, type SbHeadlineProps } from "./components/headline/SbHeadline";
+export { SbHoloImage, type SbHoloImageProps } from "./components/holo-image/SbHoloImage";
 export { SbIcon, type SbIconProps } from "./components/icon/SbIcon";
 export {
   SbImageComparison,

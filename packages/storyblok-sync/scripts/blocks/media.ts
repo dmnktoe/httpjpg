@@ -17,6 +17,11 @@ const FETCH_PRIORITY_OPTIONS = [
   { name: "Low", value: "low" },
 ];
 
+const HOLO_VARIANT_OPTIONS = [
+  { name: "Card", value: "card" },
+  { name: "Disc (CD)", value: "disc" },
+];
+
 const SLIDESHOW_EFFECTS = ["slide", "fade", "cube", "coverflow", "flip", "cards", "creative"];
 
 const VIDEO_SOURCES = [
@@ -74,6 +79,58 @@ export const mediaBlocks: BlockDef[] = [
         lightbox: field.boolean("Open in Lightbox", "false", {
           description:
             "Lets visitors click the image open at full size. The caption and copyright come along.",
+          tooltip: true,
+        }),
+      }),
+    }),
+  },
+  {
+    name: "holo_image",
+    display_name: "Holo Image",
+    group: "Media",
+    icon: "block-image",
+    color: "#38b2ac",
+    preview_field: "alt",
+    schema: withSpacing({
+      image: field.asset("Image", ["images"], { required: true }),
+      alt: field.text("Alt Text", {
+        translatable: true,
+        description: "Describe the image for screen readers; leave empty if purely decorative.",
+        tooltip: true,
+      }),
+      caption: field.richtext("Caption", { translatable: true }),
+      variant: field.options("Shape", HOLO_VARIANT_OPTIONS, {
+        default_value: "card",
+        description: "Trading card with a holo frame, or a CD with a centre hole.",
+        tooltip: true,
+      }),
+      ...tabbed("Layout", "layout", {
+        aspectRatio: field.options("Aspect Ratio (card only)", inlineOptions.aspectRatio, {
+          default_value: "3/4",
+        }),
+        width: field.options("Width", inlineOptions.imageWidth, { default_value: "50%" }),
+        widthMd: field.options("Width (Tablet)", inlineOptions.imageWidth),
+        widthLg: field.options("Width (Desktop)", inlineOptions.imageWidth),
+      }),
+      ...tabbed("Loading", "loading", {
+        isLoadingEager: field.boolean("Eager Loading"),
+        fetchPriority: field.options("Fetch Priority", FETCH_PRIORITY_OPTIONS, {
+          default_value: "auto",
+        }),
+      }),
+      ...tabbed("Effects", "effects", {
+        intensity: field.number("Foil Intensity (0–1)", {
+          default_value: "0.8",
+          description: "Strength of the rainbow, glitter and glare layers.",
+          tooltip: true,
+        }),
+        maxTilt: field.number("Max Tilt (degrees)", { default_value: "18" }),
+        idle: field.boolean("Idle Drift", "true", {
+          description: "Slowly sways the card while nobody touches it.",
+          tooltip: true,
+        }),
+        gyro: field.boolean("Tilt with Device Motion", "true", {
+          description: "Follows the phone's gyroscope. iOS asks the visitor with a tap.",
           tooltip: true,
         }),
       }),

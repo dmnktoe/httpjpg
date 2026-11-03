@@ -282,6 +282,16 @@ Same presentational/stateful split as the command palette.
 - ASCII chrome (`[ 02 / 05 ]`, `[ ← ]` …); wrap + clamp index; preload neighbours; videos skip preload; credit always `CopyrightLabel` `below` variant.
 - Opt-in only on `image` / `video` bloks — not slideshow. Rendition: `imagePreset.full` (2560px, usually a cache hit).
 
+## Holo card
+
+Trading-card foil (Pokémon-TCG-Pocket style) for a single image, as the `holo_image` blok → `SbHoloImage` → `HoloCard` (`@httpjpg/ui`). Don't rebuild it with CSS blend layers; they can't do per-pixel iridescence.
+
+- **Two parts:** `useHoloTilt` writes `--holo-*` vars on the rotator (pointer, gyroscope, or idle drift, one rAF loop that sleeps off-screen or once settled); `holo-shader.ts` paints the foil in a WebGL fragment shader fed by the same state via `onFrame`. The rotator is plain CSS 3D (`perspective` + `rotateX/Y`) plus `drop-shadow`.
+- **Variants:** `card` (silver holo frame, rounded corners, hex glitter, rainbow edge fringe, stars, glare) and `disc` (CD: hole, hub ring, grooves, diffraction fans). Both live in one shader behind `uVariant`.
+- **Fallbacks, in order:** no WebGL / texture fails (CORS) → plain `<img>` still tilts; `prefers-reduced-motion` → rest pose, foil painted once, no loop. The `<img>` always stays in the DOM for alt text and LCP; the canvas is `aria-hidden` and fades in once the texture is decoded.
+- **Gyroscope:** iOS gates `DeviceOrientationEvent.requestPermission` behind a tap, so `HoloCard` shows a `[ tap to tilt ]` mono button only there; the first reading after the card scrolls into view becomes the rest pose.
+- Credit always renders `CopyrightLabel` `below`, outside the tilt. Textures load with `crossOrigin="anonymous"` (Storyblok CDN sends CORS headers).
+
 ## Page actions & draft tools
 
 One glass pill row at the bottom. Same presentational/stateful split as the lightbox.

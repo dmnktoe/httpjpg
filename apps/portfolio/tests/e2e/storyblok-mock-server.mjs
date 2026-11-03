@@ -85,6 +85,13 @@ const CONFIG = baseStory("config", {
 
 const STORIES = { home: HOME, config: CONFIG };
 
+const WORK_EXAMPLE = baseStory("work/example", {
+  _uid: "work-example",
+  component: "page_work",
+  title: "Example work",
+  date: TS,
+});
+
 function getStory(slug, language) {
   if (slug === "cv") {
     if (language === "de") {
@@ -129,6 +136,12 @@ const server = createServer((req, res) => {
     return;
   }
   if (rest === "stories") {
+    // The RSS feed (the only list read with per_page=50) throws on an empty list;
+    // every other list read keeps answering [] so the other pages are unchanged.
+    if (searchParams.get("starts_with") === "work/" && searchParams.get("per_page") === "50") {
+      sendJson(res, 200, { stories: [WORK_EXAMPLE] }, { total: "1", "per-page": "50" });
+      return;
+    }
     sendJson(res, 200, { stories: [] }, { total: "0", "per-page": "25" });
     return;
   }

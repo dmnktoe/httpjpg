@@ -4,8 +4,12 @@ export const DEFAULT_INTENSITY = 0.8;
 export const GYRO_RANGE = 24;
 /** Rest angle of the rainbow band in degrees (card variant only). */
 export const REST_ANGLE = 115;
-/** Per-frame easing toward the target; higher snaps faster. */
+/** Per-frame easing toward the target while the visitor drives the card. */
 export const SMOOTHING = 0.14;
+/** Slower easing for the snap back to rest, so the card settles like a spring. */
+export const RETURN_SMOOTHING = 0.055;
+/** Hold the last pose this long after the pointer leaves before easing back. */
+export const RETURN_DELAY_MS = 350;
 
 export type HoloVariant = "card" | "disc";
 
@@ -23,6 +27,8 @@ export interface HoloState {
   angle: number;
   /** 0 at rest, 1 while the visitor (or the gyroscope) drives the tilt. */
   active: number;
+  /** How far the light sits from the centre (0 centre, 1 edge). Foil shows more toward the edges. */
+  dist: number;
 }
 
 export interface Point {
@@ -39,6 +45,7 @@ export const REST_STATE: HoloState = {
   my: 50,
   angle: REST_ANGLE,
   active: 0,
+  dist: 0,
 };
 
 export function clamp(value: number, min: number, max: number): number {
@@ -69,6 +76,7 @@ export function stateFromPoint({ px, py }: Point, maxTilt: number, active = 1): 
     my: y * 100,
     angle,
     active,
+    dist: clamp(Math.hypot(dx, dy) * 2, 0, 1),
   };
 }
 
@@ -123,6 +131,7 @@ export function stepState(current: HoloState, target: HoloState, t = SMOOTHING):
     my: lerp(current.my, target.my, t),
     angle: current.angle + angleDelta * t,
     active: lerp(current.active, target.active, t),
+    dist: lerp(current.dist, target.dist, t),
   };
 }
 
@@ -133,7 +142,8 @@ export function isSettled(current: HoloState, target: HoloState, epsilon = 0.05)
     Math.abs(current.ry - target.ry) < epsilon &&
     Math.abs(current.mx - target.mx) < epsilon &&
     Math.abs(current.my - target.my) < epsilon &&
-    Math.abs(current.active - target.active) < epsilon
+    Math.abs(current.active - target.active) < epsilon &&
+    Math.abs(current.dist - target.dist) < epsilon
   );
 }
 
@@ -145,6 +155,7 @@ export function holoVars(state: HoloState, intensity: number): Record<`--holo-${
     "--holo-my": state.my.toFixed(2),
     "--holo-angle": state.angle.toFixed(2),
     "--holo-active": state.active.toFixed(3),
+    "--holo-dist": state.dist.toFixed(3),
     "--holo-intensity": clamp(intensity, 0, 1).toFixed(2),
   };
 }

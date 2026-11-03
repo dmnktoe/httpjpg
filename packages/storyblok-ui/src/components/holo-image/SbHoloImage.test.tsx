@@ -55,7 +55,7 @@ describe("SbHoloImage", () => {
     expect(mockHoloCard).toHaveBeenCalledWith(
       expect.objectContaining({
         variant: "card",
-        aspectRatio: "3/4",
+        aspectRatio: "5/7",
         idle: true,
         gyro: true,
         loading: "lazy",

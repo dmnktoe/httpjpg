@@ -12,6 +12,9 @@ import {
   pointFromOrientation,
   pointFromRect,
   REST_STATE,
+  RETURN_DELAY_MS,
+  RETURN_SMOOTHING,
+  SMOOTHING,
   stateFromPoint,
   stepState,
 } from "./lib";
@@ -60,7 +63,8 @@ function detectGyroPermission(): GyroPermission {
  * Drives the `--holo-*` custom properties on the returned element from the
  * pointer, the device gyroscope, or a slow idle drift. All motion runs through
  * one rAF loop that eases toward the current target and sleeps once settled
- * or off-screen.
+ * or off-screen. Leaving the card holds the pose briefly, then eases back
+ * more slowly than it followed, so the snap back reads like a spring.
  */
 export function useHoloTilt<T extends HTMLElement = HTMLDivElement>({
   maxTilt = DEFAULT_MAX_TILT,
@@ -126,6 +130,9 @@ export function useHoloTilt<T extends HTMLElement = HTMLDivElement>({
     let baseline: Orientation | null = null;
     let inView = false;
     let rafId = 0;
+    let releaseTimer = 0;
+    // Set when the pointer leaves: eases back slowly until something drives the card again.
+    let isReturning = false;
     const startedAt = performance.now();
 
     apply(current, 0);
@@ -143,7 +150,7 @@ export function useHoloTilt<T extends HTMLElement = HTMLDivElement>({
           maxTilt * IDLE_TILT_SCALE,
           0,
         );
-        return { ...drift, active: 0 };
+        return { ...drift, active: 0, dist: 0 };
       }
       return REST_STATE;
     };
@@ -154,9 +161,13 @@ export function useHoloTilt<T extends HTMLElement = HTMLDivElement>({
         return;
       }
       const target = targetState(now);
-      current = stepState(current, target);
+      current = stepState(current, target, isReturning ? RETURN_SMOOTHING : SMOOTHING);
       apply(current, (now - startedAt) / 1000);
-      const keepGoing = idle || pointerTarget || gyroTarget || !isSettled(current, target);
+      const settled = isSettled(current, target);
+      if (settled) {
+        isReturning = false;
+      }
+      const keepGoing = idle || pointerTarget || gyroTarget || !settled;
       if (keepGoing) {
         rafId = requestAnimationFrame(frame);
       }
@@ -169,14 +180,20 @@ export function useHoloTilt<T extends HTMLElement = HTMLDivElement>({
     };
 
     const handlePointerMove = (event: PointerEvent) => {
+      window.clearTimeout(releaseTimer);
+      isReturning = false;
       const rect = el.getBoundingClientRect();
       pointerTarget = stateFromPoint(pointFromRect(event.clientX, event.clientY, rect), maxTilt);
       wake();
     };
 
     const handlePointerLeave = () => {
-      pointerTarget = null;
-      wake();
+      window.clearTimeout(releaseTimer);
+      releaseTimer = window.setTimeout(() => {
+        pointerTarget = null;
+        isReturning = true;
+        wake();
+      }, RETURN_DELAY_MS);
     };
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
@@ -185,6 +202,7 @@ export function useHoloTilt<T extends HTMLElement = HTMLDivElement>({
       }
       const reading = { beta: event.beta, gamma: event.gamma };
       baseline ??= reading;
+      isReturning = false;
       gyroTarget = stateFromPoint(pointFromOrientation(reading, baseline), maxTilt);
       wake();
     };
@@ -219,6 +237,7 @@ export function useHoloTilt<T extends HTMLElement = HTMLDivElement>({
       el.removeEventListener("pointerleave", handlePointerLeave);
       el.removeEventListener("pointercancel", handlePointerLeave);
       window.removeEventListener("deviceorientation", handleOrientation);
+      window.clearTimeout(releaseTimer);
       cancelAnimationFrame(rafId);
     };
   }, [maxTilt, intensity, idle, disabled, gyroEnabled]);

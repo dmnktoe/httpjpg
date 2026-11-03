@@ -15,6 +15,9 @@ void main() {
   gl_Position = vec4(aPos, 0.0, 1.0);
 }`;
 
+// Layering and tuning follow simeydotme/pokemon-cards-css (GPL-3.0; studied, not
+// copied): foil strength scales with how far the light sits from the centre,
+// pastel "sunpillar" hues, glare as an overlay radial, a soft delayed snap back.
 export const HOLO_FRAGMENT_SHADER = `
 precision highp float;
 varying vec2 vUv;
@@ -24,6 +27,7 @@ uniform vec2 uSize;
 uniform vec2 uTilt;
 uniform vec2 uLight;
 uniform float uActive;
+uniform float uDist;
 uniform float uIntensity;
 uniform float uTime;
 uniform float uVariant;
@@ -80,6 +84,8 @@ void main() {
   vec2 aspectScale = uSize / minSide;
   vec2 light = uLight;
   float tiltPhase = uTilt.y * 0.9 - uTilt.x * 0.6;
+  // Foil shows more the further the card is tilted, like the real thing.
+  float drive = uActive * (0.45 + 0.55 * uDist);
   float lightAngle = atan(light.y - 0.5, light.x - 0.5);
   vec2 dir = vec2(cos(lightAngle + 1.5708), sin(lightAngle + 1.5708));
 
@@ -99,6 +105,9 @@ void main() {
     texUv = coverUv((px - fw) / inner, inner.x / inner.y);
     vec3 photo = texture2D(uTex, texUv).rgb;
     vec3 silver = mix(vec3(0.80, 0.81, 0.86), vec3(0.95, 0.95, 0.97), 0.5 + 0.5 * sin((uv.x + uv.y) * 6.0 + tiltPhase * 3.0));
+    // brushed metal: fine diagonal lines that catch the light
+    float brush = sin(dot(px, vec2(0.68, -0.73)) * 1.9 + tiltPhase * 20.0);
+    silver += brush * 0.045;
     col = mix(photo, silver, isFrame);
     holoW = mix(smoothstep(0.15, 0.95, luma(photo)) * 0.85 + 0.15, 1.0, isFrame);
   } else {
@@ -129,10 +138,10 @@ void main() {
   }
   vec3 rainbow = hsl2rgb(fract(phase), 0.95, mix(0.72, 0.6, uVariant));
   float sheen = pow(0.5 + 0.5 * sin(phase * 3.1416), 1.5);
-  float rainbowAmt = uIntensity * holoW * fanW * (0.22 + 0.38 * uActive) * sheen;
+  float rainbowAmt = uIntensity * holoW * fanW * (0.22 + 0.42 * drive) * sheen;
   vec3 chroma = rainbow - vec3(luma(rainbow));
   vec3 screened = col + chroma * rainbowAmt * 1.7 + rainbow * rainbowAmt * 0.2 * holoW;
-  vec3 framed = col * mix(vec3(1.0), rainbow * 1.15, 0.55 + 0.35 * uActive);
+  vec3 framed = col * mix(vec3(1.0), rainbow * 1.15, 0.55 + 0.35 * drive);
   col = mix(screened, framed, isFrame);
 
   float cell = minSide / 44.0;
@@ -142,9 +151,15 @@ void main() {
   float h1 = hash(hid);
   float pop = pow(smoothstep(0.6, 1.0, fract(h1 + tiltPhase * 1.3 + uTime * 0.02)), 1.5);
   float lightFall = 1.0 - smoothstep(0.0, 1.1, distance(uv * aspectScale, light * aspectScale));
-  float glitter = dotShape * pop * (0.35 + 0.65 * lightFall) * (0.5 + 0.5 * uActive);
+  float glitter = dotShape * pop * (0.35 + 0.65 * lightFall) * (0.45 + 0.55 * drive);
   vec3 dotCol = mix(vec3(1.0), hsl2rgb(fract(h1 + phase), 1.0, 0.7), 0.6);
   col += dotCol * glitter * uIntensity * holoW * mix(0.9, 0.5, uVariant);
+
+  // sparse glitter specks between the dots, each winking at its own angle
+  vec2 sid = floor(px / 2.0);
+  float sh = hash(sid + 7.0);
+  float speck = step(0.965, sh) * step(0.72, fract(sh * 13.0 + tiltPhase * 2.2 + uTime * 0.05));
+  col += vec3(1.0) * speck * (0.15 + 0.6 * drive) * uIntensity * (0.4 + 0.6 * lightFall);
 
   vec2 t = 1.5 / uTexSize;
   float tl = luma(texture2D(uTex, texUv + vec2(-t.x, -t.y)).rgb);
@@ -159,7 +174,7 @@ void main() {
   float gy = (bl + 2.0 * b0 + br) - (tl + 2.0 * t0 + tr);
   float edge = smoothstep(0.12, 0.6, length(vec2(gx, gy)));
   vec3 fringe = hsl2rgb(fract(phase * 2.0 + atan(gy, gx) * 0.159), 1.0, 0.62);
-  col += fringe * edge * (1.0 - isFrame) * uIntensity * (0.35 + 0.65 * uActive) * mix(0.9, 0.5, uVariant);
+  col += fringe * edge * (1.0 - isFrame) * uIntensity * (0.35 + 0.65 * drive) * mix(0.9, 0.5, uVariant);
 
   vec3 starCol = vec3(0.0);
   for (int i = 0; i < 12; i++) {
@@ -172,10 +187,10 @@ void main() {
     float s = star(p, sz) * tw * (0.25 + 0.75 * near);
     starCol += s * mix(vec3(1.0), hsl2rgb(fract(fi * 0.17 + phase), 1.0, 0.7), 0.5);
   }
-  col += starCol * uIntensity * (0.6 + 0.4 * uActive) * (1.0 - isFrame * 0.7);
+  col += starCol * uIntensity * (0.6 + 0.4 * drive) * (1.0 - isFrame * 0.7);
 
   float g = pow(1.0 - smoothstep(0.0, 0.85, distance(uv * aspectScale, light * aspectScale)), 2.2);
-  col += vec3(1.0) * g * uIntensity * (0.08 + 0.32 * uActive) * mix(1.0, 0.6, uVariant);
+  col += vec3(1.0) * g * uIntensity * (0.08 + 0.36 * uActive) * mix(1.0, 0.6, uVariant);
   col *= 1.0 - 0.08 * uActive * (1.0 - g);
 
   col = clamp(col, 0.0, 1.0);
@@ -213,6 +228,7 @@ const UNIFORMS = [
   "uTilt",
   "uLight",
   "uActive",
+  "uDist",
   "uIntensity",
   "uTime",
   "uVariant",
@@ -317,6 +333,7 @@ export function createHoloRenderer(
     gl.uniform2f(uniforms.uTilt, lastState.rx * tiltScale, lastState.ry * tiltScale);
     gl.uniform2f(uniforms.uLight, lastState.mx / 100, lastState.my / 100);
     gl.uniform1f(uniforms.uActive, lastState.active);
+    gl.uniform1f(uniforms.uDist, lastState.dist);
     gl.uniform1f(uniforms.uTime, lastTime);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

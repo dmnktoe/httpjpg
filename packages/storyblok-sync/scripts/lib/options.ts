@@ -15,6 +15,7 @@ const aspectRatioLabels: Record<string, string> = {
   "4/3": "4:3 (Standard)",
   "1/1": "1:1 (Square)",
   "3/4": "3:4 (Portrait)",
+  "5/7": "5:7 (Trading Card)",
   "9/16": "9:16 (Vertical)",
   "21/9": "21:9 (Ultrawide)",
   "1920/200": "1920×200 (Stage Banner)",

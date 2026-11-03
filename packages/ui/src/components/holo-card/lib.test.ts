@@ -40,6 +40,9 @@ describe("holo-card lib", () => {
     expect(topLeft.mx).toBe(0);
     expect(topLeft.my).toBe(0);
     expect(topLeft.active).toBe(1);
+    expect(topLeft.dist).toBe(1);
+    expect(stateFromPoint({ px: 0.5, py: 0.5 }, 18).dist).toBe(0);
+    expect(stateFromPoint({ px: 0.75, py: 0.5 }, 18).dist).toBeCloseTo(0.5);
 
     const bottomRight = stateFromPoint({ px: 1, py: 1 }, 18);
     expect(bottomRight.rx).toBe(-18);
@@ -94,7 +97,8 @@ describe("holo-card lib", () => {
   });
 
   it("formats CSS variables with a clamped intensity", () => {
-    const vars = holoVars({ ...REST_STATE, rx: 1.2345 }, 3);
+    const vars = holoVars({ ...REST_STATE, rx: 1.2345, dist: 0.5 }, 3);
+    expect(vars["--holo-dist"]).toBe("0.500");
     expect(vars["--holo-rx"]).toBe("1.23");
     expect(vars["--holo-intensity"]).toBe("1.00");
     expect(vars["--holo-mx"]).toBe("50.00");

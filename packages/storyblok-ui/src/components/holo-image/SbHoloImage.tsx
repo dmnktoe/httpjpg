@@ -18,7 +18,7 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
     alt,
     caption,
     variant = "card",
-    aspectRatio = "3/4",
+    aspectRatio = "5/7",
     width = "50%",
     widthMd,
     widthLg,

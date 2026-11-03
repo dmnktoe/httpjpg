@@ -22,7 +22,7 @@ export interface HoloCardProps {
    * a centre hole and diffraction fans. @default "card"
    */
   variant?: HoloVariant;
-  /** CSS aspect ratio of the card. Discs are always square. @default "3/4" */
+  /** CSS aspect ratio of the card. Discs are always square. @default "5/7" (a real trading card) */
   aspectRatio?: string;
   /** Foil strength, 0–1. @default 0.8 */
   intensity?: number;
@@ -58,7 +58,7 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
     srcSet,
     sizes,
     variant = "card",
-    aspectRatio = "3/4",
+    aspectRatio = "5/7",
     intensity = DEFAULT_INTENSITY,
     maxTilt = DEFAULT_MAX_TILT,
     idle = true,

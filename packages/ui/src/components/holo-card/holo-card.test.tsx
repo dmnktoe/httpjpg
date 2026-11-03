@@ -174,6 +174,46 @@ describe("HoloCard", () => {
     expect(Number(rotator.style.getPropertyValue("--holo-rx"))).toBeGreaterThan(0);
   });
 
+  it("holds the pose after the pointer leaves, then eases back slowly", () => {
+    // Only the release timer is faked; rAF stays on the hand-flushed queue above.
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    try {
+      const { container } = render(<HoloCard src="/card.jpg" alt="" idle={false} />);
+      const rotator = container.querySelector("canvas")?.parentElement as HTMLElement;
+      rotator.getBoundingClientRect = () =>
+        ({ left: 0, top: 0, width: 200, height: 300, right: 200, bottom: 300 }) as DOMRect;
+      act(() => observerCallback?.([{ isIntersecting: true }]));
+      act(() => {
+        fireEvent.pointerMove(rotator, { clientX: 200, clientY: 150 });
+        flushFrames(80);
+      });
+      const tilted = Number(rotator.style.getPropertyValue("--holo-ry"));
+      expect(tilted).toBeGreaterThan(17);
+
+      act(() => {
+        fireEvent.pointerLeave(rotator);
+        vi.advanceTimersByTime(200);
+        flushFrames(10);
+      });
+      expect(Number(rotator.style.getPropertyValue("--holo-ry"))).toBeCloseTo(tilted, 1);
+
+      act(() => {
+        vi.advanceTimersByTime(200);
+        flushFrames(10);
+      });
+      const returning = Number(rotator.style.getPropertyValue("--holo-ry"));
+      expect(returning).toBeLessThan(tilted);
+      expect(returning).toBeGreaterThan(tilted * 0.4);
+
+      act(() => {
+        flushFrames(200);
+      });
+      expect(Number(rotator.style.getPropertyValue("--holo-ry"))).toBeCloseTo(0, 1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("stays at rest under reduced motion", () => {
     mockReducedMotion.mockReturnValue(true);
     const { container } = render(<HoloCard src="/card.jpg" alt="" idle />);

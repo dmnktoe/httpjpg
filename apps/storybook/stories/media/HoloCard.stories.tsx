@@ -67,7 +67,7 @@ export const Card: Story = {
     src: OPTIMIZED_IMAGES.portrait,
     alt: "Klosterkirche Nordshausen",
     variant: "card",
-    aspectRatio: "3/4",
+    aspectRatio: "5/7",
     intensity: 0.8,
     maxTilt: 18,
     idle: true,

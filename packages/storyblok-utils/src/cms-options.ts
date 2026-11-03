@@ -94,7 +94,7 @@ const gridSpanScale = [
   "12",
   "full",
 ] as const;
-const aspectRatioScale = ["16/9", "4/3", "1/1", "3/4", "9/16", "21/9"] as const;
+const aspectRatioScale = ["16/9", "4/3", "1/1", "3/4", "5/7", "9/16", "21/9"] as const;
 const videoAspectRatioScale = [...aspectRatioScale, "1920/200"] as const;
 const widthScale = ["sm", "md", "lg", "xl", "2xl", "fluid"] as const;
 /** `AnimateInView` animations in `@httpjpg/ui`. `none` keeps a blok still. */

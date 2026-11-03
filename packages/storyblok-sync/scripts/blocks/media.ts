@@ -106,7 +106,7 @@ export const mediaBlocks: BlockDef[] = [
       }),
       ...tabbed("Layout", "layout", {
         aspectRatio: field.options("Aspect Ratio (card only)", inlineOptions.aspectRatio, {
-          default_value: "3/4",
+          default_value: "5/7",
         }),
         width: field.options("Width", inlineOptions.imageWidth, { default_value: "50%" }),
         widthMd: field.options("Width (Tablet)", inlineOptions.imageWidth),

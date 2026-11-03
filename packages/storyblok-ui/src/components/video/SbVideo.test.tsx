@@ -26,6 +26,58 @@ describe("SbVideo", () => {
     expect(container.querySelector("video")).not.toBeNull();
   });
 
+  it("frames a native video in a device and moves the credit below it", () => {
+    const { container } = render(
+      <SbVideo
+        blok={
+          {
+            _uid: "3",
+            component: "video",
+            source: "native",
+            video: { filename: clip, copyright: "2025 Studio" },
+            frame: "psp",
+            aspectRatio: "16/9",
+          } as never
+        }
+      />,
+    );
+    expect(container.querySelector('[data-device-frame="psp"]')).not.toBeNull();
+    const player = container.querySelector("video")?.closest("[data-device-screen]");
+    expect(player).not.toBeNull();
+    expect(screen.getByText("© 2025 Studio")).toBeInTheDocument();
+  });
+
+  it("ignores the device frame for embeds and unknown devices", () => {
+    const { container, rerender } = render(
+      <SbVideo
+        blok={
+          {
+            _uid: "3b",
+            component: "video",
+            source: "youtube",
+            videoUrl: "https://youtu.be/abc",
+            frame: "psp",
+          } as never
+        }
+      />,
+    );
+    expect(container.querySelector("[data-device-frame]")).toBeNull();
+    rerender(
+      <SbVideo
+        blok={
+          {
+            _uid: "3c",
+            component: "video",
+            source: "native",
+            video: { filename: clip },
+            frame: "gameboy",
+          } as never
+        }
+      />,
+    );
+    expect(container.querySelector("[data-device-frame]")).toBeNull();
+  });
+
   it("offers no lightbox trigger unless the blok asks for one", () => {
     render(
       <SbVideo

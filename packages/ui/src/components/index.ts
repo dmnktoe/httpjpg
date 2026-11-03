@@ -18,6 +18,8 @@ export * from "./container/container";
 export * from "./copyright-label/copyright-label";
 export * from "./custom-cursor/custom-cursor";
 export * from "./desktop-downloads/desktop-downloads";
+export * from "./device-frame/device-frame";
+export * from "./device-frame/devices";
 export * from "./divider/divider";
 export * from "./floating-action-bar/floating-action-bar";
 export * from "./footer/footer";

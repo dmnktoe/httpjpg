@@ -293,6 +293,14 @@ Trading-card foil (Pokémon-TCG-Pocket style) for a single image, as the `holo_i
 - Credit always renders `CopyrightLabel` `below`, outside the tilt. Textures load with `crossOrigin="anonymous"` (Storyblok CDN sends CORS headers).
 - **Physics:** follow at `SMOOTHING`, hold `RETURN_DELAY_MS` after the pointer leaves, then ease back at the slower `RETURN_SMOOTHING`. Foil strength scales with `dist` (light's distance from the centre), so a centred pointer shows little and tilting to an edge brings it out. Tuning studied from simeydotme/pokemon-cards-css (GPL-3.0), nothing copied.
 
+## Device frames
+
+A video can play on the screen of a product photo: `video` blok → `frame: psp` → `SbVideo` wraps the player in `DeviceFrame` (`@httpjpg/ui`). Frame only, no tilt; `HoloCard` owns 3D.
+
+- **How:** the cut-out device WebP is the frame, the screen quad is a `clip-path`, and the media is laid out flat at the screen's aspect and projected into the quad with a four-point homography (`matrix3dForQuad` in `device-frame/lib.ts`). A screened copy of the photo on top keeps the glass reflections.
+- **Presets:** `DEVICE_FRAMES` in `device-frame/devices.ts` (image path under `apps/portfolio/public/images/devices/`, natural size, screen corners clockwise from top-left in file px, screen aspect). `DEVICE_FRAME_OPTIONS` in the sync schema mirrors the names — keep in lock-step. New device: cut-out WebP with alpha, read the four screen corners off the dark panel, add both entries.
+- The screen aspect overrides the blok's aspect ratio; credit renders `CopyrightLabel` `below` the device, never on the screen. Embeds (YouTube / Vimeo) ignore the frame.
+
 ## Page actions & draft tools
 
 One glass pill row at the bottom. Same presentational/stateful split as the lightbox.

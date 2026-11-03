@@ -5,6 +5,10 @@ import type { SbVideoData } from "@httpjpg/storyblok-utils";
 import { extractPlainText } from "@httpjpg/storyblok-utils";
 import {
   Box,
+  CopyrightLabel,
+  DEVICE_FRAMES,
+  DeviceFrame,
+  isDeviceFrameName,
   Lightbox,
   type LightboxEntry,
   LightboxTrigger,
@@ -60,7 +64,10 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
     muted,
     copyrightPosition = "inline-white",
     lightbox = false,
+    frame = "none",
   } = blok;
+  // Only native video can sit on a device screen; embeds are iframes with their own chrome.
+  const device = source === "native" && isDeviceFrameName(frame) ? frame : null;
   const copyright = video?.copyright;
   const copyrightSource = video?.source;
   const editable = editableAttrs(blok);
@@ -70,7 +77,9 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
   const viewer = useLightbox();
   const inlineRef = useRef<HTMLVideoElement | null>(null);
   const src = resolveSrc(blok);
-  const resolvedAspectRatio = resolveOptionalString(aspectRatio);
+  const resolvedAspectRatio = device
+    ? DEVICE_FRAMES[device].screenAspect
+    : resolveOptionalString(aspectRatio);
   const mediaWidth = toDimension(video?.width);
   const mediaHeight = toDimension(video?.height);
   const lightboxItem =
@@ -90,25 +99,37 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
     );
   }
 
+  const player = (
+    <Video
+      src={src}
+      source={source}
+      poster={resolveOptionalString(poster?.filename)}
+      aspectRatio={resolvedAspectRatio}
+      mediaWidth={mediaWidth}
+      mediaHeight={mediaHeight}
+      controls={controls}
+      autoPlay={autoPlay}
+      loop={loop}
+      muted={muted}
+      copyright={device ? undefined : copyright}
+      copyrightSource={device ? undefined : copyrightSource}
+      copyrightPosition={copyrightPosition}
+      mediaRef={inlineRef}
+    />
+  );
+
   return (
     <Box {...editable} css={spacingCss(blok)}>
       <Box css={{ position: "relative" }}>
-        <Video
-          src={src}
-          source={source}
-          poster={resolveOptionalString(poster?.filename)}
-          aspectRatio={resolvedAspectRatio}
-          mediaWidth={mediaWidth}
-          mediaHeight={mediaHeight}
-          controls={controls}
-          autoPlay={autoPlay}
-          loop={loop}
-          muted={muted}
-          copyright={copyright}
-          copyrightSource={copyrightSource}
-          copyrightPosition={copyrightPosition}
-          mediaRef={inlineRef}
-        />
+        {device ? (
+          <>
+            <DeviceFrame device={device}>{player}</DeviceFrame>
+            {/* The credit would be projected onto the screen otherwise. */}
+            <CopyrightLabel text={copyright} source={copyrightSource} position="below" />
+          </>
+        ) : (
+          player
+        )}
         {lightbox && (
           // Corner, not cover: the player underneath has its own controls to
           // press, and an invisible full-size hit area would swallow them.

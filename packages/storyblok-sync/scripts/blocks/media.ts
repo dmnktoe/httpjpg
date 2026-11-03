@@ -22,6 +22,12 @@ const HOLO_VARIANT_OPTIONS = [
   { name: "Disc (CD)", value: "disc" },
 ];
 
+/** Mirrors `DEVICE_FRAMES` in `@httpjpg/ui`; keep in lock-step. */
+const DEVICE_FRAME_OPTIONS = [
+  { name: "None", value: "none" },
+  { name: "Sony PSP", value: "psp" },
+];
+
 const SLIDESHOW_EFFECTS = ["slide", "fade", "cube", "coverflow", "flip", "cards", "creative"];
 
 const VIDEO_SOURCES = [
@@ -245,6 +251,12 @@ export const mediaBlocks: BlockDef[] = [
       }),
       ...tabbed("Layout", "layout", {
         aspectRatio: field.options("Aspect Ratio", inlineOptions.videoAspectRatio),
+        frame: field.options("Device Frame", DEVICE_FRAME_OPTIONS, {
+          default_value: "none",
+          description:
+            "Plays the video on the screen of a product photo. The screen sets the aspect ratio; credit moves below the device.",
+          tooltip: true,
+        }),
       }),
       ...tabbed("Playback", "playback", {
         controls: field.boolean("Show Controls", "true"),

@@ -97,12 +97,12 @@ type Story = StoryObj<typeof meta>;
 
 export const Card: Story = {
   args: {
-    src: OPTIMIZED_IMAGES.portrait,
-    textureSrc: holoTextureUrl(OPTIMIZED_IMAGES.portrait),
-    alt: "Klosterkirche Nordshausen",
+    src: "/images/holo/hello.webp",
+    alt: "Y2K collage of chrome hearts, crystals and Hello Kitty on a pink sky",
     variant: "card",
     aspectRatio: "5/7",
-    intensity: 0.8,
+    // bright pastel art takes the foil strongly; keep it readable
+    intensity: 0.6,
     maxTilt: 18,
     idle: true,
     gyro: true,
@@ -117,15 +117,16 @@ export const Card: Story = {
 /**
  * The layered look: a photo plus a cut-out of its subject with the same
  * framing. The cut-out floats in front with its own parallax, shadow and
- * rainbow outline while the backdrop slides the other way. Both demo files
- * live in `apps/portfolio/public/images/holo/`.
+ * rainbow outline while the backdrop slides the other way. Demo files live
+ * in `apps/portfolio/public/images/holo/` (cut from the portfolio's own
+ * Storyblok assets).
  */
 export const LayeredCutOut: Story = {
   name: "Layered (foreground cut-out)",
   args: {
-    src: "/images/holo/psp-card.webp",
-    foregroundSrc: "/images/holo/psp-card-fg.webp",
-    alt: "A silver PSP floating over a night sky",
+    src: "/images/holo/cryo.webp",
+    foregroundSrc: "/images/holo/cryo-fg.webp",
+    alt: "CRYONiQ cryosauna with open doors, cold mist flowing out",
     variant: "card",
     aspectRatio: "5/7",
     intensity: 0.85,
@@ -149,11 +150,11 @@ export const LayeredCutOut: Story = {
 export const FullStack: Story = {
   name: "Full stack (swirl, fireworks, effects, depth)",
   args: {
-    src: "/images/holo/psp-card.webp",
-    foregroundSrc: "/images/holo/psp-card-fg.webp",
-    effectsSrc: "/images/holo/psp-card-fx.webp",
-    depthSrc: "/images/holo/psp-card-depth.webp",
-    alt: "A silver PSP floating over a night sky, shards flying out of the card",
+    src: "/images/holo/cryo.webp",
+    foregroundSrc: "/images/holo/cryo-fg.webp",
+    effectsSrc: "/images/holo/cryo-fx.webp",
+    depthSrc: "/images/holo/cryo-depth.webp",
+    alt: "CRYONiQ cryosauna bursting out of the card in a cloud of ice shards",
     variant: "card",
     aspectRatio: "5/7",
     intensity: 0.85,
@@ -163,6 +164,22 @@ export const FullStack: Story = {
     sparkle: "fireworks",
     idle: true,
     gyro: true,
+  },
+  render: (args) => (
+    <Box css={{ maxW: "360px", mx: "auto", py: 8 }}>
+      <HoloCard {...args} />
+    </Box>
+  ),
+};
+
+/** Flat art plus an effects layer: no cut-out, the shards alone carry the depth. */
+export const EffectsOnly: Story = {
+  name: "Effects layer only",
+  args: {
+    ...Card.args,
+    effectsSrc: "/images/holo/hello-fx.webp",
+    sparkle: "fireworks",
+    depth: 1.2,
   },
   render: (args) => (
     <Box css={{ maxW: "360px", mx: "auto", py: 8 }}>
@@ -191,7 +208,11 @@ export const Disc: Story = {
 
 export const WithCredit: Story = {
   args: {
-    ...Card.args,
+    src: OPTIMIZED_IMAGES.portrait,
+    textureSrc: holoTextureUrl(OPTIMIZED_IMAGES.portrait),
+    alt: "Klosterkirche Nordshausen",
+    variant: "card",
+    aspectRatio: "5/7",
     copyright: "httpjpg",
     copyrightSource: "Kodak Portra 400",
   },

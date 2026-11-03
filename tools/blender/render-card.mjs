@@ -188,7 +188,18 @@ async function main() {
   }
   args.push("--python", script, "--", ...pythonArgs(options));
   console.log(`[holo] ${blender} ${args.join(" ")}`);
-  await run(blender, args);
+  try {
+    await run(blender, args);
+  } catch (error) {
+    // EEVEE needs a GL context; headless boxes without one (CI, containers)
+    // fall back to Cycles on the CPU instead of failing the whole run.
+    if (options.python.engine === "cycles") {
+      throw error;
+    }
+    console.warn(`[holo] ${error.message}; retrying with --engine cycles`);
+    options.python.engine = "cycles";
+    await run(blender, [...args.slice(0, args.indexOf("--") + 1), ...pythonArgs(options)]);
+  }
 
   const index = JSON.parse(await readFile(path.join(options.out, "index.json"), "utf8"));
   const sharp = await loadSharp();

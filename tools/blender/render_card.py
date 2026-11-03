@@ -164,7 +164,9 @@ def link_to(obj: bpy.types.Object, collection: bpy.types.Collection) -> None:
 
 def new_material(name: str) -> tuple[bpy.types.Material, bpy.types.NodeTree]:
     material = bpy.data.materials.new(name)
-    material.use_nodes = True
+    if bpy.app.version < (5, 0, 0):
+        # 5.0 materials always use nodes; the flag is deprecated there
+        material.use_nodes = True
     tree = material.node_tree
     tree.nodes.clear()
     return material, tree
@@ -246,13 +248,14 @@ def build_backdrop(palette: dict, rng: random.Random) -> None:
     streak_map.inputs["Scale"].default_value = (1.0, 1.0, 1.0)
     wave = tree.nodes.new("ShaderNodeTexWave")
     wave.wave_type = "BANDS"
-    wave.inputs["Scale"].default_value = rng.uniform(2.5, 4.5)
-    wave.inputs["Distortion"].default_value = rng.uniform(1.0, 3.0)
-    wave.inputs["Detail"].default_value = 2.0
+    wave.inputs["Scale"].default_value = rng.uniform(1.2, 2.2)
+    wave.inputs["Distortion"].default_value = rng.uniform(3.0, 6.0)
+    wave.inputs["Detail"].default_value = 3.0
+    wave.inputs["Detail Roughness"].default_value = 0.7
     streak_ramp = tree.nodes.new("ShaderNodeValToRGB")
-    streak_ramp.color_ramp.elements[0].position = 0.72
+    streak_ramp.color_ramp.elements[0].position = 0.55
     streak_ramp.color_ramp.elements[0].color = (0.0, 0.0, 0.0, 1.0)
-    streak_ramp.color_ramp.elements[1].position = 0.9
+    streak_ramp.color_ramp.elements[1].position = 0.97
     streak_ramp.color_ramp.elements[1].color = hex_to_rgb(palette["streak"])
 
     # bokeh: voronoi cells, soft and sparse
@@ -268,7 +271,7 @@ def build_backdrop(palette: dict, rng: random.Random) -> None:
     add_streaks = tree.nodes.new("ShaderNodeMix")
     add_streaks.data_type = "RGBA"
     add_streaks.blend_type = "ADD"
-    add_streaks.inputs["Factor"].default_value = 0.9
+    add_streaks.inputs["Factor"].default_value = 0.55
     add_bokeh = tree.nodes.new("ShaderNodeMix")
     add_bokeh.data_type = "RGBA"
     add_bokeh.blend_type = "ADD"
@@ -345,13 +348,13 @@ def build_subject(args: argparse.Namespace, palette: dict) -> None:
             link_to(root, subject)
         return
     # placeholder: a chrome torus with a metallic core, tilted toward the camera
-    bpy.ops.mesh.primitive_torus_add(major_radius=0.26, minor_radius=0.1, major_segments=96, minor_segments=48)
+    bpy.ops.mesh.primitive_torus_add(major_radius=0.3, minor_radius=0.12, major_segments=96, minor_segments=48)
     torus = bpy.context.active_object
     torus.rotation_euler = (math.radians(58.0), 0.0, math.radians(-22.0))
     torus.data.materials.append(metal_material("HoloChrome", "#dfe3ea", 0.12))
     bpy.ops.object.shade_smooth()
     link_to(torus, subject)
-    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=4, radius=0.13)
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=4, radius=0.16)
     core = bpy.context.active_object
     core.data.materials.append(metal_material("HoloCore", palette["accent"], 0.3))
     bpy.ops.object.shade_smooth()
@@ -376,7 +379,8 @@ def build_lights(palette: dict) -> None:
         scene_collection.objects.link(light)
     world = bpy.context.scene.world or bpy.data.worlds.new("HoloWorld")
     bpy.context.scene.world = world
-    world.use_nodes = True
+    if bpy.app.version < (5, 0, 0):
+        world.use_nodes = True
     background = world.node_tree.nodes.get("Background")
     if background is not None:
         background.inputs["Color"].default_value = (0.01, 0.01, 0.015, 1.0)
@@ -397,13 +401,13 @@ def build_effects(args: argparse.Namespace, palette: dict, rng: random.Random) -
     fx = get_collection("fx")
     clear_collection(fx)
     frame_w, frame_h = frame_size_units(args)
-    shard_materials = [emission_material(f"HoloShard{i}", color, 3.0) for i, color in enumerate(palette["shards"])]
+    shard_materials = [emission_material(f"HoloShard{i}", color, 4.0) for i, color in enumerate(palette["shards"])]
     debris_material = metal_material("HoloDebris", "#8d8f98", 0.6)
     sparkle_material = emission_material("HoloSparkle", palette["sparkle"], 9.0)
 
     for index in range(args.shards):
         x, y = random_in_frame(rng, frame_w, frame_h, 0.22)
-        size = rng.uniform(0.03, 0.11)
+        size = rng.uniform(0.04, 0.16)
         bpy.ops.mesh.primitive_cone_add(vertices=3, radius1=size, radius2=0.0, depth=size * 0.12, location=(x, y, rng.uniform(0.25, 1.2)))
         shard = bpy.context.active_object
         shard.name = f"HoloShard.{index:03d}"
@@ -424,7 +428,7 @@ def build_effects(args: argparse.Namespace, palette: dict, rng: random.Random) -
     # firework sparkles: two crossed slivers, facing the camera
     for index in range(args.sparkles):
         x, y = random_in_frame(rng, frame_w, frame_h, 0.0)
-        size = rng.uniform(0.02, 0.07)
+        size = rng.uniform(0.03, 0.1)
         z = rng.uniform(0.3, 1.1)
         for angle in (0.0, math.pi / 2.0):
             bpy.ops.mesh.primitive_plane_add(size=1.0, location=(x, y, z))

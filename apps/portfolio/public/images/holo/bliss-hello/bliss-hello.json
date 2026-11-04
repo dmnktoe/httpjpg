@@ -1,7 +1,7 @@
 {
   "name": "bliss-hello",
   "palette": "psychic",
-  "fx": "shards",
+  "fx": "energy",
   "foregroundFrame": "overhang",
   "seed": 7,
   "card": {
@@ -36,7 +36,7 @@
     },
     "effects": {
       "file": "bliss-hello-fx.webp",
-      "bytes": 77156
+      "bytes": 149174
     },
     "depth": {
       "file": "bliss-hello-depth.webp",

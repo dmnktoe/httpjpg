@@ -97,7 +97,15 @@ Palettes: `psychic` (Mew), `fire` (Team Rocket), `steel` (Steelix), `water`,
 Effect styles (`--fx`): `shards` (default) scatters small emissive triangles,
 debris and sparkles like the Mew card; `burst` shoots big flat orange / blue
 wedges, glass crystals and thin beams out of the centre over a backdrop of
-radial rays, like Mega-Scherox. Pair `burst` with the `scherox` palette.
+radial rays, like Mega-Scherox (pair with the `scherox` palette); `lightning`
+grows branching bolts out of the subject (random walks pulled toward the
+motion direction, white-hot core tube plus a translucent halo tube, sparks at
+the tips), short arcs crawling around the silhouette and drifting sparks, like
+Zapdos ex (pair with `electric`); `energy` draws three glowing orbit rings as
+open arcs (the far side is left out, so they read as passing behind the
+subject), dust riding on them and glass orbs, like Mewtwo ex (pair with
+`psychic`). Bolts and rings are bevelled poly curves with per-point radius, so
+they taper; the bloom pass in the wrapper widens the halos.
 
 ## Your own scene
 

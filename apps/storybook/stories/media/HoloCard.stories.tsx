@@ -232,7 +232,9 @@ export const BlenderCutOut: Story = {
 /**
  * Lettering as the subject: the Pure Bliss chrome logo (an alpha PNG from the
  * portfolio's Storyblok space) wider than the card over a blurred Y2K collage,
- * Mew-style shards along the lettering's tilt, swirl foil and rainbow stars.
+ * with `--fx energy`: glowing orbit rings around the lettering (open at the
+ * back so they read as passing behind it), dust and orbs, like Mewtwo ex.
+ * Swirl foil and rainbow stars.
  */
 export const BlenderLettering: Story = {
   name: "Blender pipeline (chrome lettering)",
@@ -242,7 +244,7 @@ export const BlenderLettering: Story = {
     foregroundFrame: "overhang",
     effectsSrc: "/images/holo/bliss-hello/bliss-hello-fx.webp",
     depthSrc: "/images/holo/bliss-hello/bliss-hello-depth.webp",
-    alt: "Pure Bliss in glossy purple chrome lettering running past the card edges over a blurred pink collage with shards",
+    alt: "Pure Bliss in glossy purple chrome lettering running past the card edges, pink and violet orbit rings circling it over a blurred collage",
     variant: "card",
     aspectRatio: "5/7",
     intensity: 0.8,
@@ -261,12 +263,13 @@ export const BlenderLettering: Story = {
 };
 
 /**
- * The yellow ex look (Zapdos, Mewtwo Tera): `--palette electric --bg-tint
+ * The yellow ex look (Zapdos ex): `--palette electric --fx lightning --bg-tint
  * "#ffcc1a"`. The subject is a rack of yellow longsleeves cut out of the
  * Outlet Store photo with `tools/blender/cutout.py`, which also estimates its
  * depth, so the front sweater sits nearer than the trousers behind it. The
- * backdrop is the same photo blurred and tinted to one colour; violet-white
- * beams and crystals fly along one direction.
+ * backdrop is the same photo blurred and tinted to one colour; branching
+ * bolts with violet halos shoot out of the rack and past the frame, short arcs
+ * crawl around it.
  */
 export const BlenderElectric: Story = {
   name: "Blender pipeline (electric, cut-out with depth)",
@@ -276,7 +279,7 @@ export const BlenderElectric: Story = {
     foregroundFrame: "overhang",
     effectsSrc: "/images/holo/outlet-electric/outlet-electric-fx.webp",
     depthSrc: "/images/holo/outlet-electric/outlet-electric-depth.webp",
-    alt: "A rack of yellow longsleeves bursting out of a yellow card, white and violet lightning beams flying past the edge",
+    alt: "A rack of yellow longsleeves bursting out of a yellow card, white-violet lightning bolts branching past the edge",
     variant: "card",
     aspectRatio: "5/7",
     intensity: 0.75,

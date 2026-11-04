@@ -123,6 +123,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--image-rotate", type=float, default=0.0, help="rotation of the cut-out in degrees, counter-clockwise")
     parser.add_argument("--image-depth", help="greyscale depth map for --image (white = far, same size); gives the flat cut-out per-pixel depth")
     parser.add_argument("--image-depth-range", type=float, default=0.3, help="how much of the near–far range the --image-depth map spans")
+    parser.add_argument("--passes", default="photo,fg,fx,depth", help="comma list of passes to render; the others keep the files from the last run (e.g. `fx` while tuning effects)")
     parser.add_argument("--subject-overflow", action="store_true", help="render the cut-out on the full overhang frame so it can break the card edge")
     parser.add_argument("--bg-image", help="photo for the backdrop (already blurred/darkened by the wrapper) instead of the procedural gradient")
     parser.add_argument("--fx-angle", type=float, help="direction the effects shoot along, in degrees (default: random per seed)")
@@ -139,9 +140,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--sparkles", type=int, default=10)
     parser.add_argument(
         "--fx",
-        choices=("shards", "burst"),
+        choices=("shards", "burst", "lightning", "energy"),
         default="shards",
-        help="shards: small emissive triangles (Mew); burst: big flat wedges, glass crystals and beams from the centre (Scherox)",
+        help="shards: small emissive triangles (Mew); burst: big flat wedges, glass crystals and beams from the centre (Scherox); lightning: branching bolts, arcs and sparks (Zapdos); energy: glowing orbit rings, orbs and dust (Mewtwo)",
     )
     return parser.parse_args(argv)
 
@@ -270,6 +271,22 @@ def fade_emission_material(name: str, color: str, strength: float, axis: str, ex
     links.new(transparent.outputs["BSDF"], mix.inputs[1])
     links.new(emission.outputs["Emission"], mix.inputs[2])
     links.new(mix.outputs["Shader"], output.inputs["Surface"])
+    return material
+
+
+def glow_material(name: str, color: str, strength: float, alpha: float) -> bpy.types.Material:
+    """Translucent emission: the soft halo around a bolt or ring; the bloom pass widens it further."""
+    material, tree = new_material(name)
+    emission = tree.nodes.new("ShaderNodeEmission")
+    emission.inputs["Color"].default_value = hex_to_rgb(color)
+    emission.inputs["Strength"].default_value = strength
+    transparent = tree.nodes.new("ShaderNodeBsdfTransparent")
+    mix = tree.nodes.new("ShaderNodeMixShader")
+    mix.inputs["Fac"].default_value = alpha
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    tree.links.new(transparent.outputs["BSDF"], mix.inputs[1])
+    tree.links.new(emission.outputs["Emission"], mix.inputs[2])
+    tree.links.new(mix.outputs["Shader"], output.inputs["Surface"])
     return material
 
 
@@ -719,6 +736,161 @@ def build_burst(args: argparse.Namespace, palette: dict, rng: random.Random, fx:
         link_to(beam, fx)
 
 
+def tube_from_points(name: str, points: list[tuple[float, float, float]], radii: list[float], depth: float, material: bpy.types.Material, fx: bpy.types.Collection, cyclic: bool = False) -> bpy.types.Object:
+    """A poly curve rendered as a bevelled tube; per-point radius tapers it."""
+    curve = bpy.data.curves.new(name, type="CURVE")
+    curve.dimensions = "3D"
+    curve.bevel_depth = depth
+    curve.bevel_resolution = 4
+    curve.use_fill_caps = True
+    spline = curve.splines.new("POLY")
+    spline.points.add(len(points) - 1)
+    for point, (x, y, z), radius in zip(spline.points, points, radii):
+        point.co = (x, y, z, 1.0)
+        point.radius = radius
+    spline.use_cyclic_u = cyclic
+    obj = bpy.data.objects.new(name, curve)
+    curve.materials.append(material)
+    link_to(obj, fx)
+    return obj
+
+
+def bolt_points(rng: random.Random, start: tuple[float, float], heading: float, length: float, z: float, jitter: float = 0.7) -> list[tuple[float, float, float]]:
+    """Zig-zag around a slowly drifting heading: the jagged line of a lightning bolt."""
+    points = [(start[0], start[1], z)]
+    x, y = start
+    travelled = 0.0
+    side = rng.choice((-1.0, 1.0))
+    while travelled < length:
+        step = rng.uniform(0.012, 0.04)
+        if rng.random() < 0.75:
+            side = -side
+        heading += rng.uniform(-0.12, 0.12)
+        angle = heading + side * rng.uniform(0.2, jitter)
+        x += math.cos(angle) * step
+        y += math.sin(angle) * step
+        travelled += step
+        points.append((x, y, z + rng.uniform(-0.005, 0.005)))
+    return points
+
+
+def build_bolt(name: str, rng: random.Random, points: list[tuple[float, float, float]], width: float, core: bpy.types.Material, halo: bpy.types.Material, fx: bpy.types.Collection) -> None:
+    """White-hot core plus a wider translucent halo along the same path, tapering to the tip."""
+    count = len(points)
+    radii = [max(0.15, 1.0 - index / max(count - 1, 1)) for index in range(count)]
+    tube_from_points(f"{name}.core", points, radii, width, core, fx)
+    tube_from_points(f"{name}.halo", points, radii, width * 2.6, halo, fx)
+
+
+def build_lightning(args: argparse.Namespace, palette: dict, rng: random.Random, fx: bpy.types.Collection) -> None:
+    """Zapdos style: branching bolts shooting out of the subject, short arcs crawling around it, sparks at the tips."""
+    frame_w, frame_h = frame_size_units(args)
+    reach = math.hypot(frame_w, frame_h) / 2.0
+    direction = fx_direction(args, rng)
+    spread = math.radians(args.fx_spread)
+    colors = [color for color in palette.get("beams", palette["shards"]) if color.lower() != "#ffffff"] or palette["shards"]
+    core = emission_material("HoloBoltCore", "#ffffff", 14.0)
+    # the halo carries the colour (violet for Zapdos); the core stays white-hot
+    halos = [glow_material(f"HoloBoltHalo{i}", color, 3.0, 0.5) for i, color in enumerate(colors)]
+    spark_material = emission_material("HoloSpark", palette["sparkle"], 16.0)
+
+    bolt_count = max(args.shards // 4, 4)
+    for index in range(bolt_count):
+        # main bolts leave the subject along the motion direction, a couple go the other way
+        heading = direction + rng.uniform(-spread, spread) + (math.pi if index % 3 == 2 else 0.0)
+        start_radius = rng.uniform(0.12, 0.3)
+        start = (math.cos(heading) * start_radius, math.sin(heading) * start_radius)
+        z = rng.uniform(0.6, 1.1)
+        points = bolt_points(rng, start, heading, rng.uniform(0.45, 0.95) * reach, z)
+        halo = halos[index % len(halos)]
+        width = rng.uniform(0.002, 0.0034)
+        build_bolt(f"HoloBolt.{index:03d}", rng, points, width, core, halo, fx)
+        # branches split off part-way and wander off at an angle
+        for branch in range(rng.randint(1, 3)):
+            at = rng.randint(2, max(2, len(points) - 3))
+            bx, by, bz = points[at]
+            side = rng.choice((-1.0, 1.0))
+            branch_points = bolt_points(rng, (bx, by), heading + side * rng.uniform(0.5, 1.1), rng.uniform(0.15, 0.4) * reach, bz, jitter=0.9)
+            build_bolt(f"HoloBolt.{index:03d}.{branch}", rng, branch_points, width * 0.6, core, halo, fx)
+        # a spark where the bolt ends
+        tx, ty, tz = points[-1]
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=rng.uniform(0.004, 0.008), location=(tx, ty, tz))
+        spark = bpy.context.active_object
+        spark.name = f"HoloSpark.{index:03d}"
+        spark.data.materials.append(spark_material)
+        link_to(spark, fx)
+
+    # short arcs crawl around the subject's silhouette like static
+    for index in range(max(args.shards // 3, 5)):
+        angle = rng.uniform(0.0, 2.0 * math.pi)
+        radius = rng.uniform(0.28, 0.46)
+        start = (math.cos(angle) * radius, math.sin(angle) * radius)
+        heading = angle + math.pi / 2.0 * rng.choice((-1.0, 1.0))
+        points = bolt_points(rng, start, heading, rng.uniform(0.08, 0.2), rng.uniform(0.5, 1.0), jitter=0.9)
+        build_bolt(f"HoloArc.{index:03d}", rng, points, rng.uniform(0.0008, 0.0016), core, rng.choice(halos), fx)
+
+    # loose sparks drifting along the direction
+    for index in range(args.shards):
+        x, y, _ = along_direction(rng, direction, spread * 2.0, reach, near=0.2, far=0.95, back_chance=0.4)
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=rng.uniform(0.002, 0.005), location=(x, y, rng.uniform(0.4, 1.1)))
+        spark = bpy.context.active_object
+        spark.name = f"HoloDust.{index:03d}"
+        spark.data.materials.append(spark_material)
+        link_to(spark, fx)
+
+
+def build_energy(args: argparse.Namespace, palette: dict, rng: random.Random, fx: bpy.types.Collection) -> None:
+    """Mewtwo style: glowing orbit rings around the subject (open at the back so they read as passing behind it), orbs and dust."""
+    frame_w, frame_h = frame_size_units(args)
+    reach = math.hypot(frame_w, frame_h) / 2.0
+    direction = fx_direction(args, rng)
+    colors = palette.get("beams", palette["shards"])
+    cores = [emission_material(f"HoloRingCore{i}", color, 9.0) for i, color in enumerate(colors)]
+    halos = [glow_material(f"HoloRingHalo{i}", color, 2.5, 0.5) for i, color in enumerate(colors)]
+    orb_material = glass_material("HoloOrb", palette.get("crystal", colors[0]))
+    dust_material = emission_material("HoloDust", palette["sparkle"], 12.0)
+
+    ring_count = 3
+    for index in range(ring_count):
+        # an ellipse in the XY plane: a tilted circle seen from the front, rotated to the motion direction
+        rx = rng.uniform(0.42, 0.62)
+        ry = rx * rng.uniform(0.18, 0.4)
+        tilt = direction + rng.uniform(-0.5, 0.5)
+        z = rng.uniform(0.5, 1.0)
+        # open arc: the far side would pass behind the subject, so it is left out
+        gap = rng.uniform(1.6, 2.4)
+        phase = rng.uniform(0.0, 2.0 * math.pi)
+        steps = 48
+        points = []
+        radii = []
+        for step in range(steps + 1):
+            t = step / steps
+            theta = phase + gap / 2.0 + t * (2.0 * math.pi - gap)
+            ex, ey = math.cos(theta) * rx, math.sin(theta) * ry
+            points.append((ex * math.cos(tilt) - ey * math.sin(tilt), ex * math.sin(tilt) + ey * math.cos(tilt), z + rng.uniform(-0.004, 0.004)))
+            radii.append(0.35 + 0.65 * math.sin(t * math.pi))
+        width = rng.uniform(0.004, 0.007)
+        tube_from_points(f"HoloRing.{index:02d}.core", points, radii, width, cores[index % len(cores)], fx)
+        tube_from_points(f"HoloRing.{index:02d}.halo", points, radii, width * 3.0, halos[index % len(halos)], fx)
+        # dust riding on the ring
+        for grain in range(10):
+            px, py, pz = rng.choice(points)
+            bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=rng.uniform(0.003, 0.009), location=(px + rng.uniform(-0.03, 0.03), py + rng.uniform(-0.03, 0.03), pz + 0.05))
+            grain_obj = bpy.context.active_object
+            grain_obj.name = f"HoloRingDust.{index:02d}.{grain:02d}"
+            grain_obj.data.materials.append(dust_material)
+            link_to(grain_obj, fx)
+
+    for index in range(max(args.shards // 3, 5)):
+        x, y, _ = along_direction(rng, direction, math.radians(args.fx_spread) * 2.0, reach, near=0.35, far=0.95, back_chance=0.5)
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=3, radius=rng.uniform(0.02, 0.06), location=(x, y, rng.uniform(0.4, 1.1)))
+        orb = bpy.context.active_object
+        orb.name = f"HoloOrb.{index:03d}"
+        orb.data.materials.append(orb_material)
+        bpy.ops.object.shade_smooth()
+        link_to(orb, fx)
+
+
 def build_effects(args: argparse.Namespace, palette: dict, rng: random.Random) -> None:
     fx = get_collection("fx")
     clear_collection(fx)
@@ -726,6 +898,14 @@ def build_effects(args: argparse.Namespace, palette: dict, rng: random.Random) -
     sparkle_material = emission_material("HoloSparkle", palette["sparkle"], 9.0)
     if args.fx == "burst":
         build_burst(args, palette, rng, fx)
+        build_sparkles(args, palette, rng, fx, sparkle_material)
+        return
+    if args.fx == "lightning":
+        build_lightning(args, palette, rng, fx)
+        build_sparkles(args, palette, rng, fx, sparkle_material)
+        return
+    if args.fx == "energy":
+        build_energy(args, palette, rng, fx)
         build_sparkles(args, palette, rng, fx, sparkle_material)
         return
     shard_materials = [fade_emission_material(f"HoloShard{i}", color, 4.5, "Y", 0.12) for i, color in enumerate(palette["shards"])]
@@ -962,20 +1142,25 @@ def render_variant(args: argparse.Namespace, out_dir: str, palette_name: str, se
             raise SystemExit(f"missing collection `{name}` (expected `bg`, `subject`, `fx`)")
     near, far = depth_range(camera, ["bg", "subject"])
     base = os.path.join(out_dir, args.name)
+    wanted = {name.strip() for name in args.passes.split(",")}
     passes = (
-        (f"{base}.png", {"bg": True, "subject": True}, False),
-        (f"{base}-fg.png", {"subject": True}, True),
-        (f"{base}-fx.png", {"fx": True}, True),
+        ("photo", f"{base}.png", {"bg": True, "subject": True}, False),
+        ("fg", f"{base}-fg.png", {"subject": True}, True),
+        ("fx", f"{base}-fx.png", {"fx": True}, True),
     )
-    for path, visible, transparent in passes:
+    for key, path, visible, transparent in passes:
+        if key not in wanted:
+            log(f"keep {os.path.basename(path)}")
+            continue
         log(f"render {os.path.basename(path)}")
         render_pass(path, visible, transparent, False)
-    log(f"render {args.name}-depth.png")
-    restore = apply_depth_materials(near, far, ["bg", "subject"])
-    try:
-        render_pass(f"{base}-depth.png", {"bg": True, "subject": True}, False, True)
-    finally:
-        restore()
+    if "depth" in wanted:
+        log(f"render {args.name}-depth.png")
+        restore = apply_depth_materials(near, far, ["bg", "subject"])
+        try:
+            render_pass(f"{base}-depth.png", {"bg": True, "subject": True}, False, True)
+        finally:
+            restore()
     grow = 1.0 + 2.0 * args.overscan
     manifest = {
         "name": args.name,

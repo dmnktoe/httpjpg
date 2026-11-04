@@ -1,7 +1,7 @@
 {
   "name": "outlet-electric",
   "palette": "electric",
-  "fx": "burst",
+  "fx": "lightning",
   "foregroundFrame": "overhang",
   "seed": 7,
   "card": {
@@ -36,7 +36,7 @@
     },
     "effects": {
       "file": "outlet-electric-fx.webp",
-      "bytes": 128702
+      "bytes": 130566
     },
     "depth": {
       "file": "outlet-electric-depth.webp",

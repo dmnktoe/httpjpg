@@ -107,6 +107,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--out", required=True, help="output directory (one sub-folder per variant)")
     parser.add_argument("--name", default="card", help="base file name")
     parser.add_argument("--model", help="glTF/GLB, FBX or OBJ to use as the subject (template scene only)")
+    parser.add_argument("--image", help="cut-out photo (PNG/WebP with alpha) to use as a flat subject instead of a model")
     parser.add_argument("--palette", default="psychic", help="palette name or `all`")
     parser.add_argument("--variants", type=int, default=1, help="how many variants to render")
     parser.add_argument("--seed", type=int, default=7)
@@ -115,8 +116,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--overscan", type=float, default=0.18, help="frame overhang per side, fraction of the card")
     parser.add_argument("--samples", type=int, default=64)
     parser.add_argument("--engine", choices=("eevee", "cycles"), default="eevee")
-    parser.add_argument("--shards", type=int, default=28)
-    parser.add_argument("--sparkles", type=int, default=18)
+    parser.add_argument("--shards", type=int, default=20, help="scatter density; burst uses about a third of it per element")
+    parser.add_argument("--sparkles", type=int, default=10)
     parser.add_argument(
         "--fx",
         choices=("shards", "burst"),
@@ -250,6 +251,25 @@ def fade_emission_material(name: str, color: str, strength: float, axis: str, ex
     links.new(transparent.outputs["BSDF"], mix.inputs[1])
     links.new(emission.outputs["Emission"], mix.inputs[2])
     links.new(mix.outputs["Shader"], output.inputs["Surface"])
+    return material
+
+
+def image_plane_material(name: str, image: bpy.types.Image) -> bpy.types.Material:
+    """A cut-out photo: its own colours as emission, its alpha as transparency."""
+    material, tree = new_material(name)
+    texture = tree.nodes.new("ShaderNodeTexImage")
+    texture.image = image
+    texture.interpolation = "Cubic"
+    emission = tree.nodes.new("ShaderNodeEmission")
+    emission.inputs["Strength"].default_value = 1.0
+    transparent = tree.nodes.new("ShaderNodeBsdfTransparent")
+    mix = tree.nodes.new("ShaderNodeMixShader")
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    tree.links.new(texture.outputs["Color"], emission.inputs["Color"])
+    tree.links.new(texture.outputs["Alpha"], mix.inputs["Fac"])
+    tree.links.new(transparent.outputs["BSDF"], mix.inputs[1])
+    tree.links.new(emission.outputs["Emission"], mix.inputs[2])
+    tree.links.new(mix.outputs["Shader"], output.inputs["Surface"])
     return material
 
 
@@ -478,6 +498,21 @@ def fit_subject(objects: list[bpy.types.Object], target_width: float) -> None:
 def build_subject(args: argparse.Namespace, palette: dict) -> None:
     subject = get_collection("subject")
     clear_collection(subject)
+    if args.image:
+        path = os.path.abspath(args.image)
+        log(f"using cut-out {path} as the subject")
+        image = bpy.data.images.load(path)
+        image.alpha_mode = "STRAIGHT"
+        aspect = image.size[1] / max(image.size[0], 1)
+        bpy.ops.mesh.primitive_plane_add(size=1.0, location=(0.0, 0.0, 0.0))
+        plane = bpy.context.active_object
+        plane.name = "HoloImageSubject"
+        width = 0.8
+        plane.scale = (width, width * aspect, 1.0)
+        plane.data.materials.append(image_plane_material("HoloImageSubject", image))
+        plane["holo_alpha_image"] = image.name
+        link_to(plane, subject)
+        return
     if args.model:
         log(f"importing {args.model}")
         objects = import_model(os.path.abspath(args.model))
@@ -577,11 +612,13 @@ def build_burst(args: argparse.Namespace, palette: dict, rng: random.Random, fx:
     crystal_material = glass_material("HoloCrystal", palette.get("crystal", "#cdb4ff"))
     reach = math.hypot(frame_w, frame_h) / 2.0
 
-    for index in range(max(args.shards // 2, 10)):
-        angle = rng.uniform(0.0, 2.0 * math.pi)
-        length = rng.uniform(0.35, 0.75) * reach
-        width = rng.uniform(0.05, 0.14)
-        start = rng.uniform(0.18, 0.45)
+    wedge_count = max(args.shards // 3, 5)
+    for index in range(wedge_count):
+        # spread the wedges around the ring instead of leaving it to chance
+        angle = (index + rng.uniform(0.1, 0.9)) * (2.0 * math.pi / wedge_count)
+        length = rng.uniform(0.4, 0.8) * reach
+        width = rng.uniform(0.07, 0.16)
+        start = rng.uniform(0.3, 0.5)
         cx, cy = math.cos(angle) * (start + length / 2.0), math.sin(angle) * (start + length / 2.0)
         bpy.ops.mesh.primitive_cone_add(vertices=3, radius1=width, radius2=0.0, depth=0.004, location=(cx, cy, rng.uniform(0.5, 1.0)))
         wedge = bpy.context.active_object
@@ -591,9 +628,9 @@ def build_burst(args: argparse.Namespace, palette: dict, rng: random.Random, fx:
         wedge.data.materials.append(wedge_materials[index % len(wedge_materials)])
         link_to(wedge, fx)
 
-    for index in range(args.shards):
-        x, y = random_in_frame(rng, frame_w, frame_h, 0.2)
-        size = rng.uniform(0.02, 0.06)
+    for index in range(max(args.shards // 2, 6)):
+        x, y = random_in_frame(rng, frame_w, frame_h, 0.32)
+        size = rng.uniform(0.025, 0.07)
         bpy.ops.mesh.primitive_cone_add(vertices=6, radius1=size, radius2=size * 0.45, depth=size * rng.uniform(2.5, 4.5), location=(x, y, rng.uniform(0.3, 1.2)))
         crystal = bpy.context.active_object
         crystal.name = f"HoloCrystal.{index:03d}"
@@ -602,10 +639,10 @@ def build_burst(args: argparse.Namespace, palette: dict, rng: random.Random, fx:
         bpy.ops.object.shade_smooth()
         link_to(crystal, fx)
 
-    for index in range(max(args.shards // 2, 10)):
+    for index in range(max(args.shards // 4, 4)):
         angle = rng.uniform(0.0, 2.0 * math.pi)
         length = rng.uniform(0.3, 0.9) * reach
-        start = rng.uniform(0.15, 0.5)
+        start = rng.uniform(0.3, 0.6)
         cx, cy = math.cos(angle) * (start + length / 2.0), math.sin(angle) * (start + length / 2.0)
         bpy.ops.mesh.primitive_cube_add(size=1.0, location=(cx, cy, rng.uniform(0.4, 0.9)))
         beam = bpy.context.active_object
@@ -629,7 +666,7 @@ def build_effects(args: argparse.Namespace, palette: dict, rng: random.Random) -
     debris_material = anisotropic_material("HoloDebris", "#9a9ca6")
 
     for index in range(args.shards):
-        x, y = random_in_frame(rng, frame_w, frame_h, 0.22)
+        x, y = random_in_frame(rng, frame_w, frame_h, 0.3)
         size = rng.uniform(0.04, 0.16)
         bpy.ops.mesh.primitive_cone_add(vertices=3, radius1=size, radius2=0.0, depth=size * 0.12, location=(x, y, rng.uniform(0.25, 1.2)))
         shard = bpy.context.active_object
@@ -698,6 +735,51 @@ def depth_material(near: float, far: float) -> bpy.types.Material:
     return material
 
 
+def depth_alpha_material(near: float, far: float, image: bpy.types.Image) -> bpy.types.Material:
+    """Depth for a cut-out plane: transparent where the photo is transparent."""
+    material = depth_material(near, far)
+    material.name = f"HoloDepthAlpha.{image.name}"
+    tree = material.node_tree
+    output = next(node for node in tree.nodes if node.type == "OUTPUT_MATERIAL")
+    emission = next(node for node in tree.nodes if node.type == "EMISSION")
+    texture = tree.nodes.new("ShaderNodeTexImage")
+    texture.image = image
+    transparent = tree.nodes.new("ShaderNodeBsdfTransparent")
+    mix = tree.nodes.new("ShaderNodeMixShader")
+    tree.links.new(texture.outputs["Alpha"], mix.inputs["Fac"])
+    tree.links.new(transparent.outputs["BSDF"], mix.inputs[1])
+    tree.links.new(emission.outputs["Emission"], mix.inputs[2])
+    tree.links.new(mix.outputs["Shader"], output.inputs["Surface"])
+    return material
+
+
+def apply_depth_materials(near: float, far: float, collections: list[str]):
+    """Swap every mesh material in `collections` for a depth material; returns a restore function."""
+    plain = depth_material(near, far)
+    saved: list[tuple[bpy.types.Object, list[bpy.types.Material | None]]] = []
+    for name in collections:
+        collection = bpy.data.collections.get(name)
+        if collection is None:
+            continue
+        for obj in collection.all_objects:
+            if obj.type != "MESH":
+                continue
+            saved.append((obj, [slot.material for slot in obj.material_slots]))
+            image_name = obj.get("holo_alpha_image")
+            replacement = depth_alpha_material(near, far, bpy.data.images[image_name]) if image_name else plain
+            if not obj.material_slots:
+                obj.data.materials.append(replacement)
+            for slot in obj.material_slots:
+                slot.material = replacement
+
+    def restore() -> None:
+        for obj, materials in saved:
+            for slot, material in zip(obj.material_slots, materials):
+                slot.material = material
+
+    return restore
+
+
 def depth_range(camera: bpy.types.Object, collections: list[str]) -> tuple[float, float]:
     """Nearest and farthest bounding-box corner along the camera's view axis."""
     bpy.context.view_layer.update()
@@ -747,14 +829,13 @@ def configure_render(args: argparse.Namespace) -> str:
     return engine
 
 
-def render_pass(path: str, visible: dict[str, bool], transparent: bool, override: bpy.types.Material | None, depth16: bool) -> None:
+def render_pass(path: str, visible: dict[str, bool], transparent: bool, depth16: bool) -> None:
     scene = bpy.context.scene
     for name in LAYERS:
         collection = bpy.data.collections.get(name)
         if collection is not None:
             collection.hide_render = not visible.get(name, False)
     scene.render.film_transparent = transparent
-    bpy.context.view_layer.material_override = override
     settings = scene.render.image_settings
     if depth16:
         settings.color_mode = "BW"
@@ -764,7 +845,6 @@ def render_pass(path: str, visible: dict[str, bool], transparent: bool, override
         settings.color_depth = "8"
     scene.render.filepath = path
     bpy.ops.render.render(write_still=True)
-    bpy.context.view_layer.material_override = None
 
 
 def render_variant(args: argparse.Namespace, out_dir: str, palette_name: str, seed: int, engine: str) -> dict:
@@ -778,14 +858,19 @@ def render_variant(args: argparse.Namespace, out_dir: str, palette_name: str, se
     near, far = depth_range(camera, ["bg", "subject"])
     base = os.path.join(out_dir, args.name)
     passes = (
-        (f"{base}.png", {"bg": True, "subject": True}, False, None, False),
-        (f"{base}-fg.png", {"subject": True}, True, None, False),
-        (f"{base}-fx.png", {"fx": True}, True, None, False),
-        (f"{base}-depth.png", {"bg": True, "subject": True}, False, depth_material(near, far), True),
+        (f"{base}.png", {"bg": True, "subject": True}, False),
+        (f"{base}-fg.png", {"subject": True}, True),
+        (f"{base}-fx.png", {"fx": True}, True),
     )
-    for path, visible, transparent, override, depth16 in passes:
+    for path, visible, transparent in passes:
         log(f"render {os.path.basename(path)}")
-        render_pass(path, visible, transparent, override, depth16)
+        render_pass(path, visible, transparent, False)
+    log(f"render {args.name}-depth.png")
+    restore = apply_depth_materials(near, far, ["bg", "subject"])
+    try:
+        render_pass(f"{base}-depth.png", {"bg": True, "subject": True}, False, True)
+    finally:
+        restore()
     grow = 1.0 + 2.0 * args.overscan
     manifest = {
         "name": args.name,

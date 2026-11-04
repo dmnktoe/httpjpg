@@ -1,6 +1,7 @@
 {
   "name": "card",
   "palette": "psychic",
+  "fx": "shards",
   "seed": 7,
   "card": {
     "width": 1000,
@@ -12,8 +13,8 @@
   },
   "overscan": 0.18,
   "depthRange": {
-    "near": 5.540833868026733,
-    "far": 7.539395414352417
+    "near": 5.578897003173828,
+    "far": 7.538649078369141
   },
   "engine": "CYCLES",
   "blender": "5.0.1",
@@ -26,19 +27,19 @@
   "webp": {
     "photo": {
       "file": "card.webp",
-      "bytes": 51564
+      "bytes": 68126
     },
     "foreground": {
       "file": "card-fg.webp",
-      "bytes": 25018
+      "bytes": 87712
     },
     "effects": {
       "file": "card-fx.webp",
-      "bytes": 55918
+      "bytes": 182850
     },
     "depth": {
       "file": "card-depth.webp",
-      "bytes": 30294
+      "bytes": 46754
     }
   }
 }

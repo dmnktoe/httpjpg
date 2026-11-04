@@ -12,6 +12,9 @@ pnpm holo:render --name gameboy --model ~/models/gameboy.glb --palette all --pub
 # three variants of one palette (different seeds), Cycles instead of EEVEE
 pnpm holo:render --name mew --model mew.glb --palette psychic --variants 3 --engine cycles --samples 128
 
+# a cut-out photo as the subject instead of a model (PNG/WebP with alpha)
+pnpm holo:render --name cryo --image cryo-fg.webp --palette water --fx burst
+
 # your own scene: collections `bg`, `subject`, `fx` + a camera
 pnpm holo:render --name steelix --blend ~/cards/steelix.blend
 ```
@@ -46,7 +49,8 @@ Without `--blend`, `render_card.py` builds the scene itself:
 - `bg`: emissive plane at `z = -1.5` with a palette gradient, light streaks
   (wave texture) and bokeh (voronoi)
 - `subject`: your `--model` (glTF/GLB, FBX, OBJ), centred and scaled to 0.62
-  units, or a chrome torus placeholder
+  units; or `--image`, a cut-out photo on an emissive plane whose alpha also
+  shapes the depth map; or a faceted gem in brushed rings as the placeholder
 - `fx`: emissive triangular shards, grey debris and crossed-sliver sparkles,
   scattered across the whole frame at `z = 0.2 … 1.2`, i.e. in front of the subject
 - key, rim (palette accent) and fill area lights, dark world
@@ -71,8 +75,9 @@ subject. Palettes and variants do not apply to your own materials.
 ## Pipeline notes
 
 - Layers are isolated by toggling `Collection.hide_render`; no view-layer
-  juggling, no compositor. Depth is a `material_override` that emits
-  `View Z Depth` through a Map Range, rendered as 16-bit greyscale.
+  juggling, no compositor. For the depth pass every material is swapped for
+  one that emits `View Z Depth` through a Map Range (cut-out planes keep their
+  alpha), rendered as 16-bit greyscale, then restored.
 - Colour management is `Standard`: the holo shader adds the look, the render
   stays neutral.
 - `render-card.mjs` crops with `sharp` (from the portfolio app). Without it the

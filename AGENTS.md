@@ -299,7 +299,7 @@ Trading-card foil (Pokémon-TCG-Pocket style) for a single image, as the `holo_i
 
 ### Holo card assets from Blender
 
-`pnpm holo:render --name x --model x.glb --palette all --publish` → `tools/blender/render_card.py` (bpy, headless, Blender 4.2 – 5.x) renders photo, cut-out, effects and depth from one camera, `render-card.mjs` crops to the card with `sharp`, writes WebPs + manifest and can copy them to `public/images/holo/<variant>/`. `--fx shards` (Mew) or `--fx burst` (Scherox wedges, crystals, beams, radial rays); palettes incl. `scherox`. The wrapper adds a bloom pass (`--no-glow` to skip). Own scenes work with collections `bg` / `subject` / `fx`. Layers are isolated with `hide_render`, depth via `material_override`, no compositor (its API moved in 5.0). Overscan must match `OVERSCAN`. See `tools/blender/README.md`.
+`pnpm holo:render --name x --model x.glb --palette all --publish` → `tools/blender/render_card.py` (bpy, headless, Blender 4.2 – 5.x) renders photo, cut-out, effects and depth from one camera, `render-card.mjs` crops to the card with `sharp`, writes WebPs + manifest and can copy them to `public/images/holo/<variant>/`. `--fx shards` (Mew) or `--fx burst` (Scherox wedges, crystals, beams, radial rays); palettes incl. `scherox`. The wrapper adds a bloom pass (`--no-glow` to skip). Subject: `--model` (glTF/FBX/OBJ), `--image` (cut-out photo on a plane, alpha also shapes the depth map) or the gem placeholder. Own scenes work with collections `bg` / `subject` / `fx`. Layers are isolated with `hide_render`, depth by swapping materials per pass, no compositor (its API moved in 5.0). Overscan must match `OVERSCAN`. See `tools/blender/README.md`.
 
 ## Device frames
 

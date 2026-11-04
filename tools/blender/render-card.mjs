@@ -27,6 +27,7 @@ const PUBLIC_DIR = path.join(repoRoot, "apps/portfolio/public/images/holo");
 const PY_FLAGS = new Set([
   "name",
   "model",
+  "image",
   "palette",
   "variants",
   "seed",
@@ -191,7 +192,7 @@ async function convertVariant(sharp, dir, manifest, glow = true) {
     outputs[kind] = { file: target, bytes: size };
   }
   const next = { ...manifest, webp: outputs };
-  await writeFile(path.join(dir, `${manifest.name}.json`), JSON.stringify(next, null, 2));
+  await writeFile(path.join(dir, `${manifest.name}.json`), `${JSON.stringify(next, null, 2)}\n`);
   return next;
 }
 

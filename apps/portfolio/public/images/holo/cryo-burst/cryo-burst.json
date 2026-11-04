@@ -1,0 +1,45 @@
+{
+  "name": "cryo-burst",
+  "palette": "water",
+  "fx": "burst",
+  "seed": 7,
+  "card": {
+    "width": 1000,
+    "height": 1400
+  },
+  "frame": {
+    "width": 1360,
+    "height": 1904
+  },
+  "overscan": 0.18,
+  "depthRange": {
+    "near": 5.969,
+    "far": 7.531
+  },
+  "engine": "CYCLES",
+  "blender": "5.0.1",
+  "files": {
+    "photo": "cryo-burst.png",
+    "foreground": "cryo-burst-fg.png",
+    "effects": "cryo-burst-fx.png",
+    "depth": "cryo-burst-depth.png"
+  },
+  "webp": {
+    "photo": {
+      "file": "cryo-burst.webp",
+      "bytes": 98536
+    },
+    "foreground": {
+      "file": "cryo-burst-fg.webp",
+      "bytes": 108132
+    },
+    "effects": {
+      "file": "cryo-burst-fx.webp",
+      "bytes": 207568
+    },
+    "depth": {
+      "file": "cryo-burst-depth.webp",
+      "bytes": 37896
+    }
+  }
+}

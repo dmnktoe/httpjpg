@@ -247,6 +247,36 @@ export const BlenderBurst: Story = {
   ),
 };
 
+/**
+ * A cut-out photo as the Blender subject (`--image`): the portfolio's own
+ * CRYONiQ shot gets the water palette, burst effects and a depth map that
+ * respects the cut-out's alpha.
+ */
+export const BlenderCutOut: Story = {
+  name: "Blender pipeline (photo cut-out subject)",
+  args: {
+    src: "/images/holo/cryo-burst/cryo-burst.webp",
+    foregroundSrc: "/images/holo/cryo-burst/cryo-burst-fg.webp",
+    effectsSrc: "/images/holo/cryo-burst/cryo-burst-fx.webp",
+    depthSrc: "/images/holo/cryo-burst/cryo-burst-depth.webp",
+    alt: "CRYONiQ cryosauna over radial rays, cyan wedges and ice crystals bursting out of the card",
+    variant: "card",
+    aspectRatio: "5/7",
+    intensity: 0.75,
+    maxTilt: 20,
+    depth: 1.4,
+    foil: "silver",
+    sparkle: "fireworks",
+    idle: true,
+    gyro: true,
+  },
+  render: (args) => (
+    <Box css={{ maxW: "360px", mx: "auto", py: 8 }}>
+      <HoloCard {...args} />
+    </Box>
+  ),
+};
+
 export const Disc: Story = {
   args: {
     src: OPTIMIZED_IMAGES.outletStore1,

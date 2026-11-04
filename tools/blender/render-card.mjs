@@ -37,10 +37,19 @@ const PY_FLAGS = new Set([
   "engine",
   "shards",
   "sparkles",
+  "fx",
 ]);
 
 export function parseArgs(argv) {
-  const options = { name: "card", out: "", blend: "", blender: "", publish: false, python: {} };
+  const options = {
+    name: "card",
+    out: "",
+    blend: "",
+    blender: "",
+    publish: false,
+    glow: true,
+    python: {},
+  };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (!arg.startsWith("--")) {
@@ -49,6 +58,10 @@ export function parseArgs(argv) {
     const key = arg.slice(2);
     if (key === "publish") {
       options.publish = true;
+      continue;
+    }
+    if (key === "no-glow") {
+      options.glow = false;
       continue;
     }
     const value = argv[i + 1];
@@ -134,7 +147,22 @@ export function cardRegion(manifest) {
   return { left, top, width: manifest.card.width, height: manifest.card.height };
 }
 
-async function convertVariant(sharp, dir, manifest) {
+/**
+ * Soft bloom in post: a blurred, brightened copy screened over the layer. Cycles
+ * has no bloom and EEVEE's moved to the compositor, so it lives here; the alpha
+ * blurs too, which gives shards a halo past their edges.
+ */
+async function withGlow(sharp, image, sigma) {
+  const base = await image.png().toBuffer();
+  const glow = await sharp(base)
+    .blur(sigma)
+    .linear([1.9, 1.9, 1.9, 0.55], [-140, -140, -140, 0])
+    .png()
+    .toBuffer();
+  return sharp(base).composite([{ input: glow, blend: "screen" }]);
+}
+
+async function convertVariant(sharp, dir, manifest, glow = true) {
   const region = cardRegion(manifest);
   const outputs = {};
   const jobs = [
@@ -155,6 +183,8 @@ async function convertVariant(sharp, dir, manifest) {
     }
     if (kind === "depth") {
       image = image.toColourspace("b-w");
+    } else if (glow && kind !== "foreground") {
+      image = await withGlow(sharp, image, kind === "effects" ? 9 : 14);
     }
     await image.webp(webp).toFile(path.join(dir, target));
     const { size } = await stat(path.join(dir, target));
@@ -223,7 +253,7 @@ async function main() {
       console.warn(`[holo] no folder for variant ${manifest.palette}`);
       continue;
     }
-    const converted = await convertVariant(sharp, dir, manifest);
+    const converted = await convertVariant(sharp, dir, manifest, options.glow);
     const published = options.publish ? await publishVariant(dir, converted) : "";
     rows.push({
       variant: path.basename(dir),

@@ -52,8 +52,13 @@ Without `--blend`, `render_card.py` builds the scene itself:
 - key, rim (palette accent) and fill area lights, dark world
 
 Palettes: `psychic` (Mew), `fire` (Team Rocket), `steel` (Steelix), `water`,
-`grass`, `dark`. Add one in `PALETTES` in `render_card.py`. `--variants N`
-cycles through the chosen palettes with `--seed + i`.
+`grass`, `dark`, `scherox`. Add one in `PALETTES` in `render_card.py`.
+`--variants N` cycles through the chosen palettes with `--seed + i`.
+
+Effect styles (`--fx`): `shards` (default) scatters small emissive triangles,
+debris and sparkles like the Mew card; `burst` shoots big flat orange / blue
+wedges, glass crystals and thin beams out of the centre over a backdrop of
+radial rays, like Mega-Scherox. Pair `burst` with the `scherox` palette.
 
 ## Your own scene
 

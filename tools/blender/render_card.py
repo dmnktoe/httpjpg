@@ -85,6 +85,17 @@ PALETTES = {
         "shards": ("#b48cff", "#ff4fd8", "#ffffff"),
         "sparkle": "#ffffff",
     },
+    # Mega-Scherox: black with green rays, orange / blue wedges, violet crystals
+    "scherox": {
+        "bg": ("#050506", "#10141a", "#1f262e", "#3b454f"),
+        "streak": "#39ff8a",
+        "accent": "#ff5a1a",
+        "shards": ("#ff6a1a", "#1c5cff", "#e8d9ff"),
+        "wedges": ("#ff6a1a", "#1c5cff"),
+        "beams": ("#ff2d2d", "#ff9a1a", "#39ff8a"),
+        "crystal": "#cdb4ff",
+        "sparkle": "#ffffff",
+    },
 }
 
 
@@ -106,6 +117,12 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--engine", choices=("eevee", "cycles"), default="eevee")
     parser.add_argument("--shards", type=int, default=28)
     parser.add_argument("--sparkles", type=int, default=18)
+    parser.add_argument(
+        "--fx",
+        choices=("shards", "burst"),
+        default="shards",
+        help="shards: small emissive triangles (Mew); burst: big flat wedges, glass crystals and beams from the centre (Scherox)",
+    )
     return parser.parse_args(argv)
 
 
@@ -182,6 +199,90 @@ def emission_material(name: str, color: str, strength: float) -> bpy.types.Mater
     return material
 
 
+def glass_material(name: str, color: str) -> bpy.types.Material:
+    material, tree = new_material(name)
+    bsdf = tree.nodes.new("ShaderNodeBsdfPrincipled")
+    bsdf.inputs["Base Color"].default_value = hex_to_rgb(color)
+    bsdf.inputs["Roughness"].default_value = 0.08
+    bsdf.inputs["IOR"].default_value = 1.5
+    bsdf.inputs["Transmission Weight"].default_value = 1.0
+    bsdf.inputs["Emission Color"].default_value = hex_to_rgb(color)
+    bsdf.inputs["Emission Strength"].default_value = 0.6
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    tree.links.new(bsdf.outputs["BSDF"], output.inputs["Surface"])
+    return material
+
+
+def fade_emission_material(name: str, color: str, strength: float, axis: str, extent: float) -> bpy.types.Material:
+    """Emission that is white-hot in the core and fades to a translucent tint toward the tips."""
+    material, tree = new_material(name)
+    coords = tree.nodes.new("ShaderNodeTexCoord")
+    split = tree.nodes.new("ShaderNodeSeparateXYZ")
+    absolute = tree.nodes.new("ShaderNodeMath")
+    absolute.operation = "ABSOLUTE"
+    remap = tree.nodes.new("ShaderNodeMapRange")
+    remap.inputs["From Min"].default_value = 0.0
+    remap.inputs["From Max"].default_value = extent
+    remap.clamp = True
+    tint = tree.nodes.new("ShaderNodeValToRGB")
+    tint.color_ramp.elements[0].position = 0.0
+    tint.color_ramp.elements[0].color = (1.0, 1.0, 1.0, 1.0)
+    tint.color_ramp.elements[1].position = 0.14
+    tint.color_ramp.elements[1].color = hex_to_rgb(color)
+    alpha = tree.nodes.new("ShaderNodeValToRGB")
+    alpha.color_ramp.elements[0].position = 0.35
+    alpha.color_ramp.elements[0].color = (1.0, 1.0, 1.0, 1.0)
+    alpha.color_ramp.elements[1].position = 1.0
+    alpha.color_ramp.elements[1].color = (0.18, 0.18, 0.18, 1.0)
+    emission = tree.nodes.new("ShaderNodeEmission")
+    emission.inputs["Strength"].default_value = strength
+    transparent = tree.nodes.new("ShaderNodeBsdfTransparent")
+    mix = tree.nodes.new("ShaderNodeMixShader")
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    links = tree.links
+    links.new(coords.outputs["Object"], split.inputs["Vector"])
+    links.new(split.outputs[axis], absolute.inputs[0])
+    links.new(absolute.outputs["Value"], remap.inputs["Value"])
+    links.new(remap.outputs["Result"], tint.inputs["Fac"])
+    links.new(remap.outputs["Result"], alpha.inputs["Fac"])
+    links.new(tint.outputs["Color"], emission.inputs["Color"])
+    links.new(alpha.outputs["Color"], mix.inputs["Fac"])
+    links.new(transparent.outputs["BSDF"], mix.inputs[1])
+    links.new(emission.outputs["Emission"], mix.inputs[2])
+    links.new(mix.outputs["Shader"], output.inputs["Surface"])
+    return material
+
+
+def anisotropic_material(name: str, color: str) -> bpy.types.Material:
+    """Brushed metal: tight anisotropic highlight, reads as machined rather than plastic."""
+    material, tree = new_material(name)
+    bsdf = tree.nodes.new("ShaderNodeBsdfPrincipled")
+    bsdf.inputs["Base Color"].default_value = hex_to_rgb(color)
+    bsdf.inputs["Metallic"].default_value = 1.0
+    bsdf.inputs["Roughness"].default_value = 0.22
+    bsdf.inputs["Anisotropic"].default_value = 0.85
+    bsdf.inputs["Anisotropic Rotation"].default_value = 0.25
+    bsdf.inputs["Coat Weight"].default_value = 0.4
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    tree.links.new(bsdf.outputs["BSDF"], output.inputs["Surface"])
+    return material
+
+
+def gem_material(name: str, color: str) -> bpy.types.Material:
+    material, tree = new_material(name)
+    bsdf = tree.nodes.new("ShaderNodeBsdfPrincipled")
+    bsdf.inputs["Base Color"].default_value = hex_to_rgb(color)
+    bsdf.inputs["Roughness"].default_value = 0.02
+    bsdf.inputs["IOR"].default_value = 2.3
+    bsdf.inputs["Transmission Weight"].default_value = 1.0
+    bsdf.inputs["Coat Weight"].default_value = 1.0
+    bsdf.inputs["Emission Color"].default_value = hex_to_rgb(color)
+    bsdf.inputs["Emission Strength"].default_value = 0.35
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    tree.links.new(bsdf.outputs["BSDF"], output.inputs["Surface"])
+    return material
+
+
 def metal_material(name: str, color: str, roughness: float) -> bpy.types.Material:
     material, tree = new_material(name)
     bsdf = tree.nodes.new("ShaderNodeBsdfPrincipled")
@@ -218,7 +319,7 @@ def build_camera(args: argparse.Namespace) -> bpy.types.Object:
     return camera
 
 
-def build_backdrop(palette: dict, rng: random.Random) -> None:
+def build_backdrop(palette: dict, rng: random.Random, rays: bool = False) -> None:
     bg = get_collection("bg")
     clear_collection(bg)
     bpy.ops.mesh.primitive_plane_add(size=4.0, location=(0.0, 0.0, -1.5))
@@ -242,7 +343,7 @@ def build_backdrop(palette: dict, rng: random.Random) -> None:
         element = ramp.color_ramp.elements.new(index / (len(stops) - 1))
         element.color = hex_to_rgb(stop)
 
-    # light streaks: a distorted wave texture, thresholded
+    # light streaks: a distorted wave texture, thresholded (or rays from the centre)
     streak_map = tree.nodes.new("ShaderNodeMapping")
     streak_map.inputs["Rotation"].default_value = (0.0, 0.0, math.radians(rng.uniform(20.0, 70.0)))
     streak_map.inputs["Scale"].default_value = (1.0, 1.0, 1.0)
@@ -285,8 +386,29 @@ def build_backdrop(palette: dict, rng: random.Random) -> None:
     links.new(mapping.outputs["Vector"], gradient.inputs["Vector"])
     links.new(gradient.outputs["Fac"], ramp.inputs["Fac"])
     links.new(coords.outputs["Object"], streak_map.inputs["Vector"])
-    links.new(streak_map.outputs["Vector"], wave.inputs["Vector"])
-    links.new(wave.outputs["Fac"], streak_ramp.inputs["Fac"])
+    if rays:
+        # angle around the centre → sine → thin bright rays, like the Scherox backdrop
+        radial = tree.nodes.new("ShaderNodeTexGradient")
+        radial.gradient_type = "RADIAL"
+        scale_angle = tree.nodes.new("ShaderNodeMath")
+        scale_angle.operation = "MULTIPLY"
+        scale_angle.inputs[1].default_value = rng.uniform(90.0, 130.0)
+        sine = tree.nodes.new("ShaderNodeMath")
+        sine.operation = "SINE"
+        sharpen = tree.nodes.new("ShaderNodeMath")
+        sharpen.operation = "POWER"
+        sharpen.inputs[1].default_value = 40.0
+        links.new(streak_map.outputs["Vector"], radial.inputs["Vector"])
+        links.new(radial.outputs["Fac"], scale_angle.inputs[0])
+        links.new(scale_angle.outputs["Value"], sine.inputs[0])
+        links.new(sine.outputs["Value"], sharpen.inputs[0])
+        links.new(sharpen.outputs["Value"], streak_ramp.inputs["Fac"])
+        streak_ramp.color_ramp.elements[0].position = 0.3
+        streak_ramp.color_ramp.elements[1].position = 1.0
+        add_streaks.inputs["Factor"].default_value = 0.38
+    else:
+        links.new(streak_map.outputs["Vector"], wave.inputs["Vector"])
+        links.new(wave.outputs["Fac"], streak_ramp.inputs["Fac"])
     links.new(coords.outputs["Object"], voronoi.inputs["Vector"])
     links.new(voronoi.outputs["Distance"], bokeh_ramp.inputs["Fac"])
     # Mix nodes expose typed sockets as A/B by index: 6 = A (color), 7 = B (color), 2 = result
@@ -294,7 +416,26 @@ def build_backdrop(palette: dict, rng: random.Random) -> None:
     links.new(streak_ramp.outputs["Color"], add_streaks.inputs[7])
     links.new(add_streaks.outputs[2], add_bokeh.inputs[6])
     links.new(bokeh_ramp.outputs["Color"], add_bokeh.inputs[7])
-    links.new(add_bokeh.outputs[2], emission.inputs["Color"])
+    # vignette: darker toward the corners so the subject and the shards pop
+    vignette = tree.nodes.new("ShaderNodeTexGradient")
+    vignette.gradient_type = "SPHERICAL"
+    vignette_map = tree.nodes.new("ShaderNodeMapping")
+    vignette_map.inputs["Scale"].default_value = (0.55, 0.55, 1.0)
+    vignette_ramp = tree.nodes.new("ShaderNodeValToRGB")
+    vignette_ramp.color_ramp.elements[0].position = 0.0
+    vignette_ramp.color_ramp.elements[0].color = (0.25, 0.25, 0.3, 1.0)
+    vignette_ramp.color_ramp.elements[1].position = 0.75
+    vignette_ramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)
+    darken = tree.nodes.new("ShaderNodeMix")
+    darken.data_type = "RGBA"
+    darken.blend_type = "MULTIPLY"
+    darken.inputs["Factor"].default_value = 1.0
+    links.new(coords.outputs["Object"], vignette_map.inputs["Vector"])
+    links.new(vignette_map.outputs["Vector"], vignette.inputs["Vector"])
+    links.new(vignette.outputs["Fac"], vignette_ramp.inputs["Fac"])
+    links.new(add_bokeh.outputs[2], darken.inputs[6])
+    links.new(vignette_ramp.outputs["Color"], darken.inputs[7])
+    links.new(darken.outputs[2], emission.inputs["Color"])
     links.new(emission.outputs["Emission"], output.inputs["Surface"])
     plane.data.materials.append(material)
 
@@ -347,18 +488,23 @@ def build_subject(args: argparse.Namespace, palette: dict) -> None:
         if root is not None:
             link_to(root, subject)
         return
-    # placeholder: a chrome torus with a metallic core, tilted toward the camera
-    bpy.ops.mesh.primitive_torus_add(major_radius=0.3, minor_radius=0.12, major_segments=96, minor_segments=48)
-    torus = bpy.context.active_object
-    torus.rotation_euler = (math.radians(58.0), 0.0, math.radians(-22.0))
-    torus.data.materials.append(metal_material("HoloChrome", "#dfe3ea", 0.12))
-    bpy.ops.object.shade_smooth()
-    link_to(torus, subject)
-    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=4, radius=0.16)
-    core = bpy.context.active_object
-    core.data.materials.append(metal_material("HoloCore", palette["accent"], 0.3))
-    bpy.ops.object.shade_smooth()
-    link_to(core, subject)
+    # placeholder: a faceted gem held by two brushed-metal rings, tilted toward the camera
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, radius=0.23)
+    gem = bpy.context.active_object
+    gem.name = "HoloGem"
+    gem.rotation_euler = (math.radians(18.0), math.radians(12.0), math.radians(30.0))
+    gem.scale = (1.0, 1.0, 1.25)
+    gem.data.materials.append(gem_material("HoloGem", palette["accent"]))
+    bpy.ops.object.shade_flat()
+    link_to(gem, subject)
+    for index, (tilt, roll, major) in enumerate(((58.0, -22.0, 0.36), (-40.0, 35.0, 0.42))):
+        bpy.ops.mesh.primitive_torus_add(major_radius=major, minor_radius=0.035, major_segments=128, minor_segments=32)
+        ring = bpy.context.active_object
+        ring.name = f"HoloRing.{index}"
+        ring.rotation_euler = (math.radians(tilt), 0.0, math.radians(roll))
+        ring.data.materials.append(anisotropic_material(f"HoloRing{index}", "#e9ecf2" if index == 0 else "#c9ccd6"))
+        bpy.ops.object.shade_smooth()
+        link_to(ring, subject)
 
 
 def build_lights(palette: dict) -> None:
@@ -381,10 +527,35 @@ def build_lights(palette: dict) -> None:
     bpy.context.scene.world = world
     if bpy.app.version < (5, 0, 0):
         world.use_nodes = True
-    background = world.node_tree.nodes.get("Background")
-    if background is not None:
-        background.inputs["Color"].default_value = (0.01, 0.01, 0.015, 1.0)
-        background.inputs["Strength"].default_value = 1.0
+    tree = world.node_tree
+    tree.nodes.clear()
+    # striped softbox: bright bands in the reflections make metal read as metal
+    coords = tree.nodes.new("ShaderNodeTexCoord")
+    mapping = tree.nodes.new("ShaderNodeMapping")
+    mapping.inputs["Rotation"].default_value = (math.radians(35.0), math.radians(20.0), 0.0)
+    bands = tree.nodes.new("ShaderNodeTexWave")
+    bands.wave_type = "BANDS"
+    bands.inputs["Scale"].default_value = 1.6
+    bands.inputs["Distortion"].default_value = 0.0
+    ramp = tree.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.elements[0].position = 0.72
+    ramp.color_ramp.elements[0].color = (0.004, 0.004, 0.006, 1.0)
+    ramp.color_ramp.elements[1].position = 0.86
+    ramp.color_ramp.elements[1].color = (2.5, 2.5, 2.6, 1.0)
+    accent = tree.nodes.new("ShaderNodeMix")
+    accent.data_type = "RGBA"
+    accent.blend_type = "ADD"
+    accent.inputs["Factor"].default_value = 0.12
+    accent.inputs[7].default_value = hex_to_rgb(palette["accent"])
+    background = tree.nodes.new("ShaderNodeBackground")
+    background.inputs["Strength"].default_value = 1.0
+    output = tree.nodes.new("ShaderNodeOutputWorld")
+    tree.links.new(coords.outputs["Generated"], mapping.inputs["Vector"])
+    tree.links.new(mapping.outputs["Vector"], bands.inputs["Vector"])
+    tree.links.new(bands.outputs["Fac"], ramp.inputs["Fac"])
+    tree.links.new(ramp.outputs["Color"], accent.inputs[6])
+    tree.links.new(accent.outputs[2], background.inputs["Color"])
+    tree.links.new(background.outputs["Background"], output.inputs["Surface"])
 
 
 def random_in_frame(rng: random.Random, frame_w: float, frame_h: float, keep_out: float) -> tuple[float, float]:
@@ -397,13 +568,65 @@ def random_in_frame(rng: random.Random, frame_w: float, frame_h: float, keep_out
     return frame_w / 2.0, 0.0
 
 
+def build_burst(args: argparse.Namespace, palette: dict, rng: random.Random, fx: bpy.types.Collection) -> None:
+    """Scherox style: big flat wedges, glass crystals and thin beams shooting out of the centre."""
+    frame_w, frame_h = frame_size_units(args)
+    wedge_colors = palette.get("wedges", palette["shards"][:2])
+    wedge_materials = [fade_emission_material(f"HoloWedge{i}", color, 1.7, "Y", 0.11) for i, color in enumerate(wedge_colors)]
+    beam_materials = [fade_emission_material(f"HoloBeam{i}", color, 7.0, "X", 0.5) for i, color in enumerate(palette.get("beams", palette["shards"]))]
+    crystal_material = glass_material("HoloCrystal", palette.get("crystal", "#cdb4ff"))
+    reach = math.hypot(frame_w, frame_h) / 2.0
+
+    for index in range(max(args.shards // 2, 10)):
+        angle = rng.uniform(0.0, 2.0 * math.pi)
+        length = rng.uniform(0.35, 0.75) * reach
+        width = rng.uniform(0.05, 0.14)
+        start = rng.uniform(0.18, 0.45)
+        cx, cy = math.cos(angle) * (start + length / 2.0), math.sin(angle) * (start + length / 2.0)
+        bpy.ops.mesh.primitive_cone_add(vertices=3, radius1=width, radius2=0.0, depth=0.004, location=(cx, cy, rng.uniform(0.5, 1.0)))
+        wedge = bpy.context.active_object
+        wedge.name = f"HoloWedge.{index:03d}"
+        wedge.rotation_euler = (0.0, 0.0, angle + math.pi / 2.0)
+        wedge.scale = (1.0, length / width * 0.5, 1.0)
+        wedge.data.materials.append(wedge_materials[index % len(wedge_materials)])
+        link_to(wedge, fx)
+
+    for index in range(args.shards):
+        x, y = random_in_frame(rng, frame_w, frame_h, 0.2)
+        size = rng.uniform(0.02, 0.06)
+        bpy.ops.mesh.primitive_cone_add(vertices=6, radius1=size, radius2=size * 0.45, depth=size * rng.uniform(2.5, 4.5), location=(x, y, rng.uniform(0.3, 1.2)))
+        crystal = bpy.context.active_object
+        crystal.name = f"HoloCrystal.{index:03d}"
+        crystal.rotation_euler = (rng.uniform(0.0, math.pi), rng.uniform(0.0, math.pi), rng.uniform(0.0, math.pi))
+        crystal.data.materials.append(crystal_material)
+        bpy.ops.object.shade_smooth()
+        link_to(crystal, fx)
+
+    for index in range(max(args.shards // 2, 10)):
+        angle = rng.uniform(0.0, 2.0 * math.pi)
+        length = rng.uniform(0.3, 0.9) * reach
+        start = rng.uniform(0.15, 0.5)
+        cx, cy = math.cos(angle) * (start + length / 2.0), math.sin(angle) * (start + length / 2.0)
+        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(cx, cy, rng.uniform(0.4, 0.9)))
+        beam = bpy.context.active_object
+        beam.name = f"HoloBeam.{index:03d}"
+        beam.rotation_euler = (0.0, 0.0, angle)
+        beam.scale = (length, rng.uniform(0.003, 0.007), 0.003)
+        beam.data.materials.append(rng.choice(beam_materials))
+        link_to(beam, fx)
+
+
 def build_effects(args: argparse.Namespace, palette: dict, rng: random.Random) -> None:
     fx = get_collection("fx")
     clear_collection(fx)
     frame_w, frame_h = frame_size_units(args)
-    shard_materials = [emission_material(f"HoloShard{i}", color, 4.0) for i, color in enumerate(palette["shards"])]
-    debris_material = metal_material("HoloDebris", "#8d8f98", 0.6)
     sparkle_material = emission_material("HoloSparkle", palette["sparkle"], 9.0)
+    if args.fx == "burst":
+        build_burst(args, palette, rng, fx)
+        build_sparkles(args, palette, rng, fx, sparkle_material)
+        return
+    shard_materials = [fade_emission_material(f"HoloShard{i}", color, 4.5, "Y", 0.12) for i, color in enumerate(palette["shards"])]
+    debris_material = anisotropic_material("HoloDebris", "#9a9ca6")
 
     for index in range(args.shards):
         x, y = random_in_frame(rng, frame_w, frame_h, 0.22)
@@ -424,8 +647,12 @@ def build_effects(args: argparse.Namespace, palette: dict, rng: random.Random) -
         rock.rotation_euler = (rng.uniform(0.0, math.pi), rng.uniform(0.0, math.pi), 0.0)
         rock.data.materials.append(debris_material)
         link_to(rock, fx)
+    build_sparkles(args, palette, rng, fx, sparkle_material)
 
-    # firework sparkles: two crossed slivers, facing the camera
+
+def build_sparkles(args: argparse.Namespace, palette: dict, rng: random.Random, fx: bpy.types.Collection, sparkle_material: bpy.types.Material) -> None:
+    """Firework sparkles: two crossed slivers, facing the camera."""
+    frame_w, frame_h = frame_size_units(args)
     for index in range(args.sparkles):
         x, y = random_in_frame(rng, frame_w, frame_h, 0.0)
         size = rng.uniform(0.03, 0.1)
@@ -443,7 +670,7 @@ def build_effects(args: argparse.Namespace, palette: dict, rng: random.Random) -
 def build_template(args: argparse.Namespace, palette: dict, rng: random.Random) -> None:
     bpy.ops.wm.read_factory_settings(use_empty=True)
     build_camera(args)
-    build_backdrop(palette, rng)
+    build_backdrop(palette, rng, rays=args.fx == "burst")
     build_subject(args, palette)
     build_lights(palette)
     build_effects(args, palette, rng)
@@ -563,6 +790,7 @@ def render_variant(args: argparse.Namespace, out_dir: str, palette_name: str, se
     manifest = {
         "name": args.name,
         "palette": palette_name,
+        "fx": args.fx,
         "seed": seed,
         "card": {"width": args.width, "height": args.height},
         "frame": {"width": round(args.width * grow), "height": round(args.height * grow)},

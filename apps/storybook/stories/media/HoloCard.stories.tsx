@@ -217,6 +217,36 @@ export const BlenderRender: Story = {
   ),
 };
 
+/**
+ * `pnpm holo:render --palette scherox --fx burst`: flat orange / blue wedges,
+ * glass crystals and beams shoot out of the centre and past the frame, over
+ * a backdrop of radial rays, like the Mega-Scherox card.
+ */
+export const BlenderBurst: Story = {
+  name: "Blender pipeline (scherox burst)",
+  args: {
+    src: "/images/holo/scherox/scherox.webp",
+    foregroundSrc: "/images/holo/scherox/scherox-fg.webp",
+    effectsSrc: "/images/holo/scherox/scherox-fx.webp",
+    depthSrc: "/images/holo/scherox/scherox-depth.webp",
+    alt: "Faceted orange gem in brushed rings, orange and blue wedges bursting out of the card",
+    variant: "card",
+    aspectRatio: "5/7",
+    intensity: 0.75,
+    maxTilt: 20,
+    depth: 1.4,
+    foil: "silver",
+    sparkle: "fireworks",
+    idle: true,
+    gyro: true,
+  },
+  render: (args) => (
+    <Box css={{ maxW: "360px", mx: "auto", py: 8 }}>
+      <HoloCard {...args} />
+    </Box>
+  ),
+};
+
 export const Disc: Story = {
   args: {
     src: OPTIMIZED_IMAGES.outletStore1,

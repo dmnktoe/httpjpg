@@ -277,6 +277,36 @@ export const BlenderCutOut: Story = {
   ),
 };
 
+/**
+ * Lettering as the subject: the Pure Bliss chrome logo (an alpha PNG from the
+ * portfolio's Storyblok space) over the fire palette with Mew-style shards,
+ * swirl foil and rainbow stars.
+ */
+export const BlenderLettering: Story = {
+  name: "Blender pipeline (chrome lettering, fire shards)",
+  args: {
+    src: "/images/holo/bliss/bliss.webp",
+    foregroundSrc: "/images/holo/bliss/bliss-fg.webp",
+    effectsSrc: "/images/holo/bliss/bliss-fx.webp",
+    depthSrc: "/images/holo/bliss/bliss-depth.webp",
+    alt: "Pure Bliss in glossy purple chrome lettering over a molten orange backdrop with shards",
+    variant: "card",
+    aspectRatio: "5/7",
+    intensity: 0.8,
+    maxTilt: 20,
+    depth: 1.3,
+    foil: "swirl",
+    sparkle: "stars",
+    idle: true,
+    gyro: true,
+  },
+  render: (args) => (
+    <Box css={{ maxW: "360px", mx: "auto", py: 8 }}>
+      <HoloCard {...args} />
+    </Box>
+  ),
+};
+
 export const Disc: Story = {
   args: {
     src: OPTIMIZED_IMAGES.outletStore1,

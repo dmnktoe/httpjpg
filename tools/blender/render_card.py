@@ -108,6 +108,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--name", default="card", help="base file name")
     parser.add_argument("--model", help="glTF/GLB, FBX or OBJ to use as the subject (template scene only)")
     parser.add_argument("--image", help="cut-out photo (PNG/WebP with alpha) to use as a flat subject instead of a model")
+    parser.add_argument("--image-width", type=float, default=0.8, help="width of the cut-out in card widths (card = 1.0)")
+    parser.add_argument("--image-rotate", type=float, default=0.0, help="rotation of the cut-out in degrees, counter-clockwise")
     parser.add_argument("--palette", default="psychic", help="palette name or `all`")
     parser.add_argument("--variants", type=int, default=1, help="how many variants to render")
     parser.add_argument("--seed", type=int, default=7)
@@ -507,8 +509,9 @@ def build_subject(args: argparse.Namespace, palette: dict) -> None:
         bpy.ops.mesh.primitive_plane_add(size=1.0, location=(0.0, 0.0, 0.0))
         plane = bpy.context.active_object
         plane.name = "HoloImageSubject"
-        width = 0.8
+        width = args.image_width
         plane.scale = (width, width * aspect, 1.0)
+        plane.rotation_euler = (0.0, 0.0, math.radians(args.image_rotate))
         plane.data.materials.append(image_plane_material("HoloImageSubject", image))
         plane["holo_alpha_image"] = image.name
         link_to(plane, subject)

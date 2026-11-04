@@ -1,0 +1,45 @@
+{
+  "name": "bliss",
+  "palette": "fire",
+  "fx": "shards",
+  "seed": 7,
+  "card": {
+    "width": 1000,
+    "height": 1400
+  },
+  "frame": {
+    "width": 1360,
+    "height": 1904
+  },
+  "overscan": 0.18,
+  "depthRange": {
+    "near": 5.969,
+    "far": 7.531
+  },
+  "engine": "CYCLES",
+  "blender": "5.0.1",
+  "files": {
+    "photo": "bliss.png",
+    "foreground": "bliss-fg.png",
+    "effects": "bliss-fx.png",
+    "depth": "bliss-depth.png"
+  },
+  "webp": {
+    "photo": {
+      "file": "bliss.webp",
+      "bytes": 61836
+    },
+    "foreground": {
+      "file": "bliss-fg.webp",
+      "bytes": 111738
+    },
+    "effects": {
+      "file": "bliss-fx.webp",
+      "bytes": 133762
+    },
+    "depth": {
+      "file": "bliss-depth.webp",
+      "bytes": 60364
+    }
+  }
+}

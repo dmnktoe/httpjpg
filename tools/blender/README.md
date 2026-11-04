@@ -15,6 +15,9 @@ pnpm holo:render --name mew --model mew.glb --palette psychic --variants 3 --eng
 # a cut-out photo as the subject instead of a model (PNG/WebP with alpha)
 pnpm holo:render --name cryo --image cryo-fg.webp --palette water --fx burst
 
+# lettering or a logo: size it in card widths and tilt it
+pnpm holo:render --name bliss --image bliss.png --image-width 0.98 --image-rotate -12 --palette fire
+
 # your own scene: collections `bg`, `subject`, `fx` + a camera
 pnpm holo:render --name steelix --blend ~/cards/steelix.blend
 ```

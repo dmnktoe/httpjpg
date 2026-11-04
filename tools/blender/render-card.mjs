@@ -28,6 +28,8 @@ const PY_FLAGS = new Set([
   "name",
   "model",
   "image",
+  "image-width",
+  "image-rotate",
   "palette",
   "variants",
   "seed",

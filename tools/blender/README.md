@@ -101,7 +101,8 @@ radial rays, like Mega-Scherox (pair with the `scherox` palette); `lightning`
 grows branching bolts out of the subject (random walks pulled toward the
 motion direction, white-hot core tube plus a translucent halo tube, sparks at
 the tips), short arcs crawling around the silhouette and drifting sparks, like
-Zapdos ex (pair with `electric`); `energy` draws three glowing orbit rings as
+Zapdos ex (pair with `electric`; the bolts are drawn chunky and angular like
+the card art, `--fx-weight 1.5` makes every stroke thicker); `energy` draws three glowing orbit rings as
 open arcs (the far side is left out, so they read as passing behind the
 subject), dust riding on them and glass orbs, like Mewtwo ex (pair with
 `psychic`). Bolts and rings are bevelled poly curves with per-point radius, so

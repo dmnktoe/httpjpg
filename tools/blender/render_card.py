@@ -128,6 +128,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--bg-image", help="photo for the backdrop (already blurred/darkened by the wrapper) instead of the procedural gradient")
     parser.add_argument("--fx-angle", type=float, help="direction the effects shoot along, in degrees (default: random per seed)")
     parser.add_argument("--fx-spread", type=float, default=28.0, help="half-angle of the effects cone in degrees")
+    parser.add_argument("--fx-weight", type=float, default=1.0, help="stroke weight of bolts, arcs and rings (1 = default, 2 = twice as thick)")
     parser.add_argument("--palette", default="psychic", help="palette name or `all`")
     parser.add_argument("--variants", type=int, default=1, help="how many variants to render")
     parser.add_argument("--seed", type=int, default=7)
@@ -755,18 +756,22 @@ def tube_from_points(name: str, points: list[tuple[float, float, float]], radii:
     return obj
 
 
-def bolt_points(rng: random.Random, start: tuple[float, float], heading: float, length: float, z: float, jitter: float = 0.7) -> list[tuple[float, float, float]]:
-    """Zig-zag around a slowly drifting heading: the jagged line of a lightning bolt."""
+def bolt_points(rng: random.Random, start: tuple[float, float], heading: float, length: float, z: float, jitter: float = 0.8, step_range: tuple[float, float] = (0.05, 0.13)) -> list[tuple[float, float, float]]:
+    """Zig-zag around a slowly drifting heading: the jagged line of a lightning bolt.
+
+    Long steps and wide angles give the chunky, angular bolts of the card art
+    rather than the fine crackle of a photo; `step_range` scales them.
+    """
     points = [(start[0], start[1], z)]
     x, y = start
     travelled = 0.0
     side = rng.choice((-1.0, 1.0))
     while travelled < length:
-        step = rng.uniform(0.012, 0.04)
-        if rng.random() < 0.75:
+        step = rng.uniform(*step_range)
+        if rng.random() < 0.8:
             side = -side
-        heading += rng.uniform(-0.12, 0.12)
-        angle = heading + side * rng.uniform(0.2, jitter)
+        heading += rng.uniform(-0.1, 0.1)
+        angle = heading + side * rng.uniform(0.35, jitter)
         x += math.cos(angle) * step
         y += math.sin(angle) * step
         travelled += step
@@ -775,11 +780,11 @@ def bolt_points(rng: random.Random, start: tuple[float, float], heading: float, 
 
 
 def build_bolt(name: str, rng: random.Random, points: list[tuple[float, float, float]], width: float, core: bpy.types.Material, halo: bpy.types.Material, fx: bpy.types.Collection) -> None:
-    """White-hot core plus a wider translucent halo along the same path, tapering to the tip."""
+    """White-hot core inside a wider coloured halo along the same path, both tapering to a point at the tip."""
     count = len(points)
-    radii = [max(0.15, 1.0 - index / max(count - 1, 1)) for index in range(count)]
+    radii = [max(0.08, 1.0 - (index / max(count - 1, 1)) ** 1.4) for index in range(count)]
     tube_from_points(f"{name}.core", points, radii, width, core, fx)
-    tube_from_points(f"{name}.halo", points, radii, width * 2.6, halo, fx)
+    tube_from_points(f"{name}.halo", points, radii, width * 2.0, halo, fx)
 
 
 def build_lightning(args: argparse.Namespace, palette: dict, rng: random.Random, fx: bpy.types.Collection) -> None:
@@ -790,8 +795,10 @@ def build_lightning(args: argparse.Namespace, palette: dict, rng: random.Random,
     spread = math.radians(args.fx_spread)
     colors = [color for color in palette.get("beams", palette["shards"]) if color.lower() != "#ffffff"] or palette["shards"]
     core = emission_material("HoloBoltCore", "#ffffff", 14.0)
-    # the halo carries the colour (violet for Zapdos); the core stays white-hot
-    halos = [glow_material(f"HoloBoltHalo{i}", color, 3.0, 0.5) for i, color in enumerate(colors)]
+    # the halo carries the colour (violet for Zapdos) and is nearly solid, so the
+    # bolt reads as a drawn shape; the core stays white-hot
+    halos = [glow_material(f"HoloBoltHalo{i}", color, 1.6, 0.9) for i, color in enumerate(colors)]
+    weight = args.fx_weight
     spark_material = emission_material("HoloSpark", palette["sparkle"], 16.0)
 
     bolt_count = max(args.shards // 4, 4)
@@ -803,18 +810,18 @@ def build_lightning(args: argparse.Namespace, palette: dict, rng: random.Random,
         z = rng.uniform(0.6, 1.1)
         points = bolt_points(rng, start, heading, rng.uniform(0.45, 0.95) * reach, z)
         halo = halos[index % len(halos)]
-        width = rng.uniform(0.002, 0.0034)
+        width = rng.uniform(0.0055, 0.0095) * weight
         build_bolt(f"HoloBolt.{index:03d}", rng, points, width, core, halo, fx)
         # branches split off part-way and wander off at an angle
-        for branch in range(rng.randint(1, 3)):
-            at = rng.randint(2, max(2, len(points) - 3))
+        for branch in range(rng.randint(1, 2)):
+            at = rng.randint(1, max(1, len(points) - 3))
             bx, by, bz = points[at]
             side = rng.choice((-1.0, 1.0))
-            branch_points = bolt_points(rng, (bx, by), heading + side * rng.uniform(0.5, 1.1), rng.uniform(0.15, 0.4) * reach, bz, jitter=0.9)
+            branch_points = bolt_points(rng, (bx, by), heading + side * rng.uniform(0.5, 1.1), rng.uniform(0.15, 0.4) * reach, bz, step_range=(0.04, 0.09))
             build_bolt(f"HoloBolt.{index:03d}.{branch}", rng, branch_points, width * 0.6, core, halo, fx)
         # a spark where the bolt ends
         tx, ty, tz = points[-1]
-        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=rng.uniform(0.004, 0.008), location=(tx, ty, tz))
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, radius=rng.uniform(0.008, 0.014) * weight, location=(tx, ty, tz))
         spark = bpy.context.active_object
         spark.name = f"HoloSpark.{index:03d}"
         spark.data.materials.append(spark_material)
@@ -826,8 +833,8 @@ def build_lightning(args: argparse.Namespace, palette: dict, rng: random.Random,
         radius = rng.uniform(0.28, 0.46)
         start = (math.cos(angle) * radius, math.sin(angle) * radius)
         heading = angle + math.pi / 2.0 * rng.choice((-1.0, 1.0))
-        points = bolt_points(rng, start, heading, rng.uniform(0.08, 0.2), rng.uniform(0.5, 1.0), jitter=0.9)
-        build_bolt(f"HoloArc.{index:03d}", rng, points, rng.uniform(0.0008, 0.0016), core, rng.choice(halos), fx)
+        points = bolt_points(rng, start, heading, rng.uniform(0.08, 0.2), rng.uniform(0.5, 1.0), jitter=1.0, step_range=(0.025, 0.06))
+        build_bolt(f"HoloArc.{index:03d}", rng, points, rng.uniform(0.0025, 0.004) * weight, core, rng.choice(halos), fx)
 
     # loose sparks drifting along the direction
     for index in range(args.shards):
@@ -869,7 +876,7 @@ def build_energy(args: argparse.Namespace, palette: dict, rng: random.Random, fx
             ex, ey = math.cos(theta) * rx, math.sin(theta) * ry
             points.append((ex * math.cos(tilt) - ey * math.sin(tilt), ex * math.sin(tilt) + ey * math.cos(tilt), z + rng.uniform(-0.004, 0.004)))
             radii.append(0.35 + 0.65 * math.sin(t * math.pi))
-        width = rng.uniform(0.004, 0.007)
+        width = rng.uniform(0.004, 0.007) * args.fx_weight
         tube_from_points(f"HoloRing.{index:02d}.core", points, radii, width, cores[index % len(cores)], fx)
         tube_from_points(f"HoloRing.{index:02d}.halo", points, radii, width * 3.0, halos[index % len(halos)], fx)
         # dust riding on the ring

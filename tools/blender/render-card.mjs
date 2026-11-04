@@ -34,6 +34,7 @@ const PY_FLAGS = new Set([
   "image-depth-range",
   "fx-angle",
   "fx-spread",
+  "fx-weight",
   "passes",
   "palette",
   "variants",

@@ -37,6 +37,7 @@ uniform float uRadius;
 uniform float uSeed;
 uniform sampler2D uFg;
 uniform float uHasFg;
+uniform float uFgOverhang;
 uniform float uDepth;
 uniform sampler2D uFx;
 uniform float uHasFx;
@@ -200,13 +201,17 @@ void main() {
 
   // Optional cut-out in front of the photo: own parallax, soft shadow on the
   // photo, and later a rainbow fringe around its silhouette.
-  vec2 fgUv = texUv + shift * 0.05;
+  // A cut-out on the overhang frame (uFgOverhang) covers the holo frame and
+  // keeps going past the card edge, like Pocket's full-art figures.
+  vec2 fgUv = mix(texUv, fullPx / uSize, uFgOverhang) + shift * 0.05;
   vec4 fg = texture2D(uFg, fgUv);
   float inside = step(0.0, fgUv.x) * step(fgUv.x, 1.0) * step(0.0, fgUv.y) * step(fgUv.y, 1.0);
-  float fgA = fg.a * inside * uHasFg * (1.0 - isFrame);
-  float shadowA = texture2D(uFg, fgUv + vec2(-0.012, -0.018) * uDepth).a * uHasFg * (1.0 - isFrame);
+  float fgClip = mix(1.0 - isFrame, 1.0, uFgOverhang);
+  float fgA = fg.a * inside * uHasFg * fgClip;
+  float shadowA = texture2D(uFg, fgUv + vec2(-0.012, -0.018) * uDepth).a * uHasFg * fgClip;
   col *= 1.0 - shadowA * (1.0 - fgA) * (0.22 + 0.3 * drive);
   col = mix(col, fg.rgb, fgA);
+  vec3 fgFringeAdd = vec3(0.0);
 
   float phase;
   float fanW = 1.0;
@@ -265,9 +270,10 @@ void main() {
     float ar = texture2D(uFg, fgUv + vec2( tf.x, 0.0)).a;
     float at = texture2D(uFg, fgUv + vec2(0.0, -tf.y)).a;
     float ab = texture2D(uFg, fgUv + vec2(0.0,  tf.y)).a;
-    float fgEdge = smoothstep(0.08, 0.6, abs(ar - al) + abs(ab - at)) * inside * (1.0 - isFrame);
+    float fgEdge = smoothstep(0.08, 0.6, abs(ar - al) + abs(ab - at)) * inside * fgClip;
     vec3 fgFringe = hsl2rgb(fract(phase * 2.0 + atan(ab - at, ar - al) * 0.159), 1.0, 0.68);
-    col += fgFringe * fgEdge * uIntensity * (0.3 + 0.45 * drive);
+    fgFringeAdd = fgFringe * fgEdge * uIntensity * (0.3 + 0.45 * drive);
+    col += fgFringeAdd;
   }
 
   // Sparkles: 0 none, 1 rainbow stars, 2 firework glints (denser, bigger, gold-white).
@@ -298,6 +304,12 @@ void main() {
 
   col = clamp(col, 0.0, 1.0);
   vec4 outColor = vec4(col * alpha, alpha);
+  if (uFgOverhang > 0.5) {
+    // the part of the cut-out past the card edge sits over the transparent overhang
+    float outsideA = clamp(fgA * (1.0 - alpha), 0.0, 1.0);
+    outColor.rgb += (fg.rgb + fgFringeAdd) * outsideA;
+    outColor.a = max(outColor.a, fgA);
+  }
 
   // ---- effects layer: shards and debris rendered on the overhang frame, furthest in front ----
   if (uHasFx > 0.5) {
@@ -379,7 +391,11 @@ export interface HoloRendererOptions {
   foil: HoloFoil;
   /** Twinkling sparkles over the art. */
   sparkle: HoloSparkle;
+  /** Whether the cut-out shares the photo's crop or covers the overhang frame. */
+  foregroundFrame: HoloForegroundFrame;
 }
+
+export type HoloForegroundFrame = "card" | "overhang";
 
 export type HoloFoil = "silver" | "swirl";
 export type HoloSparkle = "none" | "stars" | "fireworks";
@@ -422,6 +438,7 @@ const UNIFORMS = [
   "uSeed",
   "uFg",
   "uHasFg",
+  "uFgOverhang",
   "uDepth",
   "uFx",
   "uHasFx",
@@ -520,6 +537,7 @@ export function createHoloRenderer(
   gl.uniform1i(uniforms.uFx, LAYER_UNIT.effects);
   gl.uniform1i(uniforms.uDepthMap, LAYER_UNIT.depth);
   gl.uniform1f(uniforms.uHasFg, 0);
+  gl.uniform1f(uniforms.uFgOverhang, options.foregroundFrame === "overhang" ? 1 : 0);
   gl.uniform1f(uniforms.uHasFx, 0);
   gl.uniform1f(uniforms.uHasDepthMap, 0);
   gl.uniform2f(uniforms.uFxSize, 1, 1);

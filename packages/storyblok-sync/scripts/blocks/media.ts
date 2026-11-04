@@ -29,6 +29,12 @@ const HOLO_SPARKLE_OPTIONS = [
   { name: "None", value: "none" },
 ];
 
+/** Mirror `HoloForegroundFrame` in `@httpjpg/ui`; keep in lock-step. */
+const HOLO_FOREGROUND_FRAME_OPTIONS = [
+  { name: "Same crop as the image", value: "card" },
+  { name: "Overhang frame (card + 18% per side)", value: "overhang" },
+];
+
 const HOLO_VARIANT_OPTIONS = [
   { name: "Card", value: "card" },
   { name: "Disc (CD)", value: "disc" },
@@ -179,7 +185,13 @@ export const mediaBlocks: BlockDef[] = [
         }),
         foreground: field.asset("Foreground Cut-out", ["images"], {
           description:
-            "Optional PNG/WebP with a transparent background and the same size and framing as the image. Floats in front of the photo with its own parallax, shadow and rainbow outline.",
+            "Optional PNG/WebP with a transparent background. Floats in front of the photo with its own parallax, shadow and rainbow outline.",
+          tooltip: true,
+        }),
+        foregroundFrame: field.options("Foreground Framing", HOLO_FOREGROUND_FRAME_OPTIONS, {
+          default_value: "card",
+          description:
+            "Same crop: the cut-out matches the image pixel for pixel. Overhang frame: it covers the card plus 18% on every side (what the Blender pipeline renders with --subject-overflow), so the subject can cover the holo frame and stick out past the edge.",
           tooltip: true,
         }),
       }),

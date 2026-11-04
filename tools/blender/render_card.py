@@ -108,8 +108,12 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--name", default="card", help="base file name")
     parser.add_argument("--model", help="glTF/GLB, FBX or OBJ to use as the subject (template scene only)")
     parser.add_argument("--image", help="cut-out photo (PNG/WebP with alpha) to use as a flat subject instead of a model")
-    parser.add_argument("--image-width", type=float, default=0.8, help="width of the cut-out in card widths (card = 1.0)")
+    parser.add_argument("--image-width", type=float, help="width of the cut-out in card widths (card = 1.0; default 0.8, or 1.1 with --subject-overflow)")
     parser.add_argument("--image-rotate", type=float, default=0.0, help="rotation of the cut-out in degrees, counter-clockwise")
+    parser.add_argument("--subject-overflow", action="store_true", help="render the cut-out on the full overhang frame so it can break the card edge")
+    parser.add_argument("--bg-image", help="photo for the backdrop (already blurred/darkened by the wrapper) instead of the procedural gradient")
+    parser.add_argument("--fx-angle", type=float, help="direction the effects shoot along, in degrees (default: random per seed)")
+    parser.add_argument("--fx-spread", type=float, default=28.0, help="half-angle of the effects cone in degrees")
     parser.add_argument("--palette", default="psychic", help="palette name or `all`")
     parser.add_argument("--variants", type=int, default=1, help="how many variants to render")
     parser.add_argument("--seed", type=int, default=7)
@@ -341,6 +345,29 @@ def build_camera(args: argparse.Namespace) -> bpy.types.Object:
     return camera
 
 
+def build_photo_backdrop(args: argparse.Namespace) -> None:
+    """A prepared photo (blurred, darkened by the wrapper) fills the whole frame at z = -1.5."""
+    bg = get_collection("bg")
+    clear_collection(bg)
+    frame_w, frame_h = frame_size_units(args)
+    image = bpy.data.images.load(os.path.abspath(args.bg_image))
+    bpy.ops.mesh.primitive_plane_add(size=1.0, location=(0.0, 0.0, -1.5))
+    plane = bpy.context.active_object
+    plane.name = "HoloPhotoBackdrop"
+    plane.scale = (frame_w * 1.08, frame_h * 1.08, 1.0)
+    material, tree = new_material("HoloPhotoBackdrop")
+    texture = tree.nodes.new("ShaderNodeTexImage")
+    texture.image = image
+    texture.extension = "EXTEND"
+    emission = tree.nodes.new("ShaderNodeEmission")
+    emission.inputs["Strength"].default_value = 1.0
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    tree.links.new(texture.outputs["Color"], emission.inputs["Color"])
+    tree.links.new(emission.outputs["Emission"], output.inputs["Surface"])
+    plane.data.materials.append(material)
+    link_to(plane, bg)
+
+
 def build_backdrop(palette: dict, rng: random.Random, rays: bool = False) -> None:
     bg = get_collection("bg")
     clear_collection(bg)
@@ -509,7 +536,7 @@ def build_subject(args: argparse.Namespace, palette: dict) -> None:
         bpy.ops.mesh.primitive_plane_add(size=1.0, location=(0.0, 0.0, 0.0))
         plane = bpy.context.active_object
         plane.name = "HoloImageSubject"
-        width = args.image_width
+        width = args.image_width or (1.1 if args.subject_overflow else 0.8)
         plane.scale = (width, width * aspect, 1.0)
         plane.rotation_euler = (0.0, 0.0, math.radians(args.image_rotate))
         plane.data.materials.append(image_plane_material("HoloImageSubject", image))
@@ -519,7 +546,7 @@ def build_subject(args: argparse.Namespace, palette: dict) -> None:
     if args.model:
         log(f"importing {args.model}")
         objects = import_model(os.path.abspath(args.model))
-        fit_subject(objects, 0.62)
+        fit_subject(objects, 0.9 if args.subject_overflow else 0.62)
         for obj in objects:
             link_to(obj, subject)
         root = bpy.data.objects.get("HoloSubjectRoot")
@@ -596,6 +623,22 @@ def build_lights(palette: dict) -> None:
     tree.links.new(background.outputs["Background"], output.inputs["Surface"])
 
 
+def fx_direction(args: argparse.Namespace, rng: random.Random) -> float:
+    """Main direction of the effects in radians; random per seed unless given."""
+    if args.fx_angle is None:
+        return rng.uniform(0.0, 2.0 * math.pi)
+    return math.radians(args.fx_angle)
+
+
+def along_direction(rng: random.Random, direction: float, spread: float, reach: float, near: float = 0.25, far: float = 0.9, back_chance: float = 0.3) -> tuple[float, float, float]:
+    """A point in a cone around `direction` (or its opposite), between `near` and `far` of `reach`; returns x, y and the actual angle."""
+    angle = direction + math.radians(rng.uniform(-spread, spread))
+    if rng.random() < back_chance:
+        angle += math.pi
+    distance = rng.uniform(near, far) * reach
+    return math.cos(angle) * distance, math.sin(angle) * distance, angle
+
+
 def random_in_frame(rng: random.Random, frame_w: float, frame_h: float, keep_out: float) -> tuple[float, float]:
     """Uniform position inside the frame, outside the subject's keep-out radius."""
     for _ in range(64):
@@ -614,11 +657,13 @@ def build_burst(args: argparse.Namespace, palette: dict, rng: random.Random, fx:
     beam_materials = [fade_emission_material(f"HoloBeam{i}", color, 7.0, "X", 0.5) for i, color in enumerate(palette.get("beams", palette["shards"]))]
     crystal_material = glass_material("HoloCrystal", palette.get("crystal", "#cdb4ff"))
     reach = math.hypot(frame_w, frame_h) / 2.0
+    direction = fx_direction(args, rng)
+    spread = args.fx_spread
 
     wedge_count = max(args.shards // 3, 5)
     for index in range(wedge_count):
-        # spread the wedges around the ring instead of leaving it to chance
-        angle = (index + rng.uniform(0.1, 0.9)) * (2.0 * math.pi / wedge_count)
+        # wedges fan out along the motion direction, a few fly the other way
+        angle = direction + math.radians(rng.uniform(-spread, spread)) + (math.pi if index % 3 == 2 else 0.0)
         length = rng.uniform(0.4, 0.8) * reach
         width = rng.uniform(0.07, 0.16)
         start = rng.uniform(0.3, 0.5)
@@ -632,7 +677,7 @@ def build_burst(args: argparse.Namespace, palette: dict, rng: random.Random, fx:
         link_to(wedge, fx)
 
     for index in range(max(args.shards // 2, 6)):
-        x, y = random_in_frame(rng, frame_w, frame_h, 0.32)
+        x, y, _ = along_direction(rng, direction, spread * 1.6, reach, near=0.3, far=0.95, back_chance=0.35)
         size = rng.uniform(0.025, 0.07)
         bpy.ops.mesh.primitive_cone_add(vertices=6, radius1=size, radius2=size * 0.45, depth=size * rng.uniform(2.5, 4.5), location=(x, y, rng.uniform(0.3, 1.2)))
         crystal = bpy.context.active_object
@@ -643,7 +688,7 @@ def build_burst(args: argparse.Namespace, palette: dict, rng: random.Random, fx:
         link_to(crystal, fx)
 
     for index in range(max(args.shards // 4, 4)):
-        angle = rng.uniform(0.0, 2.0 * math.pi)
+        angle = direction + math.radians(rng.uniform(-spread, spread)) + (math.pi if index % 2 else 0.0)
         length = rng.uniform(0.3, 0.9) * reach
         start = rng.uniform(0.3, 0.6)
         cx, cy = math.cos(angle) * (start + length / 2.0), math.sin(angle) * (start + length / 2.0)
@@ -668,8 +713,10 @@ def build_effects(args: argparse.Namespace, palette: dict, rng: random.Random) -
     shard_materials = [fade_emission_material(f"HoloShard{i}", color, 4.5, "Y", 0.12) for i, color in enumerate(palette["shards"])]
     debris_material = anisotropic_material("HoloDebris", "#9a9ca6")
 
+    reach = math.hypot(frame_w, frame_h) / 2.0
+    direction = fx_direction(args, rng)
     for index in range(args.shards):
-        x, y = random_in_frame(rng, frame_w, frame_h, 0.3)
+        x, y, _ = along_direction(rng, direction, args.fx_spread * 1.4, reach, near=0.3, far=0.95, back_chance=0.4)
         size = rng.uniform(0.04, 0.16)
         bpy.ops.mesh.primitive_cone_add(vertices=3, radius1=size, radius2=0.0, depth=size * 0.12, location=(x, y, rng.uniform(0.25, 1.2)))
         shard = bpy.context.active_object
@@ -710,7 +757,10 @@ def build_sparkles(args: argparse.Namespace, palette: dict, rng: random.Random, 
 def build_template(args: argparse.Namespace, palette: dict, rng: random.Random) -> None:
     bpy.ops.wm.read_factory_settings(use_empty=True)
     build_camera(args)
-    build_backdrop(palette, rng, rays=args.fx == "burst")
+    if args.bg_image:
+        build_photo_backdrop(args)
+    else:
+        build_backdrop(palette, rng, rays=args.fx == "burst")
     build_subject(args, palette)
     build_lights(palette)
     build_effects(args, palette, rng)
@@ -879,6 +929,7 @@ def render_variant(args: argparse.Namespace, out_dir: str, palette_name: str, se
         "name": args.name,
         "palette": palette_name,
         "fx": args.fx,
+        "foregroundFrame": "overhang" if args.subject_overflow else "card",
         "seed": seed,
         "card": {"width": args.width, "height": args.height},
         "frame": {"width": round(args.width * grow), "height": round(args.height * grow)},

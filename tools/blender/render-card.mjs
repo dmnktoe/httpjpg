@@ -30,6 +30,8 @@ const PY_FLAGS = new Set([
   "image",
   "image-width",
   "image-rotate",
+  "fx-angle",
+  "fx-spread",
   "palette",
   "variants",
   "seed",
@@ -49,8 +51,12 @@ export function parseArgs(argv) {
     out: "",
     blend: "",
     blender: "",
+    bgImage: "",
+    bgBlur: 16,
+    bgBrightness: 0.6,
     publish: false,
     glow: true,
+    subjectOverflow: false,
     python: {},
   };
   for (let i = 0; i < argv.length; i++) {
@@ -67,12 +73,22 @@ export function parseArgs(argv) {
       options.glow = false;
       continue;
     }
+    if (key === "subject-overflow") {
+      options.subjectOverflow = true;
+      continue;
+    }
     const value = argv[i + 1];
     if (value === undefined || value.startsWith("--")) {
       throw new Error(`--${key} needs a value`);
     }
     i++;
-    if (key === "out" || key === "blend" || key === "blender") {
+    if (key === "bg-image") {
+      options.bgImage = value;
+    } else if (key === "bg-blur") {
+      options.bgBlur = Number(value);
+    } else if (key === "bg-brightness") {
+      options.bgBrightness = Number(value);
+    } else if (key === "out" || key === "blend" || key === "blender") {
       options[key] = value;
     } else if (key === "name") {
       options.name = value;
@@ -130,7 +146,37 @@ export function pythonArgs(options) {
   for (const [key, value] of Object.entries(options.python)) {
     args.push(`--${key}`, String(value));
   }
+  if (options.subjectOverflow) {
+    args.push("--subject-overflow");
+  }
   return args;
+}
+
+/** Overhang frame size in px, as `render_card.py` computes it. */
+export function frameSize(options) {
+  const width = Number(options.python.width ?? 1000);
+  const height = Number(options.python.height ?? 1400);
+  const overscan = Number(options.python.overscan ?? 0.18);
+  const grow = 1 + 2 * overscan;
+  return { width: Math.round(width * grow), height: Math.round(height * grow) };
+}
+
+/**
+ * A photo backdrop: cover-fitted to the overhang frame, blurred (`--bg-blur`,
+ * sigma in px) and dimmed (`--bg-brightness`) so the subject and the effects
+ * sit on top instead of fighting it.
+ */
+async function prepareBackdrop(sharp, source, options) {
+  const { width, height } = frameSize(options);
+  const target = path.join(options.out, "backdrop.png");
+  await mkdir(options.out, { recursive: true });
+  await sharp(source)
+    .resize(width, height, { fit: "cover" })
+    .blur(Math.max(0.3, options.bgBlur))
+    .modulate({ brightness: options.bgBrightness, saturation: 1.35 })
+    .png()
+    .toFile(target);
+  return target;
 }
 
 async function loadSharp() {
@@ -155,11 +201,12 @@ export function cardRegion(manifest) {
  * has no bloom and EEVEE's moved to the compositor, so it lives here; the alpha
  * blurs too, which gives shards a halo past their edges.
  */
-async function withGlow(sharp, image, sigma) {
+/** Bloom: screen a blurred, thresholded copy over the image. `gain` / `offset` set the threshold curve. */
+async function withGlow(sharp, image, sigma, gain = 1.9, offset = -140) {
   const base = await image.png().toBuffer();
   const glow = await sharp(base)
     .blur(sigma)
-    .linear([1.9, 1.9, 1.9, 0.55], [-140, -140, -140, 0])
+    .linear([gain, gain, gain, 0.55], [offset, offset, offset, 0])
     .png()
     .toBuffer();
   return sharp(base).composite([{ input: glow, blend: "screen" }]);
@@ -170,7 +217,13 @@ async function convertVariant(sharp, dir, manifest, glow = true) {
   const outputs = {};
   const jobs = [
     ["photo", manifest.files.photo, `${manifest.name}.webp`, true, { quality: 86 }],
-    ["foreground", manifest.files.foreground, `${manifest.name}-fg.webp`, true, { quality: 90 }],
+    [
+      "foreground",
+      manifest.files.foreground,
+      `${manifest.name}-fg.webp`,
+      manifest.foregroundFrame !== "overhang",
+      { quality: 90 },
+    ],
     ["effects", manifest.files.effects, `${manifest.name}-fx.webp`, false, { quality: 90 }],
     ["depth", manifest.files.depth, `${manifest.name}-depth.webp`, true, { nearLossless: true }],
   ];
@@ -186,8 +239,11 @@ async function convertVariant(sharp, dir, manifest, glow = true) {
     }
     if (kind === "depth") {
       image = image.toColourspace("b-w");
-    } else if (glow && kind !== "foreground") {
-      image = await withGlow(sharp, image, kind === "effects" ? 9 : 14);
+    } else if (glow && kind === "effects") {
+      image = await withGlow(sharp, image, 9);
+    } else if (glow && kind === "photo") {
+      // gentler on the photo: only real highlights bloom, so a photo subject keeps its tones
+      image = await withGlow(sharp, image, 14, 1.5, -165);
     }
     await image.webp(webp).toFile(path.join(dir, target));
     const { size } = await stat(path.join(dir, target));
@@ -215,6 +271,17 @@ async function main() {
   const options = parseArgs(process.argv.slice(2));
   const blender = await findBlender(options.blender);
   const script = path.join(here, "render_card.py");
+  if (options.bgImage) {
+    const sharpForBackdrop = await loadSharp();
+    if (!sharpForBackdrop) {
+      throw new Error("--bg-image needs sharp (pnpm install in the repo root)");
+    }
+    options.python["bg-image"] = await prepareBackdrop(
+      sharpForBackdrop,
+      path.resolve(options.bgImage),
+      options,
+    );
+  }
   const args = ["--background"];
   if (options.blend) {
     args.push(path.resolve(options.blend));

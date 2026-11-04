@@ -1,0 +1,46 @@
+{
+  "name": "bliss-hello",
+  "palette": "psychic",
+  "fx": "shards",
+  "foregroundFrame": "overhang",
+  "seed": 7,
+  "card": {
+    "width": 1000,
+    "height": 1400
+  },
+  "frame": {
+    "width": 1360,
+    "height": 1904
+  },
+  "overscan": 0.18,
+  "depthRange": {
+    "near": 5.969,
+    "far": 7.531
+  },
+  "engine": "CYCLES",
+  "blender": "5.0.1",
+  "files": {
+    "photo": "bliss-hello.png",
+    "foreground": "bliss-hello-fg.png",
+    "effects": "bliss-hello-fx.png",
+    "depth": "bliss-hello-depth.png"
+  },
+  "webp": {
+    "photo": {
+      "file": "bliss-hello.webp",
+      "bytes": 54244
+    },
+    "foreground": {
+      "file": "bliss-hello-fg.webp",
+      "bytes": 167280
+    },
+    "effects": {
+      "file": "bliss-hello-fx.webp",
+      "bytes": 77156
+    },
+    "depth": {
+      "file": "bliss-hello-depth.webp",
+      "bytes": 78724
+    }
+  }
+}

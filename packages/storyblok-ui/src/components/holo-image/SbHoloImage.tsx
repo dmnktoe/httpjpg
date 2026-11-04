@@ -31,6 +31,7 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
     gyro = true,
     depth,
     foreground,
+    foregroundFrame = "card",
     effects,
     depthMap,
     foil = "silver",
@@ -64,9 +65,13 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
   const depthSrc = depthMap?.filename
     ? sameOriginImageUrl(cropLikePhoto(depthMap.filename), TEXTURE_WIDTH)
     : undefined;
-  // Same crop as the photo so the cut-out lines up at rest.
+  // Same crop as the photo so the cut-out lines up at rest, unless it was
+  // rendered on the overhang frame like the effects layer.
   const foregroundSrc = foreground?.filename
-    ? sameOriginImageUrl(cropLikePhoto(foreground.filename), TEXTURE_WIDTH)
+    ? sameOriginImageUrl(
+        foregroundFrame === "overhang" ? foreground.filename : cropLikePhoto(foreground.filename),
+        TEXTURE_WIDTH,
+      )
     : undefined;
 
   return (
@@ -92,6 +97,7 @@ export const SbHoloImage = memo(function SbHoloImage({ blok }: SbHoloImageProps)
         gyro={gyro}
         depth={depth !== undefined && Number.isFinite(depth) ? Math.max(0, depth) : undefined}
         foregroundSrc={foregroundSrc}
+        foregroundFrame={foregroundFrame}
         effectsSrc={effectsSrc}
         depthSrc={depthSrc}
         foil={foil}

@@ -115,5 +115,26 @@ describe("SbHoloImage", () => {
     expect(decodeURIComponent(String(props.depthSrc))).toContain("/m/");
     expect(props.foil).toBe("swirl");
     expect(props.sparkle).toBe("fireworks");
+    expect(props.foregroundFrame).toBe("card");
+  });
+
+  it("leaves an overhang-frame cut-out uncropped", () => {
+    render(
+      <SbHoloImage
+        blok={
+          {
+            _uid: "holo-3",
+            component: "holo_image",
+            image: { filename: "https://a.storyblok.com/f/1/1200x1600/abc/image.jpg" },
+            foreground: { filename: "https://a.storyblok.com/f/1/1632x2176/def/cutout.png" },
+            foregroundFrame: "overhang",
+          } as never
+        }
+      />,
+    );
+    const props = mockHoloCard.mock.calls[0]?.[0] as Record<string, unknown>;
+    expect(props.foregroundFrame).toBe("overhang");
+    expect(decodeURIComponent(String(props.foregroundSrc))).not.toContain("/m/");
+    expect(String(props.foregroundSrc)).toMatch(/^\/_next\/image\?url=.*cutout\.png&w=/);
   });
 });

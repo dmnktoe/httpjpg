@@ -82,6 +82,7 @@ const OPTIONS = {
   overscan: 0.25,
   foil: "silver" as const,
   sparkle: "stars" as const,
+  foregroundFrame: "card" as const,
 };
 
 describe("createHoloRenderer", () => {
@@ -165,6 +166,10 @@ describe("createHoloRenderer", () => {
     createHoloRenderer(canvasWith(gl), { ...OPTIONS, foil: "swirl", sparkle: "fireworks" });
     expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uFoil" }, 1);
     expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uSparkle" }, 2);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "uFgOverhang" }, 0);
+    const gl2 = fakeGl();
+    createHoloRenderer(canvasWith(gl2), { ...OPTIONS, foregroundFrame: "overhang" });
+    expect(gl2.uniform1f).toHaveBeenCalledWith({ name: "uFgOverhang" }, 1);
   });
 
   it("paints a disc without a frame", () => {

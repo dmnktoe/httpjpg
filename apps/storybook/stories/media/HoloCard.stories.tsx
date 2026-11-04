@@ -78,7 +78,14 @@ const meta = {
     },
     foregroundSrc: {
       control: "text",
-      description: "Cut-out (alpha) with the same framing as `src`, floats in front",
+      description: "Cut-out (alpha) that floats in front of the photo",
+    },
+    foregroundFrame: {
+      control: { type: "radio" as const },
+      options: ["card", "overhang"],
+      description:
+        "`card`: same crop as `src`, clipped by the frame. `overhang`: card + 18% per side, drawn over the frame and past the edge",
+      table: { defaultValue: { summary: "card" } },
     },
     radius: {
       control: { type: "range", min: 0, max: 40, step: 1 },
@@ -189,77 +196,22 @@ export const EffectsOnly: Story = {
 };
 
 /**
- * Straight out of `pnpm holo:render --palette all`: the template scene's
- * chrome placeholder, psychic palette, every layer rendered by Blender.
- */
-export const BlenderRender: Story = {
-  name: "Blender pipeline (psychic)",
-  args: {
-    src: "/images/holo/card-psychic-7/card.webp",
-    foregroundSrc: "/images/holo/card-psychic-7/card-fg.webp",
-    effectsSrc: "/images/holo/card-psychic-7/card-fx.webp",
-    depthSrc: "/images/holo/card-psychic-7/card-depth.webp",
-    alt: "Chrome ring over a violet backdrop with light streaks, shards flying out of the card",
-    variant: "card",
-    aspectRatio: "5/7",
-    intensity: 0.8,
-    maxTilt: 20,
-    depth: 1.4,
-    foil: "swirl",
-    sparkle: "fireworks",
-    idle: true,
-    gyro: true,
-  },
-  render: (args) => (
-    <Box css={{ maxW: "360px", mx: "auto", py: 8 }}>
-      <HoloCard {...args} />
-    </Box>
-  ),
-};
-
-/**
- * `pnpm holo:render --palette scherox --fx burst`: flat orange / blue wedges,
- * glass crystals and beams shoot out of the centre and past the frame, over
- * a backdrop of radial rays, like the Mega-Scherox card.
- */
-export const BlenderBurst: Story = {
-  name: "Blender pipeline (scherox burst)",
-  args: {
-    src: "/images/holo/scherox/scherox.webp",
-    foregroundSrc: "/images/holo/scherox/scherox-fg.webp",
-    effectsSrc: "/images/holo/scherox/scherox-fx.webp",
-    depthSrc: "/images/holo/scherox/scherox-depth.webp",
-    alt: "Faceted orange gem in brushed rings, orange and blue wedges bursting out of the card",
-    variant: "card",
-    aspectRatio: "5/7",
-    intensity: 0.75,
-    maxTilt: 20,
-    depth: 1.4,
-    foil: "silver",
-    sparkle: "fireworks",
-    idle: true,
-    gyro: true,
-  },
-  render: (args) => (
-    <Box css={{ maxW: "360px", mx: "auto", py: 8 }}>
-      <HoloCard {...args} />
-    </Box>
-  ),
-};
-
-/**
- * A cut-out photo as the Blender subject (`--image`): the portfolio's own
- * CRYONiQ shot gets the water palette, burst effects and a depth map that
- * respects the cut-out's alpha.
+ * `pnpm holo:render --image cryo-fg.webp --bg-image cryo.webp --subject-overflow
+ * --fx burst --fx-angle 35`: the portfolio's own CRYONiQ cut-out, bigger than
+ * the card and rendered on the overhang frame (`foregroundFrame="overhang"`),
+ * so it covers the holo frame and sticks out past the edge like Pocket's
+ * full-art cards. Behind it a blurred copy of the same photo; cyan wedges,
+ * crystals and beams shoot along one direction.
  */
 export const BlenderCutOut: Story = {
-  name: "Blender pipeline (photo cut-out subject)",
+  name: "Blender pipeline (cut-out breaking the frame)",
   args: {
     src: "/images/holo/cryo-burst/cryo-burst.webp",
     foregroundSrc: "/images/holo/cryo-burst/cryo-burst-fg.webp",
+    foregroundFrame: "overhang",
     effectsSrc: "/images/holo/cryo-burst/cryo-burst-fx.webp",
     depthSrc: "/images/holo/cryo-burst/cryo-burst-depth.webp",
-    alt: "CRYONiQ cryosauna over radial rays, cyan wedges and ice crystals bursting out of the card",
+    alt: "CRYONiQ cryosauna bursting out of the card over a blurred copy of itself, cyan wedges and ice crystals flying out",
     variant: "card",
     aspectRatio: "5/7",
     intensity: 0.75,
@@ -279,17 +231,18 @@ export const BlenderCutOut: Story = {
 
 /**
  * Lettering as the subject: the Pure Bliss chrome logo (an alpha PNG from the
- * portfolio's Storyblok space) over the fire palette with Mew-style shards,
- * swirl foil and rainbow stars.
+ * portfolio's Storyblok space) wider than the card over a blurred Y2K collage,
+ * Mew-style shards along the lettering's tilt, swirl foil and rainbow stars.
  */
 export const BlenderLettering: Story = {
-  name: "Blender pipeline (chrome lettering, fire shards)",
+  name: "Blender pipeline (chrome lettering)",
   args: {
-    src: "/images/holo/bliss/bliss.webp",
-    foregroundSrc: "/images/holo/bliss/bliss-fg.webp",
-    effectsSrc: "/images/holo/bliss/bliss-fx.webp",
-    depthSrc: "/images/holo/bliss/bliss-depth.webp",
-    alt: "Pure Bliss in glossy purple chrome lettering over a molten orange backdrop with shards",
+    src: "/images/holo/bliss-hello/bliss-hello.webp",
+    foregroundSrc: "/images/holo/bliss-hello/bliss-hello-fg.webp",
+    foregroundFrame: "overhang",
+    effectsSrc: "/images/holo/bliss-hello/bliss-hello-fx.webp",
+    depthSrc: "/images/holo/bliss-hello/bliss-hello-depth.webp",
+    alt: "Pure Bliss in glossy purple chrome lettering running past the card edges over a blurred pink collage with shards",
     variant: "card",
     aspectRatio: "5/7",
     intensity: 0.8,

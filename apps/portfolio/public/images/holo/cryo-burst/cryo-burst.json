@@ -2,6 +2,7 @@
   "name": "cryo-burst",
   "palette": "water",
   "fx": "burst",
+  "foregroundFrame": "overhang",
   "seed": 7,
   "card": {
     "width": 1000,
@@ -27,19 +28,19 @@
   "webp": {
     "photo": {
       "file": "cryo-burst.webp",
-      "bytes": 98536
+      "bytes": 98210
     },
     "foreground": {
       "file": "cryo-burst-fg.webp",
-      "bytes": 108132
+      "bytes": 158408
     },
     "effects": {
       "file": "cryo-burst-fx.webp",
-      "bytes": 207568
+      "bytes": 116642
     },
     "depth": {
       "file": "cryo-burst-depth.webp",
-      "bytes": 37896
+      "bytes": 31766
     }
   }
 }

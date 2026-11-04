@@ -11,6 +11,7 @@ import { CopyrightLabel } from "../copyright-label/copyright-label";
 import {
   createHoloRenderer,
   type HoloFoil,
+  type HoloForegroundFrame,
   type HoloLayerKind,
   type HoloRenderer,
   type HoloSparkle,
@@ -64,6 +65,12 @@ export interface HoloCardProps {
   effectsSrc?: string;
   /** Optional greyscale depth map (white = far, same framing as `src`) for per-pixel parallax. */
   depthSrc?: string;
+  /**
+   * `card`: the cut-out shares the photo's crop. `overhang`: it covers the
+   * card plus `OVERSCAN` on every side (the Blender pipeline's frame), so the
+   * subject can cover the holo frame and stick out past the edge. @default "card"
+   */
+  foregroundFrame?: HoloForegroundFrame;
   /** Frame foil: pastel silver (Galagladi) or dark oil-slick swirl (Mew). @default "silver" */
   foil?: HoloFoil;
   /** Twinkling sparkles over the art. @default "stars" */
@@ -104,6 +111,7 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
     depth = 1,
     effectsSrc,
     depthSrc,
+    foregroundFrame = "card",
     foil = "silver",
     sparkle = "stars",
     copyright,
@@ -155,6 +163,7 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
         overscan: OVERSCAN,
         foil,
         sparkle,
+        foregroundFrame,
         seed: seedFromString(src),
       });
     } catch (error) {
@@ -242,6 +251,7 @@ export const HoloCard = forwardRef<HTMLDivElement, HoloCardProps>(function HoloC
     depth,
     foil,
     sparkle,
+    foregroundFrame,
     variant,
     intensity,
     frame,

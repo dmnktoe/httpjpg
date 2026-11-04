@@ -23,9 +23,18 @@ pnpm holo:render --name bliss --image bliss.png --image-width 0.98 --image-rotat
 pnpm holo:render --name cryo-burst --image cryo-fg.webp --bg-image cryo.webp --bg-brightness 0.95 \
   --subject-overflow --image-width 1.12 --palette water --fx burst --fx-angle 35 --fx-spread 24
 
+# cut a subject out of a photo first (rembg) and estimate its depth (Depth Anything), then
+# render it in the yellow ex style over its own photo tinted to one colour
+python3 tools/blender/cutout.py outlet.jpg --crop 1150,950,2250,2250 --out out/rack
+pnpm holo:render --name outlet --image out/rack.png --image-depth out/rack-depth.png \
+  --bg-image outlet.jpg --bg-tint "#ffcc1a" --subject-overflow --palette electric --fx burst --fx-angle 150
+
 # your own scene: collections `bg`, `subject`, `fx` + a camera
 pnpm holo:render --name steelix --blend ~/cards/steelix.blend
 ```
+
+`cutout.py` needs `pip install rembg onnxruntime numpy pillow`; both models download on
+first use (rembg's into its cache, the depth model into `~/.cache/holo-depth/`).
 
 Requires Blender 4.2 or newer on `PATH`, `BLENDER=/path/to/blender`, in the
 default install location, or passed as `--blender`. Verified on 5.0.1 headless:
@@ -58,11 +67,16 @@ Without `--blend`, `render_card.py` builds the scene itself:
 - `bg`: emissive plane at `z = -1.5` with a palette gradient, light streaks
   (wave texture) and bokeh (voronoi); or, with `--bg-image`, a photo that the
   wrapper first cover-fits to the frame, blurs (`--bg-blur`, sigma in px,
-  default 16) and dims (`--bg-brightness`, default 0.6). A blurred copy of the
+  default 16), dims (`--bg-brightness`, default 0.6) and can tint to one
+  colour (`--bg-tint "#ffcc1a"`, luminance kept) for the one-colour ex cards. A blurred copy of the
   photo the cut-out came from works best: same light, same colours.
 - `subject`: your `--model` (glTF/GLB, FBX, OBJ), centred and scaled to 0.62
   units; or `--image`, a cut-out photo on an emissive plane whose alpha also
-  shapes the depth map; or a faceted gem in brushed rings as the placeholder.
+  shapes the depth map (add `--image-depth`, a greyscale map with white = far
+  such as `cutout.py` writes, and the depth pass offsets the plane per pixel by
+  `--image-depth-range` of the near–far span, so the subject gets relief
+  instead of reading as cardboard); or a faceted gem in brushed rings as the
+  placeholder.
   `--subject-overflow` renders the cut-out on the full overhang frame instead
   of cropping it to the card and grows it (`--image-width` 1.1, models 0.9),
   so it covers the holo frame and sticks out past the edge like Pocket's
@@ -76,7 +90,8 @@ Without `--blend`, `render_card.py` builds the scene itself:
 - key, rim (palette accent) and fill area lights, dark world
 
 Palettes: `psychic` (Mew), `fire` (Team Rocket), `steel` (Steelix), `water`,
-`grass`, `dark`, `scherox`. Add one in `PALETTES` in `render_card.py`.
+`grass`, `dark`, `electric` (Zapdos ex: yellow, violet-white lightning),
+`scherox`. Add one in `PALETTES` in `render_card.py`.
 `--variants N` cycles through the chosen palettes with `--seed + i`.
 
 Effect styles (`--fx`): `shards` (default) scatters small emissive triangles,

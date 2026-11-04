@@ -260,6 +260,40 @@ export const BlenderLettering: Story = {
   ),
 };
 
+/**
+ * The yellow ex look (Zapdos, Mewtwo Tera): `--palette electric --bg-tint
+ * "#ffcc1a"`. The subject is a rack of yellow longsleeves cut out of the
+ * Outlet Store photo with `tools/blender/cutout.py`, which also estimates its
+ * depth, so the front sweater sits nearer than the trousers behind it. The
+ * backdrop is the same photo blurred and tinted to one colour; violet-white
+ * beams and crystals fly along one direction.
+ */
+export const BlenderElectric: Story = {
+  name: "Blender pipeline (electric, cut-out with depth)",
+  args: {
+    src: "/images/holo/outlet-electric/outlet-electric.webp",
+    foregroundSrc: "/images/holo/outlet-electric/outlet-electric-fg.webp",
+    foregroundFrame: "overhang",
+    effectsSrc: "/images/holo/outlet-electric/outlet-electric-fx.webp",
+    depthSrc: "/images/holo/outlet-electric/outlet-electric-depth.webp",
+    alt: "A rack of yellow longsleeves bursting out of a yellow card, white and violet lightning beams flying past the edge",
+    variant: "card",
+    aspectRatio: "5/7",
+    intensity: 0.75,
+    maxTilt: 20,
+    depth: 1.5,
+    foil: "silver",
+    sparkle: "fireworks",
+    idle: true,
+    gyro: true,
+  },
+  render: (args) => (
+    <Box css={{ maxW: "360px", mx: "auto", py: 8 }}>
+      <HoloCard {...args} />
+    </Box>
+  ),
+};
+
 export const Disc: Story = {
   args: {
     src: OPTIMIZED_IMAGES.outletStore1,

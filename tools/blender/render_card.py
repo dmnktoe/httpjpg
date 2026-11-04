@@ -86,6 +86,17 @@ PALETTES = {
         "sparkle": "#ffffff",
     },
     # Mega-Scherox: black with green rays, orange / blue wedges, violet crystals
+    "electric": {
+        # Zapdos ex: yellow all over, violet-white lightning
+        "bg": ("#3a2600", "#b07a00", "#ffcc1a", "#fff3a6"),
+        "streak": "#fff7c2",
+        "accent": "#ffd21a",
+        "shards": ("#ffe34d", "#b388ff", "#ffffff"),
+        "wedges": ("#ffd21a", "#c9a3ff"),
+        "beams": ("#ffffff", "#d9b3ff", "#ffe34d"),
+        "crystal": "#fff1a8",
+        "sparkle": "#ffffff",
+    },
     "scherox": {
         "bg": ("#050506", "#10141a", "#1f262e", "#3b454f"),
         "streak": "#39ff8a",
@@ -110,6 +121,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--image", help="cut-out photo (PNG/WebP with alpha) to use as a flat subject instead of a model")
     parser.add_argument("--image-width", type=float, help="width of the cut-out in card widths (card = 1.0; default 0.8, or 1.1 with --subject-overflow)")
     parser.add_argument("--image-rotate", type=float, default=0.0, help="rotation of the cut-out in degrees, counter-clockwise")
+    parser.add_argument("--image-depth", help="greyscale depth map for --image (white = far, same size); gives the flat cut-out per-pixel depth")
+    parser.add_argument("--image-depth-range", type=float, default=0.3, help="how much of the near–far range the --image-depth map spans")
     parser.add_argument("--subject-overflow", action="store_true", help="render the cut-out on the full overhang frame so it can break the card edge")
     parser.add_argument("--bg-image", help="photo for the backdrop (already blurred/darkened by the wrapper) instead of the procedural gradient")
     parser.add_argument("--fx-angle", type=float, help="direction the effects shoot along, in degrees (default: random per seed)")
@@ -541,6 +554,11 @@ def build_subject(args: argparse.Namespace, palette: dict) -> None:
         plane.rotation_euler = (0.0, 0.0, math.radians(args.image_rotate))
         plane.data.materials.append(image_plane_material("HoloImageSubject", image))
         plane["holo_alpha_image"] = image.name
+        if args.image_depth:
+            depth_image = bpy.data.images.load(os.path.abspath(args.image_depth))
+            depth_image.colorspace_settings.name = "Non-Color"
+            plane["holo_depth_image"] = depth_image.name
+            plane["holo_depth_range"] = args.image_depth_range
         link_to(plane, subject)
         return
     if args.model:
@@ -788,13 +806,36 @@ def depth_material(near: float, far: float) -> bpy.types.Material:
     return material
 
 
-def depth_alpha_material(near: float, far: float, image: bpy.types.Image) -> bpy.types.Material:
-    """Depth for a cut-out plane: transparent where the photo is transparent."""
+def depth_alpha_material(near: float, far: float, image: bpy.types.Image, depth_image: bpy.types.Image | None = None, depth_range: float = 0.3) -> bpy.types.Material:
+    """Depth for a cut-out plane: transparent where the photo is transparent.
+
+    With `depth_image` (white = far) the plane's own distance is offset per
+    pixel by `depth_range` of the near–far span, so a photo subject gets relief
+    instead of reading as a flat cardboard cut-out.
+    """
     material = depth_material(near, far)
     material.name = f"HoloDepthAlpha.{image.name}"
     tree = material.node_tree
     output = next(node for node in tree.nodes if node.type == "OUTPUT_MATERIAL")
     emission = next(node for node in tree.nodes if node.type == "EMISSION")
+    if depth_image is not None:
+        remap = next(node for node in tree.nodes if node.type == "MAP_RANGE")
+        relief = tree.nodes.new("ShaderNodeTexImage")
+        relief.image = depth_image
+        centre = tree.nodes.new("ShaderNodeMath")
+        centre.operation = "SUBTRACT"
+        centre.inputs[1].default_value = 0.5
+        scale = tree.nodes.new("ShaderNodeMath")
+        scale.operation = "MULTIPLY"
+        scale.inputs[1].default_value = depth_range
+        add = tree.nodes.new("ShaderNodeMath")
+        add.operation = "ADD"
+        add.use_clamp = True
+        tree.links.new(relief.outputs["Color"], centre.inputs[0])
+        tree.links.new(centre.outputs["Value"], scale.inputs[0])
+        tree.links.new(remap.outputs["Result"], add.inputs[0])
+        tree.links.new(scale.outputs["Value"], add.inputs[1])
+        tree.links.new(add.outputs["Value"], emission.inputs["Color"])
     texture = tree.nodes.new("ShaderNodeTexImage")
     texture.image = image
     transparent = tree.nodes.new("ShaderNodeBsdfTransparent")
@@ -819,7 +860,18 @@ def apply_depth_materials(near: float, far: float, collections: list[str]):
                 continue
             saved.append((obj, [slot.material for slot in obj.material_slots]))
             image_name = obj.get("holo_alpha_image")
-            replacement = depth_alpha_material(near, far, bpy.data.images[image_name]) if image_name else plain
+            depth_name = obj.get("holo_depth_image")
+            replacement = (
+                depth_alpha_material(
+                    near,
+                    far,
+                    bpy.data.images[image_name],
+                    bpy.data.images[depth_name] if depth_name else None,
+                    float(obj.get("holo_depth_range", 0.3)),
+                )
+                if image_name
+                else plain
+            )
             if not obj.material_slots:
                 obj.data.materials.append(replacement)
             for slot in obj.material_slots:

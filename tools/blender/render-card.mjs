@@ -30,6 +30,8 @@ const PY_FLAGS = new Set([
   "image",
   "image-width",
   "image-rotate",
+  "image-depth",
+  "image-depth-range",
   "fx-angle",
   "fx-spread",
   "palette",
@@ -54,6 +56,7 @@ export function parseArgs(argv) {
     bgImage: "",
     bgBlur: 16,
     bgBrightness: 0.6,
+    bgTint: "",
     publish: false,
     glow: true,
     subjectOverflow: false,
@@ -88,6 +91,8 @@ export function parseArgs(argv) {
       options.bgBlur = Number(value);
     } else if (key === "bg-brightness") {
       options.bgBrightness = Number(value);
+    } else if (key === "bg-tint") {
+      options.bgTint = value;
     } else if (key === "out" || key === "blend" || key === "blender") {
       options[key] = value;
     } else if (key === "name") {
@@ -163,19 +168,23 @@ export function frameSize(options) {
 
 /**
  * A photo backdrop: cover-fitted to the overhang frame, blurred (`--bg-blur`,
- * sigma in px) and dimmed (`--bg-brightness`) so the subject and the effects
- * sit on top instead of fighting it.
+ * sigma in px), dimmed (`--bg-brightness`) and optionally tinted to one
+ * colour (`--bg-tint`) so the subject and the effects sit on top instead of
+ * fighting it.
  */
 async function prepareBackdrop(sharp, source, options) {
   const { width, height } = frameSize(options);
   const target = path.join(options.out, "backdrop.png");
   await mkdir(options.out, { recursive: true });
-  await sharp(source)
+  let image = sharp(source)
     .resize(width, height, { fit: "cover" })
     .blur(Math.max(0.3, options.bgBlur))
-    .modulate({ brightness: options.bgBrightness, saturation: 1.35 })
-    .png()
-    .toFile(target);
+    .modulate({ brightness: options.bgBrightness, saturation: 1.35 });
+  if (options.bgTint) {
+    // one-colour backdrop like the yellow ex cards: luminance kept, hue replaced
+    image = image.tint(options.bgTint);
+  }
+  await image.png().toFile(target);
   return target;
 }
 

@@ -1,0 +1,46 @@
+{
+  "name": "outlet-electric",
+  "palette": "electric",
+  "fx": "burst",
+  "foregroundFrame": "overhang",
+  "seed": 7,
+  "card": {
+    "width": 1000,
+    "height": 1400
+  },
+  "frame": {
+    "width": 1360,
+    "height": 1904
+  },
+  "overscan": 0.18,
+  "depthRange": {
+    "near": 5.969,
+    "far": 7.531
+  },
+  "engine": "CYCLES",
+  "blender": "5.0.1",
+  "files": {
+    "photo": "outlet-electric.png",
+    "foreground": "outlet-electric-fg.png",
+    "effects": "outlet-electric-fx.png",
+    "depth": "outlet-electric-depth.png"
+  },
+  "webp": {
+    "photo": {
+      "file": "outlet-electric.webp",
+      "bytes": 62726
+    },
+    "foreground": {
+      "file": "outlet-electric-fg.webp",
+      "bytes": 206424
+    },
+    "effects": {
+      "file": "outlet-electric-fx.webp",
+      "bytes": 128702
+    },
+    "depth": {
+      "file": "outlet-electric-depth.webp",
+      "bytes": 102002
+    }
+  }
+}

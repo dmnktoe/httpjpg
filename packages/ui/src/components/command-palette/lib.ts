@@ -94,10 +94,7 @@ function fold(text: string): { folded: string; origin: number[] } {
   let folded = "";
   const origin: number[] = [];
   for (let index = 0; index < text.length; index += 1) {
-    const piece = text[index]
-      .normalize("NFD")
-      .replace(/[̀-ͯ]/g, "")
-      .toLowerCase();
+    const piece = text[index].normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     for (const char of piece) {
       folded += char;
       origin.push(index);

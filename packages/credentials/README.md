@@ -62,4 +62,7 @@ endpoint to tell an expired cookie apart from a blocked network — psn-api repo
 both with the same message.
 
 NPSSO cookies last about 60 days and nothing renews them, so this comes back
-around. `--check` is cheap enough to hang off a reminder.
+around. The **PSN NPSSO** workflow (`.github/workflows/psn-npsso.yml`) probes the
+live trophy widget every morning. When PSN rejects the cookie it opens an issue
+labelled `psn-npsso` with these steps, and closes it once the widget answers
+again — run the workflow by hand after you update production.

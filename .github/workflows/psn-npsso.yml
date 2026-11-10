@@ -1,0 +1,77 @@
+name: PSN NPSSO
+
+# Sony mints no NPSSO through an API, so renewal stays manual
+# (`pnpm creds:psn --write`). This watches the live trophy widget and opens an
+# issue the day PSN starts rejecting the cookie, then closes it once it works.
+
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: psn-npsso
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Check PSN_NPSSO
+    if: github.repository == 'dmnktoe/httpjpg'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      ENDPOINT: https://www.httpjpg.com/api/psn-trophies
+      LABEL: psn-npsso
+    steps:
+      - name: Probe the live trophy widget
+        id: probe
+        run: |
+          body="$(mktemp)"
+          status="$(curl -sS -L --max-time 30 -A "httpjpg-psn-check" -o "$body" -w '%{http_code}' "$ENDPOINT")" || status=000
+          reason="$(jq -r '.reason // empty' "$body" 2>/dev/null)" || reason=""
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "reason=$reason" >> "$GITHUB_OUTPUT"
+          echo "PSN widget answered $status${reason:+ ($reason)}"
+
+      - name: Open or close the renewal issue
+        env:
+          STATUS: ${{ steps.probe.outputs.status }}
+          REASON: ${{ steps.probe.outputs.reason }}
+        run: |
+          open="$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number // empty')"
+
+          if [[ "$STATUS" == "200" ]]; then
+            if [[ -n "$open" ]]; then
+              gh issue close "$open" --comment "The trophy widget answers 200 again, so PSN accepts the new \`PSN_NPSSO\`. Closing."
+            fi
+            echo "PSN_NPSSO is valid."
+            exit 0
+          fi
+
+          if [[ "$STATUS" != "503" || "$REASON" != "auth" ]]; then
+            # Rate limits, PSN outages and network blips are not the cookie's fault.
+            echo "::warning::PSN widget answered $STATUS${REASON:+ ($REASON)} — not an NPSSO rejection, leaving issues alone."
+            exit 0
+          fi
+
+          if [[ -n "$open" ]]; then
+            echo "::warning::PSN_NPSSO is still rejected — see #$open."
+            exit 0
+          fi
+
+          gh label create "$LABEL" --color FBCA04 --description "PSN_NPSSO needs renewing" --force
+          gh issue create --label "$LABEL" --title "Renew PSN_NPSSO — PSN rejects the cookie" --body-file - <<'EOF'
+          The live trophy widget answers `503 · reason: auth`: Sony no longer accepts `PSN_NPSSO`.
+          NPSSO cookies last about 60 days and Sony offers no API to mint one, so renewing takes a browser.
+
+          1. Sign in on playstation.com, then open https://ca.account.sony.com/api/v1/ssocookie
+          2. Run `pnpm creds:psn --write` and paste the cookie (or the whole JSON body). It verifies the value against PSN and stores it in `.env.local`.
+          3. Set the same value as `PSN_NPSSO` in production and restart the app.
+          4. Run the **PSN NPSSO** workflow (Actions → Run workflow). It closes this issue once the widget answers 200.
+          EOF

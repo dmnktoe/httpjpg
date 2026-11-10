@@ -5,8 +5,6 @@ import { env } from "@httpjpg/env";
 import { CACHE_LIFE } from "@httpjpg/storyblok-next/cache-life";
 import type { NextConfig } from "next";
 
-import { legacyRedirects } from "./lib/legacy-redirects";
-
 const GITHUB_REPO = "dmnktoe/httpjpg";
 
 async function fetchLatestReleaseTag(): Promise<string | undefined> {
@@ -104,10 +102,6 @@ export default async (): Promise<NextConfig> => {
 
     reactStrictMode: true,
     productionBrowserSourceMaps: true,
-
-    async redirects() {
-      return legacyRedirects();
-    },
 
     async rewrites() {
       return [

@@ -45,7 +45,6 @@ function row(teamInfoId: number, points: number, goals: number, opponentGoals: n
   return { teamInfoId, points, goals, opponentGoals, matches: 9 } satisfies OpenLigaTableRow;
 }
 
-// Köln, Union, Schalke after matchday nine.
 const TABLE = [row(65, 9, 10, 14), row(80, 7, 7, 21), row(9, 6, 5, 11)];
 
 beforeEach(() => {
@@ -113,7 +112,6 @@ describe("parseFixture", () => {
 
 describe("readStanding", () => {
   it("reports a drop when the matchday cost a place", () => {
-    // Before the matchday Union had 4 points, Schalke 6: Schalke was second of three.
     const matchday = [
       LAST,
       match({

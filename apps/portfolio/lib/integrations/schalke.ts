@@ -11,16 +11,13 @@ export interface SchalkeFixture {
   away: string;
   homeGoals: number;
   awayGoals: number;
-  /** Seen from Schalke's side, whichever end they played at. */
   outcome: FixtureOutcome;
-  /** OpenLigaDB league shortcut: `bl1`, `bl2`, `bl3` or `dfb`. */
   competition: string;
   playedAt: string | null;
 }
 
 export interface SchalkeStanding {
   position: number;
-  /** Where the club stood before its latest league matchday; null on matchday one. */
   previousPosition: number | null;
   trend: StandingTrend;
   points: number;
@@ -71,21 +68,15 @@ const API = "https://api.openligadb.de";
 const TEAM_ID = 9;
 const CLUB_URL = "https://schalke04.de";
 
-/**
- * OpenLigaDB files the women's and youth sides under the same team id, so the
- * men's fixtures have to be picked out by competition.
- */
 const LEAGUES = ["bl1", "bl2", "bl3"];
 const CUP = "dfb";
 
-/** Far enough back to still find a match across the winter break. */
 const WEEKS_BACK = 8;
 
 function teamLabel(team: OpenLigaTeam | undefined): string {
   return team?.shortName || team?.teamName || "?";
 }
 
-/** The last entry is the one that stands: full time, or extra time and penalties in the cup. */
 function finalScore(match: OpenLigaMatch): [number, number] | null {
   const results = [...(match.matchResults ?? [])].sort(
     (a, b) => (b.resultOrderID ?? 0) - (a.resultOrderID ?? 0),
@@ -97,7 +88,6 @@ function finalScore(match: OpenLigaMatch): [number, number] | null {
   return [final.pointsTeam1, final.pointsTeam2];
 }
 
-/** Finished men's matches, newest first. */
 export function recentMatches(matches: OpenLigaMatch[]): OpenLigaMatch[] {
   return matches
     .filter(
@@ -149,10 +139,6 @@ function toLine(row: OpenLigaTableRow): TableLine {
   };
 }
 
-/**
- * The feed only carries the current table, so the previous position is worked
- * out by taking the latest matchday's results back off it and re-sorting.
- */
 export function readStanding(
   table: OpenLigaTableRow[],
   matchday: OpenLigaMatch[],
@@ -189,8 +175,6 @@ export function readStanding(
     }
   }
 
-  // Bundesliga order: points, goal difference, goals scored. The sort is
-  // stable, so teams still level keep the feed's own order.
   const previous = [...before.values()].sort(
     (a, b) =>
       b.points - a.points || b.goals - b.against - (a.goals - a.against) || b.goals - a.goals,
@@ -238,12 +222,10 @@ async function fetchStanding(match: OpenLigaMatch): Promise<SchalkeStanding | nu
   if (!table.ok || !Array.isArray(table.data)) {
     return null;
   }
-  // Without the matchday the position still stands; only the trend is lost.
   const played = results.ok && Array.isArray(results.data) ? results.data : [];
   return readStanding(table.data, played, league);
 }
 
-/** Schalke's last result and league position, from the keyless OpenLigaDB feed. */
 export async function fetchSchalkeStatus(): Promise<SchalkeFetchResult> {
   const matches = await fetchOpenLiga<OpenLigaMatch[]>(
     `/getmatchesbyteamid/${TEAM_ID}/${WEEKS_BACK}/0`,

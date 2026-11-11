@@ -12,15 +12,7 @@ import type { SchalkeStanding, SchalkeStatus as SchalkeData } from "@/lib/integr
 
 export interface SchalkeStatusProps {
   status: SchalkeData | null;
-  /** False while the request is in flight, so the line holds instead of collapsing. */
   loaded: boolean;
-}
-
-function describeTrend(standing: SchalkeStanding): string {
-  if (standing.trend === "same" || standing.previousPosition === null) {
-    return "unchanged";
-  }
-  return `${standing.trend} from ${standing.previousPosition}.`;
 }
 
 export function SchalkeStatus({ status, loaded }: SchalkeStatusProps) {
@@ -79,4 +71,11 @@ export function SchalkeStatus({ status, loaded }: SchalkeStatusProps) {
       )}
     </FooterStatusLine>
   );
+}
+
+function describeTrend(standing: SchalkeStanding): string {
+  if (standing.trend === "same" || standing.previousPosition === null) {
+    return "unchanged";
+  }
+  return `${standing.trend} from ${standing.previousPosition}.`;
 }

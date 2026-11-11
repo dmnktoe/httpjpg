@@ -2,8 +2,6 @@ import { fetchSchalkeStatus } from "@/lib/integrations/schalke";
 import { WIDGET_MAX_AGE } from "@/lib/queries/widget-status";
 import { widgetPayload, widgetRoute, widgetUpstreamError } from "@/lib/widget-route";
 
-// No setting to resolve: the club is fixed and the feed needs no key. The
-// footer decides from `schalke_enabled` whether to ask at all.
 export const GET = widgetRoute(
   { route: "schalke", label: "Schalke status" },
   async ({ isDraft }) => {

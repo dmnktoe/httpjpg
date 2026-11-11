@@ -1,11 +1,24 @@
 // @vitest-environment node
+import sharp from "sharp";
 import { beforeEach, type MockedFunction, vi } from "vitest";
+
+const { safeFetch, readLimited } = vi.hoisted(() => ({
+  safeFetch: vi.fn(),
+  readLimited: vi.fn(),
+}));
+
+vi.mock("./favicon", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./favicon")>()),
+  safeFetch,
+  readLimited,
+}));
 
 import {
   fetchSchalkeStatus,
   type OpenLigaMatch,
   type OpenLigaTableRow,
   parseFixture,
+  pixelateCrest,
   readStanding,
   recentMatches,
 } from "./schalke";
@@ -48,7 +61,7 @@ function row(teamInfoId: number, points: number, goals: number, opponentGoals: n
 const TABLE = [row(65, 9, 10, 14), row(80, 7, 7, 21), row(9, 6, 5, 11)];
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  vi.resetAllMocks();
 });
 
 describe("recentMatches", () => {
@@ -79,6 +92,8 @@ describe("parseFixture", () => {
       away: "S04",
       homeGoals: 2,
       awayGoals: 1,
+      homeCrest: null,
+      awayCrest: null,
       outcome: "loss",
       competition: "bl1",
       playedAt: "2026-11-08T18:30:00Z",
@@ -107,6 +122,59 @@ describe("parseFixture", () => {
 
   it("returns null without a result", () => {
     expect(parseFixture(match({ matchResults: [] }))).toBeNull();
+  });
+});
+
+describe("pixelateCrest", () => {
+  const CREST_URL = "https://crests.test/s04.png";
+
+  async function crest(): Promise<Buffer> {
+    return sharp({
+      create: {
+        width: 200,
+        height: 120,
+        channels: 4,
+        background: { r: 0, g: 75, b: 160, alpha: 1 },
+      },
+    })
+      .png()
+      .toBuffer();
+  }
+
+  it("shrinks the crest to a 16px data URI", async () => {
+    safeFetch.mockResolvedValueOnce({ ok: true });
+    readLimited.mockResolvedValueOnce(await crest());
+
+    const uri = await pixelateCrest(CREST_URL);
+
+    expect(uri).toMatch(/^data:image\/png;base64,/);
+    const pixels = Buffer.from(uri!.split(",")[1], "base64");
+    await expect(sharp(pixels).metadata()).resolves.toMatchObject({ width: 16, height: 16 });
+    expect(safeFetch.mock.calls[0][0].href).toBe(CREST_URL);
+  });
+
+  it("skips a missing or non-http icon without fetching", async () => {
+    await expect(pixelateCrest(undefined)).resolves.toBeNull();
+    await expect(pixelateCrest("file:///etc/passwd")).resolves.toBeNull();
+    expect(safeFetch).not.toHaveBeenCalled();
+  });
+
+  it("returns null when the icon host is refused or fails", async () => {
+    safeFetch.mockResolvedValueOnce(null);
+    await expect(pixelateCrest(CREST_URL)).resolves.toBeNull();
+
+    safeFetch.mockResolvedValueOnce({ ok: false });
+    await expect(pixelateCrest(CREST_URL)).resolves.toBeNull();
+  });
+
+  it("returns null when the icon is too large or not an image", async () => {
+    safeFetch.mockResolvedValueOnce({ ok: true });
+    readLimited.mockResolvedValueOnce(null);
+    await expect(pixelateCrest(CREST_URL)).resolves.toBeNull();
+
+    safeFetch.mockResolvedValueOnce({ ok: true });
+    readLimited.mockResolvedValueOnce(Buffer.from("not an image"));
+    await expect(pixelateCrest(CREST_URL)).resolves.toBeNull();
   });
 });
 
@@ -208,6 +276,34 @@ describe("fetchSchalkeStatus", () => {
     expect(urls[0]).toBe("https://api.openligadb.de/getmatchesbyteamid/9/8/0");
     expect(urls).toContain("https://api.openligadb.de/getbltable/bl1/2026");
     expect(urls).toContain("https://api.openligadb.de/getmatchdata/bl1/2026/9");
+  });
+
+  it("attaches both pixelated crests to the fixture", async () => {
+    const withIcons = match({
+      team1: { ...HOFFENHEIM, teamIconUrl: "https://crests.test/tsg.png" },
+      team2: { ...S04, teamIconUrl: "https://crests.test/s04.png" },
+    });
+    const pixels = await sharp({
+      create: { width: 32, height: 32, channels: 4, background: { r: 0, g: 75, b: 160, alpha: 1 } },
+    })
+      .png()
+      .toBuffer();
+    safeFetch.mockResolvedValue({ ok: true });
+    readLimited.mockResolvedValue(pixels);
+    mockFetch
+      .mockResolvedValueOnce(jsonResponse([withIcons]))
+      .mockResolvedValueOnce(jsonResponse(TABLE))
+      .mockResolvedValueOnce(jsonResponse([withIcons]));
+
+    const result = await fetchSchalkeStatus();
+
+    expect(result).toMatchObject({
+      fixture: {
+        homeCrest: expect.stringMatching(/^data:image\/png;base64,/),
+        awayCrest: expect.stringMatching(/^data:image\/png;base64,/),
+      },
+    });
+    expect(safeFetch).toHaveBeenCalledTimes(2);
   });
 
   it("shows a cup tie as the fixture but ranks from the last league match", async () => {

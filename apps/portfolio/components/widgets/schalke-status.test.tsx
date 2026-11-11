@@ -11,6 +11,8 @@ const STATUS: SchalkeData = {
     away: "S04",
     homeGoals: 2,
     awayGoals: 1,
+    homeCrest: "data:image/png;base64,aG9tZQ==",
+    awayCrest: "data:image/png;base64,YXdheQ==",
     outcome: "loss",
     competition: "bl1",
     playedAt: "2026-11-08T18:30:00Z",
@@ -44,16 +46,20 @@ describe("SchalkeStatus", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("renders the result with its outcome dot and the position with its trend arrow", () => {
+  it("renders the result between both crests and the position with its trend arrow", () => {
     render(<SchalkeStatus status={STATUS} loaded />);
 
     expect(screen.getByText("Hoffenheim 2:1 S04")).toBeInTheDocument();
     expect(screen.getByText("17.")).toBeInTheDocument();
     expect(screen.getByText("6 pts")).toBeInTheDocument();
 
-    const dot = screen.getByAltText("loss");
-    expect(dot).toHaveAttribute("src", "/images/football/loss.png");
-    expect(dot).toHaveStyle({ imageRendering: "pixelated" });
+    const crests = [STATUS.fixture!.homeCrest, STATUS.fixture!.awayCrest].map((src) =>
+      document.querySelector(`img[src="${src}"]`),
+    );
+    for (const crest of crests) {
+      expect(crest).toBeInTheDocument();
+      expect(crest).toHaveStyle({ imageRendering: "pixelated" });
+    }
 
     const arrow = screen.getByAltText("down from 16.");
     expect(arrow).toHaveAttribute("src", "/images/football/down.png");
@@ -67,6 +73,14 @@ describe("SchalkeStatus", () => {
     render(<SchalkeStatus status={{ ...STATUS, standing }} loaded />);
 
     expect(screen.getByAltText("unchanged")).toHaveAttribute("src", "/images/football/same.png");
+  });
+
+  it("leaves a crest out when it could not be loaded", () => {
+    const fixture = { ...STATUS.fixture!, homeCrest: null, awayCrest: null };
+    render(<SchalkeStatus status={{ ...STATUS, fixture }} loaded />);
+
+    expect(screen.getByText("Hoffenheim 2:1 S04")).toBeInTheDocument();
+    expect(document.querySelectorAll("img")).toHaveLength(1);
   });
 
   it("shows the position alone when there is no recent fixture", () => {

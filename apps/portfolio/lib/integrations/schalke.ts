@@ -1,3 +1,6 @@
+import sharp from "sharp";
+
+import { isHttpUrl, readLimited, safeFetch } from "./favicon";
 import { fetchWithTimeout, type HttpFailure, readJson } from "./http";
 
 const OUTCOME = { win: "win", draw: "draw", loss: "loss" } as const;
@@ -11,6 +14,8 @@ export interface SchalkeFixture {
   away: string;
   homeGoals: number;
   awayGoals: number;
+  homeCrest: string | null;
+  awayCrest: string | null;
   outcome: FixtureOutcome;
   competition: string;
   playedAt: string | null;
@@ -37,6 +42,7 @@ interface OpenLigaTeam {
   teamId?: number;
   teamName?: string;
   shortName?: string;
+  teamIconUrl?: string;
 }
 
 interface OpenLigaResult {
@@ -72,6 +78,10 @@ const LEAGUES = ["bl1", "bl2", "bl3"];
 const CUP = "dfb";
 
 const WEEKS_BACK = 8;
+
+const CREST_SIZE = 16;
+const CREST_TIMEOUT_MS = 5000;
+const MAX_CREST_BYTES = 4 * 1024 * 1024;
 
 function teamLabel(team: OpenLigaTeam | undefined): string {
   return team?.shortName || team?.teamName || "?";
@@ -115,6 +125,8 @@ export function parseFixture(match: OpenLigaMatch): SchalkeFixture | null {
     away: teamLabel(match.team2),
     homeGoals,
     awayGoals,
+    homeCrest: null,
+    awayCrest: null,
     outcome: own > other ? OUTCOME.win : own < other ? OUTCOME.loss : OUTCOME.draw,
     competition: match.leagueShortcut ?? "",
     playedAt: match.matchDateTimeUTC ?? null,
@@ -199,6 +211,46 @@ export function readStanding(
   };
 }
 
+export async function pixelateCrest(iconUrl: string | undefined): Promise<string | null> {
+  const target = iconUrl ? isHttpUrl(iconUrl) : null;
+  if (!target) {
+    return null;
+  }
+
+  try {
+    const response = await safeFetch(target, "image/*", Date.now() + CREST_TIMEOUT_MS);
+    if (!response?.ok) {
+      return null;
+    }
+    const source = await readLimited(response, MAX_CREST_BYTES);
+    if (!source) {
+      return null;
+    }
+    const pixels = await sharp(source)
+      .resize(CREST_SIZE, CREST_SIZE, {
+        fit: "contain",
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      })
+      .png()
+      .toBuffer();
+    return `data:image/png;base64,${pixels.toString("base64")}`;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchFixture(match: OpenLigaMatch): Promise<SchalkeFixture | null> {
+  const fixture = parseFixture(match);
+  if (!fixture) {
+    return null;
+  }
+  const [homeCrest, awayCrest] = await Promise.all([
+    pixelateCrest(match.team1?.teamIconUrl),
+    pixelateCrest(match.team2?.teamIconUrl),
+  ]);
+  return { ...fixture, homeCrest, awayCrest };
+}
+
 async function fetchOpenLiga<T>(path: string): Promise<{ ok: true; data: T } | HttpFailure> {
   const result = await fetchWithTimeout(`${API}${path}`, { label: "OpenLigaDB" });
   if (!result.ok) {
@@ -240,10 +292,10 @@ export async function fetchSchalkeStatus(): Promise<SchalkeFetchResult> {
   const recent = recentMatches(matches.data);
   const lastLeagueMatch = recent.find((match) => LEAGUES.includes(match.leagueShortcut ?? ""));
 
-  return {
-    ok: true,
-    fixture: recent[0] ? parseFixture(recent[0]) : null,
-    standing: lastLeagueMatch ? await fetchStanding(lastLeagueMatch) : null,
-    url: CLUB_URL,
-  };
+  const [fixture, standing] = await Promise.all([
+    recent[0] ? fetchFixture(recent[0]) : null,
+    lastLeagueMatch ? fetchStanding(lastLeagueMatch) : null,
+  ]);
+
+  return { ok: true, fixture, standing, url: CLUB_URL };
 }

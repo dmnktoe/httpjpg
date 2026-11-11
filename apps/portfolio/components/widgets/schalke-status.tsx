@@ -41,15 +41,25 @@ export function SchalkeStatus({ status, loaded }: SchalkeStatusProps) {
     >
       {fixture && (
         <>
-          <FooterStatusLineThumb
-            src={`/images/football/${fixture.outcome}.png`}
-            alt={fixture.outcome}
-            size="2"
-            shape="square"
-            fit="contain"
-            pixelated
-          />
+          {fixture.homeCrest && (
+            <FooterStatusLineThumb
+              src={fixture.homeCrest}
+              size="4"
+              shape="square"
+              fit="contain"
+              pixelated
+            />
+          )}
           <FooterStatusLineText>{score}</FooterStatusLineText>
+          {fixture.awayCrest && (
+            <FooterStatusLineThumb
+              src={fixture.awayCrest}
+              size="4"
+              shape="square"
+              fit="contain"
+              pixelated
+            />
+          )}
         </>
       )}
       {fixture && standing && <FooterStatusLineSeparator />}

@@ -112,14 +112,6 @@ export const Football: Story = {
   render: () => (
     <Box css={{ display: "flex", flexDirection: "column", alignItems: "center", w: "26rem" }}>
       <FooterStatusLine label="s04">
-        <FooterStatusLineThumb
-          src="/images/football/loss.png"
-          alt="loss"
-          size="2"
-          shape="square"
-          fit="contain"
-          pixelated
-        />
         <FooterStatusLineText>Hoffenheim 2:1 S04</FooterStatusLineText>
         <FooterStatusLineSeparator />
         <FooterStatusLineThumb
@@ -136,14 +128,6 @@ export const Football: Story = {
         </FooterStatusLineText>
       </FooterStatusLine>
       <FooterStatusLine label="s04">
-        <FooterStatusLineThumb
-          src="/images/football/win.png"
-          alt="win"
-          size="2"
-          shape="square"
-          fit="contain"
-          pixelated
-        />
         <FooterStatusLineText>S04 2:0 Köln</FooterStatusLineText>
         <FooterStatusLineSeparator />
         <FooterStatusLineThumb
@@ -160,14 +144,6 @@ export const Football: Story = {
         </FooterStatusLineText>
       </FooterStatusLine>
       <FooterStatusLine label="s04">
-        <FooterStatusLineThumb
-          src="/images/football/draw.png"
-          alt="draw"
-          size="2"
-          shape="square"
-          fit="contain"
-          pixelated
-        />
         <FooterStatusLineText>Köln 0:0 S04</FooterStatusLineText>
         <FooterStatusLineSeparator />
         <FooterStatusLineThumb

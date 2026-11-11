@@ -8,6 +8,7 @@ export interface WidgetConfig {
   letterboxdEnabled: boolean;
   discogsEnabled: boolean;
   xEnabled: boolean;
+  schalkeEnabled: boolean;
   spotifyEnabled: boolean;
   nostalgiaSlideshowEnabled: boolean;
   askEnabled: boolean;
@@ -23,6 +24,7 @@ export async function getWidgetConfig(): Promise<WidgetConfig> {
     letterboxdEnabled: config?.letterboxd_enabled ?? false,
     discogsEnabled: config?.discogs_enabled ?? false,
     xEnabled: config?.x_enabled ?? false,
+    schalkeEnabled: config?.schalke_enabled ?? false,
     spotifyEnabled: config?.spotify_enabled ?? false,
     nostalgiaSlideshowEnabled: config?.nostalgia_slideshow_enabled ?? false,
     askEnabled: config?.ask_enabled ?? false,

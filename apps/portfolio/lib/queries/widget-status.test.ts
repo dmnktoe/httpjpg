@@ -16,6 +16,7 @@ const {
   fetchDiscogsCollection,
   fetchXTimeline,
   fetchRecentTrophies,
+  fetchSchalkeStatus,
   isPlainUsername,
 } = vi.hoisted(() => ({
   getConfig: vi.fn(),
@@ -23,6 +24,7 @@ const {
   fetchDiscogsCollection: vi.fn(),
   fetchXTimeline: vi.fn(),
   fetchRecentTrophies: vi.fn(),
+  fetchSchalkeStatus: vi.fn(),
   // Stand-in validator: rejects whitespace and path separators.
   isPlainUsername: (value: string) => !/[\s/\\]/.test(value),
 }));
@@ -41,6 +43,7 @@ vi.mock("../integrations/x-posts", () => ({
   fetchXTimeline,
   isXUsername: isPlainUsername,
 }));
+vi.mock("../integrations/schalke", () => ({ fetchSchalkeStatus }));
 vi.mock("../integrations/psn-trophies", () => ({
   fetchRecentTrophies,
   isPsnUsername: isPlainUsername,
@@ -57,6 +60,7 @@ const ALL_ENABLED = {
   x_username: "user",
   psn_trophy_enabled: true,
   psn_username: "player",
+  schalke_enabled: true,
 };
 
 beforeEach(() => {
@@ -70,6 +74,12 @@ beforeEach(() => {
     ok: true,
     trophies: [{ name: "Platinum" }],
     avatar: null,
+  });
+  fetchSchalkeStatus.mockResolvedValue({
+    ok: true,
+    fixture: null,
+    standing: { position: 17 },
+    url: "https://schalke04.de",
   });
   vi.spyOn(console, "warn").mockImplementation(() => {});
 });
@@ -87,6 +97,7 @@ describe("getWidgetStatus", () => {
       discogs: { releases: [{ title: "Endtroducing" }] },
       x: { profile: {}, posts: [] },
       trophies: { trophies: [{ name: "Platinum" }], avatar: null },
+      schalke: { fixture: null, standing: { position: 17 }, url: "https://schalke04.de" },
     });
   });
 
@@ -110,6 +121,7 @@ describe("getWidgetStatus", () => {
       discogs: null,
       x: null,
       trophies: null,
+      schalke: null,
     });
   });
 

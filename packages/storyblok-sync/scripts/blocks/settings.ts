@@ -175,6 +175,10 @@ export const settingsBlocks: BlockDef[] = [
           tooltip: true,
         }),
         psn_username: field.text("PSN · Username"),
+        schalke_enabled: field.boolean("Schalke 04 · Last Result & Table", "false", {
+          description: "One-line footer status with the last fixture and the league position.",
+          tooltip: true,
+        }),
       }),
       ...tabbed("Features", "features", {
         last_updated_badge_enabled: field.boolean("Last-Updated · Footer Badge", "false"),

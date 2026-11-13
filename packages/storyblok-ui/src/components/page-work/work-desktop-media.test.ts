@@ -1,6 +1,6 @@
 import { getResponsiveImage } from "@httpjpg/storyblok-utils";
 
-import { workDesktopMedia } from "./work-desktop-media";
+import { storyblokAssetDimensions, workDesktopMedia } from "./work-desktop-media";
 
 const PHOTO = "https://a.storyblok.com/f/1/800x600/abc/still.jpg";
 const CLIP = "https://a.storyblok.com/f/1/clip.mp4";
@@ -139,8 +139,8 @@ describe("workDesktopMedia", () => {
         width: 240,
         kind: "image",
         alt: "Still",
-        mediaWidth: undefined,
-        mediaHeight: undefined,
+        mediaWidth: 800,
+        mediaHeight: 600,
       },
       {
         id: "i2",
@@ -153,5 +153,24 @@ describe("workDesktopMedia", () => {
         mediaHeight: undefined,
       },
     ]);
+  });
+});
+
+describe("storyblokAssetDimensions", () => {
+  it("reads the natural size from the CDN path", () => {
+    expect(storyblokAssetDimensions(PHOTO)).toEqual({ width: 800, height: 600 });
+    expect(storyblokAssetDimensions("//a.storyblok.com/f/42/1080x1920/h/tall.png")).toEqual({
+      width: 1080,
+      height: 1920,
+    });
+  });
+
+  it("answers nothing for videos, zero sizes and foreign URLs", () => {
+    expect(storyblokAssetDimensions("https://a.storyblok.com/f/1/x/abc/clip.mp4")).toBeUndefined();
+    expect(
+      storyblokAssetDimensions("https://a.storyblok.com/f/1/0x0/abc/zero.svg"),
+    ).toBeUndefined();
+    expect(storyblokAssetDimensions("https://cdn.example/640x480/poster.png")).toBeUndefined();
+    expect(storyblokAssetDimensions("")).toBeUndefined();
   });
 });

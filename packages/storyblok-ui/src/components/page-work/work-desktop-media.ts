@@ -19,6 +19,25 @@ function toDimension(value: unknown): number | undefined {
   return undefined;
 }
 
+interface AssetDimensions {
+  width: number;
+  height: number;
+}
+
+/** Storyblok asset URLs embed the natural size as `/f/<space>/<W>x<H>/`; videos and SVGs have none. */
+export function storyblokAssetDimensions(filename: string): AssetDimensions | undefined {
+  const match = /\/f\/\d+\/(\d+)x(\d+)\//.exec(filename);
+  if (!match) {
+    return undefined;
+  }
+  const width = Number(match[1]);
+  const height = Number(match[2]);
+  if (!width || !height) {
+    return undefined;
+  }
+  return { width, height };
+}
+
 function parseFrameWidth(value?: string): number {
   if (value && (CMS_OPTIONS.desktopMediaWidth as readonly string[]).includes(value)) {
     return Number.parseInt(value, 10);
@@ -26,7 +45,6 @@ function parseFrameWidth(value?: string): number {
   return DESKTOP_MEDIA_WIDTH;
 }
 
-/** Map the work page's desktop_media bloks onto the overlay items. */
 export function workDesktopMedia(blok: SbWorkData): DesktopMediaItem[] {
   return (blok.desktop_media ?? []).flatMap((item): DesktopMediaItem[] => {
     const name = item.name?.trim() ?? "";
@@ -38,8 +56,10 @@ export function workDesktopMedia(blok: SbWorkData): DesktopMediaItem[] {
     }
 
     const width = parseFrameWidth(item.width);
-    const mediaWidth = toDimension(item.file?.width);
-    const mediaHeight = toDimension(item.file?.height);
+    // The asset field rarely carries dimensions; the CDN path does.
+    const fromFilename = storyblokAssetDimensions(filename);
+    const mediaWidth = toDimension(item.file?.width) ?? fromFilename?.width;
+    const mediaHeight = toDimension(item.file?.height) ?? fromFilename?.height;
     const alt = item.file?.alt?.trim() || name;
 
     if (item.file && filename && !isVideoAsset(item.file)) {

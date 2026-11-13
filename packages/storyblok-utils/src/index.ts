@@ -14,6 +14,7 @@ export type {
   SbConfigData,
   SbContainerData,
   SbDividerData,
+  SbDesktopMediaItemData,
   SbDownloadItemData,
   SbFooterConfigData,
   SbUserbarData,

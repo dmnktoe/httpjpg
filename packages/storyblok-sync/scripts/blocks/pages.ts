@@ -2,6 +2,7 @@ import { WORK_TAG_DATASOURCE_SLUG } from "@httpjpg/storyblok-utils";
 
 import type { BlockDef } from "../lib/block";
 import { field } from "../lib/fields";
+import { inlineOptions } from "../lib/options";
 
 export const pageBlocks: BlockDef[] = [
   {
@@ -38,6 +39,33 @@ export const pageBlocks: BlockDef[] = [
         description: "Direct file URL. Double-clicking the icon starts the download.",
         tooltip: true,
       }),
+    },
+  },
+  {
+    name: "desktop_media_item",
+    display_name: "Desktop media",
+    group: "Pages",
+    icon: "block-image",
+    color: "#316ac5",
+    preview_field: "name",
+    schema: {
+      name: field.text("Name", {
+        required: true,
+        translatable: true,
+        description: "Title bar of the window. Also searchable.",
+        tooltip: true,
+      }),
+      file: field.asset("File", ["images", "videos"], {
+        allow_external_url: true,
+        description: "Image or native video. Prefer this over a pasted URL.",
+        tooltip: true,
+      }),
+      url: field.text("URL", {
+        description:
+          "Direct image or mp4 URL when the file is not a Storyblok asset. YouTube and Vimeo stay in the regular Video blok.",
+        tooltip: true,
+      }),
+      width: field.options("Width", inlineOptions.desktopMediaWidth, { default_value: "400" }),
     },
   },
   {
@@ -82,6 +110,12 @@ export const pageBlocks: BlockDef[] = [
         ...field.bloks("Downloads", { whitelist: ["download_item"] }),
         description:
           "Files scattered across the work page as Windows XP–style desktop icons. Double-click an icon to download.",
+        tooltip: true,
+      },
+      desktop_media: {
+        ...field.bloks("Desktop media", { whitelist: ["desktop_media_item"] }),
+        description:
+          "Images and native videos scattered on the work page as draggable windows, next to the Downloads icons. Separate from in-flow image / video bloks.",
         tooltip: true,
       },
       isDark: field.boolean("Dark Mode"),

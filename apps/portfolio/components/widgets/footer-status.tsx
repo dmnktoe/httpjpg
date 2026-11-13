@@ -6,6 +6,7 @@ import { useWidgetData } from "@/lib/use-widget-data";
 import { DiscogsStatus } from "./discogs-status";
 import { type DiscordPresence, DiscordStatus } from "./discord-status";
 import { LetterboxdStatus } from "./letterboxd-status";
+import { SchalkeStatus } from "./schalke-status";
 import { TrophyStatus } from "./trophy-status";
 import { XStatus } from "./x-status";
 
@@ -15,6 +16,7 @@ export interface FooterStatusProps {
   discogsEnabled?: boolean;
   xEnabled?: boolean;
   trophiesEnabled?: boolean;
+  schalkeEnabled?: boolean;
 }
 
 /** Presence changes minute to minute, so it is the one line worth polling. */
@@ -35,8 +37,10 @@ export function FooterStatus({
   discogsEnabled = false,
   xEnabled = false,
   trophiesEnabled = false,
+  schalkeEnabled = false,
 }: FooterStatusProps) {
-  const wantsStatus = letterboxdEnabled || discogsEnabled || xEnabled || trophiesEnabled;
+  const wantsStatus =
+    letterboxdEnabled || discogsEnabled || xEnabled || trophiesEnabled || schalkeEnabled;
 
   const status = useWidgetData<WidgetStatus>("/api/status", { enabled: wantsStatus });
   const discord = useWidgetData<DiscordPresence>("/api/discord", {
@@ -72,6 +76,9 @@ export function FooterStatus({
           avatar={status.data?.trophies?.avatar}
           loaded={status.loaded}
         />
+      )}
+      {schalkeEnabled && (
+        <SchalkeStatus status={status.data?.schalke ?? null} loaded={status.loaded} />
       )}
     </>
   );

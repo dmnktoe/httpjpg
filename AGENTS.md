@@ -266,7 +266,7 @@ Audio outlives client navigations (like the iOS app's `AudioPlayerModel`; native
 
 ## Footer status widgets
 
-Live footer lines (Discord, Discogs, Letterboxd, X, PSN, Cloudflare) render through `FooterStatusLine` in `@httpjpg/ui`. Don't invent a second status row. Classic 350×19 userbars sit below the wave via `Userbars`, sourced from the config story — not a status line.
+Live footer lines (Discord, Discogs, Letterboxd, X, PSN, Schalke 04, Cloudflare) render through `FooterStatusLine` in `@httpjpg/ui`. Don't invent a second status row. Classic 350×19 userbars sit below the wave via `Userbars`, sourced from the config story — not a status line.
 
 ## Work accent
 

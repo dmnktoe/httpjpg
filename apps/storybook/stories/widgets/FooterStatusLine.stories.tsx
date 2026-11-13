@@ -11,7 +11,7 @@ import { OPTIMIZED_IMAGES } from "../shared/storybook-fixtures";
 
 /**
  * One line of the footer's live status stack (Discord, Discogs, Letterboxd,
- * X, PSN, Cloudflare). Every widget renders through this so the stack keeps
+ * X, PSN, Schalke 04, Cloudflare). Every widget renders through this so the stack keeps
  * one rhythm.
  */
 const meta = {
@@ -102,6 +102,61 @@ export const WithThumbnails: Story = {
         <FooterStatusLineThumb src={OPTIMIZED_IMAGES.landscape} shape="circle" />
         <FooterStatusLineText maxWidth="260px">
           still thinking about that one build step
+        </FooterStatusLineText>
+      </FooterStatusLine>
+    </Box>
+  ),
+};
+
+export const Football: Story = {
+  render: () => (
+    <Box css={{ display: "flex", flexDirection: "column", alignItems: "center", w: "26rem" }}>
+      <FooterStatusLine label="s04">
+        <FooterStatusLineText>Hoffenheim 2:1 S04</FooterStatusLineText>
+        <FooterStatusLineSeparator />
+        <FooterStatusLineThumb
+          src="/images/football/down.png"
+          alt="down"
+          size="2"
+          shape="square"
+          fit="contain"
+          pixelated
+        />
+        <FooterStatusLineText fixed>17.</FooterStatusLineText>
+        <FooterStatusLineText fixed dim>
+          6 pts
+        </FooterStatusLineText>
+      </FooterStatusLine>
+      <FooterStatusLine label="s04">
+        <FooterStatusLineText>S04 2:0 Köln</FooterStatusLineText>
+        <FooterStatusLineSeparator />
+        <FooterStatusLineThumb
+          src="/images/football/up.png"
+          alt="up"
+          size="2"
+          shape="square"
+          fit="contain"
+          pixelated
+        />
+        <FooterStatusLineText fixed>9.</FooterStatusLineText>
+        <FooterStatusLineText fixed dim>
+          17 pts
+        </FooterStatusLineText>
+      </FooterStatusLine>
+      <FooterStatusLine label="s04">
+        <FooterStatusLineText>Köln 0:0 S04</FooterStatusLineText>
+        <FooterStatusLineSeparator />
+        <FooterStatusLineThumb
+          src="/images/football/same.png"
+          alt="same"
+          size="2"
+          shape="square"
+          fit="contain"
+          pixelated
+        />
+        <FooterStatusLineText fixed>15.</FooterStatusLineText>
+        <FooterStatusLineText fixed dim>
+          9 pts
         </FooterStatusLineText>
       </FooterStatusLine>
     </Box>

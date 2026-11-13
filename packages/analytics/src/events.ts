@@ -14,6 +14,7 @@ export type OutboundDestination =
   | "discogs"
   | "x"
   | "psn"
+  | "schalke"
   | "cloudflare"
   | "github"
   | "external";

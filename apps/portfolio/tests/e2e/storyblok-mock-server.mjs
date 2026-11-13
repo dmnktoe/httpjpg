@@ -76,6 +76,7 @@ const CONFIG = baseStory("config", {
   psn_trophy_enabled: false,
   discord_enabled: false,
   letterboxd_enabled: false,
+  schalke_enabled: false,
   custom_cursor_enabled: false,
   mouse_trail_enabled: false,
   last_updated_badge_enabled: false,

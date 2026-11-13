@@ -120,7 +120,11 @@ async function isPublicHost(hostname: string): Promise<boolean> {
   }
 }
 
-async function safeFetch(target: URL, accept: string, deadline: number): Promise<Response | null> {
+export async function safeFetch(
+  target: URL,
+  accept: string,
+  deadline: number,
+): Promise<Response | null> {
   let url = target;
 
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
@@ -159,7 +163,7 @@ async function safeFetch(target: URL, accept: string, deadline: number): Promise
   return null;
 }
 
-async function readLimited(
+export async function readLimited(
   response: Response,
   maxBytes: number,
 ): Promise<Uint8Array<ArrayBuffer> | null> {

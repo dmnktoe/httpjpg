@@ -12,6 +12,7 @@ import {
   type LetterboxdFilm,
 } from "../integrations/letterboxd";
 import { fetchRecentTrophies, isPsnUsername, type PsnTrophy } from "../integrations/psn-trophies";
+import { fetchSchalkeStatus, type SchalkeStatus } from "../integrations/schalke";
 import { fetchXTimeline, isXUsername, type XTimeline } from "../integrations/x-posts";
 import { getConfig } from "./config";
 
@@ -24,6 +25,7 @@ export const WIDGET_MAX_AGE = {
   psnTrophies: 300,
   x: 3600,
   cloudflare: 900,
+  schalke: 900,
 } as const;
 
 /** Edge window of the bundled envelope; each loader keeps its own upstream rate. */
@@ -34,6 +36,7 @@ export interface WidgetStatus {
   discogs: { releases: DiscogsRelease[] } | null;
   x: XTimeline | null;
   trophies: { trophies: PsnTrophy[]; avatar: string | null } | null;
+  schalke: SchalkeStatus | null;
 }
 
 // Failures collapse to null: only plain-JSON successes are cached, and a widget
@@ -66,6 +69,17 @@ async function readTrophies(npsso: string, username?: string) {
   return result.ok ? { trophies: result.trophies, avatar: result.avatar } : null;
 }
 
+async function readSchalke() {
+  "use cache";
+  cacheLife({ revalidate: WIDGET_MAX_AGE.schalke });
+  const result = await fetchSchalkeStatus();
+  if (!result.ok) {
+    return null;
+  }
+  const { fixture, standing, url } = result;
+  return { fixture, standing, url };
+}
+
 /** Unlike `resolveWidgetSetting()`, no 501/503 split: the envelope has no status. */
 function readSetting(
   value: string | undefined,
@@ -87,7 +101,7 @@ async function settle<T>(label: string, loader: Promise<T | null> | null): Promi
   }
 }
 
-/** Every slow-moving footer widget in one read: one connection instead of four. */
+/** Every slow-moving footer widget in one read: one connection instead of five. */
 export async function getWidgetStatus(): Promise<WidgetStatus> {
   const config = await getConfig();
 
@@ -107,13 +121,15 @@ export async function getWidgetStatus(): Promise<WidgetStatus> {
   const xLoad =
     config?.x_enabled && xUser && xApiKey ? readX(xUser, env.TWEETAPI_API_URL, xApiKey) : null;
   const trophiesLoad = config?.psn_trophy_enabled && npsso ? readTrophies(npsso, psnUser) : null;
+  const schalkeLoad = config?.schalke_enabled ? readSchalke() : null;
 
-  const [letterboxd, discogs, x, trophies] = await Promise.all([
+  const [letterboxd, discogs, x, trophies, schalke] = await Promise.all([
     settle("letterboxd", letterboxdLoad),
     settle("discogs", discogsLoad),
     settle("x", xLoad),
     settle("psn-trophies", trophiesLoad),
+    settle("schalke", schalkeLoad),
   ]);
 
-  return { letterboxd, discogs, x, trophies };
+  return { letterboxd, discogs, x, trophies, schalke };
 }

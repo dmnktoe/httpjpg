@@ -201,6 +201,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                       letterboxdEnabled={widgetConfig.letterboxdEnabled}
                       discogsEnabled={widgetConfig.discogsEnabled}
                       xEnabled={widgetConfig.xEnabled}
+                      schalkeEnabled={widgetConfig.schalkeEnabled}
                       trophiesEnabled={widgetConfig.psnTrophyEnabled}
                     />
                     <WeatherTime />

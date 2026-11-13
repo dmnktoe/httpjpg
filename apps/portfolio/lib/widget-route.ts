@@ -21,7 +21,6 @@ export interface WidgetSettingOptions {
   validate: (value: string) => boolean;
 }
 
-/** Reads one widget setting from the cached config story. */
 export async function resolveWidgetSetting({
   field,
   validate,

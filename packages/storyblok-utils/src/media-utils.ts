@@ -22,7 +22,6 @@ interface SlideshowImageLike {
 
 const VIDEO_EXT = /\.(mp4|webm|ogg|mov|avi|mkv)(\?|$)/i;
 
-/** Heuristic check: is this Storyblok asset a video? */
 export function isVideoAsset(asset: Pick<ImageLike, "filename" | "content_type">): boolean {
   return Boolean(asset.content_type?.startsWith("video/") || VIDEO_EXT.test(asset.filename || ""));
 }

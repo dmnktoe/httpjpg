@@ -25,7 +25,6 @@ describe("SbList", () => {
     );
     expect(screen.getByText("One")).toBeInTheDocument();
     expect(screen.getByText("Two")).toBeInTheDocument();
-    // Default container must be unordered, not ordered.
     expect(screen.getByRole("list").tagName).toBe("UL");
   });
 

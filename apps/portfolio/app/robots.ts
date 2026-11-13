@@ -2,13 +2,6 @@ import { env } from "@httpjpg/env";
 import type { MetadataRoute } from "next";
 
 /**
- * Robots.txt configuration
- *
- * Blocks:
- * - Draft mode URLs (_draft, _storyblok params)
- * - API routes
- * - Storyblok editor paths
- *
  * Allows the image routes pages link to (share cards, nav favicons) so
  * crawlers that honour robots.txt (e.g. Twitterbot) can fetch them.
  */

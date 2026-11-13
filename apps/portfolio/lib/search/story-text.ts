@@ -24,7 +24,6 @@ function isRichTextDoc(value: unknown): value is StoryblokRichText {
   return typeof value === "object" && value !== null && (value as { type?: string }).type === "doc";
 }
 
-/** Flatten a story's content into one searchable string. */
 export function collectStoryText(content: unknown, maxLength = 1200): string {
   const parts: string[] = [];
 

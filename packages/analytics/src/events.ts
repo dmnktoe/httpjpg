@@ -1,6 +1,5 @@
 import { type UmamiEventData, trackUmamiEvent } from "./umami/analytics";
 
-/** Shared event payload for Umami custom events. */
 export type EventData = UmamiEventData;
 
 export type SearchOpenSource = "keyboard" | "trigger";

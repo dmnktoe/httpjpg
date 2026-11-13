@@ -254,7 +254,7 @@ jobs:
         if: steps.changes.outputs.relevant == 'true'
       - name: Publish to Chromatic
         if: steps.changes.outputs.relevant == 'true'
-        uses: chromaui/action@2b75e3340bcec86b4ae38c6a10f14831114e8137 # v18
+        uses: chromaui/action@5d18868345f53a8f61258ad393396c7e169100fd # v18
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: apps/storybook

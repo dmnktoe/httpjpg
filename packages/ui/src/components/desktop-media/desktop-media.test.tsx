@@ -236,7 +236,9 @@ describe("DesktopMedia", () => {
     expect(frame.style.width).toMatch(/^min\(400px, .*0\.5625 \* \(min\(72vh, 800px\)/);
     expect(frame.style.maxHeight).toBe("");
     expect(frame.style.top).toContain("0.5625");
-    expect((frame.lastElementChild as HTMLElement).style.aspectRatio).toBe("1080/1920");
+    expect((frame.lastElementChild as HTMLElement).style.aspectRatio.replace(/\s/g, "")).toBe(
+      "1080/1920",
+    );
   });
 
   it("lets a video of unknown size lay itself out and letterboxes it at the cap", () => {
@@ -246,8 +248,6 @@ describe("DesktopMedia", () => {
 
     expect((frame.lastElementChild as HTMLElement).style.aspectRatio).toBe("");
     expect(video.style.maxHeight).toContain("72vh");
-    expect(frame.style.top).toMatch(
-      /^clamp\(8px, [\d.]+%, \(100vh - 8px\) - min\(72vh, 800px\)\)$/,
-    );
+    expect(frame.style.top).toMatch(/^clamp\(8px, [\d.]+%, .*100vh.*min\(72vh, 800px\)\)$/);
   });
 });

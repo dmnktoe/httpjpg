@@ -43,7 +43,6 @@ export type {
   SbWorkListData,
 } from "./blok-types.gen";
 export * from "./cms-options";
-export { isMarginSide, MARGIN_SIDES, spacingLabel, spacingValue } from "./spacing";
 export { extractPlainText } from "./extract-plain-text";
 export { imagePreset } from "./image-presets";
 export { getResponsiveImage } from "./image-processing";
@@ -51,6 +50,7 @@ export type { ResponsiveImage, ResponsiveImageOptions } from "./image-processing
 export { firstImage, firstImageFilename, isVideoAsset, toSlideshowImage } from "./media-utils";
 export { storyblokEditHref } from "./editable";
 export { validateStoryblokPreviewToken } from "./preview";
+export { isMarginSide, spacingLabel, spacingValue } from "./spacing";
 export type {
   StoryblokApiResponse,
   StoryblokBlokData,

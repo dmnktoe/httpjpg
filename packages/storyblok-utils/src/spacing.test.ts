@@ -14,6 +14,12 @@ describe("spacingValue", () => {
     expect(spacingValue("-0")).toBeUndefined();
     expect(spacingValue("999")).toBeUndefined();
   });
+
+  it("ignores keys inherited from the prototype", () => {
+    expect(spacingValue("constructor")).toBeUndefined();
+    expect(spacingValue("-toString")).toBeUndefined();
+    expect(spacingLabel("__proto__")).toBe("__proto__");
+  });
 });
 
 describe("spacingLabel", () => {

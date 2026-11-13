@@ -65,9 +65,6 @@ export const OldBasic: Story = {
   ),
 };
 
-/**
- * Semantic elements
- */
 export const SemanticElements: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -125,9 +122,6 @@ export const SemanticElements: Story = {
   ),
 };
 
-/**
- * Nested Boxes
- */
 export const NestedBoxes: Story = {
   render: () => (
     <Box
@@ -161,9 +155,6 @@ export const NestedBoxes: Story = {
   ),
 };
 
-/**
- * Brutalist Card Pattern
- */
 export const BrutalistCard: Story = {
   render: () => (
     <Box
@@ -217,9 +208,6 @@ export const BrutalistCard: Story = {
   ),
 };
 
-/**
- * Grid of Boxes
- */
 export const GridOfBoxes: Story = {
   render: () => (
     <div

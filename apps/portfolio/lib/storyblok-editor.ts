@@ -2,7 +2,6 @@ import type { NextRequest } from "next/server";
 
 export const STORYBLOK_EDITOR_HEADER = "x-storyblok-editor";
 
-/** True when the URL carries any Storyblok Visual Editor query param. */
 export function hasStoryblokEditorParams(searchParams: URLSearchParams): boolean {
   for (const key of searchParams.keys()) {
     if (key === "_storyblok" || key.startsWith("_storyblok_")) {

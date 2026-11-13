@@ -77,7 +77,7 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
     .filter(
       (story): story is SitemapStory & { first_published_at: string } =>
         story.first_published_at !== null,
-    ) // Only published
+    )
     .filter((story) => !story.is_startpage) // No folders
     .filter((story) => !EXCLUDED_SLUGS.includes(story.slug))
     .filter((story) => !story.content?.external_only)

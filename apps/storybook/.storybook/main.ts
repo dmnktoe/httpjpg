@@ -37,7 +37,6 @@ const config: StorybookConfig = {
           "@httpjpg/tokens": path.resolve(tokensPackagePath, "src"),
           "@httpjpg/consent": path.resolve(consentPackagePath, "src"),
           "styled-system": path.resolve(uiPackagePath, "styled-system"),
-          // Mock Next.js Link for Storybook
           "next/link": path.resolve(__dirname, "next-link-mock.tsx"),
           "next/navigation": path.resolve(__dirname, "next-navigation-mock.ts"),
         },

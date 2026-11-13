@@ -1,4 +1,3 @@
-/** Groq-hosted chat models this repo calls. */
 export const GROQ_MODELS = {
   instant: "openai/gpt-oss-20b",
   versatile: "openai/gpt-oss-120b",

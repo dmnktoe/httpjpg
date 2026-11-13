@@ -59,9 +59,6 @@ export const Basic: Story = {
   ),
 };
 
-/**
- * Different container sizes
- */
 export const Sizes: Story = {
   args: {
     children: null,
@@ -143,9 +140,6 @@ export const Sizes: Story = {
   ),
 };
 
-/**
- * Article layout
- */
 export const ArticleLayout: Story = {
   args: {
     children: null,

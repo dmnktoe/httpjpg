@@ -22,7 +22,6 @@ export interface ScrollClipImageProps {
   href?: string;
   /** Title for the link (tooltip). */
   title?: string;
-  /** `srcSet` / `sizes` passthrough. */
   srcSet?: string;
   sizes?: string;
   /** CSS aspect-ratio string. @default "16/9" */
@@ -62,7 +61,6 @@ export interface ScrollClipImageProps {
    * @default true
    */
   showProgress?: boolean;
-  /** Copyright text. */
   copyright?: string;
   /** Asset source/credit, shown as a second line below the copyright. */
   copyrightSource?: string;

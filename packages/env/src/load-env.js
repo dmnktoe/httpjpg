@@ -1,4 +1,3 @@
-// Load root .env.local file in monorepo
 // This file is only imported in Node.js runtime, never in Edge or client
 try {
   const dotenv = require("dotenv");

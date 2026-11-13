@@ -74,7 +74,6 @@ function toEvent(line: string): AskEvent | null {
   return null;
 }
 
-/** Read the `/api/ask` NDJSON body as typed events. */
 export async function* readAskStream(
   body: ReadableStream<Uint8Array>,
 ): AsyncGenerator<AskEvent, void, undefined> {

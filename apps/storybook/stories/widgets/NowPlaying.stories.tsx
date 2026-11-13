@@ -43,9 +43,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Default Now Playing widget
- */
 export const Default: Story = {
   args: {
     title: "Blinding Lights",
@@ -69,9 +66,6 @@ export const LongTitle: Story = {
   },
 };
 
-/**
- * Very long artist name
- */
 export const LongArtist: Story = {
   args: {
     title: "One More Time",
@@ -82,9 +76,6 @@ export const LongArtist: Story = {
   },
 };
 
-/**
- * Both title and artist long
- */
 export const BothLong: Story = {
   args: {
     title: "Echoes (Live at Pompeii 1971 - Remastered)",
@@ -230,9 +221,6 @@ export const PremiumMissing = {
   ),
 };
 
-/**
- * Portfolio demo context
- */
 export const PortfolioContext: Story = {
   args: {
     title: "Currently Coding To This",
@@ -280,9 +268,6 @@ export const PortfolioContext: Story = {
   ),
 };
 
-/**
- * Playground with all controls
- */
 export const Playground: Story = {
   args: {
     title: "Your Favorite Song",

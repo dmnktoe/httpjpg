@@ -14,7 +14,6 @@ export interface LightboxProviderProps extends PropsWithChildren {
   onOpen?: (item: LightboxEntry, index: number, count: number) => void;
   /** Fires when the visible index changes while open (not on the initial open). */
   onNavigate?: (item: LightboxEntry, index: number, count: number) => void;
-  /** Fires when the gallery closes. */
   onClose?: (item: LightboxEntry | undefined, index: number) => void;
 }
 

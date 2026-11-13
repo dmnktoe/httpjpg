@@ -13,7 +13,6 @@ const SYSTEM_PROMPT = [
   "- Reply in the language the question was asked in.",
 ].join("\n");
 
-/** Hard cap on question length. */
 export const MAX_QUESTION_LENGTH = 500;
 
 /** Build the grounded chat messages. Sources are numbered so the model can cite them. */

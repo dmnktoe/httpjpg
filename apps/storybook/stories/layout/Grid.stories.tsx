@@ -332,7 +332,6 @@ export const MagazineLayout: Story = {
   },
   render: (args) => (
     <Grid {...args} css={{ p: "32 16", bg: "white" }}>
-      {/* Hero Image - Breathe */}
       <GridItem colSpan={8} colStart={3}>
         <Image
           src="https://a.storyblok.com/f/281211/5000x2400/609e58d1fb/outlet-store_slideshow-1.jpg/m/2000x1125/smart/filters:quality(75)"
@@ -341,7 +340,6 @@ export const MagazineLayout: Story = {
         />
       </GridItem>
 
-      {/* Title - Generous spacing */}
       <GridItem colSpan={6} colStart={4}>
         <Box css={{ mt: "40", mb: "40" }}>
           <Box css={{ mb: "6", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>
@@ -353,7 +351,6 @@ export const MagazineLayout: Story = {
         </Box>
       </GridItem>
 
-      {/* Large Portrait Left */}
       <GridItem colSpan={5} colStart={2}>
         <Box css={{ mt: "20" }}>
           <Image
@@ -364,7 +361,6 @@ export const MagazineLayout: Story = {
         </Box>
       </GridItem>
 
-      {/* Small Square Top Right */}
       <GridItem colSpan={3} colStart={9}>
         <Box css={{ mt: "48" }}>
           <Image
@@ -375,7 +371,6 @@ export const MagazineLayout: Story = {
         </Box>
       </GridItem>
 
-      {/* Text Block Float */}
       <GridItem colSpan={3} colStart={9}>
         <Box css={{ mt: "20", pr: "8" }}>
           <Paragraph css={{ opacity: 0.7, fontSize: "sm", lineHeight: 2 }}>
@@ -385,7 +380,6 @@ export const MagazineLayout: Story = {
         </Box>
       </GridItem>
 
-      {/* Wide Image Center */}
       <GridItem colSpan={10} colStart={2}>
         <Box css={{ mt: "64", mb: "64" }}>
           <Image
@@ -396,7 +390,6 @@ export const MagazineLayout: Story = {
         </Box>
       </GridItem>
 
-      {/* Quote - Minimal */}
       <GridItem colSpan={6} colStart={4}>
         <Box css={{ mb: "56" }}>
           <Headline
@@ -408,7 +401,6 @@ export const MagazineLayout: Story = {
         </Box>
       </GridItem>
 
-      {/* Two Images Offset */}
       <GridItem colSpan={4} colStart={2}>
         <Image
           src="https://a.storyblok.com/f/281211/2000x1500/bff231d512/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0215.jpg/m/2000x1125/smart/filters:quality(75)"
@@ -427,7 +419,6 @@ export const MagazineLayout: Story = {
         </Box>
       </GridItem>
 
-      {/* Small Detail Right */}
       <GridItem colSpan={3} colStart={9}>
         <Box css={{ mt: "48" }}>
           <Image
@@ -438,7 +429,6 @@ export const MagazineLayout: Story = {
         </Box>
       </GridItem>
 
-      {/* Closing Image Full Bleed */}
       <GridItem colSpan={12}>
         <Box css={{ mt: "80" }}>
           <Image
@@ -449,7 +439,6 @@ export const MagazineLayout: Story = {
         </Box>
       </GridItem>
 
-      {/* Footer Details */}
       <GridItem colSpan={8} colStart={3}>
         <Box css={{ mt: "40", mb: "20", textAlign: "center" }}>
           <Box css={{ mb: "4", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>
@@ -461,7 +450,6 @@ export const MagazineLayout: Story = {
         </Box>
       </GridItem>
 
-      {/* Wide Image - Bottom */}
       <GridItem colSpan={9} colStart={2} css={{ mt: "24", mb: "16" }}>
         <Image
           src="https://a.storyblok.com/f/281211/5120x2880/a1811c6510/video-still-1.png/m/2000x1125/smart/filters:quality(75)"
@@ -484,7 +472,6 @@ export const OverlappingLayout: Story = {
   },
   render: (args) => (
     <Grid {...args} css={{ p: "16 8", bg: "white" }}>
-      {/* Large Hero Image with Text Overlay */}
       <GridItem colSpan={11} colStart={1}>
         <Box css={{ position: "relative" }}>
           <Image
@@ -492,7 +479,6 @@ export const OverlappingLayout: Story = {
             alt="Architecture hero"
             aspectRatio="21/9"
           />
-          {/* Overlapping Title Card - Modern Style */}
           <Box
             css={{
               position: "absolute",
@@ -514,7 +500,6 @@ export const OverlappingLayout: Story = {
         </Box>
       </GridItem>
 
-      {/* Description Block */}
       <GridItem colSpan={5} colStart={2} css={{ mt: "24", pr: "8" }}>
         <Paragraph size="sm">
           ⋆.˚ ᡣ𐭩 Overlapping elements create depth and visual hierarchy. Strategic layering draws
@@ -522,7 +507,6 @@ export const OverlappingLayout: Story = {
         </Paragraph>
       </GridItem>
 
-      {/* Square Image 1 */}
       <GridItem colSpan={4} colStart={2} css={{ mt: "16" }}>
         <Image
           src="https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)"
@@ -531,7 +515,6 @@ export const OverlappingLayout: Story = {
         />
       </GridItem>
 
-      {/* Square Image 2 - Overlapping */}
       <GridItem colSpan={5} colStart={6} css={{ mt: "8" }}>
         <Image
           src="https://a.storyblok.com/f/281211/5120x2880/075de8f14e/video-still-3.png/m/2000x1125/smart/filters:quality(75)"
@@ -540,7 +523,6 @@ export const OverlappingLayout: Story = {
         />
       </GridItem>
 
-      {/* Floating Text Box */}
       <GridItem colSpan={4} colStart={8}>
         <Box
           css={{
@@ -564,7 +546,6 @@ export const OverlappingLayout: Story = {
         </Box>
       </GridItem>
 
-      {/* Wide Bottom Image */}
       <GridItem colSpan={10} colStart={2}>
         <Box style={{ marginTop: "4rem" }}>
           <Image
@@ -616,7 +597,6 @@ export const ComplexGrid: Story = {
   },
   render: (args) => (
     <Grid {...args} css={{ p: "8", bg: "white" }}>
-      {/* Large Feature Image */}
       <GridItem colSpan={7} colStart={1} rowSpan={2}>
         <Image
           src="https://a.storyblok.com/f/281211/1500x2000/e04c56fe25/2024_10_11_klosterkirche_nordshausen_time_this_wild_beast_in_the_jungle_0225.jpg/m/2000x1125/smart/filters:quality(75)"
@@ -626,7 +606,6 @@ export const ComplexGrid: Story = {
         />
       </GridItem>
 
-      {/* Title Block */}
       <GridItem colSpan={5} colStart={8}>
         <Box style={{ padding: "2rem", borderLeft: "4px solid black" }}>
           <Box
@@ -648,7 +627,6 @@ export const ComplexGrid: Story = {
         </Box>
       </GridItem>
 
-      {/* Small Images */}
       <GridItem colSpan={5} colStart={8}>
         <Image
           src="https://a.storyblok.com/f/281211/5120x2880/89c84d7bcc/video-still-2.png/m/2000x1125/smart/filters:quality(75)"
@@ -657,7 +635,6 @@ export const ComplexGrid: Story = {
         />
       </GridItem>
 
-      {/* Wide Image */}
       <GridItem colSpan="full">
         <Box style={{ marginTop: "2rem" }}>
           <Image

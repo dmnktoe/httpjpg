@@ -47,7 +47,6 @@ export const TypographyGuide = {
         Strong typography hierarchy following brutalistic design principles.
       </Paragraph>
 
-      {/* Font Families */}
       <Headline level={2} css={{ mt: "12", mb: "6" }}>
         FONT FAMILIES
       </Headline>
@@ -136,7 +135,6 @@ export const TypographyGuide = {
         </Box>
       </Box>
 
-      {/* Font Sizes */}
       <Headline level={2} css={{ mt: "12", mb: "6" }}>
         FONT SIZES
       </Headline>
@@ -174,7 +172,6 @@ export const TypographyGuide = {
         </FontSizeRow>
       </Box>
 
-      {/* Font Weights */}
       <Headline level={2} css={{ mt: "12", mb: "6" }}>
         FONT WEIGHTS
       </Headline>
@@ -197,7 +194,6 @@ export const TypographyGuide = {
         ))}
       </Box>
 
-      {/* Letter Spacing */}
       <Headline level={2} css={{ mt: "12", mb: "6" }}>
         LETTER SPACING
       </Headline>
@@ -217,7 +213,6 @@ export const TypographyGuide = {
         ))}
       </Box>
 
-      {/* Line Heights */}
       <Headline level={2} css={{ mt: "12", mb: "6" }}>
         LINE HEIGHTS
       </Headline>
@@ -243,7 +238,6 @@ export const TypographyGuide = {
         ))}
       </Box>
 
-      {/* Usage Examples */}
       <Headline level={2} css={{ mt: "12", mb: "6" }}>
         USAGE EXAMPLES
       </Headline>

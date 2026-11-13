@@ -55,9 +55,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Default cursor with standard settings
- */
 export const Default: Story = {
   render: (args) => (
     <>
@@ -134,9 +131,6 @@ export const WithLabels: Story = {
   },
 };
 
-/**
- * Large ASCII symbols
- */
 export const LargeSymbols: Story = {
   render: (args) => (
     <>
@@ -161,9 +155,6 @@ export const LargeSymbols: Story = {
   },
 };
 
-/**
- * Small symbols
- */
 export const SmallSymbols: Story = {
   render: (args) => (
     <>
@@ -186,9 +177,6 @@ export const SmallSymbols: Story = {
   },
 };
 
-/**
- * Without labels (minimal)
- */
 export const NoLabels: Story = {
   render: (args) => (
     <>
@@ -297,9 +285,6 @@ export const WithImagePreview: Story = {
   args: {},
 };
 
-/**
- * Interactive playground
- */
 export const Playground: Story = {
   render: (args) => (
     <>

@@ -119,9 +119,6 @@ export const Default: Story = {
   },
 };
 
-/**
- * Smooth slide transitions
- */
 export const SmoothSlide: Story = {
   args: {
     images: sampleImages,
@@ -139,9 +136,6 @@ export const SingleImage: Story = {
   },
 };
 
-/**
- * Fade transition between slides
- */
 export const FadeTransition: Story = {
   args: {
     images: sampleImages,
@@ -151,9 +145,6 @@ export const FadeTransition: Story = {
   },
 };
 
-/**
- * Cube 3D transition
- */
 export const CubeTransition: Story = {
   args: {
     images: sampleImages,
@@ -163,9 +154,6 @@ export const CubeTransition: Story = {
   },
 };
 
-/**
- * Coverflow 3D transition
- */
 export const CoverflowTransition: Story = {
   args: {
     images: sampleImages,
@@ -175,9 +163,6 @@ export const CoverflowTransition: Story = {
   },
 };
 
-/**
- * Flip 3D transition
- */
 export const FlipTransition: Story = {
   args: {
     images: sampleImages,
@@ -187,9 +172,6 @@ export const FlipTransition: Story = {
   },
 };
 
-/**
- * Cards stacked transition
- */
 export const CardsTransition: Story = {
   args: {
     images: sampleImages,
@@ -199,9 +181,6 @@ export const CardsTransition: Story = {
   },
 };
 
-/**
- * Creative custom transition
- */
 export const CreativeTransition: Story = {
   args: {
     images: sampleImages,
@@ -211,9 +190,6 @@ export const CreativeTransition: Story = {
   },
 };
 
-/**
- * Fast autoplay with quick transitions
- */
 export const FastAutoplay: Story = {
   args: {
     images: sampleImages,
@@ -222,9 +198,6 @@ export const FastAutoplay: Story = {
   },
 };
 
-/**
- * Slow, cinematic transitions
- */
 export const SlowTransitions: Story = {
   args: {
     images: sampleImages,
@@ -234,9 +207,6 @@ export const SlowTransitions: Story = {
   },
 };
 
-/**
- * Square aspect ratio
- */
 export const SquareAspect: Story = {
   args: {
     images: sampleImages,
@@ -244,9 +214,6 @@ export const SquareAspect: Story = {
   },
 };
 
-/**
- * Portrait aspect ratio
- */
 export const PortraitAspect: Story = {
   args: {
     images: [
@@ -263,9 +230,6 @@ export const PortraitAspect: Story = {
   },
 };
 
-/**
- * Without navigation arrows
- */
 export const NoNavigation: Story = {
   args: {
     images: sampleImages,

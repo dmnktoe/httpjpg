@@ -10,7 +10,6 @@ import { firstCitedSource } from "@/lib/search/citations";
 import { buildAskMessages, MAX_QUESTION_LENGTH } from "@/lib/search/prompt";
 import { rankDocuments } from "@/lib/search/ranking";
 
-/** Sources per answer. */
 const MAX_SOURCES = 5;
 
 interface AskBody {

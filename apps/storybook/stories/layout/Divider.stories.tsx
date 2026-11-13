@@ -102,9 +102,6 @@ export const Basic: Story = {
   ),
 };
 
-/**
- * Default solid divider
- */
 export const Solid: Story = {
   args: {
     children: null,
@@ -118,9 +115,6 @@ export const Solid: Story = {
   ),
 };
 
-/**
- * ASCII art divider (brutalist style)
- */
 export const ASCII: Story = {
   args: {
     variant: "ascii",
@@ -141,9 +135,6 @@ export const ASCII: Story = {
   ),
 };
 
-/**
- * Custom content divider
- */
 export const CustomContent: Story = {
   args: {
     children: null,
@@ -163,9 +154,6 @@ export const CustomContent: Story = {
   ),
 };
 
-/**
- * Dashed and dotted variants
- */
 export const DashedAndDotted: Story = {
   args: {
     children: null,
@@ -181,9 +169,6 @@ export const DashedAndDotted: Story = {
   ),
 };
 
-/**
- * Vertical divider
- */
 export const Vertical: Story = {
   args: {
     children: null,
@@ -245,9 +230,6 @@ export const BrutalistStyle: Story = {
   ),
 };
 
-/**
- * Thick dividers
- */
 export const Thick: Story = {
   args: {
     children: null,

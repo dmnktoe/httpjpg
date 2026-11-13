@@ -10,7 +10,7 @@ catalogs:
       specifier: ^2.1.9
       version: 2.1.9
     '@storyblok/react':
-      specifier: ^7.3.1
+      specifier: ^7.5.0
       version: 7.5.0
     '@testing-library/jest-dom':
       specifier: ^7.0.1
@@ -126,7 +126,7 @@ importers:
   apps/portfolio:
     dependencies:
       '@arcjet/next':
-        specifier: ^1.14.1
+        specifier: ^1.15.0
         version: 1.15.0(next@16.4.6(@babel/core@7.29.13(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.65.0)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))
       '@httpjpg/ai':
         specifier: workspace:*
@@ -458,7 +458,7 @@ importers:
         specifier: workspace:*
         version: link:../env
       '@sentry/nextjs':
-        specifier: ^11.9.0
+        specifier: ^11.11.0
         version: 11.11.0(next@16.4.6(@babel/core@7.29.13(supports-color@10.2.2))(@opentelemetry/api@1.10.0)(@playwright/test@1.65.0)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)(vite@8.3.8(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(webpack@5.112.2(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.32)(sharp@0.35.5(@types/node@24.19.2)))
     devDependencies:
       '@types/node':
@@ -505,7 +505,7 @@ importers:
         specifier: workspace:*
         version: link:../env
       storyblok-js-client:
-        specifier: ^7.8.1
+        specifier: ^7.9.0
         version: 7.9.0
     devDependencies:
       '@types/node':
@@ -562,8 +562,8 @@ importers:
         specifier: workspace:*
         version: link:../tokens
       '@storyblok/schema':
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: ^0.7.0
+        version: 0.7.0
       dotenv:
         specifier: 'catalog:'
         version: 18.0.10
@@ -2843,8 +2843,8 @@ packages:
   '@storyblok/richtext@5.5.1':
     resolution: {integrity: sha512-RpHf22Uw1pqeoM1S3NN2jdAcSQvWmJc4JS0tV36EcJE1fEMUAXf3fgDFpJOOW4gzuuYVzGqhFlHmvknVJ6xZvw==}
 
-  '@storyblok/schema@0.5.0':
-    resolution: {integrity: sha512-Qeu/5IAUXLvw9J687HhBvAkavPf2/rfxrIBi2coVGqlle7Xrbc9iHKQG59gvW7i3dHyDyROgR/otVublraFUfw==}
+  '@storyblok/schema@0.7.0':
+    resolution: {integrity: sha512-QvAYaTPeWqZWFKGko/rn9ta7jGCy8IsleXzPzTx2ojRVrDh0xuwsy7Fl/FMDP+CL24e2bTD16wKeN6DCJ/5B4g==}
 
   '@storybook/addon-docs@10.6.6':
     resolution: {integrity: sha512-yflMNPrxk+QNuH0dPFgUk+AhVOa+Cz48bKz3/72eFDB8viWS9R0mQVBvKUxTIHOSUyDbaRyQiIeaL/pCvwW2jg==}
@@ -7173,7 +7173,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@storyblok/schema@0.5.0':
+  '@storyblok/schema@0.7.0':
     dependencies:
       '@standard-schema/spec': 1.1.0
       zod: 4.6.7

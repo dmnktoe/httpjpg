@@ -141,7 +141,8 @@ export const layoutBlocks: BlockDef[] = [
           alignSelf: field.options("Align Self", labelize(CMS_OPTIONS.alignItems)),
           justifySelf: field.options("Justify Self", labelize(CMS_OPTIONS.justifyItems)),
           zIndex: field.number("Z-Index", {
-            description: "Stacking order when items overlap (negative margin pull-out).",
+            description:
+              "Stacking order among the items of this grid when they overlap. Negative values go behind the other items.",
             tooltip: true,
           }),
         }),

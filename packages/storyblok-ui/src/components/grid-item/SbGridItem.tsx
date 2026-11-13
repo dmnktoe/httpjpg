@@ -86,11 +86,13 @@ function toLine(value?: string | number): number | undefined {
   return Number.isInteger(n) && n !== 0 ? n : undefined;
 }
 
-/** Empty CMS number fields arrive as `""`: no z-index, so no stacking context. */
+/**
+ * Storyblok sends number fields as strings and empty ones as `""`. `Number()` would
+ * turn `""`, `" "` or `false` into `0`, and `z-index: 0` already creates a stacking context.
+ */
 function zIndexStyle(value: unknown): CSSProperties | undefined {
-  if (value === undefined || value === null || value === "") {
-    return undefined;
+  if (typeof value === "number") {
+    return Number.isInteger(value) ? { zIndex: value } : undefined;
   }
-  const zIndex = Number(value);
-  return Number.isInteger(zIndex) ? { zIndex } : undefined;
+  return typeof value === "string" && /^-?\d+$/.test(value) ? { zIndex: Number(value) } : undefined;
 }

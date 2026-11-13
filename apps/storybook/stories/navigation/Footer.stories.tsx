@@ -105,9 +105,6 @@ export const WithCookieSettings: Story = {
   },
 };
 
-/**
- * Footer with widget area
- */
 export const WithWidgets: Story = {
   args: {
     backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
@@ -125,7 +122,6 @@ export const WithWidgets: Story = {
           gap: "4",
         }}
       >
-        {/* Mock Discord Status */}
         <Box css={{ opacity: 0.8, fontFamily: "mono", fontSize: "xs" }}>
           discord: 🟢 <span style={{ color: "#22C55E" }}>online</span> · Playing Spotify
         </Box>
@@ -175,9 +171,6 @@ export const NoBackground: Story = {
   render: (args) => <Footer {...args} css={{ bg: "neutral.100" }} />,
 };
 
-/**
- * Footer with custom content
- */
 export const CustomContent: Story = {
   args: {
     backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
@@ -203,9 +196,6 @@ export const CustomContent: Story = {
   ),
 };
 
-/**
- * Footer with multiple sections
- */
 export const MultiSection: Story = {
   args: {
     backgroundImage: "https://www.httpjpg.com/images/footer_bg.png",
@@ -222,7 +212,6 @@ export const MultiSection: Story = {
           filter: "drop-shadow(0 35px 35px rgba(0,0,0,0.25))",
         }}
       >
-        {/* Navigation */}
         <Box>
           <Box css={{ mb: "4", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>
             NAVIGATION
@@ -238,7 +227,6 @@ export const MultiSection: Story = {
           </Box>
         </Box>
 
-        {/* Legal */}
         <Box>
           <Box css={{ mb: "4", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>LEGAL</Box>
           <Box css={{ fontSize: "sm" }}>
@@ -250,7 +238,6 @@ export const MultiSection: Story = {
           </Box>
         </Box>
 
-        {/* Social */}
         <Box>
           <Box css={{ mb: "4", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>SOCIAL</Box>
           <Box css={{ fontSize: "sm" }}>
@@ -269,10 +256,8 @@ export const MultiSection: Story = {
         </Box>
       </Box>
 
-      {/* ASCII Divider */}
       <Box css={{ mt: "12", mb: "6" }}>*ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚</Box>
 
-      {/* Copyright */}
       <Box css={{ opacity: 0.6, fontSize: "xs" }}>
         ༺yl33ly httpjpg icon.icon.iconn te3shay༻
         <br />© 2025 httpjpg
@@ -281,9 +266,6 @@ export const MultiSection: Story = {
   ),
 };
 
-/**
- * Minimal footer
- */
 export const Minimal: Story = {
   args: {},
   render: (args) => (

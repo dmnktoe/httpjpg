@@ -80,9 +80,6 @@ export const Client: Story = {
   },
 };
 
-/**
- * External personal work link
- */
 export const PersonalExternal: Story = {
   args: {
     variant: "projects",
@@ -91,9 +88,6 @@ export const PersonalExternal: Story = {
   },
 };
 
-/**
- * External client work link
- */
 export const ClientExternal: Story = {
   args: {
     variant: "websites",
@@ -121,9 +115,6 @@ export const LongText: Story = {
   ],
 };
 
-/**
- * Custom styles override
- */
 export const CustomStyles: Story = {
   args: {
     variant: "websites",
@@ -231,9 +222,6 @@ export const WebsitesWorkList = {
   ),
 };
 
-/**
- * Mixed navigation list (both variants)
- */
 export const MixedNavigation = {
   render: () => (
     <Box

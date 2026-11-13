@@ -88,10 +88,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Default work card with multiple images
- */
-
 export const Default: Story = {
   args: {
     title: "BLENCE NETWORK™ INC., 2025",
@@ -143,9 +139,6 @@ export const Default: Story = {
   },
 };
 
-/**
- * Work card with single image
- */
 export const SingleImage: Story = {
   args: {
     title: "E-Commerce Redesign",
@@ -162,9 +155,6 @@ export const SingleImage: Story = {
   },
 };
 
-/**
- * Work card without description
- */
 export const NoDescription: Story = {
   args: {
     title: "Creative Exhibition",
@@ -180,9 +170,6 @@ export const NoDescription: Story = {
   },
 };
 
-/**
- * Work card without date
- */
 export const NoDate: Story = {
   args: {
     title: "Magazine Layout",
@@ -230,9 +217,6 @@ export const MultipleImages: Story = {
   },
 };
 
-/**
- * Minimal work card
- */
 export const Minimal: Story = {
   args: {
     title: "Project Title",

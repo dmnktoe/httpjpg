@@ -105,9 +105,6 @@ export const LargePadding: Story = {
   },
 };
 
-/**
- * Compact section with minimal padding
- */
 export const Compact: Story = {
   args: {
     pt: 4,
@@ -121,9 +118,6 @@ export const Compact: Story = {
   },
 };
 
-/**
- * With horizontal padding
- */
 export const WithHorizontalPadding: Story = {
   args: {
     pt: 16,
@@ -191,9 +185,6 @@ export const MultipleSections: Story = {
   ),
 };
 
-/**
- * Brutalist portfolio section
- */
 export const BrutalistPortfolio: Story = {
   args: {
     children: null,
@@ -209,7 +200,6 @@ export const BrutalistPortfolio: Story = {
             gap: "4rem",
           }}
         >
-          {/* Left column */}
           <Box style={{ flex: 1 }}>
             <Box
               style={{
@@ -234,7 +224,6 @@ export const BrutalistPortfolio: Story = {
             </Headline>
           </Box>
 
-          {/* Right column */}
           <Box style={{ flex: 1, paddingTop: "1rem" }}>
             <Paragraph
               style={{
@@ -250,7 +239,6 @@ export const BrutalistPortfolio: Story = {
           </Box>
         </Box>
 
-        {/* Projects grid */}
         <Box
           style={{
             display: "grid",
@@ -365,9 +353,6 @@ export const FluidContainer: Story = {
   },
 };
 
-/**
- * Without container wrapper
- */
 export const WithoutContainer: Story = {
   args: {
     pt: 16,

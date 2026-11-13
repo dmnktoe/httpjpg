@@ -64,7 +64,6 @@ export const Basic: Story = {
           </Paragraph>
         </Box>
       </GridItem>
-      {/* Fill rest of grid */}
       <GridItem colSpan={6}>
         <Box css={{ h: "120px", p: "4", bg: "neutral.200" }}>Other item</Box>
       </GridItem>
@@ -78,9 +77,6 @@ export const Basic: Story = {
   ),
 };
 
-/**
- * Full width GridItem
- */
 export const FullWidth: Story = {
   args: {
     colSpan: "full",
@@ -118,7 +114,6 @@ export const PrecisePositioning: Story = {
   },
   render: () => (
     <Grid columns={12} gap={4} css={{ p: "8", bg: "neutral.50" }}>
-      {/* Row 1 */}
       <GridItem colStart={1} colEnd={4}>
         <Box css={{ h: "100px", p: "4", color: "white", bg: "blue.500" }}>1 → 4</Box>
       </GridItem>
@@ -129,7 +124,6 @@ export const PrecisePositioning: Story = {
         <Box css={{ h: "100px", p: "4", color: "white", bg: "green.500" }}>10 → 13</Box>
       </GridItem>
 
-      {/* Row 2 - Offset positioning */}
       <GridItem colStart={3} colEnd={7}>
         <Box css={{ h: "100px", p: "4", color: "white", bg: "purple.500" }}>3 → 7</Box>
       </GridItem>
@@ -149,12 +143,10 @@ export const Overlapping: Story = {
   },
   render: () => (
     <Grid columns={12} gap={0} css={{ position: "relative", p: "8", bg: "white" }}>
-      {/* Base image */}
       <GridItem colSpan={8} colStart={1} rowSpan={2}>
         <Image src={OPTIMIZED_IMAGES.videoStill1} alt="Base" aspectRatio="16/9" />
       </GridItem>
 
-      {/* Overlapping card */}
       <GridItem colStart={6} colEnd={12} rowStart={2}>
         <Box css={{ position: "relative", zIndex: 10, mt: "-16", p: "8", bg: "white" }}>
           <Box css={{ mb: "4", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>
@@ -181,15 +173,12 @@ export const MagazineLayout: Story = {
   },
   render: () => (
     <Grid columns={12} gap={6} css={{ p: "16 8", bg: "white" }}>
-      {/* Container für eingerückte Bildreihe */}
       <GridItem colSpan={10} colStart={2}>
         <Grid columns={7} gap={6}>
-          {/* Large feature - spans multiple rows */}
           <GridItem colSpan={4} rowSpan={3}>
             <Image src={OPTIMIZED_IMAGES.portrait} alt="Feature" aspectRatio="3/4" />
           </GridItem>
 
-          {/* Title block */}
           <GridItem colSpan={3}>
             <Box css={{ p: "4" }}>
               <Box css={{ mb: "4", opacity: 0.5, fontSize: "xs", letterSpacing: "0.15em" }}>
@@ -201,12 +190,10 @@ export const MagazineLayout: Story = {
             </Box>
           </GridItem>
 
-          {/* Small image */}
           <GridItem colSpan={3} rowSpan={2}>
             <Image src={OPTIMIZED_IMAGES.videoStill2} alt="Detail" aspectRatio="1/1" />
           </GridItem>
 
-          {/* Text block */}
           <GridItem colSpan={3}>
             <Paragraph css={{ opacity: 0.7, fontSize: "sm", lineHeight: 2 }}>
               🎀 ୧ꔛꗃ˖ GridItem allows precise control over column spans and positioning ･ﾟ⋆
@@ -215,7 +202,6 @@ export const MagazineLayout: Story = {
         </Grid>
       </GridItem>
 
-      {/* Wide image - full width */}
       <GridItem colSpan="full">
         <Image src={OPTIMIZED_IMAGES.videoStill3} alt="Wide" aspectRatio="21/9" />
       </GridItem>
@@ -232,7 +218,6 @@ export const Dashboard: Story = {
   },
   render: () => (
     <Grid columns={12} gap={4} css={{ p: "8", bg: "neutral.50" }}>
-      {/* Large stat */}
       <GridItem colSpan={8} rowSpan={2}>
         <Box css={{ h: "full", p: "8", color: "white", bg: "blue.500" }}>
           <Box css={{ mb: "2", opacity: 0.8, fontSize: "xs" }}>TOTAL VIEWS</Box>
@@ -241,7 +226,6 @@ export const Dashboard: Story = {
         </Box>
       </GridItem>
 
-      {/* Small stats */}
       <GridItem colSpan={4}>
         <Box css={{ h: "full", p: "6", color: "white", bg: "green.500" }}>
           <Box css={{ mb: "2", opacity: 0.8, fontSize: "xs" }}>ENGAGEMENT</Box>
@@ -255,7 +239,6 @@ export const Dashboard: Story = {
         </Box>
       </GridItem>
 
-      {/* Medium cards */}
       <GridItem colSpan={6}>
         <Box css={{ p: "6", bg: "white", border: "1px solid", borderColor: "neutral.200" }}>
           <Headline level={3} css={{ m: 0, mb: "4" }}>

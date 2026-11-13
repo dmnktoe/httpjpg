@@ -25,12 +25,10 @@ export const Introduction = {
     <Box css={{ minH: "100vh", color: "pageFg", bg: "pageBg" }}>
       <Container size="lg" py={12}>
         <Stack direction="vertical" gap="10">
-          {/* ── Top bar ── */}
           <Box css={{ opacity: 0.4, fontFamily: "mono", fontSize: "xs", letterSpacing: "wider" }}>
             ⇝ httpjpg / design system &nbsp; · &nbsp; toggle theme in the toolbar ↗
           </Box>
 
-          {/* ── Hero ── */}
           <Box>
             <Headline level={1}>HTTPJPG DESIGN SYSTEM</Headline>
 
@@ -61,7 +59,6 @@ export const Introduction = {
             </Stack>
           </Box>
 
-          {/* ── Badges ── */}
           <Stack direction="horizontal" gap="2" css={{ flexWrap: "wrap" }}>
             <img
               src="https://img.shields.io/github/actions/workflow/status/dmnktoe/httpjpg/ci.yml?branch=main&logo=github&logoColor=fff&label=CI&labelColor=000"
@@ -79,7 +76,6 @@ export const Introduction = {
 
           <Divider variant="ascii" pattern={ASCII_DIVIDER_STARS} />
 
-          {/* ── Stack ── */}
           <Box>
             <Headline level={2} css={{ mb: "2" }}>
               ◇ THE STACK
@@ -123,7 +119,6 @@ export const Introduction = {
 
           <Divider variant="ascii" />
 
-          {/* ── Principles ── */}
           <Box>
             <Headline level={2} css={{ mb: "2" }}>
               ◇ CORE PRINCIPLES
@@ -185,7 +180,6 @@ export const Introduction = {
 
           <Divider variant="ascii" />
 
-          {/* ── Quick Start ── */}
           <Box>
             <Headline level={2} css={{ mb: "2" }}>
               ◇ QUICK START
@@ -218,7 +212,6 @@ export default function MyPage() {
 
           <Divider variant="ascii" />
 
-          {/* ── Components ── */}
           <Box>
             <Headline level={2} css={{ mb: "2" }}>
               ◇ WHAT'S INSIDE
@@ -302,7 +295,6 @@ export default function MyPage() {
 
           <Divider variant="ascii" />
 
-          {/* ── Architecture ── */}
           <Box>
             <Headline level={2} css={{ mb: "2" }}>
               ◇ ARCHITECTURE
@@ -329,7 +321,6 @@ portfolio       ← Next.js 16 App Router`}
 
           <Divider variant="ascii" />
 
-          {/* ── Footer ── */}
           <Box css={{ py: "8", textAlign: "center" }}>
             <Paragraph size="sm" color="muted" css={{ fontFamily: "mono", letterSpacing: "wider" }}>
               *ੈ✩‧₊˚༺☆༻*ੈ✩‧₊˚

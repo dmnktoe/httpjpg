@@ -71,9 +71,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * YouTube video embed
- */
 export const YouTube: Story = {
   args: {
     src: "dQw4w9WgXcQ",
@@ -88,9 +85,6 @@ export const YouTube: Story = {
   },
 };
 
-/**
- * Vimeo video embed
- */
 export const Vimeo: Story = {
   args: {
     src: "76979871",
@@ -137,9 +131,6 @@ export const Native: Story = {
   },
 };
 
-/**
- * Native video with a copyright + source line
- */
 export const NativeWithCopyrightSource: Story = {
   args: {
     src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
@@ -156,9 +147,6 @@ export const NativeWithCopyrightSource: Story = {
   },
 };
 
-/**
- * Native video with overlay copyright
- */
 export const NativeWithOverlayCopyright: Story = {
   args: {
     src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_5MB.mp4",
@@ -220,9 +208,6 @@ export const AutoplayMuted: Story = {
   },
 };
 
-/**
- * Without controls
- */
 export const WithoutControls: Story = {
   args: {
     src: "dQw4w9WgXcQ",

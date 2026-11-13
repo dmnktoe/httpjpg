@@ -78,9 +78,6 @@ export const Default: Story = {
   ],
 };
 
-/**
- * Fast scrolling announcement
- */
 export const FastAnnouncement: Story = {
   args: {
     children: "🎀 ⋆ﾟ･ NEW WORK AVAILABLE ⋆ﾟ･ 🎀 ⋆ﾟ･ CONTACT ME ⋆ﾟ･ 🎀",
@@ -95,9 +92,6 @@ export const FastAnnouncement: Story = {
   ],
 };
 
-/**
- * Slow ASCII art
- */
 export const SlowASCII: Story = {
   args: {
     children:
@@ -113,9 +107,6 @@ export const SlowASCII: Story = {
   ],
 };
 
-/**
- * Scrolling right direction
- */
 export const RightDirection: Story = {
   args: {
     children: "← SCROLLING RIGHT ← BRUTALIST DESIGN ← HTTPJPG ←",
@@ -131,9 +122,6 @@ export const RightDirection: Story = {
   ],
 };
 
-/**
- * Pause on hover
- */
 export const PauseOnHover: Story = {
   args: {
     children: "⊹ HOVER TO PAUSE ⊹ INTERACTIVE MARQUEE ⊹",
@@ -170,9 +158,6 @@ export const NavigationStyle: Story = {
   ),
 };
 
-/**
- * Multiple stacked marquees
- */
 export const StackedMarquees: Story = {
   args: {
     children: "",
@@ -196,9 +181,6 @@ export const StackedMarquees: Story = {
   ),
 };
 
-/**
- * Large text marquee
- */
 export const LargeText: Story = {
   args: {
     children: "BRUTALIST ✦ DESIGN ◆ SYSTEM ✧",

@@ -71,9 +71,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Diamond trail variant
- */
 export const Diamond: Story = {
   args: {
     character: "◆",
@@ -101,9 +98,6 @@ export const Diamond: Story = {
   ),
 };
 
-/**
- * Star trail variant
- */
 export const Star: Story = {
   args: {
     character: "✧",
@@ -131,9 +125,6 @@ export const Star: Story = {
   ),
 };
 
-/**
- * Long lasting trail
- */
 export const LongTrail: Story = {
   args: {
     character: "⬥",
@@ -161,9 +152,6 @@ export const LongTrail: Story = {
   ),
 };
 
-/**
- * Short quick trail
- */
 export const QuickTrail: Story = {
   args: {
     character: "•",
@@ -191,9 +179,6 @@ export const QuickTrail: Story = {
   ),
 };
 
-/**
- * Large particles
- */
 export const LargeParticles: Story = {
   args: {
     character: "✦",
@@ -221,9 +206,6 @@ export const LargeParticles: Story = {
   ),
 };
 
-/**
- * Dense trail with many particles
- */
 export const Dense: Story = {
   args: {
     character: "✧",
@@ -251,9 +233,6 @@ export const Dense: Story = {
   ),
 };
 
-/**
- * Portfolio example with content
- */
 export const PortfolioExample: Story = {
   args: {
     character: "✦",
@@ -333,9 +312,6 @@ export const PortfolioExample: Story = {
   ),
 };
 
-/**
- * Playground with all controls
- */
 export const Playground: Story = {
   args: {
     character: "✦",

@@ -16,7 +16,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Sample data for demos
 const sampleNav = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
@@ -72,9 +71,6 @@ export const Default: Story = {
   ),
 };
 
-/**
- * Page with custom content sections
- */
 export const WithSections: Story = {
   args: {
     children: null,
@@ -88,7 +84,6 @@ export const WithSections: Story = {
   },
   render: (args) => (
     <Page {...args}>
-      {/* Hero Section */}
       <Section css={{ py: "32", bg: "neutral.50" }}>
         <Headline level={1} css={{ mb: "6" }}>
           Portfolio Showcase
@@ -99,7 +94,6 @@ export const WithSections: Story = {
         </Paragraph>
       </Section>
 
-      {/* Content Section */}
       <Section css={{ py: "24" }}>
         <Headline level={2} css={{ mb: "8" }}>
           Recent Projects
@@ -138,7 +132,6 @@ export const WithSections: Story = {
         </Box>
       </Section>
 
-      {/* Call to Action */}
       <Section css={{ py: "32", color: "white", textAlign: "center", bg: "black" }}>
         <Headline level={2} css={{ mb: "6" }}>
           Let's Work Together
@@ -168,9 +161,6 @@ export const WithSections: Story = {
   ),
 };
 
-/**
- * Minimal page (header only)
- */
 export const HeaderOnly: Story = {
   args: {
     children: null,
@@ -188,9 +178,6 @@ export const HeaderOnly: Story = {
   ),
 };
 
-/**
- * Minimal page (footer only)
- */
 export const FooterOnly: Story = {
   args: {
     children: null,
@@ -208,9 +195,6 @@ export const FooterOnly: Story = {
   ),
 };
 
-/**
- * Content-only page (no header/footer)
- */
 export const ContentOnly: Story = {
   args: { children: null },
   render: () => (

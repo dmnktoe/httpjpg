@@ -89,9 +89,6 @@ export const InlineCopyright: Story = {
   },
 };
 
-/**
- * Image with copyright below
- */
 export const BelowCopyright: Story = {
   args: {
     src: OPTIMIZED_IMAGES.videoStill3,
@@ -219,9 +216,6 @@ export const Gallery: Story = {
   ),
 };
 
-/**
- * Brutalist card with image
- */
 export const BrutalistCard: Story = {
   args: {
     src: "",

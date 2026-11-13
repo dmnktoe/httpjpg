@@ -57,9 +57,6 @@ export const External: Story = {
   },
 };
 
-/**
- * External link without icon
- */
 export const ExternalWithoutIcon: Story = {
   args: {
     href: "https://github.com",
@@ -88,9 +85,6 @@ export const Phone: Story = {
   },
 };
 
-/**
- * Link with custom styles
- */
 export const CustomStyles: Story = {
   args: {
     href: "/portfolio",
@@ -106,9 +100,6 @@ export const CustomStyles: Story = {
   },
 };
 
-/**
- * External client/agency link example
- */
 export const ClientsExternal: Story = {
   args: {
     href: "https://www.behance.net/gallery/example",
@@ -117,9 +108,6 @@ export const ClientsExternal: Story = {
   },
 };
 
-/**
- * Multiple links in different contexts
- */
 export const MultipleLinks = {
   render: () => (
     <Box
@@ -148,9 +136,6 @@ export const MultipleLinks = {
   ),
 };
 
-/**
- * Links in paragraph context
- */
 export const InParagraph = {
   render: () => (
     <Box css={{ maxW: "prose", fontSize: "base", lineHeight: "relaxed" }}>

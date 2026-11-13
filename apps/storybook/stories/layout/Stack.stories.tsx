@@ -135,9 +135,6 @@ export const ButtonGroup: Story = {
   ),
 };
 
-/**
- * Centered content
- */
 export const Centered: Story = {
   args: {
     children: null,
@@ -156,9 +153,6 @@ export const Centered: Story = {
   ),
 };
 
-/**
- * Space between items
- */
 export const SpaceBetween: Story = {
   args: {
     children: null,
@@ -178,9 +172,6 @@ export const SpaceBetween: Story = {
   ),
 };
 
-/**
- * Different gap sizes
- */
 export const GapSizes: Story = {
   args: {
     children: null,

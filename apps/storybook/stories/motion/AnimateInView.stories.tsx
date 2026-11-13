@@ -73,9 +73,6 @@ export const Default: Story = {
   },
 };
 
-/**
- * Zoom in animation
- */
 export const ZoomIn: Story = {
   args: {
     animation: "zoomIn",
@@ -108,9 +105,6 @@ export const Sharpen: Story = {
   },
 };
 
-/**
- * Zoom + Sharpen combined
- */
 export const ZoomSharpen: Story = {
   args: {
     animation: "zoomSharpen",
@@ -126,9 +120,6 @@ export const ZoomSharpen: Story = {
   },
 };
 
-/**
- * Slide from left
- */
 export const SlideLeft: Story = {
   args: {
     animation: "slideInFromLeft",
@@ -143,9 +134,6 @@ export const SlideLeft: Story = {
   },
 };
 
-/**
- * Slide from right
- */
 export const SlideRight: Story = {
   args: {
     animation: "slideInFromRight",
@@ -160,9 +148,6 @@ export const SlideRight: Story = {
   },
 };
 
-/**
- * Slide up
- */
 export const SlideUp: Story = {
   args: {
     animation: "slideUp",
@@ -177,9 +162,6 @@ export const SlideUp: Story = {
   },
 };
 
-/**
- * With delay
- */
 export const WithDelay: Story = {
   args: {
     animation: "fadeIn",

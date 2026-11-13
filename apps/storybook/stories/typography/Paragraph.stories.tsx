@@ -144,9 +144,6 @@ export const Centered: Story = {
   },
 };
 
-/**
- * Right-aligned paragraph.
- */
 export const RightAligned: Story = {
   args: {
     align: "right",
@@ -215,9 +212,6 @@ export const FullWidth: Story = {
   },
 };
 
-/**
- * Custom max-width for specific layouts.
- */
 export const CustomMaxWidth: Story = {
   args: {
     maxWidth: "80ch",
@@ -225,9 +219,6 @@ export const CustomMaxWidth: Story = {
   },
 };
 
-/**
- * Render as span element.
- */
 export const AsSpan: Story = {
   args: {
     as: "span",
@@ -261,9 +252,6 @@ export const MultiParagraph: Story = {
   ),
 };
 
-/**
- * Combined features showcase.
- */
 export const CombinedFeatures: Story = {
   args: {
     children: null,

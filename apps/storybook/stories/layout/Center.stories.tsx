@@ -71,9 +71,6 @@ export const Basic: Story = {
   },
 };
 
-/**
- * Horizontal only
- */
 export const HorizontalOnly: Story = {
   args: {
     horizontal: true,
@@ -92,9 +89,6 @@ export const HorizontalOnly: Story = {
   },
 };
 
-/**
- * Vertical only
- */
 export const VerticalOnly: Story = {
   args: {
     horizontal: false,
@@ -140,9 +134,6 @@ export const WithFlex: Story = {
   },
 };
 
-/**
- * Hero section example
- */
 export const HeroSection: Story = {
   args: { children: null },
   render: () => (
@@ -193,9 +184,6 @@ export const HeroSection: Story = {
   ),
 };
 
-/**
- * Modal content example
- */
 export const ModalContent: Story = {
   args: { children: null },
   render: () => (
@@ -241,9 +229,6 @@ export const ModalContent: Story = {
   ),
 };
 
-/**
- * Loading state example
- */
 export const LoadingState: Story = {
   args: { children: null },
   render: () => (
@@ -268,9 +253,6 @@ export const LoadingState: Story = {
   ),
 };
 
-/**
- * Brutalist card centered
- */
 export const BrutalistCard: Story = {
   args: { children: null },
   render: () => (

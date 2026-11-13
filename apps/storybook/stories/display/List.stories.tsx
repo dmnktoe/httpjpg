@@ -139,9 +139,6 @@ export const OrderedVariants: Story = {
   ),
 };
 
-/**
- * Lists with different sizes
- */
 export const Sizes: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
@@ -172,9 +169,6 @@ export const Sizes: Story = {
   ),
 };
 
-/**
- * Lists with different spacing between items
- */
 export const Spacing: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
@@ -208,9 +202,6 @@ export const Spacing: Story = {
   ),
 };
 
-/**
- * Nested lists
- */
 export const NestedLists: Story = {
   render: () => (
     <UnorderedList>
@@ -232,9 +223,6 @@ export const NestedLists: Story = {
   ),
 };
 
-/**
- * Lists with paragraph content
- */
 export const WithParagraphs: Story = {
   render: () => (
     <UnorderedList>

@@ -34,7 +34,7 @@ function spacingSchema() {
 
 /**
  * Append the canonical Spacing tab (mt/mb/.../pl/pr × base/Md/Lg, 24 fields)
- * to a component schema. Every component that consumes `spacingCss(blok)`
+ * to a component schema. Every component that consumes `spacingStyle(blok)`
  * at runtime should wrap its own fields in this.
  */
 export function withSpacing(

@@ -5,21 +5,10 @@ import { forwardRef } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
 
-const GRID_COLUMNS_MAP = {
-  1: "repeat(1, 1fr)",
-  2: "repeat(2, 1fr)",
-  3: "repeat(3, 1fr)",
-  4: "repeat(4, 1fr)",
-  5: "repeat(5, 1fr)",
-  6: "repeat(6, 1fr)",
-  7: "repeat(7, 1fr)",
-  8: "repeat(8, 1fr)",
-  9: "repeat(9, 1fr)",
-  10: "repeat(10, 1fr)",
-  11: "repeat(11, 1fr)",
-  12: "repeat(12, 1fr)",
-  auto: "repeat(auto-fit, minmax(200px, 1fr))",
-} as const;
+import { spacingVar } from "../../lib/spacing-var";
+import { type GridColumns, gridTemplate } from "./lib";
+
+export type { GridColumns };
 
 /** CMS uses `row-dense`; CSS grid-auto-flow requires a space (`row dense`). */
 const GRID_AUTO_FLOW = {
@@ -33,7 +22,11 @@ type GridFlow = keyof typeof GRID_AUTO_FLOW;
 
 export interface GridProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
-  columns?: keyof typeof GRID_COLUMNS_MAP;
+  columns?: GridColumns;
+  /** Columns from 768px up; falls back to `columns`. */
+  columnsMd?: GridColumns;
+  /** Columns from 1024px up; falls back to `columnsMd`. */
+  columnsLg?: GridColumns;
   gap?: string | number;
   rowGap?: string | number;
   columnGap?: string | number;
@@ -50,6 +43,8 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
     {
       children,
       columns = 12,
+      columnsMd,
+      columnsLg,
       gap = "4",
       rowGap,
       columnGap,
@@ -70,16 +65,22 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
       className={cx(
         css({
           display: "grid",
-          gridTemplateColumns: GRID_COLUMNS_MAP[columns],
-          gap: rowGap || columnGap ? undefined : gap,
-          rowGap: rowGap || gap,
-          columnGap: columnGap || gap,
+          // Fixed classes; the values arrive as variables so any column count or gap works.
+          gridTemplateColumns: {
+            base: "var(--grid-cols)",
+            md: "var(--grid-cols-md)",
+            lg: "var(--grid-cols-lg)",
+          },
+          rowGap: "var(--grid-row-gap)",
+          columnGap: "var(--grid-column-gap)",
           w: fullWidth ? "full" : undefined,
           ...cssProp,
         }),
         className,
       )}
       style={{
+        ...columnVars(columns, columnsMd, columnsLg),
+        ...gapVars(spacingVar(rowGap) ?? spacingVar(gap), spacingVar(columnGap) ?? spacingVar(gap)),
         alignItems: align || "stretch",
         justifyItems: justify || "stretch",
         ...(justifyContent ? { justifyContent } : {}),
@@ -94,6 +95,19 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
 );
 
 Grid.displayName = "Grid";
+
+/** Each breakpoint falls back to the one below; always set, so nested grids never inherit. */
+function columnVars(base: GridColumns, md = base, lg = md): CSSProperties {
+  return {
+    "--grid-cols": gridTemplate(base),
+    "--grid-cols-md": gridTemplate(md),
+    "--grid-cols-lg": gridTemplate(lg),
+  } as CSSProperties;
+}
+
+function gapVars(rowGap = "0", columnGap = "0"): CSSProperties {
+  return { "--grid-row-gap": rowGap, "--grid-column-gap": columnGap } as CSSProperties;
+}
 
 function toGridAutoFlow(flow: string | undefined): CSSProperties["gridAutoFlow"] {
   if (flow && flow in GRID_AUTO_FLOW) {

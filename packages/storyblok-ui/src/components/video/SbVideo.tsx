@@ -15,7 +15,7 @@ import {
 } from "@httpjpg/ui";
 import { memo, useRef } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 import { SbCaption, type SbCaptionProps } from "../caption/SbCaption";
 
 export interface SbVideoProps {
@@ -84,14 +84,14 @@ export const SbVideo = memo(function SbVideo({ blok }: SbVideoProps) {
 
   if (!consent) {
     return (
-      <Box {...editable} css={spacingCss(blok)}>
+      <Box {...editable} {...spacingStyle(blok)}>
         <ConsentPlaceholder vendor={source === "youtube" ? "YouTube" : "Vimeo"} height="400px" />
       </Box>
     );
   }
 
   return (
-    <Box {...editable} css={spacingCss(blok)}>
+    <Box {...editable} {...spacingStyle(blok)}>
       <Box css={{ position: "relative" }}>
         <Video
           src={src}

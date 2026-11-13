@@ -8,6 +8,8 @@ import { AsciiArt } from "../ascii-art/ascii-art";
 import { ASCII_EMPTY } from "../ascii-art/banners";
 import { Box } from "../box/box";
 import { Divider, type DividerProps } from "../divider/divider";
+import { Grid } from "../grid/grid";
+import type { GridColumns } from "../grid/lib";
 import { VStack } from "../stack/stack";
 import { WorkCard, type WorkCardProps, type WorkCardVariant } from "../work-card/work-card";
 import { collectWorkTags, filterWorksByTag } from "./lib";
@@ -137,36 +139,22 @@ export const WorkList = forwardRef<HTMLDivElement, WorkListProps>(
       <Box ref={ref} css={cssProp} {...props}>
         {header}
         {filterBar}
-        <Box
-          css={{
-            display: "grid",
-            gridTemplateColumns: {
-              base: gridTemplate(columns),
-              md: columnsMd ? gridTemplate(columnsMd) : undefined,
-              lg: columnsLg ? gridTemplate(columnsLg) : undefined,
-            },
-            gap,
-          }}
+        <Grid
+          columns={toColumns(columns)}
+          columnsMd={columnsMd ? toColumns(columnsMd) : undefined}
+          columnsLg={columnsLg ? toColumns(columnsLg) : undefined}
+          gap={gap}
         >
           {cards}
-        </Box>
+        </Grid>
         {footer}
       </Box>
     );
   },
 );
 
-const GRID_TEMPLATES: Record<number, string> = {
-  1: "repeat(1, 1fr)",
-  2: "repeat(2, 1fr)",
-  3: "repeat(3, 1fr)",
-  4: "repeat(4, 1fr)",
-  5: "repeat(5, 1fr)",
-  6: "repeat(6, 1fr)",
-};
-
-function gridTemplate(n: number): string {
-  return GRID_TEMPLATES[n] ?? GRID_TEMPLATES[1];
+function toColumns(n: number): GridColumns {
+  return Number.isInteger(n) && n >= 1 && n <= 12 ? (n as GridColumns) : 1;
 }
 
 WorkList.displayName = "WorkList";

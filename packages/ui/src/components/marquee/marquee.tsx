@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
-import { useMemo } from "react";
+import { type CSSProperties, useMemo } from "react";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
@@ -15,6 +15,7 @@ export interface MarqueeProps {
   iosStyle?: boolean;
   pauseDuration?: number;
   css?: SystemStyleObject;
+  style?: CSSProperties;
 }
 
 function hashProps(props: {
@@ -43,6 +44,7 @@ export function Marquee({
   iosStyle = false,
   pauseDuration = 2,
   css: cssProp,
+  style,
 }: MarqueeProps) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -63,6 +65,7 @@ export function Marquee({
           position: "relative",
           ...cssProp,
         }}
+        style={style}
       >
         <Box as="span" css={{ display: "inline-block" }}>
           {children}
@@ -111,6 +114,7 @@ export function Marquee({
           position: "relative",
           ...cssProp,
         }}
+        style={style}
       >
         <Box
           css={{

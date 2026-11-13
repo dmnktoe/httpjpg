@@ -6,7 +6,13 @@ import { getResponsiveImage } from "@httpjpg/storyblok-utils";
 import { Box, ImageComparisonSlider } from "@httpjpg/ui";
 import { memo, useCallback } from "react";
 
-import { editableAttrs, sizesFromWidths, spacingCss, widthCss } from "../../lib/use-blok";
+import {
+  editableAttrs,
+  mergeBlokStyles,
+  sizesFromWidths,
+  spacingStyle,
+  widthStyle,
+} from "../../lib/use-blok";
 import { SbCaption, type SbCaptionProps } from "../caption/SbCaption";
 
 export interface SbImageComparisonProps {
@@ -51,15 +57,13 @@ export const SbImageComparison = memo(function SbImageComparison({ blok }: SbIma
   });
   const sizes = sizesFromWidths({ width, widthMd, widthLg });
 
+  const media = mergeBlokStyles(
+    widthStyle({ width, widthMd, widthLg }),
+    spacingStyle(blok, { mb: "4" }),
+  );
+
   return (
-    <Box
-      {...editable}
-      css={{
-        mb: "4",
-        ...widthCss({ width, widthMd, widthLg }),
-        ...spacingCss(blok),
-      }}
-    >
+    <Box {...editable} css={media.css} style={media.style}>
       <ImageComparisonSlider
         beforeSrc={beforeImage.src}
         afterSrc={afterImage.src}

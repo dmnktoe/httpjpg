@@ -1,6 +1,6 @@
 "use client";
 
-import type { ImgHTMLAttributes } from "react";
+import type { CSSProperties, ImgHTMLAttributes } from "react";
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { css, cx } from "styled-system/css";
 import type { SystemStyleObject } from "styled-system/types";
@@ -125,10 +125,12 @@ export const Image = forwardRef<HTMLDivElement, ImageProps>(
             position: "relative",
             display: "block",
             overflow: "hidden",
-            aspectRatio,
+            // Any ratio works: the class reads a variable instead of carrying the value.
+            aspectRatio: aspectRatio ? "var(--media-ratio)" : undefined,
             width: aspectRatio ? "100%" : undefined,
             ...cssProp,
           }}
+          style={aspectRatio ? ({ "--media-ratio": aspectRatio } as CSSProperties) : undefined}
         >
           {showSkeleton && <MediaSkeleton visible={!highResLoaded} />}
 

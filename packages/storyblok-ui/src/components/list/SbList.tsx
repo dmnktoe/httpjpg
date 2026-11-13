@@ -2,7 +2,7 @@ import type { SbListData } from "@httpjpg/storyblok-utils";
 import { Box, ListItem, OrderedList, UnorderedList } from "@httpjpg/ui";
 import { memo } from "react";
 
-import { editableAttrs, spacingCss } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbListProps {
   blok: SbListData;
@@ -10,6 +10,7 @@ export interface SbListProps {
 
 export const SbList = memo(function SbList({ blok }: SbListProps) {
   const { items, ordered, size, itemSpacing, unorderedStyle, orderedStyle, color } = blok;
+  const spacing = spacingStyle(blok);
 
   if (!items?.length) {
     return null;
@@ -32,7 +33,7 @@ export const SbList = memo(function SbList({ blok }: SbListProps) {
   );
 
   return (
-    <Box {...editableAttrs(blok)} css={{ color, ...spacingCss(blok) }}>
+    <Box {...editableAttrs(blok)} css={{ color, ...spacing.css }} style={spacing.style}>
       {list}
     </Box>
   );

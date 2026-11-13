@@ -63,9 +63,14 @@ describe("SbGridItem", () => {
     expect(renderItem({ colSpan: "-2" }).col[0]).toBe("auto");
   });
 
-  it("maps a numeric rowSpan and ignores the full keyword and zero", () => {
+  it("maps a numeric rowSpan, stretches full across every row and ignores zero", () => {
     expect(renderItem({ rowSpan: "3" }).row[0]).toBe("span 3");
-    expect(renderItem({ rowSpan: "full" }).row[0]).toBe("auto");
+    expect(renderItem({ rowSpan: "full" }).row[0]).toBe("1 / -1");
+    expect(renderItem({ rowSpan: "2", rowSpanMd: "full" }).row).toEqual([
+      "span 2",
+      "1 / -1",
+      "1 / -1",
+    ]);
     expect(renderItem({ rowSpan: "0" }).row[0]).toBe("auto");
   });
 

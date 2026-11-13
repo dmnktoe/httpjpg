@@ -65,8 +65,11 @@ describe("GridItem", () => {
     render(<GridItem rowStart={2} rowSpan={3} data-testid="a" />);
     render(<GridItem rowStart={2} rowEnd={5} data-testid="b" />);
 
+    render(<GridItem rowSpan="full" data-testid="c" />);
+
     expect(placement("a").row[0]).toBe("2 / span 3");
     expect(placement("b").row[0]).toBe("2 / 5");
+    expect(placement("c").row[0]).toBe("1 / -1");
   });
 
   it("carries the base placement up when no breakpoint overrides it", () => {

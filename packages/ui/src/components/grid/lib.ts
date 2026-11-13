@@ -35,7 +35,8 @@ export function carryTrack(below: GridTrack, own: GridTrack): GridTrack {
   if (below.end === undefined) {
     return { start, span: below.span };
   }
-  if (below.start !== undefined && below.end > below.start) {
+  // Negative lines count from the far edge, so a width is only measurable between two positive ones.
+  if (below.start !== undefined && below.start > 0 && below.end > below.start) {
     return { start, span: below.end - below.start };
   }
   return { start, end: below.end };

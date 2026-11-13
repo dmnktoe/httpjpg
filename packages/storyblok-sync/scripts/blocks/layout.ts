@@ -11,9 +11,6 @@ const GRID_SPAN_OPTIONS = CMS_OPTIONS.gridSpan.map((v) => ({
   value: v,
 }));
 
-/** Rows have no fixed count, so "Full" would mean nothing there. */
-const ROW_SPAN_OPTIONS = GRID_SPAN_OPTIONS.filter((o) => o.value !== "full");
-
 const CONTAINER_ALIGN_OPTIONS = [
   { name: "Left", value: "left" },
   { name: "Center", value: "center" },
@@ -125,9 +122,9 @@ export const layoutBlocks: BlockDef[] = [
         colSpan: field.options("Column Span", GRID_SPAN_OPTIONS),
         colSpanMd: field.options("Column Span (Tablet)", GRID_SPAN_OPTIONS),
         colSpanLg: field.options("Column Span (Desktop)", GRID_SPAN_OPTIONS),
-        rowSpan: field.options("Row Span", ROW_SPAN_OPTIONS),
-        rowSpanMd: field.options("Row Span (Tablet)", ROW_SPAN_OPTIONS),
-        rowSpanLg: field.options("Row Span (Desktop)", ROW_SPAN_OPTIONS),
+        rowSpan: field.options("Row Span", GRID_SPAN_OPTIONS),
+        rowSpanMd: field.options("Row Span (Tablet)", GRID_SPAN_OPTIONS),
+        rowSpanLg: field.options("Row Span (Desktop)", GRID_SPAN_OPTIONS),
       }),
       ...tabbed("Position", "position", {
         colStart: field.number("Column Start"),

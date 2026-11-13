@@ -30,10 +30,15 @@ describe("carryTrack", () => {
     expect(carryTrack({ start: 2, span: 3 }, {})).toEqual({ start: 2, span: 3 });
   });
 
-  it("keeps the start when only the span changes", () => {
+  it("keeps the start when only the span changes, except for a full span", () => {
     expect(carryTrack({ start: 3, span: 4 }, { span: 6 })).toEqual({
       start: 3,
       span: 6,
+      end: undefined,
+    });
+    expect(carryTrack({ start: 3, span: 4 }, { span: "full" })).toEqual({
+      start: undefined,
+      span: "full",
       end: undefined,
     });
   });
@@ -54,5 +59,7 @@ describe("carryTrack", () => {
   it("keeps the end line when the width below can't be measured", () => {
     expect(trackLine(carryTrack({ start: 1, end: -1 }, { start: 2 }))).toBe("2 / -1");
     expect(trackLine(carryTrack({ end: 5 }, { start: 2 }))).toBe("2 / 5");
+    expect(trackLine(carryTrack({ start: -5, end: 2 }, { start: 3 }))).toBe("3 / 2");
+    expect(trackLine(carryTrack({ start: -3, end: -1 }, { start: 2 }))).toBe("2 / -1");
   });
 });

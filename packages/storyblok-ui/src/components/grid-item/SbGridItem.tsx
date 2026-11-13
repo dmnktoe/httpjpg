@@ -66,9 +66,9 @@ function toColSpan(value?: string): GridPlacement["colSpan"] {
   return n !== undefined && n <= 12 ? (n as GridPlacement["colSpan"]) : undefined;
 }
 
-/** Rows have no fixed count, so the CMS offers no `"full"` for them. */
-function toRowSpan(value?: string): number | undefined {
-  return toSpan(value);
+/** `"full"` stretches across every explicit row (`1 / -1`); rows have no upper count otherwise. */
+function toRowSpan(value?: string): GridPlacement["rowSpan"] {
+  return value === "full" ? "full" : toSpan(value);
 }
 
 /** A span counts tracks, so it must be positive. */

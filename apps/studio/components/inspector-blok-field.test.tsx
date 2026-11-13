@@ -89,6 +89,8 @@ describe("BlokField", () => {
       />,
     );
     expect(screen.getByLabelText("Label")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Label"), { target: { value: "a" } });
+    expect(onChange).toHaveBeenCalledWith("a");
   });
 
   it("renders a select without options", () => {

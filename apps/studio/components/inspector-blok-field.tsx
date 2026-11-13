@@ -8,15 +8,17 @@ import { fieldCss, fieldInline, labelCss } from "./inspector-field-css";
 import { SelectField } from "./inspector-select-field";
 import type { FieldDef } from "./lib";
 
-export function BlokField({
-  field,
-  value,
-  onChange,
-}: {
+interface BlokFieldProps {
   field: FieldDef;
   value: unknown;
   onChange(v: unknown): void;
-}) {
+}
+
+interface PickableFieldProps extends BlokFieldProps {
+  kind: "asset" | "story";
+}
+
+export function BlokField({ field, value, onChange }: BlokFieldProps) {
   switch (field.type) {
     case "textarea":
       return (
@@ -86,17 +88,7 @@ export function BlokField({
   }
 }
 
-function PickableField({
-  field,
-  value,
-  onChange,
-  kind,
-}: {
-  field: FieldDef;
-  value: unknown;
-  onChange(v: unknown): void;
-  kind: "asset" | "story";
-}) {
+function PickableField({ field, value, onChange, kind }: PickableFieldProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
   return (
     <label className={labelCss}>

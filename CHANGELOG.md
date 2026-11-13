@@ -4,6 +4,44 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.13.0](https://github.com/dmnktoe/httpjpg/compare/v2.12.2...v2.13.0) (2026-11-13)
+
+
+### Added
+
+* scatter draggable image and video windows on work pages ([#502](https://github.com/dmnktoe/httpjpg/issues/502)) ([06f8be5](https://github.com/dmnktoe/httpjpg/commit/06f8be58981ebbf599bc48d402f72a1b6a18483d))
+* signed margins and grid-item pull-out ([#500](https://github.com/dmnktoe/httpjpg/issues/500)) ([1df928e](https://github.com/dmnktoe/httpjpg/commit/1df928e8afe739a89db73876e49209be22d0a0a9))
+* **widgets:** add a Schalke 04 footer status line ([#546](https://github.com/dmnktoe/httpjpg/issues/546)) ([e8d83c3](https://github.com/dmnktoe/httpjpg/commit/e8d83c383acfddb8d6440bd856f9d0aa6d31bdbc))
+
+
+### Fixed
+
+* **ui:** responsive CMS grid placement and CSS-variable bridge for open values ([#520](https://github.com/dmnktoe/httpjpg/issues/520)) ([5e47e0f](https://github.com/dmnktoe/httpjpg/commit/5e47e0f32b09504ccc5e815212f437f153973b41))
+
+
+### Changed
+
+* drop comments that only restate the code ([#548](https://github.com/dmnktoe/httpjpg/issues/548)) ([6c5ab6b](https://github.com/dmnktoe/httpjpg/commit/6c5ab6ba6062d55d4fc227e128befe873ab9e69f))
+* weekly cleanup for studio inspector split and format fix ([#543](https://github.com/dmnktoe/httpjpg/issues/543)) ([7e7ad6c](https://github.com/dmnktoe/httpjpg/commit/7e7ad6cb4a059add55faa1810ba665a27527cdc0))
+
+
+### Tooling
+
+* **ui:** match desktop-media styles the way jsdom 31 serialises them ([#549](https://github.com/dmnktoe/httpjpg/issues/549)) ([fa54a12](https://github.com/dmnktoe/httpjpg/commit/fa54a122a19a032bafbde3ffafd8c3e3f6bd73de))
+
+
+### Dependencies
+
+* lock file maintenance ([#534](https://github.com/dmnktoe/httpjpg/issues/534)) ([f542b72](https://github.com/dmnktoe/httpjpg/commit/f542b722e23a5e1733462d7d2fa8d37c54bd97be))
+* update chromaui/action digest to 2b75e33 ([#542](https://github.com/dmnktoe/httpjpg/issues/542)) ([364be12](https://github.com/dmnktoe/httpjpg/commit/364be129d67548e6cbe967e081a0dbfe7a936c7a))
+* update dependency jsdom to v31 ([#541](https://github.com/dmnktoe/httpjpg/issues/541)) ([1471a5e](https://github.com/dmnktoe/httpjpg/commit/1471a5e2acafae20fcdb76c6b5aa8bda95a493e2))
+* update dependency next to ^16.4.6 ([#538](https://github.com/dmnktoe/httpjpg/issues/538)) ([d87d6ad](https://github.com/dmnktoe/httpjpg/commit/d87d6adecf14f90f41f6bad18ed2f0b15a38cbf9))
+* update dev dependencies ([#539](https://github.com/dmnktoe/httpjpg/issues/539)) ([5740e92](https://github.com/dmnktoe/httpjpg/commit/5740e924ebcba18fbee61428ac416ecc552ee232))
+* update dev dependencies ([#547](https://github.com/dmnktoe/httpjpg/issues/547)) ([4782844](https://github.com/dmnktoe/httpjpg/commit/478284410da3980bfac40a5bcb47704f58685fef))
+* update node.js to v26 ([#532](https://github.com/dmnktoe/httpjpg/issues/532)) ([43f1020](https://github.com/dmnktoe/httpjpg/commit/43f1020131b25d3b9288de52513387e96fa41ace))
+* update pnpm to v11.28.11 ([#540](https://github.com/dmnktoe/httpjpg/issues/540)) ([1d8d194](https://github.com/dmnktoe/httpjpg/commit/1d8d194434ddc74cd67f62017de165caad3ad230))
+* update production dependencies ([#531](https://github.com/dmnktoe/httpjpg/issues/531)) ([e40194a](https://github.com/dmnktoe/httpjpg/commit/e40194ae5fd77aae6253dba9416d7e9072dcce90))
+
 ## [2.12.2](https://github.com/dmnktoe/httpjpg/compare/v2.12.1...v2.12.2) (2026-11-07)
 
 

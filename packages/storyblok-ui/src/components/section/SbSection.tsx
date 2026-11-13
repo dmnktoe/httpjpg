@@ -12,7 +12,8 @@ export interface SbSectionProps {
 
 export const SbSection = memo(function SbSection({ blok }: SbSectionProps) {
   const { content, bgColor, useContainer, containerSize, containerAlign } = blok;
-  const spacing = spacingStyle(blok);
+  // Section pads 16 top and bottom by default; restate it so a tablet-only value doesn't drop it on mobile.
+  const spacing = spacingStyle(blok, { pt: "16", pb: "16" });
   if (!content?.length) {
     return null;
   }

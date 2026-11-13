@@ -24,4 +24,22 @@ describe("SbSection", () => {
     );
     expect(container.querySelector("section")).not.toBeNull();
   });
+
+  it("keeps the mobile padding when only a tablet value is set", () => {
+    const { container } = render(
+      <SbSection
+        blok={
+          {
+            _uid: "1",
+            component: "section",
+            ptMd: "8",
+            content: [{ _uid: "c1", component: "headline", text: "Hi" }],
+          } as never
+        }
+      />,
+    );
+    const section = container.querySelector("section") as HTMLElement;
+    expect(section.style.getPropertyValue("--sb-pt")).toBe("var(--jpg-spacing-16)");
+    expect(section.style.getPropertyValue("--sb-pt-md")).toBe("var(--jpg-spacing-8)");
+  });
 });

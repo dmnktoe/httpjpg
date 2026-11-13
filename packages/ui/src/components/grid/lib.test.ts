@@ -17,6 +17,9 @@ describe("trackLine", () => {
     [{ start: 3, span: 4 }, "3 / span 4"],
     [{ start: 2, end: 9, span: 4 }, "2 / 9"],
     [{ end: 5 }, "auto / 5"],
+    [{ end: 5, span: 3 }, "span 3 / 5"],
+    [{ start: 2, end: 5, span: "full" as const }, "2 / 5"],
+    [{ start: 1, end: -1 }, "1 / -1"],
   ])("%o → %s", (track, line) => {
     expect(trackLine(track)).toBe(line);
   });
@@ -35,11 +38,21 @@ describe("carryTrack", () => {
     });
   });
 
+  it("starts a full span at line 1 instead of the start below", () => {
+    expect(trackLine(carryTrack({ start: 4, span: 2 }, { span: "full" }))).toBe("1 / -1");
+    expect(trackLine(carryTrack({ start: 4 }, { start: 2, span: "full" }))).toBe("2 / -1");
+  });
+
   it("turns an explicit end into a width when only the start moves", () => {
     expect(carryTrack({ start: 1, end: 4 }, { start: 6 })).toEqual({
       start: 6,
       span: 3,
       end: undefined,
     });
+  });
+
+  it("keeps the end line when the width below can't be measured", () => {
+    expect(trackLine(carryTrack({ start: 1, end: -1 }, { start: 2 }))).toBe("2 / -1");
+    expect(trackLine(carryTrack({ end: 5 }, { start: 2 }))).toBe("2 / 5");
   });
 });

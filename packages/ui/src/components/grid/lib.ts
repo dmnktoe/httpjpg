@@ -17,32 +17,41 @@ export interface GridTrack {
 /**
  * The track a larger breakpoint ends up with. Whatever it doesn't set carries
  * over from the breakpoint below — a new start keeps the width, a new span keeps
- * the start — so placement cascades the way spacing does.
+ * the start — so placement cascades the way spacing does. `"full"` always starts
+ * at line 1 unless the breakpoint sets its own start.
  */
 export function carryTrack(below: GridTrack, own: GridTrack): GridTrack {
   if (own.start === undefined && own.end === undefined && own.span === undefined) {
     return below;
   }
-  const width =
-    below.start !== undefined && below.end !== undefined ? below.end - below.start : below.span;
-  return {
-    start: own.start ?? below.start,
-    end: own.end,
-    span: own.span ?? (own.end === undefined ? width : undefined),
-  };
+  if (own.span === "full") {
+    return { start: own.start, end: own.end, span: "full" };
+  }
+  const start = own.start ?? below.start;
+  if (own.end !== undefined || own.span !== undefined) {
+    return { start, end: own.end, span: own.span };
+  }
+  // Only the start moved: keep the width when it is known, else keep the end line.
+  if (below.end === undefined) {
+    return { start, span: below.span };
+  }
+  if (below.start !== undefined && below.end > below.start) {
+    return { start, span: below.end - below.start };
+  }
+  return { start, end: below.end };
 }
 
 /** `grid-column` / `grid-row` value for a track; an explicit end wins over the span. */
 export function trackLine({ start, end, span }: GridTrack): string {
+  if (end !== undefined) {
+    const from = start ?? (span === "full" ? 1 : span ? `span ${span}` : "auto");
+    return `${from} / ${end}`;
+  }
   if (span === "full") {
     return `${start ?? 1} / -1`;
   }
-  const to = end !== undefined ? `${end}` : span ? `span ${span}` : undefined;
   if (start !== undefined) {
-    return to ? `${start} / ${to}` : `${start}`;
+    return span ? `${start} / span ${span}` : `${start}`;
   }
-  if (end !== undefined) {
-    return `auto / ${end}`;
-  }
-  return to ?? "auto";
+  return span ? `span ${span}` : "auto";
 }

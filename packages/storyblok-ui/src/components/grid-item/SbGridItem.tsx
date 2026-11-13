@@ -62,17 +62,23 @@ function toColSpan(value?: string): GridPlacement["colSpan"] {
   if (value === "full") {
     return "full";
   }
-  const n = toLine(value);
+  const n = toSpan(value);
   return n !== undefined && n <= 12 ? (n as GridPlacement["colSpan"]) : undefined;
 }
 
-/** Rows have no fixed count, so `"full"` has no meaning there and is ignored. */
+/** Rows have no fixed count, so the CMS offers no `"full"` for them. */
 function toRowSpan(value?: string): number | undefined {
-  return value === "full" ? undefined : toLine(value);
+  return toSpan(value);
 }
 
-/** A positive grid line or span from a CMS number / string field. */
+/** A span counts tracks, so it must be positive. */
+function toSpan(value?: string): number | undefined {
+  const n = toLine(value);
+  return n !== undefined && n > 0 ? n : undefined;
+}
+
+/** A grid line from a CMS number / string field; negative lines count from the end. */
 function toLine(value?: string | number): number | undefined {
   const n = Number(value);
-  return Number.isInteger(n) && n > 0 ? n : undefined;
+  return Number.isInteger(n) && n !== 0 ? n : undefined;
 }

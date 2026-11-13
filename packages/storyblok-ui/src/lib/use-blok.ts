@@ -39,8 +39,9 @@ const WIDTH_BRIDGE = css.raw({
 
 /**
  * Only the breakpoints the editor set get a class: `min-width` queries already
- * carry a value up to larger screens, and an unset variable would wipe the
- * component's own value instead of leaving it alone.
+ * carry a value up to larger screens, and an unset variable would resolve to
+ * nothing. An axis the editor set still replaces the component's own classes for
+ * that axis, so a component with its own spacing passes it as `defaults`.
  */
 function bridge(
   classes: Record<Breakpoint, string>,

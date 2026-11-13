@@ -58,6 +58,11 @@ describe("SbGridItem", () => {
     expect(renderItem({ colSpanMd: "" }).col[1]).toBe("auto");
   });
 
+  it("accepts negative grid lines but only positive spans", () => {
+    expect(renderItem({ colStart: 1, colEnd: -1 }).col[0]).toBe("1 / -1");
+    expect(renderItem({ colSpan: "-2" }).col[0]).toBe("auto");
+  });
+
   it("maps a numeric rowSpan and ignores the full keyword and zero", () => {
     expect(renderItem({ rowSpan: "3" }).row[0]).toBe("span 3");
     expect(renderItem({ rowSpan: "full" }).row[0]).toBe("auto");

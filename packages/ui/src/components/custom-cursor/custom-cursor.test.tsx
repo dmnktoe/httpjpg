@@ -74,7 +74,7 @@ describe("CustomCursor", () => {
       window.dispatchEvent(new MouseEvent("mousemove", { clientX: 40, clientY: 80 }));
     });
 
-    expect(cursor.style.transform).toContain("translate3d(40px, 80px, 0)");
+    expect(cursor.style.transform).toContain("translate3d(40px, 80px, 0px)");
     expect(cursor.style.opacity).toBe("1");
   });
 
@@ -272,7 +272,7 @@ describe("CustomCursor", () => {
       window.dispatchEvent(new MouseEvent("mousemove", { clientX: 15, clientY: 25 }));
     });
 
-    expect(screen.getByText("open").style.transform).toContain("translate3d(15px, 25px, 0)");
+    expect(screen.getByText("open").style.transform).toContain("translate3d(15px, 25px, 0px)");
   });
 
   it("cleans up its injected cursor-hiding stylesheet on unmount", () => {

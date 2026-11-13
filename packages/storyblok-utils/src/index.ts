@@ -51,6 +51,7 @@ export type { ResponsiveImage, ResponsiveImageOptions } from "./image-processing
 export { firstImage, firstImageFilename, isVideoAsset, toSlideshowImage } from "./media-utils";
 export { storyblokEditHref } from "./editable";
 export { validateStoryblokPreviewToken } from "./preview";
+export { isMarginSide, spacingLabel, spacingValue } from "./spacing";
 export type {
   StoryblokApiResponse,
   StoryblokBlokData,

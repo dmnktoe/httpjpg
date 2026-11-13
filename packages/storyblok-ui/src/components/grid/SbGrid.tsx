@@ -45,7 +45,8 @@ export const SbGrid = memo(function SbGrid({ blok }: SbGridProps) {
         justify={justify || undefined}
         justifyContent={justifyContent || undefined}
         flow={flow || undefined}
-        css={spacing.css}
+        // Scopes item z-indexes to this grid: without it a negative one paints behind ancestor backgrounds.
+        css={{ isolation: "isolate", ...spacing.css }}
         style={spacing.style}
       >
         {items.map((item) => (

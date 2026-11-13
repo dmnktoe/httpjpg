@@ -1,18 +1,19 @@
 import type { SbGridItemData } from "@httpjpg/storyblok-utils";
 import { GridItem, type GridPlacement } from "@httpjpg/ui";
 import { StoryblokServerComponent } from "@storyblok/react/rsc";
-import { memo } from "react";
+import { type CSSProperties, memo } from "react";
 import { css } from "styled-system/css";
 
 import { EntranceMotion } from "../../lib/entrance-motion";
-import { editableAttrs } from "../../lib/use-blok";
+import { editableAttrs, spacingStyle } from "../../lib/use-blok";
 
 export interface SbGridItemProps {
   blok: SbGridItemData;
 }
 
 export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
-  const { content, alignSelf, justifySelf, hiddenBase, hiddenMd, hiddenLg } = blok;
+  const { content, alignSelf, justifySelf, hiddenBase, hiddenMd, hiddenLg, zIndex } = blok;
+  const spacing = spacingStyle(blok);
 
   const visibility = css({
     display: hiddenBase ? "none" : undefined,
@@ -44,6 +45,8 @@ export const SbGridItem = memo(function SbGridItem({ blok }: SbGridItemProps) {
       alignSelf={alignSelf || undefined}
       justifySelf={justifySelf || undefined}
       className={visibility}
+      css={spacing.css}
+      style={{ ...spacing.style, ...zIndexStyle(zIndex) }}
     >
       {/* Animate inside the cell: an outer wrapper would become the grid child and drop the placement. */}
       <EntranceMotion blok={blok}>
@@ -81,4 +84,15 @@ function toSpan(value?: string): number | undefined {
 function toLine(value?: string | number): number | undefined {
   const n = Number(value);
   return Number.isInteger(n) && n !== 0 ? n : undefined;
+}
+
+/**
+ * Storyblok sends number fields as strings and empty ones as `""`. `Number()` would
+ * turn `""`, `" "` or `false` into `0`, and `z-index: 0` already creates a stacking context.
+ */
+function zIndexStyle(value: unknown): CSSProperties | undefined {
+  if (typeof value === "number") {
+    return Number.isInteger(value) ? { zIndex: value } : undefined;
+  }
+  return typeof value === "string" && /^-?\d+$/.test(value) ? { zIndex: Number(value) } : undefined;
 }

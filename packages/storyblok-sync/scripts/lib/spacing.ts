@@ -1,3 +1,5 @@
+import { isMarginSide } from "@httpjpg/storyblok-utils";
+
 import type { StoryblokField } from "../../src/index";
 import { field } from "./fields";
 
@@ -12,22 +14,23 @@ const SPACING_AXES = {
   pr: "Padding Right",
 } as const;
 
+const BREAKPOINTS = [
+  { suffix: "", label: "" },
+  { suffix: "Md", label: " (Tablet)" },
+  { suffix: "Lg", label: " (Desktop)" },
+] as const;
+
 function spacingSchema() {
   const fields: Record<string, StoryblokField> = {};
   const keys: string[] = [];
   let pos = 100;
-  const add = (key: string, label: string) => {
-    fields[key] = field.datasource(label, "spacing-options", { pos: pos++ });
-    keys.push(key);
-  };
-  for (const [axis, label] of Object.entries(SPACING_AXES)) {
-    add(axis, label);
-  }
-  for (const [axis, label] of Object.entries(SPACING_AXES)) {
-    add(`${axis}Md`, `${label} (Tablet)`);
-  }
-  for (const [axis, label] of Object.entries(SPACING_AXES)) {
-    add(`${axis}Lg`, `${label} (Desktop)`);
+  for (const { suffix, label: breakpoint } of BREAKPOINTS) {
+    for (const [axis, label] of Object.entries(SPACING_AXES)) {
+      const key = `${axis}${suffix}`;
+      const datasource = isMarginSide(axis) ? "margin-options" : "spacing-options";
+      fields[key] = field.datasource(`${label}${breakpoint}`, datasource, { pos: pos++ });
+      keys.push(key);
+    }
   }
   return { tab_spacing: field.tab("Spacing", keys), ...fields };
 }

@@ -67,4 +67,24 @@ describe("SbGrid", () => {
     );
     expect(container.firstChild).not.toBeNull();
   });
+
+  it("isolates the grid so a negative item z-index stays above the surface behind it", () => {
+    const { container } = render(
+      <SbGrid
+        blok={
+          {
+            _uid: "5",
+            component: "grid",
+            mt: "-4",
+            items: [{ _uid: "i1", component: "grid_item", zIndex: "-1" }],
+          } as never
+        }
+      />,
+    );
+    const grid = container.firstElementChild as HTMLElement;
+
+    expect(grid.className).toContain("jpg-isolation_isolate");
+    expect(grid.className).toContain("jpg-mt_var(--sb-mt)");
+    expect(grid.style.getPropertyValue("--sb-mt")).toBe("calc(var(--jpg-spacing-4) * -1)");
+  });
 });

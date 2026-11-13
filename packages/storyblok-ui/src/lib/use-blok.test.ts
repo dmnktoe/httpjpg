@@ -49,6 +49,21 @@ describe("spacingStyle", () => {
       style: { "--sb-mt": "var(--jpg-spacing-0)" },
     });
   });
+
+  it("negates the token for signed margins, per breakpoint", () => {
+    expect(spacingStyle({ ml: "-4", mtMd: "-8", mrLg: "-24" } as never)).toEqual({
+      css: {
+        ml: { base: "var(--sb-ml)" },
+        mt: { md: "var(--sb-mt-md)" },
+        mr: { lg: "var(--sb-mr-lg)" },
+      },
+      style: {
+        "--sb-ml": "calc(var(--jpg-spacing-4) * -1)",
+        "--sb-mt-md": "calc(var(--jpg-spacing-8) * -1)",
+        "--sb-mr-lg": "calc(var(--jpg-spacing-24) * -1)",
+      },
+    });
+  });
 });
 
 describe("spacingStyle defaults", () => {

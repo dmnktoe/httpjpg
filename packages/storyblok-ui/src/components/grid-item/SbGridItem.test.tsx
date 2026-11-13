@@ -89,6 +89,52 @@ describe("SbGridItem", () => {
     expect(item).toHaveStyle({ alignSelf: "center", justifySelf: "end" });
   });
 
+  it("applies signed spacing and a stacking z-index", () => {
+    const { item } = renderItem({ ml: "-4", zIndex: 2 });
+
+    expect(item).toHaveStyle({ zIndex: "2" });
+    expect(item.className).toContain("jpg-ml_var(--sb-ml)");
+    expect(item.style.getPropertyValue("--sb-ml")).toBe("calc(var(--jpg-spacing-4) * -1)");
+  });
+
+  it.each([
+    ["2", "2"],
+    ["-1", "-1"],
+    [0, "0"],
+    ["0", "0"],
+  ])("reads the z-index %j as Storyblok sends it", (zIndex, expected) => {
+    expect(renderItem({ zIndex }).item.style.zIndex).toBe(expected);
+  });
+
+  it.each([
+    "",
+    " ",
+    null,
+    undefined,
+    false,
+    true,
+    [],
+    "abc",
+    "1.5",
+    1.5,
+    "1e3",
+    Number.NaN,
+    Infinity,
+  ])("sets no z-index, so no stacking context, for %j", (zIndex) => {
+    expect(renderItem({ zIndex }).item.style.zIndex).toBe("");
+  });
+
+  it("pulls the cell out per breakpoint with negative margins", () => {
+    const { item } = renderItem({ mt: "-8", mlMd: "-4", mrLg: "-24" });
+
+    expect(item.className).toContain("jpg-mt_var(--sb-mt)");
+    expect(item.className).toContain("md:jpg-ml_var(--sb-ml-md)");
+    expect(item.className).toContain("lg:jpg-mr_var(--sb-mr-lg)");
+    expect(item.style.getPropertyValue("--sb-mt")).toBe("calc(var(--jpg-spacing-8) * -1)");
+    expect(item.style.getPropertyValue("--sb-ml-md")).toBe("calc(var(--jpg-spacing-4) * -1)");
+    expect(item.style.getPropertyValue("--sb-mr-lg")).toBe("calc(var(--jpg-spacing-24) * -1)");
+  });
+
   it("hides the item per breakpoint", () => {
     const { item } = renderItem({ hiddenLg: true });
 

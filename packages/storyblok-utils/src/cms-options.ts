@@ -54,6 +54,11 @@ const colorEntries: ReadonlyArray<{ name: string; value: string }> = (() => {
 })();
 
 const spacingScale = Object.keys(spacing) as Array<keyof typeof spacing & string>;
+const negativeSpacingScale = spacingScale
+  .filter((key) => key !== "0")
+  .map((key) => `-${key}` as const);
+/** Margins only; padding and gap stay positive. Positives first so a dropdown opens on `0`, not `-96`. */
+const marginScale = [...spacingScale, ...negativeSpacingScale];
 const fontSizeScale = Object.keys(typography.fontSize) as Array<
   keyof typeof typography.fontSize & string
 >;
@@ -145,6 +150,7 @@ export const CMS_OPTIONS = {
   colors: colorTokens,
   colorEntries,
   spacing: spacingScale,
+  margin: marginScale,
   fontSize: fontSizeScale,
   fontWeight: fontWeightScale,
   fontFamily: fontFamilyScale,
@@ -166,6 +172,7 @@ export const CMS_OPTIONS = {
 
 export type CmsColor = (typeof colorTokens)[number];
 export type CmsSpacing = (typeof spacingScale)[number];
+export type CmsMargin = (typeof marginScale)[number];
 export type CmsFontSize = (typeof fontSizeScale)[number];
 export type CmsFontWeight = (typeof fontWeightScale)[number];
 export type CmsFontFamily = (typeof fontFamilyScale)[number];

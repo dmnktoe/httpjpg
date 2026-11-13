@@ -4,9 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { css } from "styled-system/css";
 
+import { scatterPositions } from "../../lib/desktop-scatter";
 import { useHasMounted } from "../../lib/use-has-mounted";
 import { DesktopDownloadIcon } from "./desktop-download-icon";
-import { desktopIconPositions, type DesktopDownloadItem, visibleDesktopDownloads } from "./lib";
+import { DESKTOP_ICON_SCATTER, type DesktopDownloadItem, visibleDesktopDownloads } from "./lib";
 
 export type { DesktopDownloadItem, DesktopFileKind } from "./lib";
 
@@ -21,7 +22,14 @@ export function DesktopDownloads({ items }: DesktopDownloadsProps) {
   const [topId, setTopId] = useState<string | null>(null);
 
   const visible = useMemo(() => visibleDesktopDownloads(items), [items]);
-  const positions = useMemo(() => desktopIconPositions(visible.map((item) => item.id)), [visible]);
+  const positions = useMemo(
+    () =>
+      scatterPositions(
+        visible.map((item) => item.id),
+        DESKTOP_ICON_SCATTER,
+      ),
+    [visible],
+  );
 
   useEffect(() => {
     if (visible.length === 0) {

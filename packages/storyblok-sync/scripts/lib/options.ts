@@ -73,6 +73,7 @@ export const inlineOptions = {
     name: entranceAnimationLabels[value],
     value,
   })),
+  desktopMediaWidth: CMS_OPTIONS.desktopMediaWidth.map((value) => ({ name: `${value}px`, value })),
   aspectRatio: CMS_OPTIONS.aspectRatio.map((value) => ({
     name: aspectRatioLabels[value],
     value,

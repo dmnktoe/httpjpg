@@ -126,6 +126,8 @@ const imageWidthScale = [
   "90%",
   "100%",
 ] as const;
+/** Pixel widths for desktop media windows on work pages. Not the in-flow `imageWidth` %. */
+const desktopMediaWidthScale = ["240", "320", "400", "480", "560", "720"] as const;
 const proseMaxWidthScale = ["none", "45ch", "65ch", "80ch", "100ch"] as const;
 const alignItemsScale = ["start", "center", "end", "stretch", "baseline"] as const;
 const justifyItemsScale = ["start", "center", "end", "stretch"] as const;
@@ -159,6 +161,7 @@ export const CMS_OPTIONS = {
   width: widthScale,
   imageWidth: imageWidthScale,
   entranceAnimation: entranceAnimationScale,
+  desktopMediaWidth: desktopMediaWidthScale,
   proseMaxWidth: proseMaxWidthScale,
   alignItems: alignItemsScale,
   justifyItems: justifyItemsScale,
@@ -180,6 +183,7 @@ export type CmsVideoAspectRatio = (typeof videoAspectRatioScale)[number];
 export type CmsWidth = (typeof widthScale)[number];
 export type CmsImageWidth = (typeof imageWidthScale)[number];
 export type CmsEntranceAnimation = (typeof entranceAnimationScale)[number];
+export type CmsDesktopMediaWidth = (typeof desktopMediaWidthScale)[number];
 export type CmsProseMaxWidth = (typeof proseMaxWidthScale)[number];
 export type CmsAlignItems = (typeof alignItemsScale)[number];
 export type CmsJustifyItems = (typeof justifyItemsScale)[number];

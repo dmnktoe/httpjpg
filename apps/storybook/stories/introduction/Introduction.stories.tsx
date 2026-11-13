@@ -260,7 +260,7 @@ export default function MyPage() {
                 {
                   cat: "Widgets",
                   items:
-                    "MusicPlayer · NowPlaying · MiniPlayer · CommandPalette · FooterStatusLine · CloudflareLogo · Userbars · DesktopDownloads · CookieBanner · CookieCenter",
+                    "MusicPlayer · NowPlaying · MiniPlayer · CommandPalette · FooterStatusLine · CloudflareLogo · Userbars · DesktopDownloads · DesktopMedia · CookieBanner · CookieCenter",
                 },
                 {
                   cat: "Utilities",

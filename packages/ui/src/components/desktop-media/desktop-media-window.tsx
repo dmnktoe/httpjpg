@@ -7,10 +7,15 @@ import { useDesktopDrag } from "../../lib/use-desktop-drag";
 import { Image } from "../image/image";
 import { Video } from "../video/video";
 import {
+  DESKTOP_MEDIA_BODY_MAX_HEIGHT,
+  DESKTOP_MEDIA_VIEWPORT_MARGIN_PX,
   type DesktopMediaItem,
   type DesktopMediaKind,
   desktopMediaAspectRatio,
+  desktopMediaLayoutRatio,
   desktopMediaSizesAttr,
+  desktopMediaWindowHeight,
+  desktopMediaWindowWidth,
   resolveDesktopMediaFrameWidth,
   resolveDesktopMediaKind,
 } from "./lib";
@@ -43,6 +48,11 @@ export function DesktopMediaWindow({
   const aspectRatio = desktopMediaAspectRatio(item, kind);
   const alt = item.alt?.trim() || item.name;
   const frameWidth = resolveDesktopMediaFrameWidth(item.width);
+  const layoutRatio = desktopMediaLayoutRatio(item, kind);
+  const width = desktopMediaWindowWidth(frameWidth, layoutRatio);
+  // No aspect ratio means a video of unknown size: reserve the full height cap for it.
+  const height = desktopMediaWindowHeight(frameWidth, aspectRatio ? layoutRatio : undefined);
+  const margin = `${DESKTOP_MEDIA_VIEWPORT_MARGIN_PX}px`;
 
   return (
     <figure
@@ -64,21 +74,18 @@ export function DesktopMediaWindow({
         borderWidth: "1px",
         pointerEvents: "auto",
         userSelect: "none",
-        touchAction: "none",
         overflow: "hidden",
-        _focusVisible: { outline: "2px solid", outlineColor: "pageFg", outlineOffset: "2px" },
       })}
       style={{
         zIndex: stackingOrder,
-        width: `min(${frameWidth}px, calc(100vw - 16px))`,
-        maxHeight: "min(72vh, 800px)",
+        width,
         outline: selected ? "1px solid currentColor" : undefined,
         cursor: dragging ? "grabbing" : undefined,
         ...(offset
           ? { left: offset.x, top: offset.y }
           : {
-              left: `clamp(8px, ${position.left}%, calc(100vw - min(${frameWidth}px, calc(100vw - 16px)) - 8px))`,
-              top: `clamp(8px, ${position.top}%, calc(100vh - 120px))`,
+              left: `clamp(${margin}, ${position.left}%, calc(100vw - ${width} - ${margin}))`,
+              top: `clamp(${margin}, ${position.top}%, calc(100vh - ${height} - ${margin}))`,
             }),
       }}
     >
@@ -87,10 +94,11 @@ export function DesktopMediaWindow({
         className={css({
           display: "flex",
           alignItems: "center",
+          flexShrink: "0",
           gap: "2",
-          minH: "8",
+          // Fixed, not min: `lib.ts` subtracts this height to size the window.
+          h: "8",
           px: "2",
-          py: "1",
           fontFamily: "mono",
           fontSize: "xs",
           lineHeight: "none",
@@ -99,6 +107,8 @@ export function DesktopMediaWindow({
           borderBottomStyle: "solid",
           borderBottomWidth: "1px",
           cursor: dragging ? "grabbing" : "grab",
+          // Only the handle opts out of touch gestures; a swipe on the media still scrolls the page.
+          touchAction: "none",
         })}
       >
         <KindMark kind={kind} />
@@ -116,10 +126,13 @@ export function DesktopMediaWindow({
       <div
         data-desktop-no-drag={kind === "video" ? "" : undefined}
         className={css({
-          minH: "0",
+          position: "relative",
           pointerEvents: kind === "video" ? "auto" : "none",
           overflow: "hidden",
         })}
+        // Inline, and the media fills this box: a `<w>/<h>` ratio per asset is
+        // not statically extractable, so the components' own ratio class is dead.
+        style={aspectRatio ? { aspectRatio } : undefined}
       >
         {kind === "video" ? (
           <Video
@@ -131,7 +144,13 @@ export function DesktopMediaWindow({
             mediaHeight={item.mediaHeight}
             objectFit="contain"
             controls
-            css={{ backgroundColor: "#000", backgroundImage: "none" }}
+            css={{
+              backgroundColor: "black",
+              backgroundImage: "none",
+              ...(aspectRatio && { position: "absolute", inset: "0", h: "100%" }),
+            }}
+            // Unknown size: the window could not be narrowed for it, so letterbox instead.
+            style={aspectRatio ? undefined : { maxHeight: `calc${DESKTOP_MEDIA_BODY_MAX_HEIGHT}` }}
           />
         ) : (
           <Image
@@ -139,9 +158,9 @@ export function DesktopMediaWindow({
             srcSet={item.srcSet}
             sizes={item.sizes ?? desktopMediaSizesAttr(frameWidth)}
             alt={alt}
-            aspectRatio={aspectRatio}
             objectFit="contain"
             draggable={false}
+            css={{ position: "absolute", inset: "0", h: "100%" }}
           />
         )}
       </div>
@@ -149,7 +168,11 @@ export function DesktopMediaWindow({
   );
 }
 
-function KindMark({ kind }: { kind: DesktopMediaKind }) {
+interface KindMarkProps {
+  kind: DesktopMediaKind;
+}
+
+function KindMark({ kind }: KindMarkProps) {
   return (
     <span aria-hidden="true" className={css({ flexShrink: "0", opacity: 0.55 })}>
       {kind === "video" ? "▶" : "▣"}

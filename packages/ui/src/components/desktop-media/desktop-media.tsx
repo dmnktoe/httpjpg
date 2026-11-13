@@ -6,6 +6,7 @@ import { css } from "styled-system/css";
 
 import { scatterPositions } from "../../lib/desktop-scatter";
 import { useHasMounted } from "../../lib/use-has-mounted";
+import { usePageTheme } from "../lightbox/use-page-theme";
 import { DesktopMediaWindow } from "./desktop-media-window";
 import { DESKTOP_MEDIA_SCATTER, type DesktopMediaItem, visibleDesktopMedia } from "./lib";
 
@@ -18,6 +19,7 @@ export interface DesktopMediaProps {
 
 export function DesktopMedia({ items }: DesktopMediaProps) {
   const mounted = useHasMounted();
+  const theme = usePageTheme();
   const layerRef = useRef<HTMLElement>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [topId, setTopId] = useState<string | null>(null);
@@ -54,32 +56,39 @@ export function DesktopMedia({ items }: DesktopMediaProps) {
   }
 
   return createPortal(
-    <section
-      ref={layerRef}
-      aria-label="Work media"
-      data-desktop-media=""
-      className={css({
-        position: "fixed",
-        inset: "0",
-        zIndex: "widget",
-        pointerEvents: "none",
-        overflow: "hidden",
-      })}
-    >
-      {visible.map((item, index) => (
-        <DesktopMediaWindow
-          key={item.id}
-          item={item}
-          position={positions[index] ?? { left: 8, top: 12 }}
-          selected={selectedId === item.id}
-          stackingOrder={topId === item.id ? visible.length + 1 : index + 1}
-          onSelect={() => {
-            setSelectedId(item.id);
-            setTopId(item.id);
-          }}
-        />
-      ))}
-    </section>,
+    // The layer hangs off `document.body`, outside the page's `[data-theme]`;
+    // restating it keeps `pageBg` / `pageFg` on the windows in the page's theme.
+    <div data-theme={theme} data-theme-mirror="">
+      <section
+        ref={layerRef}
+        aria-label="Work media"
+        data-desktop-media=""
+        className={css({
+          // Windows are too large to share a phone screen with the page, and
+          // the fixed layer offers no way to dismiss them.
+          display: { base: "none", md: "block" },
+          position: "fixed",
+          inset: "0",
+          zIndex: "widget",
+          pointerEvents: "none",
+          overflow: "hidden",
+        })}
+      >
+        {visible.map((item, index) => (
+          <DesktopMediaWindow
+            key={item.id}
+            item={item}
+            position={positions[index] ?? { left: 8, top: 12 }}
+            selected={selectedId === item.id}
+            stackingOrder={topId === item.id ? visible.length + 1 : index + 1}
+            onSelect={() => {
+              setSelectedId(item.id);
+              setTopId(item.id);
+            }}
+          />
+        ))}
+      </section>
+    </div>,
     document.body,
   );
 }

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { DesktopMedia } from "./desktop-media";
 
@@ -17,7 +17,10 @@ describe("DesktopMedia", () => {
     const { container } = render(<DesktopMedia items={ITEMS} />);
 
     expect(container.querySelector("[data-desktop-media]")).toBeNull();
-    expect(screen.getByRole("region", { name: "Work media" }).parentElement).toBe(document.body);
+    const layer = screen.getByRole("region", { name: "Work media" });
+    expect(layer.parentElement?.parentElement).toBe(document.body);
+    expect(layer.className).toContain("md:jpg-d_block");
+    expect(layer.className).toContain("jpg-d_none");
     expect(screen.getByRole("figure", { name: "Still.png" })).toHaveAttribute(
       "data-media-kind",
       "image",
@@ -185,5 +188,66 @@ describe("DesktopMedia", () => {
       "240",
     );
     expect(screen.getByRole("figure", { name: "Narrow" }).style.width).toContain("240px");
+  });
+
+  it("restates the page theme on the portal root and follows changes", async () => {
+    const host = document.createElement("div");
+    host.setAttribute("data-theme", "dark");
+    document.body.appendChild(host);
+    try {
+      render(<DesktopMedia items={[ITEMS[0]]} />);
+      const mirror = screen.getByRole("region", { name: "Work media" }).parentElement;
+      expect(mirror).toHaveAttribute("data-theme-mirror");
+      expect(mirror).toHaveAttribute("data-theme", "dark");
+
+      host.setAttribute("data-theme", "light");
+      await waitFor(() => expect(mirror).toHaveAttribute("data-theme", "light"));
+    } finally {
+      host.remove();
+    }
+  });
+
+  it("limits touch-action to the title bar so swipes on the media still scroll", () => {
+    render(<DesktopMedia items={[ITEMS[0]]} />);
+    const frame = screen.getByRole("figure", { name: "Still.png" });
+    const titlebar = frame.querySelector("[data-desktop-titlebar]") as HTMLElement;
+
+    expect(frame.className).not.toContain("tch-a");
+    expect(titlebar.className).toContain("jpg-tch-a_none");
+  });
+
+  it("narrows the window instead of cropping tall media", () => {
+    render(
+      <DesktopMedia
+        items={[
+          {
+            id: "tall",
+            name: "Tall.mp4",
+            src: "https://cdn.example/tall.mp4",
+            mediaWidth: 1080,
+            mediaHeight: 1920,
+          },
+        ]}
+      />,
+    );
+    const frame = screen.getByRole("figure", { name: "Tall.mp4" });
+
+    // jsdom re-serialises calc(), so match the terms rather than the exact string.
+    expect(frame.style.width).toMatch(/^min\(400px, .*0\.5625 \* \(min\(72vh, 800px\)/);
+    expect(frame.style.maxHeight).toBe("");
+    expect(frame.style.top).toContain("0.5625");
+    expect((frame.lastElementChild as HTMLElement).style.aspectRatio).toBe("1080/1920");
+  });
+
+  it("lets a video of unknown size lay itself out and letterboxes it at the cap", () => {
+    render(<DesktopMedia items={[ITEMS[1]]} />);
+    const frame = screen.getByRole("figure", { name: "Showreel.mp4" });
+    const video = frame.querySelector("video") as HTMLVideoElement;
+
+    expect((frame.lastElementChild as HTMLElement).style.aspectRatio).toBe("");
+    expect(video.style.maxHeight).toContain("72vh");
+    expect(frame.style.top).toMatch(
+      /^clamp\(8px, [\d.]+%, \(100vh - 8px\) - min\(72vh, 800px\)\)$/,
+    );
   });
 });

@@ -3,7 +3,10 @@ import {
   DESKTOP_MEDIA_SCATTER,
   desktopMediaAspectRatio,
   desktopMediaKindFromSrc,
+  desktopMediaLayoutRatio,
   desktopMediaSizesAttr,
+  desktopMediaWindowHeight,
+  desktopMediaWindowWidth,
   resolveDesktopMediaFrameWidth,
   resolveDesktopMediaKind,
   visibleDesktopMedia,
@@ -62,7 +65,40 @@ describe("desktopMediaAspectRatio", () => {
 
   it("falls back by kind", () => {
     expect(desktopMediaAspectRatio({ id: "1", name: "A", src: "/a.png" }, "image")).toBe("4/3");
-    expect(desktopMediaAspectRatio({ id: "1", name: "A", src: "/a.mp4" }, "video")).toBe("16/9");
+    expect(desktopMediaAspectRatio({ id: "1", name: "A", src: "/a.mp4" }, "video")).toBeUndefined();
+  });
+});
+
+describe("desktopMediaLayoutRatio", () => {
+  it("uses real dimensions, else the usual shape per kind", () => {
+    expect(
+      desktopMediaLayoutRatio(
+        { id: "1", name: "A", src: "/a.mp4", mediaWidth: 1080, mediaHeight: 1920 },
+        "video",
+      ),
+    ).toBe(0.5625);
+    expect(desktopMediaLayoutRatio({ id: "1", name: "A", src: "/a.mp4" }, "video")).toBe(16 / 9);
+    expect(desktopMediaLayoutRatio({ id: "1", name: "A", src: "/a.png" }, "image")).toBe(4 / 3);
+  });
+});
+
+describe("desktopMediaWindowWidth", () => {
+  it("caps by frame, viewport and the height cap times the ratio", () => {
+    expect(desktopMediaWindowWidth(400, 1080 / 1920)).toBe(
+      "min(400px, calc(100vw - 16px), calc((min(72vh, 800px) - (2rem + 2px)) * 0.5625 + 2px))",
+    );
+  });
+});
+
+describe("desktopMediaWindowHeight", () => {
+  it("derives the height from the width and ratio", () => {
+    expect(desktopMediaWindowHeight(240, 2)).toBe(
+      `calc((${desktopMediaWindowWidth(240, 2)} - 2px) / 2 + (2rem + 2px))`,
+    );
+  });
+
+  it("answers the cap when the ratio is unknown", () => {
+    expect(desktopMediaWindowHeight(240)).toBe("min(72vh, 800px)");
   });
 });
 

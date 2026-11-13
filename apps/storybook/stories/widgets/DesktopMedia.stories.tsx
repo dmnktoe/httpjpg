@@ -91,6 +91,21 @@ export const WithVideo: Story = {
   ),
 };
 
+/** Tall media narrows its window to stay within the height cap instead of being cropped. */
+export const Portrait: Story = {
+  args: {
+    items: [
+      { ...IMAGES[0], id: "portrait", name: "Portrait", mediaWidth: 1080, mediaHeight: 1920 },
+      { ...IMAGES[2], id: "wide", name: "Wide", mediaWidth: 1920, mediaHeight: 1080 },
+    ],
+  },
+  render: (args) => (
+    <Stage>
+      <DesktopMedia {...args} />
+    </Stage>
+  ),
+};
+
 export const Empty: Story = {
   args: { items: [] },
   render: (args) => (

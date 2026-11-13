@@ -5,7 +5,6 @@ import { useCallback, useState } from "react";
 export interface UseLightboxResult {
   open: boolean;
   index: number;
-  /** Opens the lightbox on a given item. */
   openAt: (index: number) => void;
   close: () => void;
   setIndex: (index: number) => void;

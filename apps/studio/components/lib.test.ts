@@ -175,7 +175,7 @@ describe("nudgeItem / duplicateItem", () => {
 
 describe("spacing / effective geometry", () => {
   it("exposes signed pull-out values on MARGIN_OPTIONS only", () => {
-    expect(MARGIN_OPTIONS).toContainEqual({ value: "-4", label: "-4 (-1rem)" });
+    expect(MARGIN_OPTIONS).toContainEqual({ value: "-4", label: "\u22124 (\u22121rem)" });
     expect(SPACING_OPTIONS.some((option) => option.value.startsWith("-"))).toBe(false);
   });
 

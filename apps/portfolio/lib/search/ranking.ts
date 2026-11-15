@@ -218,9 +218,15 @@ interface DocumentScore {
   score: number;
   /** How many query terms hit any field. */
   matched: number;
+  hasFieldHit: boolean;
 }
 
-function scoreDocument(document: SearchDocument, query: string, tokens: string[]): DocumentScore {
+function scoreDocument(
+  document: SearchDocument,
+  query: string,
+  tokens: string[],
+  variantsByToken: string[][],
+): DocumentScore {
   const title = normalize(document.title);
   const body = normalize(document.body ?? document.excerpt);
   const tags = tagVariants(document);
@@ -229,6 +235,7 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
 
   let score = 0;
   let matched = 0;
+  let hasFieldHit = false;
 
   if (title === query) {
     score += WEIGHT.titleExact;
@@ -236,28 +243,33 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
     score += WEIGHT.titlePrefix;
   }
 
-  for (const token of tokens) {
-    const variants = termVariants(token);
+  for (const [index, token] of tokens.entries()) {
+    const variants = variantsByToken[index];
     let hit = false;
 
     const titleVariant = variants.find((variant) => matchesWord(title, variant));
     if (titleVariant) {
       score += title.startsWith(titleVariant) ? WEIGHT.titlePrefix : WEIGHT.titleToken;
       hit = true;
+      hasFieldHit = true;
     } else if (isTypoOf(token, titleWords)) {
       score += WEIGHT.titleFuzzy;
       hit = true;
+      hasFieldHit = true;
     }
 
     if (variants.some((variant) => tags.includes(variant))) {
       score += WEIGHT.tagExact;
       hit = true;
+      hasFieldHit = true;
     } else if (tags.some((tag) => variants.some((variant) => matchesWord(tag, variant)))) {
       score += WEIGHT.tagToken;
       hit = true;
+      hasFieldHit = true;
     } else if (isTypoOf(token, tagWords)) {
       score += WEIGHT.tagFuzzy;
       hit = true;
+      hasFieldHit = true;
     }
 
     if (variants.some((variant) => matchesWord(body, variant))) {
@@ -274,7 +286,7 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
     score += WEIGHT.allTokens;
   }
 
-  return { score, matched };
+  return { score, matched, hasFieldHit };
 }
 
 function isTypoOf(token: string, words: string[]): boolean {
@@ -307,13 +319,21 @@ export function rankDocuments(
     return isRecency ? newestWork(documents, limit) : [];
   }
 
+  const variantsByToken = tokens.map(termVariants);
   const scored = documents
-    .map((document) => ({ document, ...scoreDocument(document, normalized, tokens) }))
+    .map((document) => ({
+      document,
+      ...scoreDocument(document, normalized, tokens, variantsByToken),
+    }))
     .filter((entry) => entry.score > 0);
   const coverage = Math.max(0, ...scored.map((entry) => entry.matched));
+  const covered = scored.filter((entry) => entry.matched === coverage);
+  const kept =
+    isRecency && covered.some((entry) => entry.hasFieldHit)
+      ? covered.filter((entry) => entry.hasFieldHit)
+      : covered;
 
-  return scored
-    .filter((entry) => entry.matched === coverage)
+  return kept
     .map(({ document, score }) => ({ ...document, score }))
     .sort((a, b) =>
       isRecency

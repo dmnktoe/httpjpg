@@ -1,4 +1,3 @@
-// gpt-oss writes `【2】` and `**bold**` whatever the prompt says; no client renders either.
 const WIDE_CITATION = /[【［]\s*(\d+(?:\s*[,，、]\s*\d+)*)\s*(?:†[^】］]*)?[】］]/g;
 
 const BOLD = /\*\*/g;
@@ -21,7 +20,6 @@ interface AnswerCleaner {
   flush: () => string;
 }
 
-// A delta can end inside a citation or between the two `*` of a bold marker.
 export function createAnswerCleaner(): AnswerCleaner {
   let pending = "";
 

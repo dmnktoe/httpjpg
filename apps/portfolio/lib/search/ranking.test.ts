@@ -270,6 +270,17 @@ describe("rankDocuments", () => {
     ]);
   });
 
+  it("drops body-only mentions from a recency query when a title or tag matches", () => {
+    const documents = [
+      doc({ title: "Go Service", tags: ["Go"], tagValues: ["go"], date: "2020-01-01" }),
+      doc({ title: "Newer", excerpt: "let us go", date: "2025-01-01" }),
+    ];
+
+    expect(rankDocuments(documents, "latest go").map((result) => result.title)).toEqual([
+      "Go Service",
+    ]);
+  });
+
   it("sorts topical matches by date when the query asks for recency", () => {
     const documents = [
       doc({ title: "Go Service", tags: ["Go"], tagValues: ["go"], date: "2020-01-01" }),
@@ -281,8 +292,10 @@ describe("rankDocuments", () => {
       "Later",
     ]);
     expect(rankDocuments(documents, "latest go").map((result) => result.title)).toEqual([
-      "Later",
       "Go Service",
+    ]);
+    expect(rankDocuments(documents, "latest written").map((result) => result.title)).toEqual([
+      "Later",
     ]);
   });
 });

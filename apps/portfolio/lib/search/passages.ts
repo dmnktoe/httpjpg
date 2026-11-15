@@ -5,6 +5,8 @@ const LEAD_LENGTH = 240;
 
 const GAP = " … ";
 
+const MAX_SENTENCE_LENGTH = 200;
+
 export function selectPassages(text: string, terms: string[], budget: number): string {
   if (text.length <= budget) {
     return text;
@@ -17,7 +19,7 @@ export function selectPassages(text: string, terms: string[], budget: number): s
 
   for (let index = 0; index < sentences.length; index += 1) {
     const length = sentences[index].length;
-    if (length > budget || (picked.size > 0 && used + length > leadLength)) {
+    if (used + length > leadLength) {
       break;
     }
     picked.add(index);
@@ -66,8 +68,28 @@ function countHits(sentence: string, variants: string[][]): number {
 function splitSentences(text: string): string[] {
   return text
     .split(/(?<=[.!?…])\s+/)
-    .map((sentence) => sentence.trim())
+    .flatMap((sentence) => chunkWords(sentence.trim(), MAX_SENTENCE_LENGTH))
     .filter(Boolean);
+}
+
+function chunkWords(sentence: string, maxLength: number): string[] {
+  if (sentence.length <= maxLength) {
+    return [sentence];
+  }
+  const chunks: string[] = [];
+  let current = "";
+  for (const word of sentence.split(" ")) {
+    if (current && current.length + word.length + 1 > maxLength) {
+      chunks.push(current);
+      current = word;
+    } else {
+      current = current ? `${current} ${word}` : word;
+    }
+  }
+  if (current) {
+    chunks.push(current);
+  }
+  return chunks;
 }
 
 function joinInOrder(sentences: string[], picked: Set<number>): string {

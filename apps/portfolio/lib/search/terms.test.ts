@@ -14,6 +14,7 @@ describe("singular", () => {
     expect(singular("analysis")).toBeNull();
     expect(singular("go")).toBeNull();
     expect(singular("kunde")).toBeNull();
+    expect(singular("screen")).toBeNull();
   });
 });
 

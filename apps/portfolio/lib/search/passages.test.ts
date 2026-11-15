@@ -26,7 +26,7 @@ describe("selectPassages", () => {
   it("prefers the sentence matching more terms", () => {
     const text = story("The login uses a cookie.", "The login uses a signed session cookie.");
 
-    const passage = selectPassages(text, ["login", "signed", "session"], 120);
+    const passage = selectPassages(text, ["login", "signed", "session"], 60);
 
     expect(passage).toContain("signed session cookie");
     expect(passage).not.toContain("The login uses a cookie.");
@@ -45,6 +45,15 @@ describe("selectPassages", () => {
 
     expect(passage.startsWith(`${LEAD} Filler sentence number 0.`)).toBe(true);
     expect(passage.length).toBeLessThanOrEqual(200);
+  });
+
+  it("splits run-on text without punctuation so a match deep inside is reachable", () => {
+    const runOn = `${"caption word ".repeat(60)}the qr code login ${"caption word ".repeat(60)}`;
+
+    const passage = selectPassages(runOn, ["login"], 400);
+
+    expect(passage).toContain("qr code login");
+    expect(passage.length).toBeLessThanOrEqual(400);
   });
 
   it("cuts a single overlong sentence to the budget", () => {

@@ -1,7 +1,7 @@
 import type { GroqMessage } from "@httpjpg/ai";
 
 import { selectPassages } from "./passages";
-import { queryTerms, rankDocuments, type SearchDocument } from "./ranking";
+import { newestWork, queryTerms, rankDocuments, type SearchDocument } from "./ranking";
 
 export const MAX_QUESTION_LENGTH = 500;
 
@@ -21,10 +21,10 @@ export interface AskSources {
 export function selectAskSources(documents: SearchDocument[], question: string): AskSources {
   const ranked = rankDocuments(documents, question, MAX_RANKED);
   const rankedIds = new Set(ranked.map((document) => document.id));
-  const catalog = documents
-    .filter((document) => document.kind === "work" && !rankedIds.has(document.id))
-    .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? "") || a.title.localeCompare(b.title))
-    .slice(0, MAX_CATALOG);
+  const catalog = newestWork(
+    documents.filter((document) => !rankedIds.has(document.id)),
+    MAX_CATALOG,
+  ).map(({ score: _score, ...document }) => document);
   return { ranked, catalog };
 }
 

@@ -15,7 +15,6 @@ const SYNONYM_GROUPS: readonly (readonly string[])[] = [
 
 const SYNONYMS = buildSynonyms(SYNONYM_GROUPS);
 
-// "new" is left out: it starts too many titles.
 export const RECENCY_TERMS = new Set([
   "latest",
   "newest",
@@ -40,7 +39,6 @@ export const RECENCY_TERMS = new Set([
   "zuletzt",
 ]);
 
-// Dropped only beside a recency word: "latest project" means the newest work.
 export const GENERIC_WORK_TERMS = new Set([
   "project",
   "projects",
@@ -77,7 +75,7 @@ export function termVariants(token: string): string[] {
 }
 
 export function singular(token: string): string | null {
-  if (token.length >= 6 && token.endsWith("en")) {
+  if (token.length >= 7 && token.endsWith("en")) {
     return token.slice(0, -2);
   }
   if (token.length >= 6 && token.endsWith("e")) {

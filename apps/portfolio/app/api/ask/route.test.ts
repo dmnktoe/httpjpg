@@ -130,6 +130,52 @@ describe("POST /api/ask", () => {
     });
   });
 
+  it("cleans gpt-oss citations and bold before streaming and resolving them", async () => {
+    mockStream.mockImplementation(yields("It is **Brutalist", " Portfolio** 【", "1】."));
+
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+    const text = lines
+      .filter((line) => line.type === "delta")
+      .map((line) => line.text)
+      .join("");
+
+    expect(text).toBe("It is Brutalist Portfolio [1].");
+    expect(lines.filter((line) => line.type === "delta").every((line) => line.text)).toBe(true);
+    expect(lines.at(-1)).toMatchObject({
+      type: "action",
+      action: { href: "/work/brutalist-portfolio" },
+    });
+  });
+
+  it("sends the rest of the work after the matches, in the prompt's numbering", async () => {
+    mockGetSearchIndex.mockResolvedValue([
+      ...DOCUMENTS,
+      { ...EXTERNAL_DOCUMENT, id: "3", href: "/work/healform", title: "Healform", excerpt: "" },
+    ]);
+
+    const lines = await readLines(await POST(post({ question: "brutalist portfolio?" })));
+
+    expect(lines[0]).toEqual({
+      type: "sources",
+      sources: [
+        { title: "Brutalist Portfolio", href: "/work/brutalist-portfolio", kind: "work" },
+        { title: "Healform", href: "/work/healform", kind: "work" },
+      ],
+    });
+    const [messages] = mockStream.mock.calls[0] as [Array<{ role: string; content: string }>];
+    expect(messages[1]?.content).toContain("[2] Healform | /work/healform");
+  });
+
+  it("still asks the model when nothing matches but there is work to list", async () => {
+    const lines = await readLines(await POST(post({ question: "what is the oldest thing?" })));
+
+    expect(lines[0]).toEqual({
+      type: "sources",
+      sources: [{ title: "Brutalist Portfolio", href: "/work/brutalist-portfolio", kind: "work" }],
+    });
+    expect(mockStream).toHaveBeenCalledTimes(1);
+  });
+
   it("sends no action when the answer cites nothing", async () => {
     mockStream.mockImplementation(yields("I am not sure."));
 

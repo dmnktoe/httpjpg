@@ -4,7 +4,12 @@ import { type NextRequest, NextResponse } from "next/server";
 import { API_ERROR, jsonError } from "@/lib/api-error";
 import { getSearchIndex } from "@/lib/queries/search-index";
 import { enforceRateLimit } from "@/lib/rate-limit";
-import { queryTerms, rankDocuments, suggestCompletions } from "@/lib/search/ranking";
+import {
+  queryTerms,
+  rankDocuments,
+  type SearchResult,
+  suggestCompletions,
+} from "@/lib/search/ranking";
 
 const MAX_QUERY_LENGTH = 120;
 const DEFAULT_LIMIT = 8;
@@ -16,6 +21,11 @@ function parseLimit(raw: string | null): number {
     return DEFAULT_LIMIT;
   }
   return Math.min(parsed, MAX_LIMIT);
+}
+
+/** The full story text is for ranking and ask only; clients get the excerpt. */
+function withoutBody({ body: _body, ...result }: SearchResult): Omit<SearchResult, "body"> {
+  return result;
 }
 
 export async function GET(request: NextRequest) {
@@ -36,7 +46,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       {
-        results: rankDocuments(documents, query, limit),
+        results: rankDocuments(documents, query, limit).map(withoutBody),
         suggestions: suggestCompletions(documents, query),
         terms: queryTerms(query),
       },

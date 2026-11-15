@@ -1,3 +1,12 @@
+import {
+  asksForRecencyTokens,
+  GENERIC_WORK_TERMS,
+  isWithinOneEdit,
+  MIN_FUZZY_LENGTH,
+  RECENCY_TERMS,
+  termVariants,
+} from "./terms";
+
 export interface SearchMedia {
   id: string;
   kind: "image" | "video" | "audio";
@@ -24,6 +33,12 @@ export interface SearchDocument {
   /** Canonical vocabulary values (`typescript`). */
   tagValues?: string[];
   excerpt: string;
+  /**
+   * The longer story text, when it runs past `excerpt`. Ranked on and quoted
+   * to ask; never sent to clients. Optional so a cache entry from an older
+   * build still reads.
+   */
+  body?: string;
   date?: string;
   media?: SearchMedia[];
   /** First `content.images` entry, as in the nav hover preview. */
@@ -41,6 +56,8 @@ const WEIGHT = {
   titleToken: 8,
   tagExact: 12,
   tagToken: 6,
+  titleFuzzy: 4,
+  tagFuzzy: 3,
   excerptToken: 2,
   allTokens: 5,
 } as const;
@@ -162,16 +179,29 @@ export function tokenize(value: string): string[] {
 /**
  * The words a query is ranked on: tokenized, deduplicated, filler dropped. A
  * query of nothing but filler keeps it, so "the who" still finds something.
+ * A query asking for the newest work drops its recency and generic words
+ * instead — "latest project" ranks on nothing and lists work by date.
  * `/api/search` returns these so clients highlight what was actually matched.
  */
 export function queryTerms(query: string): string[] {
   const tokens = [...new Set(tokenize(query))];
+  if (asksForRecencyTokens(tokens)) {
+    return tokens.filter(
+      (token) =>
+        !RECENCY_TERMS.has(token) && !STOP_WORDS.has(token) && !GENERIC_WORK_TERMS.has(token),
+    );
+  }
   const topical = tokens.filter((token) => !STOP_WORDS.has(token));
   return topical.length > 0 ? topical : tokens;
 }
 
+/** True when the query asks for the newest work ("latest", "neueste", …). */
+export function asksForRecency(query: string): boolean {
+  return asksForRecencyTokens(tokenize(query));
+}
+
 /** True when `token` starts a word of normalized `text` (or is one, if short). */
-function matchesWord(text: string, token: string): boolean {
+export function matchesWord(text: string, token: string): boolean {
   const padded = ` ${text} `;
   return token.length >= MIN_PREFIX_LENGTH
     ? padded.includes(` ${token}`)
@@ -200,8 +230,10 @@ interface DocumentScore {
 
 function scoreDocument(document: SearchDocument, query: string, tokens: string[]): DocumentScore {
   const title = normalize(document.title);
-  const excerpt = normalize(document.excerpt);
+  const body = normalize(document.body ?? document.excerpt);
   const tags = tagVariants(document);
+  const titleWords = title.split(" ");
+  const tagWords = tags.flatMap((tag) => tag.split(" "));
 
   let score = 0;
   let matched = 0;
@@ -213,20 +245,30 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
   }
 
   for (const token of tokens) {
+    const variants = termVariants(token);
     let hit = false;
 
-    if (matchesWord(title, token)) {
-      score += title.startsWith(token) ? WEIGHT.titlePrefix : WEIGHT.titleToken;
+    const titleVariant = variants.find((variant) => matchesWord(title, variant));
+    if (titleVariant) {
+      score += title.startsWith(titleVariant) ? WEIGHT.titlePrefix : WEIGHT.titleToken;
+      hit = true;
+    } else if (isTypoOf(token, titleWords)) {
+      score += WEIGHT.titleFuzzy;
       hit = true;
     }
-    if (tags.includes(token)) {
+
+    if (variants.some((variant) => tags.includes(variant))) {
       score += WEIGHT.tagExact;
       hit = true;
-    } else if (tags.some((tag) => matchesWord(tag, token))) {
+    } else if (tags.some((tag) => variants.some((variant) => matchesWord(tag, variant)))) {
       score += WEIGHT.tagToken;
       hit = true;
+    } else if (isTypoOf(token, tagWords)) {
+      score += WEIGHT.tagFuzzy;
+      hit = true;
     }
-    if (matchesWord(excerpt, token)) {
+
+    if (variants.some((variant) => matchesWord(body, variant))) {
       score += WEIGHT.excerptToken;
       hit = true;
     }
@@ -244,12 +286,24 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
 }
 
 /**
+ * One slipped key in a title or tag word ("innenstdat"). Body text is left
+ * out: across a whole story, one edit away from something is too easy.
+ */
+function isTypoOf(token: string, words: string[]): boolean {
+  if (token.length < MIN_FUZZY_LENGTH) {
+    return false;
+  }
+  return words.some((word) => word.length >= MIN_FUZZY_LENGTH && isWithinOneEdit(token, word));
+}
+
+/**
  * Every query term has to match, as in Algolia's default. When no document
  * matches them all, the best-covered ones stand in, so a typo or a half-typed
  * last word narrows the list instead of emptying it — and a lone shared word
  * like `app` no longer pads a precise query with unrelated work.
  *
- * Ties break on recency, then title.
+ * Ties break on recency, then title. A query asking for the newest work sorts
+ * on date first; with nothing else in it, it lists work by date.
  */
 export function rankDocuments(
   documents: SearchDocument[],
@@ -258,8 +312,12 @@ export function rankDocuments(
 ): SearchResult[] {
   const normalized = normalize(query);
   const tokens = queryTerms(query);
-  if (!normalized || tokens.length === 0) {
+  const isRecency = asksForRecency(query);
+  if (!normalized) {
     return [];
+  }
+  if (tokens.length === 0) {
+    return isRecency ? newestWork(documents, limit) : [];
   }
 
   const scored = documents
@@ -270,13 +328,25 @@ export function rankDocuments(
   return scored
     .filter((entry) => entry.matched === coverage)
     .map(({ document, score }) => ({ ...document, score }))
-    .sort(
-      (a, b) =>
-        b.score - a.score ||
-        (b.date ?? "").localeCompare(a.date ?? "") ||
-        a.title.localeCompare(b.title),
+    .sort((a, b) =>
+      isRecency
+        ? byDate(a, b) || b.score - a.score || a.title.localeCompare(b.title)
+        : b.score - a.score || byDate(a, b) || a.title.localeCompare(b.title),
     )
     .slice(0, limit);
+}
+
+/** Work by date, newest first; undated work last. */
+export function newestWork(documents: SearchDocument[], limit: number): SearchResult[] {
+  return documents
+    .filter((document) => document.kind === "work")
+    .map((document) => ({ ...document, score: 1 }))
+    .sort((a, b) => byDate(a, b) || a.title.localeCompare(b.title))
+    .slice(0, limit);
+}
+
+function byDate(a: SearchDocument, b: SearchDocument): number {
+  return (b.date ?? "").localeCompare(a.date ?? "");
 }
 
 /** Type-ahead from titles and tags; never a model call. */

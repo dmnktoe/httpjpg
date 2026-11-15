@@ -83,6 +83,24 @@ describe("getSearchIndex", () => {
     ]);
   });
 
+  it("keeps the longer story text as a body only when it runs past the excerpt", async () => {
+    const long = "word ".repeat(400).trim();
+    mockStories([
+      story({ content: { component: "work", title: "Short", text: "A stark site" } }),
+      story({
+        uuid: "uuid-2",
+        slug: "long",
+        content: { component: "work", title: "Long", text: long },
+      }),
+    ]);
+
+    const [short, longDocument] = await getSearchIndex();
+
+    expect(short).not.toHaveProperty("body");
+    expect(longDocument?.excerpt.length).toBeLessThanOrEqual(1201);
+    expect(longDocument?.body).toBe(`Long ${long}`);
+  });
+
   it("resolves curated tags to labels and keeps their values", async () => {
     mockStories([
       story({

@@ -227,7 +227,11 @@ Cache Components: nothing is cached unless a `"use cache"` scope says so. Three 
 Command palette (`⌘K` / `Ctrl+K`) has search + ask sharing one corpus.
 
 - **One index:** `getSearchIndex()` → `SearchDocument[]` under `CMS_TAGS.stories`. Don't add a second corpus.
-- **Ranking is lexical and pure** (`rankDocuments`, `suggestCompletions`) — autocomplete is not an AI call.
+- **Ranking is lexical and pure** (`rankDocuments`, `suggestCompletions`) — autocomplete is not an AI call. Query vocabulary (DE↔EN synonyms, plural stems, recency words) lives in `lib/search/terms.ts`; one typo is forgiven in title/tag words only. "latest" / "neueste" sorts by date.
+- **`body` never leaves the server.** Documents carry the longer story text as `body` for ranking and ask passages; `/api/search` strips it, clients get `excerpt`.
+- **Ask sees all the work.** `selectAskSources` = ranked matches (with `selectPassages`) + every other work as a one-line catalog, one numbering, same order as the `sources` event. The prompt carries today's date; a later date is "upcoming".
+- **Answers are cleaned server-side** (`createAnswerCleaner`): gpt-oss `【n】` → `[n]`, `**` dropped, before streaming and `firstCitedSource`. Clients render plain text.
+- **Retrieval regressions go in `search-eval.test.ts`** (question → expected source) before weights or terms change.
 - **`GET /api/search`** → `{ results, suggestions }`. **`POST /api/ask`** streams NDJSON (`sources` → `delta` → `action`|`error`). Both rate-limited.
 - **`action` is derived**, not asked for: `firstCitedSource()` resolves the first `[n]` citation; `readAskStream` re-checks same-origin. External / uncited answers get no action.
 - **AI is optional.** No `GROQ_API_KEY` → ask is 503 / hidden; search still works. Prompts in the app (`buildAskMessages`), never in `@httpjpg/ai`.

@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.14.0](https://github.com/dmnktoe/httpjpg/compare/v2.13.1...v2.14.0) (2026-11-15)
+
+
+### Added
+
+* **search:** give ask the whole work list and smarter retrieval ([#555](https://github.com/dmnktoe/httpjpg/issues/555)) ([f702a49](https://github.com/dmnktoe/httpjpg/commit/f702a49c96a888442a5c87290b13910f0e96593e))
+
 ## [2.13.1](https://github.com/dmnktoe/httpjpg/compare/v2.13.0...v2.13.1) (2026-11-15)
 
 

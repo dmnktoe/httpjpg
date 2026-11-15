@@ -1,3 +1,12 @@
+import {
+  asksForRecencyTokens,
+  GENERIC_WORK_TERMS,
+  isWithinOneEdit,
+  MIN_FUZZY_LENGTH,
+  RECENCY_TERMS,
+  termVariants,
+} from "./terms";
+
 export interface SearchMedia {
   id: string;
   kind: "image" | "video" | "audio";
@@ -24,6 +33,7 @@ export interface SearchDocument {
   /** Canonical vocabulary values (`typescript`). */
   tagValues?: string[];
   excerpt: string;
+  body?: string;
   date?: string;
   media?: SearchMedia[];
   /** First `content.images` entry, as in the nav hover preview. */
@@ -41,6 +51,8 @@ const WEIGHT = {
   titleToken: 8,
   tagExact: 12,
   tagToken: 6,
+  titleFuzzy: 4,
+  tagFuzzy: 3,
   excerptToken: 2,
   allTokens: 5,
 } as const;
@@ -166,12 +178,22 @@ export function tokenize(value: string): string[] {
  */
 export function queryTerms(query: string): string[] {
   const tokens = [...new Set(tokenize(query))];
+  if (asksForRecencyTokens(tokens)) {
+    return tokens.filter(
+      (token) =>
+        !RECENCY_TERMS.has(token) && !STOP_WORDS.has(token) && !GENERIC_WORK_TERMS.has(token),
+    );
+  }
   const topical = tokens.filter((token) => !STOP_WORDS.has(token));
   return topical.length > 0 ? topical : tokens;
 }
 
+export function asksForRecency(query: string): boolean {
+  return asksForRecencyTokens(tokenize(query));
+}
+
 /** True when `token` starts a word of normalized `text` (or is one, if short). */
-function matchesWord(text: string, token: string): boolean {
+export function matchesWord(text: string, token: string): boolean {
   const padded = ` ${text} `;
   return token.length >= MIN_PREFIX_LENGTH
     ? padded.includes(` ${token}`)
@@ -196,15 +218,24 @@ interface DocumentScore {
   score: number;
   /** How many query terms hit any field. */
   matched: number;
+  hasFieldHit: boolean;
 }
 
-function scoreDocument(document: SearchDocument, query: string, tokens: string[]): DocumentScore {
+function scoreDocument(
+  document: SearchDocument,
+  query: string,
+  tokens: string[],
+  variantsByToken: string[][],
+): DocumentScore {
   const title = normalize(document.title);
-  const excerpt = normalize(document.excerpt);
+  const body = normalize(document.body ?? document.excerpt);
   const tags = tagVariants(document);
+  const titleWords = title.split(" ");
+  const tagWords = tags.flatMap((tag) => tag.split(" "));
 
   let score = 0;
   let matched = 0;
+  let hasFieldHit = false;
 
   if (title === query) {
     score += WEIGHT.titleExact;
@@ -212,21 +243,36 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
     score += WEIGHT.titlePrefix;
   }
 
-  for (const token of tokens) {
+  for (const [index, token] of tokens.entries()) {
+    const variants = variantsByToken[index];
     let hit = false;
 
-    if (matchesWord(title, token)) {
-      score += title.startsWith(token) ? WEIGHT.titlePrefix : WEIGHT.titleToken;
+    const titleVariant = variants.find((variant) => matchesWord(title, variant));
+    if (titleVariant) {
+      score += title.startsWith(titleVariant) ? WEIGHT.titlePrefix : WEIGHT.titleToken;
       hit = true;
+      hasFieldHit = true;
+    } else if (isTypoOf(token, titleWords)) {
+      score += WEIGHT.titleFuzzy;
+      hit = true;
+      hasFieldHit = true;
     }
-    if (tags.includes(token)) {
+
+    if (variants.some((variant) => tags.includes(variant))) {
       score += WEIGHT.tagExact;
       hit = true;
-    } else if (tags.some((tag) => matchesWord(tag, token))) {
+      hasFieldHit = true;
+    } else if (tags.some((tag) => variants.some((variant) => matchesWord(tag, variant)))) {
       score += WEIGHT.tagToken;
       hit = true;
+      hasFieldHit = true;
+    } else if (isTypoOf(token, tagWords)) {
+      score += WEIGHT.tagFuzzy;
+      hit = true;
+      hasFieldHit = true;
     }
-    if (matchesWord(excerpt, token)) {
+
+    if (variants.some((variant) => matchesWord(body, variant))) {
       score += WEIGHT.excerptToken;
       hit = true;
     }
@@ -240,7 +286,14 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
     score += WEIGHT.allTokens;
   }
 
-  return { score, matched };
+  return { score, matched, hasFieldHit };
+}
+
+function isTypoOf(token: string, words: string[]): boolean {
+  if (token.length < MIN_FUZZY_LENGTH) {
+    return false;
+  }
+  return words.some((word) => word.length >= MIN_FUZZY_LENGTH && isWithinOneEdit(token, word));
 }
 
 /**
@@ -258,25 +311,48 @@ export function rankDocuments(
 ): SearchResult[] {
   const normalized = normalize(query);
   const tokens = queryTerms(query);
-  if (!normalized || tokens.length === 0) {
+  const isRecency = asksForRecency(query);
+  if (!normalized) {
     return [];
   }
+  if (tokens.length === 0) {
+    return isRecency ? newestWork(documents, limit) : [];
+  }
 
+  const variantsByToken = tokens.map(termVariants);
   const scored = documents
-    .map((document) => ({ document, ...scoreDocument(document, normalized, tokens) }))
+    .map((document) => ({
+      document,
+      ...scoreDocument(document, normalized, tokens, variantsByToken),
+    }))
     .filter((entry) => entry.score > 0);
   const coverage = Math.max(0, ...scored.map((entry) => entry.matched));
+  const covered = scored.filter((entry) => entry.matched === coverage);
+  const kept =
+    isRecency && covered.some((entry) => entry.hasFieldHit)
+      ? covered.filter((entry) => entry.hasFieldHit)
+      : covered;
 
-  return scored
-    .filter((entry) => entry.matched === coverage)
+  return kept
     .map(({ document, score }) => ({ ...document, score }))
-    .sort(
-      (a, b) =>
-        b.score - a.score ||
-        (b.date ?? "").localeCompare(a.date ?? "") ||
-        a.title.localeCompare(b.title),
+    .sort((a, b) =>
+      isRecency
+        ? byDate(a, b) || b.score - a.score || a.title.localeCompare(b.title)
+        : b.score - a.score || byDate(a, b) || a.title.localeCompare(b.title),
     )
     .slice(0, limit);
+}
+
+export function newestWork(documents: SearchDocument[], limit: number): SearchResult[] {
+  return documents
+    .filter((document) => document.kind === "work")
+    .map((document) => ({ ...document, score: 1 }))
+    .sort((a, b) => byDate(a, b) || a.title.localeCompare(b.title))
+    .slice(0, limit);
+}
+
+function byDate(a: SearchDocument, b: SearchDocument): number {
+  return (b.date ?? "").localeCompare(a.date ?? "");
 }
 
 /** Type-ahead from titles and tags; never a model call. */

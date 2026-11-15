@@ -6,11 +6,9 @@ import type { NextRequest } from "next/server";
 import { API_ERROR, jsonError } from "@/lib/api-error";
 import { getSearchIndex } from "@/lib/queries/search-index";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { createAnswerCleaner } from "@/lib/search/answer-cleaner";
 import { firstCitedSource } from "@/lib/search/citations";
-import { buildAskMessages, MAX_QUESTION_LENGTH } from "@/lib/search/prompt";
-import { rankDocuments } from "@/lib/search/ranking";
-
-const MAX_SOURCES = 5;
+import { buildAskMessages, MAX_QUESTION_LENGTH, selectAskSources } from "@/lib/search/prompt";
 
 interface AskBody {
   question?: unknown;
@@ -82,9 +80,13 @@ export async function POST(request: NextRequest) {
   let messages;
   try {
     const documents = await getSearchIndex();
-    const ranked = rankDocuments(documents, question, MAX_SOURCES);
-    sources = ranked.map(({ title, href, kind }) => ({ title, href, kind }));
-    messages = buildAskMessages(question, ranked);
+    const selected = selectAskSources(documents, question);
+    sources = [...selected.ranked, ...selected.catalog].map(({ title, href, kind }) => ({
+      title,
+      href,
+      kind,
+    }));
+    messages = buildAskMessages(question, selected);
   } catch (error) {
     console.error("Ask retrieval failed:", error);
     captureServerException(error, { tags: { route: "ask" } });
@@ -111,12 +113,19 @@ export async function POST(request: NextRequest) {
 
       send({ type: "sources", sources });
 
+      const cleaner = createAnswerCleaner();
       let answer = "";
+      const sendText = (text: string) => {
+        if (text) {
+          answer += text;
+          send({ type: "delta", text });
+        }
+      };
       try {
         for await (const delta of client.stream(messages, { signal: request.signal })) {
-          answer += delta;
-          send({ type: "delta", text: delta });
+          sendText(cleaner.push(delta));
         }
+        sendText(cleaner.flush());
 
         const action = navigateAction(answer, sources);
         if (action) {

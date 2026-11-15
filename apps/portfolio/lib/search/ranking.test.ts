@@ -55,6 +55,15 @@ describe("queryTerms", () => {
   it("keeps filler when the query is nothing else", () => {
     expect(queryTerms("the who")).toEqual(["the", "who"]);
   });
+
+  it("drops recency and generic work words from a recency query", () => {
+    expect(queryTerms("the latest project")).toEqual([]);
+    expect(queryTerms("latest go work")).toEqual(["go"]);
+  });
+
+  it("keeps generic work words when the query does not ask for recency", () => {
+    expect(queryTerms("projects")).toEqual(["projects"]);
+  });
 });
 
 describe("rankDocuments", () => {
@@ -198,6 +207,96 @@ describe("rankDocuments", () => {
     const results = rankDocuments([one, both], "risograph poster");
 
     expect(results[0]?.id).toBe("both");
+  });
+  it("matches a German query against English text and back", () => {
+    const documents = [
+      doc({ title: "Poster Series", excerpt: "A print project", id: "en" }),
+      doc({ title: "Archiv", excerpt: "Ein altes Projekt", id: "de" }),
+      doc({ title: "Haze", excerpt: "unrelated", id: "noise" }),
+    ];
+
+    expect(rankDocuments(documents, "projekt").map((result) => result.id)).toEqual(["de", "en"]);
+    expect(rankDocuments(documents, "project").map((result) => result.id)).toEqual(["de", "en"]);
+  });
+
+  it("finds the singular from a plural query", () => {
+    const documents = [doc({ title: "Companion App", id: "app" }), doc({ title: "Haze", id: "x" })];
+
+    expect(rankDocuments(documents, "apps").map((result) => result.id)).toEqual(["app"]);
+  });
+
+  it("forgives one typo in a title or tag word", () => {
+    const documents = [
+      doc({ title: "Innenstadt ID-100", id: "title" }),
+      doc({ title: "Clinic", tags: ["Healthcare"], tagValues: ["healthcare"], id: "tag" }),
+      doc({ title: "Haze", excerpt: "innenstadt in the text only", id: "body" }),
+    ];
+
+    expect(rankDocuments(documents, "innenstdat").map((result) => result.id)).toEqual(["title"]);
+    expect(rankDocuments(documents, "helthcare").map((result) => result.id)).toEqual(["tag"]);
+  });
+
+  it("does not forgive typos in short words", () => {
+    const documents = [doc({ title: "Haze", id: "haze" })];
+
+    expect(rankDocuments(documents, "hazy")).toEqual([]);
+  });
+
+  it("ranks on the body when a document has one", () => {
+    const documents = [
+      doc({ title: "Long Story", excerpt: "The opening.", body: "The opening. Then a login." }),
+    ];
+
+    expect(rankDocuments(documents, "login").map((result) => result.title)).toEqual(["Long Story"]);
+  });
+
+  it("lists work by date for a recency query with no topic", () => {
+    const documents = [
+      doc({ title: "Old", date: "2019-01-01" }),
+      doc({ title: "Upcoming", date: "2027-01-01" }),
+      doc({ title: "Undated" }),
+      doc({ title: "About", kind: "page", date: "2030-01-01" }),
+    ];
+
+    expect(rankDocuments(documents, "latest project").map((result) => result.title)).toEqual([
+      "Upcoming",
+      "Old",
+      "Undated",
+    ]);
+    expect(rankDocuments(documents, "neueste Arbeit").map((result) => result.title)).toEqual([
+      "Upcoming",
+      "Old",
+      "Undated",
+    ]);
+  });
+
+  it("drops body-only mentions from a recency query when a title or tag matches", () => {
+    const documents = [
+      doc({ title: "Go Service", tags: ["Go"], tagValues: ["go"], date: "2020-01-01" }),
+      doc({ title: "Newer", excerpt: "let us go", date: "2025-01-01" }),
+    ];
+
+    expect(rankDocuments(documents, "latest go").map((result) => result.title)).toEqual([
+      "Go Service",
+    ]);
+  });
+
+  it("sorts topical matches by date when the query asks for recency", () => {
+    const documents = [
+      doc({ title: "Go Service", tags: ["Go"], tagValues: ["go"], date: "2020-01-01" }),
+      doc({ title: "Later", excerpt: "written in go", date: "2025-01-01" }),
+    ];
+
+    expect(rankDocuments(documents, "go").map((result) => result.title)).toEqual([
+      "Go Service",
+      "Later",
+    ]);
+    expect(rankDocuments(documents, "latest go").map((result) => result.title)).toEqual([
+      "Go Service",
+    ]);
+    expect(rankDocuments(documents, "latest written").map((result) => result.title)).toEqual([
+      "Later",
+    ]);
   });
 });
 

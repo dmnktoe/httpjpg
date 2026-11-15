@@ -70,6 +70,18 @@ describe("GET /api/search", () => {
     expect(body.terms).toEqual(["brutalist"]);
   });
 
+  it("keeps the full story text out of the response", async () => {
+    mockGetSearchIndex.mockResolvedValue([
+      { ...DOCUMENTS[0], body: "A stark site. Then a long story about a login." },
+    ]);
+
+    const body = await (await GET(get("/api/search?q=login"))).json();
+
+    expect(body.results).toHaveLength(1);
+    expect(body.results[0]).not.toHaveProperty("body");
+    expect(body.results[0].excerpt).toBe("A stark site");
+  });
+
   it("returns empty payloads for a blank query without touching the index", async () => {
     const response = await GET(get("/api/search?q=%20%20"));
 

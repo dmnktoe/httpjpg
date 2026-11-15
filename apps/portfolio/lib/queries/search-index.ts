@@ -44,9 +44,13 @@ function toHref(story: IndexableStory): string {
   return fullSlug === STORYBLOK_SLUGS.HOME ? "/" : `/${fullSlug}`;
 }
 
+const BODY_LENGTH = 8000;
+
 function toSearchDocument(story: IndexableStory): SearchDocument {
   const curated = resolveWorkTags(story.content?.tags);
   const featured = toFeatured(story.content?.images);
+  const excerpt = collectStoryText(story.content);
+  const body = collectStoryText(story.content, BODY_LENGTH);
 
   return {
     id: story.uuid,
@@ -55,7 +59,8 @@ function toSearchDocument(story: IndexableStory): SearchDocument {
     kind: story.content?.component === "work" ? "work" : "page",
     tags: curated.map((tag) => tag.label),
     tagValues: curated.map((tag) => tag.value),
-    excerpt: collectStoryText(story.content),
+    excerpt,
+    ...(body !== excerpt ? { body } : {}),
     date: story.content?.date,
     media: collectStoryMedia(story.content),
     ...(featured ? { featured } : {}),

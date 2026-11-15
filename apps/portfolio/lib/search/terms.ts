@@ -1,10 +1,3 @@
-/**
- * Query-side vocabulary for the lexical ranker: spellings a term also matches
- * (synonyms across German and English, plural endings) and the words that ask
- * for recency rather than name a topic. All values are spelled normalized.
- */
-
-/** Words that are equivalent in a query, both ways round. */
 const SYNONYM_GROUPS: readonly (readonly string[])[] = [
   ["project", "projekt"],
   ["work", "arbeit"],
@@ -22,11 +15,7 @@ const SYNONYM_GROUPS: readonly (readonly string[])[] = [
 
 const SYNONYMS = buildSynonyms(SYNONYM_GROUPS);
 
-/**
- * Words asking for the newest work. Ranked as filler, so "latest project" is
- * not narrowed to pages that happen to contain the word "latest". "new" is
- * left out: it starts too many titles.
- */
+// "new" is left out: it starts too many titles.
 export const RECENCY_TERMS = new Set([
   "latest",
   "newest",
@@ -51,11 +40,7 @@ export const RECENCY_TERMS = new Set([
   "zuletzt",
 ]);
 
-/**
- * Words that name a work item in general. Beside a recency word they add
- * nothing — "latest project" means the newest work, not work mentioning
- * "project" — so they are dropped there, and only there.
- */
+// Dropped only beside a recency word: "latest project" means the newest work.
 export const GENERIC_WORK_TERMS = new Set([
   "project",
   "projects",
@@ -71,15 +56,12 @@ export const GENERIC_WORK_TERMS = new Set([
   "pieces",
 ]);
 
-/** True when any token asks for the newest work. */
 export function asksForRecencyTokens(tokens: string[]): boolean {
   return tokens.some((token) => RECENCY_TERMS.has(token));
 }
 
-/** Shortest token a typo is forgiven in. Below it, one edit is a different word. */
 export const MIN_FUZZY_LENGTH = 5;
 
-/** The token, its singular stem, and every synonym of either. */
 export function termVariants(token: string): string[] {
   const variants = new Set([token]);
   const stem = singular(token);
@@ -94,11 +76,6 @@ export function termVariants(token: string): string[] {
   return [...variants];
 }
 
-/**
- * A light plural strip, English and German. Prefix matching already finds
- * "projects" from "project"; this covers the other direction, so "apps" finds
- * "app" and "arbeiten" finds "arbeit".
- */
 export function singular(token: string): string | null {
   if (token.length >= 6 && token.endsWith("en")) {
     return token.slice(0, -2);
@@ -112,10 +89,6 @@ export function singular(token: string): string | null {
   return null;
 }
 
-/**
- * True when `a` becomes `b` with at most one insertion, deletion,
- * substitution, or swap of neighbouring letters (optimal string alignment).
- */
 export function isWithinOneEdit(a: string, b: string): boolean {
   if (a === b) {
     return true;

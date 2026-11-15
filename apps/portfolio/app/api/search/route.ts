@@ -23,7 +23,6 @@ function parseLimit(raw: string | null): number {
   return Math.min(parsed, MAX_LIMIT);
 }
 
-/** The full story text is for ranking and ask only; clients get the excerpt. */
 function withoutBody({ body: _body, ...result }: SearchResult): Omit<SearchResult, "body"> {
   return result;
 }

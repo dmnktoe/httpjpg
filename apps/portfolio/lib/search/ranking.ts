@@ -33,11 +33,6 @@ export interface SearchDocument {
   /** Canonical vocabulary values (`typescript`). */
   tagValues?: string[];
   excerpt: string;
-  /**
-   * The longer story text, when it runs past `excerpt`. Ranked on and quoted
-   * to ask; never sent to clients. Optional so a cache entry from an older
-   * build still reads.
-   */
   body?: string;
   date?: string;
   media?: SearchMedia[];
@@ -179,8 +174,6 @@ export function tokenize(value: string): string[] {
 /**
  * The words a query is ranked on: tokenized, deduplicated, filler dropped. A
  * query of nothing but filler keeps it, so "the who" still finds something.
- * A query asking for the newest work drops its recency and generic words
- * instead — "latest project" ranks on nothing and lists work by date.
  * `/api/search` returns these so clients highlight what was actually matched.
  */
 export function queryTerms(query: string): string[] {
@@ -195,7 +188,6 @@ export function queryTerms(query: string): string[] {
   return topical.length > 0 ? topical : tokens;
 }
 
-/** True when the query asks for the newest work ("latest", "neueste", …). */
 export function asksForRecency(query: string): boolean {
   return asksForRecencyTokens(tokenize(query));
 }
@@ -285,10 +277,6 @@ function scoreDocument(document: SearchDocument, query: string, tokens: string[]
   return { score, matched };
 }
 
-/**
- * One slipped key in a title or tag word ("innenstdat"). Body text is left
- * out: across a whole story, one edit away from something is too easy.
- */
 function isTypoOf(token: string, words: string[]): boolean {
   if (token.length < MIN_FUZZY_LENGTH) {
     return false;
@@ -302,8 +290,7 @@ function isTypoOf(token: string, words: string[]): boolean {
  * last word narrows the list instead of emptying it — and a lone shared word
  * like `app` no longer pads a precise query with unrelated work.
  *
- * Ties break on recency, then title. A query asking for the newest work sorts
- * on date first; with nothing else in it, it lists work by date.
+ * Ties break on recency, then title.
  */
 export function rankDocuments(
   documents: SearchDocument[],
@@ -336,7 +323,6 @@ export function rankDocuments(
     .slice(0, limit);
 }
 
-/** Work by date, newest first; undated work last. */
 export function newestWork(documents: SearchDocument[], limit: number): SearchResult[] {
   return documents
     .filter((document) => document.kind === "work")

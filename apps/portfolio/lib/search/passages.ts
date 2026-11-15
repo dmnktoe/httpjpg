@@ -1,22 +1,10 @@
 import { matchesWord, normalize } from "./ranking";
 import { termVariants } from "./terms";
 
-/**
- * The opening is always quoted — it carries a work's year, stack and role —
- * up to this length, and never more than a third of the budget.
- */
 const LEAD_LENGTH = 240;
 
 const GAP = " … ";
 
-/**
- * The parts of a story's text that answer a question, within `budget`
- * characters: the lead, then the sentences matching the most query terms, in
- * reading order. A question about a detail deep in a story ("how does the
- * login work?") reaches the sentence that has it instead of the first few
- * hundred characters. No terms, or no sentence matching one, quotes the
- * opening, as much as fits.
- */
 export function selectPassages(text: string, terms: string[], budget: number): string {
   if (text.length <= budget) {
     return text;
@@ -51,8 +39,6 @@ export function selectPassages(text: string, terms: string[], budget: number): s
     used += cost;
   }
 
-  // Room left over continues the opening, so a question matching nothing
-  // still gets as much context as before.
   for (let index = 0; index < sentences.length; index += 1) {
     if (picked.has(index)) {
       continue;
@@ -84,7 +70,6 @@ function splitSentences(text: string): string[] {
     .filter(Boolean);
 }
 
-/** Neighbouring sentences join with a space; a skipped stretch shows as "…". */
 function joinInOrder(sentences: string[], picked: Set<number>): string {
   const order = [...picked].sort((a, b) => a - b);
   let result = "";

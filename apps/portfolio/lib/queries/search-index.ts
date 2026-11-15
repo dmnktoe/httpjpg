@@ -44,7 +44,6 @@ function toHref(story: IndexableStory): string {
   return fullSlug === STORYBLOK_SLUGS.HOME ? "/" : `/${fullSlug}`;
 }
 
-/** Story text kept for ranking and ask; the excerpt clients see stays short. */
 const BODY_LENGTH = 8000;
 
 function toSearchDocument(story: IndexableStory): SearchDocument {

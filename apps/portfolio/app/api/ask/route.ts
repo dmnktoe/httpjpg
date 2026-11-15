@@ -81,7 +81,6 @@ export async function POST(request: NextRequest) {
   try {
     const documents = await getSearchIndex();
     const selected = selectAskSources(documents, question);
-    // Same order as the prompt's numbering, so `[n]` is `sources[n - 1]`.
     sources = [...selected.ranked, ...selected.catalog].map(({ title, href, kind }) => ({
       title,
       href,

@@ -1,18 +1,8 @@
-/**
- * gpt-oss cites in its own house style — `【2】`, `【2†L4-L9】`, `［2］` — and
- * bolds names with markdown, whatever the prompt says. Neither client renders
- * markdown, and both, like `firstCitedSource`, read citations as ASCII `[n]`:
- * left alone, the answer shows `**…**` and loses its source chips and its
- * "go to" action. Cleaning here fixes every client, released app builds
- * included.
- */
-
-/** A full-width citation: numbers, then optional `†…` location noise. */
+// gpt-oss writes `【2】` and `**bold**` whatever the prompt says; no client renders either.
 const WIDE_CITATION = /[【［]\s*(\d+(?:\s*[,，、]\s*\d+)*)\s*(?:†[^】］]*)?[】］]/g;
 
 const BOLD = /\*\*/g;
 
-/** Longest a citation can run before it is treated as plain text. */
 const MAX_PENDING = 48;
 
 export function cleanAnswerText(text: string): string {
@@ -27,17 +17,11 @@ export function cleanAnswerText(text: string): string {
 }
 
 interface AnswerCleaner {
-  /** Cleaned text that is safe to send now; may be empty. */
   push: (delta: string) => string;
-  /** Whatever was held back, once the stream ends. */
   flush: () => string;
 }
 
-/**
- * Cleans a streamed answer. A delta can end halfway through a citation or
- * between the two `*` of a bold marker, so that tail is held back until the
- * next delta completes it.
- */
+// A delta can end inside a citation or between the two `*` of a bold marker.
 export function createAnswerCleaner(): AnswerCleaner {
   let pending = "";
 
@@ -57,7 +41,6 @@ export function createAnswerCleaner(): AnswerCleaner {
   };
 }
 
-/** How much of `text` cannot change with more input. */
 function safeLength(text: string): number {
   let cut = text.length;
 

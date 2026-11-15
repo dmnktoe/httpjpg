@@ -5,35 +5,19 @@ import { queryTerms, rankDocuments, type SearchDocument } from "./ranking";
 
 export const MAX_QUESTION_LENGTH = 500;
 
-/** Best matches quoted with their text. */
 const MAX_RANKED = 5;
 
-/** Backstop on the one-line work list; the site has far fewer. */
 const MAX_CATALOG = 40;
 
-/** Characters of story text quoted per ranked match. */
 const PASSAGE_BUDGET = 700;
 
-/** Characters of summary on a work list line. */
 const SUMMARY_LENGTH = 160;
 
-/**
- * What the model is told it may cite. `ranked` are the lexical matches,
- * quoted with text; `catalog` is the rest of the work, one line each, newest
- * first. Both share one numbering — ranked first — which is also the order
- * the `sources` event sends, so `[n]` resolves the same on every client.
- */
 export interface AskSources {
   ranked: SearchDocument[];
   catalog: SearchDocument[];
 }
 
-/**
- * The catalog is what lets ask answer questions lexical ranking cannot:
- * "the latest project", "how many Go projects", "what did you make in 2024".
- * The site holds a few dozen stories, so listing all the work costs about a
- * thousand tokens.
- */
 export function selectAskSources(documents: SearchDocument[], question: string): AskSources {
   const ranked = rankDocuments(documents, question, MAX_RANKED);
   const rankedIds = new Set(ranked.map((document) => document.id));
@@ -115,7 +99,6 @@ function systemPrompt(today: string): string {
   ].join("\n");
 }
 
-/** `2027-01-01 (upcoming, not released yet)` for a date after today. */
 function describeDate(date: string, today: string): string {
   const day = date.slice(0, 10);
   return day > today ? `${day} (upcoming, not released yet)` : day;

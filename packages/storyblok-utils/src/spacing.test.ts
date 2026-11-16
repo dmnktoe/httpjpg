@@ -1,9 +1,10 @@
-import { isMarginSide, spacingLabel, spacingValue } from "./spacing";
+import { isMarginSide, spacingLabel, spacingToken, spacingValue } from "./spacing";
 
 describe("spacingValue", () => {
   it("resolves positive and negative keys", () => {
     expect(spacingValue("4")).toBe("1rem");
     expect(spacingValue("-4")).toBe("-1rem");
+    expect(spacingValue("\u22124")).toBe("-1rem");
     expect(spacingValue("0")).toBe("0");
   });
 
@@ -22,10 +23,19 @@ describe("spacingValue", () => {
   });
 });
 
+describe("spacingToken", () => {
+  it("turns the CMS minus into the token's hyphen", () => {
+    expect(spacingToken("\u22124")).toBe("-4");
+    expect(spacingToken("-4")).toBe("-4");
+    expect(spacingToken("4")).toBe("4");
+    expect(spacingToken(undefined)).toBeUndefined();
+  });
+});
+
 describe("spacingLabel", () => {
   it("appends the CSS length", () => {
     expect(spacingLabel("4")).toBe("4 (1rem)");
-    expect(spacingLabel("-4")).toBe("\u22124 (\u22121rem)");
+    expect(spacingLabel("\u22124")).toBe("\u22124 (\u22121rem)");
   });
 
   it("keeps unknown keys bare", () => {

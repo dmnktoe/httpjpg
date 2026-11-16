@@ -7,8 +7,14 @@ export function isMarginSide(side: string): boolean {
   return (MARGIN_SIDES as readonly string[]).includes(side);
 }
 
-/** CSS length for a spacing or margin key: `"4"` → `"1rem"`, `"-4"` → `"-1rem"`. */
-export function spacingValue(key?: string): string | undefined {
+/** Panda spacing token for a CMS key: `"−4"` → `"-4"`. Storyblok rejects a leading `-`. */
+export function spacingToken(key?: string): string | undefined {
+  return key?.startsWith(MINUS) ? `-${key.slice(1)}` : key;
+}
+
+/** CSS length for a spacing or margin key: `"4"` → `"1rem"`, `"−4"` / `"-4"` → `"-1rem"`. */
+export function spacingValue(cmsKey?: string): string | undefined {
+  const key = spacingToken(cmsKey);
   if (!key) {
     return undefined;
   }

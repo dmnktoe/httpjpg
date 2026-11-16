@@ -188,6 +188,7 @@ New blok checklist:
 - Registry in `apps/portfolio/lib/storyblok.ts` (imported from layout + `StoryblokProvider`). Dev `_fallback: SbMissing`.
 - Every `Sb*` spreads `editableAttrs(blok)` on the root.
 - Spacing: `withSpacing()` (sync, 24-field matrix) ↔ `BlokSpacing` + `spacingStyle()` (runtime) — keep in lock-step.
+- Negative margins are stored as `−4` (U+2212): Storyblok rejects datasource names and values starting with `-`, `=` or `@`. `spacingToken()` turns them back into Panda's `-4`.
 - Draft: `getStoryblokApi({ draftMode: true })` uses preview token + `version: "draft"`; `proxy.ts` validates the preview-token hash.
 - Revalidate webhook: `app/api/revalidate/route.ts` → `expireStory(slug)` / `expireConfig()` + paths.
 - New CMS option: edit `storyblok-utils/src/cms-options.ts` → `sync:datasources` → rebuild `ui`.

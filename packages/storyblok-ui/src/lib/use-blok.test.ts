@@ -51,7 +51,7 @@ describe("spacingStyle", () => {
   });
 
   it("negates the token for signed margins, per breakpoint", () => {
-    expect(spacingStyle({ ml: "-4", mtMd: "-8", mrLg: "-24" } as never)).toEqual({
+    expect(spacingStyle({ ml: "\u22124", mtMd: "\u22128", mrLg: "-24" } as never)).toEqual({
       css: {
         ml: { base: "var(--sb-ml)" },
         mt: { md: "var(--sb-mt-md)" },

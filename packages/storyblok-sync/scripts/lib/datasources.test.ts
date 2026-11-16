@@ -18,10 +18,11 @@ describe("allDatasources", () => {
     }
   });
 
-  it("never starts an entry name with a character Storyblok rejects", () => {
+  it("never starts an entry name or value with a character Storyblok rejects", () => {
     for (const ds of allDatasources()) {
       for (const entry of ds.entries) {
         expect(entry.name).not.toMatch(/^[-=@]/);
+        expect(entry.value).not.toMatch(/^[-=@]/);
       }
     }
   });
@@ -35,7 +36,7 @@ describe("allDatasources", () => {
 
   it("opens the margin dropdown on 0…96, then the negatives from -1 to -96", () => {
     const margin = allDatasources().find((d) => d.datasource.slug === "margin-options");
-    const values = margin?.entries.map((entry) => Number(entry.value)) ?? [];
+    const values = margin?.entries.map((entry) => Number(entry.value.replace("\u2212", "-"))) ?? [];
     const positives = values.filter((value) => value >= 0);
     const negatives = values.filter((value) => value < 0);
     expect(values).toEqual([...positives, ...negatives]);
@@ -44,7 +45,7 @@ describe("allDatasources", () => {
     expect(negatives[0]).toBe(-1);
     expect(negatives.at(-1)).toBe(-96);
     expect(negatives).toEqual(negatives.toSorted((a, b) => b - a));
-    expect(margin?.entries).toContainEqual({ name: "\u22124 (\u22121rem)", value: "-4" });
-    expect(margin?.entries.some((entry) => entry.value === "-0")).toBe(false);
+    expect(margin?.entries).toContainEqual({ name: "\u22124 (\u22121rem)", value: "\u22124" });
+    expect(margin?.entries.some((entry) => entry.value === "\u22120")).toBe(false);
   });
 });

@@ -56,8 +56,8 @@ const colorEntries: ReadonlyArray<{ name: string; value: string }> = (() => {
 const spacingScale = Object.keys(spacing) as Array<keyof typeof spacing & string>;
 const negativeSpacingScale = spacingScale
   .filter((key) => key !== "0")
-  .map((key) => `-${key}` as const);
-/** Margins only; padding and gap stay positive. Positives first so a dropdown opens on `0`, not `-96`. */
+  .map((key) => `\u2212${key}` as const);
+/** Margins only; padding and gap stay positive. Positives first so a dropdown opens on `0`, not `−96`. */
 const marginScale = [...spacingScale, ...negativeSpacingScale];
 const fontSizeScale = Object.keys(typography.fontSize) as Array<
   keyof typeof typography.fontSize & string

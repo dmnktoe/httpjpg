@@ -1,4 +1,4 @@
-import type { BlokSpacing } from "@httpjpg/storyblok-utils";
+import { type BlokSpacing, spacingToken } from "@httpjpg/storyblok-utils";
 import { spacingVar } from "@httpjpg/ui";
 import { storyblokEditable } from "@storyblok/react/rsc";
 import type { CSSProperties } from "react";
@@ -69,9 +69,9 @@ export function spacingStyle(
   const style: Record<string, string> = {};
   for (const axis of AXES) {
     const result = bridge(SPACING_BRIDGE[axis], `--sb-${axis}`, {
-      base: spacingVar(s[axis] || defaults[axis]),
-      md: spacingVar(s[`${axis}Md`]),
-      lg: spacingVar(s[`${axis}Lg`]),
+      base: spacingVar(spacingToken(s[axis] || defaults[axis])),
+      md: spacingVar(spacingToken(s[`${axis}Md`])),
+      lg: spacingVar(spacingToken(s[`${axis}Lg`])),
     });
     if (result.css) {
       classes[axis] = result.css;

@@ -14,19 +14,19 @@ describe("CMS_OPTIONS.margin", () => {
       if (key === "0") {
         continue;
       }
-      expect(CMS_OPTIONS.margin).toContain(`-${key}`);
+      expect(CMS_OPTIONS.margin).toContain(`\u2212${key}`);
     }
   });
 
   it("does not add a negative zero", () => {
-    expect(CMS_OPTIONS.margin).not.toContain("-0");
+    expect(CMS_OPTIONS.margin).not.toContain("\u22120");
   });
 
   it("lists the positive scale first, then the negatives from smallest to largest pull", () => {
     const positives = Object.keys(spacing);
     expect(CMS_OPTIONS.margin.slice(0, positives.length)).toEqual(positives);
     expect(CMS_OPTIONS.margin[0]).toBe("0");
-    expect(CMS_OPTIONS.margin[positives.length]).toBe("-1");
-    expect(CMS_OPTIONS.margin.at(-1)).toBe("-96");
+    expect(CMS_OPTIONS.margin[positives.length]).toBe("\u22121");
+    expect(CMS_OPTIONS.margin.at(-1)).toBe("\u221296");
   });
 });

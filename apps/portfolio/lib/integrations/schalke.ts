@@ -21,6 +21,15 @@ export interface SchalkeFixture {
   playedAt: string | null;
 }
 
+export interface SchalkeUpcoming {
+  home: string;
+  away: string;
+  homeCrest: string | null;
+  awayCrest: string | null;
+  competition: string;
+  kickoff: string;
+}
+
 export interface SchalkeStanding {
   position: number;
   previousPosition: number | null;
@@ -32,6 +41,7 @@ export interface SchalkeStanding {
 
 export interface SchalkeStatus {
   fixture: SchalkeFixture | null;
+  upcoming: SchalkeUpcoming | null;
   standing: SchalkeStanding | null;
   url: string;
 }
@@ -78,6 +88,10 @@ const LEAGUES = ["bl1", "bl2", "bl3"];
 const CUP = "dfb";
 
 const WEEKS_BACK = 8;
+const WEEKS_AHEAD = 4;
+
+const MATCH_LENGTH_MS = 2 * 60 * 60 * 1000;
+const LIVE_WINDOW_MS = 3 * 60 * 60 * 1000;
 
 const CREST_SIZE = 16;
 const CREST_TIMEOUT_MS = 5000;
@@ -101,13 +115,45 @@ function finalScore(match: OpenLigaMatch): [number, number] | null {
 export function recentMatches(matches: OpenLigaMatch[]): OpenLigaMatch[] {
   return matches
     .filter(
-      (match) =>
-        match.matchIsFinished === true &&
-        typeof match.leagueShortcut === "string" &&
-        (LEAGUES.includes(match.leagueShortcut) || match.leagueShortcut === CUP) &&
-        finalScore(match) !== null,
+      (match) => match.matchIsFinished === true && isTracked(match) && finalScore(match) !== null,
     )
     .sort((a, b) => (b.matchDateTimeUTC ?? "").localeCompare(a.matchDateTimeUTC ?? ""));
+}
+
+function kickoffTime(match: OpenLigaMatch): number {
+  return Date.parse(match.matchDateTimeUTC ?? "");
+}
+
+function isTracked(match: OpenLigaMatch): boolean {
+  const league = match.leagueShortcut;
+  return typeof league === "string" && (LEAGUES.includes(league) || league === CUP);
+}
+
+export function upcomingMatches(matches: OpenLigaMatch[], now: number): OpenLigaMatch[] {
+  return matches
+    .filter(
+      (match) =>
+        match.matchIsFinished !== true &&
+        isTracked(match) &&
+        kickoffTime(match) > now - LIVE_WINDOW_MS,
+    )
+    .sort((a, b) => kickoffTime(a) - kickoffTime(b));
+}
+
+export function prefersUpcoming(
+  last: OpenLigaMatch | undefined,
+  next: OpenLigaMatch | undefined,
+  now: number,
+): boolean {
+  if (!next) {
+    return false;
+  }
+  if (!last) {
+    return true;
+  }
+  const sinceFinal = now - (kickoffTime(last) + MATCH_LENGTH_MS);
+  const untilKickoff = kickoffTime(next) - now;
+  return untilKickoff <= sinceFinal;
 }
 
 export function parseFixture(match: OpenLigaMatch): SchalkeFixture | null {
@@ -239,16 +285,30 @@ export async function pixelateCrest(iconUrl: string | undefined): Promise<string
   }
 }
 
-async function fetchFixture(match: OpenLigaMatch): Promise<SchalkeFixture | null> {
-  const fixture = parseFixture(match);
-  if (!fixture) {
+export function parseUpcoming(match: OpenLigaMatch): SchalkeUpcoming | null {
+  if (Number.isNaN(kickoffTime(match))) {
     return null;
   }
-  const [homeCrest, awayCrest] = await Promise.all([
-    pixelateCrest(match.team1?.teamIconUrl),
-    pixelateCrest(match.team2?.teamIconUrl),
-  ]);
-  return { ...fixture, homeCrest, awayCrest };
+  return {
+    home: teamLabel(match.team1),
+    away: teamLabel(match.team2),
+    homeCrest: null,
+    awayCrest: null,
+    competition: match.leagueShortcut ?? "",
+    kickoff: match.matchDateTimeUTC ?? "",
+  };
+}
+
+async function withOwnCrest<T extends { homeCrest: string | null; awayCrest: string | null }>(
+  match: OpenLigaMatch,
+  line: T | null,
+): Promise<T | null> {
+  if (!line) {
+    return null;
+  }
+  const isHome = match.team1?.teamId === TEAM_ID;
+  const crest = await pixelateCrest((isHome ? match.team1 : match.team2)?.teamIconUrl);
+  return { ...line, homeCrest: isHome ? crest : null, awayCrest: isHome ? null : crest };
 }
 
 async function fetchOpenLiga<T>(path: string): Promise<{ ok: true; data: T } | HttpFailure> {
@@ -278,9 +338,9 @@ async function fetchStanding(match: OpenLigaMatch): Promise<SchalkeStanding | nu
   return readStanding(table.data, played, league);
 }
 
-export async function fetchSchalkeStatus(): Promise<SchalkeFetchResult> {
+export async function fetchSchalkeStatus(now = Date.now()): Promise<SchalkeFetchResult> {
   const matches = await fetchOpenLiga<OpenLigaMatch[]>(
-    `/getmatchesbyteamid/${TEAM_ID}/${WEEKS_BACK}/0`,
+    `/getmatchesbyteamid/${TEAM_ID}/${WEEKS_BACK}/${WEEKS_AHEAD}`,
   );
   if (!matches.ok) {
     return matches;
@@ -290,12 +350,15 @@ export async function fetchSchalkeStatus(): Promise<SchalkeFetchResult> {
   }
 
   const recent = recentMatches(matches.data);
+  const next = upcomingMatches(matches.data, now)[0];
+  const showNext = prefersUpcoming(recent[0], next, now);
   const lastLeagueMatch = recent.find((match) => LEAGUES.includes(match.leagueShortcut ?? ""));
 
-  const [fixture, standing] = await Promise.all([
-    recent[0] ? fetchFixture(recent[0]) : null,
+  const [fixture, upcoming, standing] = await Promise.all([
+    !showNext && recent[0] ? withOwnCrest(recent[0], parseFixture(recent[0])) : null,
+    showNext && next ? withOwnCrest(next, parseUpcoming(next)) : null,
     lastLeagueMatch ? fetchStanding(lastLeagueMatch) : null,
   ]);
 
-  return { ok: true, fixture, standing, url: CLUB_URL };
+  return { ok: true, fixture, upcoming, standing, url: CLUB_URL };
 }

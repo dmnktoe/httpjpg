@@ -76,8 +76,8 @@ async function readSchalke() {
   if (!result.ok) {
     return null;
   }
-  const { fixture, standing, url } = result;
-  return { fixture, standing, url };
+  const { fixture, upcoming, standing, url } = result;
+  return { fixture, upcoming, standing, url };
 }
 
 /** Unlike `resolveWidgetSetting()`, no 501/503 split: the envelope has no status. */

@@ -10,7 +10,10 @@ export const GET = widgetRoute(
       return widgetUpstreamError("OpenLigaDB", result);
     }
 
-    const { fixture, standing, url } = result;
-    return widgetPayload({ fixture, standing, url }, { isDraft, maxAge: WIDGET_MAX_AGE.schalke });
+    const { fixture, upcoming, standing, url } = result;
+    return widgetPayload(
+      { fixture, upcoming, standing, url },
+      { isDraft, maxAge: WIDGET_MAX_AGE.schalke },
+    );
   },
 );

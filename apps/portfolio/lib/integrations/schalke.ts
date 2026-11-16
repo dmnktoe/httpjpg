@@ -244,11 +244,10 @@ async function fetchFixture(match: OpenLigaMatch): Promise<SchalkeFixture | null
   if (!fixture) {
     return null;
   }
-  const [homeCrest, awayCrest] = await Promise.all([
-    pixelateCrest(match.team1?.teamIconUrl),
-    pixelateCrest(match.team2?.teamIconUrl),
-  ]);
-  return { ...fixture, homeCrest, awayCrest };
+  // Only the club's own crest is shown; it sits on Schalke's side of the score.
+  const isHome = match.team1?.teamId === TEAM_ID;
+  const crest = await pixelateCrest((isHome ? match.team1 : match.team2)?.teamIconUrl);
+  return { ...fixture, homeCrest: isHome ? crest : null, awayCrest: isHome ? null : crest };
 }
 
 async function fetchOpenLiga<T>(path: string): Promise<{ ok: true; data: T } | HttpFailure> {

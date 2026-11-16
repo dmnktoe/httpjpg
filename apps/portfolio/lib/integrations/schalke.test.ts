@@ -278,7 +278,7 @@ describe("fetchSchalkeStatus", () => {
     expect(urls).toContain("https://api.openligadb.de/getmatchdata/bl1/2026/9");
   });
 
-  it("attaches both pixelated crests to the fixture", async () => {
+  it("attaches only Schalke's pixelated crest to the fixture", async () => {
     const withIcons = match({
       team1: { ...HOFFENHEIM, teamIconUrl: "https://crests.test/tsg.png" },
       team2: { ...S04, teamIconUrl: "https://crests.test/s04.png" },
@@ -299,11 +299,12 @@ describe("fetchSchalkeStatus", () => {
 
     expect(result).toMatchObject({
       fixture: {
-        homeCrest: expect.stringMatching(/^data:image\/png;base64,/),
+        homeCrest: null,
         awayCrest: expect.stringMatching(/^data:image\/png;base64,/),
       },
     });
-    expect(safeFetch).toHaveBeenCalledTimes(2);
+    expect(safeFetch).toHaveBeenCalledTimes(1);
+    expect(safeFetch.mock.calls[0][0].href).toBe("https://crests.test/s04.png");
   });
 
   it("shows a cup tie as the fixture but ranks from the last league match", async () => {

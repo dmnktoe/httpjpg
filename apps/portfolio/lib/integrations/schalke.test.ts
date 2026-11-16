@@ -18,9 +18,12 @@ import {
   type OpenLigaMatch,
   type OpenLigaTableRow,
   parseFixture,
+  parseUpcoming,
   pixelateCrest,
+  prefersUpcoming,
   readStanding,
   recentMatches,
+  upcomingMatches,
 } from "./schalke";
 
 global.fetch = vi.fn() as MockedFunction<typeof fetch>;
@@ -82,6 +85,73 @@ describe("recentMatches", () => {
     const cup = match({ leagueShortcut: "dfb", matchDateTimeUTC: "2026-11-10T19:00:00Z" });
 
     expect(recentMatches([LAST, cup])).toEqual([cup, LAST]);
+  });
+});
+
+const NEXT = match({
+  matchDateTimeUTC: "2026-11-21T17:30:00Z",
+  matchIsFinished: false,
+  group: { groupOrderID: 10 },
+  team1: S04,
+  team2: KOELN,
+  matchResults: [],
+});
+
+describe("upcomingMatches", () => {
+  const now = Date.parse("2026-11-16T12:00:00Z");
+
+  it("keeps unfinished league and cup matches, soonest first", () => {
+    const later = { ...NEXT, matchDateTimeUTC: "2026-11-28T14:30:00Z" };
+    const cup = { ...NEXT, leagueShortcut: "dfb", matchDateTimeUTC: "2026-12-02T19:45:00Z" };
+
+    expect(upcomingMatches([cup, later, NEXT, LAST], now)).toEqual([NEXT, later, cup]);
+  });
+
+  it("drops the women's side", () => {
+    const women = { ...NEXT, leagueShortcut: "rlw-frauen", matchDateTimeUTC: "2026-11-17T12:00Z" };
+
+    expect(upcomingMatches([women, NEXT], now)).toEqual([NEXT]);
+  });
+
+  it("keeps a running match but drops one that was never marked finished", () => {
+    const running = { ...NEXT, matchDateTimeUTC: "2026-11-16T11:00:00Z" };
+    const stale = { ...NEXT, matchDateTimeUTC: "2026-11-16T08:00:00Z" };
+
+    expect(upcomingMatches([stale, running], now)).toEqual([running]);
+  });
+});
+
+describe("prefersUpcoming", () => {
+  it("keeps the result while it is the nearer match", () => {
+    expect(prefersUpcoming(LAST, NEXT, Date.parse("2026-11-14T00:00:00Z"))).toBe(false);
+  });
+
+  it("switches to the next match once it is nearer", () => {
+    expect(prefersUpcoming(LAST, NEXT, Date.parse("2026-11-16T00:00:00Z"))).toBe(true);
+  });
+
+  it("shows the next match when there is no result and the result when nothing is planned", () => {
+    const now = Date.parse("2026-11-09T00:00:00Z");
+
+    expect(prefersUpcoming(undefined, NEXT, now)).toBe(true);
+    expect(prefersUpcoming(LAST, undefined, now)).toBe(false);
+  });
+});
+
+describe("parseUpcoming", () => {
+  it("reads the pairing and the kickoff", () => {
+    expect(parseUpcoming(NEXT)).toEqual({
+      home: "S04",
+      away: "Köln",
+      homeCrest: null,
+      awayCrest: null,
+      competition: "bl1",
+      kickoff: "2026-11-21T17:30:00Z",
+    });
+  });
+
+  it("returns null without a kickoff time", () => {
+    expect(parseUpcoming({ ...NEXT, matchDateTimeUTC: undefined })).toBeNull();
   });
 });
 
@@ -273,7 +343,7 @@ describe("fetchSchalkeStatus", () => {
       url: "https://schalke04.de",
     });
     const urls = mockFetch.mock.calls.map(([url]) => url);
-    expect(urls[0]).toBe("https://api.openligadb.de/getmatchesbyteamid/9/8/0");
+    expect(urls[0]).toBe("https://api.openligadb.de/getmatchesbyteamid/9/8/4");
     expect(urls).toContain("https://api.openligadb.de/getbltable/bl1/2026");
     expect(urls).toContain("https://api.openligadb.de/getmatchdata/bl1/2026/9");
   });
@@ -305,6 +375,47 @@ describe("fetchSchalkeStatus", () => {
     });
     expect(safeFetch).toHaveBeenCalledTimes(1);
     expect(safeFetch.mock.calls[0][0].href).toBe("https://crests.test/s04.png");
+  });
+
+  it("swaps the result for the next match once that is nearer", async () => {
+    const withIcon = { ...NEXT, team1: { ...S04, teamIconUrl: "https://crests.test/s04.png" } };
+    const pixels = await sharp({
+      create: { width: 32, height: 32, channels: 4, background: { r: 0, g: 75, b: 160, alpha: 1 } },
+    })
+      .png()
+      .toBuffer();
+    safeFetch.mockResolvedValue({ ok: true });
+    readLimited.mockResolvedValue(pixels);
+    mockFetch
+      .mockResolvedValueOnce(jsonResponse([LAST, withIcon]))
+      .mockResolvedValueOnce(jsonResponse(TABLE))
+      .mockResolvedValueOnce(jsonResponse([LAST]));
+
+    const result = await fetchSchalkeStatus(Date.parse("2026-11-16T12:00:00Z"));
+
+    expect(result).toMatchObject({
+      ok: true,
+      fixture: null,
+      upcoming: {
+        home: "S04",
+        away: "Köln",
+        kickoff: "2026-11-21T17:30:00Z",
+        homeCrest: expect.stringMatching(/^data:image\/png;base64,/),
+        awayCrest: null,
+      },
+      standing: { position: 3 },
+    });
+  });
+
+  it("keeps the result while it is the nearer match", async () => {
+    mockFetch
+      .mockResolvedValueOnce(jsonResponse([LAST, NEXT]))
+      .mockResolvedValueOnce(jsonResponse(TABLE))
+      .mockResolvedValueOnce(jsonResponse([LAST]));
+
+    const result = await fetchSchalkeStatus(Date.parse("2026-11-10T12:00:00Z"));
+
+    expect(result).toMatchObject({ fixture: { home: "Hoffenheim" }, upcoming: null });
   });
 
   it("shows a cup tie as the fixture but ranks from the last league match", async () => {

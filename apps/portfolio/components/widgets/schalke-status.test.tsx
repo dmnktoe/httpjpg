@@ -1,5 +1,5 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { SchalkeStatus as SchalkeData } from "@/lib/integrations/schalke";
 
@@ -17,6 +17,7 @@ const STATUS: SchalkeData = {
     competition: "bl1",
     playedAt: "2026-11-08T18:30:00Z",
   },
+  upcoming: null,
   standing: {
     position: 17,
     previousPosition: 16,
@@ -28,7 +29,19 @@ const STATUS: SchalkeData = {
   url: "https://schalke04.de",
 };
 
-afterEach(cleanup);
+const UPCOMING = {
+  home: "S04",
+  away: "Stuttgart",
+  homeCrest: "data:image/png;base64,aG9tZQ==",
+  awayCrest: null,
+  competition: "bl1",
+  kickoff: "2026-11-21T17:30:00Z",
+};
+
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
 
 describe("SchalkeStatus", () => {
   it("holds a loading label until the data arrives", () => {
@@ -40,7 +53,10 @@ describe("SchalkeStatus", () => {
 
   it("collapses once loaded with nothing to show", () => {
     const { container } = render(
-      <SchalkeStatus status={{ fixture: null, standing: null, url: STATUS.url }} loaded />,
+      <SchalkeStatus
+        status={{ fixture: null, upcoming: null, standing: null, url: STATUS.url }}
+        loaded
+      />,
     );
 
     expect(container).toBeEmptyDOMElement();
@@ -81,6 +97,30 @@ describe("SchalkeStatus", () => {
 
     expect(screen.getByText("Hoffenheim 2:1 S04")).toBeInTheDocument();
     expect(document.querySelectorAll("img")).toHaveLength(1);
+  });
+
+  it("previews the next match with its weekday and Berlin kickoff time", () => {
+    vi.useFakeTimers({ now: new Date("2026-11-16T12:00:00Z") });
+    render(<SchalkeStatus status={{ ...STATUS, fixture: null, upcoming: UPCOMING }} loaded />);
+
+    expect(screen.getByText("S04 – Stuttgart")).toBeInTheDocument();
+    expect(screen.getByText("Sat 18:30")).toBeInTheDocument();
+    expect(document.querySelector(`img[src="${UPCOMING.homeCrest}"]`)).toBeInTheDocument();
+    expect(screen.getByText("17.")).toBeInTheDocument();
+  });
+
+  it("dates a kickoff more than a week out", () => {
+    vi.useFakeTimers({ now: new Date("2026-11-01T12:00:00Z") });
+    render(<SchalkeStatus status={{ ...STATUS, fixture: null, upcoming: UPCOMING }} loaded />);
+
+    expect(screen.getByText("21 Nov 18:30")).toBeInTheDocument();
+  });
+
+  it("marks a match that has kicked off as live", () => {
+    vi.useFakeTimers({ now: new Date("2026-11-21T18:00:00Z") });
+    render(<SchalkeStatus status={{ ...STATUS, fixture: null, upcoming: UPCOMING }} loaded />);
+
+    expect(screen.getByText("live")).toBeInTheDocument();
   });
 
   it("shows the position alone when there is no recent fixture", () => {

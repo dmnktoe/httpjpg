@@ -78,6 +78,7 @@ beforeEach(() => {
   fetchSchalkeStatus.mockResolvedValue({
     ok: true,
     fixture: null,
+    upcoming: null,
     standing: { position: 17 },
     url: "https://schalke04.de",
   });
@@ -97,7 +98,12 @@ describe("getWidgetStatus", () => {
       discogs: { releases: [{ title: "Endtroducing" }] },
       x: { profile: {}, posts: [] },
       trophies: { trophies: [{ name: "Platinum" }], avatar: null },
-      schalke: { fixture: null, standing: { position: 17 }, url: "https://schalke04.de" },
+      schalke: {
+        fixture: null,
+        upcoming: null,
+        standing: { position: 17 },
+        url: "https://schalke04.de",
+      },
     });
   });
 

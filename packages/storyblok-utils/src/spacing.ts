@@ -25,8 +25,10 @@ export function spacingValue(key?: string): string | undefined {
   return unsigned === "0" ? undefined : `-${value}`;
 }
 
-/** Datasource / select label: `"-4 (-1rem)"`. Unknown keys stay bare. */
+/** Datasource / select label: `"−4 (−1rem)"`. Unknown keys stay bare. */
 export function spacingLabel(key: string): string {
   const value = spacingValue(key);
-  return value ? `${key} (${value})` : key;
+  return value ? `${key} (${value})`.replace(/-/g, MINUS) : key;
 }
+
+const MINUS = "\u2212";

@@ -18,6 +18,14 @@ describe("allDatasources", () => {
     }
   });
 
+  it("never starts an entry name with a character Storyblok rejects", () => {
+    for (const ds of allDatasources()) {
+      for (const entry of ds.entries) {
+        expect(entry.name).not.toMatch(/^[-=@]/);
+      }
+    }
+  });
+
   it("keeps the spacing scale ascending", () => {
     const spacing = allDatasources().find((d) => d.datasource.slug === "spacing-options");
     const values = spacing?.entries.map((entry) => Number(entry.value)) ?? [];
@@ -36,7 +44,7 @@ describe("allDatasources", () => {
     expect(negatives[0]).toBe(-1);
     expect(negatives.at(-1)).toBe(-96);
     expect(negatives).toEqual(negatives.toSorted((a, b) => b - a));
-    expect(margin?.entries).toContainEqual({ name: "-4 (-1rem)", value: "-4" });
+    expect(margin?.entries).toContainEqual({ name: "\u22124 (\u22121rem)", value: "-4" });
     expect(margin?.entries.some((entry) => entry.value === "-0")).toBe(false);
   });
 });

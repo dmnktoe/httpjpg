@@ -25,7 +25,7 @@ describe("spacingValue", () => {
 describe("spacingLabel", () => {
   it("appends the CSS length", () => {
     expect(spacingLabel("4")).toBe("4 (1rem)");
-    expect(spacingLabel("-4")).toBe("-4 (-1rem)");
+    expect(spacingLabel("-4")).toBe("\u22124 (\u22121rem)");
   });
 
   it("keeps unknown keys bare", () => {

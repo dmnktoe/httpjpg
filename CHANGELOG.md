@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.14.1](https://github.com/dmnktoe/httpjpg/compare/v2.14.0...v2.14.1) (2026-11-16)
+
+
+### Fixed
+
+* **storyblok-utils:** label negative margins with U+2212 for Storyblok ([#558](https://github.com/dmnktoe/httpjpg/issues/558)) ([2f47b0f](https://github.com/dmnktoe/httpjpg/commit/2f47b0f6f98fb7cb3eada7034d247d08ae8c0139))
+
+
+### Dependencies
+
+* lock file maintenance ([#559](https://github.com/dmnktoe/httpjpg/issues/559)) ([6e18cb5](https://github.com/dmnktoe/httpjpg/commit/6e18cb52d9a673e236f6697595fb949a4157b89e))
+
 ## [2.14.0](https://github.com/dmnktoe/httpjpg/compare/v2.13.1...v2.14.0) (2026-11-15)
 
 

@@ -10,7 +10,9 @@
   "assignees": ["dmnktoe"],
   "reviewers": ["dmnktoe"],
   "labels": ["dependencies"],
-  "dependencyDashboard": false,
+  "dependencyDashboard": {
+    "enabled": false
+  },
   "vulnerabilityAlerts": { "labels": ["security"] },
   "packageRules": [
     {

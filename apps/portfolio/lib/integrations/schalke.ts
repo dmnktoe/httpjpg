@@ -97,10 +97,6 @@ const CREST_SIZE = 16;
 const CREST_TIMEOUT_MS = 5000;
 const MAX_CREST_BYTES = 4 * 1024 * 1024;
 
-const WIKIMEDIA_HOST = "upload.wikimedia.org";
-const WIKIMEDIA_SVG = /^\/wikipedia\/([^/]+)\/([0-9a-f]\/[0-9a-f]{2})\/([^/]+\.svg)$/i;
-const CREST_THUMB_WIDTH = 120;
-
 function teamLabel(team: OpenLigaTeam | undefined): string {
   return team?.shortName || team?.teamName || "?";
 }
@@ -311,27 +307,10 @@ async function withCrests<T extends { homeCrest: string | null; awayCrest: strin
     return null;
   }
   const [homeCrest, awayCrest] = await Promise.all([
-    readCrest(match.team1?.teamIconUrl),
-    readCrest(match.team2?.teamIconUrl),
+    pixelateCrest(match.team1?.teamIconUrl),
+    pixelateCrest(match.team2?.teamIconUrl),
   ]);
   return { ...line, homeCrest, awayCrest };
-}
-
-async function readCrest(iconUrl: string | undefined): Promise<string | null> {
-  return (await pixelateCrest(iconUrl)) ?? crestUrl(iconUrl);
-}
-
-export function crestUrl(iconUrl: string | undefined): string | null {
-  const url = iconUrl ? isHttpUrl(iconUrl) : null;
-  if (!url || url.protocol !== "https:") {
-    return null;
-  }
-  const svg = url.hostname === WIKIMEDIA_HOST ? WIKIMEDIA_SVG.exec(url.pathname) : null;
-  if (svg) {
-    const [, project, hash, file] = svg;
-    return `https://${WIKIMEDIA_HOST}/wikipedia/${project}/thumb/${hash}/${file}/${CREST_THUMB_WIDTH}px-${file}.png`;
-  }
-  return url.href;
 }
 
 async function fetchOpenLiga<T>(path: string): Promise<{ ok: true; data: T } | HttpFailure> {

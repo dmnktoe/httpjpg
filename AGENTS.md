@@ -9,7 +9,7 @@ When generating or updating code: read neighboring files first, prefer the exist
 ## Stack
 
 - **TypeScript** — strict mode, `interface` for object shapes, no `enum`
-- **Node.js** ≥ 22.12 (pinned via `.nvmrc` to 24.22.1), ESM-only (`"type": "module"` in every workspace package; the private root `package.json` does not declare it)
+- **Node.js** ≥ 22.12 (pinned via `.nvmrc` to 26.13.1), ESM-only (`"type": "module"` in every workspace package except `@httpjpg/env`, whose `load-env.js` is CommonJS; the private root `package.json` does not declare it)
 - **Next.js 16.4** App Router + **Cache Components** (`cacheComponents` + `partialPrefetching`) — Server Components by default, route handlers in `app/api/*`
 - **React 19** — functional components only
 - **Panda CSS** (zero-runtime) — `css({})` / `cx()` / token-aware patterns; tokens from `@httpjpg/tokens`
@@ -86,9 +86,9 @@ storyblok-utils ← storyblok-api    storyblok-richtext ← storyblok-ui
 
 - Only portfolio aliases `@/*` → `apps/portfolio/*`. Elsewhere import `@httpjpg/<name>`, never relative into another package.
 - Leaves: `tokens`, `env` (no workspace deps).
-- `storyblok-utils` → `tokens` only · `storyblok-api` → `env` · `storyblok-next` → `storyblok-api` (Next apps only)
+- `ui` → `tokens` · `storyblok-richtext` → `ui` · `storyblok-utils` → `tokens` only · `storyblok-api` → `env` · `storyblok-next` → `storyblok-api` (Next apps only)
 - `storyblok-ui` → `ui`, `consent`, `analytics`, `storyblok-richtext`, `storyblok-utils` (bloks may call `track*`; `ui` stays analytics-free)
-- `consent` → `ui` · `analytics` / `observability` → `env` · `terminal` → `tokens` · CLIs (`credentials`, `storyblok-sync`) → `terminal`
+- `consent` → `ui` · `analytics` / `observability` → `env` · `terminal` → `tokens` · CLIs (`credentials`, `storyblok-sync`) → `terminal`; `storyblok-sync` also reads `storyblok-utils` + `tokens`
 - `now-playing` → `spotify`, `tokens` + peer `@httpjpg/ui` (`ui` must not import back)
 - Apps may import anything
 

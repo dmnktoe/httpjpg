@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.15.0](https://github.com/dmnktoe/httpjpg/compare/v2.14.1...v2.15.0) (2026-11-17)
+
+
+### Added
+
+* **portfolio:** bring back the opponent crest in the s04 line ([#571](https://github.com/dmnktoe/httpjpg/issues/571)) ([b084d71](https://github.com/dmnktoe/httpjpg/commit/b084d7136329ad9205ca95f843977cdb9ec25f4c))
+* **portfolio:** preview the next Schalke match in the s04 status line ([#564](https://github.com/dmnktoe/httpjpg/issues/564)) ([810b053](https://github.com/dmnktoe/httpjpg/commit/810b053cd24f27f69148e7169739a86f01b49d05))
+
+
+### Fixed
+
+* **storyblok-utils:** store negative margins with U+2212 in Storyblok ([#563](https://github.com/dmnktoe/httpjpg/issues/563)) ([6b1e431](https://github.com/dmnktoe/httpjpg/commit/6b1e431cc80eff07b20739529028db9d53f217a6))
+
+
+### Changed
+
+* **ui:** fade the footer background on dark pages ([#570](https://github.com/dmnktoe/httpjpg/issues/570)) ([462dc8b](https://github.com/dmnktoe/httpjpg/commit/462dc8b6ed664302db843678f5b38e304b8308b1))
+* weekly cleanup for og route split, workspace manifests, and agents doc drift ([#569](https://github.com/dmnktoe/httpjpg/issues/569)) ([a655804](https://github.com/dmnktoe/httpjpg/commit/a6558046a48e1c619cbb0d09e7964940599d26f1))
+
+
+### Dependencies
+
+* update chromaui/action digest to 6efa19d ([#568](https://github.com/dmnktoe/httpjpg/issues/568)) ([da931ef](https://github.com/dmnktoe/httpjpg/commit/da931ef1cf4e53dfd3a1864aa269741307e715ba))
+* update dependency jsdom to ^31.0.1 ([#562](https://github.com/dmnktoe/httpjpg/issues/562)) ([15fb9ff](https://github.com/dmnktoe/httpjpg/commit/15fb9ff55c6e23bb9ae769e67f16909ba81d410b))
+* update dev dependencies ([#566](https://github.com/dmnktoe/httpjpg/issues/566)) ([520b00a](https://github.com/dmnktoe/httpjpg/commit/520b00a8fbf40a7d0d2b1c73d362c7867e63b635))
+* update pnpm to v11.28.12 ([#544](https://github.com/dmnktoe/httpjpg/issues/544)) ([85c050e](https://github.com/dmnktoe/httpjpg/commit/85c050ed42320b3f78a6cb5bfa5a62a2f9af8f74))
+
 ## [2.14.1](https://github.com/dmnktoe/httpjpg/compare/v2.14.0...v2.14.1) (2026-11-16)
 
 

@@ -79,7 +79,8 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
         {...props}
       >
         {backgroundImage && (
-          // Its own layer so the artwork can be faded without fading the text.
+          // Its own layer so the artwork can be faded without fading the text: it is
+          // tuned for white, and on a dark page its light strokes glare.
           <Box
             aria-hidden="true"
             style={{ backgroundImage: `url(${backgroundImage})` }}
@@ -87,10 +88,10 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
               position: "absolute",
               inset: "0",
               zIndex: "-1",
-              opacity: 0.5,
               bgSize: "cover",
               bgPosition: "center",
               pointerEvents: "none",
+              _pageDark: { opacity: 0.5 },
             }}
           />
         )}

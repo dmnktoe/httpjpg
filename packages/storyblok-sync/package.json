@@ -19,7 +19,7 @@
     "codegen": "tsx scripts/codegen-types.ts",
     "cleanup:groups": "tsx scripts/cleanup-duplicate-groups.ts",
     "lint": "oxlint",
-    "format": "oxfmt",
+    "lint:fix": "oxlint --fix",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

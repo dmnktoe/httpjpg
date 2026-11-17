@@ -54,6 +54,31 @@ describe("GET /llms.txt", () => {
     expect(body).toContain("- [Sitemap](https://httpjpg.test/sitemap.xml)");
   });
 
+  it("falls back through seo title and base url and skips empty sections", async () => {
+    getSiteConfig.mockResolvedValueOnce({ name: "" });
+    getSeoDefaults.mockResolvedValueOnce({ title: "SEO Title" });
+    getAuthor.mockResolvedValueOnce({ name: "Domenik" });
+    getSearchIndex.mockResolvedValueOnce([
+      { kind: "work", href: "https://elsewhere.test/x", title: "Ext", tags: [], excerpt: "" },
+      { kind: "work", href: "/work/undated", title: "Undated", tags: [], excerpt: "" },
+    ]);
+
+    const body = await (await GET()).text();
+
+    expect(body.startsWith("# SEO Title\n\nPortfolio of Domenik.\n")).toBe(true);
+    expect(body).toContain("- [Ext](https://elsewhere.test/x)\n");
+    expect(body).not.toContain("## Pages");
+
+    getSiteConfig.mockResolvedValueOnce({ name: "" });
+    getSeoDefaults.mockResolvedValueOnce({});
+    getAuthor.mockResolvedValueOnce(null);
+    getSearchIndex.mockResolvedValueOnce([]);
+
+    const bare = await (await GET()).text();
+
+    expect(bare.startsWith("# https://httpjpg.test\n\n## Optional")).toBe(true);
+  });
+
   it("503s and reports when the index is unavailable", async () => {
     getSearchIndex.mockRejectedValueOnce(new Error("down"));
 

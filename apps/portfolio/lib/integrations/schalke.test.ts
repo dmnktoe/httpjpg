@@ -19,6 +19,7 @@ import {
   type OpenLigaTableRow,
   parseFixture,
   parseUpcoming,
+  crestUrl,
   pixelateCrest,
   prefersUpcoming,
   readStanding,
@@ -195,6 +196,34 @@ describe("parseFixture", () => {
   });
 });
 
+describe("crestUrl", () => {
+  it("keeps an https icon as it is", () => {
+    expect(crestUrl("https://i.imgur.com/v0tkpNx.png")).toBe("https://i.imgur.com/v0tkpNx.png");
+  });
+
+  it("points a Wikimedia SVG at its rendered PNG", () => {
+    expect(
+      crestUrl(
+        "https://upload.wikimedia.org/wikipedia/commons/0/01/1._FC_Koeln_Logo_2014%E2%80%93.svg",
+      ),
+    ).toBe(
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/1._FC_Koeln_Logo_2014%E2%80%93.svg/120px-1._FC_Koeln_Logo_2014%E2%80%93.svg.png",
+    );
+  });
+
+  it("leaves a Wikimedia thumbnail alone", () => {
+    const thumb =
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Borussia_Dortmund_logo.svg/960px-Borussia_Dortmund_logo.svg.png";
+    expect(crestUrl(thumb)).toBe(thumb);
+  });
+
+  it("drops a missing, plain-http or non-web icon", () => {
+    expect(crestUrl(undefined)).toBeNull();
+    expect(crestUrl("http://crests.test/s04.png")).toBeNull();
+    expect(crestUrl("file:///etc/passwd")).toBeNull();
+  });
+});
+
 describe("pixelateCrest", () => {
   const CREST_URL = "https://crests.test/s04.png";
 
@@ -348,7 +377,7 @@ describe("fetchSchalkeStatus", () => {
     expect(urls).toContain("https://api.openligadb.de/getmatchdata/bl1/2026/9");
   });
 
-  it("attaches only Schalke's pixelated crest to the fixture", async () => {
+  it("attaches both pixelated crests to the fixture", async () => {
     const withIcons = match({
       team1: { ...HOFFENHEIM, teamIconUrl: "https://crests.test/tsg.png" },
       team2: { ...S04, teamIconUrl: "https://crests.test/s04.png" },
@@ -369,12 +398,32 @@ describe("fetchSchalkeStatus", () => {
 
     expect(result).toMatchObject({
       fixture: {
-        homeCrest: null,
+        homeCrest: expect.stringMatching(/^data:image\/png;base64,/),
         awayCrest: expect.stringMatching(/^data:image\/png;base64,/),
       },
     });
-    expect(safeFetch).toHaveBeenCalledTimes(1);
-    expect(safeFetch.mock.calls[0][0].href).toBe("https://crests.test/s04.png");
+    expect(safeFetch.mock.calls.map(([url]) => url.href).sort()).toEqual([
+      "https://crests.test/s04.png",
+      "https://crests.test/tsg.png",
+    ]);
+  });
+
+  it("hands over the crest's own address when the server cannot fetch it", async () => {
+    const withIcons = match({
+      team1: { ...HOFFENHEIM, teamIconUrl: "https://crests.test/tsg.png" },
+      team2: { ...S04, teamIconUrl: "http://crests.test/s04.png" },
+    });
+    safeFetch.mockResolvedValue({ ok: false });
+    mockFetch
+      .mockResolvedValueOnce(jsonResponse([withIcons]))
+      .mockResolvedValueOnce(jsonResponse(TABLE))
+      .mockResolvedValueOnce(jsonResponse([withIcons]));
+
+    const result = await fetchSchalkeStatus();
+
+    expect(result).toMatchObject({
+      fixture: { homeCrest: "https://crests.test/tsg.png", awayCrest: null },
+    });
   });
 
   it("swaps the result for the next match once that is nearer", async () => {

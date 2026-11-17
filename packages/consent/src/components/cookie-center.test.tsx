@@ -97,4 +97,15 @@ describe("CookieCenter", () => {
 
     expect((screen.getAllByRole("checkbox")[MEDIA_INDEX] as HTMLInputElement).checked).toBe(true);
   });
+
+  it("expands and collapses a category's vendor list", () => {
+    render(<CookieCenter />);
+    const [toggle] = screen.getAllByRole("button", { name: "▶" });
+
+    fireEvent.click(toggle);
+    expect(screen.getByRole("button", { name: "▼" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "▼" }));
+    expect(screen.queryByRole("button", { name: "▼" })).toBeNull();
+  });
 });

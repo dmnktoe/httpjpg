@@ -99,6 +99,14 @@ describe("SchalkeStatus", () => {
     expect(document.querySelectorAll("img")).toHaveLength(1);
   });
 
+  it("never draws a remote crest at full size", () => {
+    const upcoming = { ...UPCOMING, awayCrest: "https://i.imgur.com/v0tkpNx.png" };
+    render(<SchalkeStatus status={{ ...STATUS, fixture: null, upcoming }} loaded />);
+
+    expect(document.querySelector(`img[src="${upcoming.awayCrest}"]`)).not.toBeInTheDocument();
+    expect(document.querySelector(`img[src="${UPCOMING.homeCrest}"]`)).toBeInTheDocument();
+  });
+
   it("previews the next match with its weekday and Berlin kickoff time", () => {
     vi.useFakeTimers({ now: new Date("2026-11-16T12:00:00Z") });
     render(<SchalkeStatus status={{ ...STATUS, fixture: null, upcoming: UPCOMING }} loaded />);

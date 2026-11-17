@@ -13,6 +13,7 @@ import type {
   SchalkeStatus as SchalkeData,
   SchalkeUpcoming,
 } from "@/lib/integrations/schalke";
+import { usePixelCrest } from "@/lib/use-pixel-crest";
 
 export interface SchalkeStatusProps {
   status: SchalkeData | null;
@@ -24,6 +25,8 @@ export function SchalkeStatus({ status, loaded }: SchalkeStatusProps) {
   const upcoming = status?.upcoming ?? null;
   const standing = status?.standing ?? null;
   const match = fixture ?? upcoming;
+  const homeCrest = usePixelCrest(match?.homeCrest ?? null);
+  const awayCrest = usePixelCrest(match?.awayCrest ?? null);
 
   if (!status || (!match && !standing)) {
     return loaded ? null : <FooterStatusLine label="s04" loading />;
@@ -49,9 +52,9 @@ export function SchalkeStatus({ status, loaded }: SchalkeStatusProps) {
     >
       {match && (
         <>
-          {match.homeCrest && (
+          {homeCrest && (
             <FooterStatusLineThumb
-              src={match.homeCrest}
+              src={homeCrest}
               size="4"
               shape="square"
               fit="contain"
@@ -59,9 +62,9 @@ export function SchalkeStatus({ status, loaded }: SchalkeStatusProps) {
             />
           )}
           <FooterStatusLineText>{score}</FooterStatusLineText>
-          {match.awayCrest && (
+          {awayCrest && (
             <FooterStatusLineThumb
-              src={match.awayCrest}
+              src={awayCrest}
               size="4"
               shape="square"
               fit="contain"

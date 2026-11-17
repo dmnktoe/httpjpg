@@ -12,7 +12,7 @@
   },
   "scripts": {
     "lint": "oxlint",
-    "format": "oxfmt",
+    "lint:fix": "oxlint --fix",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

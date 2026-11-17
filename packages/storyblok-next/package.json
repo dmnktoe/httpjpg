@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Cache Components layer for @httpjpg/storyblok-api: cached story reads, cms cache life, tags and webhook expiry",
+  "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
@@ -12,7 +13,6 @@
   "scripts": {
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "format": "oxfmt",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

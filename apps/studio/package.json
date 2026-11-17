@@ -1,6 +1,6 @@
 {
   "name": "@httpjpg/studio",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "start": "next start -p 3001",
     "type-check": "tsc --noEmit",
     "lint": "oxlint",
-    "format": "oxfmt"
+    "lint:fix": "oxlint --fix"
   },
   "dependencies": {
     "@httpjpg/env": "workspace:*",

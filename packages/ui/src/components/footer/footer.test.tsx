@@ -101,7 +101,7 @@ describe("Footer", () => {
   });
 
   it("paints a background, marks external links, and links the cookie policy", () => {
-    render(
+    const { container } = render(
       <Footer
         backgroundImage="/bg.jpg"
         showCookieSettings
@@ -114,5 +114,10 @@ describe("Footer", () => {
       "href",
       "/cookie-policy",
     );
+
+    const footer = container.querySelector("footer");
+    const background = footer?.querySelector<HTMLElement>(':scope > [aria-hidden="true"]');
+    expect(footer?.style.backgroundImage).toBe("");
+    expect(background?.style.backgroundImage).toBe('url("/bg.jpg")');
   });
 });

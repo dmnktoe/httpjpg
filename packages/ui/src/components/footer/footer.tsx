@@ -68,16 +68,9 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
       <Box
         as="footer"
         ref={ref}
-        style={{
-          ...(backgroundImage
-            ? {
-                backgroundImage: `url(${backgroundImage})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }
-            : {}),
-        }}
         css={{
+          position: "relative",
+          isolation: "isolate",
           py: 64,
           textAlign: "center",
           w: "full",
@@ -85,6 +78,22 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
         }}
         {...props}
       >
+        {backgroundImage && (
+          // Its own layer so the artwork can be faded without fading the text.
+          <Box
+            aria-hidden="true"
+            style={{ backgroundImage: `url(${backgroundImage})` }}
+            css={{
+              position: "absolute",
+              inset: "0",
+              zIndex: "-1",
+              opacity: 0.5,
+              bgSize: "cover",
+              bgPosition: "center",
+              pointerEvents: "none",
+            }}
+          />
+        )}
         <Box css={{ w: "100%", mx: "auto", px: "4", fontSize: "sm" }}>
           {children ? (
             children

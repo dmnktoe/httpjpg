@@ -97,6 +97,10 @@ const CREST_SIZE = 16;
 const CREST_TIMEOUT_MS = 5000;
 const MAX_CREST_BYTES = 4 * 1024 * 1024;
 
+const WIKIMEDIA_HOST = "upload.wikimedia.org";
+const WIKIMEDIA_SVG = /^\/wikipedia\/([^/]+)\/([0-9a-f]\/[0-9a-f]{2})\/([^/]+\.svg)$/i;
+const CREST_THUMB_WIDTH = 120;
+
 function teamLabel(team: OpenLigaTeam | undefined): string {
   return team?.shortName || team?.teamName || "?";
 }
@@ -299,16 +303,35 @@ export function parseUpcoming(match: OpenLigaMatch): SchalkeUpcoming | null {
   };
 }
 
-async function withOwnCrest<T extends { homeCrest: string | null; awayCrest: string | null }>(
+async function withCrests<T extends { homeCrest: string | null; awayCrest: string | null }>(
   match: OpenLigaMatch,
   line: T | null,
 ): Promise<T | null> {
   if (!line) {
     return null;
   }
-  const isHome = match.team1?.teamId === TEAM_ID;
-  const crest = await pixelateCrest((isHome ? match.team1 : match.team2)?.teamIconUrl);
-  return { ...line, homeCrest: isHome ? crest : null, awayCrest: isHome ? null : crest };
+  const [homeCrest, awayCrest] = await Promise.all([
+    readCrest(match.team1?.teamIconUrl),
+    readCrest(match.team2?.teamIconUrl),
+  ]);
+  return { ...line, homeCrest, awayCrest };
+}
+
+async function readCrest(iconUrl: string | undefined): Promise<string | null> {
+  return (await pixelateCrest(iconUrl)) ?? crestUrl(iconUrl);
+}
+
+export function crestUrl(iconUrl: string | undefined): string | null {
+  const url = iconUrl ? isHttpUrl(iconUrl) : null;
+  if (!url || url.protocol !== "https:") {
+    return null;
+  }
+  const svg = url.hostname === WIKIMEDIA_HOST ? WIKIMEDIA_SVG.exec(url.pathname) : null;
+  if (svg) {
+    const [, project, hash, file] = svg;
+    return `https://${WIKIMEDIA_HOST}/wikipedia/${project}/thumb/${hash}/${file}/${CREST_THUMB_WIDTH}px-${file}.png`;
+  }
+  return url.href;
 }
 
 async function fetchOpenLiga<T>(path: string): Promise<{ ok: true; data: T } | HttpFailure> {
@@ -355,8 +378,8 @@ export async function fetchSchalkeStatus(now = Date.now()): Promise<SchalkeFetch
   const lastLeagueMatch = recent.find((match) => LEAGUES.includes(match.leagueShortcut ?? ""));
 
   const [fixture, upcoming, standing] = await Promise.all([
-    !showNext && recent[0] ? withOwnCrest(recent[0], parseFixture(recent[0])) : null,
-    showNext && next ? withOwnCrest(next, parseUpcoming(next)) : null,
+    !showNext && recent[0] ? withCrests(recent[0], parseFixture(recent[0])) : null,
+    showNext && next ? withCrests(next, parseUpcoming(next)) : null,
     lastLeagueMatch ? fetchStanding(lastLeagueMatch) : null,
   ]);
 

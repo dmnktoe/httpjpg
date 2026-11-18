@@ -19,7 +19,6 @@ import {
   type OpenLigaTableRow,
   parseFixture,
   parseUpcoming,
-  crestUrl,
   pixelateCrest,
   prefersUpcoming,
   readStanding,
@@ -193,34 +192,6 @@ describe("parseFixture", () => {
 
   it("returns null without a result", () => {
     expect(parseFixture(match({ matchResults: [] }))).toBeNull();
-  });
-});
-
-describe("crestUrl", () => {
-  it("keeps an https icon as it is", () => {
-    expect(crestUrl("https://i.imgur.com/v0tkpNx.png")).toBe("https://i.imgur.com/v0tkpNx.png");
-  });
-
-  it("points a Wikimedia SVG at its rendered PNG", () => {
-    expect(
-      crestUrl(
-        "https://upload.wikimedia.org/wikipedia/commons/0/01/1._FC_Koeln_Logo_2014%E2%80%93.svg",
-      ),
-    ).toBe(
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/1._FC_Koeln_Logo_2014%E2%80%93.svg/120px-1._FC_Koeln_Logo_2014%E2%80%93.svg.png",
-    );
-  });
-
-  it("leaves a Wikimedia thumbnail alone", () => {
-    const thumb =
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Borussia_Dortmund_logo.svg/960px-Borussia_Dortmund_logo.svg.png";
-    expect(crestUrl(thumb)).toBe(thumb);
-  });
-
-  it("drops a missing, plain-http or non-web icon", () => {
-    expect(crestUrl(undefined)).toBeNull();
-    expect(crestUrl("http://crests.test/s04.png")).toBeNull();
-    expect(crestUrl("file:///etc/passwd")).toBeNull();
   });
 });
 
@@ -408,7 +379,7 @@ describe("fetchSchalkeStatus", () => {
     ]);
   });
 
-  it("hands over the crest's own address when the server cannot fetch it", async () => {
+  it("leaves a crest out when the server cannot fetch it", async () => {
     const withIcons = match({
       team1: { ...HOFFENHEIM, teamIconUrl: "https://crests.test/tsg.png" },
       team2: { ...S04, teamIconUrl: "http://crests.test/s04.png" },
@@ -422,7 +393,7 @@ describe("fetchSchalkeStatus", () => {
     const result = await fetchSchalkeStatus();
 
     expect(result).toMatchObject({
-      fixture: { homeCrest: "https://crests.test/tsg.png", awayCrest: null },
+      fixture: { homeCrest: null, awayCrest: null },
     });
   });
 

@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.15.1](https://github.com/dmnktoe/httpjpg/compare/v2.15.0...v2.15.1) (2026-11-18)
+
+
+### Fixed
+
+* **portfolio:** show only the crests the server could pixelate ([#573](https://github.com/dmnktoe/httpjpg/issues/573)) ([13cd809](https://github.com/dmnktoe/httpjpg/commit/13cd8097ce00c967873b192b173e1e84d031e535))
+
+
+### Dependencies
+
+* lock file maintenance ([#561](https://github.com/dmnktoe/httpjpg/issues/561)) ([249b5d0](https://github.com/dmnktoe/httpjpg/commit/249b5d0fd5284fd78a4ecb1a47245bacb78a7166))
+* update chromaui/action digest to 86505fc ([#574](https://github.com/dmnktoe/httpjpg/issues/574)) ([5dd1025](https://github.com/dmnktoe/httpjpg/commit/5dd1025b252aabb368d4fc10da03eecb7744ba7b))
+
 ## [2.15.0](https://github.com/dmnktoe/httpjpg/compare/v2.14.1...v2.15.0) (2026-11-17)
 
 

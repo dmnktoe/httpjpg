@@ -31,7 +31,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "chromatic": "^18.14.4",
+    "chromatic": "^18.14.6",
     "motion": "catalog:",
     "storybook": "^10.6.7",
     "typescript": "catalog:",

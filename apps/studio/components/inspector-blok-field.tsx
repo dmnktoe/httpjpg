@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { css } from "styled-system/css";
 
-import { AssetPicker, StoryPicker } from "./asset-picker";
+import { AssetPicker } from "./asset-picker";
 import { fieldCss, fieldInline, labelCss } from "./inspector-field-css";
 import { SelectField } from "./inspector-select-field";
 import type { FieldDef } from "./lib";
+import { StoryPicker } from "./story-picker";
 
 interface BlokFieldProps {
   field: FieldDef;

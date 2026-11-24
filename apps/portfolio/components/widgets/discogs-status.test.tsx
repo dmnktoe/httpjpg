@@ -1,5 +1,11 @@
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("@httpjpg/analytics", () => ({
+  trackOutboundClick: vi.fn(),
+}));
+
+import { trackOutboundClick } from "@httpjpg/analytics";
 
 import type { DiscogsRelease } from "@/lib/integrations/discogs";
 
@@ -54,5 +60,15 @@ describe("DiscogsStatus", () => {
     expect(screen.getByText("DJ Shadow — Endtroducing.....")).toBeInTheDocument();
     expect(screen.queryByText("1996")).not.toBeInTheDocument();
     expect(screen.queryByText("Vinyl LP")).not.toBeInTheDocument();
+  });
+
+  it("tracks the outbound click", () => {
+    render(<DiscogsStatus release={release} loaded />);
+
+    fireEvent.click(screen.getByRole("link"));
+
+    expect(trackOutboundClick).toHaveBeenCalledWith(
+      expect.objectContaining({ destination: "discogs", href: release.url }),
+    );
   });
 });

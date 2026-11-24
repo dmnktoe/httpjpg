@@ -1,5 +1,11 @@
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("@httpjpg/analytics", () => ({
+  trackOutboundClick: vi.fn(),
+}));
+
+import { trackOutboundClick } from "@httpjpg/analytics";
 
 import type { PsnTrophy } from "@/lib/integrations/psn-trophies";
 
@@ -69,5 +75,15 @@ describe("TrophyStatus", () => {
 
     expect(document.querySelector(`img[src="${AVATAR}"]`)).not.toBeInTheDocument();
     expect(screen.getByText(trophyA.name)).toBeInTheDocument();
+  });
+
+  it("tracks the outbound click", () => {
+    render(<TrophyStatus trophy={trophyA} avatar={AVATAR} loaded />);
+
+    fireEvent.click(screen.getByRole("link"));
+
+    expect(trackOutboundClick).toHaveBeenCalledWith(
+      expect.objectContaining({ destination: "psn", href: trophyA.url }),
+    );
   });
 });

@@ -262,11 +262,9 @@ function FooterStatusMore({ count, children }: FooterStatusMoreProps) {
 
   return (
     <>
-      {isExpanded && (
-        <div id={panelId} className={panelClass}>
-          {children}
-        </div>
-      )}
+      <div id={panelId} hidden={!isExpanded} className={panelClass}>
+        {children}
+      </div>
       <button
         type="button"
         aria-expanded={isExpanded}
@@ -286,7 +284,7 @@ const toggleClass = css({
   minHeight: "5",
   px: "0",
   color: "inherit",
-  opacity: 0.5,
+  opacity: 50,
   fontFamily: "mono",
   fontSize: "xs",
   bg: "transparent",
@@ -294,6 +292,6 @@ const toggleClass = css({
   transitionProperty: "opacity",
   transitionDuration: "fast",
   cursor: "pointer",
-  _hover: { opacity: 0.8 },
+  _hover: { opacity: 80 },
   _focusVisible: { outline: "2px solid", outlineColor: "primary.500", outlineOffset: "2px" },
 });

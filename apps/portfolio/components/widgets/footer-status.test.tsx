@@ -249,22 +249,23 @@ describe("FooterStatus", () => {
     await waitFor(() => expect(screen.getByText("Teardrop")).toBeInTheDocument());
     expect(screen.getByText("Stalker")).toBeInTheDocument();
     expect(screen.getByText("DJ Shadow — Endtroducing.....")).toBeInTheDocument();
-    expect(screen.queryByText("Hello world")).not.toBeInTheDocument();
-    expect(screen.queryByText("Power Couple")).not.toBeInTheDocument();
+    expect(screen.getByText("Hello world")).not.toBeVisible();
+    expect(screen.getByText("Power Couple")).not.toBeVisible();
 
     const toggle = screen.getByRole("button", { name: "[ + 2 more ]" });
     expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(document.getElementById(toggle.getAttribute("aria-controls") ?? "")).not.toBeNull();
 
     fireEvent.click(toggle);
 
-    expect(screen.getByText("Hello world")).toBeInTheDocument();
-    expect(screen.getByText("Power Couple")).toBeInTheDocument();
+    expect(screen.getByText("Hello world")).toBeVisible();
+    expect(screen.getByText("Power Couple")).toBeVisible();
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     expect(toggle).toHaveTextContent("[ − less ]");
 
     fireEvent.click(toggle);
 
-    expect(screen.queryByText("Hello world")).not.toBeInTheDocument();
+    expect(screen.getByText("Hello world")).not.toBeVisible();
   });
 
   it("leaves empty sources out of the visible few and the tally", async () => {

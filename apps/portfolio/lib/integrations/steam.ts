@@ -1,5 +1,5 @@
 import { fetchWithTimeout, readJson } from "./http";
-import { PIXEL_GRID, pixelateEach } from "./pixelate";
+import { PIXEL_GRID, pixelateEach, pixelateImage } from "./pixelate";
 
 export interface SteamGame {
   appId: number;
@@ -15,6 +15,7 @@ export interface SteamProfile {
   name: string;
   avatar: string | null;
   url: string;
+  isOnline: boolean;
   inGame: { appId: number; name: string } | null;
 }
 
@@ -32,6 +33,7 @@ interface SteamPlayer {
   profileurl?: string;
   avatarfull?: string;
   avatarmedium?: string;
+  personastate?: number;
   gameid?: string;
   gameextrainfo?: string;
 }
@@ -94,6 +96,7 @@ export function parsePlayer(
     name: player.personaname,
     avatar: player.avatarfull || player.avatarmedium || null,
     url: player.profileurl || `https://steamcommunity.com/profiles/${steamId}/`,
+    isOnline: (player.personastate ?? 0) > 0,
     inGame:
       Number.isFinite(appId) && player.gameextrainfo ? { appId, name: player.gameextrainfo } : null,
   };
@@ -203,9 +206,10 @@ export async function fetchSteamStatus(
     return { ok: false, status: 404, message: `No Steam profile for ${steamId}. ${hint}` };
   }
 
-  const games = await pixelateEach(parseOwnedGames(ownedBody.data ?? {}, limit), "icon", {
-    width: PIXEL_GRID.thumb,
-    height: PIXEL_GRID.thumb,
-  });
-  return { ok: true, status: { profile: player, games } };
+  const grid = { width: PIXEL_GRID.thumb, height: PIXEL_GRID.thumb };
+  const [avatar, games] = await Promise.all([
+    pixelateImage(player.avatar, grid),
+    pixelateEach(parseOwnedGames(ownedBody.data ?? {}, limit), "icon", grid),
+  ]);
+  return { ok: true, status: { profile: { ...player, avatar }, games } };
 }

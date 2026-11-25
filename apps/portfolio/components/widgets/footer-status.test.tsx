@@ -24,7 +24,13 @@ const STATUS_PAYLOAD = {
     total: 48213,
   },
   steam: {
-    profile: { name: "dmnktoe", avatar: null, url: "https://s.test/p", inGame: null },
+    profile: {
+      name: "dmnktoe",
+      avatar: null,
+      url: "https://s.test/p",
+      isOnline: false,
+      inGame: null,
+    },
     games: [
       {
         appId: 1245620,

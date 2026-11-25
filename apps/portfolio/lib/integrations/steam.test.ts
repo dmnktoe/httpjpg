@@ -57,8 +57,15 @@ describe("parsePlayer", () => {
       name: "yl33lyxx",
       avatar: PLAYER.avatarfull,
       url: PLAYER.profileurl,
+      isOnline: false,
       inGame: null,
     });
+  });
+
+  it("reads whether the profile is online", () => {
+    const online = { ...PLAYER, personastate: 1 };
+
+    expect(parsePlayer({ response: { players: [online] } }, STEAM_ID)?.isOnline).toBe(true);
   });
 
   it("reads the game running right now", () => {

@@ -2,7 +2,7 @@
 
 import { Fragment } from "react";
 
-import { featuredSteamGame } from "@/lib/integrations/steam-game";
+import { steamLine } from "@/lib/integrations/steam-game";
 import type { WidgetStatus } from "@/lib/queries/widget-status";
 import { orderStatusLines } from "@/lib/status-order";
 import { useWidgetData } from "@/lib/use-widget-data";
@@ -76,7 +76,7 @@ export function FooterStatus({
     enabled: discordEnabled,
   });
 
-  const steamGame = status.data?.steam ? featuredSteamGame(status.data.steam) : null;
+  const steam = status.data?.steam ? steamLine(status.data.steam) : null;
   const track = status.data?.lastfm?.tracks?.[0] ?? null;
   const fixture = status.data?.schalke?.fixture ?? null;
 
@@ -128,8 +128,8 @@ export function FooterStatus({
     {
       key: "steam",
       enabled: steamEnabled,
-      isLive: Boolean(steamGame && status.data?.steam?.profile.inGame?.appId === steamGame.appId),
-      date: steamGame?.lastPlayedAt ?? null,
+      isLive: steam?.kind === "playing",
+      date: steam?.game?.lastPlayedAt ?? null,
       node: <SteamStatus status={status.data?.steam ?? null} loaded={status.loaded} />,
     },
     {

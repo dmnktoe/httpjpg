@@ -116,24 +116,6 @@ export function parseRecentGames(
   return games.slice(0, limit);
 }
 
-/** The game the line leads with: the one running now, else the most played lately. */
-export function featuredSteamGame(status: SteamStatus): SteamGame | null {
-  const { inGame } = status.profile;
-  if (!inGame) {
-    return status.games[0] ?? null;
-  }
-  return (
-    status.games.find((game) => game.appId === inGame.appId) ?? {
-      appId: inGame.appId,
-      name: inGame.name,
-      minutesTwoWeeks: 0,
-      minutesTotal: 0,
-      icon: null,
-      url: storeUrl(inGame.appId),
-    }
-  );
-}
-
 export async function fetchSteamStatus(
   steamId: string,
   apiKey: string,

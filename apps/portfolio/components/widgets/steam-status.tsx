@@ -8,7 +8,8 @@ import {
   FooterStatusLineThumb,
 } from "@httpjpg/ui";
 
-import { featuredSteamGame, type SteamStatus as SteamStatusData } from "@/lib/integrations/steam";
+import type { SteamStatus as SteamStatusData } from "@/lib/integrations/steam";
+import { featuredSteamGame } from "@/lib/integrations/steam-game";
 
 export interface SteamStatusProps {
   status: SteamStatusData | null;

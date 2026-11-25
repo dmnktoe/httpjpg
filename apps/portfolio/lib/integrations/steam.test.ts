@@ -1,14 +1,7 @@
 // @vitest-environment node
 import { beforeEach, type MockedFunction, vi } from "vitest";
 
-import {
-  featuredSteamGame,
-  fetchSteamStatus,
-  isSteamId,
-  parsePlayer,
-  parseRecentGames,
-  type SteamStatus,
-} from "./steam";
+import { fetchSteamStatus, isSteamId, parsePlayer, parseRecentGames } from "./steam";
 
 // Pixelation has its own tests; here it passes images through untouched.
 vi.mock("./pixelate", async (importOriginal) => ({
@@ -104,35 +97,6 @@ describe("parseRecentGames", () => {
     expect(games.map((game) => game.name)).toEqual(["B", "ELDEN RING"]);
     expect(games[0]).toMatchObject({ minutesTwoWeeks: 0, icon: null });
     expect(parseRecentGames({ response: { games: [GAME] } }, 0)).toEqual([]);
-  });
-});
-
-describe("featuredSteamGame", () => {
-  const game = parseRecentGames({ response: { games: [GAME] } })[0];
-  const other = { ...game, appId: 10, name: "Counter-Strike" };
-  const base: SteamStatus = {
-    profile: { name: "d", avatar: null, url: "u", inGame: null },
-    games: [other, game],
-  };
-
-  it("leads with the most played game when nothing is running", () => {
-    expect(featuredSteamGame(base)).toBe(other);
-  });
-
-  it("leads with the running game, using its recent stats when known", () => {
-    const status = { ...base, profile: { ...base.profile, inGame: { appId: 1245620, name: "x" } } };
-
-    expect(featuredSteamGame(status)).toBe(game);
-  });
-
-  it("builds an entry for a running game outside the recent list", () => {
-    const status = { ...base, profile: { ...base.profile, inGame: { appId: 7, name: "Portal" } } };
-
-    expect(featuredSteamGame(status)).toMatchObject({ appId: 7, name: "Portal", icon: null });
-  });
-
-  it("returns null with no games at all", () => {
-    expect(featuredSteamGame({ ...base, games: [] })).toBeNull();
   });
 });
 

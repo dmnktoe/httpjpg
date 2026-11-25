@@ -38,7 +38,6 @@ import {
   toGraph,
 } from "@/lib/schema-org";
 import { extractStoryMetadata, feedAlternates, toNextMetadata } from "@/lib/seo";
-import { isVisualEditorRequest } from "@/lib/storyblok-preview";
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
 interface PageProps {
@@ -62,7 +61,7 @@ async function resolvePageRequest(
   const { slug: segments } = await params;
   const search = searchParams ? await searchParams : {};
   const { isEnabled } = await draftMode();
-  const isVisualEditor = await isVisualEditorRequest(search, isEnabled);
+  const isVisualEditor = Boolean(search._storyblok || search._draft);
   const { locale, slug } = resolvePageLocale({
     segments,
     storyblokLang: search._storyblok_lang,

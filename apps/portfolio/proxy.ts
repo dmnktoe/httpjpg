@@ -66,7 +66,7 @@ async function isUnknownStory(request: NextRequest, inEditor: boolean): Promise<
   if (request.method !== "GET" && request.method !== "HEAD") {
     return false;
   }
-  if (request.cookies.has(DRAFT_MODE_COOKIE)) {
+  if (request.cookies.has(DRAFT_MODE_COOKIE) || request.nextUrl.searchParams.has("_draft")) {
     return false;
   }
   const slug = storySlugForPath(request.nextUrl.pathname);

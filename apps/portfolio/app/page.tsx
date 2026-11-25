@@ -14,7 +14,6 @@ import { getSearchIndex } from "@/lib/queries/search-index";
 import { getFeatureFlags } from "@/lib/queries/widgets";
 import { generateCollectionPageSchema, JsonLd, schemaIds, toGraph } from "@/lib/schema-org";
 import { feedAlternates } from "@/lib/seo";
-import { isVisualEditorRequest } from "@/lib/storyblok-preview";
 import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
 /** Blocking, like the root layout; draft reads wait for request time. */
@@ -47,8 +46,8 @@ export default async function HomePage({
   const search = await searchParams;
   const { isEnabled } = await draftMode();
 
-  const isVisualEditor = await isVisualEditorRequest(search, isEnabled);
-  const isDraft = isEnabled || isVisualEditor;
+  const isVisualEditor = search._storyblok || search._draft;
+  const isDraft = Boolean(isEnabled || isVisualEditor);
 
   const story = await readStory(STORYBLOK_SLUGS.HOME, {
     draft: isDraft,

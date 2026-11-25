@@ -9,13 +9,9 @@ const {
   getSiteConfig,
   getSocialProfiles,
   getFeatureFlags,
-  isVisualEditorRequest,
   preload,
 } = vi.hoisted(() => ({
   draftMode: vi.fn(),
-  isVisualEditorRequest: vi.fn(async (search: Record<string, unknown>) =>
-    Boolean(search._storyblok || search._draft),
-  ),
   notFound: vi.fn(() => {
     throw new Error("NEXT_NOT_FOUND");
   }),
@@ -29,7 +25,6 @@ const {
 }));
 
 vi.mock("next/headers", () => ({ draftMode }));
-vi.mock("@/lib/storyblok-preview", () => ({ isVisualEditorRequest }));
 vi.mock("next/navigation", () => ({ notFound, unstable_rethrow: vi.fn() }));
 vi.mock("react-dom", async (importOriginal) => {
   const actual = await importOriginal<typeof import("react-dom")>();
@@ -460,24 +455,6 @@ describe("DynamicPage", () => {
     expect(readPageStory).toHaveBeenCalledWith("cv", { draft: true, language: "de" });
     expect(screen.getByTestId("live")).toBeInTheDocument();
     expect(screen.queryByRole("navigation", { name: "Language" })).not.toBeInTheDocument();
-  });
-
-  it("reads the published story when the editor markers are not trusted", async () => {
-    isVisualEditorRequest.mockResolvedValueOnce(false);
-    readPageStory.mockResolvedValueOnce({
-      slug: "cv",
-      content: { component: "page", title: "CV" },
-    });
-
-    render(
-      await DynamicPage({
-        params: params(["cv"]),
-        searchParams: search({ _draft: "1", _storyblok: "1", _storyblok_lang: "de" }),
-      }),
-    );
-
-    expect(readPageStory).toHaveBeenCalledWith("cv", { draft: false });
-    expect(screen.queryByTestId("live")).not.toBeInTheDocument();
   });
 
   it("ignores a public _storyblok_lang query on /cv", async () => {

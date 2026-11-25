@@ -9,11 +9,7 @@ const {
   getSearchIndex,
   getFeatureFlags,
   captureServerException,
-  isVisualEditorRequest,
 } = vi.hoisted(() => ({
-  isVisualEditorRequest: vi.fn(async (search: Record<string, unknown>) =>
-    Boolean(search._storyblok || search._draft),
-  ),
   draftMode: vi.fn(),
   notFound: vi.fn(() => {
     throw new Error("NEXT_NOT_FOUND");
@@ -27,7 +23,6 @@ const {
 }));
 
 vi.mock("next/headers", () => ({ draftMode }));
-vi.mock("@/lib/storyblok-preview", () => ({ isVisualEditorRequest }));
 vi.mock("next/navigation", () => ({ notFound, unstable_rethrow: vi.fn() }));
 vi.mock("@httpjpg/storyblok-next", () => ({ readStory }));
 vi.mock("@httpjpg/observability/sentry/server.ts", () => ({ captureServerException }));
@@ -112,16 +107,6 @@ describe("HomePage", () => {
     render(await HomePage({ searchParams: search({ _draft: "1" }) }));
 
     expect(screen.getByTestId("live")).toBeInTheDocument();
-  });
-
-  it("reads the published home when the editor markers are not trusted", async () => {
-    isVisualEditorRequest.mockResolvedValueOnce(false);
-    readStory.mockResolvedValueOnce({ content: { component: "page" } });
-
-    render(await HomePage({ searchParams: search({ _draft: "1" }) }));
-
-    expect(screen.queryByTestId("live")).not.toBeInTheDocument();
-    expect(readStory).toHaveBeenCalledWith("home", expect.objectContaining({ draft: false }));
   });
 });
 

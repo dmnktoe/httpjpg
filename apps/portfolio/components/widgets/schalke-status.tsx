@@ -50,23 +50,11 @@ export function SchalkeStatus({ status, loaded }: SchalkeStatusProps) {
       {match && (
         <>
           {match.homeCrest && (
-            <FooterStatusLineThumb
-              src={match.homeCrest}
-              size="4"
-              shape="square"
-              fit="contain"
-              pixelated
-            />
+            <FooterStatusLineThumb src={match.homeCrest} size="4" shape="square" fit="contain" />
           )}
           <FooterStatusLineText>{score}</FooterStatusLineText>
           {match.awayCrest && (
-            <FooterStatusLineThumb
-              src={match.awayCrest}
-              size="4"
-              shape="square"
-              fit="contain"
-              pixelated
-            />
+            <FooterStatusLineThumb src={match.awayCrest} size="4" shape="square" fit="contain" />
           )}
           {upcoming && (
             <FooterStatusLineText fixed dim>
@@ -84,7 +72,6 @@ export function SchalkeStatus({ status, loaded }: SchalkeStatusProps) {
             size="2"
             shape="square"
             fit="contain"
-            pixelated
           />
           <FooterStatusLineText fixed>{standing.position}.</FooterStatusLineText>
           <FooterStatusLineText fixed dim>

@@ -1,4 +1,5 @@
 import { fetchWithTimeout, readJson } from "./http";
+import { PIXEL_GRID, pixelateEach } from "./pixelate";
 
 export interface DiscogsRelease {
   title: string;
@@ -132,5 +133,6 @@ export async function fetchDiscogsCollection(
     return body;
   }
 
-  return { ok: true, releases: parseCollection(body.data ?? {}, limit) };
+  const releases = parseCollection(body.data ?? {}, limit);
+  return { ok: true, releases: await pixelateEach(releases, "thumb", { width: PIXEL_GRID.thumb }) };
 }

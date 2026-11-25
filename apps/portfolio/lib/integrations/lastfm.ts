@@ -1,4 +1,5 @@
 import { fetchWithTimeout, readJson } from "./http";
+import { PIXEL_GRID, pixelateEach } from "./pixelate";
 
 export interface LastfmTrack {
   title: string;
@@ -149,5 +150,13 @@ export async function fetchLastfmScrobbles(
     };
   }
 
-  return { ok: true, ...parseRecentTracks(body.data ?? {}, limit) };
+  const { tracks, total } = parseRecentTracks(body.data ?? {}, limit);
+  return {
+    ok: true,
+    total,
+    tracks: await pixelateEach(tracks, "image", {
+      width: PIXEL_GRID.thumb,
+      height: PIXEL_GRID.thumb,
+    }),
+  };
 }

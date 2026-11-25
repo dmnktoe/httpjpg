@@ -1,4 +1,5 @@
 import { fetchWithTimeout, readJson } from "./http";
+import { PIXEL_GRID, pixelateEach, pixelateImage } from "./pixelate";
 
 export interface YoutubeChannel {
   id: string;
@@ -164,7 +165,19 @@ export async function fetchYoutubeStatus(
   // A channel without uploads answers 404 for its playlist; the line still shows the channel.
   if (!uploadsResult.ok) {
     return uploadsResult.status === 404
-      ? { ok: true, status: { channel, videos: [] } }
+      ? {
+          ok: true,
+          status: {
+            channel: {
+              ...channel,
+              avatar: await pixelateImage(channel.avatar, {
+                width: PIXEL_GRID.thumb,
+                height: PIXEL_GRID.thumb,
+              }),
+            },
+            videos: [],
+          },
+        }
       : uploadsResult;
   }
   const uploadsBody = await readJson<YoutubePlaylistItemsResponse>(
@@ -175,5 +188,11 @@ export async function fetchYoutubeStatus(
     return uploadsBody;
   }
 
-  return { ok: true, status: { channel, videos: parseUploads(uploadsBody.data ?? {}, limit) } };
+  const [avatar, videos] = await Promise.all([
+    pixelateImage(channel.avatar, { width: PIXEL_GRID.thumb, height: PIXEL_GRID.thumb }),
+    pixelateEach(parseUploads(uploadsBody.data ?? {}, limit), "thumbnail", {
+      width: PIXEL_GRID.thumb,
+    }),
+  ]);
+  return { ok: true, status: { channel: { ...channel, avatar }, videos } };
 }

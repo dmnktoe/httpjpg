@@ -2,6 +2,14 @@
 import { beforeEach, type MockedFunction, vi } from "vitest";
 
 import { fetchLastfmScrobbles, isLastfmUsername, parseRecentTracks } from "./lastfm";
+import { pixelateEach } from "./pixelate";
+
+// Pixelation has its own tests; here it passes images through untouched.
+vi.mock("./pixelate", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./pixelate")>()),
+  pixelateImage: vi.fn(async (source: string | null | undefined) => source ?? null),
+  pixelateEach: vi.fn(async (items: unknown[]) => items),
+}));
 
 global.fetch = vi.fn() as MockedFunction<typeof fetch>;
 const mockFetch = global.fetch as MockedFunction<typeof fetch>;
@@ -158,6 +166,17 @@ describe("fetchLastfmScrobbles", () => {
 
     expect(result).toMatchObject({ ok: true, total: 48213 });
     expect(result.ok && result.tracks[0].nowPlaying).toBe(true);
+  });
+
+  it("pixelates the covers to the footer's 12px grid", async () => {
+    mockFetch.mockResolvedValueOnce(jsonResponse(recent([TRACK])));
+
+    await fetchLastfmScrobbles("dom", "key");
+
+    expect(pixelateEach).toHaveBeenCalledWith(expect.any(Array), "image", {
+      width: 12,
+      height: 12,
+    });
   });
 
   it("surfaces an error code sent with a 200 as a failure", async () => {

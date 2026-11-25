@@ -1,4 +1,5 @@
 import { fetchWithTimeout, readJson } from "./http";
+import { PIXEL_GRID, pixelateImage } from "./pixelate";
 
 export type GithubActivityKind = "push" | "pull_request" | "release" | "create" | "star";
 
@@ -184,8 +185,10 @@ export async function fetchGithubActivity(
     return body;
   }
 
-  return {
-    ok: true,
-    status: parseEvents(Array.isArray(body.data) ? body.data : [], username, limit),
-  };
+  const status = parseEvents(Array.isArray(body.data) ? body.data : [], username, limit);
+  const avatar = await pixelateImage(status.profile.avatar, {
+    width: PIXEL_GRID.thumb,
+    height: PIXEL_GRID.thumb,
+  });
+  return { ok: true, status: { ...status, profile: { ...status.profile, avatar } } };
 }

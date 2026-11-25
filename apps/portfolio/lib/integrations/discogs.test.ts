@@ -9,6 +9,13 @@ import {
   parseCollection,
 } from "./discogs";
 
+// Pixelation has its own tests; here it passes images through untouched.
+vi.mock("./pixelate", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./pixelate")>()),
+  pixelateImage: vi.fn(async (source: string | null | undefined) => source ?? null),
+  pixelateEach: vi.fn(async (items: unknown[]) => items),
+}));
+
 global.fetch = vi.fn() as MockedFunction<typeof fetch>;
 const mockFetch = global.fetch as MockedFunction<typeof fetch>;
 

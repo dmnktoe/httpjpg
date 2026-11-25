@@ -1,5 +1,6 @@
 import { decodeEntities } from "./html";
 import { fetchWithTimeout, readJson } from "./http";
+import { PIXEL_GRID, pixelateImage } from "./pixelate";
 
 export interface XProfile {
   id: string;
@@ -180,5 +181,9 @@ export async function fetchXTimeline({
     .sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""))
     .slice(0, limit);
 
-  return { ok: true, timeline: { profile, posts } };
+  const avatar = await pixelateImage(profile.avatar, {
+    width: PIXEL_GRID.thumb,
+    height: PIXEL_GRID.thumb,
+  });
+  return { ok: true, timeline: { profile: { ...profile, avatar }, posts } };
 }

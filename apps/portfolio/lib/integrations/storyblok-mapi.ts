@@ -104,6 +104,18 @@ export async function ensureFolder(
   return created.story.id;
 }
 
+/** The story at this full slug, if there is one. */
+export async function findStory(
+  config: MapiConfig,
+  fullSlug: string,
+): Promise<CreatedStory | null> {
+  const found = await mapiRequest<{
+    stories?: Array<{ id: number; full_slug?: string; is_folder?: boolean }>;
+  }>(config, `/stories?with_slug=${encodeURIComponent(fullSlug)}`);
+  const story = found.stories?.find((entry) => !entry.is_folder && entry.full_slug === fullSlug);
+  return story ? { id: story.id, fullSlug } : null;
+}
+
 export interface CreatedStory {
   id: number;
   fullSlug: string;

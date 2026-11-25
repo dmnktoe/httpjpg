@@ -1,4 +1,4 @@
-import { randomBytes, randomUUID } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 
 export const POST_FORMATS = ["1/1", "4/5", "original"] as const;
 export type PostFormat = (typeof POST_FORMATS)[number];
@@ -15,6 +15,7 @@ export const MAX_IMAGES = 20;
 const MAX_FILENAME_LENGTH = 120;
 const MAX_DIMENSION = 20_000;
 const MAX_TEXT_LENGTH = 200;
+const CLIENT_ID = /^[A-Za-z0-9-]{8,64}$/;
 const UPLOAD_EXTENSIONS = /\.(jpe?g|png|webp|gif|avif|mp3|m4a|wav)$/i;
 
 export type Parsed<T> = { ok: true; value: T } | { ok: false; message: string };
@@ -48,6 +49,11 @@ export interface PublishRequest {
   music?: PublishMusic;
   /** Backdates a post; defaults to now. */
   date?: Date;
+  /**
+   * The composer's id for this draft. With it a retry lands on the same slug,
+   * so a publish whose answer was lost is found again instead of repeated.
+   */
+  clientId?: string;
 }
 
 export function parseAssetRequest(body: unknown): Parsed<AssetRequest> {
@@ -116,9 +122,24 @@ export function parsePublishRequest(body: unknown): Parsed<PublishRequest> {
     }
   }
 
+  let clientId: string | undefined;
+  if (body.clientId !== undefined) {
+    if (typeof body.clientId !== "string" || !CLIENT_ID.test(body.clientId)) {
+      return fail("clientId must be 8 to 64 letters, digits or hyphens");
+    }
+    clientId = body.clientId.toLowerCase();
+  }
+
   return {
     ok: true,
-    value: { caption: caption.trim(), format, images, ...(music ? { music } : {}), date },
+    value: {
+      caption: caption.trim(),
+      format,
+      images,
+      ...(music ? { music } : {}),
+      date,
+      ...(clientId ? { clientId } : {}),
+    },
   };
 }
 
@@ -174,14 +195,21 @@ export function buildPostContent(
   };
 }
 
-/** `20261125-153012-a3f9`: sortable, and unique for posts backdated to the same second. */
-export function postSlug(date: Date): string {
+/**
+ * `20261125-153012-a3f9`: sortable, and unique for posts backdated to the same
+ * second. A draft with a `clientId` gets a suffix derived from it instead of a
+ * random one, so the same draft and date always name the same story.
+ */
+export function postSlug(date: Date, clientId?: string): string {
   const stamp = date
     .toISOString()
     .replace(/\.\d+Z$/, "")
     .replace(/[-:]/g, "")
     .replace("T", "-");
-  return `${stamp}-${randomBytes(2).toString("hex")}`;
+  const suffix = clientId
+    ? createHash("sha256").update(clientId).digest("hex").slice(0, 8)
+    : randomBytes(2).toString("hex");
+  return `${stamp}-${suffix}`;
 }
 
 /** Story name in the Storyblok list: the caption's first line, or the date. */

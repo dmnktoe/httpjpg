@@ -22,7 +22,14 @@ export function ThemeSync({ theme, accent, scale }: ThemeSyncProps) {
     const root = document.documentElement;
     root.dataset.theme = theme;
     applyWorkAccent(root, accent, theme === "dark");
+    const scaled = Boolean(desktop && tablet && mobile);
     applyPageScale(root, desktop && tablet && mobile ? { desktop, tablet, mobile } : null);
+    if (!scaled) {
+      return;
+    }
+    // Not every route renders a ThemeSync (cookie policy, not-found): a scaled
+    // page takes its scale with it when it leaves, or the next page would inherit it.
+    return () => applyPageScale(root, null);
   }, [theme, accent, desktop, tablet, mobile]);
   return null;
 }

@@ -12,6 +12,7 @@ vi.mock("@/lib/feed/auth", () => ({
 vi.mock("@/lib/integrations/storyblok-mapi", () => ({
   mapiConfig: vi.fn(),
   finishAssetUpload: vi.fn(),
+  findStory: vi.fn(),
   ensureFolder: vi.fn(),
   createPublishedStory: vi.fn(),
 }));
@@ -31,6 +32,7 @@ import { authorizeFeedRequest } from "@/lib/feed/auth";
 import {
   createPublishedStory,
   ensureFolder,
+  findStory,
   finishAssetUpload,
   mapiConfig,
 } from "@/lib/integrations/storyblok-mapi";
@@ -60,6 +62,7 @@ beforeEach(() => {
   vi.mocked(finishAssetUpload).mockImplementation(
     async (_config, id) => `https://a.storyblok.com/f/42/800x800/abc/${id}.jpg`,
   );
+  vi.mocked(findStory).mockResolvedValue(null);
   vi.mocked(ensureFolder).mockResolvedValue(4);
   vi.mocked(createPublishedStory).mockResolvedValue({
     id: 12,
@@ -70,12 +73,12 @@ beforeEach(() => {
 });
 
 describe("GET /api/feed/posts", () => {
-  it("serves the first page by default, publicly cacheable", async () => {
+  it("serves the first page by default, without a second cache", async () => {
     const response = await GET(get());
 
     expect(getFeedPage).toHaveBeenCalledWith(1);
     expect(await response.json()).toEqual({ posts: [], page: 1, hasMore: false });
-    expect(response.headers.get("Cache-Control")).toContain("s-maxage=60");
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
   });
 
   it.each([
@@ -148,6 +151,47 @@ describe("POST /api/feed/posts", () => {
         }),
       }),
     );
+  });
+
+  it("answers a retried draft with the post it already made", async () => {
+    vi.mocked(findStory).mockResolvedValue({ id: 12, fullSlug: "feed/20261125-153012-1c9d4a6b" });
+    const draft = {
+      images: [{ assetId: 7 }],
+      date: "2026-11-25T15:30:12Z",
+      clientId: "0F5C1A2B-9D3E-4F60-8A7B-112233445566",
+    };
+
+    const response = await POST(post(draft));
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ id: 12, url: "/feed/20261125-153012-1c9d4a6b" });
+    expect(findStory).toHaveBeenCalledWith(
+      CONFIG,
+      expect.stringMatching(/^feed\/20261125-153012-[0-9a-f]{8}$/),
+    );
+    expect(finishAssetUpload).not.toHaveBeenCalled();
+    expect(createPublishedStory).not.toHaveBeenCalled();
+  });
+
+  it("gives the same draft the same slug on every attempt", async () => {
+    const draft = {
+      images: [{ assetId: 7 }],
+      date: "2026-11-25T15:30:12Z",
+      clientId: "0f5c1a2b-9d3e-4f60-8a7b-112233445566",
+    };
+
+    await POST(post(draft));
+    await POST(post({ ...draft, clientId: draft.clientId.toUpperCase() }));
+
+    const [first, second] = vi.mocked(createPublishedStory).mock.calls;
+    expect(first?.[1].slug).toMatch(/^20261125-153012-[0-9a-f]{8}$/);
+    expect(second?.[1].slug).toBe(first?.[1].slug);
+  });
+
+  it("does not look for an earlier attempt without a client id and a date", async () => {
+    await POST(post({ images: [{ assetId: 7 }], clientId: "abcdefgh" }));
+
+    expect(findStory).not.toHaveBeenCalled();
   });
 
   it("dates an undated post now", async () => {

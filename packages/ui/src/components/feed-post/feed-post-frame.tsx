@@ -79,6 +79,9 @@ export function FeedPostFrame({ images, ratio, sizes, onImageClick }: FeedPostFr
     track.scrollTo?.({ left: next * track.clientWidth, behavior: "smooth" });
   };
 
+  const handlePrevious = () => scrollToIndex(activeIndex - 1);
+  const handleNext = () => scrollToIndex(activeIndex + 1);
+
   return (
     <Box
       data-feed-frame=""
@@ -154,7 +157,7 @@ export function FeedPostFrame({ images, ratio, sizes, onImageClick }: FeedPostFr
             aria-label="Previous image"
             className={NAV_CLASS}
             style={{ left: 0 }}
-            onClick={() => scrollToIndex(activeIndex - 1)}
+            onClick={handlePrevious}
           >
             [ ← ]
           </button>
@@ -163,7 +166,7 @@ export function FeedPostFrame({ images, ratio, sizes, onImageClick }: FeedPostFr
             aria-label="Next image"
             className={NAV_CLASS}
             style={{ right: 0 }}
-            onClick={() => scrollToIndex(activeIndex + 1)}
+            onClick={handleNext}
           >
             [ → ]
           </button>

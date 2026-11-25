@@ -9,6 +9,7 @@ vi.mock("@httpjpg/env", () => ({ env: envObj }));
 import {
   createPublishedStory,
   ensureFolder,
+  findStory,
   finishAssetUpload,
   mapiConfig,
   signAssetUpload,
@@ -160,6 +161,29 @@ describe("ensureFolder", () => {
     fetchMock.mockResolvedValueOnce(json({})).mockResolvedValueOnce(json({}));
 
     await expect(ensureFolder(CONFIG, { slug: "feed", name: "Feed" })).rejects.toThrow(/folder/);
+  });
+});
+
+describe("findStory", () => {
+  it("finds the story at exactly this slug", async () => {
+    fetchMock.mockResolvedValue(
+      json({
+        stories: [
+          { id: 1, full_slug: "feed/a", is_folder: true },
+          { id: 2, full_slug: "feed/a-b" },
+          { id: 3, full_slug: "feed/a" },
+        ],
+      }),
+    );
+
+    expect(await findStory(CONFIG, "feed/a")).toEqual({ id: 3, fullSlug: "feed/a" });
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${BASE}/stories?with_slug=feed%2Fa`);
+  });
+
+  it("answers null when there is none", async () => {
+    fetchMock.mockResolvedValue(json({}));
+
+    expect(await findStory(CONFIG, "feed/a")).toBeNull();
   });
 });
 

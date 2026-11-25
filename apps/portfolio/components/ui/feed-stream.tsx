@@ -36,7 +36,7 @@ export function FeedStream({ initial }: FeedStreamProps) {
   const [hasMore, setHasMore] = useState(initial.hasMore);
   const [status, setStatus] = useState<LoadStatus>("idle");
 
-  const loadMore = async () => {
+  const handleLoadMore = async () => {
     setStatus("loading");
     try {
       const response = await fetch(`/api/feed/posts?page=${page + 1}`);
@@ -82,7 +82,7 @@ export function FeedStream({ initial }: FeedStreamProps) {
             type="button"
             className={buttonClass}
             disabled={status === "loading"}
-            onClick={loadMore}
+            onClick={handleLoadMore}
           >
             {status === "loading" ? "[ loading … ]" : "[ load more ]"}
           </button>

@@ -35,6 +35,17 @@ describe("ThemeSync", () => {
     expect(document.documentElement.style.getPropertyValue("--page-scale-desktop")).toBe("2vw");
   });
 
+  it("takes its scale with it when the page unmounts", () => {
+    const { unmount } = render(
+      <ThemeSync theme="light" scale={{ desktop: 1600, tablet: 800, mobile: 400 }} />,
+    );
+
+    unmount();
+
+    expect(document.documentElement.dataset.pageScale).toBeUndefined();
+    expect(document.documentElement.style.getPropertyValue("--page-scale-desktop")).toBe("");
+  });
+
   it("clears the scale when navigating to a page without one", () => {
     const { rerender } = render(
       <ThemeSync theme="light" scale={{ desktop: 1600, tablet: 800, mobile: 400 }} />,

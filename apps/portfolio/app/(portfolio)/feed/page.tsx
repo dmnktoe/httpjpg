@@ -26,7 +26,8 @@ export default async function FeedPage() {
           <Headline level={1} marginBottom="8">
             ⋆.˚ feed ˚.⋆
           </Headline>
-          <FeedStream initial={feed} />
+          {/* Keyed on the newest post: a refreshed first page starts the stream over. */}
+          <FeedStream key={feed.posts[0]?.id ?? "empty"} initial={feed} />
         </Container>
       </Section>
     </>

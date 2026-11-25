@@ -151,6 +151,12 @@ describe("parsePublishRequest", () => {
       "artworkAssetId",
     ],
     ["a non-string title", { music: { source: "mp3", assetId: 3, title: 4 } }, "title"],
+    ["a client id that is too short", { images: [{ assetId: 1 }], clientId: "abc" }, "clientId"],
+    [
+      "a client id with odd characters",
+      { images: [{ assetId: 1 }], clientId: "../../etc/x" },
+      "clientId",
+    ],
     ["a non-string date", { images: [{ assetId: 1 }], date: 20260101 }, "date"],
     ["an unreadable date", { images: [{ assetId: 1 }], date: "yesterday" }, "date"],
   ])("rejects %s", (_label, body, reason) => {
@@ -256,6 +262,16 @@ describe("buildPostContent", () => {
 describe("postSlug", () => {
   it("stamps the UTC second and adds a random suffix", () => {
     expect(postSlug(DATE)).toMatch(/^20261125-153012-[0-9a-f]{4}$/);
+  });
+
+  it("derives the suffix from the draft's client id", () => {
+    expect(postSlug(DATE, "draft-0001")).toMatch(/^20261125-153012-[0-9a-f]{8}$/);
+    expect(postSlug(DATE, "draft-0001")).toBe(postSlug(DATE, "draft-0001"));
+    expect(postSlug(DATE, "draft-0002")).not.toBe(postSlug(DATE, "draft-0001"));
+  });
+
+  it("keeps the lower-cased client id of a draft", () => {
+    expect(publish({ images: [{ assetId: 1 }], clientId: "ABCDEF-12" }).clientId).toBe("abcdef-12");
   });
 });
 

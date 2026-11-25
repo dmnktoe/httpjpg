@@ -57,6 +57,20 @@ export function FeedPanelWidget({ items }: FeedPanelWidgetProps) {
     handlers.onPointerMove(event);
   };
 
+  // The click that ends a drag fires right after pointer-up; once it has had its
+  // chance the flag goes, so a later keyboard activation is not swallowed.
+  const handlePointerEnd = (
+    event: PointerEvent<HTMLDivElement>,
+    end: typeof handlers.onPointerUp,
+  ) => {
+    end(event);
+    if (draggedRef.current) {
+      window.setTimeout(() => {
+        draggedRef.current = false;
+      }, 0);
+    }
+  };
+
   const handleClickCapture = (event: MouseEvent<HTMLDivElement>) => {
     if (draggedRef.current) {
       draggedRef.current = false;
@@ -77,6 +91,12 @@ export function FeedPanelWidget({ items }: FeedPanelWidgetProps) {
         {...handlers}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
+        onPointerUp={(event: PointerEvent<HTMLDivElement>) =>
+          handlePointerEnd(event, handlers.onPointerUp)
+        }
+        onPointerCancel={(event: PointerEvent<HTMLDivElement>) =>
+          handlePointerEnd(event, handlers.onPointerCancel)
+        }
         onClickCapture={handleClickCapture}
         css={{
           w: "full",

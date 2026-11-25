@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.16.0](https://github.com/dmnktoe/httpjpg/compare/v2.15.1...v2.16.0) (2026-11-25)
+
+
+### Added
+
+* **portfolio:** add Last.fm, Steam, YouTube, GitHub and Reddit footer lines as pixel art ([#583](https://github.com/dmnktoe/httpjpg/issues/583)) ([a2bd5ab](https://github.com/dmnktoe/httpjpg/commit/a2bd5ab8ddbeffbb310e34fa17a9034d8db31599))
+* **portfolio:** order the footer by recency and show the last Steam game ([#588](https://github.com/dmnktoe/httpjpg/issues/588)) ([9e01d4e](https://github.com/dmnktoe/httpjpg/commit/9e01d4e8dc1e2145ddd05342387fd8b8b552a69b))
+
+
+### Fixed
+
+* **ui:** extract cva recipes imported from styled-system ([#589](https://github.com/dmnktoe/httpjpg/issues/589)) ([a484911](https://github.com/dmnktoe/httpjpg/commit/a484911499949f073ff41b84e9149dce2c0c79de))
+
+
+### Changed
+
+* **ui:** fill tags instead of outlining them ([#587](https://github.com/dmnktoe/httpjpg/issues/587)) ([6941c1c](https://github.com/dmnktoe/httpjpg/commit/6941c1cb30a7b39bd3952d95799905bdc4271a52))
+* weekly cleanup for studio pickers, dead exports, and status line tests ([#582](https://github.com/dmnktoe/httpjpg/issues/582)) ([955bbfb](https://github.com/dmnktoe/httpjpg/commit/955bbfb4ce8673370b3a43e986ced5858a674c9f))
+
+
+### Dependencies
+
+* lock file maintenance ([#581](https://github.com/dmnktoe/httpjpg/issues/581)) ([1f23c1d](https://github.com/dmnktoe/httpjpg/commit/1f23c1d7bc7420f16edde1083462818baba49a04))
+* update dependency @testing-library/jest-dom to v8 ([#580](https://github.com/dmnktoe/httpjpg/issues/580)) ([d2831ee](https://github.com/dmnktoe/httpjpg/commit/d2831ee474f8754592881a50ee4153f859baf52d))
+* update dependency lint-staged to ^17.6.2 ([#585](https://github.com/dmnktoe/httpjpg/issues/585)) ([2853e9a](https://github.com/dmnktoe/httpjpg/commit/2853e9a83d7cc6573c87bbbf2a2177a7161c7ee4))
+* update dev dependencies ([#577](https://github.com/dmnktoe/httpjpg/issues/577)) ([33ca5fe](https://github.com/dmnktoe/httpjpg/commit/33ca5fef7006c1b639dc0781d5e4d9f6770ce303))
+* update github actions ([#576](https://github.com/dmnktoe/httpjpg/issues/576)) ([13ce70f](https://github.com/dmnktoe/httpjpg/commit/13ce70fe7574cc512eab5cdce21460cfbbd12854))
+* update pnpm to v11.28.13 ([#579](https://github.com/dmnktoe/httpjpg/issues/579)) ([c751f05](https://github.com/dmnktoe/httpjpg/commit/c751f05d64939f558de204e6678063b44a26d665))
+* update production dependencies ([#578](https://github.com/dmnktoe/httpjpg/issues/578)) ([447c79c](https://github.com/dmnktoe/httpjpg/commit/447c79cd10410e73fc939fa9b5b62a8a9b5ed5ee))
+
 ## [2.15.1](https://github.com/dmnktoe/httpjpg/compare/v2.15.0...v2.15.1) (2026-11-18)
 
 

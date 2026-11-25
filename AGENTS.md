@@ -182,6 +182,7 @@ New blok checklist:
 - Fetch Storyblok on the server (`readStory` cached, or `getStoryblokApi` inside your own `"use cache"` scope); never from the client.
 - Per-request dedupe: `react.cache()` (e.g. `readPageStory` so `generateMetadata` + page + root layout share one roundtrip).
 - Missing story → `notFound()`; throw from route handlers only for real 500s. Log user-facing Storyblok failures to Sentry.
+- A real 404 is decided in `proxy.ts`, not in the page: the shell is streamed before `notFound()` runs, so the page alone answers 200 + `noindex`. The proxy asks `lib/story-index.ts` (published slugs from `cdn/links`, in memory) and rewrites an unknown slug to `/_not-found`. Unknown means fail open — an outage never turns a page into a 404. A hard page route under `app/(portfolio)` has to be listed in `APP_PAGE_ROUTES` (`lib/story-route.ts`; a test compares it with the folders). Unknown `/api/*` paths answer JSON 404 through `app/api/[...path]`.
 
 ## Storyblok
 

@@ -94,6 +94,10 @@ const WORK_EXAMPLE = baseStory("work/example", {
   date: TS,
 });
 
+const MISSING_PREFIX = "missing";
+/** Slugs the tests visit that are answered by the generic fixture page. */
+const PUBLISHED_FIXTURE_SLUGS = ["cv", "feed-xml_html"];
+
 const IMG = `http://127.0.0.1:${PORT}/img`;
 
 function postImage(uid, size, label, fit = "cover") {
@@ -225,7 +229,15 @@ const server = createServer((req, res) => {
     return;
   }
   if (rest === "links") {
-    sendJson(res, 200, { links: {} });
+    // The proxy 404s any page slug that is not on this list.
+    const published = [HOME, CONFIG, WORK_EXAMPLE, WORK_SCALED, ...FEED_POSTS].map((story) => [
+      story.uuid,
+      { slug: story.full_slug, is_folder: false, published: true },
+    ]);
+    for (const slug of PUBLISHED_FIXTURE_SLUGS) {
+      published.push([`uuid-${slug}`, { slug, is_folder: false, published: true }]);
+    }
+    sendJson(res, 200, { links: Object.fromEntries(published) });
     return;
   }
   if (rest === "stories") {
@@ -251,6 +263,11 @@ const server = createServer((req, res) => {
   }
   if (rest.startsWith("stories/")) {
     const slug = decodeURIComponent(rest.slice("stories/".length));
+    // Every other slug gets a fixture page; this prefix is the space's "no such story".
+    if (slug.startsWith(MISSING_PREFIX)) {
+      sendJson(res, 404, ["This record could not be found"]);
+      return;
+    }
     sendJson(res, 200, { story: getStory(slug, searchParams.get("language")) });
     return;
   }

@@ -8,6 +8,7 @@ export const API_ERROR = {
   rateLimited: "rate_limited",
   forbidden: "forbidden",
   unauthorized: "unauthorized",
+  notFound: "not_found",
   internal: "internal_error",
   configUnavailable: "config_unavailable",
   notConfigured: "not_configured",

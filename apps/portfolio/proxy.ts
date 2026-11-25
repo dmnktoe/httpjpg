@@ -3,7 +3,14 @@ import { validateStoryblokPreviewToken } from "@httpjpg/storyblok-utils";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+import { isPublishedStory } from "@/lib/story-index";
+import { storySlugForPath } from "@/lib/story-route";
 import { isStoryblokEditorRequest } from "@/lib/storyblok-editor";
+
+/** Next's own not-found route: the one page route that answers with a 404 status. */
+const NOT_FOUND_ROUTE = "/_not-found";
+/** Set by `draftMode().enable()`. */
+const DRAFT_MODE_COOKIE = "__prerender_bypass";
 
 const SECURITY_HEADERS: Record<string, string> = {
   "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
@@ -30,7 +37,13 @@ export async function proxy(request: NextRequest) {
     requestHeaders.set("x-storyblok-editor", "1");
   }
 
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  // A page cannot answer 404 once its shell is out, so an unknown slug is sent to
+  // the not-found route here. `x-pathname` keeps the path the visitor asked for.
+  const response = (await isUnknownStory(request, inEditor))
+    ? NextResponse.rewrite(new URL(NOT_FOUND_ROUTE, request.url), {
+        request: { headers: requestHeaders },
+      })
+    : NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set(
     "Content-Security-Policy",
     "frame-ancestors 'self' https://app.storyblok.com",
@@ -45,6 +58,27 @@ export async function proxy(request: NextRequest) {
   }
 
   return response;
+}
+
+/**
+ * Only a published page view is checked. Drafts and the editor show stories the
+ * published list does not know, and development reads drafts throughout.
+ */
+async function isUnknownStory(request: NextRequest, inEditor: boolean): Promise<boolean> {
+  if (process.env.NODE_ENV === "development" || inEditor) {
+    return false;
+  }
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return false;
+  }
+  if (request.cookies.has(DRAFT_MODE_COOKIE) || request.nextUrl.searchParams.has("_draft")) {
+    return false;
+  }
+  const slug = storySlugForPath(request.nextUrl.pathname);
+  if (!slug) {
+    return false;
+  }
+  return (await isPublishedStory(slug)) === false;
 }
 
 export const config = {

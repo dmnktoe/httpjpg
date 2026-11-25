@@ -4,6 +4,9 @@ const mockEnv = vi.hoisted(() => ({
   TWEETAPI_KEY: "key" as string | undefined,
   TWEETAPI_API_URL: "https://api.tweetapi.test",
   LASTFM_API_KEY: "lastfm-key" as string | undefined,
+  STEAM_API_KEY: "steam-key" as string | undefined,
+  YOUTUBE_API_KEY: "youtube-key" as string | undefined,
+  GITHUB_API_TOKEN: undefined as string | undefined,
 }));
 
 vi.mock("@httpjpg/env", () => ({ env: mockEnv }));
@@ -16,6 +19,9 @@ const {
   fetchLetterboxdFilms,
   fetchDiscogsCollection,
   fetchLastfmScrobbles,
+  fetchSteamStatus,
+  fetchYoutubeStatus,
+  fetchGithubActivity,
   fetchXTimeline,
   fetchRecentTrophies,
   fetchSchalkeStatus,
@@ -25,6 +31,9 @@ const {
   fetchLetterboxdFilms: vi.fn(),
   fetchDiscogsCollection: vi.fn(),
   fetchLastfmScrobbles: vi.fn(),
+  fetchSteamStatus: vi.fn(),
+  fetchYoutubeStatus: vi.fn(),
+  fetchGithubActivity: vi.fn(),
   fetchXTimeline: vi.fn(),
   fetchRecentTrophies: vi.fn(),
   fetchSchalkeStatus: vi.fn(),
@@ -46,6 +55,15 @@ vi.mock("../integrations/lastfm", () => ({
   fetchLastfmScrobbles,
   isLastfmUsername: isPlainUsername,
 }));
+vi.mock("../integrations/steam", () => ({ fetchSteamStatus, isSteamId: isPlainUsername }));
+vi.mock("../integrations/youtube", () => ({
+  fetchYoutubeStatus,
+  isYoutubeChannelId: isPlainUsername,
+}));
+vi.mock("../integrations/github", () => ({
+  fetchGithubActivity,
+  isGithubUsername: isPlainUsername,
+}));
 vi.mock("../integrations/x-posts", () => ({
   fetchXTimeline,
   isXUsername: isPlainUsername,
@@ -65,6 +83,12 @@ const ALL_ENABLED = {
   discogs_username: "user",
   lastfm_enabled: true,
   lastfm_username: "user",
+  steam_enabled: true,
+  steam_id: "76561197960435530",
+  youtube_enabled: true,
+  youtube_channel_id: "UC_channel",
+  github_enabled: true,
+  github_username: "user",
   x_enabled: true,
   x_username: "user",
   psn_trophy_enabled: true,
@@ -77,6 +101,12 @@ beforeEach(() => {
   mockEnv.PSN_NPSSO = "npsso";
   mockEnv.TWEETAPI_KEY = "key";
   mockEnv.LASTFM_API_KEY = "lastfm-key";
+  mockEnv.STEAM_API_KEY = "steam-key";
+  mockEnv.YOUTUBE_API_KEY = "youtube-key";
+  mockEnv.GITHUB_API_TOKEN = undefined;
+  fetchSteamStatus.mockResolvedValue({ ok: true, status: { profile: {}, games: [] } });
+  fetchYoutubeStatus.mockResolvedValue({ ok: true, status: { channel: {}, videos: [] } });
+  fetchGithubActivity.mockResolvedValue({ ok: true, status: { profile: {}, activity: [] } });
   fetchLetterboxdFilms.mockResolvedValue({ ok: true, films: [{ title: "Stalker" }] });
   fetchDiscogsCollection.mockResolvedValue({ ok: true, releases: [{ title: "Endtroducing" }] });
   fetchLastfmScrobbles.mockResolvedValue({
@@ -112,6 +142,9 @@ describe("getWidgetStatus", () => {
       letterboxd: { films: [{ title: "Stalker" }] },
       discogs: { releases: [{ title: "Endtroducing" }] },
       lastfm: { tracks: [{ title: "Teardrop" }], total: 42 },
+      steam: { profile: {}, games: [] },
+      youtube: { channel: {}, videos: [] },
+      github: { profile: {}, activity: [] },
       x: { profile: {}, posts: [] },
       trophies: { trophies: [{ name: "Platinum" }], avatar: null },
       schalke: {
@@ -142,6 +175,9 @@ describe("getWidgetStatus", () => {
       letterboxd: null,
       discogs: null,
       lastfm: null,
+      steam: null,
+      youtube: null,
+      github: null,
       x: null,
       trophies: null,
       schalke: null,
@@ -195,6 +231,30 @@ describe("getWidgetStatus", () => {
 
     expect(status.lastfm).toBeNull();
     expect(fetchLastfmScrobbles).not.toHaveBeenCalled();
+  });
+
+  it("passes each new widget its setting and server key", async () => {
+    getConfig.mockResolvedValueOnce(ALL_ENABLED);
+
+    await getWidgetStatus();
+
+    expect(fetchSteamStatus).toHaveBeenCalledWith("76561197960435530", "steam-key");
+    expect(fetchYoutubeStatus).toHaveBeenCalledWith("UC_channel", "youtube-key");
+    expect(fetchGithubActivity).toHaveBeenCalledWith("user", undefined);
+  });
+
+  it("skips Steam and YouTube without their keys but loads GitHub without a token", async () => {
+    mockEnv.STEAM_API_KEY = undefined;
+    mockEnv.YOUTUBE_API_KEY = undefined;
+    getConfig.mockResolvedValueOnce(ALL_ENABLED);
+
+    const status = await getWidgetStatus();
+
+    expect(status.steam).toBeNull();
+    expect(status.youtube).toBeNull();
+    expect(status.github).not.toBeNull();
+    expect(fetchSteamStatus).not.toHaveBeenCalled();
+    expect(fetchYoutubeStatus).not.toHaveBeenCalled();
   });
 
   it("collapses an upstream failure to null", async () => {

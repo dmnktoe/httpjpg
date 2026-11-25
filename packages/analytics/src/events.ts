@@ -12,6 +12,8 @@ export type OutboundDestination =
   | "letterboxd"
   | "discogs"
   | "lastfm"
+  | "steam"
+  | "youtube"
   | "x"
   | "psn"
   | "schalke"

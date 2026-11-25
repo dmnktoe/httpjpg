@@ -5,17 +5,23 @@ import { useWidgetData } from "@/lib/use-widget-data";
 
 import { DiscogsStatus } from "./discogs-status";
 import { type DiscordPresence, DiscordStatus } from "./discord-status";
+import { GithubStatus } from "./github-status";
 import { LastfmStatus } from "./lastfm-status";
 import { LetterboxdStatus } from "./letterboxd-status";
 import { SchalkeStatus } from "./schalke-status";
+import { SteamStatus } from "./steam-status";
 import { TrophyStatus } from "./trophy-status";
 import { XStatus } from "./x-status";
+import { YoutubeStatus } from "./youtube-status";
 
 export interface FooterStatusProps {
   discordEnabled?: boolean;
   letterboxdEnabled?: boolean;
   discogsEnabled?: boolean;
   lastfmEnabled?: boolean;
+  steamEnabled?: boolean;
+  youtubeEnabled?: boolean;
+  githubEnabled?: boolean;
   xEnabled?: boolean;
   trophiesEnabled?: boolean;
   schalkeEnabled?: boolean;
@@ -38,6 +44,9 @@ export function FooterStatus({
   letterboxdEnabled = false,
   discogsEnabled = false,
   lastfmEnabled = false,
+  steamEnabled = false,
+  youtubeEnabled = false,
+  githubEnabled = false,
   xEnabled = false,
   trophiesEnabled = false,
   schalkeEnabled = false,
@@ -46,6 +55,9 @@ export function FooterStatus({
     letterboxdEnabled ||
     discogsEnabled ||
     lastfmEnabled ||
+    steamEnabled ||
+    youtubeEnabled ||
+    githubEnabled ||
     xEnabled ||
     trophiesEnabled ||
     schalkeEnabled;
@@ -75,6 +87,21 @@ export function FooterStatus({
         <LastfmStatus
           track={status.data?.lastfm?.tracks?.[0] ?? null}
           total={status.data?.lastfm?.total ?? null}
+          loaded={status.loaded}
+        />
+      )}
+      {steamEnabled && <SteamStatus status={status.data?.steam ?? null} loaded={status.loaded} />}
+      {youtubeEnabled && (
+        <YoutubeStatus
+          channel={status.data?.youtube?.channel ?? null}
+          video={status.data?.youtube?.videos?.[0] ?? null}
+          loaded={status.loaded}
+        />
+      )}
+      {githubEnabled && (
+        <GithubStatus
+          profile={status.data?.github?.profile ?? null}
+          activity={status.data?.github?.activity?.[0] ?? null}
           loaded={status.loaded}
         />
       )}

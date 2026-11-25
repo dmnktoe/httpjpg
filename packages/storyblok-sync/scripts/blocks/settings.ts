@@ -47,6 +47,8 @@ export const settingsBlocks: BlockDef[] = [
           "SoundCloud",
           "Bandcamp",
           "Spotify",
+          "YouTube",
+          "Steam",
           "Discogs",
           "Last.fm",
           "Letterboxd",
@@ -167,6 +169,19 @@ export const settingsBlocks: BlockDef[] = [
           description: "Needs LASTFM_API_KEY to be set.",
           tooltip: true,
         }),
+        steam_enabled: field.boolean("Steam · Recently Played", "false"),
+        steam_id: field.text("Steam · SteamID64", {
+          description:
+            "17-digit id starting with 7656119 (steamid.io resolves a vanity URL). Needs STEAM_API_KEY and public game details.",
+          tooltip: true,
+        }),
+        youtube_enabled: field.boolean("YouTube · Latest Upload", "false"),
+        youtube_channel_id: field.text("YouTube · Channel ID", {
+          description: "UC… id from youtube.com/account_advanced. Needs YOUTUBE_API_KEY.",
+          tooltip: true,
+        }),
+        github_enabled: field.boolean("GitHub · Latest Activity", "false"),
+        github_username: field.text("GitHub · Username"),
         x_enabled: field.boolean("X · Latest Post"),
         x_username: field.text("X · Username", {
           description: "Handle without @, e.g. dmnktoe. Needs TWEETAPI_KEY to be set.",

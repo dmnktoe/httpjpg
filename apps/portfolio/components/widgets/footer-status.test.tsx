@@ -137,6 +137,36 @@ describe("FooterStatus", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  it("orders the lines like the status widget: live first, then newest, then undated", async () => {
+    mockFetch({
+      "/api/status": {
+        ...STATUS_PAYLOAD,
+        letterboxd: {
+          films: [{ title: "Stalker", watchedDate: "2026-11-01", url: "https://l.test/f" }],
+        },
+        discogs: {
+          releases: [
+            { artist: "DJ Shadow", title: "Endtroducing.....", addedAt: "2026-11-20T10:00:00Z" },
+          ],
+        },
+        lastfm: { ...STATUS_PAYLOAD.lastfm, tracks: [{ ...STATUS_PAYLOAD.lastfm.tracks[0] }] },
+        x: { ...STATUS_PAYLOAD.x, posts: [{ text: "Hello world", url: "https://x.test/p" }] },
+      },
+    });
+
+    const { container } = render(
+      <FooterStatus letterboxdEnabled discogsEnabled lastfmEnabled xEnabled redditEnabled />,
+    );
+
+    await waitFor(() => expect(screen.getByText("Stalker")).toBeInTheDocument());
+    const text = container.textContent ?? "";
+    const order = ["Teardrop", "Endtroducing", "Stalker", "u/dmnktoe", "Hello world"].map(
+      (needle) => text.indexOf(needle),
+    );
+    expect(order.every((position) => position >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+  });
+
   it("keeps Discord on its own connection so it can poll", async () => {
     const fetchMock = mockFetch({
       "/api/status": STATUS_PAYLOAD,

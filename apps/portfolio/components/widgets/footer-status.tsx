@@ -1,6 +1,10 @@
 "use client";
 
+import { Fragment } from "react";
+
+import { featuredSteamGame } from "@/lib/integrations/steam-game";
 import type { WidgetStatus } from "@/lib/queries/widget-status";
+import { orderStatusLines } from "@/lib/status-order";
 import { useWidgetData } from "@/lib/use-widget-data";
 
 import { DiscogsStatus } from "./discogs-status";
@@ -72,63 +76,135 @@ export function FooterStatus({
     enabled: discordEnabled,
   });
 
-  return (
-    <>
-      {discordEnabled && <DiscordStatus presence={discord.data} loaded={discord.loaded} />}
-      {letterboxdEnabled && (
+  const steamGame = status.data?.steam ? featuredSteamGame(status.data.steam) : null;
+  const track = status.data?.lastfm?.tracks?.[0] ?? null;
+  const fixture = status.data?.schalke?.fixture ?? null;
+
+  const lines = [
+    {
+      key: "discord",
+      enabled: discordEnabled,
+      isLive: Boolean(discord.data?.status && discord.data.status !== "offline"),
+      date: null,
+      node: <DiscordStatus presence={discord.data} loaded={discord.loaded} />,
+    },
+    {
+      key: "letterboxd",
+      enabled: letterboxdEnabled,
+      isLive: false,
+      date: status.data?.letterboxd?.films?.[0]?.watchedDate ?? null,
+      node: (
         <LetterboxdStatus
           film={status.data?.letterboxd?.films?.[0] ?? null}
           loaded={status.loaded}
         />
-      )}
-      {discogsEnabled && (
+      ),
+    },
+    {
+      key: "discogs",
+      enabled: discogsEnabled,
+      isLive: false,
+      date: status.data?.discogs?.releases?.[0]?.addedAt ?? null,
+      node: (
         <DiscogsStatus
           release={status.data?.discogs?.releases?.[0] ?? null}
           loaded={status.loaded}
         />
-      )}
-      {lastfmEnabled && (
+      ),
+    },
+    {
+      key: "lastfm",
+      enabled: lastfmEnabled,
+      isLive: track?.nowPlaying ?? false,
+      date: track?.scrobbledAt ?? null,
+      node: (
         <LastfmStatus
-          track={status.data?.lastfm?.tracks?.[0] ?? null}
+          track={track}
           total={status.data?.lastfm?.total ?? null}
           loaded={status.loaded}
         />
-      )}
-      {steamEnabled && <SteamStatus status={status.data?.steam ?? null} loaded={status.loaded} />}
-      {youtubeEnabled && (
+      ),
+    },
+    {
+      key: "steam",
+      enabled: steamEnabled,
+      isLive: Boolean(steamGame && status.data?.steam?.profile.inGame?.appId === steamGame.appId),
+      date: null,
+      node: <SteamStatus status={status.data?.steam ?? null} loaded={status.loaded} />,
+    },
+    {
+      key: "youtube",
+      enabled: youtubeEnabled,
+      isLive: false,
+      date: status.data?.youtube?.videos?.[0]?.publishedAt ?? null,
+      node: (
         <YoutubeStatus
           channel={status.data?.youtube?.channel ?? null}
           video={status.data?.youtube?.videos?.[0] ?? null}
           loaded={status.loaded}
         />
-      )}
-      {githubEnabled && (
+      ),
+    },
+    {
+      key: "github",
+      enabled: githubEnabled,
+      isLive: false,
+      date: status.data?.github?.activity?.[0]?.createdAt ?? null,
+      node: (
         <GithubStatus
           profile={status.data?.github?.profile ?? null}
           activity={status.data?.github?.activity?.[0] ?? null}
           loaded={status.loaded}
         />
-      )}
-      {redditEnabled && (
-        <RedditStatus reddit={status.data?.reddit ?? null} loaded={status.loaded} />
-      )}
-      {xEnabled && (
+      ),
+    },
+    {
+      key: "reddit",
+      enabled: redditEnabled,
+      isLive: false,
+      date: null,
+      node: <RedditStatus reddit={status.data?.reddit ?? null} loaded={status.loaded} />,
+    },
+    {
+      key: "x",
+      enabled: xEnabled,
+      isLive: false,
+      date: status.data?.x?.posts?.[0]?.createdAt ?? null,
+      node: (
         <XStatus
           profile={status.data?.x?.profile ?? null}
           post={status.data?.x?.posts?.[0] ?? null}
           loaded={status.loaded}
         />
-      )}
-      {trophiesEnabled && (
+      ),
+    },
+    {
+      key: "trophies",
+      enabled: trophiesEnabled,
+      isLive: false,
+      date: status.data?.trophies?.trophies?.[0]?.earnedAt ?? null,
+      node: (
         <TrophyStatus
           trophy={status.data?.trophies?.trophies?.[0] ?? null}
           avatar={status.data?.trophies?.avatar}
           loaded={status.loaded}
         />
-      )}
-      {schalkeEnabled && (
-        <SchalkeStatus status={status.data?.schalke ?? null} loaded={status.loaded} />
-      )}
+      ),
+    },
+    {
+      key: "schalke",
+      enabled: schalkeEnabled,
+      isLive: false,
+      date: fixture?.playedAt ?? null,
+      node: <SchalkeStatus status={status.data?.schalke ?? null} loaded={status.loaded} />,
+    },
+  ];
+
+  return (
+    <>
+      {orderStatusLines(lines.filter((line) => line.enabled)).map((line) => (
+        <Fragment key={line.key}>{line.node}</Fragment>
+      ))}
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { WORK_TAG_DATASOURCE_SLUG } from "@httpjpg/storyblok-utils";
 
 import type { BlockDef } from "../lib/block";
-import { field } from "../lib/fields";
+import { field, tabbed } from "../lib/fields";
 import { inlineOptions } from "../lib/options";
 
 export const pageBlocks: BlockDef[] = [
@@ -69,6 +69,62 @@ export const pageBlocks: BlockDef[] = [
     },
   },
   {
+    name: "post_image",
+    display_name: "Post Image",
+    group: "Pages",
+    icon: "block-image",
+    color: "#ec4899",
+    preview_field: "alt",
+    schema: {
+      image: field.asset("Image", ["images"], { required: true }),
+      alt: field.text("Alt Text", { translatable: true }),
+      fit: field.options(
+        "Fit",
+        [
+          { name: "Fill (cropped to the frame)", value: "cover" },
+          { name: "Fit (whole image, bars in the page colour)", value: "contain" },
+        ],
+        {
+          default_value: "cover",
+          description:
+            "Fit keeps the file untouched and letterboxes it; the lightbox shows it without bars.",
+          tooltip: true,
+        },
+      ),
+    },
+  },
+  {
+    name: "post",
+    display_name: "Feed Post",
+    group: "Pages",
+    is_root: true,
+    icon: "block-image",
+    color: "#ec4899",
+    preview_field: "caption",
+    schema: {
+      caption: field.textarea("Caption", { translatable: true }),
+      date: field.datetime("Date", {
+        description: "Sorts the feed, newest first. The publish endpoint sets it to now.",
+        tooltip: true,
+      }),
+      format: field.options(
+        "Format",
+        [
+          { name: "Square (1:1)", value: "1/1" },
+          { name: "Portrait (4:5)", value: "4/5" },
+          { name: "Original (ratio of the first image)", value: "original" },
+        ],
+        {
+          default_value: "1/1",
+          description: "One frame for every image of the post, so a carousel does not jump.",
+          tooltip: true,
+        },
+      ),
+      images: field.bloks("Images", { whitelist: ["post_image"] }),
+      music: field.bloks("Music", { whitelist: ["music_player"], maximum: 1 }),
+    },
+  },
+  {
     name: "work",
     display_name: "Work Page",
     group: "Pages",
@@ -119,6 +175,28 @@ export const pageBlocks: BlockDef[] = [
         tooltip: true,
       },
       isDark: field.boolean("Dark Mode"),
+      ...tabbed("Scaling", "scaling", {
+        scaleWithViewport: field.boolean("Scale With Viewport", "false", {
+          description:
+            "Build the layout once at the design widths below; the whole page then scales with the browser like an image instead of reflowing. Browser zoom no longer enlarges the text on this page.",
+          tooltip: true,
+        }),
+        designWidth: field.number("Design Width · Desktop", {
+          default_value: "1440",
+          description: "Viewport width, in px, the desktop layout (1024px and up) is composed at.",
+          tooltip: true,
+        }),
+        designWidthTablet: field.number("Design Width · Tablet", {
+          default_value: "834",
+          description: "Viewport width, in px, the tablet layout (768–1023px) is composed at.",
+          tooltip: true,
+        }),
+        designWidthMobile: field.number("Design Width · Mobile", {
+          default_value: "390",
+          description: "Viewport width, in px, the phone layout (below 768px) is composed at.",
+          tooltip: true,
+        }),
+      }),
     },
   },
 ];

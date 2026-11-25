@@ -11,7 +11,13 @@ vi.mock("./queries/work", () => ({
 
 import { draftMode, headers } from "next/headers";
 
-import { getPageAccent, getPageTheme, isInternalSlug } from "./page-theme";
+import {
+  getPageAccent,
+  getPageScale,
+  getPageTheme,
+  isInternalSlug,
+  workPageScale,
+} from "./page-theme";
 import { readPageStory } from "./queries/work";
 
 const mockHeaders = vi.mocked(headers);
@@ -163,5 +169,55 @@ describe("getPageAccent", () => {
     mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/work/foo" }) as never);
     mockReadPageStory.mockResolvedValue({ content: { component: "work" } } as never);
     await expect(getPageAccent()).resolves.toBeNull();
+  });
+});
+
+describe("getPageScale", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubEnv("NODE_ENV", "test");
+    mockDraftMode.mockResolvedValue({ isEnabled: false } as Awaited<ReturnType<typeof draftMode>>);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("returns the design widths of a work page that scales", async () => {
+    mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/work/shooting" }) as never);
+    mockReadPageStory.mockResolvedValue({
+      content: { component: "work", scaleWithViewport: true, designWidth: "1920" },
+    } as never);
+
+    await expect(getPageScale()).resolves.toEqual({ desktop: 1920, tablet: 834, mobile: 390 });
+  });
+
+  it("returns null for a work page that did not opt in", async () => {
+    mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/work/plain" }) as never);
+    mockReadPageStory.mockResolvedValue({ content: { component: "work" } } as never);
+
+    await expect(getPageScale()).resolves.toBeNull();
+  });
+
+  it("returns null in the Storyblok editor without fetching", async () => {
+    mockHeaders.mockResolvedValue(headerMap({ "x-storyblok-editor": "1" }) as never);
+
+    await expect(getPageScale()).resolves.toBeNull();
+    expect(mockReadPageStory).not.toHaveBeenCalled();
+  });
+
+  it("returns null when the story cannot be read", async () => {
+    mockHeaders.mockResolvedValue(headerMap({ "x-pathname": "/work/broken" }) as never);
+    mockReadPageStory.mockRejectedValue(new Error("boom"));
+
+    await expect(getPageScale()).resolves.toBeNull();
+  });
+});
+
+describe("workPageScale", () => {
+  it("ignores the fields on anything but a work page", () => {
+    expect(workPageScale({ component: "page", scaleWithViewport: true })).toBeNull();
+    expect(workPageScale(null)).toBeNull();
+    expect(workPageScale({ component: "work", scaleWithViewport: true })).not.toBeNull();
   });
 });

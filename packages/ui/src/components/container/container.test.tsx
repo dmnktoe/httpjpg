@@ -14,6 +14,16 @@ describe("Container", () => {
     expect(ref.current).toBeInstanceOf(HTMLDivElement);
   });
 
+  it("caps its width in rem, so a page that scales with the viewport scales it too", () => {
+    render(
+      <Container size="lg" data-testid="container">
+        wide
+      </Container>,
+    );
+
+    expect(screen.getByTestId("container").style.getPropertyValue("--container-max")).toBe("64rem");
+  });
+
   it("accepts size, padding, and uncentered layout", () => {
     render(
       <Container size="sm" px={2} py={4} center={false}>

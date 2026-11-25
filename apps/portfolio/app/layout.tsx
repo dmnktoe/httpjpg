@@ -12,6 +12,7 @@ import {
   PageActionsProvider,
   parseWorkAccent,
   Userbars,
+  pageScaleCssVars,
   workAccentCssVars,
 } from "@httpjpg/ui";
 import type { Metadata } from "next";
@@ -34,14 +35,16 @@ import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AskWidget } from "@/components/widgets/ask-widget";
 import { BuildBadge } from "@/components/widgets/build-badge";
 import { CloudflareStatus } from "@/components/widgets/cloudflare-status";
+import { FeedPanelWidget } from "@/components/widgets/feed-panel-widget";
 import { FooterStatus } from "@/components/widgets/footer-status";
 import { NowPlayingWidget } from "@/components/widgets/now-playing-widget";
 import { PSNCard } from "@/components/widgets/psn-card";
 import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
+import { toFeedPanelItems } from "@/lib/feed/panel";
 import { isStoryblokEditor } from "@/lib/is-storyblok-editor";
 import { htmlLangForPath } from "@/lib/locale";
-import { getPageAccent, getPageTheme } from "@/lib/page-theme";
+import { getPageAccent, getPageScale, getPageTheme } from "@/lib/page-theme";
 import {
   getAuthor,
   getFooterConfig,
@@ -50,6 +53,7 @@ import {
   getSiteConfig,
   getSocialProfiles,
 } from "@/lib/queries/config";
+import { getFeedPage } from "@/lib/queries/feed";
 import { getLastUpdated } from "@/lib/queries/last-updated";
 import { getFeatureFlags, getInterfaceConfig, getWidgetConfig } from "@/lib/queries/widgets";
 import { getRecentWork } from "@/lib/queries/work";
@@ -98,15 +102,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const [theme, pageAccent, draft] = await Promise.all([
+  const [theme, pageAccent, pageScale, draft] = await Promise.all([
     getPageTheme(),
     getPageAccent(),
+    getPageScale(),
     draftMode(),
   ]);
   const workAccent = parseWorkAccent(pageAccent);
   const workAccentStyle = workAccentCssVars(workAccent, theme === "dark") as
     | CSSProperties
     | undefined;
+  const rootStyle = { ...workAccentStyle, ...pageScaleCssVars(pageScale) } as CSSProperties;
   const inStoryblokEditor = await isStoryblokEditor();
   const navigation = await getNavigation();
   const footerConfig = await getFooterConfig();
@@ -125,6 +131,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     author: author ? { ...author, sameAs: socialProfiles } : null,
   });
   const { projectsWork, websitesWork } = await getRecentWork();
+  const feedPanelItems = widgetConfig.feedPanelEnabled
+    ? toFeedPanelItems((await getFeedPage(1)).posts)
+    : [];
   const lastUpdated = flags.lastUpdatedBadgeEnabled ? await getLastUpdated() : undefined;
 
   const rawVersion = env.NEXT_PUBLIC_APP_VERSION;
@@ -137,7 +146,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       lang={htmlLang}
       data-theme={theme}
       data-work-accent={workAccent?.hex}
-      style={workAccentStyle}
+      data-page-scale={pageScale ? "" : undefined}
+      style={rootStyle}
     >
       <body style={{ margin: 0, padding: 0 }}>
         {siteGraph && <JsonLd data={siteGraph} />}
@@ -170,6 +180,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                   </Box>
                 </TrackedLightboxProvider>
               </PageActionsProvider>
+              {feedPanelItems.length > 0 && <FeedPanelWidget items={feedPanelItems} />}
               <Footer
                 backgroundImage={footerConfig.backgroundImage}
                 footerLinks={footerConfig.footerLinks}

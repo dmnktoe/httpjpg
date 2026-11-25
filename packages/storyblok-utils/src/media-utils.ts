@@ -49,6 +49,22 @@ export function toSlideshowImage(asset: ImageLike, fallbackAlt: string): Slidesh
   };
 }
 
+const ASSET_DIMENSIONS = /\/f\/\d+\/(\d+)x(\d+)\//;
+
+export function assetAspectRatio(
+  asset: Pick<ImageLike, "filename"> | undefined,
+): string | undefined {
+  const match = ASSET_DIMENSIONS.exec(asset?.filename || "");
+  if (!match) {
+    return undefined;
+  }
+  const [, width, height] = match;
+  if (!Number(width) || !Number(height)) {
+    return undefined;
+  }
+  return `${width}/${height}`;
+}
+
 /** First non-video asset, or undefined. */
 export function firstImage<T extends Pick<ImageLike, "filename" | "content_type">>(
   assets: ReadonlyArray<T> | undefined,

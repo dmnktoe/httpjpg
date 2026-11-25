@@ -200,6 +200,51 @@ describe("sitemap", () => {
     expect(work?.images).toEqual(["https://cdn/a.jpg", "https://cdn/b.jpg"]);
   });
 
+  it("lists the feed route once it has posts, dated by the newest", async () => {
+    const post = (slug: string, publishedAt: string | null) => ({
+      slug,
+      full_slug: `feed/${slug}`,
+      first_published_at: "2026-11-01",
+      published_at: publishedAt,
+      is_startpage: false,
+    });
+    getStories.mockResolvedValueOnce({
+      stories: [post("a", "2026-11-20"), post("b", null), post("c", "2026-11-25")],
+    });
+
+    const entries = await sitemap();
+
+    expect(entries.map((e) => e.url)).toEqual([
+      "https://example.test",
+      "https://example.test/feed/a",
+      "https://example.test/feed/b",
+      "https://example.test/feed/c",
+      "https://example.test/feed",
+    ]);
+    expect(entries.at(-1)).toMatchObject({
+      lastModified: new Date("2026-11-25"),
+      changeFrequency: "daily",
+    });
+  });
+
+  it("leaves the feed route out while it is empty", async () => {
+    getStories.mockResolvedValueOnce({
+      stories: [
+        {
+          slug: "about",
+          full_slug: "about",
+          first_published_at: "2024-01-01",
+          published_at: null,
+          is_startpage: false,
+        },
+      ],
+    });
+
+    const entries = await sitemap();
+
+    expect(entries.map((e) => e.url)).not.toContain("https://example.test/feed");
+  });
+
   it("falls back instead of caching a partial walk", async () => {
     const story = (slug: string) => ({
       slug,

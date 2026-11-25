@@ -108,6 +108,7 @@ export async function getSearchIndex(): Promise<SearchDocument[]> {
 
   return stories
     .filter((story) => !EXCLUDED_SLUGS.has(story.full_slug || story.slug))
+    .filter((story) => story.content?.component !== "post")
     .map(toSearchDocument)
     .filter((document) => Boolean(document.title));
 }

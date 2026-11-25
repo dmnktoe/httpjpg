@@ -14,6 +14,11 @@ describe("STORYBLOK_SLUGS", () => {
     expect(STORYBLOK_SLUGS.WORK_PREFIX.endsWith("/")).toBe(true);
   });
 
+  it("exposes the feed folder and its prefix", () => {
+    expect(STORYBLOK_SLUGS.FEED).toBe("feed");
+    expect(STORYBLOK_SLUGS.FEED_PREFIX).toBe("feed/");
+  });
+
   it("exposes the CV slug used for field-level i18n", () => {
     expect(STORYBLOK_SLUGS.CV).toBe("cv");
   });

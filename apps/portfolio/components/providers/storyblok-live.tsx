@@ -1,6 +1,6 @@
 "use client";
 
-import { useHasMounted } from "@httpjpg/ui";
+import { type PageScaleSource, parsePageScale, useHasMounted } from "@httpjpg/ui";
 import { StoryblokComponent, type ISbStoryData, useStoryblokState } from "@storyblok/react";
 
 import { ThemeSync } from "@/components/ui/theme-sync";
@@ -17,17 +17,19 @@ export function StoryblokLive({ story: initialStory }: StoryblokLiveProps) {
     return null;
   }
 
-  const content = story.content as {
+  const content = story.content as PageScaleSource & {
     isDark?: boolean;
     component?: string;
     accentColor?: string;
   };
   const theme = content.isDark ? "dark" : "light";
-  const accent = content.component === "work" ? content.accentColor : null;
+  const isWork = content.component === "work";
+  const accent = isWork ? content.accentColor : null;
+  const scale = isWork ? parsePageScale(content) : null;
 
   return (
     <>
-      <ThemeSync theme={theme} accent={accent} />
+      <ThemeSync theme={theme} accent={accent} scale={scale} />
       {hasMounted ? <StoryblokComponent blok={story.content} /> : null}
     </>
   );

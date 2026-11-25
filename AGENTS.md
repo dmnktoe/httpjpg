@@ -27,8 +27,8 @@ When generating or updating code: read neighboring files first, prefer the exist
 ├── apps/
 │   ├── portfolio/               # Next.js 16 site (the product)
 │   │   ├── app/                 # Routes, layouts, route handlers
-│   │   │   ├── (portfolio)/     # Public portfolio route group
-│   │   │   ├── api/             # discord, spotify, draft, revalidate, search, ask, …
+│   │   │   ├── (portfolio)/     # Public portfolio route group (catch-all, feed, cookie policy)
+│   │   │   ├── api/             # discord, spotify, draft, revalidate, search, ask, feed, …
 │   │   │   └── work/feed.xml/   # RSS feed
 │   │   ├── components/
 │   │   │   ├── providers/       # Consent, Storyblok live, registry init
@@ -182,6 +182,7 @@ New blok checklist:
 - Fetch Storyblok on the server (`readStory` cached, or `getStoryblokApi` inside your own `"use cache"` scope); never from the client.
 - Per-request dedupe: `react.cache()` (e.g. `readPageStory` so `generateMetadata` + page + root layout share one roundtrip).
 - Missing story → `notFound()`; throw from route handlers only for real 500s. Log user-facing Storyblok failures to Sentry.
+- A real 404 is decided in `proxy.ts`, not in the page: the shell is streamed before `notFound()` runs, so the page alone answers 200 + `noindex`. The proxy asks `lib/story-index.ts` (published slugs from `cdn/links`, in memory) and rewrites an unknown slug to `/_not-found`. Unknown means fail open — an outage never turns a page into a 404, and a failed read is not retried for 30 seconds. A hard page route under `app/(portfolio)` has to be listed in `APP_PAGE_ROUTES`, a rewrite source in `next.config.ts` in `REWRITTEN_ROUTES` (both in `lib/story-route.ts`; tests compare them with the folders and the config). Unknown `/api/*` paths answer JSON 404 through `app/api/[...path]`.
 
 ## Storyblok
 
@@ -278,6 +279,15 @@ Live footer lines (Discord, Discogs, Last.fm, Letterboxd, Steam, YouTube, GitHub
 
 Work pages may set a Project Accent Color (`#RGB` / `#RRGGBB`). `parseWorkAccent` / `applyWorkAccent` in `@httpjpg/ui` write `--work-accent`, `--work-on-accent`, and `--work-accent-fill*` on `<html>` via `ThemeSync`. Cursor, trail, lightbox chrome, and work-card titles read those vars — don't invent a second palette.
 
+## Viewport scaling
+
+A work page can opt into Readymag-style scaling (`scaleWithViewport` plus three design widths on the `work` type): composed once per breakpoint band, the whole page — header, footer and floating widgets included — then scales with the viewport like an image instead of reflowing.
+
+- It works through the root font size. `parsePageScale` / `pageScaleCssVars` / `applyPageScale` in `@httpjpg/ui` put `data-page-scale` and `--page-scale-*` on `<html>` — the root layout for the first paint, `ThemeSync` on client navigations — and `globals.css` maps one variable per band (base / `md` / `lg`): `1rem` is 16px exactly at the band's design width.
+- So a size only scales if it is `rem` (the tokens are) or `%`. A `px` value stays put: convert the ones you find on a scaled page (`Container` caps in `rem` for this reason); hairline borders can stay `px`.
+- Breakpoints are `px` media queries and do not move with the scale, so the bands stay where the CMS columns switch.
+- Trade-off: browser zoom no longer enlarges the text of a scaled page. It is opt-in per work page — don't switch it on site-wide.
+
 ## Lightbox
 
 Same presentational/stateful split as the command palette.
@@ -300,6 +310,23 @@ One glass pill row at the bottom. Same presentational/stateful split as the ligh
 ## Work downloads
 
 Work pages scatter XP desktop icons via `DesktopDownloads` (`@httpjpg/ui`). CMS `download_item` bloks on `SbPageWork` feed the strip. Don't invent a second download path.
+
+## Feed
+
+Insta-style posts (photo dumps, music), published from the native app's composer (`dmnktoe/httpjpg-ios`). One feed — don't add a second.
+
+- **Posts are stories.** Content type `post` in the `feed/` folder (`STORYBLOK_SLUGS.FEED_PREFIX`). `/feed` is a route (`app/(portfolio)/feed`), not a story; `/feed/<slug>` is the permalink, served by the catch-all (`post: SbPagePost`). `SbPagePost` is the one `Sb*` without `editableAttrs` on its root: the nested `SbPost` carries them, and a second copy would nest the editor outline.
+- **Shape:** `images` (`post_image` bloks: asset + `fit`) and/or one `music_player` blok, plus `caption`, `date`, `format` (`1/1` · `4/5` · `original`). One format per post, so a carousel does not jump.
+- **Fit, not crop coordinates.** `cover` fills the frame; `contain` shows the whole file with bars in `pageBg` — never baked into the image, and the lightbox shows it without them. Cropping happens on the device before upload: readers (web, iOS, tvOS, widgets) only ever honour `fit`.
+- **UI split:** presentational `FeedPost` / `FeedGrid` (`@httpjpg/ui`) → `SbPost` (blok → props, lightbox entries) → stateful `FeedStream` (paging). `FeedGrid` squares the tiles from `md` up through the `data-feed-*` hooks; a phone shows one column in the post's own format.
+- **Reads:** `getFeedPage(page)` under `CMS_TAGS.stories`, sorted by `content.date`. An empty page is held for `seconds` (no posts yet, or a failed fetch). `GET /api/feed/posts?page=` serves "load more".
+- **Publishing:** `POST /api/feed/assets` signs one Storyblok upload and the client posts the file to S3 itself; `POST /api/feed/posts` finishes the uploads, then creates and publishes the story. `GET /api/feed/session` is the composer's sign-in check. A draft sends a `clientId` and its `date`: the two name the slug, so a retry whose first answer was lost gets the existing post back instead of a second one.
+- **Auth:** all three need `Authorization: Bearer $FEED_PUBLISH_TOKEN` (at least 32 characters; unset → 503) plus `STORYBLOK_MANAGEMENT_TOKEN` / `STORYBLOK_SPACE_ID` on the deployment. The management token never leaves the server; the app only knows these routes.
+- **Expiry stays with the webhook.** The publish route does not call `expireStory`; Storyblok's publish webhook does, and it already revalidates `/feed` as the parent path.
+- **Panel:** presentational `FeedPanel` (`@httpjpg/ui`: always square, cycles the newest posts, the whole thing links to `/feed`) vs `FeedPanelWidget` (placement), mounted once in the root layout behind `feed_panel_enabled` on the config story. Below `md` it is a block above the footer; from `md` up it is fixed bottom-left and draggable through `useDesktopDrag`. Hidden on `/feed*`. A post shows as its cover, or a track's artwork; posts with neither are skipped.
+- **Dragging a link:** capture the pointer only once a press has become a drag (`FeedPanelWidget` releases the hook's capture on press). A captured pointer's click lands on the capturing element, so the link inside would never open.
+- Posts stay out of the search index (`getSearchIndex` drops `post`). The sitemap lists `/feed` once it has posts.
+- A new field on `post` / `post_image` also has to land in the iOS app — its `check:bloks` runs against these schemas.
 
 ## Env & observability
 

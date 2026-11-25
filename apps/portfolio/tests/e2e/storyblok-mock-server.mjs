@@ -71,6 +71,7 @@ const CONFIG = baseStory("config", {
     { _uid: "footer", component: "footer_config", copyright_text: "© httpjpg", footer_links: [] },
   ],
   spotify_enabled: false,
+  feed_panel_enabled: true,
   nostalgia_slideshow_enabled: false,
   psn_enabled: false,
   psn_trophy_enabled: false,
@@ -93,7 +94,93 @@ const WORK_EXAMPLE = baseStory("work/example", {
   date: TS,
 });
 
+const MISSING_PREFIX = "missing";
+const PUBLISHED_FIXTURE_SLUGS = ["cv", "feed-xml_html"];
+
+const IMG = `http://127.0.0.1:${PORT}/img`;
+
+function postImage(uid, size, label, fit = "cover") {
+  return {
+    _uid: uid,
+    component: "post_image",
+    fit,
+    alt: label,
+    image: { filename: `${IMG}/${size}/${encodeURIComponent(label)}.svg`, fieldtype: "asset" },
+  };
+}
+
+const FEED_POSTS = [
+  baseStory("feed/20260103-120000-aaaa", {
+    _uid: "post-carousel",
+    component: "post",
+    caption: "harbour dump, three frames",
+    date: "2026-01-03 12:00",
+    format: "4/5",
+    images: [
+      postImage("post-carousel-1", "800x1000", "harbour one"),
+      postImage("post-carousel-2", "800x1000", "harbour two"),
+      postImage("post-carousel-3", "800x1000", "harbour three"),
+    ],
+    music: [],
+  }),
+  baseStory("feed/20260102-120000-bbbb", {
+    _uid: "post-fitted",
+    component: "post",
+    caption: "straight off the dsc-w5",
+    date: "2026-01-02 12:00",
+    format: "1/1",
+    images: [postImage("post-fitted-1", "1200x900", "four by three", "contain")],
+    music: [],
+  }),
+  baseStory("feed/20260101-120000-cccc", {
+    _uid: "post-music",
+    component: "post",
+    caption: "new mix",
+    date: "2026-01-01 12:00",
+    format: "1/1",
+    images: [],
+    music: [
+      {
+        _uid: "post-music-track",
+        component: "music_player",
+        source: "mp3",
+        src: `http://127.0.0.1:${PORT}/audio/mix.mp3`,
+        title: "fixture mix",
+        artist: "httpjpg",
+      },
+    ],
+  }),
+];
+
+function placeholderSvg(size, label) {
+  const [width, height] = size.split("x").map(Number);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#2563eb"/><text x="50%" y="50%" fill="#fff" font-family="monospace" font-size="${Math.round(width / 14)}" text-anchor="middle">${label} ${size}</text></svg>`;
+}
+
+const WORK_SCALED = baseStory("work/scaled", {
+  _uid: "work-scaled",
+  component: "work",
+  title: "Scaled shooting",
+  date: TS,
+  scaleWithViewport: true,
+  designWidth: "1440",
+  designWidthTablet: "834",
+  designWidthMobile: "390",
+  body: [
+    { _uid: "scaled-headline", component: "headline", text: "Scaled shooting", level: "1" },
+    { _uid: "scaled-paragraph", component: "paragraph", text: "Composed once at 1440." },
+  ],
+});
+
 function getStory(slug, language) {
+  if (slug === WORK_SCALED.full_slug) {
+    return WORK_SCALED;
+  }
+  const post = FEED_POSTS.find((story) => story.full_slug === slug);
+  if (post) {
+    return post;
+  }
+
   if (slug === "cv") {
     if (language === "de") {
       return baseStory("cv", pageContent("Lebenslauf", "Deutscher Lebenslauf fuer httpjpg."));
@@ -120,6 +207,13 @@ const server = createServer((req, res) => {
     return;
   }
 
+  if (pathname.startsWith("/img/")) {
+    const [, , size = "800x800", file = "image.svg"] = pathname.split("/");
+    res.writeHead(200, { "content-type": "image/svg+xml", "cache-control": "max-age=3600" });
+    res.end(placeholderSvg(size, decodeURIComponent(file).replace(/\.svg$/, "")));
+    return;
+  }
+
   const cdnIndex = pathname.indexOf("/cdn/");
   if (cdnIndex === -1) {
     sendJson(res, 404, { error: "not found" });
@@ -133,7 +227,14 @@ const server = createServer((req, res) => {
     return;
   }
   if (rest === "links") {
-    sendJson(res, 200, { links: {} });
+    const published = [HOME, CONFIG, WORK_EXAMPLE, WORK_SCALED, ...FEED_POSTS].map((story) => [
+      story.uuid,
+      { slug: story.full_slug, is_folder: false, published: true },
+    ]);
+    for (const slug of PUBLISHED_FIXTURE_SLUGS) {
+      published.push([`uuid-${slug}`, { slug, is_folder: false, published: true }]);
+    }
+    sendJson(res, 200, { links: Object.fromEntries(published) });
     return;
   }
   if (rest === "stories") {
@@ -143,11 +244,26 @@ const server = createServer((req, res) => {
       sendJson(res, 200, { stories: [WORK_EXAMPLE] }, { total: "1", "per-page": "50" });
       return;
     }
+    if (searchParams.get("starts_with") === "feed/") {
+      const perPage = Number(searchParams.get("per_page")) || 25;
+      const page = Number(searchParams.get("page")) || 1;
+      sendJson(
+        res,
+        200,
+        { stories: FEED_POSTS.slice((page - 1) * perPage, page * perPage) },
+        { total: String(FEED_POSTS.length), "per-page": String(perPage) },
+      );
+      return;
+    }
     sendJson(res, 200, { stories: [] }, { total: "0", "per-page": "25" });
     return;
   }
   if (rest.startsWith("stories/")) {
     const slug = decodeURIComponent(rest.slice("stories/".length));
+    if (slug.startsWith(MISSING_PREFIX)) {
+      sendJson(res, 404, ["This record could not be found"]);
+      return;
+    }
     sendJson(res, 200, { story: getStory(slug, searchParams.get("language")) });
     return;
   }

@@ -3,7 +3,12 @@ import { validateStoryblokPreviewToken } from "@httpjpg/storyblok-utils";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+import { isPublishedStory } from "@/lib/story-index";
+import { storySlugForPath } from "@/lib/story-route";
 import { isStoryblokEditorRequest } from "@/lib/storyblok-editor";
+
+const NOT_FOUND_ROUTE = "/_not-found";
+const DRAFT_MODE_COOKIE = "__prerender_bypass";
 
 const SECURITY_HEADERS: Record<string, string> = {
   "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
@@ -30,7 +35,11 @@ export async function proxy(request: NextRequest) {
     requestHeaders.set("x-storyblok-editor", "1");
   }
 
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  const response = (await isUnknownStory(request, inEditor))
+    ? NextResponse.rewrite(new URL(NOT_FOUND_ROUTE, request.url), {
+        request: { headers: requestHeaders },
+      })
+    : NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set(
     "Content-Security-Policy",
     "frame-ancestors 'self' https://app.storyblok.com",
@@ -45,6 +54,26 @@ export async function proxy(request: NextRequest) {
   }
 
   return response;
+}
+
+async function isUnknownStory(request: NextRequest, inEditor: boolean): Promise<boolean> {
+  if (process.env.NODE_ENV === "development" || inEditor) {
+    return false;
+  }
+  if (env.NEXT_PUBLIC_STORYBLOK_VERSION === "draft") {
+    return false;
+  }
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return false;
+  }
+  if (request.cookies.has(DRAFT_MODE_COOKIE) || request.nextUrl.searchParams.has("_draft")) {
+    return false;
+  }
+  const slug = storySlugForPath(request.nextUrl.pathname);
+  if (!slug) {
+    return false;
+  }
+  return (await isPublishedStory(slug)) === false;
 }
 
 export const config = {

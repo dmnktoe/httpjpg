@@ -4,9 +4,6 @@ import { cva } from "styled-system/css";
  * One recipe behind every chip on the site. `Tag` renders it as a span,
  * `TagButton` as a button — the padding, radius and border must not drift
  * apart between the two, which is what happened when they were separate.
- *
- * Chips are filled, not outlined. The 1px border stays (transparent) so the
- * hover ring and the active state don't shift the chip's size.
  */
 export const tagRecipe = cva({
   base: {

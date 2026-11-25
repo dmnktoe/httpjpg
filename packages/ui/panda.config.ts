@@ -268,10 +268,13 @@ export default defineConfig({
 
   patterns: { extend: {} },
 
-  importMap: {
-    css: "@httpjpg/ui/css",
-    recipes: "@httpjpg/ui/recipes",
-    patterns: "@httpjpg/ui/patterns",
-    jsx: "@httpjpg/ui/jsx",
-  },
+  importMap: [
+    {
+      css: "@httpjpg/ui/css",
+      recipes: "@httpjpg/ui/recipes",
+      patterns: "@httpjpg/ui/patterns",
+      jsx: "@httpjpg/ui/jsx",
+    },
+    "styled-system",
+  ],
 });

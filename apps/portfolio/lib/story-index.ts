@@ -1,7 +1,8 @@
 import { env } from "@httpjpg/env";
 
 const FRESH_MS = 5 * 60_000;
-const RECHECK_MS = 30_000;
+const RECHECK_MS = 5000;
+const RETRY_MS = 30_000;
 const PER_PAGE = 1000;
 const MAX_PAGES = 10;
 const TIMEOUT_MS = 2500;
@@ -19,40 +20,47 @@ interface LinkEntry {
 
 let index: StoryIndex | null = null;
 let pending: Promise<StoryIndex | null> | null = null;
+let failedAt = Number.NEGATIVE_INFINITY;
 
 export async function isPublishedStory(slug: string, now = Date.now()): Promise<boolean | null> {
-  let current = index;
-  if (!current || now - current.fetchedAt > FRESH_MS) {
-    current = (await refresh(now)) ?? current;
+  const key = slug.toLowerCase();
+  const current = index;
+  if (current) {
+    const age = now - current.fetchedAt;
+    const isKnown = current.slugs.has(key);
+    if (age <= FRESH_MS && (isKnown || age <= RECHECK_MS)) {
+      return isKnown;
+    }
   }
-  if (!current) {
-    return null;
+  const next = await refresh(now);
+  if (next) {
+    return next.slugs.has(key);
   }
-  if (current.slugs.has(slug)) {
-    return true;
-  }
-  if (now - current.fetchedAt > RECHECK_MS) {
-    current = (await refresh(now)) ?? current;
-    return current.slugs.has(slug);
-  }
-  return false;
+  return current?.slugs.has(key) ? true : null;
 }
 
 export function resetStoryIndex(): void {
   index = null;
   pending = null;
+  failedAt = Number.NEGATIVE_INFINITY;
 }
 
 function refresh(now: number): Promise<StoryIndex | null> {
+  if (now - failedAt < RETRY_MS) {
+    return Promise.resolve(null);
+  }
   pending ??= readSlugs()
     .then((slugs) => {
       if (!slugs.size) {
-        return null;
+        throw new Error("Storyblok links came back empty");
       }
       index = { slugs, fetchedAt: now };
       return index;
     })
-    .catch(() => null)
+    .catch(() => {
+      failedAt = now;
+      return null;
+    })
     .finally(() => {
       pending = null;
     });
@@ -82,7 +90,7 @@ async function readSlugs(): Promise<Set<string>> {
     const links = Object.values(body.links ?? {});
     for (const link of links) {
       if (link.slug && !link.is_folder) {
-        slugs.add(link.slug.replace(/^\/+|\/+$/g, ""));
+        slugs.add(link.slug.replace(/^\/+|\/+$/g, "").toLowerCase());
       }
     }
     if (links.length < PER_PAGE) {

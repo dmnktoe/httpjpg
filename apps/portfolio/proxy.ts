@@ -60,6 +60,9 @@ async function isUnknownStory(request: NextRequest, inEditor: boolean): Promise<
   if (process.env.NODE_ENV === "development" || inEditor) {
     return false;
   }
+  if (env.NEXT_PUBLIC_STORYBLOK_VERSION === "draft") {
+    return false;
+  }
   if (request.method !== "GET" && request.method !== "HEAD") {
     return false;
   }

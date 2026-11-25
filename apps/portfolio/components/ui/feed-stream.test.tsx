@@ -99,6 +99,7 @@ describe("FeedStream", () => {
   it.each([
     ["an error status", () => Promise.resolve(new Response("nope", { status: 500 }))],
     ["a network failure", () => Promise.reject(new Error("offline"))],
+    ["a page that came back empty", () => Promise.resolve(ok(feed([], 2, false)))],
   ])("offers a retry after %s", async (_label, respond) => {
     fetchMock.mockImplementationOnce(respond).mockResolvedValueOnce(ok(feed(["b"], 2, false)));
     render(<FeedStream initial={feed(["a"], 1, true)} />);

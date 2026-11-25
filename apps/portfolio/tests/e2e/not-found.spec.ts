@@ -4,7 +4,7 @@ test.describe("not found", () => {
   test("a page without a story answers 404 with the branded screen", async ({ page, request }) => {
     const res = await request.get("/missing-page", { failOnStatusCode: false });
     test.skip(
-      res.status() === 200,
+      res.status() === 200 && !process.env.CI,
       "the proxy only checks published stories in a production build",
     );
 
@@ -31,6 +31,14 @@ test.describe("not found", () => {
       const res = await request.get(path);
 
       expect(res.status(), path).toBe(200);
+    }
+  });
+
+  test("the draft entry and exit are not mistaken for stories", async ({ request }) => {
+    for (const path of ["/draft", "/exit-draft"]) {
+      const res = await request.get(path, { failOnStatusCode: false, maxRedirects: 0 });
+
+      expect(res.status(), path).not.toBe(404);
     }
   });
 });

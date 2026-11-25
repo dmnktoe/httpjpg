@@ -42,6 +42,9 @@ export function FeedStream({ initial }: FeedStreamProps) {
         throw new Error(`Feed page failed: ${response.status}`);
       }
       const next = (await response.json()) as FeedPage;
+      if (!next.posts.length) {
+        throw new Error("Feed page came back empty");
+      }
       setPosts((current) => appendNew(current, next.posts));
       setPage(next.page);
       setHasMore(next.hasMore);

@@ -285,6 +285,12 @@ describe("postName", () => {
     expect(postName(request, DATE)).toBe("long ".repeat(20).trim().slice(0, 60));
   });
 
+  it("never cuts an emoji in half", () => {
+    const request = publish({ caption: `${"x".repeat(59)}📷 more`, images: [{ assetId: 1 }] });
+
+    expect(postName(request, DATE)).toBe(`${"x".repeat(59)}📷`);
+  });
+
   it("falls back to the date", () => {
     expect(postName(publish({ images: [{ assetId: 1 }] }), DATE)).toBe("Post 2026-11-25 15:30");
   });

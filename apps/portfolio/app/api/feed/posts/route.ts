@@ -82,15 +82,22 @@ export async function POST(request: NextRequest) {
         );
       }
     }
-    const assetIds = publishAssetIds(post);
-    const filenames = await Promise.all(assetIds.map((id) => finishAssetUpload(config, id)));
-    const assets = new Map(assetIds.map((id, index) => [id, filenames[index] as string]));
+    const assets = new Map<number, string>();
+    for (const id of publishAssetIds(post)) {
+      assets.set(id, await finishAssetUpload(config, id));
+    }
     const parentId = await ensureFolder(config, { slug: STORYBLOK_SLUGS.FEED, name: "Feed" });
     const story = await createPublishedStory(config, {
       name: postName(post, date),
       slug,
       parentId,
       content: buildPostContent(post, assets, date),
+    }).catch(async (error: unknown) => {
+      const existing = post.clientId && post.date ? await findStory(config, fullSlug) : null;
+      if (!existing) {
+        throw error;
+      }
+      return existing;
     });
     return NextResponse.json(
       { id: story.id, slug: story.fullSlug, url: `/${story.fullSlug}` },

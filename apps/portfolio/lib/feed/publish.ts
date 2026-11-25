@@ -200,7 +200,7 @@ export function postSlug(date: Date, clientId?: string): string {
 
 export function postName(request: PublishRequest, date: Date): string {
   const firstLine = request.caption.split("\n")[0]?.trim() ?? "";
-  return firstLine ? firstLine.slice(0, 60) : `Post ${storyblokDate(date)}`;
+  return firstLine ? Array.from(firstLine).slice(0, 60).join("") : `Post ${storyblokDate(date)}`;
 }
 
 function storyblokDate(date: Date): string {

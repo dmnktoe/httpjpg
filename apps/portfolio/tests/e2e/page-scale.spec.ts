@@ -20,6 +20,7 @@ test.describe("viewport scaling", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/work/scaled");
     const heading = page.getByRole("heading", { level: 1, name: "Scaled shooting" });
+    await expect(heading).toBeVisible();
     const atDesign = await heading.boundingBox();
 
     await page.setViewportSize({ width: 2880, height: 1800 });

@@ -1,6 +1,7 @@
 import { env } from "@httpjpg/env";
 
 const STORYBLOK_MAPI = "https://mapi.storyblok.com/v1";
+const MAPI_TIMEOUT_MS = 20_000;
 
 export interface MapiConfig {
   token: string;
@@ -147,6 +148,7 @@ async function mapiRequest<T>(
     ...init,
     headers: { Authorization: config.token, "Content-Type": "application/json" },
     cache: "no-store",
+    signal: AbortSignal.timeout(MAPI_TIMEOUT_MS),
   });
   if (!response.ok) {
     const detail = (await response.text()).slice(0, 300);

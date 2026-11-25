@@ -173,6 +173,23 @@ describe("POST /api/feed/posts", () => {
     expect(createPublishedStory).not.toHaveBeenCalled();
   });
 
+  it("answers with the post a parallel attempt made in the meantime", async () => {
+    const made = { id: 13, fullSlug: "feed/20261125-153012-1c9d4a6b" };
+    vi.mocked(findStory).mockResolvedValueOnce(null).mockResolvedValueOnce(made);
+    vi.mocked(createPublishedStory).mockRejectedValueOnce(new Error("slug taken"));
+
+    const response = await POST(
+      post({
+        images: [{ assetId: 7 }],
+        date: "2026-11-25T15:30:12Z",
+        clientId: "0F5C1A2B-9D3E-4F60-8A7B-112233445566",
+      }),
+    );
+
+    expect(response.status).toBe(201);
+    expect(await response.json()).toMatchObject({ id: 13, url: "/feed/20261125-153012-1c9d4a6b" });
+  });
+
   it("gives the same draft the same slug on every attempt", async () => {
     const draft = {
       images: [{ assetId: 7 }],

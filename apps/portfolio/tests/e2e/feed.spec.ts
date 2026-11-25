@@ -51,7 +51,9 @@ test.describe("feed", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/feed");
 
-    const box = await page.locator("[data-feed-frame]").first().boundingBox();
+    const frame = page.locator("[data-feed-frame]").first();
+    await expect(frame).toBeVisible();
+    const box = await frame.boundingBox();
 
     expect(box).not.toBeNull();
     expect((box?.height ?? 0) / (box?.width ?? 1)).toBeCloseTo(1.25, 1);
@@ -101,6 +103,7 @@ test.describe("feed", () => {
     await gotoHomeWithPanel(page);
     await dismissConsent(page);
     const panel = page.locator("[data-feed-panel]");
+    await expect(panel).toBeVisible();
     const before = await panel.boundingBox();
 
     await panel.hover();

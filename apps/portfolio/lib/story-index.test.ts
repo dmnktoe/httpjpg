@@ -86,9 +86,16 @@ describe("isPublishedStory", () => {
     fetchMock.mockResolvedValue(links("home"));
 
     await isPublishedStory("nope", 0);
-    await isPublishedStory("nope", 10_000);
+    await isPublishedStory("nope", 3000);
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("matches slugs whatever their case", async () => {
+    fetchMock.mockResolvedValue(links("cv", "Work/Atlas"));
+
+    expect(await isPublishedStory("CV", 0)).toBe(true);
+    expect(await isPublishedStory("work/atlas", 0)).toBe(true);
   });
 
   it.each([
@@ -108,7 +115,20 @@ describe("isPublishedStory", () => {
     fetchMock.mockRejectedValue(new Error("offline"));
 
     expect(await isPublishedStory("home", 10 * MINUTE)).toBe(true);
-    expect(await isPublishedStory("nope", 10 * MINUTE)).toBe(false);
+    expect(await isPublishedStory("nope", 10 * MINUTE)).toBeNull();
+  });
+
+  it("waits before asking again after a failed read", async () => {
+    fetchMock.mockRejectedValue(new Error("offline"));
+
+    expect(await isPublishedStory("home", 0)).toBeNull();
+    expect(await isPublishedStory("home", 10_000)).toBeNull();
+    expect(await isPublishedStory("nope", 20_000)).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    fetchMock.mockResolvedValue(links("home"));
+    expect(await isPublishedStory("home", 40_000)).toBe(true);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it("shares one read between requests that arrive together", async () => {

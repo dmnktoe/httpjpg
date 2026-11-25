@@ -11,6 +11,7 @@ export function featuredSteamGame(status: SteamStatus): SteamGame | null {
       name: inGame.name,
       minutesTwoWeeks: 0,
       minutesTotal: 0,
+      lastPlayedAt: null,
       icon: null,
       url: `https://store.steampowered.com/app/${inGame.appId}/`,
     }

@@ -129,7 +129,7 @@ export function FooterStatus({
       key: "steam",
       enabled: steamEnabled,
       isLive: Boolean(steamGame && status.data?.steam?.profile.inGame?.appId === steamGame.appId),
-      date: null,
+      date: steamGame?.lastPlayedAt ?? null,
       node: <SteamStatus status={status.data?.steam ?? null} loaded={status.loaded} />,
     },
     {

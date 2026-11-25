@@ -6,6 +6,7 @@ export interface SteamGame {
   name: string;
   minutesTwoWeeks: number;
   minutesTotal: number;
+  lastPlayedAt: string | null;
   icon: string | null;
   url: string;
 }
@@ -39,25 +40,35 @@ interface SteamPlayerSummariesResponse {
   response?: { players?: SteamPlayer[] };
 }
 
-interface SteamRecentGame {
+interface SteamOwnedGame {
   appid?: number;
   name?: string;
   playtime_2weeks?: number;
   playtime_forever?: number;
   img_icon_url?: string;
+  rtime_last_played?: number;
 }
 
-interface SteamRecentGamesResponse {
-  response?: { games?: SteamRecentGame[] };
+interface SteamOwnedGamesResponse {
+  response?: { games?: SteamOwnedGame[] };
+}
+
+interface SteamVanityResponse {
+  response?: { success?: number; steamid?: string };
 }
 
 const DEFAULT_LIMIT = 4;
 const API_URL = "https://api.steampowered.com";
 
 const STEAM_ID = /^7656119\d{10}$/;
+const STEAM_VANITY = /^[\w-]{2,32}$/;
 
 export function isSteamId(value: unknown): value is string {
   return typeof value === "string" && STEAM_ID.test(value);
+}
+
+export function isSteamProfile(value: unknown): value is string {
+  return typeof value === "string" && (STEAM_ID.test(value) || STEAM_VANITY.test(value));
 }
 
 function storeUrl(appId: number): string {
@@ -88,50 +99,83 @@ export function parsePlayer(
   };
 }
 
-export function parseRecentGames(
-  body: SteamRecentGamesResponse,
-  limit = DEFAULT_LIMIT,
-): SteamGame[] {
+export function parseOwnedGames(body: SteamOwnedGamesResponse, limit = DEFAULT_LIMIT): SteamGame[] {
   if (limit <= 0) {
     return [];
   }
-  const games: SteamGame[] = [];
-  for (const game of body.response?.games ?? []) {
-    if (!game.appid || !game.name) {
-      continue;
-    }
-    games.push({
-      appId: game.appid,
-      name: game.name,
-      minutesTwoWeeks: game.playtime_2weeks ?? 0,
-      minutesTotal: game.playtime_forever ?? 0,
-      icon: iconUrl(game.appid, game.img_icon_url),
-      url: storeUrl(game.appid),
+  return (body.response?.games ?? [])
+    .filter((game) => game.appid && game.name && (game.rtime_last_played ?? 0) > 0)
+    .sort((a, b) => (b.rtime_last_played ?? 0) - (a.rtime_last_played ?? 0))
+    .slice(0, limit)
+    .map((game) => {
+      const appId = game.appid as number;
+      return {
+        appId,
+        name: game.name as string,
+        minutesTwoWeeks: game.playtime_2weeks ?? 0,
+        minutesTotal: game.playtime_forever ?? 0,
+        lastPlayedAt: new Date((game.rtime_last_played as number) * 1000).toISOString(),
+        icon: iconUrl(appId, game.img_icon_url),
+        url: storeUrl(appId),
+      };
     });
+}
+
+async function resolveSteamId(
+  profile: string,
+  apiKey: string,
+  hint: string,
+): Promise<{ ok: true; steamId: string } | { ok: false; status: number; message: string }> {
+  if (isSteamId(profile)) {
+    return { ok: true, steamId: profile };
   }
-  return games.slice(0, limit);
+  const params = new URLSearchParams({ key: apiKey, vanityurl: profile });
+  const result = await fetchWithTimeout(`${API_URL}/ISteamUser/ResolveVanityURL/v1/?${params}`, {
+    label: "Steam",
+    hint,
+  });
+  if (!result.ok) {
+    return result;
+  }
+  const body = await readJson<SteamVanityResponse>(result.response, "Steam");
+  if (!body.ok) {
+    return body;
+  }
+  const steamId = body.data?.response?.steamid;
+  if (body.data?.response?.success !== 1 || !isSteamId(steamId)) {
+    return { ok: false, status: 404, message: `No Steam profile named ${profile}. ${hint}` };
+  }
+  return { ok: true, steamId };
 }
 
 export async function fetchSteamStatus(
-  steamId: string,
+  profile: string,
   apiKey: string,
   limit = DEFAULT_LIMIT,
 ): Promise<SteamFetchResult> {
-  const hint = "Check STEAM_API_KEY, the SteamID64, and that game details are public.";
+  const hint =
+    "Check STEAM_API_KEY, the SteamID64 or profile name, and that game details are public.";
+  const resolved = await resolveSteamId(profile, apiKey, hint);
+  if (!resolved.ok) {
+    return resolved;
+  }
+  const { steamId } = resolved;
+
   const summaries = new URLSearchParams({ key: apiKey, steamids: steamId });
-  const recent = new URLSearchParams({
+  const owned = new URLSearchParams({
     key: apiKey,
     steamid: steamId,
-    count: String(Math.max(1, limit)),
+    include_appinfo: "1",
+    include_played_free_games: "1",
     format: "json",
   });
 
-  const [summaryResult, recentResult] = await Promise.all([
+  const [summaryResult, ownedResult] = await Promise.all([
     fetchWithTimeout(`${API_URL}/ISteamUser/GetPlayerSummaries/v2/?${summaries}`, {
       label: "Steam",
       hint,
     }),
-    fetchWithTimeout(`${API_URL}/IPlayerService/GetRecentlyPlayedGames/v1/?${recent}`, {
+    fetchWithTimeout(`${API_URL}/IPlayerService/GetOwnedGames/v1/?${owned}`, {
       label: "Steam",
       hint,
     }),
@@ -139,29 +183,29 @@ export async function fetchSteamStatus(
   if (!summaryResult.ok) {
     return summaryResult;
   }
-  if (!recentResult.ok) {
-    return recentResult;
+  if (!ownedResult.ok) {
+    return ownedResult;
   }
 
-  const [summaryBody, recentBody] = await Promise.all([
+  const [summaryBody, ownedBody] = await Promise.all([
     readJson<SteamPlayerSummariesResponse>(summaryResult.response, "Steam"),
-    readJson<SteamRecentGamesResponse>(recentResult.response, "Steam"),
+    readJson<SteamOwnedGamesResponse>(ownedResult.response, "Steam"),
   ]);
   if (!summaryBody.ok) {
     return summaryBody;
   }
-  if (!recentBody.ok) {
-    return recentBody;
+  if (!ownedBody.ok) {
+    return ownedBody;
   }
 
-  const profile = parsePlayer(summaryBody.data ?? {}, steamId);
-  if (!profile) {
+  const player = parsePlayer(summaryBody.data ?? {}, steamId);
+  if (!player) {
     return { ok: false, status: 404, message: `No Steam profile for ${steamId}. ${hint}` };
   }
 
-  const games = await pixelateEach(parseRecentGames(recentBody.data ?? {}, limit), "icon", {
+  const games = await pixelateEach(parseOwnedGames(ownedBody.data ?? {}, limit), "icon", {
     width: PIXEL_GRID.thumb,
     height: PIXEL_GRID.thumb,
   });
-  return { ok: true, status: { profile, games } };
+  return { ok: true, status: { profile: player, games } };
 }

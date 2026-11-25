@@ -13,6 +13,7 @@ const game: SteamGame = {
   name: "ELDEN RING",
   minutesTwoWeeks: 845,
   minutesTotal: 9000,
+  lastPlayedAt: "2026-11-20T10:00:00.000Z",
   icon: "https://example.com/icon.jpg",
   url: "https://store.steampowered.com/app/1245620/",
 };

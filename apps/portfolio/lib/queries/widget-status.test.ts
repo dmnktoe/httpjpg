@@ -55,7 +55,7 @@ vi.mock("../integrations/lastfm", () => ({
   fetchLastfmScrobbles,
   isLastfmUsername: isPlainUsername,
 }));
-vi.mock("../integrations/steam", () => ({ fetchSteamStatus, isSteamId: isPlainUsername }));
+vi.mock("../integrations/steam", () => ({ fetchSteamStatus, isSteamProfile: isPlainUsername }));
 vi.mock("../integrations/youtube", () => ({
   fetchYoutubeStatus,
   isYoutubeChannelId: isPlainUsername,

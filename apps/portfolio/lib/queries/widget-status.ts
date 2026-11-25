@@ -20,7 +20,7 @@ import {
 import { fetchRecentTrophies, isPsnUsername, type PsnTrophy } from "../integrations/psn-trophies";
 import { readRedditKarma, type RedditKarma } from "../integrations/reddit";
 import { fetchSchalkeStatus, type SchalkeStatus } from "../integrations/schalke";
-import { fetchSteamStatus, isSteamId, type SteamStatus } from "../integrations/steam";
+import { fetchSteamStatus, isSteamProfile, type SteamStatus } from "../integrations/steam";
 import { fetchXTimeline, isXUsername, type XTimeline } from "../integrations/x-posts";
 import {
   fetchYoutubeStatus,
@@ -158,7 +158,7 @@ export async function getWidgetStatus(): Promise<WidgetStatus> {
   const letterboxdUser = readSetting(config?.letterboxd_username, isLetterboxdUsername);
   const discogsUser = readSetting(config?.discogs_username, isDiscogsUsername);
   const lastfmUser = readSetting(config?.lastfm_username, isLastfmUsername);
-  const steamId = readSetting(config?.steam_id, isSteamId);
+  const steamId = readSetting(config?.steam_id, isSteamProfile);
   const youtubeChannel = readSetting(config?.youtube_channel_id, isYoutubeChannelId);
   const githubUser = readSetting(config?.github_username, isGithubUsername);
   const xUser = readSetting(config?.x_username, isXUsername);

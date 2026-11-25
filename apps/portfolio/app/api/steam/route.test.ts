@@ -17,16 +17,16 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
-const { getConfig, fetchSteamStatus, isSteamId, enforceRateLimit } = vi.hoisted(() => ({
+const { getConfig, fetchSteamStatus, isSteamProfile, enforceRateLimit } = vi.hoisted(() => ({
   getConfig: vi.fn(),
   fetchSteamStatus: vi.fn(),
-  isSteamId: vi.fn(() => true),
+  isSteamProfile: vi.fn(() => true),
   enforceRateLimit: vi.fn(async (): Promise<Response | null> => null),
 }));
 
 vi.mock("@/lib/queries/config", () => ({ getConfig }));
 vi.mock("@/lib/rate-limit", () => ({ enforceRateLimit }));
-vi.mock("@/lib/integrations/steam", () => ({ fetchSteamStatus, isSteamId }));
+vi.mock("@/lib/integrations/steam", () => ({ fetchSteamStatus, isSteamProfile }));
 
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import type { NextRequest } from "next/server";
@@ -38,7 +38,7 @@ const request = {} as NextRequest;
 beforeEach(() => {
   vi.clearAllMocks();
   env.STEAM_API_KEY = "secret";
-  isSteamId.mockReturnValue(true);
+  isSteamProfile.mockReturnValue(true);
   enforceRateLimit.mockResolvedValue(null);
   vi.spyOn(console, "warn").mockImplementation(() => {});
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -92,7 +92,7 @@ describe("GET /api/steam", () => {
 
   it("ignores a malformed username from config", async () => {
     getConfig.mockResolvedValueOnce({ steam_id: "dom" });
-    isSteamId.mockReturnValue(false);
+    isSteamProfile.mockReturnValue(false);
 
     const response = await GET(request);
 

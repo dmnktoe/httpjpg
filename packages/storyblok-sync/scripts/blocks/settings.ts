@@ -171,9 +171,9 @@ export const settingsBlocks: BlockDef[] = [
           tooltip: true,
         }),
         steam_enabled: field.boolean("Steam · Recently Played", "false"),
-        steam_id: field.text("Steam · SteamID64", {
+        steam_id: field.text("Steam · Profile", {
           description:
-            "17-digit id starting with 7656119 (steamid.io resolves a vanity URL). Needs STEAM_API_KEY and public game details.",
+            "SteamID64 (17 digits, starts with 7656119) or the custom URL name from steamcommunity.com/id/<name>. Needs STEAM_API_KEY and public game details.",
           tooltip: true,
         }),
         youtube_enabled: field.boolean("YouTube · Latest Upload", "false"),

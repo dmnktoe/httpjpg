@@ -1,6 +1,6 @@
 import { env } from "@httpjpg/env";
 
-import { fetchSteamStatus, isSteamId } from "@/lib/integrations/steam";
+import { fetchSteamStatus, isSteamProfile } from "@/lib/integrations/steam";
 import { WIDGET_MAX_AGE } from "@/lib/queries/widget-status";
 import {
   resolveWidgetSetting,
@@ -18,12 +18,12 @@ export const GET = widgetRoute({ route: "steam", label: "Steam games" }, async (
     return widgetMissingEnv("Steam", "STEAM_API_KEY");
   }
 
-  const steamId = await resolveWidgetSetting({ field: "steam_id", validate: isSteamId });
+  const steamId = await resolveWidgetSetting({ field: "steam_id", validate: isSteamProfile });
   if (steamId.status === "unavailable") {
     return widgetConfigUnavailable();
   }
   if (steamId.status === "missing") {
-    return widgetNotConfigured("SteamID64", "steam_id");
+    return widgetNotConfigured("Steam profile", "steam_id");
   }
 
   const result = await fetchSteamStatus(steamId.value, apiKey);

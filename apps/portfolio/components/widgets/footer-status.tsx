@@ -78,7 +78,8 @@ export function FooterStatus({
 
   const steam = status.data?.steam ? steamLine(status.data.steam) : null;
   const track = status.data?.lastfm?.tracks?.[0] ?? null;
-  const fixture = status.data?.schalke?.fixture ?? null;
+  const schalke = status.data?.schalke ?? null;
+  const schalkeDate = schalke?.fixture?.playedAt ?? schalke?.upcoming?.kickoff ?? null;
 
   const lines = [
     {
@@ -195,7 +196,7 @@ export function FooterStatus({
       key: "schalke",
       enabled: schalkeEnabled,
       isLive: false,
-      date: fixture?.playedAt ?? null,
+      date: schalkeDate,
       node: <SchalkeStatus status={status.data?.schalke ?? null} loaded={status.loaded} />,
     },
   ];

@@ -106,8 +106,12 @@ export async function getSearchIndex(): Promise<SearchDocument[]> {
     throw new Error("Storyblok returned no published stories for the search index");
   }
 
-  return stories
-    .filter((story) => !EXCLUDED_SLUGS.has(story.full_slug || story.slug))
-    .map(toSearchDocument)
-    .filter((document) => Boolean(document.title));
+  return (
+    stories
+      .filter((story) => !EXCLUDED_SLUGS.has(story.full_slug || story.slug))
+      // Feed posts are captions on photo dumps, not pages to search or ask about.
+      .filter((story) => story.content?.component !== "post")
+      .map(toSearchDocument)
+      .filter((document) => Boolean(document.title))
+  );
 }

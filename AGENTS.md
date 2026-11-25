@@ -27,8 +27,8 @@ When generating or updating code: read neighboring files first, prefer the exist
 ├── apps/
 │   ├── portfolio/               # Next.js 16 site (the product)
 │   │   ├── app/                 # Routes, layouts, route handlers
-│   │   │   ├── (portfolio)/     # Public portfolio route group
-│   │   │   ├── api/             # discord, spotify, draft, revalidate, search, ask, …
+│   │   │   ├── (portfolio)/     # Public portfolio route group (catch-all, feed, cookie policy)
+│   │   │   ├── api/             # discord, spotify, draft, revalidate, search, ask, feed, …
 │   │   │   └── work/feed.xml/   # RSS feed
 │   │   ├── components/
 │   │   │   ├── providers/       # Consent, Storyblok live, registry init
@@ -300,6 +300,21 @@ One glass pill row at the bottom. Same presentational/stateful split as the ligh
 ## Work downloads
 
 Work pages scatter XP desktop icons via `DesktopDownloads` (`@httpjpg/ui`). CMS `download_item` bloks on `SbPageWork` feed the strip. Don't invent a second download path.
+
+## Feed
+
+Insta-style posts (photo dumps, music), published from the native app's composer (`dmnktoe/httpjpg-ios`). One feed — don't add a second.
+
+- **Posts are stories.** Content type `post` in the `feed/` folder (`STORYBLOK_SLUGS.FEED_PREFIX`). `/feed` is a route (`app/(portfolio)/feed`), not a story; `/feed/<slug>` is the permalink, served by the catch-all (`post: SbPagePost`).
+- **Shape:** `images` (`post_image` bloks: asset + `fit`) and/or one `music_player` blok, plus `caption`, `date`, `format` (`1/1` · `4/5` · `original`). One format per post, so a carousel does not jump.
+- **Fit, not crop coordinates.** `cover` fills the frame; `contain` shows the whole file with bars in `pageBg` — never baked into the image, and the lightbox shows it without them. Cropping happens on the device before upload: readers (web, iOS, tvOS, widgets) only ever honour `fit`.
+- **UI split:** presentational `FeedPost` / `FeedGrid` (`@httpjpg/ui`) → `SbPost` (blok → props, lightbox entries) → stateful `FeedStream` (paging). `FeedGrid` squares the tiles from `md` up through the `data-feed-*` hooks; a phone shows one column in the post's own format.
+- **Reads:** `getFeedPage(page)` under `CMS_TAGS.stories`, sorted by `content.date`. An empty page is held for `seconds` (no posts yet, or a failed fetch). `GET /api/feed/posts?page=` serves "load more".
+- **Publishing:** `POST /api/feed/assets` signs one Storyblok upload and the client posts the file to S3 itself; `POST /api/feed/posts` finishes the uploads, then creates and publishes the story. `GET /api/feed/session` is the composer's sign-in check.
+- **Auth:** all three need `Authorization: Bearer $FEED_PUBLISH_TOKEN` (at least 32 characters; unset → 503) plus `STORYBLOK_MANAGEMENT_TOKEN` / `STORYBLOK_SPACE_ID` on the deployment. The management token never leaves the server; the app only knows these routes.
+- **Expiry stays with the webhook.** The publish route does not call `expireStory`; Storyblok's publish webhook does, and it already revalidates `/feed` as the parent path.
+- Posts stay out of the search index (`getSearchIndex` drops `post`). The sitemap lists `/feed` once it has posts.
+- A new field on `post` / `post_image` also has to land in the iOS app — its `check:bloks` runs against these schemas.
 
 ## Env & observability
 

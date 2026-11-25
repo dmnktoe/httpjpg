@@ -32,6 +32,8 @@ export const env = createEnv({
     STORYBLOK_SPACE_ID: z.string().optional(),
     STORYBLOK_API_ENDPOINT: z.string().url().optional(),
 
+    FEED_PUBLISH_TOKEN: z.string().optional(),
+
     SENTRY_DSN: z.string().url().optional(),
     SENTRY_ENABLE_IN_DEV: boolFromString,
 
@@ -90,6 +92,8 @@ export const env = createEnv({
     STORYBLOK_MANAGEMENT_TOKEN: process.env.STORYBLOK_MANAGEMENT_TOKEN,
     STORYBLOK_SPACE_ID: process.env.STORYBLOK_SPACE_ID,
     STORYBLOK_API_ENDPOINT: process.env.STORYBLOK_API_ENDPOINT,
+
+    FEED_PUBLISH_TOKEN: process.env.FEED_PUBLISH_TOKEN,
 
     SENTRY_DSN: process.env.SENTRY_DSN,
     SENTRY_ENABLE_IN_DEV: process.env.SENTRY_ENABLE_IN_DEV,

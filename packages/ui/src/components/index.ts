@@ -20,6 +20,8 @@ export * from "./custom-cursor/custom-cursor";
 export * from "./desktop-downloads/desktop-downloads";
 export * from "./desktop-media/desktop-media";
 export * from "./divider/divider";
+export * from "./feed-grid/feed-grid";
+export * from "./feed-post/feed-post";
 export * from "./floating-action-bar/floating-action-bar";
 export * from "./footer/footer";
 export * from "./footer-status-line/footer-status-line";

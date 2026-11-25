@@ -1,4 +1,10 @@
-import { firstImage, firstImageFilename, isVideoAsset, toSlideshowImage } from "./media-utils";
+import {
+  assetAspectRatio,
+  firstImage,
+  firstImageFilename,
+  isVideoAsset,
+  toSlideshowImage,
+} from "./media-utils";
 
 describe("isVideoAsset", () => {
   it("detects videos by content type", () => {
@@ -85,5 +91,24 @@ describe("firstImageFilename", () => {
     expect(
       firstImageFilename([{ filename: "https://a.storyblok.com/f/1/clip.mov" }]),
     ).toBeUndefined();
+  });
+});
+
+describe("assetAspectRatio", () => {
+  it("reads the dimensions Storyblok writes into the asset URL", () => {
+    expect(
+      assetAspectRatio({ filename: "https://a.storyblok.com/f/123/2592x1944/abc123/dsc0001.jpg" }),
+    ).toBe("2592/1944");
+  });
+
+  it("returns undefined without dimensions", () => {
+    expect(
+      assetAspectRatio({ filename: "https://a.storyblok.com/f/123/abc123/track.mp3" }),
+    ).toBeUndefined();
+    expect(
+      assetAspectRatio({ filename: "https://a.storyblok.com/f/123/0x0/abc/vector.svg" }),
+    ).toBeUndefined();
+    expect(assetAspectRatio({})).toBeUndefined();
+    expect(assetAspectRatio(undefined)).toBeUndefined();
   });
 });

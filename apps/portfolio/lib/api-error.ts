@@ -7,11 +7,13 @@ import { NextResponse } from "next/server";
 export const API_ERROR = {
   rateLimited: "rate_limited",
   forbidden: "forbidden",
+  unauthorized: "unauthorized",
   internal: "internal_error",
   configUnavailable: "config_unavailable",
   notConfigured: "not_configured",
   upstream: "upstream_unavailable",
   invalidJson: "invalid_json",
+  invalidBody: "invalid_body",
   missingQuestion: "missing_question",
   questionTooLong: "question_too_long",
   aiUnavailable: "ai_unavailable",

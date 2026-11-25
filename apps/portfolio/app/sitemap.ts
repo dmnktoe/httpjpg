@@ -121,6 +121,22 @@ async function readSitemap(baseUrl: string): Promise<MetadataRoute.Sitemap> {
       return [english, { url: `${baseUrl}${localizedPath("de", story.full_slug)}`, ...shared }];
     });
 
+  // `/feed` is a route, not a story: list it once it has posts.
+  const lastPost = stories
+    .filter((story) => story.full_slug.startsWith(STORYBLOK_SLUGS.FEED_PREFIX))
+    .map((story) => story.published_at || story.first_published_at)
+    .filter((date): date is string => Boolean(date))
+    .sort()
+    .pop();
+  if (lastPost) {
+    entries.push({
+      url: `${baseUrl}/${STORYBLOK_SLUGS.FEED}`,
+      lastModified: new Date(lastPost),
+      changeFrequency: "daily",
+      priority: 0.8,
+    });
+  }
+
   entries.unshift(
     home ?? { url: baseUrl, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
   );

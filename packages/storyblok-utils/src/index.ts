@@ -32,6 +32,8 @@ export type {
   SbMusicPlayerData,
   SbPageData,
   SbParagraphData,
+  SbPostData,
+  SbPostImageData,
   SbRichtextData,
   SbScrollClipImageData,
   SbSectionData,
@@ -48,7 +50,13 @@ export { extractPlainText } from "./extract-plain-text";
 export { imagePreset } from "./image-presets";
 export { getResponsiveImage } from "./image-processing";
 export type { ResponsiveImage, ResponsiveImageOptions } from "./image-processing";
-export { firstImage, firstImageFilename, isVideoAsset, toSlideshowImage } from "./media-utils";
+export {
+  assetAspectRatio,
+  firstImage,
+  firstImageFilename,
+  isVideoAsset,
+  toSlideshowImage,
+} from "./media-utils";
 export { storyblokEditHref } from "./editable";
 export { validateStoryblokPreviewToken } from "./preview";
 export { isMarginSide, spacingLabel, spacingToken, spacingValue } from "./spacing";

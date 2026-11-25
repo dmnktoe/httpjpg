@@ -231,6 +231,22 @@ describe("getSearchIndex", () => {
     expect(documents[0]?.title).toBe("Demo Project");
   });
 
+  it("leaves feed posts out of the corpus", async () => {
+    mockStories([
+      story({
+        uuid: "post-1",
+        full_slug: "feed/20261125-153012-a3f9",
+        name: "harbour",
+        content: { component: "post", caption: "harbour" },
+      }),
+      story(),
+    ]);
+
+    const documents = await getSearchIndex();
+
+    expect(documents.map((document) => document.href)).toEqual(["/work/demo"]);
+  });
+
   it("falls back to the story name when the content has no title", async () => {
     mockStories([story({ name: "Fallback Name", content: { component: "work" } })]);
 

@@ -69,6 +69,62 @@ export const pageBlocks: BlockDef[] = [
     },
   },
   {
+    name: "post_image",
+    display_name: "Post Image",
+    group: "Pages",
+    icon: "block-image",
+    color: "#ec4899",
+    preview_field: "alt",
+    schema: {
+      image: field.asset("Image", ["images"], { required: true }),
+      alt: field.text("Alt Text", { translatable: true }),
+      fit: field.options(
+        "Fit",
+        [
+          { name: "Fill (cropped to the frame)", value: "cover" },
+          { name: "Fit (whole image, bars in the page colour)", value: "contain" },
+        ],
+        {
+          default_value: "cover",
+          description:
+            "Fit keeps the file untouched and letterboxes it; the lightbox shows it without bars.",
+          tooltip: true,
+        },
+      ),
+    },
+  },
+  {
+    name: "post",
+    display_name: "Feed Post",
+    group: "Pages",
+    is_root: true,
+    icon: "block-image",
+    color: "#ec4899",
+    preview_field: "caption",
+    schema: {
+      caption: field.textarea("Caption", { translatable: true }),
+      date: field.datetime("Date", {
+        description: "Sorts the feed, newest first. The publish endpoint sets it to now.",
+        tooltip: true,
+      }),
+      format: field.options(
+        "Format",
+        [
+          { name: "Square (1:1)", value: "1/1" },
+          { name: "Portrait (4:5)", value: "4/5" },
+          { name: "Original (ratio of the first image)", value: "original" },
+        ],
+        {
+          default_value: "1/1",
+          description: "One frame for every image of the post, so a carousel does not jump.",
+          tooltip: true,
+        },
+      ),
+      images: field.bloks("Images", { whitelist: ["post_image"] }),
+      music: field.bloks("Music", { whitelist: ["music_player"], maximum: 1 }),
+    },
+  },
+  {
     name: "work",
     display_name: "Work Page",
     group: "Pages",

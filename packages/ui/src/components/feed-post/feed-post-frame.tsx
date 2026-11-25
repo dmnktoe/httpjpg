@@ -1,0 +1,201 @@
+"use client";
+
+import { type CSSProperties, type UIEvent, useRef, useState } from "react";
+import { css } from "styled-system/css";
+
+import { Box } from "../box/box";
+
+export interface FeedPostImage {
+  id: string;
+  src: string;
+  srcSet?: string;
+  alt: string;
+  /** `contain` shows the whole image with bars in the page colour. @default "cover" */
+  fit?: "cover" | "contain";
+}
+
+interface FeedPostFrameProps {
+  images: FeedPostImage[];
+  ratio: string;
+  sizes: string;
+  onImageClick?: (index: number) => void;
+}
+
+// Written out so Panda generates both: the fit arrives at runtime.
+const FIT_CLASS = {
+  cover: css({ display: "block", w: "full", h: "full", objectFit: "cover" }),
+  contain: css({ display: "block", w: "full", h: "full", objectFit: "contain" }),
+} as const;
+
+const NAV_CLASS = css({
+  all: "unset",
+  boxSizing: "border-box",
+  position: "absolute",
+  top: "50%",
+  transform: "translateY(-50%)",
+  // Touch swipes the track; the buttons are for pointers.
+  display: { base: "none", md: "inline-flex" },
+  px: "2",
+  py: "1",
+  color: "white",
+  bg: "rgba(0, 0, 0, 0.55)",
+  cursor: "pointer",
+  fontFamily: "mono",
+  fontSize: "sm",
+  lineHeight: 1,
+  userSelect: "none",
+  opacity: 0.75,
+  transition: "opacity 0.2s",
+  _hover: { opacity: 1 },
+  _focusVisible: {
+    opacity: 1,
+    outline: "2px solid",
+    outlineColor: "primary.500",
+    outlineOffset: "2px",
+  },
+});
+
+/** The carousel: a scroll-snap track, so touch swipes it without any script. */
+export function FeedPostFrame({ images, ratio, sizes, onImageClick }: FeedPostFrameProps) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const total = images.length;
+  const isCarousel = total > 1;
+
+  const handleScroll = (event: UIEvent<HTMLDivElement>) => {
+    const { scrollLeft, clientWidth } = event.currentTarget;
+    if (clientWidth > 0) {
+      setActiveIndex(clampIndex(Math.round(scrollLeft / clientWidth), total));
+    }
+  };
+
+  const scrollToIndex = (index: number) => {
+    const track = trackRef.current;
+    if (!track) {
+      return;
+    }
+    const next = clampIndex(index, total);
+    setActiveIndex(next);
+    track.scrollTo?.({ left: next * track.clientWidth, behavior: "smooth" });
+  };
+
+  return (
+    <Box
+      data-feed-frame=""
+      css={{
+        position: "relative",
+        w: "full",
+        overflow: "hidden",
+        // The bars of a fitted image take the page colour.
+        bg: "pageBg",
+        aspectRatio: "var(--feed-ratio)",
+      }}
+      style={{ "--feed-ratio": ratio } as CSSProperties}
+    >
+      <Box
+        ref={trackRef}
+        onScroll={isCarousel ? handleScroll : undefined}
+        css={{
+          display: "flex",
+          h: "full",
+          scrollSnapType: "x mandatory",
+          overflowX: "auto",
+          overflowY: "hidden",
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+        }}
+      >
+        {images.map((image, index) => {
+          const img = (
+            <img
+              src={image.src}
+              srcSet={image.srcSet || undefined}
+              sizes={image.srcSet ? sizes : undefined}
+              alt={image.alt}
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              className={FIT_CLASS[image.fit === "contain" ? "contain" : "cover"]}
+            />
+          );
+          const slideCss = { flex: "0 0 100%", h: "full", scrollSnapAlign: "start" } as const;
+          return onImageClick ? (
+            <Box
+              as="button"
+              type="button"
+              key={image.id}
+              aria-label={image.alt ? `Open ${image.alt} at full size` : "Open at full size"}
+              onClick={() => onImageClick(index)}
+              css={{
+                all: "unset",
+                boxSizing: "border-box",
+                cursor: "zoom-in",
+                ...slideCss,
+                _focusVisible: {
+                  outline: "2px solid",
+                  outlineColor: "primary.500",
+                  outlineOffset: "-2px",
+                },
+              }}
+            >
+              {img}
+            </Box>
+          ) : (
+            <Box key={image.id} css={slideCss}>
+              {img}
+            </Box>
+          );
+        })}
+      </Box>
+      {isCarousel && (
+        <>
+          <button
+            type="button"
+            aria-label="Previous image"
+            className={NAV_CLASS}
+            style={{ left: 0 }}
+            onClick={() => scrollToIndex(activeIndex - 1)}
+          >
+            [ ← ]
+          </button>
+          <button
+            type="button"
+            aria-label="Next image"
+            className={NAV_CLASS}
+            style={{ right: 0 }}
+            onClick={() => scrollToIndex(activeIndex + 1)}
+          >
+            [ → ]
+          </button>
+          <Box
+            aria-hidden="true"
+            css={{
+              position: "absolute",
+              right: "2",
+              bottom: "2",
+              px: "2",
+              py: "1",
+              color: "white",
+              fontFamily: "mono",
+              fontSize: "sm",
+              lineHeight: 1,
+              bg: "rgba(0, 0, 0, 0.55)",
+              pointerEvents: "none",
+              userSelect: "none",
+            }}
+          >
+            {`[ ${pad(activeIndex + 1)} / ${pad(total)} ]`}
+          </Box>
+        </>
+      )}
+    </Box>
+  );
+}
+
+function clampIndex(index: number, total: number): number {
+  return Math.min(Math.max(index, 0), total - 1);
+}
+
+function pad(value: number): string {
+  return String(value).padStart(2, "0");
+}

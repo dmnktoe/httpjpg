@@ -21,8 +21,10 @@ export { SbMarquee, type SbMarqueeProps } from "./components/marquee/SbMarquee";
 export { SbMissing, type SbMissingProps } from "./components/missing/SbMissing";
 export { SbMusicPlayer, type SbMusicPlayerProps } from "./components/music-player/SbMusicPlayer";
 export { SbPage, type SbPageProps } from "./components/page/SbPage";
+export { SbPagePost, type SbPagePostProps } from "./components/page-post/SbPagePost";
 export { SbPageWork, type SbPageWorkProps } from "./components/page-work/SbPageWork";
 export { SbParagraph, type SbParagraphProps } from "./components/paragraph/SbParagraph";
+export { SbPost, type SbPostProps } from "./components/post/SbPost";
 export { SbRichText, type SbRichTextProps } from "./components/richtext/SbRichText";
 export {
   SbScrollClipImage,

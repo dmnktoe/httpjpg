@@ -21,6 +21,7 @@ export * from "./desktop-downloads/desktop-downloads";
 export * from "./desktop-media/desktop-media";
 export * from "./divider/divider";
 export * from "./feed-grid/feed-grid";
+export * from "./feed-panel/feed-panel";
 export * from "./feed-post/feed-post";
 export * from "./floating-action-bar/floating-action-bar";
 export * from "./footer/footer";

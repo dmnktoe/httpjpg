@@ -4,5 +4,6 @@ export * from "./lib/format";
 export * from "./lib/is-external-link";
 export * from "./lib/spacing-var";
 export * from "./lib/use-body-scroll-lock";
+export * from "./lib/use-desktop-drag";
 export * from "./lib/use-has-mounted";
 export * from "./lib/work-accent";

@@ -17,6 +17,7 @@ export interface WidgetConfig {
   spotifyEnabled: boolean;
   nostalgiaSlideshowEnabled: boolean;
   askEnabled: boolean;
+  feedPanelEnabled: boolean;
 }
 
 export async function getWidgetConfig(): Promise<WidgetConfig> {
@@ -38,6 +39,7 @@ export async function getWidgetConfig(): Promise<WidgetConfig> {
     spotifyEnabled: config?.spotify_enabled ?? false,
     nostalgiaSlideshowEnabled: config?.nostalgia_slideshow_enabled ?? false,
     askEnabled: config?.ask_enabled ?? false,
+    feedPanelEnabled: config?.feed_panel_enabled ?? false,
   };
 }
 

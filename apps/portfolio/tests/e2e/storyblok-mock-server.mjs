@@ -71,6 +71,7 @@ const CONFIG = baseStory("config", {
     { _uid: "footer", component: "footer_config", copyright_text: "© httpjpg", footer_links: [] },
   ],
   spotify_enabled: false,
+  feed_panel_enabled: true,
   nostalgia_slideshow_enabled: false,
   psn_enabled: false,
   psn_trophy_enabled: false,

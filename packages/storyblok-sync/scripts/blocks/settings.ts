@@ -156,6 +156,11 @@ export const settingsBlocks: BlockDef[] = [
         spotify_enabled: field.boolean("Spotify · Now Playing", "false"),
         nostalgia_slideshow_enabled: field.boolean("Nostalgia · Slideshow", "false"),
         ask_enabled: field.boolean("Ask · Search & AI Palette", "false"),
+        feed_panel_enabled: field.boolean("Feed · Floating Panel", "false", {
+          description:
+            "Square panel cycling through the newest feed posts: draggable on desktop, a block above the footer on a phone. Hidden on the feed itself.",
+          tooltip: true,
+        }),
         discord_enabled: field.boolean("Discord · Live Status", "false"),
         discord_user_id: field.text("Discord · User ID", {
           description: "17–20 digit Discord snowflake; powers the live status widget.",

@@ -31,6 +31,7 @@ describe("getWidgetConfig", () => {
       spotifyEnabled: false,
       nostalgiaSlideshowEnabled: false,
       askEnabled: false,
+      feedPanelEnabled: false,
     });
   });
 
@@ -52,6 +53,7 @@ describe("getWidgetConfig", () => {
       spotify_enabled: false,
       nostalgia_slideshow_enabled: true,
       ask_enabled: false,
+      feed_panel_enabled: true,
     } as never);
 
     await expect(getWidgetConfig()).resolves.toEqual({
@@ -71,6 +73,7 @@ describe("getWidgetConfig", () => {
       spotifyEnabled: false,
       nostalgiaSlideshowEnabled: true,
       askEnabled: false,
+      feedPanelEnabled: true,
     });
   });
 });

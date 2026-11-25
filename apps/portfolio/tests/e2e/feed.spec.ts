@@ -1,4 +1,9 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
+
+/** The consent banner covers the bottom of the viewport on a first visit, the panel with it. */
+async function dismissConsent(page: Page) {
+  await page.getByRole("button", { name: /Reject All/ }).click();
+}
 
 test.describe("feed", () => {
   test("lists the posts newest first, each with its permalink", async ({ page }) => {
@@ -70,6 +75,48 @@ test.describe("feed", () => {
 
     await expect(page.locator("main article")).toHaveCount(1);
     await expect(page.getByText("straight off the dsc-w5")).toBeVisible();
+  });
+
+  test("the panel floats on other pages and leads to the feed", async ({ page }) => {
+    await page.goto("/");
+    await dismissConsent(page);
+    const panel = page.locator("[data-feed-panel]");
+
+    await expect(panel).toBeVisible();
+    await expect(panel).toHaveCSS("position", "fixed");
+    const box = await panel.boundingBox();
+    expect(Math.abs((box?.width ?? 0) - (box?.height ?? 1))).toBeLessThan(2);
+
+    await panel.getByRole("link", { name: "Open the feed" }).click();
+    await expect(page).toHaveURL(/\/feed$/);
+    await expect(page.locator("[data-feed-panel]")).toHaveCount(0);
+  });
+
+  test("dragging the panel moves it without opening the feed", async ({ page }) => {
+    await page.goto("/");
+    await dismissConsent(page);
+    const panel = page.locator("[data-feed-panel]");
+    const before = await panel.boundingBox();
+
+    await panel.hover();
+    await page.mouse.down();
+    await page.mouse.move((before?.x ?? 0) + 300, (before?.y ?? 0) - 200, { steps: 8 });
+    await page.mouse.up();
+
+    const after = await panel.boundingBox();
+    expect((after?.x ?? 0) - (before?.x ?? 0)).toBeGreaterThan(100);
+    await expect(page).toHaveURL(/\/$/);
+  });
+
+  test("on a phone the panel is a block above the footer", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+
+    const panel = page.locator("[data-feed-panel]");
+    await expect(panel).toHaveCSS("position", "static");
+    const panelBox = await panel.boundingBox();
+    const footerBox = await page.locator("footer").first().boundingBox();
+    expect((panelBox?.y ?? 0) + (panelBox?.height ?? 0)).toBeLessThanOrEqual(footerBox?.y ?? 0);
   });
 
   test("load more is served as JSON", async ({ request }) => {

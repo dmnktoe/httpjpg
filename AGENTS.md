@@ -313,6 +313,8 @@ Insta-style posts (photo dumps, music), published from the native app's composer
 - **Publishing:** `POST /api/feed/assets` signs one Storyblok upload and the client posts the file to S3 itself; `POST /api/feed/posts` finishes the uploads, then creates and publishes the story. `GET /api/feed/session` is the composer's sign-in check.
 - **Auth:** all three need `Authorization: Bearer $FEED_PUBLISH_TOKEN` (at least 32 characters; unset → 503) plus `STORYBLOK_MANAGEMENT_TOKEN` / `STORYBLOK_SPACE_ID` on the deployment. The management token never leaves the server; the app only knows these routes.
 - **Expiry stays with the webhook.** The publish route does not call `expireStory`; Storyblok's publish webhook does, and it already revalidates `/feed` as the parent path.
+- **Panel:** presentational `FeedPanel` (`@httpjpg/ui`: always square, cycles the newest posts, the whole thing links to `/feed`) vs `FeedPanelWidget` (placement), mounted once in the root layout behind `feed_panel_enabled` on the config story. Below `md` it is a block above the footer; from `md` up it is fixed bottom-left and draggable through `useDesktopDrag`. Hidden on `/feed*`. A post shows as its cover, or a track's artwork; posts with neither are skipped.
+- **Dragging a link:** capture the pointer only once a press has become a drag (`FeedPanelWidget` releases the hook's capture on press). A captured pointer's click lands on the capturing element, so the link inside would never open.
 - Posts stay out of the search index (`getSearchIndex` drops `post`). The sitemap lists `/feed` once it has posts.
 - A new field on `post` / `post_image` also has to land in the iOS app — its `check:bloks` runs against these schemas.
 

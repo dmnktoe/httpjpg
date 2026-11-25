@@ -34,11 +34,13 @@ import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AskWidget } from "@/components/widgets/ask-widget";
 import { BuildBadge } from "@/components/widgets/build-badge";
 import { CloudflareStatus } from "@/components/widgets/cloudflare-status";
+import { FeedPanelWidget } from "@/components/widgets/feed-panel-widget";
 import { FooterStatus } from "@/components/widgets/footer-status";
 import { NowPlayingWidget } from "@/components/widgets/now-playing-widget";
 import { PSNCard } from "@/components/widgets/psn-card";
 import { WeatherTime } from "@/components/widgets/weather-time-widget";
 import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
+import { toFeedPanelItems } from "@/lib/feed/panel";
 import { isStoryblokEditor } from "@/lib/is-storyblok-editor";
 import { htmlLangForPath } from "@/lib/locale";
 import { getPageAccent, getPageTheme } from "@/lib/page-theme";
@@ -50,6 +52,7 @@ import {
   getSiteConfig,
   getSocialProfiles,
 } from "@/lib/queries/config";
+import { getFeedPage } from "@/lib/queries/feed";
 import { getLastUpdated } from "@/lib/queries/last-updated";
 import { getFeatureFlags, getInterfaceConfig, getWidgetConfig } from "@/lib/queries/widgets";
 import { getRecentWork } from "@/lib/queries/work";
@@ -125,6 +128,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     author: author ? { ...author, sameAs: socialProfiles } : null,
   });
   const { projectsWork, websitesWork } = await getRecentWork();
+  const feedPanelItems = widgetConfig.feedPanelEnabled
+    ? toFeedPanelItems((await getFeedPage(1)).posts)
+    : [];
   const lastUpdated = flags.lastUpdatedBadgeEnabled ? await getLastUpdated() : undefined;
 
   const rawVersion = env.NEXT_PUBLIC_APP_VERSION;
@@ -170,6 +176,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                   </Box>
                 </TrackedLightboxProvider>
               </PageActionsProvider>
+              {feedPanelItems.length > 0 && <FeedPanelWidget items={feedPanelItems} />}
               <Footer
                 backgroundImage={footerConfig.backgroundImage}
                 footerLinks={footerConfig.footerLinks}

@@ -95,6 +95,7 @@ const WORK_EXAMPLE = baseStory("work/example", {
 });
 
 const MISSING_PREFIX = "missing";
+const UNPUBLISHED_PREFIX = "unpublished";
 const PUBLISHED_FIXTURE_SLUGS = ["cv", "feed-xml_html"];
 
 const IMG = `http://127.0.0.1:${PORT}/img`;
@@ -261,6 +262,10 @@ const server = createServer((req, res) => {
   if (rest.startsWith("stories/")) {
     const slug = decodeURIComponent(rest.slice("stories/".length));
     if (slug.startsWith(MISSING_PREFIX)) {
+      sendJson(res, 404, ["This record could not be found"]);
+      return;
+    }
+    if (slug.startsWith(UNPUBLISHED_PREFIX) && searchParams.get("version") !== "draft") {
       sendJson(res, 404, ["This record could not be found"]);
       return;
     }

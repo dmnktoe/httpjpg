@@ -191,6 +191,7 @@ New blok checklist:
 - Spacing: `withSpacing()` (sync, 24-field matrix) ↔ `BlokSpacing` + `spacingStyle()` (runtime) — keep in lock-step.
 - Negative margins are stored as `−4` (U+2212): Storyblok rejects datasource names and values starting with `-`, `=` or `@`. `spacingToken()` turns them back into Panda's `-4`.
 - Draft: `getStoryblokApi({ draftMode: true })` uses preview token + `version: "draft"`; `proxy.ts` validates the preview-token hash.
+- `?_storyblok` / `?_draft` are markers anyone can type, never permission. A page reads drafts for them only through `isVisualEditorRequest` (`lib/storyblok-preview.ts`): draft mode is on, Storyblok signed the request (`_storyblok_tk`), or it is `pnpm dev`.
 - Revalidate webhook: `app/api/revalidate/route.ts` → `expireStory(slug)` / `expireConfig()` + paths.
 - New CMS option: edit `storyblok-utils/src/cms-options.ts` → `sync:datasources` → rebuild `ui`.
 

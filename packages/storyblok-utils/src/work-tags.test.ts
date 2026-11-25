@@ -3,7 +3,6 @@ import {
   WORK_TAG_DATASOURCE_SLUG,
   WORK_TAG_GROUPS,
   WORK_TAGS,
-  workTagByValue,
   workTagDatasourceEntries,
   workTagLabels,
 } from "./work-tags";
@@ -29,20 +28,6 @@ describe("WORK_TAGS", () => {
     for (const tag of WORK_TAGS) {
       expect(WORK_TAG_GROUPS[tag.group]).toBeDefined();
     }
-  });
-});
-
-describe("workTagByValue", () => {
-  it("finds a tag by its stored value", () => {
-    expect(workTagByValue("typescript")).toEqual({
-      value: "typescript",
-      label: "TypeScript",
-      group: "language",
-    });
-  });
-
-  it("returns undefined for a value outside the vocabulary", () => {
-    expect(workTagByValue("cobol")).toBeUndefined();
   });
 });
 

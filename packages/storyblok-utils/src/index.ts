@@ -53,14 +53,12 @@ export { storyblokEditHref } from "./editable";
 export { validateStoryblokPreviewToken } from "./preview";
 export { isMarginSide, spacingLabel, spacingToken, spacingValue } from "./spacing";
 export type {
-  StoryblokApiResponse,
   StoryblokBlokData,
   StoryblokImage,
   StoryblokLink,
   StoryblokRichText,
   StoryblokRichTextNode,
   StoryblokStory,
-  StoryblokVideoAsset,
   StoryMetadata,
 } from "./types";
 export {
@@ -68,7 +66,6 @@ export {
   WORK_TAG_DATASOURCE_SLUG,
   WORK_TAG_GROUPS,
   WORK_TAGS,
-  workTagByValue,
   workTagDatasourceEntries,
   workTagLabels,
 } from "./work-tags";

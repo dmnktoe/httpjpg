@@ -1,5 +1,11 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("@httpjpg/analytics", () => ({
+  trackOutboundClick: vi.fn(),
+}));
+
+import { trackOutboundClick } from "@httpjpg/analytics";
 
 import type { XPost, XProfile } from "@/lib/integrations/x-posts";
 
@@ -122,5 +128,15 @@ describe("XStatus", () => {
 
     const avatar = document.querySelector(`img[src="${profile.avatar}"]`) as HTMLElement;
     expect(avatar.parentElement?.parentElement).toHaveClass("jpg-flex-sh_0");
+  });
+
+  it("tracks the outbound click", () => {
+    render(<XStatus profile={profile} post={post} loaded />);
+
+    fireEvent.click(screen.getByRole("link"));
+
+    expect(trackOutboundClick).toHaveBeenCalledWith(
+      expect.objectContaining({ destination: "x", href: post.url }),
+    );
   });
 });

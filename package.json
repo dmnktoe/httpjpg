@@ -35,7 +35,7 @@
     "@vitest/coverage-v8": "catalog:",
     "husky": "^9.1.7",
     "jsdom": "catalog:",
-    "lint-staged": "^17.6.1",
+    "lint-staged": "^17.6.2",
     "oxfmt": "^0.79.0",
     "oxlint": "^1.94.0",
     "turbo": "^2.11.13",

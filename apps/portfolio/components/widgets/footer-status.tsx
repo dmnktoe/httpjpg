@@ -37,10 +37,6 @@ export interface FooterStatusProps {
 /** Presence changes minute to minute, so it is the one line worth polling. */
 const DISCORD_POLL_MS = 30_000;
 
-/**
- * Lines shown before the rest fold behind the toggle. The stack is already
- * ordered live → newest → undated, so the first few are what is happening now.
- */
 const VISIBLE_LINES = 3;
 
 /**
@@ -223,9 +219,6 @@ export function FooterStatus({
     return key === "discord" ? discord.loaded : status.loaded;
   }
 
-  // A line whose source came back empty renders nothing, so it must not count
-  // towards the visible few or the "more" tally. While loading, placeholders do
-  // count: they hold the collapsed height so the footer does not jump.
   const shown = orderStatusLines(
     lines.filter((line) => line.enabled && (line.hasContent || !isLoaded(line.key))),
   );
@@ -251,7 +244,6 @@ interface FooterStatusMoreProps {
   children: ReactNode;
 }
 
-/** Folds the older lines behind an ASCII toggle, like the lightbox chrome. */
 function FooterStatusMore({ count, children }: FooterStatusMoreProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const panelId = `footer-status-more-${useId().replace(/:/g, "")}`;

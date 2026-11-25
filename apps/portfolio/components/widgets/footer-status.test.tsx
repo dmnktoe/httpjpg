@@ -95,7 +95,6 @@ function mockFetch(byUrl: Record<string, unknown>) {
   return fetchMock;
 }
 
-/** Opens the folded lines once the envelope has landed. */
 async function expandMore() {
   fireEvent.click(await screen.findByRole("button", { name: /more/ }));
 }

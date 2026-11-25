@@ -1,7 +1,5 @@
-import sharp from "sharp";
-
-import { isHttpUrl, readLimited, safeFetch } from "./favicon";
 import { fetchWithTimeout, type HttpFailure, readJson } from "./http";
+import { PIXEL_GRID, pixelateImage } from "./pixelate";
 
 const OUTCOME = { win: "win", draw: "draw", loss: "loss" } as const;
 export type FixtureOutcome = (typeof OUTCOME)[keyof typeof OUTCOME];
@@ -92,10 +90,6 @@ const WEEKS_AHEAD = 4;
 
 const MATCH_LENGTH_MS = 2 * 60 * 60 * 1000;
 const LIVE_WINDOW_MS = 3 * 60 * 60 * 1000;
-
-const CREST_SIZE = 16;
-const CREST_TIMEOUT_MS = 5000;
-const MAX_CREST_BYTES = 4 * 1024 * 1024;
 
 function teamLabel(team: OpenLigaTeam | undefined): string {
   return team?.shortName || team?.teamName || "?";
@@ -257,32 +251,12 @@ export function readStanding(
   };
 }
 
-export async function pixelateCrest(iconUrl: string | undefined): Promise<string | null> {
-  const target = iconUrl ? isHttpUrl(iconUrl) : null;
-  if (!target) {
-    return null;
-  }
-
-  try {
-    const response = await safeFetch(target, "image/*", Date.now() + CREST_TIMEOUT_MS);
-    if (!response?.ok) {
-      return null;
-    }
-    const source = await readLimited(response, MAX_CREST_BYTES);
-    if (!source) {
-      return null;
-    }
-    const pixels = await sharp(source)
-      .resize(CREST_SIZE, CREST_SIZE, {
-        fit: "contain",
-        background: { r: 0, g: 0, b: 0, alpha: 0 },
-      })
-      .png()
-      .toBuffer();
-    return `data:image/png;base64,${pixels.toString("base64")}`;
-  } catch {
-    return null;
-  }
+export function pixelateCrest(iconUrl: string | undefined): Promise<string | null> {
+  return pixelateImage(iconUrl, {
+    width: PIXEL_GRID.large,
+    height: PIXEL_GRID.large,
+    fit: "contain",
+  });
 }
 
 export function parseUpcoming(match: OpenLigaMatch): SchalkeUpcoming | null {

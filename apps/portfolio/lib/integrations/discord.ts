@@ -1,4 +1,5 @@
 import { fetchWithTimeout } from "./http";
+import { PIXEL_GRID, pixelateImage } from "./pixelate";
 
 interface LanyardAsset {
   small_image?: string;
@@ -133,6 +134,12 @@ export async function fetchDiscordPresence(userId: string): Promise<LanyardFetch
   }
   const activities = presence.activities ?? [];
   const { label, details } = extractActivity(activities);
+  if (details?.type === "game") {
+    details.icon = await pixelateImage(details.icon, {
+      width: PIXEL_GRID.thumb,
+      height: PIXEL_GRID.thumb,
+    });
+  }
 
   return {
     ok: true,

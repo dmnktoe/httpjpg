@@ -47,7 +47,11 @@ export const settingsBlocks: BlockDef[] = [
           "SoundCloud",
           "Bandcamp",
           "Spotify",
+          "YouTube",
+          "Steam",
+          "Reddit",
           "Discogs",
+          "Last.fm",
           "Letterboxd",
           "X",
           "LinkedIn",
@@ -161,6 +165,31 @@ export const settingsBlocks: BlockDef[] = [
         letterboxd_username: field.text("Letterboxd · Username"),
         discogs_enabled: field.boolean("Discogs · Latest Record"),
         discogs_username: field.text("Discogs · Username"),
+        lastfm_enabled: field.boolean("Last.fm · Latest Scrobble", "false"),
+        lastfm_username: field.text("Last.fm · Username", {
+          description: "Needs LASTFM_API_KEY to be set.",
+          tooltip: true,
+        }),
+        steam_enabled: field.boolean("Steam · Recently Played", "false"),
+        steam_id: field.text("Steam · SteamID64", {
+          description:
+            "17-digit id starting with 7656119 (steamid.io resolves a vanity URL). Needs STEAM_API_KEY and public game details.",
+          tooltip: true,
+        }),
+        youtube_enabled: field.boolean("YouTube · Latest Upload", "false"),
+        youtube_channel_id: field.text("YouTube · Channel ID", {
+          description: "UC… id from youtube.com/account_advanced. Needs YOUTUBE_API_KEY.",
+          tooltip: true,
+        }),
+        github_enabled: field.boolean("GitHub · Latest Activity", "false"),
+        github_username: field.text("GitHub · Username"),
+        reddit_enabled: field.boolean("Reddit · Karma", "false"),
+        reddit_username: field.text("Reddit · Username", {
+          description:
+            "Without u/. Reddit's API needs an approved app, so the karma is typed in here.",
+          tooltip: true,
+        }),
+        reddit_karma: field.number("Reddit · Karma (manual)"),
         x_enabled: field.boolean("X · Latest Post"),
         x_username: field.text("X · Username", {
           description: "Handle without @, e.g. dmnktoe. Needs TWEETAPI_KEY to be set.",

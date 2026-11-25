@@ -44,7 +44,6 @@ export function TrophyStatus({ trophy, avatar, loaded }: TrophyStatusProps) {
         size="3"
         shape="square"
         fit="contain"
-        pixelated
       />
       <FooterStatusLineText>{trophy.name}</FooterStatusLineText>
       <FooterStatusLineSeparator />

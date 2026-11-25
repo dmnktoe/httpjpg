@@ -101,9 +101,15 @@ describe("FooterStatusLineThumb", () => {
     expect(screen.getByAltText("platinum trophy")).toBeInTheDocument();
   });
 
-  it("renders sprite art without smoothing", () => {
-    render(<FooterStatusLineThumb src="/images/trophies/gold.png" alt="gold trophy" pixelated />);
+  it("draws every thumb as pixel art by default", () => {
+    render(<FooterStatusLineThumb src="/images/trophies/gold.png" alt="gold trophy" />);
 
     expect(screen.getByAltText("gold trophy")).toHaveStyle({ imageRendering: "pixelated" });
+  });
+
+  it("smooths an image that opts out", () => {
+    render(<FooterStatusLineThumb src="https://example.com/a.png" alt="photo" pixelated={false} />);
+
+    expect(screen.getByAltText("photo")).not.toHaveStyle({ imageRendering: "pixelated" });
   });
 });

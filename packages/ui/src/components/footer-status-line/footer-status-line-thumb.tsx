@@ -20,7 +20,6 @@ export interface FooterStatusLineThumbProps extends HTMLAttributes<HTMLSpanEleme
   shape?: FooterStatusLineThumbShape;
   /** `contain` keeps badge art whole where `cover` would crop it. */
   fit?: "cover" | "contain";
-  /** Renders low-res sprite art crisply, e.g. the PSN trophy pips. */
   pixelated?: boolean;
 }
 
@@ -38,7 +37,7 @@ export function FooterStatusLineThumb({
   aspect = "square",
   shape = "rounded",
   fit = "cover",
-  pixelated = false,
+  pixelated = true,
   ...props
 }: FooterStatusLineThumbProps) {
   return (

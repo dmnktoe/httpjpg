@@ -200,6 +200,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                       discordEnabled={widgetConfig.discordEnabled}
                       letterboxdEnabled={widgetConfig.letterboxdEnabled}
                       discogsEnabled={widgetConfig.discogsEnabled}
+                      lastfmEnabled={widgetConfig.lastfmEnabled}
+                      steamEnabled={widgetConfig.steamEnabled}
+                      youtubeEnabled={widgetConfig.youtubeEnabled}
+                      githubEnabled={widgetConfig.githubEnabled}
+                      redditEnabled={widgetConfig.redditEnabled}
                       xEnabled={widgetConfig.xEnabled}
                       schalkeEnabled={widgetConfig.schalkeEnabled}
                       trophiesEnabled={widgetConfig.psnTrophyEnabled}

@@ -10,6 +10,8 @@ import {
   type TrophyTitle,
 } from "psn-api";
 
+import { PIXEL_GRID, pixelateEach, pixelateImage } from "./pixelate";
+
 const TROPHY_TYPES = ["bronze", "silver", "gold", "platinum"] as const;
 type TrophyType = (typeof TROPHY_TYPES)[number];
 
@@ -266,7 +268,15 @@ export async function fetchRecentTrophies(
       .map((entry) => buildTrophy(entry.title, entry.earned, entry.definition, username))
       .filter((trophy): trophy is PsnTrophy => trophy !== null);
 
-    return { ok: true, trophies, avatar };
+    const [pixelAvatar, pixelTrophies] = await Promise.all([
+      pixelateImage(avatar, { width: PIXEL_GRID.large, height: PIXEL_GRID.large }),
+      pixelateEach(trophies, "image", {
+        width: PIXEL_GRID.large,
+        height: PIXEL_GRID.large,
+        fit: "contain",
+      }),
+    ]);
+    return { ok: true, trophies: pixelTrophies, avatar: pixelAvatar };
   } catch (error) {
     const isAuthFailure = error instanceof PsnAuthError;
     return {

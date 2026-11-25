@@ -10,6 +10,64 @@ const STATUS_PAYLOAD = {
   discogs: {
     releases: [{ artist: "DJ Shadow", title: "Endtroducing.....", url: "https://d.test/r" }],
   },
+  lastfm: {
+    tracks: [
+      {
+        title: "Teardrop",
+        artist: "Massive Attack",
+        url: "https://lfm.test/t",
+        image: null,
+        nowPlaying: true,
+        loved: false,
+      },
+    ],
+    total: 48213,
+  },
+  steam: {
+    profile: { name: "dmnktoe", avatar: null, url: "https://s.test/p", inGame: null },
+    games: [
+      {
+        appId: 1245620,
+        name: "ELDEN RING",
+        minutesTwoWeeks: 845,
+        minutesTotal: 9000,
+        icon: null,
+        url: "https://s.test/g",
+      },
+    ],
+  },
+  youtube: {
+    channel: {
+      id: "UC",
+      title: "httpjpg",
+      avatar: null,
+      url: "https://y.test/c",
+      subscriberCount: 1230,
+    },
+    videos: [
+      {
+        id: "v",
+        title: "Studio tour",
+        url: "https://y.test/v",
+        thumbnail: null,
+        publishedAt: null,
+      },
+    ],
+  },
+  github: {
+    profile: { login: "dmnktoe", avatar: null, url: "https://g.test/u" },
+    activity: [
+      {
+        kind: "push",
+        verb: "pushed to",
+        repo: "dmnktoe/httpjpg",
+        detail: "main",
+        url: "https://g.test/c",
+        createdAt: null,
+      },
+    ],
+  },
+  reddit: { username: "dmnktoe", karma: 12345, url: "https://r.test/u" },
   x: {
     profile: { username: "dmnktoe", avatar: null, followerCount: null },
     posts: [{ text: "Hello world", url: "https://x.test/p" }],
@@ -54,6 +112,29 @@ describe("FooterStatus", () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith("/api/status", expect.anything());
+  });
+
+  it("renders the latest scrobble with the lifetime count", async () => {
+    mockFetch({ "/api/status": STATUS_PAYLOAD });
+
+    render(<FooterStatus lastfmEnabled />);
+
+    await waitFor(() => expect(screen.getByText("Teardrop")).toBeInTheDocument());
+    expect(screen.getByLabelText("now playing")).toBeInTheDocument();
+    expect(screen.getByLabelText("48213 scrobbles")).toBeInTheDocument();
+    expect(screen.queryByText("Stalker")).not.toBeInTheDocument();
+  });
+
+  it("renders the Steam, YouTube and GitHub lines from the same envelope", async () => {
+    const fetchMock = mockFetch({ "/api/status": STATUS_PAYLOAD });
+
+    render(<FooterStatus steamEnabled youtubeEnabled githubEnabled redditEnabled />);
+
+    await waitFor(() => expect(screen.getByText("ELDEN RING")).toBeInTheDocument());
+    expect(screen.getByText("Studio tour")).toBeInTheDocument();
+    expect(screen.getByText("dmnktoe/httpjpg")).toBeInTheDocument();
+    expect(screen.getByText("u/dmnktoe")).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it("keeps Discord on its own connection so it can poll", async () => {

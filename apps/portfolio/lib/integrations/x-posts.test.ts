@@ -3,6 +3,12 @@ import { beforeEach, type MockedFunction, vi } from "vitest";
 
 import { cleanPostText, fetchXTimeline, isXUsername, toPost, toProfile } from "./x-posts";
 
+vi.mock("./pixelate", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("./pixelate")>()),
+  pixelateImage: vi.fn(async (source: string | null | undefined) => source ?? null),
+  pixelateEach: vi.fn(async (items: unknown[]) => items),
+}));
+
 global.fetch = vi.fn() as MockedFunction<typeof fetch>;
 const mockFetch = global.fetch as MockedFunction<typeof fetch>;
 

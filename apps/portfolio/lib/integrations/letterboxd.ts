@@ -1,5 +1,6 @@
 import { decodeEntities } from "./html";
 import { fetchWithTimeout } from "./http";
+import { PIXEL_GRID, pixelateEach } from "./pixelate";
 
 export interface LetterboxdFilm {
   title: string;
@@ -80,5 +81,6 @@ export async function fetchLetterboxdFilms(
   }
 
   const xml = await result.response.text();
-  return { ok: true, films: parseLetterboxdFeed(xml, limit) };
+  const films = parseLetterboxdFeed(xml, limit);
+  return { ok: true, films: await pixelateEach(films, "poster", { width: PIXEL_GRID.thumb }) };
 }

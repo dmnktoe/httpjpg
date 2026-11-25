@@ -7,6 +7,11 @@ export interface WidgetConfig {
   discordEnabled: boolean;
   letterboxdEnabled: boolean;
   discogsEnabled: boolean;
+  lastfmEnabled: boolean;
+  steamEnabled: boolean;
+  youtubeEnabled: boolean;
+  githubEnabled: boolean;
+  redditEnabled: boolean;
   xEnabled: boolean;
   schalkeEnabled: boolean;
   spotifyEnabled: boolean;
@@ -23,6 +28,11 @@ export async function getWidgetConfig(): Promise<WidgetConfig> {
     discordEnabled: config?.discord_enabled ?? false,
     letterboxdEnabled: config?.letterboxd_enabled ?? false,
     discogsEnabled: config?.discogs_enabled ?? false,
+    lastfmEnabled: config?.lastfm_enabled ?? false,
+    steamEnabled: config?.steam_enabled ?? false,
+    youtubeEnabled: config?.youtube_enabled ?? false,
+    githubEnabled: config?.github_enabled ?? false,
+    redditEnabled: config?.reddit_enabled ?? false,
     xEnabled: config?.x_enabled ?? false,
     schalkeEnabled: config?.schalke_enabled ?? false,
     spotifyEnabled: config?.spotify_enabled ?? false,

@@ -29,7 +29,18 @@ import { GET } from "./route";
 
 const request = {} as NextRequest;
 
-const EMPTY = { letterboxd: null, discogs: null, x: null, trophies: null, schalke: null };
+const EMPTY = {
+  letterboxd: null,
+  discogs: null,
+  lastfm: null,
+  steam: null,
+  youtube: null,
+  github: null,
+  reddit: null,
+  x: null,
+  trophies: null,
+  schalke: null,
+};
 
 beforeEach(() => {
   vi.clearAllMocks();

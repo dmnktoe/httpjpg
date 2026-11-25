@@ -23,6 +23,9 @@ vi.mock("./asset-picker", () => ({
         </button>
       </div>
     ) : null,
+}));
+
+vi.mock("./story-picker", () => ({
   StoryPicker: ({
     open,
     startsWith,

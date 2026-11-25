@@ -9,5 +9,5 @@ export {
   MARK_STEP,
   MARK_WARN,
 } from "./ascii";
-export { accent, bold, colorEnabled, danger, dim, muted, primary, success, warning } from "./color";
+export { accent, bold, danger, dim, muted, primary, success, warning } from "./color";
 export { banner, done, fail, heading, note, outro, step, warn } from "./output";

@@ -1,5 +1,11 @@
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("@httpjpg/analytics", () => ({
+  trackOutboundClick: vi.fn(),
+}));
+
+import { trackOutboundClick } from "@httpjpg/analytics";
 
 import type { LetterboxdFilm } from "@/lib/integrations/letterboxd";
 
@@ -72,5 +78,15 @@ describe("LetterboxdStatus", () => {
     expect(screen.getByText("★★★★½")).toHaveClass("jpg-flex-sh_0", "jpg-white-space_nowrap");
     expect(screen.getByText("2001")).toHaveClass("jpg-flex-sh_0");
     expect(screen.getByLabelText("liked")).toHaveClass("jpg-flex-sh_0");
+  });
+
+  it("tracks the outbound click", () => {
+    render(<LetterboxdStatus film={film} loaded />);
+
+    fireEvent.click(screen.getByRole("link"));
+
+    expect(trackOutboundClick).toHaveBeenCalledWith(
+      expect.objectContaining({ destination: "letterboxd", href: film.url }),
+    );
   });
 });

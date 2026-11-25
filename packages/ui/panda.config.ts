@@ -268,9 +268,6 @@ export default defineConfig({
 
   patterns: { extend: {} },
 
-  // Consumers import `@httpjpg/ui/css`; the package's own sources import
-  // `styled-system/css`. Both have to be listed, or Panda skips the `cva()`
-  // calls in `src/` and their classes only exist when another file emits them.
   importMap: [
     {
       css: "@httpjpg/ui/css",

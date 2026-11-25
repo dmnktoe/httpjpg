@@ -41,15 +41,6 @@ export interface StoryblokStory<T = StoryblokBlokData> extends StoryMetadata {
   translated_slugs: Array<{ lang: string; name: string; path: string }> | null;
 }
 
-export interface StoryblokApiResponse<T = StoryblokBlokData> {
-  data: {
-    story: StoryblokStory<T>;
-    cv: number;
-    rels: unknown[];
-    links: unknown[];
-  };
-}
-
 export interface StoryblokImage {
   id?: number;
   alt?: string;
@@ -75,17 +66,6 @@ export interface StoryblokLink {
   anchor?: string;
   target?: "_blank" | "_self";
   email?: string;
-}
-
-export interface StoryblokVideoAsset {
-  id?: number;
-  alt?: string;
-  name?: string;
-  title?: string;
-  source?: string;
-  filename: string;
-  copyright?: string;
-  fieldtype?: "asset";
 }
 
 export interface StoryblokRichTextNode {

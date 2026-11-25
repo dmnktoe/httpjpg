@@ -25,5 +25,3 @@ export const muted = token(colors.neutral[500]);
 
 export const bold = paint("1");
 export const dim = paint("2");
-
-export const colorEnabled = !isDisabled;

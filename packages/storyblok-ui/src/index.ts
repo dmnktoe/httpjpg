@@ -50,11 +50,9 @@ export {
 } from "./lib/use-blok";
 
 export type {
-  StoryblokApiResponse,
   StoryblokImage,
   StoryblokLink,
   StoryblokRichText,
   StoryblokStory,
-  StoryblokVideoAsset,
   StoryMetadata,
 } from "@httpjpg/storyblok-utils";

@@ -121,10 +121,6 @@ const GROUP_ORDER = new Map<WorkTagGroup, number>(
   (Object.keys(WORK_TAG_GROUPS) as WorkTagGroup[]).map((group, index) => [group, index]),
 );
 
-export function workTagByValue(value: string): WorkTag | undefined {
-  return BY_VALUE.get(value);
-}
-
 /**
  * Values outside the vocabulary are dropped rather than rendered as a raw
  * slug, which is what makes retiring a tag safe: stories still carrying it

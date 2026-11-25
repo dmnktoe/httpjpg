@@ -47,7 +47,9 @@ export const PIXEL_GRID = {
   large: 16,
 } as const;
 
-type ImageKey<T> = { [K in keyof T]: T[K] extends string | null ? K : never }[keyof T];
+type ImageKey<T> = {
+  [K in keyof T]: T[K] extends string | null ? (null extends T[K] ? K : never) : never;
+}[keyof T];
 
 export function pixelateEach<T, K extends ImageKey<T>>(
   items: T[],

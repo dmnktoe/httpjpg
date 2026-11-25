@@ -1,5 +1,5 @@
 import { fetchWithTimeout, readJson } from "./http";
-import { PIXEL_GRID, pixelateEach, pixelateImage } from "./pixelate";
+import { PIXEL_GRID, pixelateEach } from "./pixelate";
 
 export interface SteamGame {
   appId: number;
@@ -159,12 +159,9 @@ export async function fetchSteamStatus(
     return { ok: false, status: 404, message: `No Steam profile for ${steamId}. ${hint}` };
   }
 
-  const [avatar, games] = await Promise.all([
-    pixelateImage(profile.avatar, { width: PIXEL_GRID.thumb, height: PIXEL_GRID.thumb }),
-    pixelateEach(parseRecentGames(recentBody.data ?? {}, limit), "icon", {
-      width: PIXEL_GRID.thumb,
-      height: PIXEL_GRID.thumb,
-    }),
-  ]);
-  return { ok: true, status: { profile: { ...profile, avatar }, games } };
+  const games = await pixelateEach(parseRecentGames(recentBody.data ?? {}, limit), "icon", {
+    width: PIXEL_GRID.thumb,
+    height: PIXEL_GRID.thumb,
+  });
+  return { ok: true, status: { profile, games } };
 }

@@ -1,5 +1,5 @@
 import { fetchWithTimeout, readJson } from "./http";
-import { PIXEL_GRID, pixelateEach, pixelateImage } from "./pixelate";
+import { PIXEL_GRID, pixelateImage } from "./pixelate";
 
 export interface YoutubeChannel {
   id: string;
@@ -182,11 +182,15 @@ export async function fetchYoutubeStatus(
     return uploadsBody;
   }
 
-  const [avatar, videos] = await Promise.all([
-    pixelateImage(channel.avatar, { width: PIXEL_GRID.thumb, height: PIXEL_GRID.thumb }),
-    pixelateEach(parseUploads(uploadsBody.data ?? {}, limit), "thumbnail", {
-      width: PIXEL_GRID.thumb,
-    }),
-  ]);
-  return { ok: true, status: { channel: { ...channel, avatar }, videos } };
+  const avatar = await pixelateImage(channel.avatar, {
+    width: PIXEL_GRID.thumb,
+    height: PIXEL_GRID.thumb,
+  });
+  return {
+    ok: true,
+    status: {
+      channel: { ...channel, avatar },
+      videos: parseUploads(uploadsBody.data ?? {}, limit),
+    },
+  };
 }

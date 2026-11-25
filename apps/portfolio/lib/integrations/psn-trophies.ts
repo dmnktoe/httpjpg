@@ -271,7 +271,8 @@ export async function fetchRecentTrophies(
     const [pixelAvatar, pixelTrophies] = await Promise.all([
       pixelateImage(avatar, { width: PIXEL_GRID.large, height: PIXEL_GRID.large }),
       pixelateEach(trophies, "image", {
-        ...{ width: PIXEL_GRID.large, height: PIXEL_GRID.large },
+        width: PIXEL_GRID.large,
+        height: PIXEL_GRID.large,
         fit: "contain",
       }),
     ]);

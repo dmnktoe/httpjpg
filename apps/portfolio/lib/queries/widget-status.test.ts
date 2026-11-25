@@ -3,6 +3,7 @@ const mockEnv = vi.hoisted(() => ({
   PSN_NPSSO: "npsso" as string | undefined,
   TWEETAPI_KEY: "key" as string | undefined,
   TWEETAPI_API_URL: "https://api.tweetapi.test",
+  LASTFM_API_KEY: "lastfm-key" as string | undefined,
 }));
 
 vi.mock("@httpjpg/env", () => ({ env: mockEnv }));
@@ -14,6 +15,7 @@ const {
   getConfig,
   fetchLetterboxdFilms,
   fetchDiscogsCollection,
+  fetchLastfmScrobbles,
   fetchXTimeline,
   fetchRecentTrophies,
   fetchSchalkeStatus,
@@ -22,6 +24,7 @@ const {
   getConfig: vi.fn(),
   fetchLetterboxdFilms: vi.fn(),
   fetchDiscogsCollection: vi.fn(),
+  fetchLastfmScrobbles: vi.fn(),
   fetchXTimeline: vi.fn(),
   fetchRecentTrophies: vi.fn(),
   fetchSchalkeStatus: vi.fn(),
@@ -38,6 +41,10 @@ vi.mock("../integrations/letterboxd", () => ({
 vi.mock("../integrations/discogs", () => ({
   fetchDiscogsCollection,
   isDiscogsUsername: isPlainUsername,
+}));
+vi.mock("../integrations/lastfm", () => ({
+  fetchLastfmScrobbles,
+  isLastfmUsername: isPlainUsername,
 }));
 vi.mock("../integrations/x-posts", () => ({
   fetchXTimeline,
@@ -56,6 +63,8 @@ const ALL_ENABLED = {
   letterboxd_username: "user",
   discogs_enabled: true,
   discogs_username: "user",
+  lastfm_enabled: true,
+  lastfm_username: "user",
   x_enabled: true,
   x_username: "user",
   psn_trophy_enabled: true,
@@ -67,8 +76,14 @@ beforeEach(() => {
   vi.clearAllMocks();
   mockEnv.PSN_NPSSO = "npsso";
   mockEnv.TWEETAPI_KEY = "key";
+  mockEnv.LASTFM_API_KEY = "lastfm-key";
   fetchLetterboxdFilms.mockResolvedValue({ ok: true, films: [{ title: "Stalker" }] });
   fetchDiscogsCollection.mockResolvedValue({ ok: true, releases: [{ title: "Endtroducing" }] });
+  fetchLastfmScrobbles.mockResolvedValue({
+    ok: true,
+    tracks: [{ title: "Teardrop" }],
+    total: 42,
+  });
   fetchXTimeline.mockResolvedValue({ ok: true, timeline: { profile: {}, posts: [] } });
   fetchRecentTrophies.mockResolvedValue({
     ok: true,
@@ -96,6 +111,7 @@ describe("getWidgetStatus", () => {
     await expect(getWidgetStatus()).resolves.toEqual({
       letterboxd: { films: [{ title: "Stalker" }] },
       discogs: { releases: [{ title: "Endtroducing" }] },
+      lastfm: { tracks: [{ title: "Teardrop" }], total: 42 },
       x: { profile: {}, posts: [] },
       trophies: { trophies: [{ name: "Platinum" }], avatar: null },
       schalke: {
@@ -125,6 +141,7 @@ describe("getWidgetStatus", () => {
     await expect(getWidgetStatus()).resolves.toEqual({
       letterboxd: null,
       discogs: null,
+      lastfm: null,
       x: null,
       trophies: null,
       schalke: null,
@@ -160,6 +177,24 @@ describe("getWidgetStatus", () => {
     expect(status.trophies).toBeNull();
     expect(fetchXTimeline).not.toHaveBeenCalled();
     expect(fetchRecentTrophies).not.toHaveBeenCalled();
+  });
+
+  it("reads Last.fm with the configured username and server key", async () => {
+    getConfig.mockResolvedValueOnce(ALL_ENABLED);
+
+    await getWidgetStatus();
+
+    expect(fetchLastfmScrobbles).toHaveBeenCalledWith("user", "lastfm-key");
+  });
+
+  it("skips Last.fm without its server key", async () => {
+    mockEnv.LASTFM_API_KEY = undefined;
+    getConfig.mockResolvedValueOnce(ALL_ENABLED);
+
+    const status = await getWidgetStatus();
+
+    expect(status.lastfm).toBeNull();
+    expect(fetchLastfmScrobbles).not.toHaveBeenCalled();
   });
 
   it("collapses an upstream failure to null", async () => {

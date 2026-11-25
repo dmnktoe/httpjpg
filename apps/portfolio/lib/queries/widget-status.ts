@@ -7,6 +7,11 @@ import {
   isDiscogsUsername,
 } from "../integrations/discogs";
 import {
+  fetchLastfmScrobbles,
+  isLastfmUsername,
+  type LastfmScrobbles,
+} from "../integrations/lastfm";
+import {
   fetchLetterboxdFilms,
   isLetterboxdUsername,
   type LetterboxdFilm,
@@ -22,6 +27,7 @@ export const WIDGET_MAX_AGE = {
   weather: 900,
   letterboxd: 300,
   discogs: 900,
+  lastfm: 120,
   psnTrophies: 300,
   x: 3600,
   cloudflare: 900,
@@ -34,6 +40,7 @@ export const WIDGET_STATUS_MAX_AGE = 60;
 export interface WidgetStatus {
   letterboxd: { films: LetterboxdFilm[] } | null;
   discogs: { releases: DiscogsRelease[] } | null;
+  lastfm: LastfmScrobbles | null;
   x: XTimeline | null;
   trophies: { trophies: PsnTrophy[]; avatar: string | null } | null;
   schalke: SchalkeStatus | null;
@@ -53,6 +60,13 @@ async function readDiscogs(username: string) {
   cacheLife({ revalidate: WIDGET_MAX_AGE.discogs });
   const result = await fetchDiscogsCollection(username);
   return result.ok ? { releases: result.releases } : null;
+}
+
+async function readLastfm(username: string, apiKey: string) {
+  "use cache";
+  cacheLife({ revalidate: WIDGET_MAX_AGE.lastfm });
+  const result = await fetchLastfmScrobbles(username, apiKey);
+  return result.ok ? { tracks: result.tracks, total: result.total } : null;
 }
 
 async function readX(username: string, apiUrl: string, apiKey: string) {
@@ -107,29 +121,36 @@ export async function getWidgetStatus(): Promise<WidgetStatus> {
 
   const letterboxdUser = readSetting(config?.letterboxd_username, isLetterboxdUsername);
   const discogsUser = readSetting(config?.discogs_username, isDiscogsUsername);
+  const lastfmUser = readSetting(config?.lastfm_username, isLastfmUsername);
   const xUser = readSetting(config?.x_username, isXUsername);
   // Optional: narrows the lookup, PSN_NPSSO alone is enough.
   const psnUser = readSetting(config?.psn_username, isPsnUsername);
 
   // A switched-off widget never opens a request.
   const xApiKey = env.TWEETAPI_KEY;
+  const lastfmApiKey = env.LASTFM_API_KEY;
   const npsso = env.PSN_NPSSO;
 
   const letterboxdLoad =
     config?.letterboxd_enabled && letterboxdUser ? readLetterboxd(letterboxdUser) : null;
   const discogsLoad = config?.discogs_enabled && discogsUser ? readDiscogs(discogsUser) : null;
+  const lastfmLoad =
+    config?.lastfm_enabled && lastfmUser && lastfmApiKey
+      ? readLastfm(lastfmUser, lastfmApiKey)
+      : null;
   const xLoad =
     config?.x_enabled && xUser && xApiKey ? readX(xUser, env.TWEETAPI_API_URL, xApiKey) : null;
   const trophiesLoad = config?.psn_trophy_enabled && npsso ? readTrophies(npsso, psnUser) : null;
   const schalkeLoad = config?.schalke_enabled ? readSchalke() : null;
 
-  const [letterboxd, discogs, x, trophies, schalke] = await Promise.all([
+  const [letterboxd, discogs, lastfm, x, trophies, schalke] = await Promise.all([
     settle("letterboxd", letterboxdLoad),
     settle("discogs", discogsLoad),
+    settle("lastfm", lastfmLoad),
     settle("x", xLoad),
     settle("psn-trophies", trophiesLoad),
     settle("schalke", schalkeLoad),
   ]);
 
-  return { letterboxd, discogs, x, trophies, schalke };
+  return { letterboxd, discogs, lastfm, x, trophies, schalke };
 }

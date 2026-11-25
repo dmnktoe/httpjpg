@@ -48,6 +48,7 @@ export const settingsBlocks: BlockDef[] = [
           "Bandcamp",
           "Spotify",
           "Discogs",
+          "Last.fm",
           "Letterboxd",
           "X",
           "LinkedIn",
@@ -161,6 +162,11 @@ export const settingsBlocks: BlockDef[] = [
         letterboxd_username: field.text("Letterboxd · Username"),
         discogs_enabled: field.boolean("Discogs · Latest Record"),
         discogs_username: field.text("Discogs · Username"),
+        lastfm_enabled: field.boolean("Last.fm · Latest Scrobble", "false"),
+        lastfm_username: field.text("Last.fm · Username", {
+          description: "Needs LASTFM_API_KEY to be set.",
+          tooltip: true,
+        }),
         x_enabled: field.boolean("X · Latest Post"),
         x_username: field.text("X · Username", {
           description: "Handle without @, e.g. dmnktoe. Needs TWEETAPI_KEY to be set.",

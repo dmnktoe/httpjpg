@@ -11,6 +11,7 @@ export type NavClickKind = "menu" | "work" | "home" | "music";
 export type OutboundDestination =
   | "letterboxd"
   | "discogs"
+  | "lastfm"
   | "x"
   | "psn"
   | "schalke"

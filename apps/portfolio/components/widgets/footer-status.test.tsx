@@ -10,6 +10,19 @@ const STATUS_PAYLOAD = {
   discogs: {
     releases: [{ artist: "DJ Shadow", title: "Endtroducing.....", url: "https://d.test/r" }],
   },
+  lastfm: {
+    tracks: [
+      {
+        title: "Teardrop",
+        artist: "Massive Attack",
+        url: "https://lfm.test/t",
+        image: null,
+        nowPlaying: true,
+        loved: false,
+      },
+    ],
+    total: 48213,
+  },
   x: {
     profile: { username: "dmnktoe", avatar: null, followerCount: null },
     posts: [{ text: "Hello world", url: "https://x.test/p" }],
@@ -54,6 +67,17 @@ describe("FooterStatus", () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith("/api/status", expect.anything());
+  });
+
+  it("renders the latest scrobble with the lifetime count", async () => {
+    mockFetch({ "/api/status": STATUS_PAYLOAD });
+
+    render(<FooterStatus lastfmEnabled />);
+
+    await waitFor(() => expect(screen.getByText("Teardrop")).toBeInTheDocument());
+    expect(screen.getByLabelText("now playing")).toBeInTheDocument();
+    expect(screen.getByLabelText("48213 scrobbles")).toBeInTheDocument();
+    expect(screen.queryByText("Stalker")).not.toBeInTheDocument();
   });
 
   it("keeps Discord on its own connection so it can poll", async () => {

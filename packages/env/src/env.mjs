@@ -47,6 +47,8 @@ export const env = createEnv({
     TWEETAPI_API_URL: z.string().url().default("https://api.tweetapi.com/tw-v2"),
     TWEETAPI_KEY: z.string().optional(),
 
+    LASTFM_API_KEY: z.string().optional(),
+
     CLOUDFLARE_API_TOKEN: z.string().optional(),
     CLOUDFLARE_ZONE_ID: z.string().optional(),
 
@@ -100,6 +102,8 @@ export const env = createEnv({
 
     TWEETAPI_API_URL: process.env.TWEETAPI_API_URL,
     TWEETAPI_KEY: process.env.TWEETAPI_KEY,
+
+    LASTFM_API_KEY: process.env.LASTFM_API_KEY,
 
     CLOUDFLARE_API_TOKEN: process.env.CLOUDFLARE_API_TOKEN,
     CLOUDFLARE_ZONE_ID: process.env.CLOUDFLARE_ZONE_ID,

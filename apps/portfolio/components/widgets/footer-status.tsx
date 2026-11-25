@@ -5,6 +5,7 @@ import { useWidgetData } from "@/lib/use-widget-data";
 
 import { DiscogsStatus } from "./discogs-status";
 import { type DiscordPresence, DiscordStatus } from "./discord-status";
+import { LastfmStatus } from "./lastfm-status";
 import { LetterboxdStatus } from "./letterboxd-status";
 import { SchalkeStatus } from "./schalke-status";
 import { TrophyStatus } from "./trophy-status";
@@ -14,6 +15,7 @@ export interface FooterStatusProps {
   discordEnabled?: boolean;
   letterboxdEnabled?: boolean;
   discogsEnabled?: boolean;
+  lastfmEnabled?: boolean;
   xEnabled?: boolean;
   trophiesEnabled?: boolean;
   schalkeEnabled?: boolean;
@@ -35,12 +37,18 @@ export function FooterStatus({
   discordEnabled = false,
   letterboxdEnabled = false,
   discogsEnabled = false,
+  lastfmEnabled = false,
   xEnabled = false,
   trophiesEnabled = false,
   schalkeEnabled = false,
 }: FooterStatusProps) {
   const wantsStatus =
-    letterboxdEnabled || discogsEnabled || xEnabled || trophiesEnabled || schalkeEnabled;
+    letterboxdEnabled ||
+    discogsEnabled ||
+    lastfmEnabled ||
+    xEnabled ||
+    trophiesEnabled ||
+    schalkeEnabled;
 
   const status = useWidgetData<WidgetStatus>("/api/status", { enabled: wantsStatus });
   const discord = useWidgetData<DiscordPresence>("/api/discord", {
@@ -60,6 +68,13 @@ export function FooterStatus({
       {discogsEnabled && (
         <DiscogsStatus
           release={status.data?.discogs?.releases?.[0] ?? null}
+          loaded={status.loaded}
+        />
+      )}
+      {lastfmEnabled && (
+        <LastfmStatus
+          track={status.data?.lastfm?.tracks?.[0] ?? null}
+          total={status.data?.lastfm?.total ?? null}
           loaded={status.loaded}
         />
       )}

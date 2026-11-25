@@ -59,6 +59,7 @@
         "WEATHER_LONGITUDE",
         "TWEETAPI_API_URL",
         "TWEETAPI_KEY",
+        "LASTFM_API_KEY",
         "CLOUDFLARE_API_TOKEN",
         "CLOUDFLARE_ZONE_ID",
         "ARCJET_KEY",

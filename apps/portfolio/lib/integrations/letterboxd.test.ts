@@ -2,7 +2,6 @@ import { beforeEach, type MockedFunction, vi } from "vitest";
 
 import { fetchLetterboxdFilms, isLetterboxdUsername, parseLetterboxdFeed } from "./letterboxd";
 
-// Pixelation has its own tests; here it passes images through untouched.
 vi.mock("./pixelate", async (importOriginal) => ({
   ...(await importOriginal<typeof import("./pixelate")>()),
   pixelateImage: vi.fn(async (source: string | null | undefined) => source ?? null),

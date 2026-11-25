@@ -13,7 +13,6 @@ import { featuredSteamGame } from "@/lib/integrations/steam-game";
 
 export interface SteamStatusProps {
   status: SteamStatusData | null;
-  /** False while the request is in flight, so the line holds instead of collapsing. */
   loaded: boolean;
 }
 

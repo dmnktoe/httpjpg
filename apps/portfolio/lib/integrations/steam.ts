@@ -4,7 +4,6 @@ import { PIXEL_GRID, pixelateEach, pixelateImage } from "./pixelate";
 export interface SteamGame {
   appId: number;
   name: string;
-  /** Minutes played in the last two weeks. */
   minutesTwoWeeks: number;
   minutesTotal: number;
   icon: string | null;
@@ -15,7 +14,6 @@ export interface SteamProfile {
   name: string;
   avatar: string | null;
   url: string;
-  /** The game running right now, when the profile shows it. */
   inGame: { appId: number; name: string } | null;
 }
 
@@ -50,14 +48,12 @@ interface SteamRecentGame {
 }
 
 interface SteamRecentGamesResponse {
-  // A private profile answers `{ response: {} }` rather than an error.
   response?: { games?: SteamRecentGame[] };
 }
 
 const DEFAULT_LIMIT = 4;
 const API_URL = "https://api.steampowered.com";
 
-// SteamID64: the individual-account base 76561197960265728 plus the account id.
 const STEAM_ID = /^7656119\d{10}$/;
 
 export function isSteamId(value: unknown): value is string {

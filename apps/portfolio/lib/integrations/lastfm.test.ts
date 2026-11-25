@@ -4,7 +4,6 @@ import { beforeEach, type MockedFunction, vi } from "vitest";
 import { fetchLastfmScrobbles, isLastfmUsername, parseRecentTracks } from "./lastfm";
 import { pixelateEach } from "./pixelate";
 
-// Pixelation has its own tests; here it passes images through untouched.
 vi.mock("./pixelate", async (importOriginal) => ({
   ...(await importOriginal<typeof import("./pixelate")>()),
   pixelateImage: vi.fn(async (source: string | null | undefined) => source ?? null),
@@ -40,7 +39,6 @@ const NOW_PLAYING = {
 
 type RecentTracksBody = Parameters<typeof parseRecentTracks>[0];
 
-// Typed loosely on purpose: the fixtures include the malformed shapes Last.fm sends.
 function recent(track: unknown, total = "48213"): RecentTracksBody {
   return { recenttracks: { track, "@attr": { total } } } as RecentTracksBody;
 }

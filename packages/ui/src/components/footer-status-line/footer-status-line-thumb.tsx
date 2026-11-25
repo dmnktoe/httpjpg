@@ -20,11 +20,6 @@ export interface FooterStatusLineThumbProps extends HTMLAttributes<HTMLSpanEleme
   shape?: FooterStatusLineThumbShape;
   /** `contain` keeps badge art whole where `cover` would crop it. */
   fit?: "cover" | "contain";
-  /**
-   * Upscales without smoothing. On by default: footer media is pixel art,
-   * shrunk to a grid of CSS pixels on the server. Off only for an image that
-   * arrives at full resolution.
-   */
   pixelated?: boolean;
 }
 

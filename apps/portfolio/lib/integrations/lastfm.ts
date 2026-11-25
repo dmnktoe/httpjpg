@@ -9,13 +9,11 @@ export interface LastfmTrack {
   image: string | null;
   nowPlaying: boolean;
   loved: boolean;
-  /** ISO timestamp of the scrobble; null while the track is still playing. */
   scrobbledAt: string | null;
 }
 
 export interface LastfmScrobbles {
   tracks: LastfmTrack[];
-  /** Lifetime scrobble count, when Last.fm reports it. */
   total: number | null;
 }
 
@@ -43,7 +41,6 @@ interface LastfmRecentTracksResponse {
   error?: number;
   message?: string;
   recenttracks?: {
-    // A single scrobble arrives as an object rather than a one-item array.
     track?: LastfmRecentTrack[] | LastfmRecentTrack;
     "@attr"?: { total?: string };
   };
@@ -52,12 +49,10 @@ interface LastfmRecentTracksResponse {
 const DEFAULT_LIMIT = 4;
 const API_URL = "https://ws.audioscrobbler.com/2.0/";
 
-// Last.fm serves a grey star instead of leaving the image empty.
 const PLACEHOLDER_IMAGE = "2a96cbd8b46e442fc41c2b86b821562f";
 
 const IMAGE_SIZES = ["extralarge", "large", "medium", "small"] as const;
 
-// Sign-up rules: 2–15 characters, a letter first, then letters, digits, _ or -.
 const LASTFM_USERNAME = /^[A-Za-z][\w-]{1,14}$/;
 
 export function isLastfmUsername(value: unknown): value is string {
@@ -123,7 +118,6 @@ export async function fetchLastfmScrobbles(
     user: username,
     api_key: apiKey,
     format: "json",
-    // `extended` adds the loved flag and names the artist as an object.
     extended: "1",
     limit: String(Math.max(1, limit)),
   });
@@ -141,7 +135,6 @@ export async function fetchLastfmScrobbles(
   if (!body.ok) {
     return body;
   }
-  // Some failures (unknown user, bad key) still answer 200 with an error code.
   if (body.data?.error) {
     return {
       ok: false,

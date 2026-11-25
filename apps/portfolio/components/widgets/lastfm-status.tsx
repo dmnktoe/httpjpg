@@ -12,9 +12,7 @@ import type { LastfmTrack } from "@/lib/integrations/lastfm";
 
 export interface LastfmStatusProps {
   track: LastfmTrack | null;
-  /** Lifetime scrobbles; the line leaves the count out when Last.fm has none. */
   total?: number | null;
-  /** False while the request is in flight, so the line holds instead of collapsing. */
   loaded: boolean;
 }
 

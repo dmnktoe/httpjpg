@@ -6,7 +6,6 @@ export interface YoutubeChannel {
   title: string;
   avatar: string | null;
   url: string;
-  /** Null when the channel hides it. YouTube rounds it to three significant figures. */
   subscriberCount: number | null;
 }
 
@@ -36,7 +35,6 @@ interface YoutubeThumbnails {
 interface YoutubeChannelItem {
   id?: string;
   snippet?: { title?: string; customUrl?: string; thumbnails?: YoutubeThumbnails };
-  // The Data API sends counts as strings.
   statistics?: { subscriberCount?: string; hiddenSubscriberCount?: boolean };
   contentDetails?: { relatedPlaylists?: { uploads?: string } };
 }
@@ -61,7 +59,6 @@ interface YoutubePlaylistItemsResponse {
 const DEFAULT_LIMIT = 4;
 const API_URL = "https://www.googleapis.com/youtube/v3";
 
-// Uploads that went private or were removed stay in the playlist under these titles.
 const UNAVAILABLE_TITLES = new Set(["Private video", "Deleted video"]);
 
 const CHANNEL_ID = /^UC[\w-]{22}$/;
@@ -147,11 +144,9 @@ export async function fetchYoutubeStatus(
     return { ok: false, status: 404, message: `No YouTube channel ${channelId}. ${hint}` };
   }
 
-  // Every channel's uploads playlist is its id with UC swapped for UU.
   const uploads =
     channelBody.data?.items?.[0]?.contentDetails?.relatedPlaylists?.uploads ??
     `UU${channelId.slice(2)}`;
-  // Over-fetch so private or deleted uploads do not leave the list short.
   const uploadParams = new URLSearchParams({
     part: "snippet,contentDetails",
     playlistId: uploads,
@@ -162,7 +157,6 @@ export async function fetchYoutubeStatus(
     label: "YouTube",
     hint,
   });
-  // A channel without uploads answers 404 for its playlist; the line still shows the channel.
   if (!uploadsResult.ok) {
     return uploadsResult.status === 404
       ? {

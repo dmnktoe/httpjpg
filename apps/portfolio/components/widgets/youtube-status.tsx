@@ -14,7 +14,6 @@ import type { YoutubeChannel, YoutubeVideo } from "@/lib/integrations/youtube";
 export interface YoutubeStatusProps {
   channel: YoutubeChannel | null;
   video: YoutubeVideo | null;
-  /** False while the request is in flight, so the line holds instead of collapsing. */
   loaded: boolean;
 }
 

@@ -185,7 +185,6 @@ export async function getWidgetStatus(): Promise<WidgetStatus> {
     config?.youtube_enabled && youtubeChannel && youtubeApiKey
       ? readYoutube(youtubeChannel, youtubeApiKey)
       : null;
-  // The token is optional: public events load without it, only at a lower rate.
   const githubLoad =
     config?.github_enabled && githubUser ? readGithub(githubUser, env.GITHUB_API_TOKEN) : null;
   const xLoad =

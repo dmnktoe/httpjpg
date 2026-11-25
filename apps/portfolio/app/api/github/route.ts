@@ -11,7 +11,6 @@ import {
   widgetUpstreamError,
 } from "@/lib/widget-route";
 
-// No key check: public events load without GITHUB_API_TOKEN, only at a lower rate.
 export const GET = widgetRoute(
   { route: "github", label: "GitHub activity" },
   async ({ isDraft }) => {

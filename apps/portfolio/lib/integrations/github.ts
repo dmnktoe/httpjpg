@@ -5,11 +5,8 @@ export type GithubActivityKind = "push" | "pull_request" | "release" | "create" 
 
 export interface GithubActivity {
   kind: GithubActivityKind;
-  /** Ready to print before the repo, e.g. "pushed to", "merged". */
   verb: string;
-  /** `owner/name`. */
   repo: string;
-  /** Branch, PR number or tag, when the event has one. */
   detail: string | null;
   url: string;
   createdAt: string | null;
@@ -40,7 +37,6 @@ interface GithubEvent {
     ref?: string | null;
     ref_type?: string;
     head?: string;
-    // GitHub trimmed these payloads in 2025; only the fields still sent are read.
     pull_request?: { number?: number; html_url?: string; merged?: boolean };
     number?: number;
     release?: { tag_name?: string; html_url?: string };
@@ -51,7 +47,6 @@ const DEFAULT_LIMIT = 4;
 const API_URL = "https://api.github.com";
 const USER_AGENT = "httpjpg.com/1.0 (+https://www.httpjpg.com)";
 
-// 1–39 characters, alphanumeric or single hyphens, never leading or trailing.
 const GITHUB_USERNAME = /^[A-Za-z\d](?:[A-Za-z\d]|-(?=[A-Za-z\d])){0,38}$/;
 
 export function isGithubUsername(value: unknown): value is string {
@@ -66,7 +61,6 @@ function branchName(ref: string | null | undefined): string | null {
   return ref ? ref.replace(/^refs\/heads\//, "") : null;
 }
 
-/** Maps one public event onto the line, or null for the noise it leaves out. */
 export function toActivity(event: GithubEvent): GithubActivity | null {
   const repo = event.repo?.name;
   if (!repo) {
@@ -121,7 +115,6 @@ export function toActivity(event: GithubEvent): GithubActivity | null {
       };
     }
     case "CreateEvent":
-      // Branch creation is noise next to the push that follows it.
       return payload.ref_type === "repository"
         ? { kind: "create", verb: "created", repo, detail: null, url: repoUrl(repo), createdAt }
         : null;
@@ -166,12 +159,10 @@ export async function fetchGithubActivity(
     "X-GitHub-Api-Version": "2022-11-28",
     "User-Agent": USER_AGENT,
   };
-  // Optional: unauthenticated reads are capped at 60 an hour per IP.
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  // A page of 30 leaves room for the event types the line skips.
   const result = await fetchWithTimeout(
     `${API_URL}/users/${encodeURIComponent(username)}/events/public?per_page=30`,
     { label: "GitHub", hint: "Check the GitHub username (and GITHUB_API_TOKEN if set).", headers },

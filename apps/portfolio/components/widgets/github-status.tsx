@@ -8,7 +8,6 @@ import type { GithubActivity, GithubProfile } from "@/lib/integrations/github";
 export interface GithubStatusProps {
   profile: GithubProfile | null;
   activity: GithubActivity | null;
-  /** False while the request is in flight, so the line holds instead of collapsing. */
   loaded: boolean;
 }
 

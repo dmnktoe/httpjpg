@@ -1,3 +1,4 @@
+import { type PageScale, type PageScaleSource, parsePageScale } from "@httpjpg/ui";
 import { draftMode, headers } from "next/headers";
 
 import { splitLocaleSlug } from "./locale";
@@ -16,7 +17,7 @@ export function isInternalSlug(slug: string): boolean {
   return slug.includes("/.well-known/");
 }
 
-interface PageStoryContent {
+interface PageStoryContent extends PageScaleSource {
   isDark?: boolean;
   component?: string;
   accentColor?: unknown;
@@ -44,6 +45,21 @@ export async function getPageAccent(): Promise<string | null> {
   } catch {
     return null;
   }
+}
+
+/** Viewport scaling a work page opted into, else `null`. */
+export async function getPageScale(): Promise<PageScale | null> {
+  try {
+    const story = await loadCurrentStory();
+    return workPageScale(story?.content);
+  } catch {
+    return null;
+  }
+}
+
+/** Only work pages scale; the fields mean nothing on another content type. */
+export function workPageScale(content: PageStoryContent | null | undefined): PageScale | null {
+  return content?.component === "work" ? parsePageScale(content) : null;
 }
 
 async function loadCurrentStory(): Promise<{ content?: PageStoryContent } | null> {

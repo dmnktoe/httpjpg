@@ -1,6 +1,6 @@
 "use client";
 
-import { applyWorkAccent } from "@httpjpg/ui";
+import { applyPageScale, applyWorkAccent, type PageScale } from "@httpjpg/ui";
 import { useEffect, useLayoutEffect } from "react";
 
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -9,13 +9,20 @@ export interface ThemeSyncProps {
   theme: "light" | "dark";
   /** Work page Project Accent Color (`#RGB` / `#RRGGBB`). Cleared when omitted. */
   accent?: string | null;
+  /** Viewport scaling of a work page. Cleared when omitted. */
+  scale?: PageScale | null;
 }
 
-export function ThemeSync({ theme, accent }: ThemeSyncProps) {
+export function ThemeSync({ theme, accent, scale }: ThemeSyncProps) {
+  const desktop = scale?.desktop;
+  const tablet = scale?.tablet;
+  const mobile = scale?.mobile;
+
   useIsomorphicLayoutEffect(() => {
     const root = document.documentElement;
     root.dataset.theme = theme;
     applyWorkAccent(root, accent, theme === "dark");
-  }, [theme, accent]);
+    applyPageScale(root, desktop && tablet && mobile ? { desktop, tablet, mobile } : null);
+  }, [theme, accent, desktop, tablet, mobile]);
   return null;
 }

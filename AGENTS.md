@@ -278,6 +278,15 @@ Live footer lines (Discord, Discogs, Last.fm, Letterboxd, Steam, YouTube, GitHub
 
 Work pages may set a Project Accent Color (`#RGB` / `#RRGGBB`). `parseWorkAccent` / `applyWorkAccent` in `@httpjpg/ui` write `--work-accent`, `--work-on-accent`, and `--work-accent-fill*` on `<html>` via `ThemeSync`. Cursor, trail, lightbox chrome, and work-card titles read those vars — don't invent a second palette.
 
+## Viewport scaling
+
+A work page can opt into Readymag-style scaling (`scaleWithViewport` plus three design widths on the `work` type): composed once per breakpoint band, the whole page — header, footer and floating widgets included — then scales with the viewport like an image instead of reflowing.
+
+- It works through the root font size. `parsePageScale` / `pageScaleCssVars` / `applyPageScale` in `@httpjpg/ui` put `data-page-scale` and `--page-scale-*` on `<html>` — the root layout for the first paint, `ThemeSync` on client navigations — and `globals.css` maps one variable per band (base / `md` / `lg`): `1rem` is 16px exactly at the band's design width.
+- So a size only scales if it is `rem` (the tokens are) or `%`. A `px` value stays put: convert the ones you find on a scaled page (`Container` caps in `rem` for this reason); hairline borders can stay `px`.
+- Breakpoints are `px` media queries and do not move with the scale, so the bands stay where the CMS columns switch.
+- Trade-off: browser zoom no longer enlarges the text of a scaled page. It is opt-in per work page — don't switch it on site-wide.
+
 ## Lightbox
 
 Same presentational/stateful split as the command palette.

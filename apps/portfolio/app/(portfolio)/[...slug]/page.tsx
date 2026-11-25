@@ -23,7 +23,7 @@ import {
   schemaLanguage,
   storyblokLanguageParam,
 } from "@/lib/locale";
-import { isInternalSlug } from "@/lib/page-theme";
+import { isInternalSlug, workPageScale } from "@/lib/page-theme";
 import { getAuthor, getSiteConfig, getSocialProfiles } from "@/lib/queries/config";
 import { getRelatedWork } from "@/lib/queries/related-work";
 import { getFeatureFlags } from "@/lib/queries/widgets";
@@ -165,7 +165,7 @@ export default async function DynamicPage({ params, searchParams }: PageProps) {
 
   return (
     <>
-      <ThemeSync theme={pageTheme} accent={pageAccent} />
+      <ThemeSync theme={pageTheme} accent={pageAccent} scale={workPageScale(story.content)} />
       <LocaleSync lang={locale} />
       <JsonLd data={schemaMarkup} />
       {showLanguagePicker && (

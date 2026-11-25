@@ -12,6 +12,38 @@ describe("ThemeSync", () => {
     document.documentElement.style.removeProperty("--work-on-accent");
     document.documentElement.style.removeProperty("--work-accent-fill");
     document.documentElement.style.removeProperty("--work-accent-fill-hover");
+    delete document.documentElement.dataset.pageScale;
+    document.documentElement.style.removeProperty("--page-scale-desktop");
+    document.documentElement.style.removeProperty("--page-scale-tablet");
+    document.documentElement.style.removeProperty("--page-scale-mobile");
+  });
+
+  it("scales the root with the viewport on a page that opted in", () => {
+    render(<ThemeSync theme="light" scale={{ desktop: 1600, tablet: 800, mobile: 400 }} />);
+
+    expect(document.documentElement.dataset.pageScale).toBe("");
+    expect(document.documentElement.style.getPropertyValue("--page-scale-desktop")).toBe("1vw");
+  });
+
+  it("follows a changed design width", () => {
+    const { rerender } = render(
+      <ThemeSync theme="light" scale={{ desktop: 1600, tablet: 800, mobile: 400 }} />,
+    );
+
+    rerender(<ThemeSync theme="light" scale={{ desktop: 800, tablet: 800, mobile: 400 }} />);
+
+    expect(document.documentElement.style.getPropertyValue("--page-scale-desktop")).toBe("2vw");
+  });
+
+  it("clears the scale when navigating to a page without one", () => {
+    const { rerender } = render(
+      <ThemeSync theme="light" scale={{ desktop: 1600, tablet: 800, mobile: 400 }} />,
+    );
+
+    rerender(<ThemeSync theme="light" />);
+
+    expect(document.documentElement.dataset.pageScale).toBeUndefined();
+    expect(document.documentElement.style.getPropertyValue("--page-scale-desktop")).toBe("");
   });
 
   it("renders nothing", () => {

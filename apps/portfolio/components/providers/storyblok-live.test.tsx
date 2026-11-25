@@ -29,6 +29,8 @@ beforeEach(() => {
   vi.clearAllMocks();
   document.documentElement.removeAttribute("data-theme");
   document.documentElement.removeAttribute("data-work-accent");
+  document.documentElement.removeAttribute("data-page-scale");
+  document.documentElement.removeAttribute("style");
 });
 
 describe("StoryblokLive", () => {
@@ -70,6 +72,32 @@ describe("StoryblokLive", () => {
       expect(screen.getByTestId("blok")).toHaveTextContent("work");
     });
     expect(document.documentElement.dataset.workAccent).toBe("#EC6839");
+  });
+
+  it("scales a work story that opted in, live", async () => {
+    useStoryblokState.mockReturnValue({
+      content: { component: "work", scaleWithViewport: true, designWidth: 1600 },
+    });
+
+    render(<StoryblokLive story={story} />);
+
+    await waitFor(() => {
+      expect(document.documentElement.dataset.pageScale).toBe("");
+    });
+    expect(document.documentElement.style.getPropertyValue("--page-scale-desktop")).toBe("1vw");
+  });
+
+  it("leaves a page story unscaled even with leftover fields", async () => {
+    useStoryblokState.mockReturnValue({
+      content: { component: "page", scaleWithViewport: true },
+    });
+
+    render(<StoryblokLive story={story} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("blok")).toHaveTextContent("page");
+    });
+    expect(document.documentElement.dataset.pageScale).toBeUndefined();
   });
 
   it("syncs the dark theme for dark stories", async () => {

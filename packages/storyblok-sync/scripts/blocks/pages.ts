@@ -1,7 +1,7 @@
 import { WORK_TAG_DATASOURCE_SLUG } from "@httpjpg/storyblok-utils";
 
 import type { BlockDef } from "../lib/block";
-import { field } from "../lib/fields";
+import { field, tabbed } from "../lib/fields";
 import { inlineOptions } from "../lib/options";
 
 export const pageBlocks: BlockDef[] = [
@@ -175,6 +175,28 @@ export const pageBlocks: BlockDef[] = [
         tooltip: true,
       },
       isDark: field.boolean("Dark Mode"),
+      ...tabbed("Scaling", "scaling", {
+        scaleWithViewport: field.boolean("Scale With Viewport", "false", {
+          description:
+            "Build the layout once at the design widths below; the whole page then scales with the browser like an image instead of reflowing. Browser zoom no longer enlarges the text on this page.",
+          tooltip: true,
+        }),
+        designWidth: field.number("Design Width · Desktop", {
+          default_value: "1440",
+          description: "Viewport width, in px, the desktop layout (1024px and up) is composed at.",
+          tooltip: true,
+        }),
+        designWidthTablet: field.number("Design Width · Tablet", {
+          default_value: "834",
+          description: "Viewport width, in px, the tablet layout (768–1023px) is composed at.",
+          tooltip: true,
+        }),
+        designWidthMobile: field.number("Design Width · Mobile", {
+          default_value: "390",
+          description: "Viewport width, in px, the phone layout (below 768px) is composed at.",
+          tooltip: true,
+        }),
+      }),
     },
   },
 ];

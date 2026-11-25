@@ -155,7 +155,25 @@ function placeholderSvg(size, label) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#2563eb"/><text x="50%" y="50%" fill="#fff" font-family="monospace" font-size="${Math.round(width / 14)}" text-anchor="middle">${label} ${size}</text></svg>`;
 }
 
+const WORK_SCALED = baseStory("work/scaled", {
+  _uid: "work-scaled",
+  component: "work",
+  title: "Scaled shooting",
+  date: TS,
+  scaleWithViewport: true,
+  designWidth: "1440",
+  designWidthTablet: "834",
+  designWidthMobile: "390",
+  body: [
+    { _uid: "scaled-headline", component: "headline", text: "Scaled shooting", level: "1" },
+    { _uid: "scaled-paragraph", component: "paragraph", text: "Composed once at 1440." },
+  ],
+});
+
 function getStory(slug, language) {
+  if (slug === WORK_SCALED.full_slug) {
+    return WORK_SCALED;
+  }
   const post = FEED_POSTS.find((story) => story.full_slug === slug);
   if (post) {
     return post;

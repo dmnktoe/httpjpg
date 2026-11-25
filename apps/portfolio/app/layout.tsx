@@ -12,6 +12,7 @@ import {
   PageActionsProvider,
   parseWorkAccent,
   Userbars,
+  pageScaleCssVars,
   workAccentCssVars,
 } from "@httpjpg/ui";
 import type { Metadata } from "next";
@@ -43,7 +44,7 @@ import { WebVitalsBadge } from "@/components/widgets/web-vitals-badge";
 import { toFeedPanelItems } from "@/lib/feed/panel";
 import { isStoryblokEditor } from "@/lib/is-storyblok-editor";
 import { htmlLangForPath } from "@/lib/locale";
-import { getPageAccent, getPageTheme } from "@/lib/page-theme";
+import { getPageAccent, getPageScale, getPageTheme } from "@/lib/page-theme";
 import {
   getAuthor,
   getFooterConfig,
@@ -101,15 +102,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const [theme, pageAccent, draft] = await Promise.all([
+  const [theme, pageAccent, pageScale, draft] = await Promise.all([
     getPageTheme(),
     getPageAccent(),
+    getPageScale(),
     draftMode(),
   ]);
   const workAccent = parseWorkAccent(pageAccent);
   const workAccentStyle = workAccentCssVars(workAccent, theme === "dark") as
     | CSSProperties
     | undefined;
+  const rootStyle = { ...workAccentStyle, ...pageScaleCssVars(pageScale) } as CSSProperties;
   const inStoryblokEditor = await isStoryblokEditor();
   const navigation = await getNavigation();
   const footerConfig = await getFooterConfig();
@@ -143,7 +146,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       lang={htmlLang}
       data-theme={theme}
       data-work-accent={workAccent?.hex}
-      style={workAccentStyle}
+      data-page-scale={pageScale ? "" : undefined}
+      style={rootStyle}
     >
       <body style={{ margin: 0, padding: 0 }}>
         {siteGraph && <JsonLd data={siteGraph} />}

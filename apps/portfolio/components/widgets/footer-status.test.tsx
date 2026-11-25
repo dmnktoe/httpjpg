@@ -1,4 +1,4 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { FooterStatus } from "./footer-status";
@@ -95,6 +95,10 @@ function mockFetch(byUrl: Record<string, unknown>) {
   return fetchMock;
 }
 
+async function expandMore() {
+  fireEvent.click(await screen.findByRole("button", { name: /more/ }));
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
 });
@@ -112,6 +116,7 @@ describe("FooterStatus", () => {
     render(<FooterStatus letterboxdEnabled discogsEnabled xEnabled trophiesEnabled />);
 
     await waitFor(() => expect(screen.getByText("Stalker")).toBeInTheDocument());
+    await expandMore();
     expect(screen.getByText("DJ Shadow — Endtroducing.....")).toBeInTheDocument();
     expect(screen.getByText("Hello world")).toBeInTheDocument();
     expect(screen.getByText("Power Couple")).toBeInTheDocument();
@@ -137,6 +142,7 @@ describe("FooterStatus", () => {
     render(<FooterStatus steamEnabled youtubeEnabled githubEnabled redditEnabled />);
 
     await waitFor(() => expect(screen.getByText("ELDEN RING")).toBeInTheDocument());
+    await expandMore();
     expect(screen.getByText("Studio tour")).toBeInTheDocument();
     expect(screen.getByText("dmnktoe/httpjpg")).toBeInTheDocument();
     expect(screen.getByText("u/dmnktoe")).toBeInTheDocument();
@@ -165,6 +171,7 @@ describe("FooterStatus", () => {
     );
 
     await waitFor(() => expect(screen.getByText("Stalker")).toBeInTheDocument());
+    await expandMore();
     const text = container.textContent ?? "";
     const order = ["Teardrop", "Endtroducing", "Stalker", "u/dmnktoe", "Hello world"].map(
       (needle) => text.indexOf(needle),
@@ -229,5 +236,49 @@ describe("FooterStatus", () => {
     await waitFor(() => expect(screen.getByText("Stalker")).toBeInTheDocument());
     expect(screen.queryByText("Hello world")).not.toBeInTheDocument();
     expect(screen.queryByText("Power Couple")).not.toBeInTheDocument();
+  });
+
+  it("shows the freshest three lines and folds the rest behind a toggle", async () => {
+    mockFetch({ "/api/status": STATUS_PAYLOAD });
+
+    render(
+      <FooterStatus lastfmEnabled letterboxdEnabled discogsEnabled xEnabled trophiesEnabled />,
+    );
+
+    await waitFor(() => expect(screen.getByText("Teardrop")).toBeInTheDocument());
+    expect(screen.getByText("Stalker")).toBeInTheDocument();
+    expect(screen.getByText("DJ Shadow — Endtroducing.....")).toBeInTheDocument();
+    expect(screen.getByText("Hello world")).not.toBeVisible();
+    expect(screen.getByText("Power Couple")).not.toBeVisible();
+
+    const toggle = screen.getByRole("button", { name: "[ + 2 more ]" });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(document.getElementById(toggle.getAttribute("aria-controls") ?? "")).not.toBeNull();
+
+    fireEvent.click(toggle);
+
+    expect(screen.getByText("Hello world")).toBeVisible();
+    expect(screen.getByText("Power Couple")).toBeVisible();
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(toggle).toHaveTextContent("[ − less ]");
+
+    fireEvent.click(toggle);
+
+    expect(screen.getByText("Hello world")).not.toBeVisible();
+  });
+
+  it("leaves empty sources out of the visible few and the tally", async () => {
+    mockFetch({
+      "/api/status": { ...STATUS_PAYLOAD, letterboxd: null, discogs: null },
+    });
+
+    render(
+      <FooterStatus lastfmEnabled letterboxdEnabled discogsEnabled xEnabled trophiesEnabled />,
+    );
+
+    await waitFor(() => expect(screen.getByText("Teardrop")).toBeInTheDocument());
+    expect(screen.getByText("Hello world")).toBeInTheDocument();
+    expect(screen.getByText("Power Couple")).toBeInTheDocument();
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 });

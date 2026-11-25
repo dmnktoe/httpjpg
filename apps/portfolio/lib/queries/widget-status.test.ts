@@ -89,6 +89,9 @@ const ALL_ENABLED = {
   youtube_channel_id: "UC_channel",
   github_enabled: true,
   github_username: "user",
+  reddit_enabled: true,
+  reddit_username: "dmnktoe",
+  reddit_karma: "12345",
   x_enabled: true,
   x_username: "user",
   psn_trophy_enabled: true,
@@ -145,6 +148,7 @@ describe("getWidgetStatus", () => {
       steam: { profile: {}, games: [] },
       youtube: { channel: {}, videos: [] },
       github: { profile: {}, activity: [] },
+      reddit: { username: "dmnktoe", karma: 12345, url: "https://www.reddit.com/user/dmnktoe/" },
       x: { profile: {}, posts: [] },
       trophies: { trophies: [{ name: "Platinum" }], avatar: null },
       schalke: {
@@ -178,6 +182,7 @@ describe("getWidgetStatus", () => {
       steam: null,
       youtube: null,
       github: null,
+      reddit: null,
       x: null,
       trophies: null,
       schalke: null,
@@ -255,6 +260,14 @@ describe("getWidgetStatus", () => {
     expect(status.github).not.toBeNull();
     expect(fetchSteamStatus).not.toHaveBeenCalled();
     expect(fetchYoutubeStatus).not.toHaveBeenCalled();
+  });
+
+  it("leaves Reddit out when it is off or has no usable karma", async () => {
+    getConfig.mockResolvedValueOnce({ ...ALL_ENABLED, reddit_enabled: false });
+    expect((await getWidgetStatus()).reddit).toBeNull();
+
+    getConfig.mockResolvedValueOnce({ ...ALL_ENABLED, reddit_karma: undefined });
+    expect((await getWidgetStatus()).reddit).toBeNull();
   });
 
   it("collapses an upstream failure to null", async () => {

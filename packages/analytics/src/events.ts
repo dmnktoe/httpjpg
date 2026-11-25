@@ -14,6 +14,7 @@ export type OutboundDestination =
   | "lastfm"
   | "steam"
   | "youtube"
+  | "reddit"
   | "x"
   | "psn"
   | "schalke"

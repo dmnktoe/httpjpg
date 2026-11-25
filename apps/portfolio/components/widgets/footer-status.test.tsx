@@ -67,6 +67,7 @@ const STATUS_PAYLOAD = {
       },
     ],
   },
+  reddit: { username: "dmnktoe", karma: 12345, url: "https://r.test/u" },
   x: {
     profile: { username: "dmnktoe", avatar: null, followerCount: null },
     posts: [{ text: "Hello world", url: "https://x.test/p" }],
@@ -127,11 +128,12 @@ describe("FooterStatus", () => {
   it("renders the Steam, YouTube and GitHub lines from the same envelope", async () => {
     const fetchMock = mockFetch({ "/api/status": STATUS_PAYLOAD });
 
-    render(<FooterStatus steamEnabled youtubeEnabled githubEnabled />);
+    render(<FooterStatus steamEnabled youtubeEnabled githubEnabled redditEnabled />);
 
     await waitFor(() => expect(screen.getByText("ELDEN RING")).toBeInTheDocument());
     expect(screen.getByText("Studio tour")).toBeInTheDocument();
     expect(screen.getByText("dmnktoe/httpjpg")).toBeInTheDocument();
+    expect(screen.getByText("u/dmnktoe")).toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 

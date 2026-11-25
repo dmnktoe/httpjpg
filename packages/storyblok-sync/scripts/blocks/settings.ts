@@ -49,6 +49,7 @@ export const settingsBlocks: BlockDef[] = [
           "Spotify",
           "YouTube",
           "Steam",
+          "Reddit",
           "Discogs",
           "Last.fm",
           "Letterboxd",
@@ -182,6 +183,13 @@ export const settingsBlocks: BlockDef[] = [
         }),
         github_enabled: field.boolean("GitHub · Latest Activity", "false"),
         github_username: field.text("GitHub · Username"),
+        reddit_enabled: field.boolean("Reddit · Karma", "false"),
+        reddit_username: field.text("Reddit · Username", {
+          description:
+            "Without u/. Reddit's API needs an approved app, so the karma is typed in here.",
+          tooltip: true,
+        }),
+        reddit_karma: field.number("Reddit · Karma (manual)"),
         x_enabled: field.boolean("X · Latest Post"),
         x_username: field.text("X · Username", {
           description: "Handle without @, e.g. dmnktoe. Needs TWEETAPI_KEY to be set.",

@@ -204,6 +204,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                       steamEnabled={widgetConfig.steamEnabled}
                       youtubeEnabled={widgetConfig.youtubeEnabled}
                       githubEnabled={widgetConfig.githubEnabled}
+                      redditEnabled={widgetConfig.redditEnabled}
                       xEnabled={widgetConfig.xEnabled}
                       schalkeEnabled={widgetConfig.schalkeEnabled}
                       trophiesEnabled={widgetConfig.psnTrophyEnabled}

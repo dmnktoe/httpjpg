@@ -36,6 +36,7 @@ const EMPTY = {
   steam: null,
   youtube: null,
   github: null,
+  reddit: null,
   x: null,
   trophies: null,
   schalke: null,

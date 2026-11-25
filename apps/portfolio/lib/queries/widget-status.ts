@@ -18,6 +18,7 @@ import {
   type LetterboxdFilm,
 } from "../integrations/letterboxd";
 import { fetchRecentTrophies, isPsnUsername, type PsnTrophy } from "../integrations/psn-trophies";
+import { readRedditKarma, type RedditKarma } from "../integrations/reddit";
 import { fetchSchalkeStatus, type SchalkeStatus } from "../integrations/schalke";
 import { fetchSteamStatus, isSteamId, type SteamStatus } from "../integrations/steam";
 import { fetchXTimeline, isXUsername, type XTimeline } from "../integrations/x-posts";
@@ -54,6 +55,7 @@ export interface WidgetStatus {
   steam: SteamStatus | null;
   youtube: YoutubeStatus | null;
   github: GithubStatus | null;
+  reddit: RedditKarma | null;
   x: XTimeline | null;
   trophies: { trophies: PsnTrophy[]; avatar: string | null } | null;
   schalke: SchalkeStatus | null;
@@ -204,5 +206,9 @@ export async function getWidgetStatus(): Promise<WidgetStatus> {
       settle("schalke", schalkeLoad),
     ]);
 
-  return { letterboxd, discogs, lastfm, steam, youtube, github, x, trophies, schalke };
+  const reddit = config?.reddit_enabled
+    ? readRedditKarma(config.reddit_username, config.reddit_karma)
+    : null;
+
+  return { letterboxd, discogs, lastfm, steam, youtube, github, reddit, x, trophies, schalke };
 }

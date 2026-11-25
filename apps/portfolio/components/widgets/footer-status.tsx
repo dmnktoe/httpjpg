@@ -8,6 +8,7 @@ import { type DiscordPresence, DiscordStatus } from "./discord-status";
 import { GithubStatus } from "./github-status";
 import { LastfmStatus } from "./lastfm-status";
 import { LetterboxdStatus } from "./letterboxd-status";
+import { RedditStatus } from "./reddit-status";
 import { SchalkeStatus } from "./schalke-status";
 import { SteamStatus } from "./steam-status";
 import { TrophyStatus } from "./trophy-status";
@@ -22,6 +23,7 @@ export interface FooterStatusProps {
   steamEnabled?: boolean;
   youtubeEnabled?: boolean;
   githubEnabled?: boolean;
+  redditEnabled?: boolean;
   xEnabled?: boolean;
   trophiesEnabled?: boolean;
   schalkeEnabled?: boolean;
@@ -47,6 +49,7 @@ export function FooterStatus({
   steamEnabled = false,
   youtubeEnabled = false,
   githubEnabled = false,
+  redditEnabled = false,
   xEnabled = false,
   trophiesEnabled = false,
   schalkeEnabled = false,
@@ -58,6 +61,7 @@ export function FooterStatus({
     steamEnabled ||
     youtubeEnabled ||
     githubEnabled ||
+    redditEnabled ||
     xEnabled ||
     trophiesEnabled ||
     schalkeEnabled;
@@ -104,6 +108,9 @@ export function FooterStatus({
           activity={status.data?.github?.activity?.[0] ?? null}
           loaded={status.loaded}
         />
+      )}
+      {redditEnabled && (
+        <RedditStatus reddit={status.data?.reddit ?? null} loaded={status.loaded} />
       )}
       {xEnabled && (
         <XStatus

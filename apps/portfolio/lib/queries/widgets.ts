@@ -11,6 +11,7 @@ export interface WidgetConfig {
   steamEnabled: boolean;
   youtubeEnabled: boolean;
   githubEnabled: boolean;
+  redditEnabled: boolean;
   xEnabled: boolean;
   schalkeEnabled: boolean;
   spotifyEnabled: boolean;
@@ -31,6 +32,7 @@ export async function getWidgetConfig(): Promise<WidgetConfig> {
     steamEnabled: config?.steam_enabled ?? false,
     youtubeEnabled: config?.youtube_enabled ?? false,
     githubEnabled: config?.github_enabled ?? false,
+    redditEnabled: config?.reddit_enabled ?? false,
     xEnabled: config?.x_enabled ?? false,
     schalkeEnabled: config?.schalke_enabled ?? false,
     spotifyEnabled: config?.spotify_enabled ?? false,

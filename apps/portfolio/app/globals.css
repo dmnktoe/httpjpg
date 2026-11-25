@@ -29,10 +29,6 @@
     line-height: 1.5;
   }
 
-  /*
-   * A page that scales with the viewport: 1rem follows the viewport width, one
-   * design width per CMS breakpoint band. The variables come from pageScaleCssVars.
-   */
   html[data-page-scale] {
     font-size: var(--page-scale-mobile);
   }

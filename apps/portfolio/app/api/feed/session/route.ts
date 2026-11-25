@@ -3,7 +3,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import { authorizeFeedRequest } from "@/lib/feed/auth";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
-/** The composer's sign-in check: 200 when its token may publish. */
 export async function GET(request: NextRequest) {
   const limited = await enforceRateLimit(request);
   if (limited) {

@@ -10,22 +10,14 @@ export interface FeedPanelWidgetProps {
 
 const FEED_PATH = "/feed";
 
-/** Matches Panda's `md`: below it the panel is a block in the page flow. */
 const FLOATING_QUERY = "(min-width: 768px)";
 
-/** The drag hook's own threshold: a press that moves less is a click. */
 const DRAG_THRESHOLD_PX = 4;
 
-/**
- * Places the feed panel: a block above the footer on a phone, floating and
- * draggable from `md` up — bottom left, clear of the now-playing widget.
- * Hidden on the feed itself, where it would only repeat the page.
- */
 export function FeedPanelWidget({ items }: FeedPanelWidgetProps) {
   const pathname = usePathname();
   const { offset, handlers } = useDesktopDrag<HTMLDivElement>({ onSelect: noop });
   const pressRef = useRef<{ x: number; y: number } | null>(null);
-  // Survives the pointer-up that ends a drag, so the click it produces can be swallowed.
   const draggedRef = useRef(false);
 
   if (!items.length || pathname === FEED_PATH || pathname?.startsWith(`${FEED_PATH}/`)) {
@@ -38,8 +30,6 @@ export function FeedPanelWidget({ items }: FeedPanelWidgetProps) {
     if (isFloating()) {
       pressRef.current = { x: event.clientX, y: event.clientY };
       handlers.onPointerDown(event);
-      // The hook captures the pointer at once, and a captured pointer's click lands on
-      // this wrapper instead of the link. Hold the capture back until it is a drag.
       event.currentTarget.releasePointerCapture?.(event.pointerId);
     }
   };
@@ -57,8 +47,6 @@ export function FeedPanelWidget({ items }: FeedPanelWidgetProps) {
     handlers.onPointerMove(event);
   };
 
-  // The click that ends a drag fires right after pointer-up; once it has had its
-  // chance the flag goes, so a later keyboard activation is not swallowed.
   const handlePointerEnd = (
     event: PointerEvent<HTMLDivElement>,
     end: typeof handlers.onPointerUp,

@@ -1,18 +1,6 @@
 import { env } from "@httpjpg/env";
 
-/**
- * Which stories are published, for the proxy.
- *
- * A page under Cache Components cannot answer 404: its shell is sent with a 200
- * before the page finds the story missing. The proxy runs first, so it asks here
- * and sends an unknown slug to the not-found route instead. One list of slugs,
- * read from Storyblok's links endpoint and kept in memory: the proxy must stay
- * fast, and this costs one request every few minutes however many pages are viewed.
- */
-
-/** How long a list is trusted before it is read again. */
 const FRESH_MS = 5 * 60_000;
-/** A slug missing from a list at least this old is looked up again: it may be newly published. */
 const RECHECK_MS = 30_000;
 const PER_PAGE = 1000;
 const MAX_PAGES = 10;
@@ -32,10 +20,6 @@ interface LinkEntry {
 let index: StoryIndex | null = null;
 let pending: Promise<StoryIndex | null> | null = null;
 
-/**
- * True or false when the list answers, `null` when it cannot be read. Callers
- * treat `null` as "let the page decide": an outage must not turn the site into 404s.
- */
 export async function isPublishedStory(slug: string, now = Date.now()): Promise<boolean | null> {
   let current = index;
   if (!current || now - current.fetchedAt > FRESH_MS) {
@@ -54,17 +38,14 @@ export async function isPublishedStory(slug: string, now = Date.now()): Promise<
   return false;
 }
 
-/** Forgets the list. For tests. */
 export function resetStoryIndex(): void {
   index = null;
   pending = null;
 }
 
-/** One read at a time: requests that arrive meanwhile wait for the same answer. */
 function refresh(now: number): Promise<StoryIndex | null> {
   pending ??= readSlugs()
     .then((slugs) => {
-      // An empty list is an outage, as everywhere else: keep what we had.
       if (!slugs.size) {
         return null;
       }

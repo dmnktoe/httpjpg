@@ -3,7 +3,6 @@ import { expect, test } from "@playwright/test";
 test.describe("not found", () => {
   test("a page without a story answers 404 with the branded screen", async ({ page, request }) => {
     const res = await request.get("/missing-page", { failOnStatusCode: false });
-    // `next dev` reads drafts and skips the published-story check: no 404 there.
     test.skip(
       res.status() === 200,
       "the proxy only checks published stories in a production build",

@@ -7,8 +7,6 @@ import type { SystemStyleObject } from "styled-system/types";
 import { type ResponsiveSpacing, responsiveSpacingVars } from "../../lib/spacing-var";
 import { Box } from "../box/box";
 
-// `rem`, not `px`: the same widths at the default root size, and a page that
-// scales with the viewport (`data-page-scale`) scales its containers with it.
 const sizeMap = {
   sm: "40rem",
   md: "48rem",

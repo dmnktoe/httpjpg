@@ -21,31 +21,29 @@ interface FeedPostFrameProps {
   onImageClick?: (index: number) => void;
 }
 
-// Written out so Panda generates both: the fit arrives at runtime.
 const FIT_CLASS = {
   cover: css({ display: "block", w: "full", h: "full", objectFit: "cover" }),
   contain: css({ display: "block", w: "full", h: "full", objectFit: "contain" }),
 } as const;
 
 const NAV_CLASS = css({
-  all: "unset",
-  boxSizing: "border-box",
   position: "absolute",
   top: "50%",
-  transform: "translateY(-50%)",
-  // Touch swipes the track; the buttons are for pointers.
+  boxSizing: "border-box",
   display: { base: "none", md: "inline-flex" },
   px: "2",
   py: "1",
   color: "white",
-  bg: "rgba(0, 0, 0, 0.55)",
-  cursor: "pointer",
+  opacity: 0.75,
   fontFamily: "mono",
   fontSize: "sm",
   lineHeight: 1,
-  userSelect: "none",
-  opacity: 0.75,
+  bg: "rgba(0, 0, 0, 0.55)",
+  transform: "translateY(-50%)",
   transition: "opacity 0.2s",
+  cursor: "pointer",
+  userSelect: "none",
+  all: "unset",
   _hover: { opacity: 1 },
   _focusVisible: {
     opacity: 1,
@@ -55,7 +53,6 @@ const NAV_CLASS = css({
   },
 });
 
-/** The carousel: a scroll-snap track, so touch swipes it without any script. */
 export function FeedPostFrame({ images, ratio, sizes, onImageClick }: FeedPostFrameProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -87,11 +84,10 @@ export function FeedPostFrame({ images, ratio, sizes, onImageClick }: FeedPostFr
       data-feed-frame=""
       css={{
         position: "relative",
-        w: "full",
-        overflow: "hidden",
-        // The bars of a fitted image take the page colour.
-        bg: "pageBg",
         aspectRatio: "var(--feed-ratio)",
+        w: "full",
+        bg: "pageBg",
+        overflow: "hidden",
       }}
       style={{ "--feed-ratio": ratio } as CSSProperties}
     >

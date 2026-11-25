@@ -7,9 +7,7 @@ import { isPublishedStory } from "@/lib/story-index";
 import { storySlugForPath } from "@/lib/story-route";
 import { isStoryblokEditorRequest } from "@/lib/storyblok-editor";
 
-/** Next's own not-found route: the one page route that answers with a 404 status. */
 const NOT_FOUND_ROUTE = "/_not-found";
-/** Set by `draftMode().enable()`. */
 const DRAFT_MODE_COOKIE = "__prerender_bypass";
 
 const SECURITY_HEADERS: Record<string, string> = {
@@ -37,8 +35,6 @@ export async function proxy(request: NextRequest) {
     requestHeaders.set("x-storyblok-editor", "1");
   }
 
-  // A page cannot answer 404 once its shell is out, so an unknown slug is sent to
-  // the not-found route here. `x-pathname` keeps the path the visitor asked for.
   const response = (await isUnknownStory(request, inEditor))
     ? NextResponse.rewrite(new URL(NOT_FOUND_ROUTE, request.url), {
         request: { headers: requestHeaders },
@@ -60,10 +56,6 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
-/**
- * Only a published page view is checked. Drafts and the editor show stories the
- * published list does not know, and development reads drafts throughout.
- */
 async function isUnknownStory(request: NextRequest, inEditor: boolean): Promise<boolean> {
   if (process.env.NODE_ENV === "development" || inEditor) {
     return false;

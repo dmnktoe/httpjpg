@@ -3,13 +3,10 @@ import type { FeedPanelItem } from "@httpjpg/ui";
 
 import type { FeedPostEntry } from "../queries/feed";
 
-/** Posts the panel cycles through. */
 export const FEED_PANEL_SIZE = 8;
 
-// The panel is 224px wide when it floats and as wide as a phone when it does not.
 const PANEL_WIDTHS = [320, 640, 960];
 
-/** One image per post — its cover, or a track's artwork. Posts without either are skipped. */
 export function toFeedPanelItems(posts: FeedPostEntry[]): FeedPanelItem[] {
   const items: FeedPanelItem[] = [];
   for (const post of posts) {

@@ -51,7 +51,6 @@ export function toSlideshowImage(asset: ImageLike, fallbackAlt: string): Slidesh
 
 const ASSET_DIMENSIONS = /\/f\/\d+\/(\d+)x(\d+)\//;
 
-/** `"W/H"` read from the dimensions Storyblok writes into an asset URL; undefined without them. */
 export function assetAspectRatio(
   asset: Pick<ImageLike, "filename"> | undefined,
 ): string | undefined {

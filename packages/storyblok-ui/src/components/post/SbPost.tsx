@@ -82,13 +82,11 @@ export const SbPost = memo(function SbPost({ blok, href, sizes }: SbPostProps) {
 
 SbPost.displayName = "SbPost";
 
-/** One hook per image: a post's image count is not fixed. */
 function PostLightboxEntry({ entry }: { entry: LightboxEntry }) {
   useLightboxEntry(entry);
   return null;
 }
 
-// Tiles are a third of the viewport at most; the lightbox loads the full rendition.
 const TILE_WIDTHS = [640, 960, 1280, 1920];
 
 function toFeedImage(item: SbPostImageData): FeedPostImage {
@@ -120,7 +118,6 @@ function imageAlt(item: SbPostImageData): string {
   return item.alt || item.image.alt || item.image.title || "";
 }
 
-/** `original` frames the whole post in its first image's own ratio. */
 function postRatio(blok: SbPostData, images: SbPostImageData[]): string {
   if (blok.format === "original") {
     return assetAspectRatio(images[0]?.image) ?? "1/1";
@@ -128,7 +125,6 @@ function postRatio(blok: SbPostData, images: SbPostImageData[]): string {
   return blok.format || "1/1";
 }
 
-/** `YYYY-MM-DD`, cut from the stored value: no locale, so server and client agree. */
 function postDate(date: string | undefined): string | undefined {
   return date?.match(/^\d{4}-\d{2}-\d{2}/)?.[0];
 }

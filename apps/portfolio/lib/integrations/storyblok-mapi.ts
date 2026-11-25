@@ -17,7 +17,6 @@ export class StoryblokMapiError extends Error {
   }
 }
 
-/** Null when the deployment has no management token: writing is optional. */
 export function mapiConfig(): MapiConfig | null {
   const token = env.STORYBLOK_MANAGEMENT_TOKEN;
   const spaceId = env.STORYBLOK_SPACE_ID;
@@ -25,15 +24,11 @@ export function mapiConfig(): MapiConfig | null {
 }
 
 export interface SignedAssetUpload {
-  /** Asset id; the publish request refers to the upload by it. */
   id: number;
-  /** Where the client posts the file, as `multipart/form-data`. */
   uploadUrl: string;
-  /** Form fields to send before the `file` field. */
   fields: Record<string, string>;
 }
 
-/** Step one of Storyblok's upload: the client posts the file itself, then we finish it. */
 export async function signAssetUpload(
   config: MapiConfig,
   upload: { filename: string; size?: string },
@@ -61,7 +56,6 @@ interface MapiAsset {
   filename?: string;
 }
 
-/** Confirms an upload and returns the asset's public URL. */
 export async function finishAssetUpload(config: MapiConfig, assetId: number): Promise<string> {
   const finished = await mapiRequest<MapiAsset & { asset?: MapiAsset }>(
     config,
@@ -69,7 +63,6 @@ export async function finishAssetUpload(config: MapiConfig, assetId: number): Pr
   );
   const filename =
     assetFilename(finished) ??
-    // The finish response is not documented to carry the URL: read the asset itself.
     assetFilename(
       await mapiRequest<MapiAsset & { asset?: MapiAsset }>(config, `/assets/${assetId}`),
     );
@@ -79,7 +72,6 @@ export async function finishAssetUpload(config: MapiConfig, assetId: number): Pr
   return filename;
 }
 
-/** Id of the folder with this slug, created on first use. */
 export async function ensureFolder(
   config: MapiConfig,
   folder: { slug: string; name: string },
@@ -104,7 +96,6 @@ export async function ensureFolder(
   return created.story.id;
 }
 
-/** The story at this full slug, if there is one. */
 export async function findStory(
   config: MapiConfig,
   fullSlug: string,
@@ -172,7 +163,6 @@ function assetFilename(response: MapiAsset & { asset?: MapiAsset }): string | un
   return filename ? toCdnUrl(filename) : undefined;
 }
 
-/** The management API names the S3 bucket; content refers to assets by the CDN host. */
 function toCdnUrl(filename: string): string {
   return filename
     .replace(/^https?:\/\/s3\.amazonaws\.com\/a\.storyblok\.com\//, "https://a.storyblok.com/")

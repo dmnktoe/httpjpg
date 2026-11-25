@@ -7,11 +7,6 @@ import { parseAssetRequest } from "@/lib/feed/publish";
 import { mapiConfig, signAssetUpload } from "@/lib/integrations/storyblok-mapi";
 import { enforceRateLimit } from "@/lib/rate-limit";
 
-/**
- * Signs one upload. The composer posts the file straight to the returned URL,
- * so a photo never passes through this server, then names the asset by `id`
- * when it publishes.
- */
 export async function POST(request: NextRequest) {
   const limited = await enforceRateLimit(request);
   if (limited) {

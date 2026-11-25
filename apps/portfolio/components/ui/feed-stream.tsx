@@ -8,7 +8,6 @@ import { css } from "styled-system/css";
 import type { FeedPage, FeedPostEntry } from "@/lib/queries/feed";
 
 export interface FeedStreamProps {
-  /** The first page, rendered on the server. */
   initial: FeedPage;
 }
 
@@ -29,7 +28,6 @@ const buttonClass = css({
   _focusVisible: { outline: "2px solid", outlineColor: "primary.500", outlineOffset: "2px" },
 });
 
-/** The feed's posts, with further pages fetched on demand from `/api/feed/posts`. */
 export function FeedStream({ initial }: FeedStreamProps) {
   const [posts, setPosts] = useState(initial.posts);
   const [page, setPage] = useState(initial.page);
@@ -97,7 +95,6 @@ export function FeedStream({ initial }: FeedStreamProps) {
   );
 }
 
-/** A post published between two page loads shifts the pages: skip what is already shown. */
 function appendNew(current: FeedPostEntry[], next: FeedPostEntry[]): FeedPostEntry[] {
   const seen = new Set(current.map((post) => post.id));
   return [...current, ...next.filter((post) => !seen.has(post.id))];

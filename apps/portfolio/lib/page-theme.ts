@@ -47,7 +47,6 @@ export async function getPageAccent(): Promise<string | null> {
   }
 }
 
-/** Viewport scaling a work page opted into, else `null`. */
 export async function getPageScale(): Promise<PageScale | null> {
   try {
     const story = await loadCurrentStory();
@@ -57,7 +56,6 @@ export async function getPageScale(): Promise<PageScale | null> {
   }
 }
 
-/** Only work pages scale; the fields mean nothing on another content type. */
 export function workPageScale(content: PageStoryContent | null | undefined): PageScale | null {
   return content?.component === "work" ? parsePageScale(content) : null;
 }

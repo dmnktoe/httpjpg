@@ -11,7 +11,6 @@ export const FEED_PAGE_SIZE = 12;
 
 export interface FeedPostEntry {
   id: string;
-  /** Permalink of the post. */
   href: string;
   content: SbPostData;
 }
@@ -28,7 +27,6 @@ interface PostStory {
   content?: SbPostData;
 }
 
-/** One page of the feed, newest first. Never throws: a failed read is an empty page. */
 export async function getFeedPage(page = 1): Promise<FeedPage> {
   try {
     return await readFeedPage(page);
@@ -59,8 +57,6 @@ async function readFeedPage(page: number): Promise<FeedPage> {
     )
     .map((story) => ({ id: story.uuid, href: `/${story.full_slug}`, content: story.content }));
 
-  // Empty is "no posts yet" or a failed fetch (`getStories` swallows errors):
-  // hold it for seconds, not the hour.
   if (posts.length) {
     cacheLife("cms");
   } else {

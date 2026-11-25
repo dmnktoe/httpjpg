@@ -8,10 +8,6 @@ export interface FeedGridProps extends Omit<HTMLAttributes<HTMLDivElement>, "css
   css?: SystemStyleObject;
 }
 
-/**
- * Lays `FeedPost`s out as a feed: one column on a phone, each post in its own
- * format; a three-column grid of square tiles from `md` up.
- */
 export function FeedGrid({ children, css: cssProp, ...props }: FeedGridProps) {
   return (
     <Box
@@ -20,7 +16,6 @@ export function FeedGrid({ children, css: cssProp, ...props }: FeedGridProps) {
         gridTemplateColumns: { base: "minmax(0, 1fr)", md: "repeat(3, minmax(0, 1fr))" },
         gap: { base: "10", md: "6" },
         alignItems: "start",
-        // Tiles are square whatever the post's format; the image crops or letterboxes inside.
         "& [data-feed-frame]": { md: { aspectRatio: "1" } },
         "& [data-feed-caption]": { md: { lineClamp: 2 } },
         ...cssProp,

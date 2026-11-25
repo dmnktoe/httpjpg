@@ -1,15 +1,9 @@
 import { expect, type Page, test } from "@playwright/test";
 
-/** The consent banner covers the bottom of the viewport on a first visit, the panel with it. */
 async function dismissConsent(page: Page) {
   await page.getByRole("button", { name: /Reject All/ }).click();
 }
 
-/**
- * Opens the home page for a panel test. The panel is switched on in the config
- * story, and the config a production build read stays with that build: against a
- * space that has it off, there is no panel to test.
- */
 async function gotoHomeWithPanel(page: Page) {
   await page.goto("/");
   if ((await page.locator("[data-feed-panel]").count()) === 0) {
@@ -60,7 +54,6 @@ test.describe("feed", () => {
     const box = await page.locator("[data-feed-frame]").first().boundingBox();
 
     expect(box).not.toBeNull();
-    // 4/5 → the frame is a quarter taller than it is wide.
     expect((box?.height ?? 0) / (box?.width ?? 1)).toBeCloseTo(1.25, 1);
   });
 
@@ -152,7 +145,6 @@ test.describe("feed", () => {
     });
     const session = await request.get("/api/feed/session", { failOnStatusCode: false });
 
-    // 503 where the deployment has no publish token, 401 where it has one.
     for (const res of [publish, sign, session]) {
       expect([401, 503]).toContain(res.status());
     }

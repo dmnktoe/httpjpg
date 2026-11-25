@@ -30,7 +30,6 @@ export interface FeedPanelProps {
   css?: SystemStyleObject;
 }
 
-// Written out so Panda generates both: the fit arrives at runtime.
 const FIT_CLASS = {
   cover: css({ display: "block", w: "full", h: "full", objectFit: "cover" }),
   contain: css({ display: "block", w: "full", h: "full", objectFit: "contain" }),
@@ -49,14 +48,6 @@ const CHIP_STYLES: SystemStyleObject = {
   userSelect: "none",
 };
 
-/**
- * A square window onto the feed: the newest posts scroll past one at a time,
- * and the whole panel links to the feed. Always square — a filled post is
- * centre-cropped, a fitted one keeps its bars in the page colour.
- *
- * Presentational: where it sits (floating, draggable, in the flow) is the
- * caller's business.
- */
 export function FeedPanel({
   items,
   href,
@@ -98,7 +89,6 @@ export function FeedPanel({
         aspectRatio: "1",
         overflow: "hidden",
         textDecoration: "none",
-        // The bars of a fitted image take the page colour, so the border is what keeps the square.
         bg: "pageBg",
         border: "1px solid",
         borderColor: "pageBorder",

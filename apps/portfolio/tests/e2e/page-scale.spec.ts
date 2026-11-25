@@ -28,7 +28,6 @@ test.describe("viewport scaling", () => {
     const doubled = await heading.boundingBox();
     expect((doubled?.height ?? 0) / (atDesign?.height ?? 1)).toBeCloseTo(2, 1);
 
-    // The phone layout is its own composition: 780px is twice its 390px design width.
     await page.setViewportSize({ width: 780 - 13, height: 900 });
     await expect.poll(() => rootFontSize(page)).toBeGreaterThan(30);
   });

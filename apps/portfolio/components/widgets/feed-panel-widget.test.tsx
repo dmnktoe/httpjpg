@@ -26,7 +26,6 @@ function drag(target: HTMLElement, from: [number, number], to: [number, number])
   fireEvent.pointerUp(target, { pointerId: 1, clientX: to[0], clientY: to[1] });
 }
 
-/** Whether a click on the panel's link is left alone for the router. */
 function clickGoesThrough(): boolean {
   return fireEvent.click(screen.getByRole("link", { name: "Open the feed" }));
 }
@@ -86,7 +85,6 @@ describe("FeedPanelWidget", () => {
     expect(panel().style.left).not.toBe("");
     expect(panel().style.bottom).toBe("auto");
     expect(clickGoesThrough()).toBe(false);
-    // Only the click that ended the drag: the next one opens the feed.
     expect(clickGoesThrough()).toBe(true);
   });
 
@@ -97,7 +95,6 @@ describe("FeedPanelWidget", () => {
     Object.assign(panel(), { setPointerCapture, releasePointerCapture });
 
     fireEvent.pointerDown(panel(), { pointerId: 1, button: 0, clientX: 50, clientY: 50 });
-    // Released again straight away: a captured pointer's click would miss the link.
     expect(releasePointerCapture).toHaveBeenCalledWith(1);
     setPointerCapture.mockClear();
 

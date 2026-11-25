@@ -22,7 +22,6 @@ export type Parsed<T> = { ok: true; value: T } | { ok: false; message: string };
 
 export interface AssetRequest {
   filename: string;
-  /** `WIDTHxHEIGHT`; Storyblok writes it into the asset URL. */
   size?: string;
 }
 
@@ -34,7 +33,6 @@ export interface PublishImage {
 
 export interface PublishMusic {
   source: MusicSource;
-  /** Share or file URL. An uploaded mp3 sends `assetId` instead. */
   src?: string;
   assetId?: number;
   title?: string;
@@ -47,12 +45,7 @@ export interface PublishRequest {
   format: PostFormat;
   images: PublishImage[];
   music?: PublishMusic;
-  /** Backdates a post; defaults to now. */
   date?: Date;
-  /**
-   * The composer's id for this draft. With it a retry lands on the same slug,
-   * so a publish whose answer was lost is found again instead of repeated.
-   */
   clientId?: string;
 }
 
@@ -143,7 +136,6 @@ export function parsePublishRequest(body: unknown): Parsed<PublishRequest> {
   };
 }
 
-/** Asset ids a publish request refers to; each is finished before the story is created. */
 export function publishAssetIds(request: PublishRequest): number[] {
   const ids = request.images.map((image) => image.assetId);
   if (request.music?.assetId) {
@@ -155,7 +147,6 @@ export function publishAssetIds(request: PublishRequest): number[] {
   return [...new Set(ids)];
 }
 
-/** The `post` blok Storyblok stores. `assets` maps each finished asset id to its URL. */
 export function buildPostContent(
   request: PublishRequest,
   assets: ReadonlyMap<number, string>,
@@ -195,11 +186,6 @@ export function buildPostContent(
   };
 }
 
-/**
- * `20261125-153012-a3f9`: sortable, and unique for posts backdated to the same
- * second. A draft with a `clientId` gets a suffix derived from it instead of a
- * random one, so the same draft and date always name the same story.
- */
 export function postSlug(date: Date, clientId?: string): string {
   const stamp = date
     .toISOString()
@@ -212,13 +198,11 @@ export function postSlug(date: Date, clientId?: string): string {
   return `${stamp}-${suffix}`;
 }
 
-/** Story name in the Storyblok list: the caption's first line, or the date. */
 export function postName(request: PublishRequest, date: Date): string {
   const firstLine = request.caption.split("\n")[0]?.trim() ?? "";
   return firstLine ? firstLine.slice(0, 60) : `Post ${storyblokDate(date)}`;
 }
 
-/** Storyblok's datetime field format, in UTC. */
 function storyblokDate(date: Date): string {
   return date.toISOString().slice(0, 16).replace("T", " ");
 }
@@ -271,7 +255,6 @@ function parseMusic(raw: unknown): Parsed<PublishMusic> {
   };
 }
 
-/** Base name only, reduced to characters that are safe in an asset URL. */
 function sanitizeFilename(filename: string): string {
   const base = filename.split(/[\\/]/).pop() ?? "";
   return base
@@ -281,7 +264,6 @@ function sanitizeFilename(filename: string): string {
     .slice(-MAX_FILENAME_LENGTH);
 }
 
-/** Undefined when absent, null when invalid. */
 function optionalText(value: unknown): string | undefined | null {
   if (value === undefined || value === null) {
     return undefined;

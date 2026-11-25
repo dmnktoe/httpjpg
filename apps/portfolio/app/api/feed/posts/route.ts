@@ -31,22 +31,15 @@ function parsePage(raw: string | null): number {
   return Math.min(parsed, MAX_PAGE);
 }
 
-/** One page of the feed, for "load more". */
 export async function GET(request: NextRequest) {
   const limited = await enforceRateLimit(request);
   if (limited) {
     return limited;
   }
   const feed = await getFeedPage(parsePage(request.nextUrl.searchParams.get("page")));
-  // No shared cache: `getFeedPage` is cached and expired by the webhook, and a
-  // second lifetime here would let the pages drift from the one the server rendered.
   return NextResponse.json(feed, { headers: { "Cache-Control": "no-store" } });
 }
 
-/**
- * Publishes a post from uploads signed by `/api/feed/assets`. The feed shows
- * it once Storyblok's publish webhook has expired the story caches.
- */
 export async function POST(request: NextRequest) {
   const limited = await enforceRateLimit(request);
   if (limited) {
@@ -76,8 +69,6 @@ export async function POST(request: NextRequest) {
   const post = parsed.value;
   const date = post.date ?? new Date();
 
-  // A draft with a client id and a date always maps to one slug: if that story
-  // is already there, an earlier attempt got through and only its answer was lost.
   const slug = postSlug(date, post.clientId);
   const fullSlug = `${STORYBLOK_SLUGS.FEED_PREFIX}${slug}`;
 

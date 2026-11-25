@@ -1,14 +1,3 @@
-/**
- * Viewport scaling for a composed page: the layout is built once at a design
- * width and the whole page then scales with the viewport like an image,
- * instead of reflowing between breakpoints.
- *
- * It works through the root font size. Spacing and type are `rem`, widths are
- * percentages, so tying `1rem` to the viewport scales everything in step. One
- * design width per CMS breakpoint band (base / `md` / `lg`), because a grid
- * picks its columns per band.
- */
-
 export interface PageScale {
   /** Design width from `lg` up. */
   desktop: number;
@@ -18,7 +7,6 @@ export interface PageScale {
   mobile: number;
 }
 
-/** The page fields the scale is read from; Storyblok sends numbers as strings at times. */
 export interface PageScaleSource {
   scaleWithViewport?: unknown;
   designWidth?: unknown;
@@ -37,7 +25,6 @@ const SCALE_VARS = {
   mobile: "--page-scale-mobile",
 } as const;
 
-/** Null unless the page opted in; an unusable width falls back to its default. */
 export function parsePageScale(source?: PageScaleSource | null): PageScale | null {
   if (source?.scaleWithViewport !== true) {
     return null;
@@ -49,7 +36,6 @@ export function parsePageScale(source?: PageScaleSource | null): PageScale | nul
   };
 }
 
-/** Root font sizes per band: `1rem` is 16px exactly at the band's design width. */
 export function pageScaleCssVars(
   scale: PageScale | null,
 ): Record<`--${string}`, string> | undefined {
@@ -63,7 +49,6 @@ export function pageScaleCssVars(
   };
 }
 
-/** Sets or clears the scale on `<html>`; `[data-page-scale]` is what the stylesheet keys on. */
 export function applyPageScale(root: HTMLElement, scale: PageScale | null): void {
   const vars = pageScaleCssVars(scale);
   if (!vars) {
@@ -87,7 +72,6 @@ function designWidth(value: unknown, fallback: number): number {
   return width >= MIN_DESIGN_WIDTH && width <= MAX_DESIGN_WIDTH ? width : fallback;
 }
 
-/** `100vw` is the design width there, so `1600 / width` vw is 16px. */
 function rootFontSize(width: number): string {
   return `${Number((1600 / width).toFixed(4))}vw`;
 }

@@ -28,12 +28,6 @@ export interface FeedPostProps {
   css?: SystemStyleObject;
 }
 
-/**
- * One feed post: a carousel frame, an optional player, caption and date.
- *
- * Presentational, like `Lightbox`: it knows nothing about the CMS or the page
- * gallery. `FeedGrid` reads the `data-feed-*` hooks to turn posts into tiles.
- */
 export function FeedPost({
   images,
   ratio = "1/1",

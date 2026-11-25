@@ -9,7 +9,6 @@ export interface ThemeSyncProps {
   theme: "light" | "dark";
   /** Work page Project Accent Color (`#RGB` / `#RRGGBB`). Cleared when omitted. */
   accent?: string | null;
-  /** Viewport scaling of a work page. Cleared when omitted. */
   scale?: PageScale | null;
 }
 
@@ -27,8 +26,6 @@ export function ThemeSync({ theme, accent, scale }: ThemeSyncProps) {
     if (!scaled) {
       return;
     }
-    // Not every route renders a ThemeSync (cookie policy, not-found): a scaled
-    // page takes its scale with it when it leaves, or the next page would inherit it.
     return () => applyPageScale(root, null);
   }, [theme, accent, desktop, tablet, mobile]);
   return null;

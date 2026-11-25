@@ -5,7 +5,6 @@ import { FeedStream } from "@/components/ui/feed-stream";
 import { ThemeSync } from "@/components/ui/theme-sync";
 import { getFeedPage } from "@/lib/queries/feed";
 
-/** Blocking, like the root layout. */
 export const instant = false;
 
 export const metadata: Metadata = {
@@ -14,7 +13,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/feed" },
 };
 
-/** The feed is a route, not a story: its posts are the `feed/` stories. */
 export default async function FeedPage() {
   const feed = await getFeedPage(1);
 
@@ -26,7 +24,6 @@ export default async function FeedPage() {
           <Headline level={1} marginBottom="8">
             ⋆.˚ feed ˚.⋆
           </Headline>
-          {/* Keyed on the newest post: a refreshed first page starts the stream over. */}
           <FeedStream key={feed.posts[0]?.id ?? "empty"} initial={feed} />
         </Container>
       </Section>

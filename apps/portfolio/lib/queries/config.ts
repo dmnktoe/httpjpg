@@ -2,7 +2,7 @@ import { captureServerException } from "@httpjpg/observability/sentry/server.ts"
 import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { CMS_TAGS } from "@httpjpg/storyblok-next";
 import { type MenuLink, type SbConfigStory, storyblokHref } from "@httpjpg/storyblok-ui";
-import type { SbUserbarData } from "@httpjpg/storyblok-utils";
+import { imagePreset, type SbUserbarData } from "@httpjpg/storyblok-utils";
 import { isExternalLink, type NavItem, type UserbarItem } from "@httpjpg/ui";
 import { cacheLife, cacheTag } from "next/cache";
 import { draftMode } from "next/headers";
@@ -133,6 +133,7 @@ export async function getSiteConfig(): Promise<SiteConfig> {
 export interface SiteAuthor {
   name: string;
   url?: string;
+  avatar?: string;
 }
 
 export async function getAuthor(): Promise<SiteAuthor | null> {
@@ -140,7 +141,12 @@ export async function getAuthor(): Promise<SiteAuthor | null> {
   if (!config?.author_name) {
     return null;
   }
-  return { name: config.author_name, url: config.author_url || undefined };
+  return {
+    name: config.author_name,
+    url: config.author_url || undefined,
+    avatar:
+      imagePreset.avatar(config.author_avatar?.filename, config.author_avatar?.focus) || undefined,
+  };
 }
 
 /** Profile URLs for the author's schema.org `sameAs`. */

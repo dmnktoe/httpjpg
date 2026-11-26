@@ -147,6 +147,10 @@ export const settingsBlocks: BlockDef[] = [
         seo_title: field.text("Default Page Title", { translatable: true }),
         seo_description: field.textarea("Default Page Description", { translatable: true }),
         author_name: field.text("Author · Name"),
+        author_avatar: field.asset("Author · Avatar", ["images"], {
+          description: "Square picture shown beside the name on the feed and its posts.",
+          tooltip: true,
+        }),
         author_url: field.text("Author · URL", {
           description: "Full URL (incl. https://); used in SEO metadata and structured data.",
           tooltip: true,

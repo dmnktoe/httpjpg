@@ -128,6 +128,9 @@ export function FeedPostFrame({
     if (event.pointerType !== "mouse" || event.button !== 0) {
       return;
     }
+    if (event.currentTarget.scrollWidth <= event.currentTarget.clientWidth) {
+      return;
+    }
     dragRef.current = {
       startX: event.clientX,
       startLeft: event.currentTarget.scrollLeft,
@@ -253,6 +256,7 @@ export function FeedPostFrame({
                   href={imageHref}
                   aria-label={image.alt ? `Open the post: ${image.alt}` : "Open the post"}
                   data-cursor="open post"
+                  data-feed-slide=""
                   draggable={false}
                   css={{ ...SLIDE_CSS, cursor: "pointer" }}
                 >
@@ -268,6 +272,7 @@ export function FeedPostFrame({
                   key={image.id}
                   aria-label={image.alt ? `Open ${image.alt} at full size` : "Open at full size"}
                   data-cursor="zoom"
+                  data-feed-slide=""
                   onClick={() => onImageClick(index)}
                   css={{ ...SLIDE_CSS, cursor: "zoom-in" }}
                 >
@@ -276,7 +281,11 @@ export function FeedPostFrame({
               );
             }
             return (
-              <Box key={image.id} css={{ flex: "0 0 100%", h: "full", scrollSnapAlign: "start" }}>
+              <Box
+                key={image.id}
+                data-feed-slide=""
+                css={{ flex: "0 0 100%", h: "full", scrollSnapAlign: "start" }}
+              >
                 {img}
               </Box>
             );
@@ -287,6 +296,7 @@ export function FeedPostFrame({
             <button
               type="button"
               aria-label="Previous image"
+              data-feed-nav=""
               className={NAV_CLASS}
               style={{ left: 0 }}
               onClick={handlePrevious}
@@ -296,6 +306,7 @@ export function FeedPostFrame({
             <button
               type="button"
               aria-label="Next image"
+              data-feed-nav=""
               className={NAV_CLASS}
               style={{ right: 0 }}
               onClick={handleNext}
@@ -304,6 +315,7 @@ export function FeedPostFrame({
             </button>
             <Box
               aria-hidden="true"
+              data-feed-counter=""
               css={{
                 position: "absolute",
                 top: "2",

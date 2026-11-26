@@ -11,11 +11,20 @@ async function gotoHomeWithPanel(page: Page) {
   }
 }
 
+async function showList(page: Page) {
+  const list = page.getByRole("button", { name: "[ ☰ list ]" });
+  await expect(async () => {
+    await list.click();
+    await expect(list).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+  }).toPass();
+}
+
 test.describe("feed", () => {
   test("lists the posts newest first, each with its permalink", async ({ page }) => {
     await page.goto("/feed");
 
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("feed");
+    await expect(page.getByRole("heading", { level: 1, name: /feed/ })).toBeVisible();
+    await showList(page);
     const posts = page.locator("main article");
     await expect(posts).toHaveCount(3);
     await expect(posts.nth(0)).toContainText("harbour dump, three frames");
@@ -28,6 +37,7 @@ test.describe("feed", () => {
 
   test("a carousel counts its images and steps through them", async ({ page }) => {
     await page.goto("/feed");
+    await showList(page);
     const carousel = page.locator("main article").first();
 
     await expect(carousel.getByText("[ 01 / 03 ]")).toBeVisible();
@@ -96,8 +106,10 @@ test.describe("feed", () => {
 
   test("a carousel shows a dot for each image and slides when dragged", async ({ page }) => {
     await page.goto("/feed");
+    await showList(page);
     const carousel = page.locator("[data-feed-frame]").first();
     await expect(carousel).toBeVisible();
+    await carousel.evaluate((element) => element.scrollIntoView({ block: "center" }));
     const dots = page.locator("[data-feed-dots]").first().locator("> *");
     await expect(dots).toHaveCount(3);
     await expect(dots.nth(0)).toHaveAttribute("data-active", "true");
@@ -111,6 +123,29 @@ test.describe("feed", () => {
 
     await expect(dots.nth(1)).toHaveAttribute("data-active", "true");
     await expect(page).toHaveURL(/\/feed$/);
+  });
+
+  test("a desktop starts as a grid of tiles and switches to whole posts", async ({ page }) => {
+    await page.goto("/feed");
+    const grid = page.locator("[data-feed-view]");
+    const caption = page.getByText("harbour dump, three frames").last();
+
+    await expect(grid).toHaveAttribute("data-feed-view", "grid");
+    await expect(page.getByRole("button", { name: "Like" })).toHaveCount(0);
+    await expect(caption).toHaveCSS("opacity", "0");
+    await page.locator("main article").first().hover();
+    await expect(caption).toHaveCSS("opacity", "1");
+
+    await showList(page);
+    const like = page.getByRole("button", { name: "Like" }).first();
+    await like.click();
+    await expect(like).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("the posts are signed with the author from the config story", async ({ page }) => {
+    await page.goto("/feed/20260102-120000-bbbb");
+
+    await expect(page.locator("main article").getByText("httpjpg").first()).toBeVisible();
   });
 
   test("a post has its own page", async ({ page }) => {

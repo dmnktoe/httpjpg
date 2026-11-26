@@ -8,4 +8,5 @@ export * from "./lib/use-body-scroll-lock";
 export * from "./lib/use-desktop-drag";
 export * from "./lib/use-client-now";
 export * from "./lib/use-has-mounted";
+export * from "./lib/use-media-query";
 export * from "./lib/work-accent";

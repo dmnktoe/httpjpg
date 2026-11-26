@@ -1,7 +1,7 @@
 "use client";
 
 import { SbPost } from "@httpjpg/storyblok-ui";
-import { Box, FeedGrid, Paragraph } from "@httpjpg/ui";
+import { Box, FeedGrid, FeedViewToggle, Paragraph, useMediaQuery } from "@httpjpg/ui";
 import { useState } from "react";
 import { css } from "styled-system/css";
 
@@ -33,6 +33,9 @@ export function FeedStream({ initial }: FeedStreamProps) {
   const [page, setPage] = useState(initial.page);
   const [hasMore, setHasMore] = useState(initial.hasMore);
   const [status, setStatus] = useState<LoadStatus>("idle");
+  const [chosenView, setChosenView] = useState<"grid" | "list" | null>(null);
+  const isWide = useMediaQuery(WIDE_QUERY);
+  const view = chosenView ?? (isWide === null ? "auto" : isWide ? "grid" : "list");
 
   const handleLoadMore = async () => {
     setStatus("loading");
@@ -64,7 +67,8 @@ export function FeedStream({ initial }: FeedStreamProps) {
 
   return (
     <>
-      <FeedGrid>
+      <FeedViewToggle view={view} onViewChange={setChosenView} css={{ mb: "6" }} />
+      <FeedGrid view={view}>
         {posts.map((post) => (
           <SbPost key={post.id} blok={post.content} href={post.href} />
         ))}
@@ -97,6 +101,8 @@ export function FeedStream({ initial }: FeedStreamProps) {
     </>
   );
 }
+
+const WIDE_QUERY = "(min-width: 768px)";
 
 function appendNew(current: FeedPostEntry[], next: FeedPostEntry[]): FeedPostEntry[] {
   const seen = new Set(current.map((post) => post.id));

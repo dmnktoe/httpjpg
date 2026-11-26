@@ -14,6 +14,9 @@ export const imagePreset = {
   /** 200px wide thumbnail, height auto. Used in nav previews. */
   thumb: (filename: string | undefined, focus?: string): string =>
     filename ? getProcessedImage(filename, "200x0", focus ?? "", "") : "",
+  /** 192×192 smart-cropped square for an avatar. */
+  avatar: (filename: string | undefined, focus?: string): string =>
+    filename ? getProcessedImage(filename, "192x192/smart", focus ?? "", "") : "",
   /** 20px wide low-res placeholder for blur-on-load. */
   blur: (filename: string | undefined, focus?: string): string =>
     filename ? getProcessedImage(filename, "20x0", focus ?? "", "") : "",

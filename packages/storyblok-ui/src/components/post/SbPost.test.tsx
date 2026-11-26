@@ -1,4 +1,4 @@
-import { LightboxProvider } from "@httpjpg/ui";
+import { FeedAuthorProvider, LightboxProvider } from "@httpjpg/ui";
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import { SbPost } from "./SbPost";
@@ -43,6 +43,42 @@ describe("SbPost", () => {
     const { container } = render(<SbPost blok={post({ images: [], music: [] })} />);
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it("signs the post with the feed's author", () => {
+    const { container } = render(
+      <FeedAuthorProvider author={{ name: "httpjpg", avatarSrc: "/me.jpg" }}>
+        <SbPost blok={post()} />
+      </FeedAuthorProvider>,
+    );
+
+    expect(screen.getAllByText("httpjpg")).toHaveLength(2);
+    expect(container.querySelector("[data-avatar] img")).toHaveAttribute("src", "/me.jpg");
+  });
+
+  it("uses a track's artwork as the tile of a post without images", () => {
+    const { container } = render(
+      <SbPost
+        href="/feed/a"
+        blok={post({
+          images: [],
+          music: [
+            {
+              _uid: "m",
+              component: "music_player",
+              source: "mp3",
+              src: "https://a.storyblok.com/f/1/mix.mp3",
+              artwork: "https://a.storyblok.com/f/1/500x500/abc/cover.jpg",
+            },
+          ],
+        })}
+      />,
+    );
+
+    expect(container.querySelector("[data-feed-tile] img")).toHaveAttribute(
+      "src",
+      "https://a.storyblok.com/f/1/500x500/abc/cover.jpg",
+    );
   });
 
   it("skips images without a file", () => {

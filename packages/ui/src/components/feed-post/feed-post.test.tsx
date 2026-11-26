@@ -25,7 +25,7 @@ describe("FeedPost", () => {
 
     expect(frame(container).style.getPropertyValue("--feed-ratio")).toBe("4/5");
     expect(screen.getByAltText("Harbour at night")).toHaveAttribute("src", "/a.jpg");
-    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Next image" })).toBeNull();
   });
 
   it("defaults to a square frame", () => {
@@ -73,6 +73,84 @@ describe("FeedPost", () => {
     expect(screen.queryByRole("link")).toBeNull();
   });
 
+  it("puts the author above the frame and before the caption", () => {
+    const { container } = render(
+      <FeedPost
+        images={ONE}
+        caption="first light"
+        author={{ name: "httpjpg", avatarSrc: "/me.jpg" }}
+      />,
+    );
+
+    expect(screen.getAllByText("httpjpg")).toHaveLength(2);
+    expect(container.querySelector("[data-avatar] img")).toHaveAttribute("src", "/me.jpg");
+    expect(screen.getByText(/first light/)).toHaveTextContent("httpjpg first light");
+  });
+
+  it("has no author row without an author", () => {
+    const { container } = render(<FeedPost images={ONE} caption="first light" />);
+
+    expect(container.querySelector("[data-avatar]")).toBeNull();
+    expect(screen.getByText(/first light/)).toHaveTextContent(/^first light$/);
+  });
+
+  it("likes and unlikes without telling anyone", () => {
+    render(<FeedPost images={ONE} />);
+    const like = screen.getByRole("button", { name: "Like" });
+
+    expect(like).toHaveAttribute("aria-pressed", "false");
+    fireEvent.click(like);
+    expect(like).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(like);
+    expect(like).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("says that comments are off when asked for them", () => {
+    render(<FeedPost images={ONE} />);
+    const comment = screen.getByRole("button", { name: "Comment" });
+
+    expect(screen.queryByRole("status")).toBeNull();
+    fireEvent.click(comment);
+    expect(screen.getByRole("status")).toHaveTextContent(/comments are off/);
+    fireEvent.click(comment);
+    expect(screen.queryByRole("status")).toBeNull();
+  });
+
+  it("marks a post with images and a player, for the grid's tile", () => {
+    const { container } = render(
+      <FeedPost images={ONE}>
+        <span>▸ PLAY</span>
+      </FeedPost>,
+    );
+
+    expect(container.querySelector("[data-feed-badge]")).toHaveTextContent("♪");
+    expect(container.querySelector("[data-feed-tile]")).toBeNull();
+  });
+
+  it("gives a post without images a tile that opens it", () => {
+    const { container } = render(
+      <FeedPost images={[]} href="/feed/a" cover="/artwork.jpg">
+        <span>▸ PLAY</span>
+      </FeedPost>,
+    );
+    const tile = container.querySelector("[data-feed-tile]");
+
+    expect(tile).toHaveAttribute("href", "/feed/a");
+    expect(tile?.querySelector("img")).toHaveAttribute("src", "/artwork.jpg");
+  });
+
+  it("draws notes on the tile when there is no artwork or permalink", () => {
+    const { container } = render(
+      <FeedPost images={[]}>
+        <span>▸ PLAY</span>
+      </FeedPost>,
+    );
+    const tile = container.querySelector("[data-feed-tile]");
+
+    expect(tile).toHaveTextContent("♪ ♫ ♪");
+    expect(tile).not.toHaveAttribute("href");
+  });
+
   it("renders a player on its own, without a frame", () => {
     const { container } = render(
       <FeedPost images={[]} caption="new mix">
@@ -99,6 +177,7 @@ describe("FeedPost", () => {
     function track(container: HTMLElement): HTMLElement {
       const el = frame(container).firstElementChild as HTMLElement;
       Object.defineProperty(el, "clientWidth", { configurable: true, value: 300 });
+      Object.defineProperty(el, "scrollWidth", { configurable: true, value: 902 });
       return el;
     }
 
@@ -235,6 +314,18 @@ describe("FeedPost", () => {
       const { container } = render(<FeedPost images={THREE} href="/feed/a" />);
 
       expect(fireEvent.dragStart(track(container))).toBe(false);
+    });
+
+    it("does not drag a track that shows a single slide, as in a grid", () => {
+      const { container } = render(<FeedPost images={THREE} />);
+      const el = track(container);
+      Object.defineProperty(el, "scrollWidth", { configurable: true, value: 300 });
+
+      fireEvent.pointerDown(el, { pointerType: "mouse", button: 0, clientX: 200 });
+      fireEvent.pointerMove(el, { pointerType: "mouse", buttons: 1, clientX: 60 });
+
+      expect(el).not.toHaveAttribute("data-dragging");
+      expect(el.scrollLeft).toBe(0);
     });
 
     it("leaves a press without movement, and touch, to the browser", () => {

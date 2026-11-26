@@ -15,6 +15,7 @@ import {
   Lightbox,
   type LightboxEntry,
   useClientNow,
+  useFeedAuthor,
   useLightbox,
   useLightboxEntry,
   useLightboxGallery,
@@ -39,6 +40,7 @@ export const SbPost = memo(function SbPost({ blok, href, sizes }: SbPostProps) {
   const images = (blok.images ?? []).filter((item) => Boolean(item.image?.filename));
   const entries = href ? [] : images.map((item) => toLightboxEntry(item, blok.caption));
   const music = blok.music?.[0];
+  const author = useFeedAuthor();
   const relativeDate = useRelativeDate(blok.date);
 
   if (!images.length && !music?.src) {
@@ -71,6 +73,8 @@ export const SbPost = memo(function SbPost({ blok, href, sizes }: SbPostProps) {
         dateTime={postDay(blok.date)}
         href={href}
         sizes={sizes}
+        author={author ?? undefined}
+        cover={music?.artwork || undefined}
         onImageClick={handleImageClick}
       >
         {music?.src ? <SbMusicPlayer blok={music} /> : null}

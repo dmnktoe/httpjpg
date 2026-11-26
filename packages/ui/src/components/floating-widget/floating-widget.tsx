@@ -62,24 +62,18 @@ export function FloatingWidget({
     handlers.onPointerMove(event);
   };
 
-  const handlePointerEnd = (
-    event: PointerEvent<HTMLDivElement>,
-    end: typeof handlers.onPointerUp,
-  ) => {
-    end(event);
-    if (draggedRef.current) {
-      window.setTimeout(() => {
-        draggedRef.current = false;
-      }, 0);
-    }
+  const handlePointerCancel = (event: PointerEvent<HTMLDivElement>) => {
+    draggedRef.current = false;
+    handlers.onPointerCancel(event);
   };
 
   const handleClickCapture = (event: MouseEvent<HTMLDivElement>) => {
-    if (draggedRef.current) {
-      draggedRef.current = false;
-      event.preventDefault();
-      event.stopPropagation();
+    if (!draggedRef.current || event.detail === 0) {
+      return;
     }
+    draggedRef.current = false;
+    event.preventDefault();
+    event.stopPropagation();
   };
 
   return (
@@ -88,12 +82,8 @@ export function FloatingWidget({
       {...props}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
-      onPointerUp={(event: PointerEvent<HTMLDivElement>) =>
-        handlePointerEnd(event, handlers.onPointerUp)
-      }
-      onPointerCancel={(event: PointerEvent<HTMLDivElement>) =>
-        handlePointerEnd(event, handlers.onPointerCancel)
-      }
+      onPointerUp={handlers.onPointerUp}
+      onPointerCancel={handlePointerCancel}
       onClickCapture={handleClickCapture}
       css={cssProp}
       style={

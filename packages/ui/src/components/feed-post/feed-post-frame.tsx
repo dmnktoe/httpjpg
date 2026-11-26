@@ -36,6 +36,7 @@ interface FeedPostFrameProps {
 
 interface DragState {
   startX: number;
+  startY: number;
   startLeft: number;
   startIndex: number;
   hasMoved: boolean;
@@ -127,6 +128,7 @@ export function FeedPostFrame({
   const handleNext = () => scrollToIndex(activeIndex + 1);
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    swallowsClickRef.current = false;
     if (event.pointerType !== "mouse" || event.button !== 0) {
       return;
     }
@@ -138,6 +140,7 @@ export function FeedPostFrame({
     }
     dragRef.current = {
       startX: event.clientX,
+      startY: event.clientY,
       startLeft: event.currentTarget.scrollLeft,
       startIndex: activeIndex,
       hasMoved: false,
@@ -155,7 +158,7 @@ export function FeedPostFrame({
     }
     const delta = event.clientX - drag.startX;
     if (!drag.hasMoved) {
-      if (Math.abs(delta) < DRAG_THRESHOLD_PX) {
+      if (Math.hypot(delta, event.clientY - drag.startY) < DRAG_THRESHOLD_PX) {
         return;
       }
       drag.hasMoved = true;
@@ -181,9 +184,6 @@ export function FeedPostFrame({
       return;
     }
     swallowsClickRef.current = true;
-    window.setTimeout(() => {
-      swallowsClickRef.current = false;
-    }, 0);
     const delta = event.clientX - drag.startX;
     const width = event.currentTarget.clientWidth || 1;
     const step = Math.abs(delta) > width * DRAG_STEP_RATIO ? -Math.sign(delta) : 0;
@@ -191,6 +191,7 @@ export function FeedPostFrame({
   };
 
   const handlePointerCancel = () => {
+    swallowsClickRef.current = false;
     endDrag(dragRef.current?.startIndex ?? activeIndex);
   };
 
@@ -199,11 +200,12 @@ export function FeedPostFrame({
   };
 
   const handleClickCapture = (event: MouseEvent<HTMLDivElement>) => {
-    if (swallowsClickRef.current) {
-      swallowsClickRef.current = false;
-      event.preventDefault();
-      event.stopPropagation();
+    if (!swallowsClickRef.current || event.detail === 0) {
+      return;
     }
+    swallowsClickRef.current = false;
+    event.preventDefault();
+    event.stopPropagation();
   };
 
   return (

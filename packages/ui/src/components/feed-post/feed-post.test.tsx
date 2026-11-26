@@ -299,13 +299,45 @@ describe("FeedPost", () => {
       fireEvent.pointerDown(el, { pointerType: "mouse", button: 0, clientX: 200 });
       fireEvent.pointerMove(el, { pointerType: "mouse", buttons: 1, clientX: 180 });
       fireEvent.pointerUp(el, { pointerType: "mouse", clientX: 180 });
-      fireEvent.click(screen.getByRole("button", { name: "Open Ferry at full size" }));
+      fireEvent.click(screen.getByRole("button", { name: "Open Ferry at full size" }), {
+        detail: 1,
+      });
 
       expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, behavior: "smooth" });
       expect(onImageClick).not.toHaveBeenCalled();
 
-      fireEvent.click(screen.getByRole("button", { name: "Open Ferry at full size" }));
+      fireEvent.click(screen.getByRole("button", { name: "Open Ferry at full size" }), {
+        detail: 1,
+      });
       expect(onImageClick).toHaveBeenCalledWith(2);
+    });
+
+    it("swallows a late click after a drag, a diagonal one too, but not a key press", () => {
+      vi.useFakeTimers();
+      const onImageClick = vi.fn();
+      const { container } = render(<FeedPost images={THREE} onImageClick={onImageClick} />);
+      const el = track(container);
+      el.scrollTo = vi.fn();
+      const open = (detail: number) =>
+        fireEvent.click(screen.getByRole("button", { name: "Open Ferry at full size" }), {
+          detail,
+        });
+
+      fireEvent.pointerDown(el, { pointerType: "mouse", button: 0, clientX: 200, clientY: 100 });
+      fireEvent.pointerMove(el, { pointerType: "mouse", buttons: 1, clientX: 197, clientY: 106 });
+      fireEvent.pointerUp(el, { pointerType: "mouse", clientX: 197, clientY: 106 });
+      vi.runAllTimers();
+
+      open(0);
+      expect(onImageClick).toHaveBeenCalledTimes(1);
+      open(1);
+      expect(onImageClick).toHaveBeenCalledTimes(1);
+
+      fireEvent.pointerDown(el, { pointerType: "mouse", button: 0, clientX: 200, clientY: 100 });
+      fireEvent.pointerUp(el, { pointerType: "mouse", clientX: 200, clientY: 100 });
+      open(1);
+      expect(onImageClick).toHaveBeenCalledTimes(2);
+      vi.useRealTimers();
     });
 
     it("lets go when the button was released somewhere else", () => {

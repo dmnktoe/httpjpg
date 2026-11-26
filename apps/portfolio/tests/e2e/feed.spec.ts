@@ -223,8 +223,35 @@ test.describe("feed", () => {
     });
     const session = await request.get("/api/feed/session", { failOnStatusCode: false });
 
-    for (const res of [publish, sign, session]) {
+    const edit = await request.patch("/api/feed/posts/20260102-120000-bbbb", {
+      data: { images: [] },
+      failOnStatusCode: false,
+    });
+    const remove = await request.delete("/api/feed/posts/20260102-120000-bbbb", {
+      headers: { cookie: "httpjpg_feed_session=not-a-session; httpjpg_feed_editor=1" },
+      failOnStatusCode: false,
+    });
+    const signIn = await request.post("/api/feed/session", {
+      data: { token: "definitely-not-the-publish-token-0123456789" },
+      failOnStatusCode: false,
+    });
+
+    for (const res of [publish, sign, session, edit, remove, signIn]) {
       expect([401, 503]).toContain(res.status());
     }
+    expect(signIn.headers()["set-cookie"] ?? "").not.toContain("httpjpg_feed_session");
+  });
+
+  test("the composer asks a visitor for the token and stays out of search", async ({ page }) => {
+    const response = await page.goto("/feed/compose");
+
+    expect(response?.status()).toBe(200);
+    await expect(page.getByRole("heading", { level: 1, name: "new post" })).toBeVisible();
+    await expect(page.getByLabel("publish token")).toBeVisible();
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+    await expect(page.getByRole("button", { name: "[ publish ]" })).toHaveCount(0);
+
+    await page.goto("/feed");
+    await expect(page.getByRole("link", { name: "[ + new post ]" })).toHaveCount(0);
   });
 });

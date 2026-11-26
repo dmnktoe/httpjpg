@@ -1,4 +1,4 @@
-import { getResponsiveImage, type SbPostImageData } from "@httpjpg/storyblok-utils";
+import { getResponsiveImage, isVideoAsset, type SbPostImageData } from "@httpjpg/storyblok-utils";
 import type { FeedPanelImage, FeedPanelItem } from "@httpjpg/ui";
 
 import type { FeedPostEntry } from "../queries/feed";
@@ -26,7 +26,7 @@ export function toFeedPanelItems(posts: FeedPostEntry[]): FeedPanelItem[] {
 function toPanelItem(post: FeedPostEntry): FeedPanelItem | null {
   const caption = post.content.caption?.trim().split("\n")[0]?.trim() || undefined;
   const images = (post.content.images ?? [])
-    .filter((image) => Boolean(image.image?.filename))
+    .filter((image) => Boolean(image.image?.filename) && !isVideoAsset(image.image))
     .slice(0, FEED_PANEL_IMAGES)
     .map((image) => toPanelImage(image, caption));
   if (images.length) {

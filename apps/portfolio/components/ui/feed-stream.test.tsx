@@ -86,6 +86,20 @@ describe("FeedStream", () => {
     expect(container.querySelector("[data-feed-view]")).toHaveAttribute("data-feed-view", "grid");
   });
 
+  it("offers a new post only to a browser that signed in to the composer", () => {
+    const { unmount } = render(<FeedStream initial={feed(["a"])} />);
+    expect(screen.queryByRole("link", { name: "[ + new post ]" })).toBeNull();
+    unmount();
+
+    document.cookie = "httpjpg_feed_editor=1; path=/";
+    render(<FeedStream initial={feed([])} />);
+    expect(screen.getByRole("link", { name: "[ + new post ]" })).toHaveAttribute(
+      "href",
+      "/feed/compose",
+    );
+    document.cookie = "httpjpg_feed_editor=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+  });
+
   it("appends the next page and skips posts it already shows", async () => {
     fetchMock.mockResolvedValue(ok(feed(["b", "c"], 2, false)));
     render(<FeedStream initial={feed(["a", "b"], 1, true)} />);

@@ -8,12 +8,17 @@ vi.mock("@httpjpg/env", () => ({ env: envObj }));
 
 import {
   createPublishedStory,
+  deleteAsset,
+  deleteStory,
   ensureFolder,
   findStory,
   finishAssetUpload,
+  getStory,
+  isAssetUsedElsewhere,
   mapiConfig,
   signAssetUpload,
   StoryblokMapiError,
+  updatePublishedStory,
 } from "./storyblok-mapi";
 
 const CONFIG = { token: "pat", spaceId: "42" };
@@ -220,5 +225,102 @@ describe("createPublishedStory", () => {
     fetchMock.mockResolvedValue(json({ story: { id: 12 } }));
 
     await expect(createPublishedStory(CONFIG, story)).rejects.toThrow(/malformed story/);
+  });
+});
+
+describe("getStory", () => {
+  it("reads one story with its content", async () => {
+    fetchMock.mockResolvedValueOnce(
+      json({ story: { id: 12, name: "harbour", full_slug: "feed/a", content: { caption: "x" } } }),
+    );
+
+    expect(await getStory(CONFIG, 12)).toEqual({
+      id: 12,
+      fullSlug: "feed/a",
+      name: "harbour",
+      content: { caption: "x" },
+    });
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${BASE}/stories/12`);
+  });
+
+  it("tolerates a story without a name and rejects one without content", async () => {
+    fetchMock.mockResolvedValueOnce(json({ story: { id: 12, full_slug: "feed/a", content: {} } }));
+    expect((await getStory(CONFIG, 12)).name).toBe("");
+
+    fetchMock.mockResolvedValueOnce(json({ story: { id: 12, full_slug: "feed/a" } }));
+    await expect(getStory(CONFIG, 12)).rejects.toBeInstanceOf(StoryblokMapiError);
+  });
+});
+
+describe("updatePublishedStory", () => {
+  it("replaces the content and publishes in one call", async () => {
+    fetchMock.mockResolvedValueOnce(json({ story: { id: 12, full_slug: "feed/a" } }));
+
+    expect(
+      await updatePublishedStory(CONFIG, 12, { name: "harbour", content: { caption: "y" } }),
+    ).toEqual({ id: 12, fullSlug: "feed/a" });
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(`${BASE}/stories/12?publish=1`);
+    expect(init.method).toBe("PUT");
+    expect(lastBody()).toEqual({
+      story: { name: "harbour", content: { caption: "y" } },
+      publish: 1,
+    });
+  });
+
+  it("rejects a response without the story", async () => {
+    fetchMock.mockResolvedValueOnce(json({}));
+
+    await expect(
+      updatePublishedStory(CONFIG, 12, { name: "x", content: {} }),
+    ).rejects.toBeInstanceOf(StoryblokMapiError);
+  });
+});
+
+describe("deleting", () => {
+  it("deletes a story and an asset, also when Storyblok answers with nothing", async () => {
+    fetchMock.mockResolvedValueOnce(json({ story: { id: 12 } }));
+    await deleteStory(CONFIG, 12);
+    expect(fetchMock.mock.calls[0]).toMatchObject([`${BASE}/stories/12`, { method: "DELETE" }]);
+
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+    await deleteAsset(CONFIG, 7);
+    expect(fetchMock.mock.calls[1]).toMatchObject([`${BASE}/assets/7`, { method: "DELETE" }]);
+  });
+
+  it("fails when Storyblok refuses", async () => {
+    fetchMock.mockResolvedValueOnce(json({ error: "nope" }, 404));
+
+    await expect(deleteStory(CONFIG, 12)).rejects.toMatchObject({ status: 404 });
+  });
+});
+
+describe("isAssetUsedElsewhere", () => {
+  const FILE = "https://a.storyblok.com/f/42/800x800/8868632e3c/print.jpeg";
+
+  it("searches story text for the file's own path segment", async () => {
+    fetchMock.mockResolvedValueOnce(json({ stories: [{ id: 12 }] }));
+
+    expect(await isAssetUsedElsewhere(CONFIG, FILE, 12)).toBe(false);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${BASE}/stories?text_search=8868632e3c&per_page=5`);
+  });
+
+  it("counts any other story as a user", async () => {
+    fetchMock.mockResolvedValueOnce(json({ stories: [{ id: 12 }, { id: 99 }] }));
+
+    expect(await isAssetUsedElsewhere(CONFIG, FILE, 12)).toBe(true);
+  });
+
+  it("trusts nothing a search says that does not even find the post", async () => {
+    fetchMock.mockResolvedValueOnce(json({ stories: [] }));
+    expect(await isAssetUsedElsewhere(CONFIG, FILE, 12)).toBe(true);
+
+    fetchMock.mockResolvedValueOnce(json({}));
+    expect(await isAssetUsedElsewhere(CONFIG, FILE, 12)).toBe(true);
+  });
+
+  it("does not search for a file it cannot name", async () => {
+    expect(await isAssetUsedElsewhere(CONFIG, "https://cdn.test/a.mp4", 12)).toBe(true);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

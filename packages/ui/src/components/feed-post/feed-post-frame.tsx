@@ -21,6 +21,8 @@ export interface FeedPostImage {
   alt: string;
   /** `contain` shows the whole image with bars in the page colour. @default "cover" */
   fit?: "cover" | "contain";
+  /** `src` is a video file: it plays muted and looping in place, with controls where no link wraps it. */
+  video?: boolean;
 }
 
 interface FeedPostFrameProps {
@@ -237,7 +239,39 @@ export function FeedPostFrame({
           }}
         >
           {images.map((image, index) => {
-            const img = (
+            const fitClass = FIT_CLASS[image.fit === "contain" ? "contain" : "cover"];
+            if (image.video && !imageHref) {
+              return (
+                <Box
+                  key={image.id}
+                  data-feed-slide=""
+                  css={{ flex: "0 0 100%", h: "full", scrollSnapAlign: "start" }}
+                >
+                  <video
+                    src={image.src}
+                    aria-label={image.alt || undefined}
+                    controls
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    className={fitClass}
+                  />
+                </Box>
+              );
+            }
+            const img = image.video ? (
+              <video
+                src={image.src}
+                aria-label={image.alt || undefined}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                className={fitClass}
+              />
+            ) : (
               <img
                 src={image.src}
                 srcSet={image.srcSet || undefined}
@@ -246,7 +280,7 @@ export function FeedPostFrame({
                 loading="lazy"
                 decoding="async"
                 draggable={false}
-                className={FIT_CLASS[image.fit === "contain" ? "contain" : "cover"]}
+                className={fitClass}
               />
             );
             if (imageHref) {

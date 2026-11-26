@@ -159,6 +159,27 @@ describe("FeedPost", () => {
     expect(container.querySelector("[data-feed-tile]")).toBeNull();
   });
 
+  it("plays a video in the frame, with controls where no link wraps it", () => {
+    const clip: FeedPostImage[] = [
+      { id: "v", src: "/clip.mp4", alt: "Harbour, moving", video: true },
+    ];
+    const own = render(<FeedPost images={clip} onImageClick={vi.fn()} />);
+    const video = own.container.querySelector("video");
+
+    expect(video).toHaveAttribute("src", "/clip.mp4");
+    expect(video).toHaveAttribute("controls");
+    expect(video).toHaveAttribute("aria-label", "Harbour, moving");
+    expect(screen.queryByRole("button", { name: /full size/ })).toBeNull();
+    own.unmount();
+
+    const linked = render(<FeedPost images={clip} href="/feed/a" />);
+    const inLink = linked.container.querySelector("a video");
+
+    expect(inLink).not.toHaveAttribute("controls");
+    expect(inLink).toHaveAttribute("autoplay");
+    expect(inLink).toHaveAttribute("loop");
+  });
+
   it("renders a player on its own, without a frame", () => {
     const { container } = render(
       <FeedPost images={[]} caption="new mix">

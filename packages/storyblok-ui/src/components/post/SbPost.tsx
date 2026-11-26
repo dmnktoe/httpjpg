@@ -5,6 +5,7 @@ import {
   assetDimensions,
   getResponsiveImage,
   imagePreset,
+  isVideoAsset,
   type SbPostData,
   type SbPostImageData,
 } from "@httpjpg/storyblok-utils";
@@ -38,7 +39,11 @@ export const SbPost = memo(function SbPost({ blok, href, sizes }: SbPostProps) {
   const gallery = useLightboxGallery();
   const viewer = useLightbox();
   const images = (blok.images ?? []).filter((item) => Boolean(item.image?.filename));
-  const entries = href ? [] : images.map((item) => toLightboxEntry(item, blok.caption));
+  const entries = href
+    ? []
+    : images
+        .filter((item) => !isVideoAsset(item.image))
+        .map((item) => toLightboxEntry(item, blok.caption));
   const music = blok.music?.[0];
   const author = useFeedAuthor();
   const relativeDate = useRelativeDate(blok.date);
@@ -48,12 +53,16 @@ export const SbPost = memo(function SbPost({ blok, href, sizes }: SbPostProps) {
   }
 
   const handleImageClick = (index: number) => {
-    const entry = entries[index];
-    if (gallery && entry) {
+    const position = entries.findIndex((entry) => entry.id === images[index]?._uid);
+    const entry = entries[position];
+    if (!entry) {
+      return;
+    }
+    if (gallery) {
       gallery.openAt(entry.id);
       return;
     }
-    viewer.openAt(index);
+    viewer.openAt(position);
   };
 
   const handleClickCapture = (event: MouseEvent<HTMLElement>) => {
@@ -106,6 +115,15 @@ const TILE_WIDTHS = [640, 960, 1280, 1920];
 const PLACEHOLDER_WIDTH = TILE_WIDTHS[0];
 
 function toFeedImage(item: SbPostImageData): FeedPostImage {
+  if (isVideoAsset(item.image)) {
+    return {
+      id: item._uid,
+      src: item.image.filename,
+      alt: imageAlt(item),
+      fit: item.fit === "contain" ? "contain" : "cover",
+      video: true,
+    };
+  }
   const { src, srcSet } = getResponsiveImage(item.image.filename, {
     widths: TILE_WIDTHS,
     focus: item.image.focus || "",

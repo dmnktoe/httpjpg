@@ -139,6 +139,84 @@ export async function createPublishedStory(
   return { id: created.story.id, fullSlug: created.story.full_slug };
 }
 
+export interface StoryDetail extends CreatedStory {
+  name: string;
+  content: Record<string, unknown>;
+}
+
+export async function getStory(config: MapiConfig, id: number): Promise<StoryDetail> {
+  const found = await mapiRequest<{
+    story?: { id?: number; name?: string; full_slug?: string; content?: Record<string, unknown> };
+  }>(config, `/stories/${id}`);
+  const story = found.story;
+  if (!story?.id || !story.full_slug || !story.content) {
+    throw new StoryblokMapiError(502, "Storyblok returned a malformed story");
+  }
+  return {
+    id: story.id,
+    fullSlug: story.full_slug,
+    name: story.name ?? "",
+    content: story.content,
+  };
+}
+
+export async function updatePublishedStory(
+  config: MapiConfig,
+  id: number,
+  story: { name: string; content: Record<string, unknown> },
+): Promise<CreatedStory> {
+  const updated = await mapiRequest<{ story?: { id?: number; full_slug?: string } }>(
+    config,
+    `/stories/${id}?publish=1`,
+    {
+      method: "PUT",
+      body: JSON.stringify({ story: { name: story.name, content: story.content }, publish: 1 }),
+    },
+  );
+  if (!updated.story?.id || !updated.story.full_slug) {
+    throw new StoryblokMapiError(502, "Storyblok returned a malformed story");
+  }
+  return { id: updated.story.id, fullSlug: updated.story.full_slug };
+}
+
+export async function deleteStory(config: MapiConfig, id: number): Promise<void> {
+  await mapiRequest<unknown>(config, `/stories/${id}`, { method: "DELETE" });
+}
+
+export async function deleteAsset(config: MapiConfig, id: number): Promise<void> {
+  await mapiRequest<unknown>(config, `/assets/${id}`, { method: "DELETE" });
+}
+
+/**
+ * Whether a story other than `storyId` mentions the asset. Storyblok has no usage lookup,
+ * so this searches story text for the file's path. A search that does not even find
+ * `storyId` itself proves nothing, and counts as used.
+ */
+export async function isAssetUsedElsewhere(
+  config: MapiConfig,
+  filename: string,
+  storyId: number,
+): Promise<boolean> {
+  const needle = assetSearchTerm(filename);
+  if (!needle) {
+    return true;
+  }
+  const found = await mapiRequest<{ stories?: Array<{ id: number }> }>(
+    config,
+    `/stories?text_search=${encodeURIComponent(needle)}&per_page=${ASSET_USAGE_PAGE}`,
+  );
+  const ids = (found.stories ?? []).map((story) => story.id);
+  return !ids.includes(storyId) || ids.some((id) => id !== storyId);
+}
+
+function assetSearchTerm(filename: string): string | null {
+  const segments = filename.split("/").filter(Boolean);
+  const hash = segments.at(-2);
+  return hash && /^[a-z0-9]{8,}$/i.test(hash) ? hash : null;
+}
+
+const ASSET_USAGE_PAGE = 5;
+
 async function mapiRequest<T>(
   config: MapiConfig,
   path: string,
@@ -157,7 +235,8 @@ async function mapiRequest<T>(
       `Storyblok ${init.method ?? "GET"} ${path} failed (${response.status}): ${detail}`,
     );
   }
-  return (await response.json()) as T;
+  const text = await response.text();
+  return (text ? JSON.parse(text) : {}) as T;
 }
 
 function assetFilename(response: MapiAsset & { asset?: MapiAsset }): string | undefined {

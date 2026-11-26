@@ -81,6 +81,32 @@ describe("SbPost", () => {
     );
   });
 
+  it("shows a video as a video and keeps it out of the lightbox", () => {
+    const { container } = render(
+      <SbPost
+        blok={post({
+          images: [
+            {
+              _uid: "clip",
+              component: "post_image",
+              image: { filename: "https://a.storyblok.com/f/1/x/abc/clip.mp4" },
+            },
+            { _uid: "img-1", component: "post_image", image: { filename: IMAGE, alt: "Harbour" } },
+          ],
+        })}
+      />,
+    );
+
+    expect(container.querySelector("video")).toHaveAttribute(
+      "src",
+      "https://a.storyblok.com/f/1/x/abc/clip.mp4",
+    );
+    expect(screen.getAllByRole("button", { name: /at full size/ })).toHaveLength(1);
+
+    fireEvent.click(screen.getByRole("button", { name: "Open Harbour at full size" }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
   it("skips images without a file", () => {
     const { container } = render(
       <SbPost

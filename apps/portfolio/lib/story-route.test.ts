@@ -23,6 +23,7 @@ describe("storySlugForPath", () => {
     ["the root", "/"],
     ["a route of its own", "/feed"],
     ["another route of its own", "/cookie-policy/"],
+    ["a nested route of its own", "/feed/compose"],
     ["an API path", "/api/feed/posts"],
     ["the draft entry", "/draft"],
     ["the draft exit", "/exit-draft"],
@@ -35,14 +36,20 @@ describe("storySlugForPath", () => {
 
   it("lists exactly the page routes that have their own page file", () => {
     const group = fileURLToPath(new URL("../app/(portfolio)", import.meta.url));
-    const routes = readdirSync(group).filter((entry) => {
-      const directory = join(group, entry);
-      return (
-        statSync(directory).isDirectory() &&
-        !entry.startsWith("[") &&
-        readdirSync(directory).includes("page.tsx")
-      );
-    });
+    const routes: string[] = [];
+    const walk = (directory: string, path: string[]) => {
+      for (const entry of readdirSync(directory)) {
+        const child = join(directory, entry);
+        if (!statSync(child).isDirectory() || entry.startsWith("[")) {
+          continue;
+        }
+        if (readdirSync(child).includes("page.tsx")) {
+          routes.push([...path, entry].join("/"));
+        }
+        walk(child, [...path, entry]);
+      }
+    };
+    walk(group, []);
 
     expect([...APP_PAGE_ROUTES].sort()).toEqual(routes.sort());
   });

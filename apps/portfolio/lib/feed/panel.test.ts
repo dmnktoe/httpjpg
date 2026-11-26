@@ -32,6 +32,19 @@ describe("toFeedPanelItems", () => {
     expect(item?.images[0]?.srcSet).toContain("320w");
   });
 
+  it("leaves videos out", () => {
+    const [item] = toFeedPanelItems([
+      post("a", {
+        images: [
+          image({ _uid: "clip", image: { filename: "https://a.storyblok.com/f/1/x/a/clip.mp4" } }),
+          image({ _uid: "still" }),
+        ],
+      }),
+    ]);
+
+    expect(item?.images.map((entry) => entry.id)).toEqual(["still"]);
+  });
+
   it("keeps a long carousel short", () => {
     const [item] = toFeedPanelItems([
       post("a", {

@@ -1,10 +1,16 @@
 // @vitest-environment node
 import {
+  buildEditedContent,
   buildPostContent,
+  editAssetIds,
+  editedPostName,
+  isPostSlug,
   MAX_CAPTION_LENGTH,
   MAX_IMAGES,
   parseAssetRequest,
+  parseEditRequest,
   parsePublishRequest,
+  postAssets,
   postName,
   postSlug,
   publishAssetIds,
@@ -293,5 +299,209 @@ describe("postName", () => {
 
   it("falls back to the date", () => {
     expect(postName(publish({ images: [{ assetId: 1 }] }), DATE)).toBe("Post 2026-11-25 15:30");
+  });
+});
+
+describe("video uploads", () => {
+  it.each(["clip.mp4", "clip.MOV", "clip.m4v", "clip.webm"])("signs %s", (filename) => {
+    expect(parseAssetRequest({ filename }).ok).toBe(true);
+  });
+});
+
+describe("isPostSlug", () => {
+  it("takes the slugs the composer makes and nothing that leaves the folder", () => {
+    expect(isPostSlug("20261125-153012-a3f9")).toBe(true);
+    expect(isPostSlug("../config")).toBe(false);
+    expect(isPostSlug("a/b")).toBe(false);
+    expect(isPostSlug("")).toBe(false);
+    expect(isPostSlug("-leading")).toBe(false);
+  });
+});
+
+describe("parseEditRequest", () => {
+  function edit(body: unknown) {
+    const parsed = parseEditRequest(body);
+    if (!parsed.ok) {
+      throw new Error(parsed.message);
+    }
+    return parsed.value;
+  }
+
+  function refusal(body: unknown): string {
+    const parsed = parseEditRequest(body);
+    return parsed.ok ? "" : parsed.message;
+  }
+
+  it("reads kept and new images, in order", () => {
+    expect(
+      edit({
+        caption: " hi ",
+        format: "4/5",
+        images: [{ uid: "u1", fit: "contain", alt: " ferry " }, { assetId: 9 }],
+      }),
+    ).toEqual({
+      caption: "hi",
+      format: "4/5",
+      images: [
+        { uid: "u1", fit: "contain", alt: "ferry" },
+        { assetId: 9, fit: "cover" },
+      ],
+    });
+  });
+
+  it("tells keeping the music from removing and replacing it", () => {
+    expect(edit({ images: [] })).not.toHaveProperty("music");
+    expect(edit({ images: [], music: null }).music).toBeNull();
+    expect(
+      edit({ images: [], music: { source: "soundcloud", src: "https://sc.test/x" } }).music,
+    ).toEqual({ source: "soundcloud", src: "https://sc.test/x" });
+  });
+
+  it("reads a date", () => {
+    expect(edit({ images: [], date: "2026-11-25T15:30:00Z" }).date?.toISOString()).toBe(
+      "2026-11-25T15:30:00.000Z",
+    );
+  });
+
+  it.each([
+    ["no object", null, /JSON object/],
+    ["a long caption", { images: [], caption: "x".repeat(MAX_CAPTION_LENGTH + 1) }, /caption/],
+    ["an unknown format", { images: [], format: "16/9" }, /format/],
+    ["images that are no list", { images: "x" }, /images/],
+    ["too many images", { images: Array(MAX_IMAGES + 1).fill({ uid: "u" }) }, /images/],
+    ["an image that is no object", { images: ["x"] }, /object/],
+    ["an image with neither id", { images: [{}] }, /either/],
+    ["an image with both ids", { images: [{ uid: "u", assetId: 1 }] }, /either/],
+    ["a uid that is none", { images: [{ uid: "../x" }] }, /uid/],
+    ["an asset id that is none", { images: [{ assetId: -1 }] }, /assetId/],
+    ["an unknown fit", { images: [{ uid: "u", fit: "stretch" }] }, /fit/],
+    ["a long alt", { images: [{ uid: "u", alt: "x".repeat(201) }] }, /alt/],
+    ["broken music", { images: [], music: { source: "tape" } }, /music/],
+    ["a broken date", { images: [], date: "soon" }, /date/],
+    ["a date that is not text", { images: [], date: 5 }, /date/],
+  ])("refuses %s", (_label, body, message) => {
+    expect(refusal(body)).toMatch(message);
+  });
+
+  it("lists the uploads an edit brings", () => {
+    expect(
+      editAssetIds(
+        edit({
+          images: [{ uid: "u1" }, { assetId: 9 }, { assetId: 9 }],
+          music: { source: "mp3", assetId: 4, artworkAssetId: 5 },
+        }),
+      ),
+    ).toEqual([9, 4, 5]);
+    expect(editAssetIds(edit({ images: [{ uid: "u1" }], music: null }))).toEqual([]);
+  });
+});
+
+describe("buildEditedContent", () => {
+  const A = "https://a.storyblok.com/f/42/1x1/aaaaaaaaaa/a.jpg";
+  const B = "https://a.storyblok.com/f/42/1x1/bbbbbbbbbb/b.jpg";
+  const existing = {
+    _uid: "root",
+    component: "post",
+    caption: "old",
+    date: "2026-11-25 15:30",
+    format: "4/5",
+    images: [
+      { _uid: "u1", component: "post_image", fit: "cover", image: { id: 1, filename: A } },
+      { _uid: "u2", component: "post_image", fit: "cover", image: { id: 2, filename: B } },
+      "junk",
+    ],
+    music: [{ _uid: "m", component: "music_player", src: "https://x/a.mp3" }],
+  };
+  const assets = new Map([[9, "https://a.storyblok.com/f/42/1x1/cccccccccc/9.jpg"]]);
+
+  function build(request: Record<string, unknown>, content: Record<string, unknown> = existing) {
+    const parsed = parseEditRequest(request);
+    if (!parsed.ok) {
+      throw new Error(parsed.message);
+    }
+    return buildEditedContent(content, parsed.value, assets);
+  }
+
+  it("keeps what the edit names, adds what it brings and reports what it drops", () => {
+    const edited = build({
+      caption: "new",
+      format: "1/1",
+      images: [
+        { assetId: 9, alt: "roof" },
+        { uid: "u2", fit: "contain" },
+      ],
+    });
+
+    expect(edited.ok).toBe(true);
+    if (!edited.ok) {
+      return;
+    }
+    expect(edited.value.content).toMatchObject({
+      _uid: "root",
+      component: "post",
+      caption: "new",
+      format: "1/1",
+      date: "2026-11-25 15:30",
+      music: existing.music,
+    });
+    const images = edited.value.content.images as Array<Record<string, unknown>>;
+    expect(images).toHaveLength(2);
+    expect(images[0]).toMatchObject({
+      component: "post_image",
+      alt: "roof",
+      fit: "cover",
+      image: { id: 9, filename: assets.get(9) },
+    });
+    expect(images[1]).toMatchObject({ _uid: "u2", fit: "contain", alt: "" });
+    expect(edited.value.removed).toEqual([{ id: 1, filename: A }]);
+  });
+
+  it("changes the date and the music when asked", () => {
+    const moved = build({
+      images: [{ uid: "u1" }],
+      date: "2026-01-02T03:04:00Z",
+      music: null,
+    });
+    const replaced = build({
+      images: [{ uid: "u1" }],
+      music: { source: "spotify", src: "https://open.spotify.test/t", title: "t" },
+    });
+
+    expect(moved.ok && moved.value.content).toMatchObject({ date: "2026-01-02 03:04", music: [] });
+    expect(replaced.ok && (replaced.value.content.music as unknown[])[0]).toMatchObject({
+      component: "music_player",
+      source: "spotify",
+      src: "https://open.spotify.test/t",
+      title: "t",
+    });
+  });
+
+  it("refuses an image the post does not have, also when it is named twice", () => {
+    expect(build({ images: [{ uid: "ghost" }] })).toMatchObject({ ok: false });
+    expect(build({ images: [{ uid: "u1" }, { uid: "u1" }] })).toMatchObject({ ok: false });
+  });
+
+  it("refuses to leave the post empty", () => {
+    expect(build({ images: [], music: null })).toMatchObject({ ok: false });
+    expect(build({ images: [] }, { ...existing, music: undefined })).toMatchObject({ ok: false });
+    expect(build({ images: [] })).toMatchObject({ ok: true });
+  });
+
+  it("lists the files of a post", () => {
+    expect(postAssets(existing)).toEqual([
+      { id: 1, filename: A },
+      { id: 2, filename: B },
+    ]);
+    expect(postAssets({ images: [{ image: { id: "x" } }, { image: null }] })).toEqual([]);
+    expect(postAssets({})).toEqual([]);
+  });
+});
+
+describe("editedPostName", () => {
+  it("is the caption's first line, or what the story was called", () => {
+    expect(editedPostName({ caption: " first \nsecond" }, "Post 1")).toBe("first");
+    expect(editedPostName({ caption: "  " }, "Post 1")).toBe("Post 1");
+    expect(editedPostName({}, "Post 1")).toBe("Post 1");
+    expect(editedPostName({ caption: "x".repeat(80) }, "Post 1")).toHaveLength(60);
   });
 });

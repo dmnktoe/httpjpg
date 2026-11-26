@@ -70,13 +70,17 @@ export const pageBlocks: BlockDef[] = [
   },
   {
     name: "post_image",
-    display_name: "Post Image",
+    display_name: "Post Image / Video",
     group: "Pages",
     icon: "block-image",
     color: "#ec4899",
     preview_field: "alt",
     schema: {
-      image: field.asset("Image", ["images"], { required: true }),
+      image: field.asset("Image or Video", ["images", "videos"], {
+        required: true,
+        description: "A video plays muted and looping in the post's frame.",
+        tooltip: true,
+      }),
       alt: field.text("Alt Text", { translatable: true }),
       fit: field.options(
         "Fit",

@@ -91,9 +91,9 @@ export function FeedPost({
           />
           {children ? <FeedPostBadge /> : null}
         </Box>
-      ) : (
+      ) : href ? (
         <FeedPostTile href={href} cover={cover} />
-      )}
+      ) : null}
       {children ? <Box data-feed-player="">{children}</Box> : null}
       <FeedPostActions />
       {caption && (
@@ -152,42 +152,34 @@ function FeedPostBadge() {
   );
 }
 
-function FeedPostTile({ href, cover }: { href?: string; cover?: string }) {
-  const content = cover ? (
-    <img
-      src={cover}
-      alt=""
-      loading="lazy"
-      decoding="async"
-      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-    />
-  ) : (
-    "♪ ♫ ♪"
-  );
-  const tileCss = {
-    display: "none",
-    justifyContent: "center",
-    alignItems: "center",
-    aspectRatio: "1",
-    w: "full",
-    color: "pageBg",
-    fontFamily: "mono",
-    fontSize: "sm",
-    textDecoration: "none",
-    bg: "pageFg",
-    overflow: "hidden",
-  } as const;
-
-  if (href) {
-    return (
-      <Link href={href} aria-label="Open the post" data-feed-tile="" css={tileCss}>
-        {content}
-      </Link>
-    );
-  }
+function FeedPostTile({ href, cover }: { href: string; cover?: string }) {
   return (
-    <Box aria-hidden="true" data-feed-tile="" css={tileCss}>
-      {content}
-    </Box>
+    <Link href={href} aria-label="Open the post" data-feed-tile="" css={TILE_CSS}>
+      {cover ? (
+        <img
+          src={cover}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      ) : (
+        "♪ ♫ ♪"
+      )}
+    </Link>
   );
 }
+
+const TILE_CSS = {
+  display: "none",
+  justifyContent: "center",
+  alignItems: "center",
+  aspectRatio: "1",
+  w: "full",
+  color: "pageBg",
+  fontFamily: "mono",
+  fontSize: "sm",
+  textDecoration: "none",
+  bg: "pageFg",
+  overflow: "hidden",
+} as const;

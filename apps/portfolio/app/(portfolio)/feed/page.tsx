@@ -57,18 +57,11 @@ export default async function FeedPage() {
             </FeedProfile>
           )}
           {ticker.length > 0 && (
-            <Marquee
-              speed={40}
-              css={{
-                py: "2",
-                fontFamily: "mono",
-                fontSize: "sm",
-                borderColor: "pageBorder",
-                borderTop: "1px solid",
-              }}
-            >
-              {ticker.map((item) => `⋆ ${item} `).join("")}
-            </Marquee>
+            <Box aria-hidden="true" css={{ borderTop: "1px solid", borderTopColor: "pageBorder" }}>
+              <Marquee speed={40} css={{ py: "2", fontFamily: "mono", fontSize: "sm" }}>
+                {ticker.map((item) => `⋆ ${item} `).join("")}
+              </Marquee>
+            </Box>
           )}
           <FeedStream key={feed.posts[0]?.id ?? "empty"} initial={feed} />
         </Container>

@@ -2,7 +2,7 @@
 
 import { createContext, type ReactNode, useContext } from "react";
 
-import type { FeedPostAuthor } from "./feed-post";
+import type { FeedPostAuthor } from "../feed-post/feed-post";
 
 export interface FeedAuthorProviderProps {
   author: FeedPostAuthor | null;

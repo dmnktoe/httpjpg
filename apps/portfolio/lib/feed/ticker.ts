@@ -7,7 +7,15 @@ export function toTickerItems(posts: FeedPostEntry[]): string[] {
   for (const post of posts) {
     const line = post.content.caption?.trim().split("\n")[0]?.trim();
     if (line) {
-      items.push(line.length > MAX_LENGTH ? `${line.slice(0, MAX_LENGTH - 1).trimEnd()}…` : line);
+      const characters = Array.from(line);
+      items.push(
+        characters.length > MAX_LENGTH
+          ? `${characters
+              .slice(0, MAX_LENGTH - 1)
+              .join("")
+              .trimEnd()}…`
+          : line,
+      );
     }
   }
   return items;

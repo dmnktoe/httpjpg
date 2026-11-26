@@ -102,7 +102,7 @@ export function FeedStream({ initial }: FeedStreamProps) {
   );
 }
 
-const WIDE_QUERY = "(min-width: 768px)";
+const WIDE_QUERY = "(min-width: 48rem)";
 
 function appendNew(current: FeedPostEntry[], next: FeedPostEntry[]): FeedPostEntry[] {
   const seen = new Set(current.map((post) => post.id));

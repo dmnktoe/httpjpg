@@ -1,10 +1,12 @@
 "use client";
 
-import { Box, Image, useHasMounted } from "@httpjpg/ui";
+import { FloatingWidget, Image, useHasMounted } from "@httpjpg/ui";
 
 export interface PSNCardProps {
   username?: string;
 }
+
+const FLOATING_QUERY = "(min-width: 64rem)";
 
 export function PSNCard({ username }: PSNCardProps) {
   const mounted = useHasMounted();
@@ -16,14 +18,19 @@ export function PSNCard({ username }: PSNCardProps) {
   const cardUrl = `https://card.psnprofiles.com/1/${username}.png`;
 
   return (
-    <Box
+    <FloatingWidget
+      data-psn-card=""
+      floatingQuery={FLOATING_QUERY}
       css={{
         position: "fixed",
-        top: 0,
-        left: 0,
+        top: "36",
+        right: "6",
         zIndex: "widget",
         display: "none",
-        width: "250px",
+        w: "15.625rem",
+        cursor: "grab",
+        userSelect: "none",
+        touchAction: "none",
         lg: { display: "block" },
       }}
     >
@@ -34,9 +41,11 @@ export function PSNCard({ username }: PSNCardProps) {
           display: "block",
           width: "100%",
           height: "auto",
+          boxShadow: "0.25rem 0.25rem 0 {colors.pageFg}",
+          transform: "rotate(2deg)",
         }}
         draggable={false}
       />
-    </Box>
+    </FloatingWidget>
   );
 }

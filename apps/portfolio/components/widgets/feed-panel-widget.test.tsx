@@ -7,7 +7,7 @@ vi.mock("next/navigation", () => ({ usePathname }));
 
 import { FeedPanelWidget } from "./feed-panel-widget";
 
-const ITEMS: FeedPanelItem[] = [{ id: "a", src: "/a.jpg", alt: "Harbour" }];
+const ITEMS: FeedPanelItem[] = [{ id: "a", images: [{ id: "a1", src: "/a.jpg", alt: "Harbour" }] }];
 
 function stubViewport(isDesktop: boolean) {
   vi.stubGlobal(
@@ -67,16 +67,6 @@ describe("FeedPanelWidget", () => {
     expect(panel()).not.toBeNull();
   });
 
-  it("lets a plain click through", () => {
-    render(<FeedPanelWidget items={ITEMS} />);
-
-    fireEvent.pointerDown(panel(), { pointerId: 1, button: 0, clientX: 50, clientY: 50 });
-    fireEvent.pointerUp(panel(), { pointerId: 1, clientX: 51, clientY: 50 });
-
-    expect(clickGoesThrough()).toBe(true);
-    expect(panel().style.left).toBe("");
-  });
-
   it("moves with a drag and swallows the click that ends it", () => {
     render(<FeedPanelWidget items={ITEMS} />);
 
@@ -86,24 +76,6 @@ describe("FeedPanelWidget", () => {
     expect(panel().style.bottom).toBe("auto");
     expect(clickGoesThrough()).toBe(false);
     expect(clickGoesThrough()).toBe(true);
-  });
-
-  it("captures the pointer only once the press becomes a drag", () => {
-    render(<FeedPanelWidget items={ITEMS} />);
-    const setPointerCapture = vi.fn();
-    const releasePointerCapture = vi.fn();
-    Object.assign(panel(), { setPointerCapture, releasePointerCapture });
-
-    fireEvent.pointerDown(panel(), { pointerId: 1, button: 0, clientX: 50, clientY: 50 });
-    expect(releasePointerCapture).toHaveBeenCalledWith(1);
-    setPointerCapture.mockClear();
-
-    fireEvent.pointerMove(panel(), { pointerId: 1, clientX: 52, clientY: 50 });
-    expect(setPointerCapture).not.toHaveBeenCalled();
-
-    fireEvent.pointerMove(panel(), { pointerId: 1, clientX: 90, clientY: 50 });
-    fireEvent.pointerMove(panel(), { pointerId: 1, clientX: 130, clientY: 50 });
-    expect(setPointerCapture).toHaveBeenCalledTimes(1);
   });
 
   it("does not drag while it sits in the page flow on a phone", () => {

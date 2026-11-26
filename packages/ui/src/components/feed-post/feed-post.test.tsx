@@ -139,16 +139,24 @@ describe("FeedPost", () => {
     expect(tile?.querySelector("img")).toHaveAttribute("src", "/artwork.jpg");
   });
 
-  it("draws notes on the tile when there is no artwork or permalink", () => {
+  it("draws notes on the tile when there is no artwork", () => {
     const { container } = render(
-      <FeedPost images={[]}>
+      <FeedPost images={[]} href="/feed/a">
         <span>▸ PLAY</span>
       </FeedPost>,
     );
-    const tile = container.querySelector("[data-feed-tile]");
 
-    expect(tile).toHaveTextContent("♪ ♫ ♪");
-    expect(tile).not.toHaveAttribute("href");
+    expect(container.querySelector("[data-feed-tile]")).toHaveTextContent("♪ ♫ ♪");
+  });
+
+  it("has no tile on the post's own page, where no grid can show it", () => {
+    const { container } = render(
+      <FeedPost images={[]} cover="/artwork.jpg">
+        <span>▸ PLAY</span>
+      </FeedPost>,
+    );
+
+    expect(container.querySelector("[data-feed-tile]")).toBeNull();
   });
 
   it("renders a player on its own, without a frame", () => {

@@ -24,4 +24,10 @@ describe("toTickerItems", () => {
     expect(item).toHaveLength(60);
     expect(item?.endsWith("…")).toBe(true);
   });
+
+  it("never cuts an emoji in half", () => {
+    const [item] = toTickerItems([post(`${"a".repeat(58)}🌊🌊🌊`)]);
+
+    expect(item).toBe(`${"a".repeat(58)}🌊…`);
+  });
 });

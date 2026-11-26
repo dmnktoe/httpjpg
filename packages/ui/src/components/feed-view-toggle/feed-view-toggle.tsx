@@ -14,14 +14,14 @@ export interface FeedViewToggleProps {
 }
 
 const ACTIVE = { opacity: 1, borderTopColor: "pageFg" } as const;
-const INACTIVE = { opacity: 0.4, borderTopColor: "transparent" } as const;
+const INACTIVE = { opacity: 0.6, borderTopColor: "transparent" } as const;
 
 const OPTION_CLASS = css({
   boxSizing: "border-box",
   mt: "-1px",
   px: "4",
   py: "3",
-  opacity: 0.4,
+  opacity: 0.6,
   fontFamily: "mono",
   fontSize: "sm",
   lineHeight: 1,
@@ -56,7 +56,7 @@ export function FeedViewToggle({ view, onViewChange, css: cssProp }: FeedViewTog
         p: 0,
         border: "none",
         borderTop: "1px solid",
-        borderColor: "pageBorder",
+        borderTopColor: "pageBorder",
         ...cssProp,
       }}
     >

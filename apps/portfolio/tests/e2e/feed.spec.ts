@@ -162,8 +162,12 @@ test.describe("feed", () => {
 
     await expect(panel).toBeVisible();
     await expect(panel).toHaveCSS("position", "fixed");
-    const box = await panel.boundingBox();
+    const box = await panel.locator("[data-feed-panel-stage]").boundingBox();
     expect(Math.abs((box?.width ?? 0) - (box?.height ?? 1))).toBeLessThan(2);
+    await expect(panel.locator("[data-feed-panel-dots] > *")).toHaveCount(3);
+    await expect(panel.locator("[data-feed-panel-caption]")).toHaveText(
+      "harbour dump, three frames",
+    );
 
     await panel.getByRole("link", { name: "Open the feed" }).click();
     await expect(page).toHaveURL(/\/feed$/);

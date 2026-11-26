@@ -10,6 +10,17 @@ let lastSlideshowProps: { images: SlideshowImage[]; effect: string; showNavigati
 
 vi.mock("@httpjpg/ui", () => ({
   Box: ({ children }: { children: React.ReactNode }) => <div data-testid="box">{children}</div>,
+  FloatingWidget: ({
+    children,
+    floatingQuery,
+  }: {
+    children: React.ReactNode;
+    floatingQuery: string;
+  }) => (
+    <div data-testid="floating" data-query={floatingQuery}>
+      {children}
+    </div>
+  ),
   Slideshow: (props: { images: SlideshowImage[]; effect: string; showNavigation: boolean }) => {
     lastSlideshowProps = props;
     return <div data-testid="slideshow" />;
@@ -28,6 +39,7 @@ describe("NostalgiaSlideshow", () => {
 
     expect(screen.getByTestId("box")).toBeInTheDocument();
     expect(screen.getByTestId("slideshow")).toBeInTheDocument();
+    expect(screen.getByTestId("floating")).toHaveAttribute("data-query", "(min-width: 64rem)");
   });
 
   it("passes the nostalgia icons with the flip effect and no navigation", () => {

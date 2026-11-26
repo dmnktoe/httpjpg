@@ -35,7 +35,7 @@ const GRID_VIEW = {
     inset: "0",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "safe center",
     p: "3",
     color: "white",
     opacity: 0,

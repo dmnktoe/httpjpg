@@ -61,7 +61,7 @@ describe("FeedPanel", () => {
     expect(link).toHaveAttribute("href", "/feed");
     expect(link.querySelectorAll("img")).toHaveLength(4);
     expect(container.querySelector("[data-feed-panel-stage]")?.className).toContain("jpg-asp_1");
-    expect(screen.getByText("⋆ feed")).toBeInTheDocument();
+    expect(screen.getByText("feed")).toBeInTheDocument();
     expect(screen.getByText("01 / 03")).toBeInTheDocument();
   });
 

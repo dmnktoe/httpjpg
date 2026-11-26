@@ -56,6 +56,27 @@ const FIT_CLASS = {
 
 const SLIDING_CLASS = css({ transition: "transform 0.6s ease-in-out" });
 
+const WINDOW_FONT =
+  '"Lucida Grande", "Lucida Sans Unicode", "Helvetica Neue", Helvetica, Arial, sans-serif';
+
+const TRAFFIC_LIGHTS = [
+  {
+    glyph: "×",
+    background:
+      "radial-gradient(circle at 50% 22%, #fde1dc 0%, #f58a80 28%, #e0443e 62%, #a52a24 100%)",
+  },
+  {
+    glyph: "−",
+    background:
+      "radial-gradient(circle at 50% 22%, #fff3cc 0%, #f8cf6a 28%, #dea123 62%, #a3731a 100%)",
+  },
+  {
+    glyph: "+",
+    background:
+      "radial-gradient(circle at 50% 22%, #dcf7d6 0%, #84d97c 28%, #1aab29 62%, #127a1f 100%)",
+  },
+] as const;
+
 export function FeedPanel({
   items,
   href,
@@ -114,15 +135,17 @@ export function FeedPanel({
         display: "flex",
         flexDirection: "column",
         w: "full",
-        color: "pageFg",
-        fontFamily: "mono",
-        fontSize: "xs",
+        overflow: "hidden",
+        color: "#1a1a1a",
+        fontFamily: WINDOW_FONT,
+        fontSize: "0.6875rem",
         lineHeight: "none",
         textDecoration: "none",
-        bg: "pageBg",
-        border: "1px solid",
-        borderColor: "pageFg",
-        boxShadow: "0.25rem 0.25rem 0 {colors.pageFg}",
+        bg: "#ffffff",
+        border: "1px solid rgba(0, 0, 0, 0.45)",
+        borderRadius: "0.3125rem 0.3125rem 0.1875rem 0.1875rem",
+        boxShadow: "0 1rem 2.75rem rgba(0, 0, 0, 0.5), 0 0.125rem 0.375rem rgba(0, 0, 0, 0.25)",
+        "&:hover [data-window-glyph], &:focus-visible [data-window-glyph]": { opacity: 1 },
         ...cssProp,
       }}
     >
@@ -131,20 +154,136 @@ export function FeedPanel({
         aria-hidden="true"
         data-feed-panel-bar=""
         css={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: "2",
-          h: "7",
-          px: "2",
-          color: "pageBg",
-          letterSpacing: "wider",
-          bg: "pageFg",
+          display: "block",
+          color: "#3d3d3d",
+          bg: "linear-gradient(to bottom, #ebebeb 0%, #d9d9d9 45%, #bdbdbd 100%)",
+          borderBottom: "1px solid #7c7c7c",
+          boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.9)",
           userSelect: "none",
+          textShadow: "0 1px 0 rgba(255, 255, 255, 0.7)",
         }}
       >
-        <span>{`⋆ ${label}`}</span>
-        {total > 1 && <span>{`${pad(post + 1)} / ${pad(total)}`}</span>}
+        <Box
+          as="span"
+          css={{
+            display: "grid",
+            gridTemplateColumns: "1fr auto 1fr",
+            alignItems: "center",
+            h: "1.25rem",
+            px: "0.375rem",
+          }}
+        >
+          <Box as="span" css={{ display: "flex", gap: "0.375rem" }}>
+            {TRAFFIC_LIGHTS.map((light) => (
+              <Box
+                as="span"
+                key={light.glyph}
+                data-traffic-light=""
+                css={{
+                  display: "grid",
+                  placeItems: "center",
+                  w: "0.6875rem",
+                  h: "0.6875rem",
+                  borderRadius: "full",
+                  boxShadow:
+                    "inset 0 1px 1px rgba(255, 255, 255, 0.7), inset 0 -1px 2px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.38), 0 1px 0 rgba(255, 255, 255, 0.6)",
+                }}
+                style={{ background: light.background }}
+              >
+                <Box
+                  as="span"
+                  data-window-glyph=""
+                  css={{
+                    color: "rgba(0, 0, 0, 0.55)",
+                    opacity: 0,
+                    fontSize: "0.5rem",
+                    fontWeight: "bold",
+                    transition: "opacity 0.15s",
+                    textShadow: "none",
+                  }}
+                >
+                  {light.glyph}
+                </Box>
+              </Box>
+            ))}
+          </Box>
+          <Box as="span" css={{ display: "flex", alignItems: "center", gap: "1" }}>
+            <svg viewBox="0 0 16 13" style={{ width: "0.75rem", height: "0.625rem" }}>
+              <path
+                d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3.6l1.5 1.6h5.9A1.5 1.5 0 0 1 15 4.1v6.9a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 11z"
+                fill="#8fb6e3"
+                stroke="#4f78ad"
+                strokeWidth="0.8"
+              />
+            </svg>
+            {label}
+          </Box>
+          <Box
+            as="span"
+            css={{
+              justifySelf: "end",
+              w: "1.125rem",
+              h: "0.4375rem",
+              bg: "linear-gradient(to bottom, #fdfdfd, #c9c9c9)",
+              border: "1px solid #8a8a8a",
+              borderRadius: "full",
+            }}
+          />
+        </Box>
+        <Box
+          as="span"
+          css={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            h: "1.375rem",
+            px: "0.375rem",
+            pb: "0.125rem",
+          }}
+        >
+          <Box as="span" css={{ display: "flex" }}>
+            {["◀", "▶"].map((arrow) => (
+              <Box
+                as="span"
+                key={arrow}
+                css={{
+                  display: "grid",
+                  placeItems: "center",
+                  w: "1.125rem",
+                  h: "0.9375rem",
+                  color: "#4a4a4a",
+                  fontSize: "0.4375rem",
+                  bg: "linear-gradient(to bottom, #fbfbfb, #d4d4d4)",
+                  border: "1px solid #8d8d8d",
+                  boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.9)",
+                  "&:first-of-type": { borderRadius: "0.1875rem 0 0 0.1875rem" },
+                  "&:last-of-type": { borderLeft: "none", borderRadius: "0 0.1875rem 0.1875rem 0" },
+                }}
+              >
+                {arrow}
+              </Box>
+            ))}
+          </Box>
+          <Box
+            as="span"
+            css={{
+              display: "flex",
+              alignItems: "center",
+              w: "4.5rem",
+              h: "0.9375rem",
+              px: "1.5",
+              bg: "#ffffff",
+              border: "1px solid #8d8d8d",
+              borderRadius: "full",
+              boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.25)",
+            }}
+          >
+            <svg viewBox="0 0 10 10" style={{ width: "0.5rem", height: "0.5rem" }}>
+              <circle cx="4" cy="4" r="3" fill="none" stroke="#6b6b6b" strokeWidth="1.4" />
+              <path d="M6.3 6.3 9 9" stroke="#6b6b6b" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+          </Box>
+        </Box>
       </Box>
       <Box
         as="span"
@@ -236,24 +375,49 @@ export function FeedPanel({
           </Box>
         )}
       </Box>
-      {caption && (
+      <Box
+        as="span"
+        data-feed-panel-status=""
+        css={{
+          position: "relative",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "1.5",
+          h: "1.125rem",
+          px: "4",
+          color: "#3a3a3a",
+          fontSize: "0.625rem",
+          whiteSpace: "nowrap",
+          bg: "linear-gradient(to bottom, #dcdcdc 0%, #c2c2c2 100%)",
+          borderTop: "1px solid #8e8e8e",
+          overflow: "hidden",
+          textShadow: "0 1px 0 rgba(255, 255, 255, 0.65)",
+        }}
+      >
+        {total > 1 && <span>{`${pad(post + 1)} / ${pad(total)}`}</span>}
+        {caption && (
+          <Box
+            as="span"
+            data-feed-panel-caption=""
+            css={{ minW: 0, textOverflow: "ellipsis", overflow: "hidden" }}
+          >
+            {caption}
+          </Box>
+        )}
         <Box
           as="span"
-          data-feed-panel-caption=""
+          aria-hidden="true"
           css={{
-            display: "block",
-            px: "2",
-            py: "2",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            borderTop: "1px solid",
-            borderTopColor: "pageFg",
-            overflow: "hidden",
+            position: "absolute",
+            right: "0.1875rem",
+            bottom: "0.1875rem",
+            w: "0.5625rem",
+            h: "0.5625rem",
+            bg: "linear-gradient(135deg, transparent 0 40%, #8a8a8a 40% 47%, transparent 47% 60%, #8a8a8a 60% 67%, transparent 67% 80%, #8a8a8a 80% 87%, transparent 87%)",
           }}
-        >
-          {caption}
-        </Box>
-      )}
+        />
+      </Box>
     </Link>
   );
 }

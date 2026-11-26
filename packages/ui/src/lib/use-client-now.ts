@@ -27,10 +27,6 @@ function getServerNow() {
   return 0;
 }
 
-/**
- * The time the page's first caller mounted; 0 on the server and while hydrating,
- * so anything derived from it renders the same on both sides first.
- */
 export function useClientNow(): number {
   return useSyncExternalStore(subscribe, getClientNow, getServerNow);
 }

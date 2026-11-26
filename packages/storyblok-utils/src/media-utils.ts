@@ -56,7 +56,6 @@ export interface AssetDimensions {
   height: number;
 }
 
-/** Pixel size Storyblok writes into an asset URL, or undefined. */
 export function assetDimensions(
   asset: Pick<ImageLike, "filename"> | undefined,
 ): AssetDimensions | undefined {

@@ -4,12 +4,10 @@ const RELATIVE_DAYS = 5;
 
 let cameFromFeed = false;
 
-/** `YYYY-MM-DD` of a Storyblok datetime, or undefined. */
 export function postDay(date: string | undefined): string | undefined {
   return date?.match(/^\d{4}-\d{2}-\d{2}/)?.[0];
 }
 
-/** Storyblok stores `YYYY-MM-DD HH:mm` in UTC. */
 export function parsePostDate(date: string | undefined): Date | null {
   const match = date?.match(/^(\d{4}-\d{2}-\d{2})(?:[ T](\d{2}:\d{2}))?/);
   if (!match) {
@@ -19,7 +17,6 @@ export function parsePostDate(date: string | undefined): Date | null {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
-/** "3 h ago" for the first five days, then null: the caller shows the date. */
 export function relativePostDate(date: Date, now: number): string | null {
   const elapsed = now - date.getTime();
   if (elapsed < 0 || elapsed >= RELATIVE_DAYS * DAY_MS) {
@@ -40,7 +37,6 @@ export function relativePostDate(date: Date, now: number): string | null {
   return days === 1 ? "yesterday" : `${days} days ago`;
 }
 
-/** The feed notes that a post was opened from it, so the post's back link can go back. */
 export function rememberFeedOrigin(): void {
   cameFromFeed = true;
 }

@@ -3,7 +3,9 @@ import { createHash } from "node:crypto";
 
 import { afterEach, vi } from "vitest";
 
+const { connection } = vi.hoisted(() => ({ connection: vi.fn() }));
 vi.mock("@httpjpg/env", () => ({ env: { STORYBLOK_PREVIEW_TOKEN: "preview-token" } }));
+vi.mock("next/server", () => ({ connection }));
 
 import { hasSignedStoryblokToken, isVisualEditorRequest } from "./storyblok-preview";
 
@@ -24,6 +26,14 @@ afterEach(() => {
 describe("hasSignedStoryblokToken", () => {
   it("accepts a token Storyblok signed with the preview token", async () => {
     expect(await hasSignedStoryblokToken(signed())).toBe(true);
+    expect(connection).toHaveBeenCalled();
+  });
+
+  it("does not wait for a request when there is no token to check", async () => {
+    connection.mockClear();
+
+    expect(await hasSignedStoryblokToken({ _storyblok: "1" })).toBe(false);
+    expect(connection).not.toHaveBeenCalled();
   });
 
   it.each([

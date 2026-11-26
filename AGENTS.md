@@ -346,7 +346,7 @@ None today. If adding: `react-hook-form` + zod (catalog v4), compose with `@http
 
 - **Unit:** Vitest, colocated `*.test.ts(x)`, globals on, `pnpm test` (root `vitest.config.ts`). Coverage via `pnpm test:coverage` (v8, 85% floor). The include set covers packages plus `apps/portfolio` and `apps/studio`.
 - **Component:** `@testing-library/react` + `@testing-library/jest-dom/vitest`.
-- **E2E:** Playwright in `apps/portfolio/tests/e2e` — `pnpm --filter @httpjpg/portfolio test:e2e`.
+- **E2E:** Playwright in `apps/portfolio/tests/e2e` — `pnpm --filter @httpjpg/portfolio test:e2e`. It runs against the Storyblok mock, but CI builds against the real space and a build keeps what it read: `global-setup.ts` expires the config and story-list caches through the revalidate route before the first test, so lists and flags come from the mock. Single stories cached by the build (home) stay the real ones.
 - **Storybook:** published to Chromatic (snapshots off) — no visual regression testing.
 - **CI:** lint → typecheck → test → build → e2e.
 

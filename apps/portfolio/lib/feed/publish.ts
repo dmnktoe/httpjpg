@@ -149,9 +149,7 @@ export interface EditImage {
 
 export interface EditRequest {
   caption: string;
-  /** `undefined` keeps the post's format. */
   format?: PostFormat;
-  /** `undefined` keeps the post's images as they are. */
   images?: EditImage[];
   music?: PublishMusic | null;
   date?: Date;

@@ -1,6 +1,6 @@
 import { env } from "@httpjpg/env";
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
-import { expireConfig, expireStory } from "@httpjpg/storyblok-next";
+import { expireConfig, expireStory, flushClientCache } from "@httpjpg/storyblok-next";
 import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "No story slug provided" }, { status: 400 });
     }
     const revalidatedPaths: string[] = [];
+    await flushClientCache();
     const revalidatedTags = expireStory(storySlug);
 
     const pagePath = storySlug === STORYBLOK_SLUGS.HOME ? "/" : `/${storySlug}`;

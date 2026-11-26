@@ -23,6 +23,7 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
 }));
 
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
+import { connection } from "next/server";
 
 import { GET } from "./route";
 
@@ -31,6 +32,21 @@ beforeEach(() => {
 });
 
 describe("GET /work/feed.xml", () => {
+  it("asks for the request before it reads anything", async () => {
+    const order: string[] = [];
+    vi.mocked(connection).mockImplementationOnce(async () => {
+      order.push("connection");
+    });
+    getFeatureFlags.mockImplementationOnce(async () => {
+      order.push("flags");
+      return { rssFeedEnabled: false };
+    });
+
+    await GET();
+
+    expect(order).toEqual(["connection", "flags"]);
+  });
+
   it("returns 404 when the RSS feed flag is disabled", async () => {
     getFeatureFlags.mockResolvedValueOnce({ rssFeedEnabled: false });
 

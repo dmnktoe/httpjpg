@@ -1,6 +1,11 @@
+import { getStoryblokApi } from "@httpjpg/storyblok-api";
 import { revalidateTag } from "next/cache";
 
 import { CMS_TAGS } from "./tags";
+
+export async function flushClientCache(): Promise<void> {
+  await getStoryblokApi().client.flushCache();
+}
 
 /** `expire: 0`, not stale-while-revalidate: the next visitor gets the new content. */
 export function expireStory(slug: string): string[] {

@@ -5,12 +5,17 @@ vi.mock("@httpjpg/observability/sentry/server.ts", () => ({
   captureServerException: vi.fn(),
 }));
 
-const { revalidatePath, revalidateTag } = vi.hoisted(() => ({
+const { revalidatePath, revalidateTag, flushCache } = vi.hoisted(() => ({
   revalidatePath: vi.fn(),
   revalidateTag: vi.fn(),
+  flushCache: vi.fn(async () => undefined),
 }));
 
 vi.mock("next/cache", () => ({ revalidatePath, revalidateTag }));
+
+vi.mock("@httpjpg/storyblok-api", () => ({
+  getStoryblokApi: () => ({ client: { flushCache } }),
+}));
 
 import { captureServerException } from "@httpjpg/observability/sentry/server.ts";
 import { CMS_TAGS } from "@httpjpg/storyblok-next";
@@ -50,6 +55,7 @@ describe("POST /api/revalidate", () => {
     expect(response.status).toBe(401);
     await expect(response.json()).resolves.toEqual({ message: "Invalid secret" });
     expect(revalidateTag).not.toHaveBeenCalled();
+    expect(flushCache).not.toHaveBeenCalled();
   });
 
   it("rejects a request with a wrong secret", async () => {
@@ -89,6 +95,20 @@ describe("POST /api/revalidate", () => {
     expect(revalidateTag).toHaveBeenCalledWith(CMS_TAGS.story("about"), { expire: 0 });
     expect(revalidateTag).toHaveBeenCalledWith(CMS_TAGS.stories, { expire: 0 });
     expect(revalidatePath).toHaveBeenCalledWith("/about");
+  });
+
+  it("empties the Storyblok client's memory before it expires the tags", async () => {
+    const order: string[] = [];
+    flushCache.mockImplementationOnce(async () => {
+      order.push("flush");
+    });
+    revalidateTag.mockImplementation(() => {
+      order.push("expire");
+    });
+
+    await POST(makeRequest({ action: "published", full_slug: "about" }, { secret: "s3cret" }));
+
+    expect(order).toEqual(["flush", "expire", "expire"]);
   });
 
   it("maps the home slug to the root path", async () => {

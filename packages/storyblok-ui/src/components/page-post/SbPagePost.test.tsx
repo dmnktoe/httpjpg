@@ -1,5 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 
+import { rememberFeedOrigin } from "../post/lib";
 import { SbPagePost } from "./SbPagePost";
 
 function post(extra: Record<string, unknown> = {}) {
@@ -27,6 +28,34 @@ describe("SbPagePost", () => {
       "(min-width: 640px) 640px, 100vw",
     );
     expect(screen.getByText("harbour")).toBeInTheDocument();
+  });
+
+  it("links back to the feed", () => {
+    const back = vi.spyOn(window.history, "back").mockImplementation(() => {});
+    render(<SbPagePost blok={post()} />);
+    const link = screen.getByRole("link", { name: "[ ← feed ]" });
+
+    expect(link).toHaveAttribute("href", "/feed");
+    fireEvent.click(link);
+    expect(back).not.toHaveBeenCalled();
+    back.mockRestore();
+  });
+
+  it("goes back instead when the post was opened from the feed", () => {
+    const back = vi.spyOn(window.history, "back").mockImplementation(() => {});
+    rememberFeedOrigin("/feed/a", window.history.length);
+    window.history.pushState({}, "", "/feed/a");
+    render(<SbPagePost blok={post()} />);
+
+    fireEvent.click(screen.getByRole("link", { name: "[ ← feed ]" }), { metaKey: true });
+    expect(back).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("link", { name: "[ ← feed ]" }));
+    expect(back).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole("link", { name: "[ ← feed ]" }));
+    expect(back).toHaveBeenCalledTimes(1);
+    back.mockRestore();
   });
 
   it("offers the draft tools on draft content", () => {

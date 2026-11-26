@@ -50,6 +50,27 @@ describe("Lightbox", () => {
     expect(screen.getByRole("img", { name: "Two" })).toHaveAttribute("src", "/two.jpg");
   });
 
+  it("is the image's final size before the file arrives, with what the page already holds", () => {
+    setup({
+      items: [
+        { src: "/big.jpg", alt: "Big", width: 3000, height: 2000, placeholder: "/small.jpg" },
+      ],
+    });
+    const image = screen.getByRole("img", { name: "Big" });
+
+    expect(image).toHaveAttribute("data-sized");
+    expect(image.style.getPropertyValue("--lightbox-ratio")).toBe("1.5");
+    expect(image.style.backgroundImage).toBe('url("/small.jpg")');
+  });
+
+  it("leaves an image of unknown size to its file", () => {
+    setup({ index: 1 });
+    const image = screen.getByRole("img", { name: "Two" });
+
+    expect(image).not.toHaveAttribute("data-sized");
+    expect(image.getAttribute("style")).toBeNull();
+  });
+
   it("clamps an out-of-range index instead of blanking", () => {
     setup({ index: 99 });
 

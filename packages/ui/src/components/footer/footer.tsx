@@ -87,7 +87,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
               inset: "0",
               zIndex: "-1",
               bgSize: "cover",
-              bgPosition: "center",
+              bgPosition: "center top",
               pointerEvents: "none",
               _pageDark: { opacity: 0.5 },
             }}

@@ -198,6 +198,8 @@ function sendJson(res, status, body, headers = {}) {
   res.end(JSON.stringify(body));
 }
 
+let isWorkListDown = false;
+
 const server = createServer((req, res) => {
   const url = new URL(req.url ?? "/", `http://127.0.0.1:${PORT}`);
   const { pathname, searchParams } = url;
@@ -205,6 +207,12 @@ const server = createServer((req, res) => {
   if (pathname === "/health") {
     res.writeHead(200, { "content-type": "text/plain" });
     res.end("ok");
+    return;
+  }
+
+  if (pathname === "/__mock/work-list") {
+    isWorkListDown = searchParams.get("state") === "down";
+    sendJson(res, 200, { down: isWorkListDown });
     return;
   }
 
@@ -242,7 +250,8 @@ const server = createServer((req, res) => {
     // The RSS feed (the only list read with per_page=50) throws on an empty list;
     // every other list read keeps answering [] so the other pages are unchanged.
     if (searchParams.get("starts_with") === "work/" && searchParams.get("per_page") === "50") {
-      sendJson(res, 200, { stories: [WORK_EXAMPLE] }, { total: "1", "per-page": "50" });
+      const stories = isWorkListDown ? [] : [WORK_EXAMPLE];
+      sendJson(res, 200, { stories }, { total: String(stories.length), "per-page": "50" });
       return;
     }
     if (searchParams.get("starts_with") === "feed/") {

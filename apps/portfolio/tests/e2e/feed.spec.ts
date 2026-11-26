@@ -67,14 +67,50 @@ test.describe("feed", () => {
     await expect(fitted).toHaveCSS("object-fit", "contain");
   });
 
-  test("an image opens the lightbox with the post's caption", async ({ page }) => {
+  test("an image in the feed opens the post, and the post leads back", async ({ page }) => {
     await page.goto("/feed");
 
-    await page.getByRole("button", { name: "Open four by three at full size" }).click();
+    await page.getByRole("link", { name: "Open the post: four by three" }).click();
+    await expect(page).toHaveURL(/\/feed\/20260102-120000-bbbb$/);
+    await expect(page.locator("main article:visible")).toHaveCount(1);
+
+    await page.getByRole("link", { name: "[ ← feed ]" }).click();
+    await expect(page).toHaveURL(/\/feed$/);
+    await expect(page.locator("main article:visible")).not.toHaveCount(1);
+  });
+
+  test("on its own page an image opens the lightbox at its final size", async ({ page }) => {
+    await page.goto("/feed/20260102-120000-bbbb");
 
     const dialog = page.getByRole("dialog");
-    await expect(dialog).toBeVisible();
+    await expect(async () => {
+      await page.getByRole("button", { name: "Open four by three at full size" }).click();
+      await expect(dialog).toBeVisible({ timeout: 1000 });
+    }).toPass();
     await expect(dialog).toContainText("straight off the dsc-w5");
+    const box = await dialog.getByRole("img", { name: "four by three" }).boundingBox();
+    expect(box).not.toBeNull();
+    expect((box?.width ?? 0) / (box?.height ?? 1)).toBeCloseTo(4 / 3, 1);
+    expect(box?.width ?? 0).toBeGreaterThan(400);
+  });
+
+  test("a carousel shows a dot for each image and slides when dragged", async ({ page }) => {
+    await page.goto("/feed");
+    const carousel = page.locator("[data-feed-frame]").first();
+    await expect(carousel).toBeVisible();
+    const dots = page.locator("[data-feed-dots]").first().locator("> *");
+    await expect(dots).toHaveCount(3);
+    await expect(dots.nth(0)).toHaveAttribute("data-active", "true");
+
+    const box = await carousel.boundingBox();
+    const y = (box?.y ?? 0) + (box?.height ?? 0) / 2;
+    await page.mouse.move((box?.x ?? 0) + (box?.width ?? 0) * 0.8, y);
+    await page.mouse.down();
+    await page.mouse.move((box?.x ?? 0) + (box?.width ?? 0) * 0.2, y, { steps: 8 });
+    await page.mouse.up();
+
+    await expect(dots.nth(1)).toHaveAttribute("data-active", "true");
+    await expect(page).toHaveURL(/\/feed$/);
   });
 
   test("a post has its own page", async ({ page }) => {

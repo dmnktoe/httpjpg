@@ -192,7 +192,7 @@ New blok checklist:
 - Negative margins are stored as `−4` (U+2212): Storyblok rejects datasource names and values starting with `-`, `=` or `@`. `spacingToken()` turns them back into Panda's `-4`.
 - Draft: `getStoryblokApi({ draftMode: true })` uses preview token + `version: "draft"`; `proxy.ts` validates the preview-token hash.
 - `?_storyblok` / `?_draft` are markers anyone can type, never permission. A page reads drafts for them only through `isVisualEditorRequest` (`lib/storyblok-preview.ts`): draft mode is on, Storyblok signed the request (`_storyblok_tk`), or it is `pnpm dev`.
-- Revalidate webhook: `app/api/revalidate/route.ts` → `expireStory(slug)` / `expireConfig()` + paths.
+- Revalidate webhook: `app/api/revalidate/route.ts` → `flushClientCache()`, then `expireStory(slug)` / `expireConfig()` + paths. The flush comes first: the Storyblok client keeps published answers in memory and would hand an expired scope the old content without asking the network.
 - New CMS option: edit `storyblok-utils/src/cms-options.ts` → `sync:datasources` → rebuild `ui`.
 
 ## Panda CSS
@@ -219,7 +219,7 @@ Cache Components: nothing is cached unless a `"use cache"` scope says so. Three 
 - Draft is never cached: branch on `draft` **outside** the scope and `await connection()` before the uncached read, so it waits for request time instead of being aborted in the prerender pass.
 - Keep failures out of the `cms` hour. The Storyblok client answers null / empty instead of throwing, so check the result inside the scope:
   - Reads rendered by pages (`readStory`, config): on a miss call `cacheLife("seconds")` instead of `"cms"`. Never throw there — an error from a cache scope fails the page prerender.
-  - Route handlers (sitemap, feed): throw inside the scope, catch outside, `unstable_rethrow(error)` first, then `await connection()` before the fallback so a build-time outage is not frozen into the prerender.
+  - Route handlers (sitemap, feed): throw inside the scope, catch outside, `unstable_rethrow(error)` first, then answer the fallback. Both await `connection()` before anything else: a route that was prerendered cannot turn dynamic when its cache is expired later, so a fallback that only then asked for the request answered 500.
 - Third-party widget feeds use inline lifetimes from `WIDGET_MAX_AGE` (`cacheLife({ revalidate: WIDGET_MAX_AGE.x })`). `widgetRoute()` calls `connection()` so rate limiting and draft checks stay per request.
 - The root layout (and the page routes under it) export `instant = false`: `<html data-theme lang>` comes from the request path. Every read under it is cached, so the per-request render stays cheap.
 - No `dynamic` / `revalidate` / `runtime` segment configs — Cache Components rejects them.
@@ -297,6 +297,7 @@ Same presentational/stateful split as the command palette.
 - Portal must restate theme via `usePageTheme()` — overlay renders into `document.body`, outside `[data-theme]`, so semantic tokens resolve correctly. Any future portalled overlay needs the same.
 - Trigger is a sibling overlay (`cover` default / `corner` when the media has its own controls), not a wrapper (invalid markup otherwise).
 - ASCII chrome (`[ 02 / 05 ]`, `[ ← ]` …); wrap + clamp index; preload neighbours; videos skip preload; credit always `CopyrightLabel` `below` variant.
+- Pass `width` / `height` (and a small `placeholder` rendition) with an item where they are known: the frame is then its final size before the 2560px file arrives, instead of opening small and empty.
 - Opt-in only on `image` / `video` bloks — not slideshow. Rendition: `imagePreset.full` (2560px, usually a cache hit).
 
 ## Page actions & draft tools
@@ -320,6 +321,7 @@ Insta-style posts (photo dumps, music), published from the native app's composer
 - **Shape:** `images` (`post_image` bloks: asset + `fit`) and/or one `music_player` blok, plus `caption`, `date`, `format` (`1/1` · `4/5` · `original`). One format per post, so a carousel does not jump.
 - **Fit, not crop coordinates.** `cover` fills the frame; `contain` shows the whole file with bars in `pageBg` — never baked into the image, and the lightbox shows it without them. Cropping happens on the device before upload: readers (web, iOS, tvOS, widgets) only ever honour `fit`.
 - **UI split:** presentational `FeedPost` / `FeedGrid` (`@httpjpg/ui`) → `SbPost` (blok → props, lightbox entries) → stateful `FeedStream` (paging). `FeedGrid` squares the tiles from `md` up through the `data-feed-*` hooks; a phone shows one column in the post's own format.
+- **One click target per place.** In the feed a post's images and its date open the post (`href` set); on the post's own page an image opens the lightbox and `[ ← feed ]` goes back. A carousel has dots, steps with its buttons and can be dragged with the mouse; touch swipes it natively. The date is relative for five days (`useClientNow`: 0 on the server and while hydrating, then the minute).
 - **Reads:** `getFeedPage(page)` under `CMS_TAGS.stories`, sorted by `content.date`. An empty page is held for `seconds` (no posts yet, or a failed fetch). `GET /api/feed/posts?page=` serves "load more".
 - **Publishing:** `POST /api/feed/assets` signs one Storyblok upload and the client posts the file to S3 itself; `POST /api/feed/posts` finishes the uploads, then creates and publishes the story. `GET /api/feed/session` is the composer's sign-in check. A draft sends a `clientId` and its `date`: the two name the slug, so a retry whose first answer was lost gets the existing post back instead of a second one.
 - **Auth:** all three need `Authorization: Bearer $FEED_PUBLISH_TOKEN` (at least 32 characters; unset → 503) plus `STORYBLOK_MANAGEMENT_TOKEN` / `STORYBLOK_SPACE_ID` on the deployment. The management token never leaves the server; the app only knows these routes.
@@ -344,7 +346,7 @@ None today. If adding: `react-hook-form` + zod (catalog v4), compose with `@http
 
 - **Unit:** Vitest, colocated `*.test.ts(x)`, globals on, `pnpm test` (root `vitest.config.ts`). Coverage via `pnpm test:coverage` (v8, 85% floor). The include set covers packages plus `apps/portfolio` and `apps/studio`.
 - **Component:** `@testing-library/react` + `@testing-library/jest-dom/vitest`.
-- **E2E:** Playwright in `apps/portfolio/tests/e2e` — `pnpm --filter @httpjpg/portfolio test:e2e`.
+- **E2E:** Playwright in `apps/portfolio/tests/e2e` — `pnpm --filter @httpjpg/portfolio test:e2e`. It runs against the Storyblok mock, but CI builds against the real space and a build keeps what it read: `global-setup.ts` expires the config and story-list caches through the revalidate route before the first test, so lists and flags come from the mock. Only those tags are expired: a single story the build read (home) is still the real one.
 - **Storybook:** published to Chromatic (snapshots off) — no visual regression testing.
 - **CI:** lint → typecheck → test → build → e2e.
 

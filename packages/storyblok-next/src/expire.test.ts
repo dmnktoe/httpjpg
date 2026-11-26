@@ -1,11 +1,13 @@
 // @vitest-environment node
 import { beforeEach, vi } from "vitest";
 
+const { flushCache } = vi.hoisted(() => ({ flushCache: vi.fn(async () => undefined) }));
 vi.mock("next/cache", () => ({ revalidateTag: vi.fn() }));
+vi.mock("@httpjpg/storyblok-api", () => ({ getStoryblokApi: () => ({ client: { flushCache } }) }));
 
 import { revalidateTag } from "next/cache";
 
-import { expireConfig, expireStory } from "./expire";
+import { expireConfig, expireStory, flushClientCache } from "./expire";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -17,6 +19,14 @@ describe("expireStory", () => {
     expect(tags).toEqual(["cms:story:work/foo", "cms:stories"]);
     expect(revalidateTag).toHaveBeenCalledWith("cms:story:work/foo", { expire: 0 });
     expect(revalidateTag).toHaveBeenCalledWith("cms:stories", { expire: 0 });
+  });
+});
+
+describe("flushClientCache", () => {
+  it("drops what the Storyblok client holds in memory", async () => {
+    await flushClientCache();
+
+    expect(flushCache).toHaveBeenCalledOnce();
   });
 });
 

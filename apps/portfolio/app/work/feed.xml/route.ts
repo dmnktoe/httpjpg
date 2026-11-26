@@ -41,6 +41,7 @@ function escapeXml(s: string): string {
 }
 
 export async function GET() {
+  await connection();
   const flags = await getFeatureFlags();
   if (!flags.rssFeedEnabled) {
     return new Response("RSS feed disabled", { status: 404 });
@@ -55,7 +56,6 @@ export async function GET() {
     console.error("Error building work feed:", error);
     captureServerException(error, { tags: { route: "work-feed" } });
     // 503, not an empty channel: readers retry instead of dropping every item.
-    await connection();
     return new Response("Work feed temporarily unavailable", {
       status: 503,
       headers: { "Retry-After": "300", "Cache-Control": "no-store" },

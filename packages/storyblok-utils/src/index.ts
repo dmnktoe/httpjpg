@@ -52,6 +52,7 @@ export { getResponsiveImage } from "./image-processing";
 export type { ResponsiveImage, ResponsiveImageOptions } from "./image-processing";
 export {
   assetAspectRatio,
+  assetDimensions,
   firstImage,
   firstImageFilename,
   isVideoAsset,

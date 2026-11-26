@@ -119,5 +119,6 @@ describe("Footer", () => {
     const background = footer?.querySelector<HTMLElement>(':scope > [aria-hidden="true"]');
     expect(footer?.style.backgroundImage).toBe("");
     expect(background?.style.backgroundImage).toBe('url("/bg.jpg")');
+    expect(background?.className).toContain("jpg-bg-p_center_top");
   });
 });

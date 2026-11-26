@@ -17,11 +17,11 @@ export interface FeedPostProps {
   /** Preformatted date label; `dateTime` is the machine-readable value. */
   date?: string;
   dateTime?: string;
-  /** Permalink; the date links to it. */
+  /** Permalink. The date and every image link to it, and `onImageClick` is ignored. */
   href?: string;
   /** `sizes` hint for every image. */
   sizes?: string;
-  /** Makes each image a button, e.g. to open a lightbox. */
+  /** Makes each image a button, e.g. to open a lightbox. Only without `href`. */
   onImageClick?: (index: number) => void;
   /** Rendered between the frame and the caption: the post's music player. */
   children?: ReactNode;
@@ -44,7 +44,11 @@ export function FeedPost({
     return null;
   }
 
-  const dateLabel = date ? <time dateTime={dateTime}>{date}</time> : null;
+  const dateLabel = date ? (
+    <time dateTime={dateTime} title={dateTime}>
+      {date}
+    </time>
+  ) : null;
 
   return (
     <Box
@@ -52,7 +56,13 @@ export function FeedPost({
       css={{ display: "flex", flexDirection: "column", gap: "2", minW: 0, ...cssProp }}
     >
       {images.length > 0 && (
-        <FeedPostFrame images={images} ratio={ratio} sizes={sizes} onImageClick={onImageClick} />
+        <FeedPostFrame
+          images={images}
+          ratio={ratio}
+          sizes={sizes}
+          imageHref={href}
+          onImageClick={onImageClick}
+        />
       )}
       {children}
       {caption && (

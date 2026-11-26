@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
-import type { KeyboardEvent, MouseEvent, PointerEvent } from "react";
+import type { CSSProperties, KeyboardEvent, MouseEvent, PointerEvent } from "react";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { css } from "styled-system/css";
@@ -37,6 +37,11 @@ export interface LightboxItem {
   copyrightSource?: string;
   /** Renders a player in place of the image. */
   video?: LightboxVideo;
+  /** Natural pixel size. With both, the frame is its final size before the file arrives. */
+  width?: number;
+  height?: number;
+  /** A rendition the page already holds, shown until `src` has loaded. */
+  placeholder?: string;
 }
 
 export interface LightboxProps {
@@ -275,6 +280,8 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
                   sizes={item.sizes}
                   alt={item.alt}
                   decoding="async"
+                  data-sized={imageRatio(item) ? "" : undefined}
+                  style={imageStyle(item)}
                   className={css({
                     display: "block",
                     w: "auto",
@@ -283,7 +290,14 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
                     h: "auto",
                     minH: "0",
                     maxH: "min(78dvh, calc(100dvh - 12rem))",
+                    bgSize: "contain",
+                    bgPosition: "center",
+                    bgRepeat: "no-repeat",
                     objectFit: "contain",
+                    "&[data-sized]": {
+                      aspectRatio: "var(--lightbox-ratio)",
+                      w: "min(calc(100vw - 3rem), calc(min(78dvh, 100dvh - 12rem) * var(--lightbox-ratio)))",
+                    },
                   })}
                 />
               )}
@@ -309,4 +323,19 @@ export function Lightbox({ open, items, index, onClose, onIndexChange, theme }: 
     </div>,
     document.body,
   );
+}
+
+function imageRatio(item: LightboxItem): number | null {
+  return item.width && item.height ? item.width / item.height : null;
+}
+
+function imageStyle(item: LightboxItem): CSSProperties | undefined {
+  const ratio = imageRatio(item);
+  if (!ratio && !item.placeholder) {
+    return undefined;
+  }
+  return {
+    ...(ratio ? { "--lightbox-ratio": String(ratio) } : null),
+    ...(item.placeholder ? { backgroundImage: `url(${JSON.stringify(item.placeholder)})` } : null),
+  } as CSSProperties;
 }

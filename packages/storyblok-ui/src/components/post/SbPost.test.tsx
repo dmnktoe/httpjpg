@@ -29,6 +29,15 @@ function frame(container: HTMLElement): HTMLElement {
   return container.querySelector("[data-feed-frame]") as HTMLElement;
 }
 
+beforeEach(() => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-12-24T12:00:00Z"));
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 describe("SbPost", () => {
   it("renders nothing without images or music", () => {
     const { container } = render(<SbPost blok={post({ images: [], music: [] })} />);
@@ -59,6 +68,24 @@ describe("SbPost", () => {
       "/feed/2026-11-25-100000",
     );
     expect(frame(container).style.getPropertyValue("--feed-ratio")).toBe("1/1");
+  });
+
+  it("tells a recent post's age, and keeps the date for machines", () => {
+    vi.setSystemTime(new Date("2026-11-25T13:30:00Z"));
+    render(<SbPost blok={post()} href="/feed/a" />);
+
+    expect(screen.getByText("3 h ago")).toHaveAttribute("datetime", "2026-11-25");
+  });
+
+  it("opens the post from its images when it has a permalink", () => {
+    render(<SbPost blok={post()} href="/feed/a" />);
+
+    expect(screen.getByRole("link", { name: "Open the post: Ferry" })).toHaveAttribute(
+      "href",
+      "/feed/a",
+    );
+    expect(screen.queryByRole("button", { name: /at full size/ })).toBeNull();
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
   it("uses the chosen format", () => {
@@ -131,8 +158,10 @@ describe("SbPost", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open Ferry at full size" }));
 
     const dialog = screen.getByRole("dialog");
-    expect(dialog).toBeInTheDocument();
-    expect(dialog.querySelector("img")?.getAttribute("src")).toContain("ferry.jpg/m/2560x0");
+    const image = dialog.querySelector("img");
+    expect(image?.getAttribute("src")).toContain("ferry.jpg/m/2560x0");
+    expect(image?.style.getPropertyValue("--lightbox-ratio")).toBe("0.8");
+    expect(image?.style.backgroundImage).toContain("ferry.jpg/m/1920x0");
   });
 
   it("opens the page gallery when there is one", () => {

@@ -2,6 +2,7 @@
 
 import {
   assetAspectRatio,
+  assetDimensions,
   getResponsiveImage,
   imagePreset,
   type SbPostData,
@@ -13,18 +14,20 @@ import {
   type FeedPostImage,
   Lightbox,
   type LightboxEntry,
+  useClientNow,
   useLightbox,
   useLightboxEntry,
   useLightboxGallery,
 } from "@httpjpg/ui";
-import { memo } from "react";
+import { memo, type MouseEvent } from "react";
 
 import { editableAttrs } from "../../lib/use-blok";
 import { SbMusicPlayer } from "../music-player/SbMusicPlayer";
+import { parsePostDate, postDay, relativePostDate, rememberFeedOrigin } from "./lib";
 
 export interface SbPostProps {
   blok: SbPostData;
-  /** Permalink of the post's story; the date links to it. */
+  /** Permalink of the post's story. With it the images and the date open the post, without it an image opens the lightbox. */
   href?: string;
   /** `sizes` hint for the images. Defaults to the feed grid's columns. */
   sizes?: string;
@@ -34,8 +37,9 @@ export const SbPost = memo(function SbPost({ blok, href, sizes }: SbPostProps) {
   const gallery = useLightboxGallery();
   const viewer = useLightbox();
   const images = (blok.images ?? []).filter((item) => Boolean(item.image?.filename));
-  const entries = images.map((item) => toLightboxEntry(item, blok.caption));
+  const entries = href ? [] : images.map((item) => toLightboxEntry(item, blok.caption));
   const music = blok.music?.[0];
+  const relativeDate = useRelativeDate(blok.date);
 
   if (!images.length && !music?.src) {
     return null;
@@ -50,14 +54,20 @@ export const SbPost = memo(function SbPost({ blok, href, sizes }: SbPostProps) {
     viewer.openAt(index);
   };
 
+  const handleClickCapture = (event: MouseEvent<HTMLElement>) => {
+    if ((event.target as Element).closest("a[href]")) {
+      rememberFeedOrigin();
+    }
+  };
+
   return (
-    <Box {...editableAttrs(blok)}>
+    <Box {...editableAttrs(blok)} onClickCapture={href ? handleClickCapture : undefined}>
       <FeedPost
         images={images.map(toFeedImage)}
         ratio={postRatio(blok, images)}
         caption={blok.caption?.trim() || undefined}
-        date={postDate(blok.date)}
-        dateTime={postDate(blok.date)}
+        date={relativeDate ?? postDay(blok.date)}
+        dateTime={postDay(blok.date)}
         href={href}
         sizes={sizes}
         onImageClick={handleImageClick}
@@ -107,6 +117,8 @@ function toLightboxEntry(item: SbPostImageData, caption: string | undefined): Li
   return {
     id: item._uid,
     src: imagePreset.full(item.image.filename, item.image.focus),
+    placeholder: toFeedImage(item).src,
+    ...assetDimensions(item.image),
     alt: imageAlt(item),
     caption: caption?.trim() || undefined,
     copyright: item.image.copyright || undefined,
@@ -125,6 +137,8 @@ function postRatio(blok: SbPostData, images: SbPostImageData[]): string {
   return blok.format || "1/1";
 }
 
-function postDate(date: string | undefined): string | undefined {
-  return date?.match(/^\d{4}-\d{2}-\d{2}/)?.[0];
+function useRelativeDate(date: string | undefined): string | null {
+  const now = useClientNow();
+  const parsed = now ? parsePostDate(date) : null;
+  return parsed ? relativePostDate(parsed, now) : null;
 }

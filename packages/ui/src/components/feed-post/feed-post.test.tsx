@@ -112,7 +112,7 @@ describe("FeedPost", () => {
       const { container } = render(<FeedPost images={THREE} />);
       const el = track(container);
 
-      el.scrollLeft = 610;
+      el.scrollLeft = 602;
       fireEvent.scroll(el);
 
       expect(screen.getByText("[ 03 / 03 ]")).toBeInTheDocument();
@@ -137,12 +137,94 @@ describe("FeedPost", () => {
       expect(screen.getByText("[ 01 / 03 ]")).toBeInTheDocument();
 
       fireEvent.click(screen.getByRole("button", { name: "Next image" }));
-      expect(scrollTo).toHaveBeenLastCalledWith({ left: 300, behavior: "smooth" });
+      expect(scrollTo).toHaveBeenLastCalledWith({ left: 301, behavior: "smooth" });
       fireEvent.click(screen.getByRole("button", { name: "Next image" }));
       fireEvent.click(screen.getByRole("button", { name: "Next image" }));
 
       expect(screen.getByText("[ 03 / 03 ]")).toBeInTheDocument();
-      expect(scrollTo).toHaveBeenLastCalledWith({ left: 600, behavior: "smooth" });
+      expect(scrollTo).toHaveBeenLastCalledWith({ left: 602, behavior: "smooth" });
     });
+
+    it("marks the current image with a dot", () => {
+      const { container } = render(<FeedPost images={THREE} />);
+      const dots = () => Array.from(container.querySelectorAll("[data-feed-dots] > *"));
+      const el = track(container);
+
+      expect(dots().map((dot) => dot.hasAttribute("data-active"))).toEqual([true, false, false]);
+
+      el.scrollLeft = 301;
+      fireEvent.scroll(el);
+
+      expect(dots().map((dot) => dot.hasAttribute("data-active"))).toEqual([false, true, false]);
+    });
+
+    it("has no dots for a single image", () => {
+      const { container } = render(<FeedPost images={ONE} />);
+
+      expect(container.querySelector("[data-feed-dots]")).toBeNull();
+    });
+
+    it("slides to the next image when the mouse drags it far enough", () => {
+      const { container } = render(<FeedPost images={THREE} />);
+      const el = track(container);
+      const scrollTo = vi.fn();
+      el.scrollTo = scrollTo;
+
+      fireEvent.pointerDown(el, { pointerType: "mouse", button: 0, clientX: 200 });
+      fireEvent.pointerMove(el, { pointerType: "mouse", clientX: 120 });
+      expect(el).toHaveAttribute("data-dragging");
+      expect(el.scrollLeft).toBe(80);
+      fireEvent.pointerUp(el, { pointerType: "mouse", clientX: 120 });
+
+      expect(el).not.toHaveAttribute("data-dragging");
+      expect(scrollTo).toHaveBeenLastCalledWith({ left: 301, behavior: "smooth" });
+      expect(screen.getByText("[ 02 / 03 ]")).toBeInTheDocument();
+    });
+
+    it("snaps back after a short drag and swallows the click that ends it", () => {
+      const onImageClick = vi.fn();
+      const { container } = render(<FeedPost images={THREE} onImageClick={onImageClick} />);
+      const el = track(container);
+      const scrollTo = vi.fn();
+      el.scrollTo = scrollTo;
+
+      fireEvent.pointerDown(el, { pointerType: "mouse", button: 0, clientX: 200 });
+      fireEvent.pointerMove(el, { pointerType: "mouse", clientX: 180 });
+      fireEvent.pointerUp(el, { pointerType: "mouse", clientX: 180 });
+      fireEvent.click(screen.getByRole("button", { name: "Open Ferry at full size" }));
+
+      expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, behavior: "smooth" });
+      expect(onImageClick).not.toHaveBeenCalled();
+
+      fireEvent.click(screen.getByRole("button", { name: "Open Ferry at full size" }));
+      expect(onImageClick).toHaveBeenCalledWith(2);
+    });
+
+    it("leaves a press without movement, and touch, to the browser", () => {
+      const onImageClick = vi.fn();
+      const { container } = render(<FeedPost images={THREE} onImageClick={onImageClick} />);
+      const el = track(container);
+
+      fireEvent.pointerDown(el, { pointerType: "touch", button: 0, clientX: 200 });
+      fireEvent.pointerMove(el, { pointerType: "touch", clientX: 100 });
+      expect(el).not.toHaveAttribute("data-dragging");
+
+      fireEvent.pointerDown(el, { pointerType: "mouse", button: 0, clientX: 200 });
+      fireEvent.pointerMove(el, { pointerType: "mouse", clientX: 198 });
+      fireEvent.pointerUp(el, { pointerType: "mouse", clientX: 198 });
+      fireEvent.click(screen.getByRole("button", { name: "Open Ferry at full size" }));
+
+      expect(onImageClick).toHaveBeenCalledWith(2);
+    });
+  });
+
+  it("links every image to the post when it has a permalink", () => {
+    const onImageClick = vi.fn();
+    render(<FeedPost images={THREE} href="/feed/a" onImageClick={onImageClick} />);
+
+    const link = screen.getByRole("link", { name: "Open the post: Ferry" });
+    expect(link).toHaveAttribute("href", "/feed/a");
+    expect(link).toHaveAttribute("data-cursor", "open post");
+    expect(screen.queryByRole("button", { name: /at full size/ })).toBeNull();
   });
 });

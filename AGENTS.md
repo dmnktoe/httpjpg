@@ -219,7 +219,7 @@ Cache Components: nothing is cached unless a `"use cache"` scope says so. Three 
 - Draft is never cached: branch on `draft` **outside** the scope and `await connection()` before the uncached read, so it waits for request time instead of being aborted in the prerender pass.
 - Keep failures out of the `cms` hour. The Storyblok client answers null / empty instead of throwing, so check the result inside the scope:
   - Reads rendered by pages (`readStory`, config): on a miss call `cacheLife("seconds")` instead of `"cms"`. Never throw there — an error from a cache scope fails the page prerender.
-  - Route handlers (sitemap, feed): throw inside the scope, catch outside, `unstable_rethrow(error)` first, then `await connection()` before the fallback so a build-time outage is not frozen into the prerender.
+  - Route handlers (sitemap, feed): throw inside the scope, catch outside, `unstable_rethrow(error)` first, then `await connection()` before the fallback so a build-time outage is not frozen into the prerender. The sitemap awaits `connection()` before anything else instead: a route that was prerendered cannot turn dynamic when its cache is expired later, so its fallback answered 500.
 - Third-party widget feeds use inline lifetimes from `WIDGET_MAX_AGE` (`cacheLife({ revalidate: WIDGET_MAX_AGE.x })`). `widgetRoute()` calls `connection()` so rate limiting and draft checks stay per request.
 - The root layout (and the page routes under it) export `instant = false`: `<html data-theme lang>` comes from the request path. Every read under it is cached, so the per-request render stays cheap.
 - No `dynamic` / `revalidate` / `runtime` segment configs — Cache Components rejects them.

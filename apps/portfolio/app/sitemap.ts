@@ -29,6 +29,7 @@ const MAX_PAGES = 20;
 const MAX_IMAGES_PER_URL = 10;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  await connection();
   const baseUrl = env.NEXT_PUBLIC_APP_URL;
   try {
     return await readSitemap(baseUrl);
@@ -36,8 +37,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     unstable_rethrow(error);
     console.error("Error generating sitemap:", error);
     captureServerException(error, { tags: { route: "sitemap" } });
-    // Request-time, so a build-time outage doesn't freeze the fallback.
-    await connection();
     return [{ url: baseUrl, changeFrequency: "weekly", priority: 1 }];
   }
 }

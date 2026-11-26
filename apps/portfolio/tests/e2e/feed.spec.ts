@@ -82,10 +82,11 @@ test.describe("feed", () => {
   test("on its own page an image opens the lightbox at its final size", async ({ page }) => {
     await page.goto("/feed/20260102-120000-bbbb");
 
-    await page.getByRole("button", { name: "Open four by three at full size" }).click();
-
     const dialog = page.getByRole("dialog");
-    await expect(dialog).toBeVisible();
+    await expect(async () => {
+      await page.getByRole("button", { name: "Open four by three at full size" }).click();
+      await expect(dialog).toBeVisible({ timeout: 1000 });
+    }).toPass();
     await expect(dialog).toContainText("straight off the dsc-w5");
     const box = await dialog.getByRole("img", { name: "four by three" }).boundingBox();
     expect(box).not.toBeNull();

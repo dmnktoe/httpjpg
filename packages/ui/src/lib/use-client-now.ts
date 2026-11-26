@@ -2,18 +2,30 @@
 
 import { useSyncExternalStore } from "react";
 
+const TICK_MS = 60_000;
+
+const listeners = new Set<() => void>();
 let now = 0;
-let subscribers = 0;
+let timer: ReturnType<typeof setInterval> | undefined;
+
+function tick() {
+  now = Date.now();
+  for (const listener of listeners) {
+    listener();
+  }
+}
 
 function subscribe(onStoreChange: () => void) {
-  if (subscribers === 0) {
-    now = Date.now();
-    onStoreChange();
+  listeners.add(onStoreChange);
+  if (listeners.size === 1) {
+    timer = setInterval(tick, TICK_MS);
+    tick();
   }
-  subscribers += 1;
   return () => {
-    subscribers -= 1;
-    if (subscribers === 0) {
+    listeners.delete(onStoreChange);
+    if (listeners.size === 0) {
+      clearInterval(timer);
+      timer = undefined;
       now = 0;
     }
   };

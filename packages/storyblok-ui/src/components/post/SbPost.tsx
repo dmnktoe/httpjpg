@@ -23,7 +23,7 @@ import { memo, type MouseEvent } from "react";
 
 import { editableAttrs } from "../../lib/use-blok";
 import { SbMusicPlayer } from "../music-player/SbMusicPlayer";
-import { parsePostDate, postDay, relativePostDate, rememberFeedOrigin } from "./lib";
+import { isPlainClick, parsePostDate, postDay, relativePostDate, rememberFeedOrigin } from "./lib";
 
 export interface SbPostProps {
   blok: SbPostData;
@@ -55,8 +55,9 @@ export const SbPost = memo(function SbPost({ blok, href, sizes }: SbPostProps) {
   };
 
   const handleClickCapture = (event: MouseEvent<HTMLElement>) => {
-    if ((event.target as Element).closest("a[href]")) {
-      rememberFeedOrigin();
+    const link = (event.target as Element).closest<HTMLAnchorElement>("a[href]");
+    if (link && isPlainClick(event)) {
+      rememberFeedOrigin(new URL(link.href).pathname, window.history.length);
     }
   };
 
@@ -98,6 +99,7 @@ function PostLightboxEntry({ entry }: { entry: LightboxEntry }) {
 }
 
 const TILE_WIDTHS = [640, 960, 1280, 1920];
+const PLACEHOLDER_WIDTH = TILE_WIDTHS[0];
 
 function toFeedImage(item: SbPostImageData): FeedPostImage {
   const { src, srcSet } = getResponsiveImage(item.image.filename, {
@@ -117,7 +119,10 @@ function toLightboxEntry(item: SbPostImageData, caption: string | undefined): Li
   return {
     id: item._uid,
     src: imagePreset.full(item.image.filename, item.image.focus),
-    placeholder: toFeedImage(item).src,
+    placeholder: getResponsiveImage(item.image.filename, {
+      widths: [PLACEHOLDER_WIDTH],
+      focus: item.image.focus || "",
+    }).src,
     ...assetDimensions(item.image),
     alt: imageAlt(item),
     caption: caption?.trim() || undefined,

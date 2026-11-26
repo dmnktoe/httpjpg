@@ -3,13 +3,16 @@
 import { Link } from "@httpjpg/ui";
 import type { MouseEvent } from "react";
 
-import { takeFeedOrigin } from "../post/lib";
+import { isPlainClick, takeFeedOrigin } from "../post/lib";
 
 const FEED_PATH = "/feed";
 
 export function PostBackLink() {
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (takeFeedOrigin() && window.history.length > 1) {
+    if (!isPlainClick(event)) {
+      return;
+    }
+    if (takeFeedOrigin(window.location.pathname, window.history.length)) {
       event.preventDefault();
       window.history.back();
     }

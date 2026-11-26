@@ -161,7 +161,7 @@ describe("SbPost", () => {
     const image = dialog.querySelector("img");
     expect(image?.getAttribute("src")).toContain("ferry.jpg/m/2560x0");
     expect(image?.style.getPropertyValue("--lightbox-ratio")).toBe("0.8");
-    expect(image?.style.backgroundImage).toContain("ferry.jpg/m/1920x0");
+    expect(image?.style.backgroundImage).toContain("ferry.jpg/m/640x0");
   });
 
   it("opens the page gallery when there is one", () => {

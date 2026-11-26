@@ -40,7 +40,7 @@ export interface LightboxItem {
   /** Natural pixel size. With both, the frame is its final size before the file arrives. */
   width?: number;
   height?: number;
-  /** A rendition the page already holds, shown until `src` has loaded. */
+  /** A small rendition, shown until `src` has loaded. */
   placeholder?: string;
 }
 

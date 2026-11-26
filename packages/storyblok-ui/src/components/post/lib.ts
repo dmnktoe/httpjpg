@@ -2,7 +2,12 @@ const MINUTE_MS = 60_000;
 const DAY_MS = 86_400_000;
 const RELATIVE_DAYS = 5;
 
-let cameFromFeed = false;
+interface FeedOrigin {
+  path: string;
+  historyLength: number;
+}
+
+let origin: FeedOrigin | null = null;
 
 export function postDay(date: string | undefined): string | undefined {
   return date?.match(/^\d{4}-\d{2}-\d{2}/)?.[0];
@@ -37,12 +42,24 @@ export function relativePostDate(date: Date, now: number): string | null {
   return days === 1 ? "yesterday" : `${days} days ago`;
 }
 
-export function rememberFeedOrigin(): void {
-  cameFromFeed = true;
+export function rememberFeedOrigin(path: string, historyLength: number): void {
+  origin = { path, historyLength };
 }
 
-export function takeFeedOrigin(): boolean {
-  const value = cameFromFeed;
-  cameFromFeed = false;
-  return value;
+export function takeFeedOrigin(path: string, historyLength: number): boolean {
+  const remembered = origin;
+  origin = null;
+  return remembered?.path === path && remembered.historyLength + 1 === historyLength;
+}
+
+interface ClickModifiers {
+  button: number;
+  metaKey: boolean;
+  ctrlKey: boolean;
+  shiftKey: boolean;
+  altKey: boolean;
+}
+
+export function isPlainClick(event: ClickModifiers): boolean {
+  return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }

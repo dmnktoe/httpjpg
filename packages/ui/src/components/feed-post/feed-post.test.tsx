@@ -171,7 +171,7 @@ describe("FeedPost", () => {
       el.scrollTo = scrollTo;
 
       fireEvent.pointerDown(el, { pointerType: "mouse", button: 0, clientX: 200 });
-      fireEvent.pointerMove(el, { pointerType: "mouse", clientX: 120 });
+      fireEvent.pointerMove(el, { pointerType: "mouse", buttons: 1, clientX: 120 });
       expect(el).toHaveAttribute("data-dragging");
       expect(el.scrollLeft).toBe(80);
       fireEvent.pointerUp(el, { pointerType: "mouse", clientX: 120 });
@@ -189,7 +189,7 @@ describe("FeedPost", () => {
       el.scrollTo = scrollTo;
 
       fireEvent.pointerDown(el, { pointerType: "mouse", button: 0, clientX: 200 });
-      fireEvent.pointerMove(el, { pointerType: "mouse", clientX: 180 });
+      fireEvent.pointerMove(el, { pointerType: "mouse", buttons: 1, clientX: 180 });
       fireEvent.pointerUp(el, { pointerType: "mouse", clientX: 180 });
       fireEvent.click(screen.getByRole("button", { name: "Open Ferry at full size" }));
 
@@ -198,6 +198,43 @@ describe("FeedPost", () => {
 
       fireEvent.click(screen.getByRole("button", { name: "Open Ferry at full size" }));
       expect(onImageClick).toHaveBeenCalledWith(2);
+    });
+
+    it("lets go when the button was released somewhere else", () => {
+      const { container } = render(<FeedPost images={THREE} />);
+      const el = track(container);
+      const scrollTo = vi.fn();
+      el.scrollTo = scrollTo;
+
+      fireEvent.pointerDown(el, { pointerType: "mouse", button: 0, clientX: 200 });
+      fireEvent.pointerMove(el, { pointerType: "mouse", buttons: 0, clientX: 60 });
+
+      expect(el).not.toHaveAttribute("data-dragging");
+      expect(el.scrollLeft).toBe(0);
+      expect(scrollTo).not.toHaveBeenCalled();
+
+      fireEvent.pointerMove(el, { pointerType: "mouse", buttons: 0, clientX: 20 });
+      expect(el).not.toHaveAttribute("data-dragging");
+    });
+
+    it("returns to where it started when a drag is cancelled", () => {
+      const { container } = render(<FeedPost images={THREE} />);
+      const el = track(container);
+      const scrollTo = vi.fn();
+      el.scrollTo = scrollTo;
+
+      fireEvent.pointerDown(el, { pointerType: "mouse", button: 0, clientX: 200 });
+      fireEvent.pointerMove(el, { pointerType: "mouse", buttons: 1, clientX: 40 });
+      fireEvent.pointerCancel(el, { pointerType: "mouse", clientX: 0 });
+
+      expect(el).not.toHaveAttribute("data-dragging");
+      expect(scrollTo).toHaveBeenLastCalledWith({ left: 0, behavior: "smooth" });
+    });
+
+    it("keeps the browser from dragging a linked image out of the carousel", () => {
+      const { container } = render(<FeedPost images={THREE} href="/feed/a" />);
+
+      expect(fireEvent.dragStart(track(container))).toBe(false);
     });
 
     it("leaves a press without movement, and touch, to the browser", () => {
@@ -210,7 +247,7 @@ describe("FeedPost", () => {
       expect(el).not.toHaveAttribute("data-dragging");
 
       fireEvent.pointerDown(el, { pointerType: "mouse", button: 0, clientX: 200 });
-      fireEvent.pointerMove(el, { pointerType: "mouse", clientX: 198 });
+      fireEvent.pointerMove(el, { pointerType: "mouse", buttons: 1, clientX: 198 });
       fireEvent.pointerUp(el, { pointerType: "mouse", clientX: 198 });
       fireEvent.click(screen.getByRole("button", { name: "Open Ferry at full size" }));
 

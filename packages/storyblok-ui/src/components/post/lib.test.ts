@@ -1,5 +1,6 @@
 // @vitest-environment node
 import {
+  isPlainClick,
   parsePostDate,
   postDay,
   relativePostDate,
@@ -57,12 +58,33 @@ describe("relativePostDate", () => {
 });
 
 describe("feed origin", () => {
-  it("is remembered once", () => {
-    expect(takeFeedOrigin()).toBe(false);
+  it("is remembered once, for the post that was opened and the step that opened it", () => {
+    expect(takeFeedOrigin("/feed/a", 4)).toBe(false);
 
-    rememberFeedOrigin();
+    rememberFeedOrigin("/feed/a", 3);
 
-    expect(takeFeedOrigin()).toBe(true);
-    expect(takeFeedOrigin()).toBe(false);
+    expect(takeFeedOrigin("/feed/a", 4)).toBe(true);
+    expect(takeFeedOrigin("/feed/a", 4)).toBe(false);
+  });
+
+  it("does not hold for another post or after further navigation", () => {
+    rememberFeedOrigin("/feed/a", 3);
+    expect(takeFeedOrigin("/feed/b", 4)).toBe(false);
+
+    rememberFeedOrigin("/feed/a", 3);
+    expect(takeFeedOrigin("/feed/a", 6)).toBe(false);
+  });
+});
+
+describe("isPlainClick", () => {
+  const plain = { button: 0, metaKey: false, ctrlKey: false, shiftKey: false, altKey: false };
+
+  it("is a left click without modifiers", () => {
+    expect(isPlainClick(plain)).toBe(true);
+    expect(isPlainClick({ ...plain, button: 1 })).toBe(false);
+    expect(isPlainClick({ ...plain, metaKey: true })).toBe(false);
+    expect(isPlainClick({ ...plain, ctrlKey: true })).toBe(false);
+    expect(isPlainClick({ ...plain, shiftKey: true })).toBe(false);
+    expect(isPlainClick({ ...plain, altKey: true })).toBe(false);
   });
 });

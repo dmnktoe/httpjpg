@@ -43,9 +43,12 @@ describe("SbPagePost", () => {
 
   it("goes back instead when the post was opened from the feed", () => {
     const back = vi.spyOn(window.history, "back").mockImplementation(() => {});
+    rememberFeedOrigin("/feed/a", window.history.length);
     window.history.pushState({}, "", "/feed/a");
-    rememberFeedOrigin();
     render(<SbPagePost blok={post()} />);
+
+    fireEvent.click(screen.getByRole("link", { name: "[ ← feed ]" }), { metaKey: true });
+    expect(back).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByRole("link", { name: "[ ← feed ]" }));
     expect(back).toHaveBeenCalledTimes(1);

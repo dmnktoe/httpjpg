@@ -2,6 +2,7 @@
 
 import {
   type CSSProperties,
+  type DragEvent,
   type MouseEvent,
   type PointerEvent,
   type UIEvent,
@@ -140,6 +141,10 @@ export function FeedPostFrame({
     if (!drag) {
       return;
     }
+    if (!(event.buttons & 1)) {
+      endDrag(drag.startIndex);
+      return;
+    }
     const delta = event.clientX - drag.startX;
     if (!drag.hasMoved) {
       if (Math.abs(delta) < DRAG_THRESHOLD_PX) {
@@ -152,21 +157,37 @@ export function FeedPostFrame({
     event.currentTarget.scrollLeft = drag.startLeft - delta;
   };
 
-  const handlePointerEnd = (event: PointerEvent<HTMLDivElement>) => {
+  const endDrag = (index: number) => {
     const drag = dragRef.current;
     dragRef.current = null;
+    setIsDragging(false);
+    if (drag?.hasMoved) {
+      scrollToIndex(index);
+    }
+  };
+
+  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
     if (!drag?.hasMoved) {
+      endDrag(activeIndex);
       return;
     }
     swallowsClickRef.current = true;
     window.setTimeout(() => {
       swallowsClickRef.current = false;
     }, 0);
-    setIsDragging(false);
     const delta = event.clientX - drag.startX;
     const width = event.currentTarget.clientWidth || 1;
     const step = Math.abs(delta) > width * DRAG_STEP_RATIO ? -Math.sign(delta) : 0;
-    scrollToIndex(drag.startIndex + step);
+    endDrag(drag.startIndex + step);
+  };
+
+  const handlePointerCancel = () => {
+    endDrag(dragRef.current?.startIndex ?? activeIndex);
+  };
+
+  const handleDragStart = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
   };
 
   const handleClickCapture = (event: MouseEvent<HTMLDivElement>) => {
@@ -196,8 +217,9 @@ export function FeedPostFrame({
           onScroll={isCarousel ? handleScroll : undefined}
           onPointerDown={isCarousel ? handlePointerDown : undefined}
           onPointerMove={isCarousel ? handlePointerMove : undefined}
-          onPointerUp={isCarousel ? handlePointerEnd : undefined}
-          onPointerCancel={isCarousel ? handlePointerEnd : undefined}
+          onPointerUp={isCarousel ? handlePointerUp : undefined}
+          onPointerCancel={isCarousel ? handlePointerCancel : undefined}
+          onDragStart={isCarousel ? handleDragStart : undefined}
           onClickCapture={isCarousel ? handleClickCapture : undefined}
           css={{
             display: "flex",

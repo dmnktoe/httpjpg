@@ -71,11 +71,24 @@ describe("CustomCursor", () => {
     expect(cursor).toHaveStyle({ opacity: "0" });
 
     act(() => {
-      window.dispatchEvent(new MouseEvent("mousemove", { clientX: 40, clientY: 80 }));
+      window.dispatchEvent(new MouseEvent("pointermove", { clientX: 40, clientY: 80 }));
     });
 
     expect(cursor.style.transform).toContain("translate3d(40px, 80px, 0px)");
     expect(cursor.style.opacity).toBe("1");
+  });
+
+  it("ignores touches, which have no cursor to move", () => {
+    render(<CustomCursor />);
+    const cursor = cursorElement();
+    const touch = new MouseEvent("pointermove", { clientX: 40, clientY: 80 });
+    Object.defineProperty(touch, "pointerType", { value: "touch" });
+
+    act(() => {
+      window.dispatchEvent(touch);
+    });
+
+    expect(cursor.style.opacity).not.toBe("1");
   });
 
   it("coalesces repeated moves into a single frame", () => {
@@ -84,8 +97,8 @@ describe("CustomCursor", () => {
     render(<CustomCursor />);
 
     act(() => {
-      window.dispatchEvent(new MouseEvent("mousemove", { clientX: 1, clientY: 1 }));
-      window.dispatchEvent(new MouseEvent("mousemove", { clientX: 2, clientY: 2 }));
+      window.dispatchEvent(new MouseEvent("pointermove", { clientX: 1, clientY: 1 }));
+      window.dispatchEvent(new MouseEvent("pointermove", { clientX: 2, clientY: 2 }));
     });
 
     expect(raf).toHaveBeenCalledOnce();
@@ -188,7 +201,7 @@ describe("CustomCursor", () => {
     render(<CustomCursor />);
     const cursor = cursorElement();
     act(() => {
-      window.dispatchEvent(new MouseEvent("mousemove", { clientX: 10, clientY: 10 }));
+      window.dispatchEvent(new MouseEvent("pointermove", { clientX: 10, clientY: 10 }));
     });
     expect(cursor.style.opacity).toBe("1");
 
@@ -203,7 +216,7 @@ describe("CustomCursor", () => {
     render(<CustomCursor />);
     const cursor = cursorElement();
     act(() => {
-      window.dispatchEvent(new MouseEvent("mousemove", { clientX: 10, clientY: 10 }));
+      window.dispatchEvent(new MouseEvent("pointermove", { clientX: 10, clientY: 10 }));
     });
 
     act(() => {
@@ -237,11 +250,11 @@ describe("CustomCursor", () => {
 
     const { unmount } = render(<CustomCursor />);
     act(() => {
-      window.dispatchEvent(new MouseEvent("mousemove", { clientX: 1, clientY: 1 }));
+      window.dispatchEvent(new MouseEvent("pointermove", { clientX: 1, clientY: 1 }));
     });
     unmount();
 
-    expect(removeEventListener).toHaveBeenCalledWith("mousemove", expect.any(Function));
+    expect(removeEventListener).toHaveBeenCalledWith("pointermove", expect.any(Function));
     expect(removeEventListener).toHaveBeenCalledWith("mouseover", expect.any(Function));
     expect(removeEventListener).toHaveBeenCalledWith("mouseout", expect.any(Function));
     removeEventListener.mockRestore();
@@ -254,7 +267,7 @@ describe("CustomCursor", () => {
 
     const { unmount } = render(<CustomCursor />);
     act(() => {
-      window.dispatchEvent(new MouseEvent("mousemove", { clientX: 1, clientY: 1 }));
+      window.dispatchEvent(new MouseEvent("pointermove", { clientX: 1, clientY: 1 }));
     });
     unmount();
 
@@ -269,7 +282,7 @@ describe("CustomCursor", () => {
 
     mouseOver(button);
     act(() => {
-      window.dispatchEvent(new MouseEvent("mousemove", { clientX: 15, clientY: 25 }));
+      window.dispatchEvent(new MouseEvent("pointermove", { clientX: 15, clientY: 25 }));
     });
 
     expect(screen.getByText("open").style.transform).toContain("translate3d(15px, 25px, 0px)");

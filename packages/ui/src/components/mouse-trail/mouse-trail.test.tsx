@@ -13,7 +13,7 @@ let clock = 0;
 function moveMouse(x: number, y: number) {
   clock += 100;
   act(() => {
-    window.dispatchEvent(new MouseEvent("mousemove", { clientX: x, clientY: y }));
+    window.dispatchEvent(new MouseEvent("pointermove", { clientX: x, clientY: y }));
   });
 }
 
@@ -72,7 +72,7 @@ describe("MouseTrail", () => {
     const { unmount } = render(<MouseTrail />);
     unmount();
 
-    expect(removeEventListener).toHaveBeenCalledWith("mousemove", expect.any(Function));
+    expect(removeEventListener).toHaveBeenCalledWith("pointermove", expect.any(Function));
   });
 
   it("throttles pointer moves closer together than 30ms", () => {
@@ -83,7 +83,7 @@ describe("MouseTrail", () => {
 
     clock += 10;
     act(() => {
-      window.dispatchEvent(new MouseEvent("mousemove", { clientX: 20, clientY: 20 }));
+      window.dispatchEvent(new MouseEvent("pointermove", { clientX: 20, clientY: 20 }));
     });
     expect(screen.getAllByText("✧")).toHaveLength(1);
   });

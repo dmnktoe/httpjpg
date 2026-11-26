@@ -44,7 +44,10 @@ export function MouseTrail({
     let rafId: number;
     let lastTime = Date.now();
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const handlePointerMove = (e: PointerEvent) => {
+      if (e.pointerType === "touch") {
+        return;
+      }
       const now = Date.now();
 
       if (now - lastTime < 30) {
@@ -78,11 +81,11 @@ export function MouseTrail({
       rafId = requestAnimationFrame(cleanupParticles);
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("pointermove", handlePointerMove);
     rafId = requestAnimationFrame(cleanupParticles);
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("pointermove", handlePointerMove);
       cancelAnimationFrame(rafId);
     };
   }, [count, lifetime, prefersReducedMotion]);

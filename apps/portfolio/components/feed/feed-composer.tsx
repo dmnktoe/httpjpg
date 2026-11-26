@@ -10,7 +10,6 @@ import { buttonClass, errorClass, hintClass } from "./composer-styles";
 import { FeedSignIn } from "./feed-sign-in";
 
 export interface FeedComposerProps {
-  /** Slug of the post to edit; without it the composer writes a new one. */
   slug?: string;
 }
 

@@ -85,7 +85,6 @@ export async function deletePost(slug: string): Promise<void> {
   await send(`/api/feed/posts/${encodeURIComponent(slug)}`, "DELETE");
 }
 
-/** The last segment of `/feed/<slug>` or `feed/<slug>`. */
 export function postSlugOf(path: string): string {
   return path.split("/").filter(Boolean).pop() ?? "";
 }

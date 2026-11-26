@@ -187,11 +187,6 @@ export async function deleteAsset(config: MapiConfig, id: number): Promise<void>
   await mapiRequest<unknown>(config, `/assets/${id}`, { method: "DELETE" });
 }
 
-/**
- * Whether a story other than `storyId` mentions the asset. Storyblok has no usage lookup,
- * so this searches story text for the file's path. A search that does not even find
- * `storyId` itself proves nothing, and counts as used.
- */
 export async function isAssetUsedElsewhere(
   config: MapiConfig,
   filename: string,

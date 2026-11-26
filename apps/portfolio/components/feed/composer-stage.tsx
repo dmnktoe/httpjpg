@@ -8,7 +8,6 @@ import { type ComposerMedia, canCrop } from "@/lib/feed/compose/media";
 
 export interface ComposerStageProps {
   media: ComposerMedia | undefined;
-  /** The post's first file: it sets the frame of an `original` post. */
   first: ComposerMedia | undefined;
   format: string;
   onPan: (offset: { offsetX: number; offsetY: number }) => void;

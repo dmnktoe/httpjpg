@@ -141,9 +141,7 @@ export function parsePublishRequest(body: unknown): Parsed<PublishRequest> {
 }
 
 export interface EditImage {
-  /** `_uid` of an image the post already has. */
   uid?: string;
-  /** A signed upload that joins the post. */
   assetId?: number;
   fit: ImageFit;
   alt?: string;
@@ -153,7 +151,6 @@ export interface EditRequest {
   caption: string;
   format: PostFormat;
   images: EditImage[];
-  /** `undefined` keeps the post's music, `null` removes it. */
   music?: PublishMusic | null;
   date?: Date;
 }
@@ -230,7 +227,6 @@ export function editAssetIds(request: EditRequest): number[] {
 
 export interface EditedPost {
   content: Record<string, unknown>;
-  /** Files of the images the edit dropped. */
   removed: PostAsset[];
 }
 

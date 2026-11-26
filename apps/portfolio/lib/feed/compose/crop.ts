@@ -1,12 +1,8 @@
 export interface CropInput {
-  /** Natural size of the picture. */
   width: number;
   height: number;
-  /** Width over height of the frame it has to fill. */
   ratio: number;
-  /** 1 fills the frame exactly; more looks closer. */
   zoom: number;
-  /** Where the frame sits in the room that is left, from -1 (left / top) to 1. */
   offsetX: number;
   offsetY: number;
 }
@@ -36,15 +32,10 @@ export function cropRect(input: CropInput): CropRect {
   };
 }
 
-/** A centred crop at zoom 1 is what `fit: cover` shows anyway: nothing to bake into the file. */
 export function isCropped(input: Pick<CropInput, "zoom" | "offsetX" | "offsetY">): boolean {
   return input.zoom > MIN_ZOOM || input.offsetX !== 0 || input.offsetY !== 0;
 }
 
-/**
- * Moves the frame by a drag. `dx` / `dy` are fractions of the frame's size, and
- * dragging the picture to the right moves the frame to the left.
- */
 export function panCrop(
   input: CropInput,
   dx: number,
@@ -59,7 +50,6 @@ export function panCrop(
   };
 }
 
-/** Percentages that lay the whole picture out so that `rect` exactly fills its frame. */
 export function cropPreviewStyle(
   input: CropInput,
 ): Record<"left" | "top" | "width" | "height", string> {

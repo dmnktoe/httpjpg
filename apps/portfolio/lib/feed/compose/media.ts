@@ -2,9 +2,7 @@ import { type CropInput, cropRect, formatRatio, isCropped } from "./crop";
 
 export interface ComposerMedia {
   key: string;
-  /** `_uid` of the blok when the post already has this file. */
   uid?: string;
-  /** The picked file when it still has to go up. */
   file?: File;
   previewUrl: string;
   kind: "image" | "video";
@@ -97,7 +95,6 @@ export function existingMedia(image: {
   };
 }
 
-/** The crop a new picture gets baked in: only where a frame crops it and it was moved or zoomed. */
 export function mediaCrop(
   media: ComposerMedia,
   format: string,
@@ -117,7 +114,6 @@ export function mediaCrop(
   return isCropped(input) ? input : null;
 }
 
-/** A picture can be moved in its frame while it is new, fills the frame and the frame has a fixed shape. */
 export function canCrop(media: ComposerMedia, format: string): boolean {
   return Boolean(
     media.file &&

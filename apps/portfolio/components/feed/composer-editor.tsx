@@ -26,7 +26,6 @@ import { ComposerStrip } from "./composer-strip";
 import { buttonClass, errorClass, fieldClass, hintClass, labelClass } from "./composer-styles";
 
 export interface ComposerEditorProps {
-  /** The post being edited; without it the editor writes a new one. */
   post?: ComposerPost;
 }
 

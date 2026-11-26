@@ -11,11 +11,6 @@ export interface PreparedFile {
 const MAX_SIDE = 4096;
 const JPEG_QUALITY = 0.92;
 
-/**
- * Draws the picture again, cropped to `rect` when there is one. A file that went
- * through the canvas carries no camera or location data. GIFs and videos cannot
- * take that path and go up as they are.
- */
 export async function prepareImage(
   file: File,
   name: string,
@@ -51,11 +46,6 @@ export function prepareFile(file: File, name: string): PreparedFile {
   return { blob: file, filename: `${name}.${extension}` };
 }
 
-/**
- * Signs the upload with the site, then posts the file to Storyblok's storage itself.
- * The storage answers without CORS headers, so the response cannot be read: the site
- * checks the upload when it finishes it.
- */
 export async function uploadFile(prepared: PreparedFile): Promise<number> {
   const signed = await signUpload({
     filename: prepared.filename,

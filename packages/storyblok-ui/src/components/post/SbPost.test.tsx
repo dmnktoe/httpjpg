@@ -1,4 +1,4 @@
-import { LightboxProvider } from "@httpjpg/ui";
+import { FeedAuthorProvider, LightboxProvider } from "@httpjpg/ui";
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import { SbPost } from "./SbPost";
@@ -43,6 +43,68 @@ describe("SbPost", () => {
     const { container } = render(<SbPost blok={post({ images: [], music: [] })} />);
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it("signs the post with the feed's author", () => {
+    const { container } = render(
+      <FeedAuthorProvider author={{ name: "httpjpg", avatarSrc: "/me.jpg" }}>
+        <SbPost blok={post()} />
+      </FeedAuthorProvider>,
+    );
+
+    expect(screen.getAllByText("httpjpg")).toHaveLength(2);
+    expect(container.querySelector("[data-avatar] img")).toHaveAttribute("src", "/me.jpg");
+  });
+
+  it("uses a track's artwork as the tile of a post without images", () => {
+    const { container } = render(
+      <SbPost
+        href="/feed/a"
+        blok={post({
+          images: [],
+          music: [
+            {
+              _uid: "m",
+              component: "music_player",
+              source: "mp3",
+              src: "https://a.storyblok.com/f/1/mix.mp3",
+              artwork: "https://a.storyblok.com/f/1/500x500/abc/cover.jpg",
+            },
+          ],
+        })}
+      />,
+    );
+
+    expect(container.querySelector("[data-feed-tile] img")).toHaveAttribute(
+      "src",
+      "https://a.storyblok.com/f/1/500x500/abc/cover.jpg",
+    );
+  });
+
+  it("shows a video as a video and keeps it out of the lightbox", () => {
+    const { container } = render(
+      <SbPost
+        blok={post({
+          images: [
+            {
+              _uid: "clip",
+              component: "post_image",
+              image: { filename: "https://a.storyblok.com/f/1/x/abc/clip.mp4" },
+            },
+            { _uid: "img-1", component: "post_image", image: { filename: IMAGE, alt: "Harbour" } },
+          ],
+        })}
+      />,
+    );
+
+    expect(container.querySelector("video")).toHaveAttribute(
+      "src",
+      "https://a.storyblok.com/f/1/x/abc/clip.mp4",
+    );
+    expect(screen.getAllByRole("button", { name: /at full size/ })).toHaveLength(1);
+
+    fireEvent.click(screen.getByRole("button", { name: "Open Harbour at full size" }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 
   it("skips images without a file", () => {

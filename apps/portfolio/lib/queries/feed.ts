@@ -19,6 +19,7 @@ export interface FeedPage {
   posts: FeedPostEntry[];
   page: number;
   hasMore: boolean;
+  total: number;
 }
 
 interface PostStory {
@@ -34,7 +35,7 @@ export async function getFeedPage(page = 1): Promise<FeedPage> {
     unstable_rethrow(error);
     console.error("Error fetching feed posts:", error);
     captureServerException(error, { tags: { query: "feed" } });
-    return { posts: [], page, hasMore: false };
+    return { posts: [], page, hasMore: false, total: 0 };
   }
 }
 
@@ -63,5 +64,6 @@ async function readFeedPage(page: number): Promise<FeedPage> {
     cacheLife("seconds");
   }
 
-  return { posts, page, hasMore: page * FEED_PAGE_SIZE < (response.total ?? 0) };
+  const total = Math.max(response.total ?? 0, posts.length);
+  return { posts, page, hasMore: page * FEED_PAGE_SIZE < total, total };
 }

@@ -1,11 +1,16 @@
-import { createHash, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 
 import { env } from "@httpjpg/env";
 import type { NextRequest, NextResponse } from "next/server";
 
 import { API_ERROR, type ApiErrorBody, jsonError } from "../api-error";
 
+export const FEED_SESSION_COOKIE = "httpjpg_feed_session";
+export const FEED_EDITOR_COOKIE = "httpjpg_feed_editor";
+export const FEED_SESSION_MAX_AGE = 60 * 60 * 24 * 30;
+
 const MIN_TOKEN_LENGTH = 32;
+const SAFE_METHODS = new Set(["GET", "HEAD"]);
 
 export function feedPublishToken(): string | null {
   const token = env.FEED_PUBLISH_TOKEN?.trim();
@@ -20,10 +25,72 @@ export function authorizeFeedRequest(request: NextRequest): NextResponse<ApiErro
     });
   }
   const presented = /^Bearer\s+(.+)$/i.exec(request.headers.get("authorization") ?? "")?.[1];
-  if (!presented || !isSameSecret(presented.trim(), expected)) {
-    return jsonError(API_ERROR.unauthorized, 401, { headers: { "WWW-Authenticate": "Bearer" } });
+  if (presented) {
+    return isSameSecret(presented.trim(), expected) ? null : unauthorized();
   }
-  return null;
+  const session = request.cookies?.get(FEED_SESSION_COOKIE)?.value;
+  if (session && isLiveSession(session, expected) && isOwnRequest(request)) {
+    return null;
+  }
+  return unauthorized();
+}
+
+export function isFeedPublishToken(presented: string): boolean {
+  const expected = feedPublishToken();
+  return Boolean(expected) && isSameSecret(presented.trim(), expected as string);
+}
+
+export function feedSessionValue(token: string, issuedAt: number = Date.now()): string {
+  const stamp = Math.floor(issuedAt / 1000).toString(36);
+  return `${stamp}.${sessionSignature(token, stamp)}`;
+}
+
+function isLiveSession(value: string, token: string, now: number = Date.now()): boolean {
+  const [stamp, signature, ...rest] = value.split(".");
+  if (!stamp || !signature || rest.length || !/^[0-9a-z]{1,12}$/.test(stamp)) {
+    return false;
+  }
+  const age = now / 1000 - Number.parseInt(stamp, 36);
+  if (!(age >= 0 && age <= FEED_SESSION_MAX_AGE)) {
+    return false;
+  }
+  return isSameSecret(signature, sessionSignature(token, stamp));
+}
+
+function sessionSignature(token: string, stamp: string): string {
+  return createHmac("sha256", token).update(`feed-session:${stamp}`).digest("hex");
+}
+
+function isOwnRequest(request: NextRequest): boolean {
+  if (SAFE_METHODS.has(request.method)) {
+    return true;
+  }
+  const origin = request.headers.get("origin");
+  if (!origin) {
+    return false;
+  }
+  const host = request.headers.get("host");
+  return origin === siteOrigin() || (Boolean(host) && hostOf(origin) === host);
+}
+
+function siteOrigin(): string | null {
+  try {
+    return new URL(env.NEXT_PUBLIC_APP_URL).origin;
+  } catch {
+    return null;
+  }
+}
+
+function hostOf(origin: string): string | null {
+  try {
+    return new URL(origin).host;
+  } catch {
+    return null;
+  }
+}
+
+function unauthorized(): NextResponse<ApiErrorBody> {
+  return jsonError(API_ERROR.unauthorized, 401, { headers: { "WWW-Authenticate": "Bearer" } });
 }
 
 function isSameSecret(presented: string, expected: string): boolean {

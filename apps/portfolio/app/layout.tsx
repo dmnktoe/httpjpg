@@ -8,6 +8,7 @@ import {
   Box,
   Footer,
   ImagePreview,
+  FeedAuthorProvider,
   LazyMotionProvider,
   PageActionsProvider,
   parseWorkAccent,
@@ -120,6 +121,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const interfaceConfig = await getInterfaceConfig();
   const site = await getSiteConfig();
   const author = await getAuthor();
+  const feedAuthor = author ? { name: author.name, avatarSrc: author.avatar } : null;
   const socialProfiles = await getSocialProfiles();
   const flags = await getFeatureFlags();
   const seo = await getSeoDefaults();
@@ -176,7 +178,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               <PageActionsProvider draft={draft.isEnabled} inEditor={inStoryblokEditor}>
                 <TrackedLightboxProvider>
                   <Box as="main" css={{ w: "full", minH: "100dvh", color: "pageFg", bg: "pageBg" }}>
-                    {children}
+                    <FeedAuthorProvider author={feedAuthor}>{children}</FeedAuthorProvider>
                   </Box>
                 </TrackedLightboxProvider>
               </PageActionsProvider>

@@ -68,7 +68,7 @@ beforeEach(() => {
     id: 12,
     fullSlug: "feed/20261125-153012-a3f9",
   });
-  vi.mocked(getFeedPage).mockResolvedValue({ posts: [], page: 1, hasMore: false });
+  vi.mocked(getFeedPage).mockResolvedValue({ posts: [], page: 1, hasMore: false, total: 0 });
   vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
@@ -77,7 +77,7 @@ describe("GET /api/feed/posts", () => {
     const response = await GET(get());
 
     expect(getFeedPage).toHaveBeenCalledWith(1);
-    expect(await response.json()).toEqual({ posts: [], page: 1, hasMore: false });
+    expect(await response.json()).toEqual({ posts: [], page: 1, hasMore: false, total: 0 });
     expect(response.headers.get("Cache-Control")).toBe("no-store");
   });
 

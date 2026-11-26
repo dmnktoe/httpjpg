@@ -349,6 +349,17 @@ describe("getAuthor", () => {
     });
   });
 
+  it("adds a square rendition of the author's picture", async () => {
+    setupGetStory(async () => ({
+      content: {
+        author_name: "Domenik",
+        author_avatar: { filename: "https://a.storyblok.com/f/1/800x800/abc/me.jpg" },
+      },
+    }));
+
+    expect((await getAuthor())?.avatar).toContain("/m/192x192/smart");
+  });
+
   it("returns null without a name, since schema.org has nothing to attach to", async () => {
     setupGetStory(async () => ({ content: { author_url: "https://httpjpg.com" } }));
     await expect(getAuthor()).resolves.toBeNull();

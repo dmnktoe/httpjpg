@@ -58,12 +58,13 @@ export function toNextMetadata(
   siteName?: string,
   alternates: Omit<Alternates, "canonical"> = {},
 ): Metadata {
-  const fullTitle = siteName ? `${meta.title} | ${siteName}` : meta.title;
+  const isSiteName = Boolean(siteName) && sameName(meta.title, siteName as string);
+  const fullTitle = siteName && !isSiteName ? `${meta.title} | ${siteName}` : meta.title;
   const ogImages = meta.ogImage
     ? [{ url: meta.ogImage.url, width: 1200, height: 630, alt: meta.ogImage.alt }]
     : undefined;
   return {
-    title: meta.title,
+    title: isSiteName ? { absolute: meta.title } : meta.title,
     description: meta.description,
     alternates: { canonical: path, ...alternates },
     openGraph: {
@@ -81,4 +82,10 @@ export function toNextMetadata(
       images: meta.ogImage ? [meta.ogImage.url] : undefined,
     },
   };
+}
+
+function sameName(title: string | undefined, siteName: string): boolean {
+  const plain = (value: string | undefined) =>
+    (value ?? "").replace(/[^\p{L}\p{N}]+/gu, "").toLowerCase();
+  return plain(title) !== "" && plain(title) === plain(siteName);
 }

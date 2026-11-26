@@ -6,8 +6,10 @@ import { NextResponse } from "next/server";
 import { isPublishedStory } from "@/lib/story-index";
 import { storySlugForPath } from "@/lib/story-route";
 import { isStoryblokEditorRequest } from "@/lib/storyblok-editor";
+import { STORYBLOK_SLUGS } from "@/lib/storyblok-slugs";
 
 const NOT_FOUND_ROUTE = "/_not-found";
+const HOME_STORY_PATH = `/${STORYBLOK_SLUGS.HOME}`;
 const DRAFT_MODE_COOKIE = "__prerender_bypass";
 
 const SECURITY_HEADERS: Record<string, string> = {
@@ -27,6 +29,16 @@ export async function proxy(request: NextRequest) {
     !(await validateStoryblokPreviewToken(searchParams, env.STORYBLOK_PREVIEW_TOKEN))
   ) {
     return NextResponse.json({ error: "Invalid Storyblok token" }, { status: 401 });
+  }
+
+  if (!inEditor && request.nextUrl.pathname === HOME_STORY_PATH) {
+    const root = request.nextUrl.clone();
+    root.pathname = "/";
+    const redirect = NextResponse.redirect(root, 308);
+    for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
+      redirect.headers.set(name, value);
+    }
+    return redirect;
   }
 
   const requestHeaders = new Headers(request.headers);

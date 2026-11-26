@@ -24,8 +24,6 @@ export function PostBackLink() {
       data-cursor="back"
       onClick={handleClick}
       css={{
-        display: "inline-block",
-        mb: "4",
         fontFamily: "mono",
         fontSize: "sm",
         textDecoration: "none",

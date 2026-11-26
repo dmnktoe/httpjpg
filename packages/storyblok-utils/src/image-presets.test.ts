@@ -8,6 +8,11 @@ describe("imagePreset", () => {
     expect(imagePreset.thumb(undefined)).toBe("");
     expect(imagePreset.blur(undefined)).toBe("");
     expect(imagePreset.full(undefined)).toBe("");
+    expect(imagePreset.avatar(undefined)).toBe("");
+  });
+
+  it("builds a 192px square smart crop for an avatar", () => {
+    expect(imagePreset.avatar(filename)).toContain("/m/192x192/smart");
   });
 
   it("builds an Open Graph 1200x630 smart crop", () => {

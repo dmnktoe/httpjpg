@@ -89,15 +89,23 @@ describe("getFeedPage", () => {
   it("knows whether another page follows", async () => {
     mockStories([post("a")], FEED_PAGE_SIZE * 2 + 1);
 
-    expect(await getFeedPage(2)).toMatchObject({ page: 2, hasMore: true });
-    expect(await getFeedPage(3)).toMatchObject({ page: 3, hasMore: false });
+    const total = FEED_PAGE_SIZE * 2 + 1;
+    expect(await getFeedPage(2)).toMatchObject({ page: 2, hasMore: true, total });
+    expect(await getFeedPage(3)).toMatchObject({ page: 3, hasMore: false, total });
+  });
+
+  it("counts at least the posts it holds when Storyblok sends no total", async () => {
+    const getStories = vi.fn().mockResolvedValue({ stories: [post("a")], total: undefined });
+    mockGetStoryblokApi.mockReturnValue({ getStories } as never);
+
+    expect(await getFeedPage()).toMatchObject({ hasMore: false, total: 1 });
   });
 
   it("holds an empty answer for seconds only", async () => {
     const getStories = vi.fn().mockResolvedValue({ stories: undefined, total: undefined });
     mockGetStoryblokApi.mockReturnValue({ getStories } as never);
 
-    expect(await getFeedPage()).toEqual({ posts: [], page: 1, hasMore: false });
+    expect(await getFeedPage()).toEqual({ posts: [], page: 1, hasMore: false, total: 0 });
     expect(cacheLife).toHaveBeenCalledWith("seconds");
   });
 
@@ -107,7 +115,7 @@ describe("getFeedPage", () => {
       getStories: vi.fn().mockRejectedValue(failure),
     } as never);
 
-    expect(await getFeedPage(4)).toEqual({ posts: [], page: 4, hasMore: false });
+    expect(await getFeedPage(4)).toEqual({ posts: [], page: 4, hasMore: false, total: 0 });
     expect(captureServerException).toHaveBeenCalledWith(failure, { tags: { query: "feed" } });
   });
 });

@@ -11,11 +11,20 @@ async function gotoHomeWithPanel(page: Page) {
   }
 }
 
+async function showList(page: Page) {
+  const list = page.getByRole("button", { name: "[ ☰ list ]" });
+  await expect(async () => {
+    await list.click();
+    await expect(list).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+  }).toPass();
+}
+
 test.describe("feed", () => {
   test("lists the posts newest first, each with its permalink", async ({ page }) => {
     await page.goto("/feed");
 
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("feed");
+    await expect(page.getByRole("heading", { level: 1, name: /feed/ })).toBeVisible();
+    await showList(page);
     const posts = page.locator("main article");
     await expect(posts).toHaveCount(3);
     await expect(posts.nth(0)).toContainText("harbour dump, three frames");
@@ -28,6 +37,7 @@ test.describe("feed", () => {
 
   test("a carousel counts its images and steps through them", async ({ page }) => {
     await page.goto("/feed");
+    await showList(page);
     const carousel = page.locator("main article").first();
 
     await expect(carousel.getByText("[ 01 / 03 ]")).toBeVisible();
@@ -96,8 +106,10 @@ test.describe("feed", () => {
 
   test("a carousel shows a dot for each image and slides when dragged", async ({ page }) => {
     await page.goto("/feed");
+    await showList(page);
     const carousel = page.locator("[data-feed-frame]").first();
     await expect(carousel).toBeVisible();
+    await carousel.evaluate((element) => element.scrollIntoView({ block: "center" }));
     const dots = page.locator("[data-feed-dots]").first().locator("> *");
     await expect(dots).toHaveCount(3);
     await expect(dots.nth(0)).toHaveAttribute("data-active", "true");
@@ -111,6 +123,29 @@ test.describe("feed", () => {
 
     await expect(dots.nth(1)).toHaveAttribute("data-active", "true");
     await expect(page).toHaveURL(/\/feed$/);
+  });
+
+  test("a desktop starts as a grid of tiles and switches to whole posts", async ({ page }) => {
+    await page.goto("/feed");
+    const grid = page.locator("[data-feed-view]");
+    const caption = page.getByText("harbour dump, three frames").last();
+
+    await expect(grid).toHaveAttribute("data-feed-view", "grid");
+    await expect(page.getByRole("button", { name: "Like" })).toHaveCount(0);
+    await expect(caption).toHaveCSS("opacity", "0");
+    await page.locator("main article").first().hover();
+    await expect(caption).toHaveCSS("opacity", "1");
+
+    await showList(page);
+    const like = page.getByRole("button", { name: "Like" }).first();
+    await like.click();
+    await expect(like).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("the posts are signed with the author from the config story", async ({ page }) => {
+    await page.goto("/feed/20260102-120000-bbbb");
+
+    await expect(page.locator("main article").getByText("httpjpg").first()).toBeVisible();
   });
 
   test("a post has its own page", async ({ page }) => {
@@ -127,8 +162,12 @@ test.describe("feed", () => {
 
     await expect(panel).toBeVisible();
     await expect(panel).toHaveCSS("position", "fixed");
-    const box = await panel.boundingBox();
+    const box = await panel.locator("[data-feed-panel-stage]").boundingBox();
     expect(Math.abs((box?.width ?? 0) - (box?.height ?? 1))).toBeLessThan(2);
+    await expect(panel.locator("[data-feed-panel-dots] > *")).toHaveCount(3);
+    await expect(panel.locator("[data-feed-panel-caption]")).toHaveText(
+      "harbour dump, three frames",
+    );
 
     await panel.getByRole("link", { name: "Open the feed" }).click();
     await expect(page).toHaveURL(/\/feed$/);
@@ -184,8 +223,35 @@ test.describe("feed", () => {
     });
     const session = await request.get("/api/feed/session", { failOnStatusCode: false });
 
-    for (const res of [publish, sign, session]) {
+    const edit = await request.patch("/api/feed/posts/20260102-120000-bbbb", {
+      data: { images: [] },
+      failOnStatusCode: false,
+    });
+    const remove = await request.delete("/api/feed/posts/20260102-120000-bbbb", {
+      headers: { cookie: "httpjpg_feed_session=not-a-session; httpjpg_feed_editor=1" },
+      failOnStatusCode: false,
+    });
+    const signIn = await request.post("/api/feed/session", {
+      data: { token: "definitely-not-the-publish-token-0123456789" },
+      failOnStatusCode: false,
+    });
+
+    for (const res of [publish, sign, session, edit, remove, signIn]) {
       expect([401, 503]).toContain(res.status());
     }
+    expect(signIn.headers()["set-cookie"] ?? "").not.toContain("httpjpg_feed_session");
+  });
+
+  test("the upload page asks a visitor for the token and stays out of search", async ({ page }) => {
+    const response = await page.goto("/feed/upload");
+
+    expect(response?.status()).toBe(200);
+    await expect(page.getByRole("heading", { level: 1, name: "new post" })).toBeVisible();
+    await expect(page.getByLabel("publish token")).toBeVisible();
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+    await expect(page.getByRole("button", { name: "[ publish ]" })).toHaveCount(0);
+
+    await page.goto("/feed");
+    await expect(page.getByRole("link", { name: "[ + new post ]" })).toHaveCount(0);
   });
 });

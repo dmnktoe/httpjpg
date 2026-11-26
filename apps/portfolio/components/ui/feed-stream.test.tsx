@@ -30,7 +30,7 @@ function entry(id: string): FeedPostEntry {
 }
 
 function feed(ids: string[], page = 1, hasMore = false): FeedPage {
-  return { posts: ids.map(entry), page, hasMore };
+  return { posts: ids.map(entry), page, hasMore, total: ids.length };
 }
 
 function ok(body: FeedPage): Response {
@@ -40,6 +40,11 @@ function ok(body: FeedPage): Response {
 beforeEach(() => {
   fetchMock.mockReset();
   vi.stubGlobal("fetch", fetchMock);
+  vi.stubGlobal("matchMedia", () => ({
+    matches: false,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+  }));
 });
 
 describe("FeedStream", () => {
@@ -48,6 +53,7 @@ describe("FeedStream", () => {
 
     expect(screen.getByText(/nothing here yet/)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /load more/ })).toBeNull();
+    expect(screen.queryByRole("group", { name: "Feed layout" })).toBeNull();
   });
 
   it("renders the server's posts with their permalinks", () => {
@@ -56,6 +62,42 @@ describe("FeedStream", () => {
     expect(screen.getByAltText("photo a")).toBeInTheDocument();
     expect(screen.getByText("caption b")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /load more/ })).toBeNull();
+  });
+
+  it("lets the viewport pick the view until one is chosen", () => {
+    const { container } = render(<FeedStream initial={feed(["a"])} />);
+    const grid = () => container.querySelector("[data-feed-view]");
+
+    expect(grid()).toHaveAttribute("data-feed-view", "list");
+
+    fireEvent.click(screen.getByRole("button", { name: /grid/ }));
+    expect(grid()).toHaveAttribute("data-feed-view", "grid");
+    expect(screen.getByRole("button", { name: /grid/ })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("starts as a grid on a wide viewport", () => {
+    vi.stubGlobal("matchMedia", () => ({
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+    const { container } = render(<FeedStream initial={feed(["a"])} />);
+
+    expect(container.querySelector("[data-feed-view]")).toHaveAttribute("data-feed-view", "grid");
+  });
+
+  it("offers a new post only to a browser that signed in to the composer", () => {
+    const { unmount } = render(<FeedStream initial={feed(["a"])} />);
+    expect(screen.queryByRole("link", { name: "[ + new post ]" })).toBeNull();
+    unmount();
+
+    document.cookie = "httpjpg_feed_editor=1; path=/";
+    render(<FeedStream initial={feed([])} />);
+    expect(screen.getByRole("link", { name: "[ + new post ]" })).toHaveAttribute(
+      "href",
+      "/feed/upload",
+    );
+    document.cookie = "httpjpg_feed_editor=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
   });
 
   it("appends the next page and skips posts it already shows", async () => {

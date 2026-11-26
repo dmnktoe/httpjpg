@@ -134,6 +134,14 @@ export const SITE_COOKIES: readonly SiteCookieInfo[] = [
     duration: "until cleared",
   },
   {
+    name: "httpjpg_feed_session, httpjpg_feed_editor",
+    provider: "httpjpg (first-party)",
+    purpose:
+      "Only set when the site's author signs in to write a feed post: keeps that session. Visitors never get them",
+    category: "preferences",
+    duration: "30 days",
+  },
+  {
     name: "VISITOR_INFO1_LIVE",
     provider: "YouTube",
     purpose: "Estimates bandwidth and may track the visitor on YouTube embeds",

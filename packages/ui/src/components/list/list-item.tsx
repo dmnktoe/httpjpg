@@ -16,8 +16,6 @@ const recipe = cva({
   base: {
     margin: 0,
     padding: 0,
-    lineHeight: 1.75,
-    "& p": { marginBottom: "0" },
   },
   variants: {
     size: {

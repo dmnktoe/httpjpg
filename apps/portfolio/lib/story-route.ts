@@ -1,6 +1,6 @@
 import { splitLocaleSlug } from "./locale";
 
-export const APP_PAGE_ROUTES = ["feed", "cookie-policy"] as const;
+export const APP_PAGE_ROUTES = ["feed", "feed/upload", "cookie-policy"] as const;
 
 export const REWRITTEN_ROUTES = ["draft", "exit-draft"] as const;
 
@@ -18,7 +18,7 @@ export function storySlugForPath(pathname: string): string | null {
   if (first === "api" && segments.length > 1) {
     return null;
   }
-  if (segments.length === 1 && isOwnRoute(first)) {
+  if (isOwnRoute(segments.join("/"))) {
     return null;
   }
   let decoded: string[];
@@ -30,9 +30,9 @@ export function storySlugForPath(pathname: string): string | null {
   return splitLocaleSlug(decoded).slug || null;
 }
 
-function isOwnRoute(segment: string): boolean {
+function isOwnRoute(path: string): boolean {
   return (
-    (APP_PAGE_ROUTES as readonly string[]).includes(segment) ||
-    (REWRITTEN_ROUTES as readonly string[]).includes(segment)
+    (APP_PAGE_ROUTES as readonly string[]).includes(path) ||
+    (REWRITTEN_ROUTES as readonly string[]).includes(path)
   );
 }

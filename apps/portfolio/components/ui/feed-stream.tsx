@@ -1,7 +1,15 @@
 "use client";
 
 import { SbPost } from "@httpjpg/storyblok-ui";
-import { Box, FeedGrid, Paragraph } from "@httpjpg/ui";
+import {
+  Box,
+  FeedGrid,
+  FeedViewToggle,
+  Link,
+  Paragraph,
+  useFeedEditor,
+  useMediaQuery,
+} from "@httpjpg/ui";
 import { useState } from "react";
 import { css } from "styled-system/css";
 
@@ -33,6 +41,10 @@ export function FeedStream({ initial }: FeedStreamProps) {
   const [page, setPage] = useState(initial.page);
   const [hasMore, setHasMore] = useState(initial.hasMore);
   const [status, setStatus] = useState<LoadStatus>("idle");
+  const [chosenView, setChosenView] = useState<"grid" | "list" | null>(null);
+  const isWide = useMediaQuery(WIDE_QUERY);
+  const isEditor = useFeedEditor();
+  const view = chosenView ?? (isWide === null ? "auto" : isWide ? "grid" : "list");
 
   const handleLoadMore = async () => {
     setStatus("loading");
@@ -54,17 +66,38 @@ export function FeedStream({ initial }: FeedStreamProps) {
     }
   };
 
+  const composeLink = isEditor ? (
+    <Box
+      css={{
+        display: "flex",
+        justifyContent: "center",
+        mb: "6",
+        fontFamily: "mono",
+        fontSize: "sm",
+      }}
+    >
+      <Link href="/feed/upload" css={{ textDecoration: "none" }}>
+        [ + new post ]
+      </Link>
+    </Box>
+  ) : null;
+
   if (!posts.length) {
     return (
-      <Paragraph size="sm" color="muted" css={{ fontFamily: "mono" }}>
-        nothing here yet ･ﾟ⋆
-      </Paragraph>
+      <>
+        {composeLink}
+        <Paragraph size="sm" color="muted" css={{ fontFamily: "mono" }}>
+          nothing here yet ･ﾟ⋆
+        </Paragraph>
+      </>
     );
   }
 
   return (
     <>
-      <FeedGrid>
+      <FeedViewToggle view={view} onViewChange={setChosenView} css={{ mb: "6" }} />
+      {composeLink}
+      <FeedGrid view={view}>
         {posts.map((post) => (
           <SbPost key={post.id} blok={post.content} href={post.href} />
         ))}
@@ -97,6 +130,8 @@ export function FeedStream({ initial }: FeedStreamProps) {
     </>
   );
 }
+
+const WIDE_QUERY = "(min-width: 48rem)";
 
 function appendNew(current: FeedPostEntry[], next: FeedPostEntry[]): FeedPostEntry[] {
   const seen = new Set(current.map((post) => post.id));

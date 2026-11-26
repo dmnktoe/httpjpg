@@ -21,6 +21,8 @@ export interface FeedPostImage {
   alt: string;
   /** `contain` shows the whole image with bars in the page colour. @default "cover" */
   fit?: "cover" | "contain";
+  /** `src` is a video file: it plays muted and looping in place, with controls where no link wraps it. */
+  video?: boolean;
 }
 
 interface FeedPostFrameProps {
@@ -126,6 +128,12 @@ export function FeedPostFrame({
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.pointerType !== "mouse" || event.button !== 0) {
+      return;
+    }
+    if (event.currentTarget.scrollWidth <= event.currentTarget.clientWidth) {
+      return;
+    }
+    if (event.target instanceof Element && event.target.closest("video")) {
       return;
     }
     dragRef.current = {
@@ -234,7 +242,39 @@ export function FeedPostFrame({
           }}
         >
           {images.map((image, index) => {
-            const img = (
+            const fitClass = FIT_CLASS[image.fit === "contain" ? "contain" : "cover"];
+            if (image.video && !imageHref) {
+              return (
+                <Box
+                  key={image.id}
+                  data-feed-slide=""
+                  css={{ flex: "0 0 100%", h: "full", scrollSnapAlign: "start" }}
+                >
+                  <video
+                    src={image.src}
+                    aria-label={image.alt || undefined}
+                    controls
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    className={fitClass}
+                  />
+                </Box>
+              );
+            }
+            const img = image.video ? (
+              <video
+                src={image.src}
+                aria-label={image.alt || undefined}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                className={fitClass}
+              />
+            ) : (
               <img
                 src={image.src}
                 srcSet={image.srcSet || undefined}
@@ -243,7 +283,7 @@ export function FeedPostFrame({
                 loading="lazy"
                 decoding="async"
                 draggable={false}
-                className={FIT_CLASS[image.fit === "contain" ? "contain" : "cover"]}
+                className={fitClass}
               />
             );
             if (imageHref) {
@@ -253,6 +293,7 @@ export function FeedPostFrame({
                   href={imageHref}
                   aria-label={image.alt ? `Open the post: ${image.alt}` : "Open the post"}
                   data-cursor="open post"
+                  data-feed-slide=""
                   draggable={false}
                   css={{ ...SLIDE_CSS, cursor: "pointer" }}
                 >
@@ -268,6 +309,7 @@ export function FeedPostFrame({
                   key={image.id}
                   aria-label={image.alt ? `Open ${image.alt} at full size` : "Open at full size"}
                   data-cursor="zoom"
+                  data-feed-slide=""
                   onClick={() => onImageClick(index)}
                   css={{ ...SLIDE_CSS, cursor: "zoom-in" }}
                 >
@@ -276,7 +318,11 @@ export function FeedPostFrame({
               );
             }
             return (
-              <Box key={image.id} css={{ flex: "0 0 100%", h: "full", scrollSnapAlign: "start" }}>
+              <Box
+                key={image.id}
+                data-feed-slide=""
+                css={{ flex: "0 0 100%", h: "full", scrollSnapAlign: "start" }}
+              >
                 {img}
               </Box>
             );
@@ -287,6 +333,7 @@ export function FeedPostFrame({
             <button
               type="button"
               aria-label="Previous image"
+              data-feed-nav=""
               className={NAV_CLASS}
               style={{ left: 0 }}
               onClick={handlePrevious}
@@ -296,6 +343,7 @@ export function FeedPostFrame({
             <button
               type="button"
               aria-label="Next image"
+              data-feed-nav=""
               className={NAV_CLASS}
               style={{ right: 0 }}
               onClick={handleNext}
@@ -304,6 +352,7 @@ export function FeedPostFrame({
             </button>
             <Box
               aria-hidden="true"
+              data-feed-counter=""
               css={{
                 position: "absolute",
                 top: "2",

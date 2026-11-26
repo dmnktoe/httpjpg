@@ -16,7 +16,9 @@ const MAX_FILENAME_LENGTH = 120;
 const MAX_DIMENSION = 20_000;
 const MAX_TEXT_LENGTH = 200;
 const CLIENT_ID = /^[A-Za-z0-9-]{8,64}$/;
-const UPLOAD_EXTENSIONS = /\.(jpe?g|png|webp|gif|avif|mp3|m4a|wav)$/i;
+const UPLOAD_EXTENSIONS = /\.(jpe?g|png|webp|gif|avif|mp3|m4a|wav|mp4|m4v|mov|webm)$/i;
+const BLOK_UID = /^[A-Za-z0-9-]{1,64}$/;
+const POST_SLUG = /^[a-z0-9][a-z0-9-]{0,79}$/;
 
 export type Parsed<T> = { ok: true; value: T } | { ok: false; message: string };
 
@@ -55,7 +57,9 @@ export function parseAssetRequest(body: unknown): Parsed<AssetRequest> {
   }
   const filename = typeof body.filename === "string" ? sanitizeFilename(body.filename) : "";
   if (!filename || !UPLOAD_EXTENSIONS.test(filename)) {
-    return fail("filename must end in jpg, png, webp, gif, avif, mp3, m4a or wav");
+    return fail(
+      "filename must end in jpg, png, webp, gif, avif, mp3, m4a, wav, mp4, m4v, mov or webm",
+    );
   }
   if (body.width === undefined && body.height === undefined) {
     return { ok: true, value: { filename } };
@@ -136,6 +140,171 @@ export function parsePublishRequest(body: unknown): Parsed<PublishRequest> {
   };
 }
 
+export interface EditImage {
+  uid?: string;
+  assetId?: number;
+  fit: ImageFit;
+  alt?: string;
+}
+
+export interface EditRequest {
+  caption: string;
+  format?: PostFormat;
+  images?: EditImage[];
+  music?: PublishMusic | null;
+  date?: Date;
+}
+
+export function isPostSlug(value: string): boolean {
+  return POST_SLUG.test(value);
+}
+
+export function parseEditRequest(body: unknown): Parsed<EditRequest> {
+  if (!isRecord(body)) {
+    return fail("Expected a JSON object");
+  }
+  const caption = body.caption === undefined ? "" : body.caption;
+  if (typeof caption !== "string" || caption.length > MAX_CAPTION_LENGTH) {
+    return fail(`caption must be a string of at most ${MAX_CAPTION_LENGTH} characters`);
+  }
+  if (body.format !== undefined && !isOneOf(POST_FORMATS, body.format)) {
+    return fail(`format must be one of ${POST_FORMATS.join(", ")}`);
+  }
+  let images: EditImage[] | undefined;
+  if (body.images !== undefined) {
+    if (!Array.isArray(body.images) || body.images.length > MAX_IMAGES) {
+      return fail(`images must be an array of at most ${MAX_IMAGES} entries`);
+    }
+    images = [];
+    for (const raw of body.images) {
+      const image = parseEditImage(raw);
+      if (!image.ok) {
+        return image;
+      }
+      images.push(image.value);
+    }
+  }
+
+  let music: PublishMusic | null | undefined;
+  if (body.music === null) {
+    music = null;
+  } else if (body.music !== undefined) {
+    const parsed = parseMusic(body.music);
+    if (!parsed.ok) {
+      return parsed;
+    }
+    music = parsed.value;
+  }
+
+  let date: Date | undefined;
+  if (body.date !== undefined) {
+    date = typeof body.date === "string" ? new Date(body.date) : undefined;
+    if (!date || Number.isNaN(date.getTime())) {
+      return fail("date must be an ISO 8601 string");
+    }
+  }
+
+  return {
+    ok: true,
+    value: {
+      caption: caption.trim(),
+      ...(body.format === undefined ? {} : { format: body.format as PostFormat }),
+      ...(images ? { images } : {}),
+      ...(music === undefined ? {} : { music }),
+      ...(date ? { date } : {}),
+    },
+  };
+}
+
+export function editAssetIds(request: EditRequest): number[] {
+  const ids = (request.images ?? []).flatMap((image) => (image.assetId ? [image.assetId] : []));
+  if (request.music?.assetId) {
+    ids.push(request.music.assetId);
+  }
+  if (request.music?.artworkAssetId) {
+    ids.push(request.music.artworkAssetId);
+  }
+  return [...new Set(ids)];
+}
+
+export interface EditedPost {
+  content: Record<string, unknown>;
+  removed: PostAsset[];
+}
+
+export interface PostAsset {
+  id: number;
+  filename: string;
+}
+
+export function buildEditedContent(
+  existing: Record<string, unknown>,
+  request: EditRequest,
+  assets: ReadonlyMap<number, string>,
+): Parsed<EditedPost> {
+  const current = new Map(postImageBloks(existing).map((blok) => [String(blok._uid), blok]));
+  const images: unknown[] = request.images ? [] : postImageBloks(existing);
+  for (const image of request.images ?? []) {
+    if (image.uid) {
+      const blok = current.get(image.uid);
+      if (!blok) {
+        return fail(`The post has no image ${image.uid}`);
+      }
+      current.delete(image.uid);
+      const alt = image.alt ?? "";
+      const file = isRecord(blok.image) ? { ...blok.image, alt } : blok.image;
+      images.push({ ...blok, image: file, alt, fit: image.fit });
+    } else {
+      images.push(imageBlok(image.assetId as number, assets, image.fit, image.alt));
+    }
+  }
+  if (!request.images) {
+    current.clear();
+  }
+
+  const keptMusic = Array.isArray(existing.music) ? existing.music : [];
+  const music =
+    request.music === undefined
+      ? keptMusic
+      : request.music === null
+        ? []
+        : [musicBlok(request.music, assets)];
+  if (!images.length && !music.length) {
+    return fail("A post needs at least one image or a music entry");
+  }
+
+  const kept = new Set(
+    images.flatMap((blok) => (isRecord(blok) ? blokAsset(blok) : [])).map((asset) => asset.id),
+  );
+  return {
+    ok: true,
+    value: {
+      content: {
+        ...existing,
+        caption: request.caption,
+        ...(request.format ? { format: request.format } : {}),
+        ...(request.date ? { date: storyblokDate(request.date) } : {}),
+        images,
+        music,
+      },
+      removed: [...current.values()].flatMap(blokAsset).filter((asset) => !kept.has(asset.id)),
+    },
+  };
+}
+
+export function postAssets(content: Record<string, unknown>): PostAsset[] {
+  return postImageBloks(content).flatMap(blokAsset);
+}
+
+export function editedPostName(content: Record<string, unknown>, fallback: string): string {
+  const firstLine = typeof content.caption === "string" ? content.caption.split("\n")[0] : "";
+  const trimmed = firstLine?.trim() ?? "";
+  if (trimmed) {
+    return Array.from(trimmed).slice(0, 60).join("");
+  }
+  return typeof content.date === "string" && content.date ? `Post ${content.date}` : fallback;
+}
+
 export function publishAssetIds(request: PublishRequest): number[] {
   const ids = request.images.map((image) => image.assetId);
   if (request.music?.assetId) {
@@ -158,31 +327,82 @@ export function buildPostContent(
     caption: request.caption,
     date: storyblokDate(date),
     format: request.format,
-    images: request.images.map((image) => ({
-      _uid: randomUUID(),
-      component: "post_image",
-      image: {
-        id: image.assetId,
-        filename: assets.get(image.assetId),
-        fieldtype: "asset",
-        alt: image.alt ?? "",
-      },
-      alt: image.alt ?? "",
-      fit: image.fit,
-    })),
-    music: music
-      ? [
-          {
-            _uid: randomUUID(),
-            component: "music_player",
-            source: music.source,
-            src: music.assetId ? assets.get(music.assetId) : music.src,
-            title: music.title ?? "",
-            artist: music.artist ?? "",
-            artwork: music.artworkAssetId ? assets.get(music.artworkAssetId) : "",
-          },
-        ]
-      : [],
+    images: request.images.map((image) => imageBlok(image.assetId, assets, image.fit, image.alt)),
+    music: music ? [musicBlok(music, assets)] : [],
+  };
+}
+
+function imageBlok(
+  assetId: number,
+  assets: ReadonlyMap<number, string>,
+  fit: ImageFit,
+  alt?: string,
+): Record<string, unknown> {
+  return {
+    _uid: randomUUID(),
+    component: "post_image",
+    image: { id: assetId, filename: assets.get(assetId), fieldtype: "asset", alt: alt ?? "" },
+    alt: alt ?? "",
+    fit,
+  };
+}
+
+function musicBlok(
+  music: PublishMusic,
+  assets: ReadonlyMap<number, string>,
+): Record<string, unknown> {
+  return {
+    _uid: randomUUID(),
+    component: "music_player",
+    source: music.source,
+    src: music.assetId ? assets.get(music.assetId) : music.src,
+    title: music.title ?? "",
+    artist: music.artist ?? "",
+    artwork: music.artworkAssetId ? assets.get(music.artworkAssetId) : "",
+  };
+}
+
+function postImageBloks(content: Record<string, unknown>): Record<string, unknown>[] {
+  return Array.isArray(content.images) ? content.images.filter(isRecord) : [];
+}
+
+function blokAsset(blok: Record<string, unknown>): PostAsset[] {
+  const image = blok.image;
+  return isRecord(image) && isAssetId(image.id) && typeof image.filename === "string"
+    ? [{ id: image.id, filename: image.filename }]
+    : [];
+}
+
+function parseEditImage(raw: unknown): Parsed<EditImage> {
+  if (!isRecord(raw)) {
+    return fail("Each image is an object");
+  }
+  const hasUid = raw.uid !== undefined;
+  const hasAsset = raw.assetId !== undefined;
+  if (hasUid === hasAsset) {
+    return fail("Each image names either the uid it has or the assetId of a signed upload");
+  }
+  if (hasUid && (typeof raw.uid !== "string" || !BLOK_UID.test(raw.uid))) {
+    return fail("uid must be the _uid of an image of the post");
+  }
+  if (hasAsset && !isAssetId(raw.assetId)) {
+    return fail("assetId must be the id of a signed upload");
+  }
+  const fit = raw.fit === undefined ? "cover" : raw.fit;
+  if (!isOneOf(IMAGE_FITS, fit)) {
+    return fail(`fit must be one of ${IMAGE_FITS.join(", ")}`);
+  }
+  const alt = optionalText(raw.alt);
+  if (alt === null) {
+    return fail(`alt must be a string of at most ${MAX_TEXT_LENGTH} characters`);
+  }
+  return {
+    ok: true,
+    value: {
+      ...(hasUid ? { uid: raw.uid as string } : { assetId: raw.assetId as number }),
+      fit,
+      ...(alt ? { alt } : {}),
+    },
   };
 }
 

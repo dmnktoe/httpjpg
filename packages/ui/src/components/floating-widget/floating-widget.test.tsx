@@ -20,8 +20,8 @@ function drag(target: HTMLElement, from: [number, number], to: [number, number])
   fireEvent.pointerUp(target, { pointerId: 1, clientX: to[0], clientY: to[1] });
 }
 
-function clickGoesThrough(): boolean {
-  return fireEvent.click(screen.getByRole("link", { name: "inside" }));
+function clickGoesThrough(detail = 1): boolean {
+  return fireEvent.click(screen.getByRole("link", { name: "inside" }), { detail });
 }
 
 function renderWidget(props: { floatingQuery?: string } = {}) {
@@ -72,14 +72,25 @@ describe("FloatingWidget", () => {
     expect(clickGoesThrough()).toBe(true);
   });
 
-  it("forgets a drag that no click followed", () => {
+  it("forgets a drag that no click followed once the next press starts", () => {
+    renderWidget();
+
+    drag(widget(), [50, 50], [120, 90]);
+    fireEvent.pointerDown(widget(), { pointerId: 1, button: 0, clientX: 130, clientY: 90 });
+    fireEvent.pointerUp(widget(), { pointerId: 1, clientX: 130, clientY: 90 });
+
+    expect(clickGoesThrough()).toBe(true);
+  });
+
+  it("swallows the click that ends a drag however late it arrives, but never a key press", () => {
     vi.useFakeTimers();
     renderWidget();
 
     drag(widget(), [50, 50], [120, 90]);
     vi.runAllTimers();
 
-    expect(clickGoesThrough()).toBe(true);
+    expect(clickGoesThrough(0)).toBe(true);
+    expect(clickGoesThrough()).toBe(false);
     vi.useRealTimers();
   });
 
@@ -113,16 +124,13 @@ describe("FloatingWidget", () => {
   });
 
   it("returns where a cancelled drag left it without swallowing the next click", () => {
-    vi.useFakeTimers();
     renderWidget();
 
     fireEvent.pointerDown(widget(), { pointerId: 1, button: 0, clientX: 50, clientY: 50 });
     fireEvent.pointerMove(widget(), { pointerId: 1, buttons: 1, clientX: 120, clientY: 90 });
     fireEvent.pointerCancel(widget(), { pointerId: 1 });
-    vi.runAllTimers();
 
     expect(clickGoesThrough()).toBe(true);
-    vi.useRealTimers();
   });
 
   it("does not drag below its floating query", () => {

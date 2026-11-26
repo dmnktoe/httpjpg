@@ -59,7 +59,10 @@ export function CustomCursor({
       }
     };
 
-    const moveCursor = (e: MouseEvent) => {
+    const moveCursor = (e: PointerEvent) => {
+      if (e.pointerType === "touch") {
+        return;
+      }
       lastX = e.clientX;
       lastY = e.clientY;
       if (rafId === null) {
@@ -126,7 +129,7 @@ export function CustomCursor({
       }
     };
 
-    window.addEventListener("mousemove", moveCursor, { passive: true });
+    window.addEventListener("pointermove", moveCursor, { passive: true });
     window.addEventListener("mouseover", handleMouseOver, { passive: true });
     window.addEventListener("mouseout", handleMouseOut);
 
@@ -134,7 +137,7 @@ export function CustomCursor({
       if (rafId !== null) {
         cancelAnimationFrame(rafId);
       }
-      window.removeEventListener("mousemove", moveCursor);
+      window.removeEventListener("pointermove", moveCursor);
       window.removeEventListener("mouseover", handleMouseOver);
       window.removeEventListener("mouseout", handleMouseOut);
     };

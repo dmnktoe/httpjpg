@@ -27,7 +27,7 @@ function drag(target: HTMLElement, from: [number, number], to: [number, number])
 }
 
 function clickGoesThrough(): boolean {
-  return fireEvent.click(screen.getByRole("link", { name: "Open the feed" }));
+  return fireEvent.click(screen.getByRole("link", { name: "Open the feed" }), { detail: 1 });
 }
 
 beforeEach(() => {

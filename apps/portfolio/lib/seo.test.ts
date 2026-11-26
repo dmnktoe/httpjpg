@@ -140,6 +140,21 @@ describe("toNextMetadata", () => {
     expect(md.twitter?.title).toBe("About | httpjpg");
   });
 
+  it("does not repeat the site name when the page is called the same", () => {
+    const md = toNextMetadata({ title: "httpjpg.com", description: "D" }, "/home", "㋡httpjpg.com");
+
+    expect(md.title).toEqual({ absolute: "httpjpg.com" });
+    expect(md.openGraph?.title).toBe("httpjpg.com");
+    expect(md.twitter?.title).toBe("httpjpg.com");
+  });
+
+  it("keeps the site name beside a title that only contains it", () => {
+    const md = toNextMetadata({ title: "httpjpg.com feed", description: "D" }, "/x", "httpjpg.com");
+
+    expect(md.title).toBe("httpjpg.com feed");
+    expect(toNextMetadata({ title: "", description: "D" }, "/x", "").title).toBe("");
+  });
+
   it("populates the OG url from the passed path", () => {
     const md = toNextMetadata({ title: "T", description: "D" }, "/some/path", "httpjpg");
     expect(md.openGraph?.url).toBe("/some/path");

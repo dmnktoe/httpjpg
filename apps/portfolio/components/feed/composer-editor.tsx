@@ -291,7 +291,7 @@ export function ComposerEditor({ post }: ComposerEditorProps) {
         />
         <p className={hintClass}>
           drop files anywhere · drag a thumbnail to reorder · pictures lose their camera and
-          location data on the way up, videos go up as they are
+          location data on the way up; videos go up as they are, with any location the camera wrote
         </p>
       </Box>
 

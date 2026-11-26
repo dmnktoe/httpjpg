@@ -3,7 +3,7 @@
 import { Link, useFeedEditor } from "@httpjpg/ui";
 import { usePathname } from "next/navigation";
 
-const COMPOSE_PATH = "/feed/compose";
+const UPLOAD_PATH = "/feed/upload";
 
 export function PostEditLink() {
   const isEditor = useFeedEditor();
@@ -15,7 +15,7 @@ export function PostEditLink() {
 
   return (
     <Link
-      href={`${COMPOSE_PATH}?post=${encodeURIComponent(slug)}`}
+      href={`${UPLOAD_PATH}?post=${encodeURIComponent(slug)}`}
       css={{ fontFamily: "mono", fontSize: "sm", textDecoration: "none" }}
     >
       [ edit ]

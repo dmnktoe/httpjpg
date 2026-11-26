@@ -5,13 +5,13 @@ vi.mock("@/components/feed/feed-composer", () => ({
   FeedComposer: ({ slug }: { slug?: string }) => <div data-testid="composer">{slug ?? "new"}</div>,
 }));
 
-import ComposePage, { instant, metadata } from "./page";
+import UploadPage, { instant, metadata } from "./page";
 
 async function renderPage(post?: string | string[]) {
-  render(await ComposePage({ searchParams: Promise.resolve(post === undefined ? {} : { post }) }));
+  render(await UploadPage({ searchParams: Promise.resolve(post === undefined ? {} : { post }) }));
 }
 
-describe("ComposePage", () => {
+describe("UploadPage", () => {
   it("writes a new post by default", async () => {
     await renderPage();
 

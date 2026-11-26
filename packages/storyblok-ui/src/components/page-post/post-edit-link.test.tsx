@@ -28,7 +28,7 @@ describe("PostEditLink", () => {
 
     expect(screen.getByRole("link", { name: "[ edit ]" })).toHaveAttribute(
       "href",
-      "/feed/compose?post=20261125-153012-a3f9",
+      "/feed/upload?post=20261125-153012-a3f9",
     );
   });
 

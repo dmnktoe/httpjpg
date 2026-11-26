@@ -1,6 +1,6 @@
 import { splitLocaleSlug } from "./locale";
 
-export const APP_PAGE_ROUTES = ["feed", "feed/compose", "cookie-policy"] as const;
+export const APP_PAGE_ROUTES = ["feed", "feed/upload", "cookie-policy"] as const;
 
 export const REWRITTEN_ROUTES = ["draft", "exit-draft"] as const;
 

@@ -8,15 +8,15 @@ import { isPostSlug } from "@/lib/feed/publish";
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "compose",
+  title: "upload",
   robots: { index: false, follow: false },
 };
 
-interface ComposePageProps {
+interface UploadPageProps {
   searchParams: Promise<{ post?: string | string[] }>;
 }
 
-export default async function ComposePage({ searchParams }: ComposePageProps) {
+export default async function UploadPage({ searchParams }: UploadPageProps) {
   const { post } = await searchParams;
   const slug = typeof post === "string" && isPostSlug(post) ? post : undefined;
 

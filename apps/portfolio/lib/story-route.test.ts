@@ -23,7 +23,7 @@ describe("storySlugForPath", () => {
     ["the root", "/"],
     ["a route of its own", "/feed"],
     ["another route of its own", "/cookie-policy/"],
-    ["a nested route of its own", "/feed/compose"],
+    ["a nested route of its own", "/feed/upload"],
     ["an API path", "/api/feed/posts"],
     ["the draft entry", "/draft"],
     ["the draft exit", "/exit-draft"],

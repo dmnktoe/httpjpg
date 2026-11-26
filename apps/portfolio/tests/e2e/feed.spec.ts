@@ -242,8 +242,8 @@ test.describe("feed", () => {
     expect(signIn.headers()["set-cookie"] ?? "").not.toContain("httpjpg_feed_session");
   });
 
-  test("the composer asks a visitor for the token and stays out of search", async ({ page }) => {
-    const response = await page.goto("/feed/compose");
+  test("the upload page asks a visitor for the token and stays out of search", async ({ page }) => {
+    const response = await page.goto("/feed/upload");
 
     expect(response?.status()).toBe(200);
     await expect(page.getByRole("heading", { level: 1, name: "new post" })).toBeVisible();

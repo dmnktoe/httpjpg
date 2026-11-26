@@ -76,7 +76,7 @@ export function FeedStream({ initial }: FeedStreamProps) {
         fontSize: "sm",
       }}
     >
-      <Link href="/feed/compose" css={{ textDecoration: "none" }}>
+      <Link href="/feed/upload" css={{ textDecoration: "none" }}>
         [ + new post ]
       </Link>
     </Box>

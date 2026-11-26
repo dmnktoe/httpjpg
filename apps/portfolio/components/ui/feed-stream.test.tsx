@@ -95,7 +95,7 @@ describe("FeedStream", () => {
     render(<FeedStream initial={feed([])} />);
     expect(screen.getByRole("link", { name: "[ + new post ]" })).toHaveAttribute(
       "href",
-      "/feed/compose",
+      "/feed/upload",
     );
     document.cookie = "httpjpg_feed_editor=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
   });

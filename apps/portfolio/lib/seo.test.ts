@@ -153,6 +153,9 @@ describe("toNextMetadata", () => {
 
     expect(md.title).toBe("httpjpg.com feed");
     expect(toNextMetadata({ title: "", description: "D" }, "/x", "").title).toBe("");
+    expect(
+      toNextMetadata({ title: undefined as unknown as string, description: "D" }, "/x", "a").title,
+    ).toBeUndefined();
   });
 
   it("populates the OG url from the passed path", () => {

@@ -84,7 +84,8 @@ export function toNextMetadata(
   };
 }
 
-function sameName(title: string, siteName: string): boolean {
-  const plain = (value: string) => value.replace(/[^\p{L}\p{N}]+/gu, "").toLowerCase();
+function sameName(title: string | undefined, siteName: string): boolean {
+  const plain = (value: string | undefined) =>
+    (value ?? "").replace(/[^\p{L}\p{N}]+/gu, "").toLowerCase();
   return plain(title) !== "" && plain(title) === plain(siteName);
 }

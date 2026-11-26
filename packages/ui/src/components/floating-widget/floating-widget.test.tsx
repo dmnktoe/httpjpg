@@ -16,7 +16,7 @@ function widget(): HTMLElement {
 
 function drag(target: HTMLElement, from: [number, number], to: [number, number]) {
   fireEvent.pointerDown(target, { pointerId: 1, button: 0, clientX: from[0], clientY: from[1] });
-  fireEvent.pointerMove(target, { pointerId: 1, clientX: to[0], clientY: to[1] });
+  fireEvent.pointerMove(target, { pointerId: 1, buttons: 1, clientX: to[0], clientY: to[1] });
   fireEvent.pointerUp(target, { pointerId: 1, clientX: to[0], clientY: to[1] });
 }
 
@@ -83,6 +83,17 @@ describe("FloatingWidget", () => {
     vi.useRealTimers();
   });
 
+  it("lets go when the button came up outside, so hovering later moves nothing", () => {
+    renderWidget();
+
+    fireEvent.pointerDown(widget(), { pointerId: 1, button: 0, clientX: 50, clientY: 50 });
+    fireEvent.pointerMove(widget(), { pointerId: 1, buttons: 0, clientX: 140, clientY: 90 });
+    fireEvent.pointerMove(widget(), { pointerId: 1, buttons: 0, clientX: 200, clientY: 120 });
+
+    expect(widget().style.left).toBe("");
+    expect(clickGoesThrough()).toBe(true);
+  });
+
   it("captures the pointer only once the press becomes a drag", () => {
     renderWidget();
     const setPointerCapture = vi.fn();
@@ -93,11 +104,11 @@ describe("FloatingWidget", () => {
     expect(releasePointerCapture).toHaveBeenCalledWith(1);
     setPointerCapture.mockClear();
 
-    fireEvent.pointerMove(widget(), { pointerId: 1, clientX: 52, clientY: 50 });
+    fireEvent.pointerMove(widget(), { pointerId: 1, buttons: 1, clientX: 52, clientY: 50 });
     expect(setPointerCapture).not.toHaveBeenCalled();
 
-    fireEvent.pointerMove(widget(), { pointerId: 1, clientX: 90, clientY: 50 });
-    fireEvent.pointerMove(widget(), { pointerId: 1, clientX: 130, clientY: 50 });
+    fireEvent.pointerMove(widget(), { pointerId: 1, buttons: 1, clientX: 90, clientY: 50 });
+    fireEvent.pointerMove(widget(), { pointerId: 1, buttons: 1, clientX: 130, clientY: 50 });
     expect(setPointerCapture).toHaveBeenCalledTimes(1);
   });
 
@@ -106,7 +117,7 @@ describe("FloatingWidget", () => {
     renderWidget();
 
     fireEvent.pointerDown(widget(), { pointerId: 1, button: 0, clientX: 50, clientY: 50 });
-    fireEvent.pointerMove(widget(), { pointerId: 1, clientX: 120, clientY: 90 });
+    fireEvent.pointerMove(widget(), { pointerId: 1, buttons: 1, clientX: 120, clientY: 90 });
     fireEvent.pointerCancel(widget(), { pointerId: 1 });
     vi.runAllTimers();
 

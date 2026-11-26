@@ -345,6 +345,21 @@ describe("FeedPost", () => {
       expect(fireEvent.dragStart(track(container))).toBe(false);
     });
 
+    it("leaves a press on a video's controls to the video", () => {
+      const clip: FeedPostImage[] = [
+        { id: "v", src: "/clip.mp4", alt: "clip", video: true },
+        ...THREE.slice(1),
+      ];
+      const { container } = render(<FeedPost images={clip} onImageClick={vi.fn()} />);
+      const el = track(container);
+      const video = container.querySelector("video") as HTMLVideoElement;
+
+      fireEvent.pointerDown(video, { pointerType: "mouse", button: 0, clientX: 200 });
+      fireEvent.pointerMove(el, { pointerType: "mouse", buttons: 1, clientX: 60 });
+
+      expect(el).not.toHaveAttribute("data-dragging");
+    });
+
     it("does not drag a track that shows a single slide, as in a grid", () => {
       const { container } = render(<FeedPost images={THREE} />);
       const el = track(container);

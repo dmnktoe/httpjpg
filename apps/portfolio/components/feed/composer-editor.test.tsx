@@ -319,6 +319,15 @@ describe("ComposerEditor, an existing post", () => {
     expect(await screen.findByText(/saved/)).toBeInTheDocument();
   });
 
+  it("does not take a double click as the confirmation", () => {
+    render(<ComposerEditor post={POST} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "[ delete post ]" }), { detail: 1 });
+    fireEvent.click(screen.getByRole("button", { name: "[ really delete? ]" }), { detail: 2 });
+
+    expect(deletePost).not.toHaveBeenCalled();
+  });
+
   it("deletes only after being asked twice", async () => {
     render(<ComposerEditor post={POST} />);
 

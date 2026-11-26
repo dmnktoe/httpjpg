@@ -34,7 +34,11 @@ export async function proxy(request: NextRequest) {
   if (!inEditor && request.nextUrl.pathname === HOME_STORY_PATH) {
     const root = request.nextUrl.clone();
     root.pathname = "/";
-    return NextResponse.redirect(root, 308);
+    const redirect = NextResponse.redirect(root, 308);
+    for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
+      redirect.headers.set(name, value);
+    }
+    return redirect;
   }
 
   const requestHeaders = new Headers(request.headers);

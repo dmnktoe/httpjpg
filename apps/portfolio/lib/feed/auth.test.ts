@@ -95,9 +95,31 @@ describe("authorizeFeedRequest", () => {
 describe("the composer's session cookie", () => {
   const session = () => feedSessionValue(TOKEN);
 
-  it("is not the token itself", () => {
-    expect(session()).toMatch(/^[0-9a-f]{64}$/);
+  it("is its issue time and a signature, not the token itself", () => {
+    expect(session()).toMatch(/^[0-9a-z]+\.[0-9a-f]{64}$/);
     expect(session()).not.toContain(TOKEN);
+  });
+
+  it("runs out after its lifetime, and a session from the future is no session", () => {
+    const day = 24 * 60 * 60 * 1000;
+    const read = (value: string) => authorizeFeedRequest(cookieRequest(value));
+
+    expect(read(feedSessionValue(TOKEN, Date.now() - 29 * day))).toBeNull();
+    expect(read(feedSessionValue(TOKEN, Date.now() - 31 * day))?.status).toBe(401);
+    expect(read(feedSessionValue(TOKEN, Date.now() + day))?.status).toBe(401);
+  });
+
+  it("refuses a changed issue time, a malformed value and another token's session", () => {
+    const [, signature] = session().split(".");
+    const read = (value: string) => authorizeFeedRequest(cookieRequest(value));
+
+    expect(read(`${(Math.floor(Date.now() / 1000) - 1).toString(36)}.${signature}`)?.status).toBe(
+      401,
+    );
+    expect(read("nope")?.status).toBe(401);
+    expect(read(`${session()}.x`)?.status).toBe(401);
+    expect(read(`ABC.${signature}`)?.status).toBe(401);
+    expect(read(feedSessionValue(TOKEN.replace("0001", "0002")))?.status).toBe(401);
   });
 
   it("opens reads without further proof", () => {

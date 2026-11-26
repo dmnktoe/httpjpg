@@ -133,6 +133,9 @@ export function FeedPostFrame({
     if (event.currentTarget.scrollWidth <= event.currentTarget.clientWidth) {
       return;
     }
+    if (event.target instanceof Element && event.target.closest("video")) {
+      return;
+    }
     dragRef.current = {
       startX: event.clientX,
       startLeft: event.currentTarget.scrollLeft,

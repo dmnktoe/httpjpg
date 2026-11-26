@@ -265,13 +265,14 @@ function nextState(current: PanelState, items: FeedPanelItem[]): PanelState {
   }
   const post = current.post % total;
   const imageCount = items[post]?.images.length ?? 0;
-  if (current.image + 1 < imageCount) {
-    return { post, image: current.image + 1, previous: null };
+  const image = Math.min(current.image, Math.max(imageCount - 1, 0));
+  if (image + 1 < imageCount) {
+    return { post, image: image + 1, previous: null };
   }
   if (total === 1) {
     return { post, image: 0, previous: null };
   }
-  return { post: (post + 1) % total, image: 0, previous: { post, image: current.image } };
+  return { post: (post + 1) % total, image: 0, previous: { post, image } };
 }
 
 function prefersReducedMotion(): boolean {

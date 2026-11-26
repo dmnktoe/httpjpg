@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Link } from "@httpjpg/ui";
-import { type DragEvent, useEffect, useReducer, useRef, useState } from "react";
+import { type DragEvent, type MouseEvent, useEffect, useReducer, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
@@ -225,8 +225,8 @@ export function ComposerEditor({ post }: ComposerEditorProps) {
     return { value: { ...details, ...track, ...artwork } };
   };
 
-  const handleDelete = async () => {
-    if (!post) {
+  const handleDelete = async (event: MouseEvent<HTMLButtonElement>) => {
+    if (!post || event.detail > 1) {
       return;
     }
     if (!isConfirmingDelete) {

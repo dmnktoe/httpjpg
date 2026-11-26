@@ -22,7 +22,7 @@ function panel(): HTMLElement {
 
 function drag(target: HTMLElement, from: [number, number], to: [number, number]) {
   fireEvent.pointerDown(target, { pointerId: 1, button: 0, clientX: from[0], clientY: from[1] });
-  fireEvent.pointerMove(target, { pointerId: 1, clientX: to[0], clientY: to[1] });
+  fireEvent.pointerMove(target, { pointerId: 1, buttons: 1, clientX: to[0], clientY: to[1] });
   fireEvent.pointerUp(target, { pointerId: 1, clientX: to[0], clientY: to[1] });
 }
 

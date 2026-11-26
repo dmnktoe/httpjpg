@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { signIn } from "@/lib/feed/compose/api";
+import { ComposerApiError, signIn } from "@/lib/feed/compose/api";
 
 import { buttonClass, errorClass, fieldClass, hintClass, labelClass } from "./composer-styles";
 
@@ -33,8 +33,8 @@ export function FeedSignIn({ onSignedIn }: FeedSignInProps) {
     try {
       await signIn(token);
       onSignedIn();
-    } catch {
-      setFailure("that token does not open the feed");
+    } catch (error) {
+      setFailure(signInFailure(error instanceof ComposerApiError ? error.status : 0));
     }
   });
 
@@ -74,4 +74,17 @@ export function FeedSignIn({ onSignedIn }: FeedSignInProps) {
       </Box>
     </Box>
   );
+}
+
+function signInFailure(status: number): string {
+  if (status === 401) {
+    return "that token does not open the feed";
+  }
+  if (status === 429) {
+    return "too many tries — wait a minute";
+  }
+  if (status === 503) {
+    return "publishing is not set up on this site";
+  }
+  return "the site did not answer — try again";
 }

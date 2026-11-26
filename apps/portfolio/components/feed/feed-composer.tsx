@@ -3,7 +3,13 @@
 import { Box, Link } from "@httpjpg/ui";
 import { useEffect, useState } from "react";
 
-import { type ComposerPost, hasSession, loadPost, signOut } from "@/lib/feed/compose/api";
+import {
+  ComposerApiError,
+  type ComposerPost,
+  hasSession,
+  loadPost,
+  signOut,
+} from "@/lib/feed/compose/api";
 
 import { ComposerEditor } from "./composer-editor";
 import { buttonClass, errorClass, hintClass } from "./composer-styles";
@@ -18,7 +24,8 @@ type Session = "checking" | "signed-out" | "signed-in";
 type Loaded =
   | { kind: "loading" }
   | { kind: "ready"; post: ComposerPost | undefined }
-  | { kind: "missing" };
+  | { kind: "missing" }
+  | { kind: "failed" };
 
 export function FeedComposer({ slug }: FeedComposerProps) {
   const [session, setSession] = useState<Session>("checking");
@@ -51,10 +58,16 @@ export function FeedComposer({ slug }: FeedComposerProps) {
           setLoaded({ kind: "ready", post });
         }
       })
-      .catch(() => {
-        if (isCurrent) {
-          setLoaded({ kind: "missing" });
+      .catch((error: unknown) => {
+        if (!isCurrent) {
+          return;
         }
+        const status = error instanceof ComposerApiError ? error.status : 0;
+        if (status === 401) {
+          setSession("signed-out");
+          return;
+        }
+        setLoaded({ kind: status === 404 ? "missing" : "failed" });
       });
     return () => {
       isCurrent = false;
@@ -96,6 +109,11 @@ export function FeedComposer({ slug }: FeedComposerProps) {
       {session === "signed-in" && loaded.kind === "missing" && (
         <p role="alert" className={errorClass}>
           that post does not exist (any more)
+        </p>
+      )}
+      {session === "signed-in" && loaded.kind === "failed" && (
+        <p role="alert" className={errorClass}>
+          the post could not be loaded — try again in a moment
         </p>
       )}
       {session === "signed-in" && loaded.kind === "ready" && (

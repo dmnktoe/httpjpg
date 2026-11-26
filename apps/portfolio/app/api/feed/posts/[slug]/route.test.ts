@@ -244,6 +244,15 @@ describe("DELETE /api/feed/posts/[slug]", () => {
     expect(order).toEqual(["story", "asset"]);
   });
 
+  it("counts only the files that really went", async () => {
+    vi.mocked(deleteAsset).mockRejectedValueOnce(new Error("locked"));
+
+    const response = await DELETE(request("DELETE"), context());
+
+    expect(await response.json()).toEqual({ ok: true, assets: 1 });
+    expect(deleteAsset).toHaveBeenCalledTimes(2);
+  });
+
   it("answers 502 and keeps the files when the story cannot be deleted", async () => {
     vi.mocked(deleteStory).mockRejectedValueOnce(new Error("nope"));
 

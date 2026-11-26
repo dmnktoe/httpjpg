@@ -97,8 +97,8 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
     const unused = await unusedAssets(config, postAssets(story.content), story.id);
     await deleteStory(config, story.id);
-    await deleteAssets(config, unused);
-    return NextResponse.json({ ok: true, assets: unused.length }, { headers: NO_STORE });
+    const deleted = await deleteAssets(config, unused);
+    return NextResponse.json({ ok: true, assets: deleted }, { headers: NO_STORE });
   } catch (error) {
     return upstreamFailure(error, "Storyblok did not delete the post");
   }
@@ -156,13 +156,18 @@ async function unusedAssets(
   return unused;
 }
 
-async function deleteAssets(config: MapiConfig, assets: PostAsset[]): Promise<void> {
+async function deleteAssets(config: MapiConfig, assets: PostAsset[]): Promise<number> {
+  let deleted = 0;
   for (const asset of assets) {
-    await deleteAsset(config, asset.id).catch((error: unknown) => {
+    try {
+      await deleteAsset(config, asset.id);
+      deleted += 1;
+    } catch (error) {
       console.error("Feed asset cleanup failed:", error);
       captureServerException(error, { tags: { route: "feed-post", step: "asset-cleanup" } });
-    });
+    }
   }
+  return deleted;
 }
 
 function upstreamFailure(error: unknown, message: string): NextResponse {

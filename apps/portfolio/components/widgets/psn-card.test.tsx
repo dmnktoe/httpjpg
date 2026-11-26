@@ -23,7 +23,7 @@ describe("PSNCard", () => {
     const card = container.querySelector("[data-psn-card]") as HTMLElement;
 
     fireEvent.pointerDown(card, { pointerId: 1, button: 0, clientX: 50, clientY: 50 });
-    fireEvent.pointerMove(card, { pointerId: 1, clientX: 140, clientY: 120 });
+    fireEvent.pointerMove(card, { pointerId: 1, buttons: 1, clientX: 140, clientY: 120 });
     fireEvent.pointerUp(card, { pointerId: 1, clientX: 140, clientY: 120 });
 
     expect(card.style.left).not.toBe("");

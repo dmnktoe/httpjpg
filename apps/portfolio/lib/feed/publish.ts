@@ -149,8 +149,10 @@ export interface EditImage {
 
 export interface EditRequest {
   caption: string;
-  format: PostFormat;
-  images: EditImage[];
+  /** `undefined` keeps the post's format. */
+  format?: PostFormat;
+  /** `undefined` keeps the post's images as they are. */
+  images?: EditImage[];
   music?: PublishMusic | null;
   date?: Date;
 }
@@ -167,20 +169,22 @@ export function parseEditRequest(body: unknown): Parsed<EditRequest> {
   if (typeof caption !== "string" || caption.length > MAX_CAPTION_LENGTH) {
     return fail(`caption must be a string of at most ${MAX_CAPTION_LENGTH} characters`);
   }
-  const format = body.format === undefined ? "1/1" : body.format;
-  if (!isOneOf(POST_FORMATS, format)) {
+  if (body.format !== undefined && !isOneOf(POST_FORMATS, body.format)) {
     return fail(`format must be one of ${POST_FORMATS.join(", ")}`);
   }
-  if (!Array.isArray(body.images) || body.images.length > MAX_IMAGES) {
-    return fail(`images must be an array of at most ${MAX_IMAGES} entries`);
-  }
-  const images: EditImage[] = [];
-  for (const raw of body.images) {
-    const image = parseEditImage(raw);
-    if (!image.ok) {
-      return image;
+  let images: EditImage[] | undefined;
+  if (body.images !== undefined) {
+    if (!Array.isArray(body.images) || body.images.length > MAX_IMAGES) {
+      return fail(`images must be an array of at most ${MAX_IMAGES} entries`);
     }
-    images.push(image.value);
+    images = [];
+    for (const raw of body.images) {
+      const image = parseEditImage(raw);
+      if (!image.ok) {
+        return image;
+      }
+      images.push(image.value);
+    }
   }
 
   let music: PublishMusic | null | undefined;
@@ -206,8 +210,8 @@ export function parseEditRequest(body: unknown): Parsed<EditRequest> {
     ok: true,
     value: {
       caption: caption.trim(),
-      format,
-      images,
+      ...(body.format === undefined ? {} : { format: body.format as PostFormat }),
+      ...(images ? { images } : {}),
       ...(music === undefined ? {} : { music }),
       ...(date ? { date } : {}),
     },
@@ -215,7 +219,7 @@ export function parseEditRequest(body: unknown): Parsed<EditRequest> {
 }
 
 export function editAssetIds(request: EditRequest): number[] {
-  const ids = request.images.flatMap((image) => (image.assetId ? [image.assetId] : []));
+  const ids = (request.images ?? []).flatMap((image) => (image.assetId ? [image.assetId] : []));
   if (request.music?.assetId) {
     ids.push(request.music.assetId);
   }
@@ -241,18 +245,23 @@ export function buildEditedContent(
   assets: ReadonlyMap<number, string>,
 ): Parsed<EditedPost> {
   const current = new Map(postImageBloks(existing).map((blok) => [String(blok._uid), blok]));
-  const images: Record<string, unknown>[] = [];
-  for (const image of request.images) {
+  const images: unknown[] = request.images ? [] : postImageBloks(existing);
+  for (const image of request.images ?? []) {
     if (image.uid) {
       const blok = current.get(image.uid);
       if (!blok) {
         return fail(`The post has no image ${image.uid}`);
       }
       current.delete(image.uid);
-      images.push({ ...blok, alt: image.alt ?? "", fit: image.fit });
+      const alt = image.alt ?? "";
+      const file = isRecord(blok.image) ? { ...blok.image, alt } : blok.image;
+      images.push({ ...blok, image: file, alt, fit: image.fit });
     } else {
       images.push(imageBlok(image.assetId as number, assets, image.fit, image.alt));
     }
+  }
+  if (!request.images) {
+    current.clear();
   }
 
   const keptMusic = Array.isArray(existing.music) ? existing.music : [];
@@ -266,18 +275,21 @@ export function buildEditedContent(
     return fail("A post needs at least one image or a music entry");
   }
 
+  const kept = new Set(
+    images.flatMap((blok) => (isRecord(blok) ? blokAsset(blok) : [])).map((asset) => asset.id),
+  );
   return {
     ok: true,
     value: {
       content: {
         ...existing,
         caption: request.caption,
-        format: request.format,
+        ...(request.format ? { format: request.format } : {}),
         ...(request.date ? { date: storyblokDate(request.date) } : {}),
         images,
         music,
       },
-      removed: [...current.values()].flatMap(blokAsset),
+      removed: [...current.values()].flatMap(blokAsset).filter((asset) => !kept.has(asset.id)),
     },
   };
 }
@@ -289,7 +301,10 @@ export function postAssets(content: Record<string, unknown>): PostAsset[] {
 export function editedPostName(content: Record<string, unknown>, fallback: string): string {
   const firstLine = typeof content.caption === "string" ? content.caption.split("\n")[0] : "";
   const trimmed = firstLine?.trim() ?? "";
-  return trimmed ? Array.from(trimmed).slice(0, 60).join("") : fallback;
+  if (trimmed) {
+    return Array.from(trimmed).slice(0, 60).join("");
+  }
+  return typeof content.date === "string" && content.date ? `Post ${content.date}` : fallback;
 }
 
 export function publishAssetIds(request: PublishRequest): number[] {

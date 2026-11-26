@@ -1,7 +1,8 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, vi } from "vitest";
 
-vi.mock("@/lib/feed/compose/api", () => ({
+vi.mock("@/lib/feed/compose/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/feed/compose/api")>()),
   hasSession: vi.fn(),
   loadPost: vi.fn(),
   signOut: vi.fn(),
@@ -21,7 +22,7 @@ vi.mock("./feed-sign-in", () => ({
   ),
 }));
 
-import { hasSession, loadPost, signOut } from "@/lib/feed/compose/api";
+import { ComposerApiError, hasSession, loadPost, signOut } from "@/lib/feed/compose/api";
 
 import { FeedComposer } from "./feed-composer";
 
@@ -67,10 +68,24 @@ describe("FeedComposer", () => {
   });
 
   it("says so when that post is gone", async () => {
-    vi.mocked(loadPost).mockRejectedValue(new Error("404"));
+    vi.mocked(loadPost).mockRejectedValue(new ComposerApiError(404, "not found"));
     render(<FeedComposer slug="abc" />);
 
     expect(await screen.findByRole("alert")).toHaveTextContent(/does not exist/);
+  });
+
+  it("tells a failed load from a missing post", async () => {
+    vi.mocked(loadPost).mockRejectedValue(new Error("offline"));
+    render(<FeedComposer slug="abc" />);
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(/could not be loaded/);
+  });
+
+  it("asks for the token again when the session has run out", async () => {
+    vi.mocked(loadPost).mockRejectedValue(new ComposerApiError(401, "unauthorized"));
+    render(<FeedComposer slug="abc" />);
+
+    expect(await screen.findByRole("button", { name: "stub sign in" })).toBeInTheDocument();
   });
 
   it("signs out, also when the request fails", async () => {

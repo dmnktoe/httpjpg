@@ -45,6 +45,12 @@ export function FloatingWidget({
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     const press = pressRef.current;
+    if (press && !(event.buttons & 1)) {
+      pressRef.current = null;
+      draggedRef.current = false;
+      handlers.onPointerCancel(event);
+      return;
+    }
     if (
       press &&
       !draggedRef.current &&

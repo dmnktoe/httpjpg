@@ -332,6 +332,10 @@ describe("parseEditRequest", () => {
     return parsed.ok ? "" : parsed.message;
   }
 
+  it("keeps the post's images and format when the edit leaves them out", () => {
+    expect(edit({ caption: "only the words" })).toEqual({ caption: "only the words" });
+  });
+
   it("reads kept and new images, in order", () => {
     expect(
       edit({
@@ -367,6 +371,7 @@ describe("parseEditRequest", () => {
     ["no object", null, /JSON object/],
     ["a long caption", { images: [], caption: "x".repeat(MAX_CAPTION_LENGTH + 1) }, /caption/],
     ["an unknown format", { images: [], format: "16/9" }, /format/],
+    ["a format that is not text", { format: 4 }, /format/],
     ["images that are no list", { images: "x" }, /images/],
     ["too many images", { images: Array(MAX_IMAGES + 1).fill({ uid: "u" }) }, /images/],
     ["an image that is no object", { images: ["x"] }, /object/],
@@ -452,8 +457,60 @@ describe("buildEditedContent", () => {
       fit: "cover",
       image: { id: 9, filename: assets.get(9) },
     });
-    expect(images[1]).toMatchObject({ _uid: "u2", fit: "contain", alt: "" });
+    expect(images[1]).toMatchObject({ _uid: "u2", fit: "contain", alt: "", image: { alt: "" } });
     expect(edited.value.removed).toEqual([{ id: 1, filename: A }]);
+  });
+
+  it("writes a kept image's alt text to its file too, so clearing it clears it", () => {
+    const withAlt = {
+      ...existing,
+      images: [
+        {
+          _uid: "u1",
+          component: "post_image",
+          alt: "old",
+          image: { id: 1, filename: A, alt: "old" },
+        },
+      ],
+    };
+
+    const cleared = build({ images: [{ uid: "u1" }] }, withAlt);
+    const renamed = build({ images: [{ uid: "u1", alt: "new" }] }, withAlt);
+
+    expect(cleared.ok && (cleared.value.content.images as unknown[])[0]).toMatchObject({
+      alt: "",
+      image: { id: 1, alt: "" },
+    });
+    expect(renamed.ok && (renamed.value.content.images as unknown[])[0]).toMatchObject({
+      alt: "new",
+      image: { id: 1, filename: A, alt: "new" },
+    });
+  });
+
+  it("leaves the images alone when the edit does not name them", () => {
+    const edited = build({ caption: "new words" });
+
+    expect(edited.ok && edited.value.content).toMatchObject({
+      caption: "new words",
+      format: "4/5",
+      images: [existing.images[0], existing.images[1]],
+      music: existing.music,
+    });
+    expect(edited.ok && edited.value.removed).toEqual([]);
+  });
+
+  it("never reports a file the post still shows", () => {
+    const twice = {
+      ...existing,
+      images: [
+        { _uid: "u1", component: "post_image", image: { id: 1, filename: A } },
+        { _uid: "u2", component: "post_image", image: { id: 1, filename: A } },
+      ],
+    };
+
+    const edited = build({ images: [{ uid: "u2" }] }, twice);
+
+    expect(edited.ok && edited.value.removed).toEqual([]);
   });
 
   it("changes the date and the music when asked", () => {
@@ -501,6 +558,9 @@ describe("editedPostName", () => {
   it("is the caption's first line, or what the story was called", () => {
     expect(editedPostName({ caption: " first \nsecond" }, "Post 1")).toBe("first");
     expect(editedPostName({ caption: "  " }, "Post 1")).toBe("Post 1");
+    expect(editedPostName({ caption: "", date: "2026-11-25 10:00" }, "old first line")).toBe(
+      "Post 2026-11-25 10:00",
+    );
     expect(editedPostName({}, "Post 1")).toBe("Post 1");
     expect(editedPostName({ caption: "x".repeat(80) }, "Post 1")).toHaveLength(60);
   });

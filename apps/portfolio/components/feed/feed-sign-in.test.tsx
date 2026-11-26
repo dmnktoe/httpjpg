@@ -1,9 +1,12 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, vi } from "vitest";
 
-vi.mock("@/lib/feed/compose/api", () => ({ signIn: vi.fn() }));
+vi.mock("@/lib/feed/compose/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/feed/compose/api")>()),
+  signIn: vi.fn(),
+}));
 
-import { signIn } from "@/lib/feed/compose/api";
+import { ComposerApiError, signIn } from "@/lib/feed/compose/api";
 
 import { FeedSignIn } from "./feed-sign-in";
 
@@ -38,8 +41,21 @@ describe("FeedSignIn", () => {
     expect(signIn).not.toHaveBeenCalled();
   });
 
+  it.each([
+    [429, /too many tries/],
+    [503, /not set up/],
+    [502, /did not answer/],
+  ])("tells a %i from a wrong token", async (status, message) => {
+    vi.mocked(signIn).mockRejectedValue(new ComposerApiError(status, "x"));
+    render(<FeedSignIn onSignedIn={vi.fn()} />);
+
+    submit(TOKEN);
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(message);
+  });
+
   it("says so when the site refuses the token", async () => {
-    vi.mocked(signIn).mockRejectedValue(new Error("unauthorized"));
+    vi.mocked(signIn).mockRejectedValue(new ComposerApiError(401, "unauthorized"));
     const onSignedIn = vi.fn();
     render(<FeedSignIn onSignedIn={onSignedIn} />);
 

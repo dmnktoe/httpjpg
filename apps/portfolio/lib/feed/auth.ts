@@ -1,4 +1,4 @@
-import { createHash, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 
 import { env } from "@httpjpg/env";
 import type { NextRequest, NextResponse } from "next/server";
@@ -29,7 +29,7 @@ export function authorizeFeedRequest(request: NextRequest): NextResponse<ApiErro
     return isSameSecret(presented.trim(), expected) ? null : unauthorized();
   }
   const session = request.cookies?.get(FEED_SESSION_COOKIE)?.value;
-  if (session && isSameSecret(session, feedSessionValue(expected)) && isOwnRequest(request)) {
+  if (session && isLiveSession(session, expected) && isOwnRequest(request)) {
     return null;
   }
   return unauthorized();
@@ -40,8 +40,25 @@ export function isFeedPublishToken(presented: string): boolean {
   return Boolean(expected) && isSameSecret(presented.trim(), expected as string);
 }
 
-export function feedSessionValue(token: string): string {
-  return createHash("sha256").update(`feed-session:${token}`).digest("hex");
+export function feedSessionValue(token: string, issuedAt: number = Date.now()): string {
+  const stamp = Math.floor(issuedAt / 1000).toString(36);
+  return `${stamp}.${sessionSignature(token, stamp)}`;
+}
+
+function isLiveSession(value: string, token: string, now: number = Date.now()): boolean {
+  const [stamp, signature, ...rest] = value.split(".");
+  if (!stamp || !signature || rest.length || !/^[0-9a-z]{1,12}$/.test(stamp)) {
+    return false;
+  }
+  const age = now / 1000 - Number.parseInt(stamp, 36);
+  if (!(age >= 0 && age <= FEED_SESSION_MAX_AGE)) {
+    return false;
+  }
+  return isSameSecret(signature, sessionSignature(token, stamp));
+}
+
+function sessionSignature(token: string, stamp: string): string {
+  return createHmac("sha256", token).update(`feed-session:${stamp}`).digest("hex");
 }
 
 function isOwnRequest(request: NextRequest): boolean {

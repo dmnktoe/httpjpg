@@ -40,6 +40,16 @@ describe("ShimmeringText", () => {
     expect(style.backgroundImage).toContain("linear-gradient(#111111, #111111)");
   });
 
+  it("keeps the inherited colour for the base, hiding only the glyph fill", () => {
+    render(<ShimmeringText text="hello" />);
+
+    const style = lastMotionProps.current?.style as { backgroundImage: string };
+    const className = lastMotionProps.current?.className as string;
+    expect(style.backgroundImage).toContain("linear-gradient(currentColor, currentColor)");
+    expect(className).toContain("jpg-wktf-c_transparent");
+    expect(className).not.toContain("jpg-c_transparent");
+  });
+
   it("scales the sweep with the text length", () => {
     render(<ShimmeringText text="abcd" spread={3} />);
 

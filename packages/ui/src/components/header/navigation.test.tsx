@@ -28,7 +28,7 @@ describe("Navigation", () => {
   it("renders the music/pics link inside the intro block", () => {
     render(<Navigation nav={nav} projectsWork={[]} websitesWork={[]} />);
     const musicLink = screen.getByRole("link", { name: /music/i });
-    expect(musicLink).toHaveAttribute("href", "/feed-xml_html");
+    expect(musicLink).toHaveAttribute("href", "/feed");
   });
 
   it("hides the more toggle when there are 5 or fewer work items", () => {

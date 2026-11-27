@@ -47,7 +47,7 @@ test.describe("viewport scaling", () => {
     await expect.poll(() => rootFontSize(page)).toBeCloseTo(32, 0);
 
     await page.locator("header").getByRole("link", { name: /music/i }).first().click();
-    await expect(page).toHaveURL(/feed-xml_html/);
+    await expect(page).toHaveURL(/\/feed$/);
 
     await expect(page.locator("html")).not.toHaveAttribute("data-page-scale");
     expect(await rootFontSize(page)).toBe(16);

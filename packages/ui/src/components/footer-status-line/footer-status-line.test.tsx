@@ -73,6 +73,18 @@ describe("FooterStatusLineText", () => {
 
     expect(screen.getByText("Selected Ambient Works")).toBeInTheDocument();
   });
+
+  it("sweeps a live title in lime", () => {
+    render(<FooterStatusLineText live>Battlefield 1</FooterStatusLineText>);
+
+    expect(screen.getByText("Battlefield 1").getAttribute("style")).toContain("accent-400");
+  });
+
+  it("leaves a title that is not live as plain text", () => {
+    render(<FooterStatusLineText>Cities: Skylines</FooterStatusLineText>);
+
+    expect(screen.getByText("Cities: Skylines")).not.toHaveAttribute("style");
+  });
 });
 
 describe("FooterStatusLineSeparator", () => {

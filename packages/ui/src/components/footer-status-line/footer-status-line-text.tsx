@@ -1,9 +1,11 @@
 "use client";
 
 import type { HTMLAttributes, ReactNode } from "react";
+import { token } from "styled-system/tokens";
 import type { SystemStyleObject } from "styled-system/types";
 
 import { Box } from "../box/box";
+import { ShimmeringText } from "../shimmering-text/shimmering-text";
 
 export interface FooterStatusLineTextProps extends Omit<
   HTMLAttributes<HTMLSpanElement>,
@@ -15,6 +17,8 @@ export interface FooterStatusLineTextProps extends Omit<
   fixed?: boolean;
   /** Lower for incidental detail, so the line reads title first. */
   dim?: boolean;
+  /** Something happening right now: a text child gets the search trigger's sweep, in lime. */
+  live?: boolean;
   children: ReactNode;
   css?: SystemStyleObject;
 }
@@ -27,6 +31,7 @@ export function FooterStatusLineText({
   maxWidth = "200px",
   fixed = false,
   dim = false,
+  live = false,
   children,
   css: cssProp,
   ...props
@@ -49,7 +54,16 @@ export function FooterStatusLineText({
         ...cssProp,
       }}
     >
-      {children}
+      {live && typeof children === "string" ? (
+        <ShimmeringText
+          text={children}
+          duration={1.6}
+          repeatDelay={2}
+          shimmerColor={token.var("colors.accent.400")}
+        />
+      ) : (
+        children
+      )}
     </Box>
   );
 }

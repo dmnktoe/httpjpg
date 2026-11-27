@@ -36,6 +36,7 @@ export interface FooterStatusProps {
 
 /** Presence changes minute to minute, so it is the one line worth polling. */
 const DISCORD_POLL_MS = 30_000;
+const STATUS_POLL_MS = 60_000;
 
 const VISIBLE_LINES = 3;
 
@@ -43,10 +44,10 @@ const VISIBLE_LINES = 3;
  * Owns the footer status stack's data so the individual lines stay
  * presentational, the way CommandPalette and AskWidget are split.
  *
- * The slow-moving widgets share one request to /api/status; only Discord keeps
- * a connection of its own, because it is the only one that refreshes often
- * enough to be worth polling. Nothing is requested at all when the CMS has the
- * relevant widgets switched off.
+ * The slow-moving widgets share one request to /api/status, polled every
+ * minute so a game or a track that starts shows up without a reload; Discord
+ * keeps a connection of its own because it changes faster. Nothing is
+ * requested at all when the CMS has the relevant widgets switched off.
  */
 export function FooterStatus({
   discordEnabled = false,
@@ -73,7 +74,10 @@ export function FooterStatus({
     trophiesEnabled ||
     schalkeEnabled;
 
-  const status = useWidgetData<WidgetStatus>("/api/status", { enabled: wantsStatus });
+  const status = useWidgetData<WidgetStatus>("/api/status", {
+    pollMs: STATUS_POLL_MS,
+    enabled: wantsStatus,
+  });
   const discord = useWidgetData<DiscordPresence>("/api/discord", {
     pollMs: DISCORD_POLL_MS,
     enabled: discordEnabled,

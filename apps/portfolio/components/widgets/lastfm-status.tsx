@@ -46,7 +46,7 @@ export function LastfmStatus({ track, total = null, loaded }: LastfmStatusProps)
       ) : (
         <FooterStatusLineGlyph glyph="♪" />
       )}
-      <FooterStatusLineText>{track.title}</FooterStatusLineText>
+      <FooterStatusLineText live={track.nowPlaying}>{track.title}</FooterStatusLineText>
       <FooterStatusLineText dim maxWidth="140px">
         {track.artist}
       </FooterStatusLineText>

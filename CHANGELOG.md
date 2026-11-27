@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.17.0](https://github.com/dmnktoe/httpjpg/compare/v2.16.0...v2.17.0) (2026-11-27)
+
+
+### Added
+
+* **footer:** draw a note when a Last.fm scrobble has no cover ([#601](https://github.com/dmnktoe/httpjpg/issues/601)) ([c217d2c](https://github.com/dmnktoe/httpjpg/commit/c217d2c16c884574d610f710872f0e51c3183a10))
+* **footer:** let live lines shimmer in lime and keep them fresh ([#602](https://github.com/dmnktoe/httpjpg/issues/602)) ([4a761fb](https://github.com/dmnktoe/httpjpg/commit/4a761fb666a17a753d6e788b7b9d21a1183172e0))
+* **portfolio:** add an Insta-style feed, a floating panel and viewport scaling ([#591](https://github.com/dmnktoe/httpjpg/issues/591)) ([e3a642d](https://github.com/dmnktoe/httpjpg/commit/e3a642d2eb526b0538157a32987604fbb5c72b14))
+* **portfolio:** fold older footer status lines behind a toggle ([#590](https://github.com/dmnktoe/httpjpg/issues/590)) ([7064bc0](https://github.com/dmnktoe/httpjpg/commit/7064bc03d566b984a4bf44d17ffd5fb67455586c))
+* **portfolio:** put the trophy card and the nostalgia slideshow back in their corners ([#603](https://github.com/dmnktoe/httpjpg/issues/603)) ([c9b719f](https://github.com/dmnktoe/httpjpg/commit/c9b719fd8461b9ee15976ec0fc46ed90a2d9032a))
+* **portfolio:** rebuild the feed as a profile, and write, edit and delete posts from the browser ([#596](https://github.com/dmnktoe/httpjpg/issues/596)) ([c57f67f](https://github.com/dmnktoe/httpjpg/commit/c57f67ff36878136419a262338ab329c4477671d))
+* **ui:** dress the feed panel as a Snow Leopard window, and fix drags, the cursor and sideways photos ([#597](https://github.com/dmnktoe/httpjpg/issues/597)) ([e05e75b](https://github.com/dmnktoe/httpjpg/commit/e05e75b6512b963db79d2a90b0d115d82476cf12))
+* **ui:** polish the feed panel's title bar ([#599](https://github.com/dmnktoe/httpjpg/issues/599)) ([f7152bb](https://github.com/dmnktoe/httpjpg/commit/f7152bbb3436f2132267ed41c64d6c928431a15f))
+
+
+### Fixed
+
+* **portfolio:** make the feed's clicks, carousel and lightbox behave ([#595](https://github.com/dmnktoe/httpjpg/issues/595)) ([b595ddc](https://github.com/dmnktoe/httpjpg/commit/b595ddc5dba9c3f16cbe11ddb0d1abaa506572e4))
+* **portfolio:** only read drafts for a trusted preview request ([#594](https://github.com/dmnktoe/httpjpg/issues/594)) ([74ba5d3](https://github.com/dmnktoe/httpjpg/commit/74ba5d3a6220b13bed632afa4f63bdc5f728a411))
+* **ui:** keep the shimmer's base text in its inherited colour ([#604](https://github.com/dmnktoe/httpjpg/issues/604)) ([a9631a4](https://github.com/dmnktoe/httpjpg/commit/a9631a4f94ebb6403f2dd54384a6ab19775a7565))
+* **ui:** point the header's music and pics link at the feed ([#606](https://github.com/dmnktoe/httpjpg/issues/606)) ([b779a30](https://github.com/dmnktoe/httpjpg/commit/b779a30a7493ab15df3109dd49a574a6f7ec59e8))
+* **ui:** set paragraphs back to a 1.5 line height ([#600](https://github.com/dmnktoe/httpjpg/issues/600)) ([432fcd5](https://github.com/dmnktoe/httpjpg/commit/432fcd5e060028b68fe3fbd8baeedb50d81e4bf4))
+
+
+### Changed
+
+* **portfolio:** stop tilting the trophy card ([#605](https://github.com/dmnktoe/httpjpg/issues/605)) ([6024062](https://github.com/dmnktoe/httpjpg/commit/6024062c37b1e79676054cdf960da2a9f5b5a6e6))
+
 ## [2.16.0](https://github.com/dmnktoe/httpjpg/compare/v2.15.1...v2.16.0) (2026-11-25)
 
 

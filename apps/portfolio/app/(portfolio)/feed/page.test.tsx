@@ -40,15 +40,19 @@ describe("FeedPage", () => {
     render(await FeedPage());
 
     expect(getFeedPage).toHaveBeenCalledWith(1);
-    expect(screen.getByRole("heading", { level: 1, name: /feed/ })).toHaveTextContent("httpGR▲M");
+    expect(screen.getByRole("heading", { level: 1, name: /feed/ })).toHaveTextContent("httpgr▲m");
+    expect(screen.getByRole("link", { name: /home/ })).toHaveAttribute("href", "/");
     expect(screen.getByTestId("stream")).toHaveTextContent("1 posts");
   });
 
   it("introduces the author with every post counted", async () => {
     const { container } = render(await FeedPage());
 
-    expect(screen.getByText("httpjpg")).toBeInTheDocument();
-    expect(container.querySelector("[data-avatar] img")).toHaveAttribute("src", "/me.jpg");
+    expect(screen.getByText("httpjpg", { selector: "p" })).toBeInTheDocument();
+    expect(container.querySelector("[data-feed-profile-photo] img")).toHaveAttribute(
+      "src",
+      "/me.jpg",
+    );
     expect(screen.getAllByRole("definition")[0]).toHaveTextContent("14");
   });
 
@@ -57,7 +61,7 @@ describe("FeedPage", () => {
 
     const { container } = render(await FeedPage());
 
-    expect(container.querySelector("[data-avatar]")).toBeNull();
+    expect(container.querySelector("[data-feed-profile-photo]")).toBeNull();
   });
 
   it("runs the captions past in a strip, when there are any", async () => {

@@ -1,4 +1,4 @@
-import { Box, Container, FeedProfile, Headline, Marquee, Section } from "@httpjpg/ui";
+import { Box, Container, FeedAppBar, FeedProfile, Marquee, Section } from "@httpjpg/ui";
 import type { Metadata } from "next";
 
 import { FeedStream } from "@/components/ui/feed-stream";
@@ -24,24 +24,27 @@ export default async function FeedPage() {
       <ThemeSync theme="light" />
       <Section pt={{ base: "8", md: "16" }} pb={{ base: "16", md: "24" }}>
         <Container size="md">
-          <Headline
-            level={1}
-            aria-label="httpgram, the feed"
-            marginBottom="8"
-            css={{
-              fontSize: { base: "clamp(3rem, 17vw, 5rem)", md: "8rem" },
-              lineHeight: 0.85,
-              letterSpacing: "-0.06em",
-            }}
-          >
-            <Box as="span" aria-hidden="true">
-              httpGR
-              <Box as="span" css={{ mx: "-0.06em", color: "primary.500" }}>
-                ▲
+          <FeedAppBar back={{ href: "/", label: "home" }} css={{ mx: { base: "-4", md: "0" } }}>
+            <Box as="h1" aria-label="httpgram, the feed" css={{ m: 0, font: "inherit" }}>
+              <Box as="span" aria-hidden="true">
+                httpgr
+                <Box
+                  as="span"
+                  css={{
+                    mx: "0.04em",
+                    color: "accent.300",
+                    fontFamily: "sans",
+                    fontSize: "0.5em",
+                    verticalAlign: "0.2em",
+                    textShadow: "0 -1px 0 rgba(0, 0, 0, 0.5), 0 0 0.5rem {colors.accent.400}",
+                  }}
+                >
+                  ▲
+                </Box>
+                m
               </Box>
-              M
             </Box>
-          </Headline>
+          </FeedAppBar>
           {author && (
             <FeedProfile
               name={author.name}
@@ -51,14 +54,20 @@ export default async function FeedPage() {
                 { value: "∞", label: "followers" },
                 { value: "0", label: "following" },
               ]}
-              css={{ mb: "8" }}
+              css={{ py: "6" }}
             >
               photo dumps and music, newest first ⋆.˚
             </FeedProfile>
           )}
           {ticker.length > 0 && (
-            <Box aria-hidden="true" css={{ borderTop: "1px solid", borderTopColor: "pageBorder" }}>
-              <Marquee speed={40} css={{ py: "2", fontFamily: "mono", fontSize: "sm" }}>
+            <Box
+              aria-hidden="true"
+              css={{ mx: { base: "-4", md: "0" }, borderTop: "1px solid {colors.neutral.300}" }}
+            >
+              <Marquee
+                speed={40}
+                css={{ px: { base: "4", md: "0" }, py: "2", fontFamily: "mono", fontSize: "sm" }}
+              >
                 {ticker.map((item) => `⋆ ${item} `).join("")}
               </Marquee>
             </Box>

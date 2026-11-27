@@ -95,7 +95,11 @@ export function FeedStream({ initial }: FeedStreamProps) {
 
   return (
     <>
-      <FeedViewToggle view={view} onViewChange={setChosenView} css={{ mb: "6" }} />
+      <FeedViewToggle
+        view={view}
+        onViewChange={setChosenView}
+        css={{ mx: { base: "-4", md: "0" }, mb: "6" }}
+      />
       {composeLink}
       <FeedGrid view={view}>
         {posts.map((post) => (

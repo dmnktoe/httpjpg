@@ -9,15 +9,15 @@ export const paragraphRecipe = defineRecipe({
     margin: 0,
     padding: 0,
     fontFamily: "sans",
-    lineHeight: 1.75,
+    lineHeight: 1.5,
     textWrap: "pretty",
   },
   variants: {
     size: {
-      sm: { fontSize: "sm", lineHeight: 1.75 },
-      md: { fontSize: "md", lineHeight: 1.75 },
-      lg: { fontSize: "lg", lineHeight: 1.8 },
-      xl: { fontSize: "xl", lineHeight: 1.8 },
+      sm: { fontSize: "sm" },
+      md: { fontSize: "md" },
+      lg: { fontSize: "lg" },
+      xl: { fontSize: "xl" },
     },
     align: {
       left: { textAlign: "left" },

@@ -5,7 +5,7 @@ test.describe("header work list expand toggle", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
     const musicLink = page.locator("header").getByRole("link", { name: /music/i }).first();
-    await expect(musicLink).toHaveAttribute("href", "/feed-xml_html");
+    await expect(musicLink).toHaveAttribute("href", "/feed");
   });
 
   test("expanding a work column reveals extras without pushing main content down", async ({

@@ -99,11 +99,11 @@ export function Navigation({
             </Box>
             <br />
             <Link
-              href="/feed-xml_html"
+              href="/feed"
               onClick={() =>
                 emit({
                   label: "music",
-                  href: "/feed-xml_html",
+                  href: "/feed",
                   source: "desktop",
                   kind: "music",
                 })

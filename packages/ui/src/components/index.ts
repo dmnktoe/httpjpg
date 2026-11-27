@@ -31,6 +31,7 @@ export * from "./floating-action-bar/floating-action-bar";
 export * from "./floating-widget/floating-widget";
 export * from "./footer/footer";
 export * from "./footer-status-line/footer-status-line";
+export * from "./footer-status-line/footer-status-line-glyph";
 export * from "./footer-status-line/footer-status-line-separator";
 export * from "./footer-status-line/footer-status-line-text";
 export * from "./footer-status-line/footer-status-line-thumb";

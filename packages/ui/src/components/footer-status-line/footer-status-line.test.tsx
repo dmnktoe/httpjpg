@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import { FooterStatusLine } from "./footer-status-line";
+import { FooterStatusLineGlyph } from "./footer-status-line-glyph";
 import { FooterStatusLineSeparator } from "./footer-status-line-separator";
 import { FooterStatusLineText } from "./footer-status-line-text";
 import { FooterStatusLineThumb } from "./footer-status-line-thumb";
@@ -111,5 +112,15 @@ describe("FooterStatusLineThumb", () => {
     render(<FooterStatusLineThumb src="https://example.com/a.png" alt="photo" pixelated={false} />);
 
     expect(screen.getByAltText("photo")).not.toHaveStyle({ imageRendering: "pixelated" });
+  });
+});
+
+describe("FooterStatusLineGlyph", () => {
+  it("draws a decorative tile on the neutral tokens", () => {
+    render(<FooterStatusLineGlyph glyph="♪" />);
+
+    const tile = screen.getByText("♪");
+    expect(tile).toHaveAttribute("aria-hidden", "true");
+    expect(tile).toHaveClass("jpg-bg_neutral.200", "jpg-c_neutral.600");
   });
 });

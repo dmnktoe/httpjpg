@@ -3,6 +3,7 @@
 import { trackOutboundClick } from "@httpjpg/analytics";
 import {
   FooterStatusLine,
+  FooterStatusLineGlyph,
   FooterStatusLineSeparator,
   FooterStatusLineText,
   FooterStatusLineThumb,
@@ -40,7 +41,11 @@ export function LastfmStatus({ track, total = null, loaded }: LastfmStatusProps)
         })
       }
     >
-      {track.image && <FooterStatusLineThumb src={track.image} />}
+      {track.image ? (
+        <FooterStatusLineThumb src={track.image} />
+      ) : (
+        <FooterStatusLineGlyph glyph="♪" />
+      )}
       <FooterStatusLineText>{track.title}</FooterStatusLineText>
       <FooterStatusLineText dim maxWidth="140px">
         {track.artist}

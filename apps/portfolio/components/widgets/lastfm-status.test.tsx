@@ -75,11 +75,12 @@ describe("LastfmStatus", () => {
     expect(screen.getByLabelText("48213 scrobbles")).toHaveTextContent("48.2K");
   });
 
-  it("leaves out the count and the cover when there are none", () => {
+  it("leaves out the count and draws a note when there is no cover", () => {
     render(<LastfmStatus track={{ ...track, image: null }} loaded />);
 
     expect(screen.queryByLabelText(/scrobbles/)).not.toBeInTheDocument();
     expect(document.querySelector("img")).not.toBeInTheDocument();
+    expect(screen.getByText("♪")).toHaveAttribute("aria-hidden", "true");
   });
 
   it("keeps the line unbreakable, letting only title and artist ellipsize", () => {

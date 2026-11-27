@@ -12,8 +12,10 @@ describe("FeedProfile", () => {
 
     expect(screen.getByText("httpjpg")).toBeInTheDocument();
     expect(screen.getByText("photo dumps")).toBeInTheDocument();
-    expect(container.querySelector("[data-avatar] img")).toHaveAttribute("src", "/me.jpg");
-    expect(container.querySelector("[data-avatar-ring]")).not.toBeNull();
+    expect(container.querySelector("[data-feed-profile-photo] img")).toHaveAttribute(
+      "src",
+      "/me.jpg",
+    );
     expect(container.firstElementChild?.className).toContain("jpg-mb_8");
   });
 
@@ -28,5 +30,12 @@ describe("FeedProfile", () => {
     const { container } = render(<FeedProfile name="httpjpg" />);
 
     expect(container.querySelector("dl")).toBeNull();
+  });
+
+  it("stands in the first letter of the name without a picture", () => {
+    const { container } = render(<FeedProfile name="httpjpg" />);
+
+    expect(container.querySelector("[data-feed-profile-photo] img")).toBeNull();
+    expect(container.querySelector("[data-feed-profile-photo]")).toHaveTextContent("h");
   });
 });

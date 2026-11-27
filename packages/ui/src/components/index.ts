@@ -21,6 +21,7 @@ export * from "./custom-cursor/custom-cursor";
 export * from "./desktop-downloads/desktop-downloads";
 export * from "./desktop-media/desktop-media";
 export * from "./divider/divider";
+export * from "./feed-app-bar/feed-app-bar";
 export * from "./feed-author-provider/feed-author-provider";
 export * from "./feed-grid/feed-grid";
 export * from "./feed-panel/feed-panel";

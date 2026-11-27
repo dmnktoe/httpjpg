@@ -13,33 +13,50 @@ export interface FeedViewToggleProps {
   css?: SystemStyleObject;
 }
 
-const ACTIVE = { opacity: 1, borderTopColor: "pageFg" } as const;
-const INACTIVE = { opacity: 0.6, borderTopColor: "transparent" } as const;
+const RAISED = {
+  color: "neutral.600",
+  textShadow: "0 1px 0 {colors.white}",
+  bg: "linear-gradient(to bottom, {colors.white} 0%, {colors.neutral.100} 50%, {colors.neutral.200} 50%, {colors.neutral.100} 100%)",
+  borderColor: "neutral.400",
+  boxShadow: "inset 0 1px 0 {colors.white}",
+} as const;
+
+const PRESSED = {
+  color: "white",
+  textShadow: "0 -1px 0 rgba(0, 0, 0, 0.4)",
+  bg: "linear-gradient(to bottom, {colors.primary.500} 0%, {colors.primary.600} 50%, {colors.primary.700} 50%, {colors.primary.600} 100%)",
+  borderColor: "primary.800",
+  boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.35)",
+} as const;
 
 const OPTION_CLASS = css({
+  all: "unset",
   boxSizing: "border-box",
-  mt: "-1px",
-  px: "4",
-  py: "3",
-  opacity: 0.6,
-  fontFamily: "mono",
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "1.5",
+  h: "1.875rem",
+  px: "5",
+  fontFamily: "sans",
   fontSize: "sm",
+  fontWeight: "bold",
   lineHeight: 1,
-  borderTop: "1px solid transparent",
-  transition: "opacity 0.2s",
+  border: "1px solid",
   cursor: "pointer",
   userSelect: "none",
-  all: "unset",
-  "&[data-state=on]": ACTIVE,
-  _hover: { opacity: 1 },
-  _focusVisible: { outline: "2px solid", outlineColor: "primary.500", outlineOffset: "-2px" },
-  "&[data-state=narrow]": { base: ACTIVE, md: INACTIVE },
-  "&[data-state=wide]": { md: ACTIVE },
+  ...RAISED,
+  _first: { borderRadius: "0.3125rem 0 0 0.3125rem" },
+  _last: { borderLeftWidth: 0, borderRadius: "0 0.3125rem 0.3125rem 0" },
+  _hover: { filter: "brightness(1.04)" },
+  _focusVisible: { outline: "2px solid", outlineColor: "primary.500", outlineOffset: "2px" },
+  "&[data-state=on]": PRESSED,
+  "&[data-state=narrow]": { base: PRESSED, md: RAISED },
+  "&[data-state=wide]": { md: PRESSED },
 });
 
 const OPTIONS = [
-  { value: "grid", label: "[ ▦ grid ]", auto: "wide" },
-  { value: "list", label: "[ ☰ list ]", auto: "narrow" },
+  { value: "grid", label: "▦ grid", auto: "wide" },
+  { value: "list", label: "☰ list", auto: "narrow" },
 ] as const;
 
 export function FeedViewToggle({ view, onViewChange, css: cssProp }: FeedViewToggleProps) {
@@ -50,13 +67,14 @@ export function FeedViewToggle({ view, onViewChange, css: cssProp }: FeedViewTog
       css={{
         display: "flex",
         justifyContent: "center",
-        gap: "2",
         minW: 0,
         m: 0,
-        p: 0,
+        px: 0,
+        py: "2.5",
         border: "none",
-        borderTop: "1px solid",
-        borderTopColor: "pageBorder",
+        borderY: "1px solid {colors.neutral.300}",
+        bg: "linear-gradient(to bottom, {colors.neutral.50} 0%, {colors.neutral.200} 100%)",
+        boxShadow: "inset 0 1px 0 {colors.white}",
         ...cssProp,
       }}
     >

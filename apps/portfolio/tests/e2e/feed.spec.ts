@@ -12,7 +12,7 @@ async function gotoHomeWithPanel(page: Page) {
 }
 
 async function showList(page: Page) {
-  const list = page.getByRole("button", { name: "[ ☰ list ]" });
+  const list = page.getByRole("button", { name: "☰ list" });
   await expect(async () => {
     await list.click();
     await expect(list).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });

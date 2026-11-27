@@ -63,13 +63,13 @@ describe("GET /api/steam", () => {
     await expect(response.json()).resolves.toEqual({ profile: { name: "dom" }, games: [] });
   });
 
-  it("caches the response at the edge for five minutes", async () => {
+  it("caches the response at the edge for a minute", async () => {
     getConfig.mockResolvedValueOnce({ steam_id: "76561197960435530" });
     fetchSteamStatus.mockResolvedValueOnce({ ok: true, status: { profile: {}, games: [] } });
 
     const response = await GET(request);
 
-    expect(response.headers.get("Cache-Control")).toContain("s-maxage=300");
+    expect(response.headers.get("Cache-Control")).toContain("s-maxage=60");
   });
 
   it("returns 501 without an api key, before touching Storyblok", async () => {

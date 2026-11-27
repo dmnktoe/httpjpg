@@ -33,7 +33,7 @@ export function SteamStatus({ status, loaded }: SteamStatusProps) {
       onClick={() => trackOutboundClick({ destination: "steam", href, label: title })}
     >
       {thumb && <FooterStatusLineThumb src={thumb} shape={line.game ? "rounded" : "circle"} />}
-      <FooterStatusLineText>{title}</FooterStatusLineText>
+      <FooterStatusLineText live={line.kind === "playing"}>{title}</FooterStatusLineText>
       {line.kind === "playing" && (
         <FooterStatusLineText fixed aria-label="playing now" css={{ color: "accent.500" }}>
           ▶

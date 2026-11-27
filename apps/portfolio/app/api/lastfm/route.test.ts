@@ -64,13 +64,13 @@ describe("GET /api/lastfm", () => {
     await expect(response.json()).resolves.toEqual({ tracks: [{ title: "Teardrop" }], total: 42 });
   });
 
-  it("caches the response at the edge for two minutes", async () => {
+  it("caches the response at the edge for a minute", async () => {
     getConfig.mockResolvedValueOnce({ lastfm_username: "dom" });
     fetchLastfmScrobbles.mockResolvedValueOnce({ ok: true, tracks: [], total: null });
 
     const response = await GET(request);
 
-    expect(response.headers.get("Cache-Control")).toContain("s-maxage=120");
+    expect(response.headers.get("Cache-Control")).toContain("s-maxage=60");
   });
 
   it("returns 501 without an api key, before touching Storyblok", async () => {

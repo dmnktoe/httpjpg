@@ -60,7 +60,7 @@ export function DiscordStatus({ presence, loaded }: DiscordStatusProps) {
         <>
           <FooterStatusLineSeparator />
           {activityIcon && <FooterStatusLineThumb src={activityIcon} />}
-          <FooterStatusLineText>{activity}</FooterStatusLineText>
+          <FooterStatusLineText live={status !== STATUS.offline}>{activity}</FooterStatusLineText>
           {playtime && (
             <>
               <FooterStatusLineSeparator />

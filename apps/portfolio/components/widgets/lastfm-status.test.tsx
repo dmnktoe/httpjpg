@@ -61,6 +61,7 @@ describe("LastfmStatus", () => {
 
     rerender(<LastfmStatus track={{ ...track, nowPlaying: true }} loaded />);
     expect(screen.getByLabelText("now playing")).toBeInTheDocument();
+    expect(screen.getByText("Teardrop").getAttribute("style")).toContain("accent-400");
   });
 
   it("marks loved tracks", () => {
@@ -86,7 +87,7 @@ describe("LastfmStatus", () => {
   it("keeps the line unbreakable, letting only title and artist ellipsize", () => {
     render(<LastfmStatus track={{ ...track, nowPlaying: true }} total={1200} loaded />);
 
-    expect(screen.getByText("Teardrop")).toHaveClass("jpg-min-w_0");
+    expect(screen.getByText("Teardrop").parentElement).toHaveClass("jpg-min-w_0");
     expect(screen.getByText("Massive Attack")).toHaveClass("jpg-min-w_0");
     expect(screen.getByLabelText("now playing")).toHaveClass("jpg-flex-sh_0");
     expect(screen.getByLabelText("1200 scrobbles")).toHaveClass("jpg-flex-sh_0");

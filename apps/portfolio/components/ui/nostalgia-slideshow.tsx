@@ -30,8 +30,8 @@ export function NostalgiaSlideshow() {
       floatingQuery={FLOATING_QUERY}
       css={{
         position: "fixed",
-        top: "45vh",
-        left: "6",
+        bottom: "4",
+        left: "4",
         zIndex: "widget",
         display: { base: "none", lg: "block" },
         w: "4.375rem",

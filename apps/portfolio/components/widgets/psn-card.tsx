@@ -23,8 +23,8 @@ export function PSNCard({ username }: PSNCardProps) {
       floatingQuery={FLOATING_QUERY}
       css={{
         position: "fixed",
-        top: "36",
-        right: "6",
+        top: "0",
+        left: "0",
         zIndex: "widget",
         display: "none",
         w: "15.625rem",

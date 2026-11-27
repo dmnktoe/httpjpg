@@ -41,7 +41,6 @@ export function PSNCard({ username }: PSNCardProps) {
           display: "block",
           width: "100%",
           height: "auto",
-          transform: "rotate(2deg)",
         }}
         draggable={false}
       />

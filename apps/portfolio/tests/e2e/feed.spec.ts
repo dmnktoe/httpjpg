@@ -183,11 +183,11 @@ test.describe("feed", () => {
 
     await panel.hover();
     await page.mouse.down();
-    await page.mouse.move((before?.x ?? 0) + 300, (before?.y ?? 0) - 200, { steps: 8 });
+    await page.mouse.move((before?.x ?? 0) - 200, (before?.y ?? 0) + 200, { steps: 8 });
     await page.mouse.up();
 
     const after = await panel.boundingBox();
-    expect((after?.x ?? 0) - (before?.x ?? 0)).toBeGreaterThan(100);
+    expect((before?.x ?? 0) - (after?.x ?? 0)).toBeGreaterThan(100);
     await expect(page).toHaveURL(/\/$/);
   });
 
